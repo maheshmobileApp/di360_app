@@ -1,5 +1,7 @@
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
+import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +14,7 @@ class DashBoardViewModel extends ChangeNotifier {
   final pages = [
     HomeScreen(),
     NewsFeedScreen(),
-    Center(child: Text('Message Page')),
+    JobSeekView(),
     Center(child: Text('Cart Page')),
     Center(child: Text('Profile Page'))
   ];
@@ -31,6 +33,7 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<HomeViewModel>().getAllNewsfeeds(context);
         break;
       case 2:
+        context.read<JobSeekViewModel>().fetchJobs();
         break;
       case 3:
         break;

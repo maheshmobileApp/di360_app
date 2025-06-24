@@ -22,7 +22,7 @@ class DashBoard extends StatelessWidget {
           topRight: Radius.circular(20),
         ),
         child: Container(
-          height: 80,
+          // height: 80,
           child: BottomNavigationBar(
             backgroundColor: AppColors.backgroundColor,
             currentIndex: dashBoardVM.currentIndex,
@@ -46,11 +46,11 @@ class DashBoard extends StatelessWidget {
                       color: AppColors.primaryColor),
                   label: 'Feeds'),
               BottomNavigationBarItem(
-                  icon: SvgPicture.asset(ImageConst.chat,
+                  icon: SvgPicture.asset(ImageConst.jobSeek,
                       color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: SvgPicture.asset(ImageConst.chat,
+                  activeIcon: SvgPicture.asset(ImageConst.jobSeek,
                       color: AppColors.primaryColor),
-                  label: 'Chat'),
+                  label: 'Job Seek'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(ImageConst.cart,
                       color: AppColors.bottomNavUnSelectedColor),

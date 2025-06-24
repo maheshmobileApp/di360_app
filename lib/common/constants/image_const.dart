@@ -39,4 +39,23 @@ class ImageConst {
   static const String feed = "assets/pngs/Feed.png";
   static const String comment = "assets/pngs/comment.png";
   static const String sendIcon = "assets/pngs/send_icon.png";
+  static const String location = "assets/pngs/location.png";
+  static const String experience = "assets/pngs/experience.png";
+
+  static const String _svgBasePath = 'assets/svgs/';
+
+  // Job related SVG icons
+  static const String briefcaseSvg = '${_svgBasePath}briefcase.svg';
+  static const String currencySvg = '${_svgBasePath}currency.svg';
+  static const String hiringSvg = '${_svgBasePath}hiring.svg';
+  static const String graduationSvg = '${_svgBasePath}graduation.svg';
+  static const String peopleSvg = '${_svgBasePath}people.svg';
+  static const String briefcurrencySvg = '${_svgBasePath}briefcurrency.svg';
+
+  // PNG Assets
+  static const String _pngBasePath = 'assets/pngs/';
+
+  // Job related PNG images
+  static const String jobHeaderPng = '${_pngBasePath}job_header.png';
+  static const String mapsPng = '${_pngBasePath}maps_b482.jpg';
 }

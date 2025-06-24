@@ -115,7 +115,7 @@ class InputTextField extends StatelessWidget {
             filled: isfilled ?? false,
             enabledBorder: enableborder ??
                 OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(16),
                   borderSide:
                       const BorderSide(width: 1.5, color: AppColors.HINT_COLOR),
                 ),
@@ -130,14 +130,14 @@ class InputTextField extends StatelessWidget {
                     fontSize: 16, color: AppColors.inputHintColor),
             prefixIcon: prefixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,

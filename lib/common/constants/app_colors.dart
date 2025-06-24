@@ -20,4 +20,11 @@ class AppColors {
   static const Color inputBorderColor = Color(0xFFDEDEDE);
   static const Color inputHintColor = Color(0xFF5B5772);
   static const Color backgroundColor= Color(0xFFEDEFF1);
+  static const Color timeBgColor = Color(0xffFFF1E5);
+  static const Color borderColor = Color(0xFFDCE0E4);
+  static const Color clipBg = Color(0xff0471DE26);
+  static const Color blueColor = Color(0xff0471DE);
+  static const Color locationTextColor = Color(0xFF5F6B7A);
+  static const Color secondaryBlueColor = Color.fromRGBO(4, 113, 222, 0.15);
+  static const Color primaryBlueColor = Color(0xff0471de);
 }

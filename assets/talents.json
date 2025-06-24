@@ -1,0 +1,494 @@
+{
+    "data": {
+      "job_profiles": [
+        {
+          "id": "bc91dc05-bf0e-4196-9c33-12c641238094",
+          "created_at": "2025-06-20T13:31:16.95218+00:00",
+          "updated_at": "2025-06-20T13:31:16.95218+00:00",
+          "skills": null,
+          "jobexperiences": [],
+          "educations": [],
+          "upload_resume": [],
+          "job_designation": "Senior Dental Assistant",
+          "current_company": "Smile Tag",
+          "current_ctc": "",
+          "dental_professional_id": "d884a7fc-471c-45a7-a795-a89619889c8e",
+          "post_anonymously": false,
+          "admin_status": "APPROVE",
+          "profile_image": [],
+          "full_name": "Dhanush",
+          "mobile_number": "+61257868323",
+          "email_address": "testdhanush@gmail.com",
+          "work_type": [
+            "Full Time"
+          ],
+          "profession_type": "Dental Specialist",
+          "location": null,
+          "country": "Australia",
+          "city": null,
+          "state": null,
+          "cover_letter": [],
+          "certificate": [],
+          "radius": "300",
+          "abn_number": null,
+          "availabilityOption": "",
+          "availabilityDate": [],
+          "fromDate": [],
+          "availabilityDay": [],
+          "work_rights": null,
+          "Year_of_experiance": null,
+          "languages_spoken": null,
+          "areas_expertise": null,
+          "percentage": null,
+          "salary_amount": null,
+          "salary_type": null,
+          "aphra_number": "57237",
+          "willing_to_travel": false,
+          "travel_distance": null,
+          "about_yourself": null,
+          "availabilityType": "fromDay",
+          "unavailabilityDate": [],
+          "dental_professional": {
+            "id": "d884a7fc-471c-45a7-a795-a89619889c8e",
+            "gender": null,
+            "__typename": "dental_professionals"
+          },
+          "jobhirings": [
+            {
+              "id": "420cc192-deee-4873-b073-2261158666c8",
+              "__typename": "jobhirings"
+            },
+            {
+              "id": "a6819675-1de9-4145-a278-2e4068b6a509",
+              "__typename": "jobhirings"
+            }
+          ],
+          "__typename": "job_profiles"
+        },
+        {
+          "id": "593322d7-eec9-4901-a9da-29484effbc2e",
+          "created_at": "2025-06-20T13:16:36.086674+00:00",
+          "updated_at": "2025-06-20T13:16:36.086674+00:00",
+          "skills": null,
+          "jobexperiences": [],
+          "educations": [],
+          "upload_resume": [],
+          "job_designation": null,
+          "current_company": null,
+          "current_ctc": "",
+          "dental_professional_id": "4edd7ff0-bba0-43df-ae41-ed51df5407de",
+          "post_anonymously": false,
+          "admin_status": "APPROVE",
+          "profile_image": [],
+          "full_name": "Chandru",
+          "mobile_number": "+61275757571",
+          "email_address": "test@gmail.com",
+          "work_type": [
+            "Full Time",
+            "Part Time"
+          ],
+          "profession_type": "Dentist",
+          "location": null,
+          "country": null,
+          "city": null,
+          "state": null,
+          "cover_letter": [],
+          "certificate": [],
+          "radius": null,
+          "abn_number": null,
+          "availabilityOption": "",
+          "availabilityDate": [],
+          "fromDate": [],
+          "availabilityDay": [],
+          "work_rights": null,
+          "Year_of_experiance": null,
+          "languages_spoken": null,
+          "areas_expertise": null,
+          "percentage": null,
+          "salary_amount": 12323,
+          "salary_type": "monthly",
+          "aphra_number": "6838866",
+          "willing_to_travel": true,
+          "travel_distance": "30",
+          "about_yourself": null,
+          "availabilityType": "fromDay",
+          "unavailabilityDate": [],
+          "dental_professional": {
+            "id": "4edd7ff0-bba0-43df-ae41-ed51df5407de",
+            "gender": null,
+            "__typename": "dental_professionals"
+          },
+          "jobhirings": [],
+          "__typename": "job_profiles"
+        },
+        {
+          "id": "81768422-6d68-4640-b53b-e2976ddd858f",
+          "created_at": "2025-06-20T13:03:32.234645+00:00",
+          "updated_at": "2025-06-20T13:03:32.234645+00:00",
+          "skills": [
+            "Skill B"
+          ],
+          "jobexperiences": [],
+          "educations": [],
+          "upload_resume": [],
+          "job_designation": "Senior Dental Hygienist",
+          "current_company": "Smile Dental Care",
+          "current_ctc": "",
+          "dental_professional_id": "857f045e-f66f-4d5f-bbfb-071c2b5aca98",
+          "post_anonymously": false,
+          "admin_status": "APPROVE",
+          "profile_image": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/69aad6c0-26d3-43de-bed8-b8d1e1d91416",
+              "name": "slide-img2.jpg",
+              "type": "image",
+              "extension": "jpeg"
+            }
+          ],
+          "full_name": "vasanth",
+          "mobile_number": "+617575757576",
+          "email_address": "vasanth@gmail.com",
+          "work_type": [
+            "Full Time",
+            "Part Time",
+            "Casual"
+          ],
+          "profession_type": "Dental Hygienist",
+          "location": "Cnr LaTrobe and Swanston Streets, Melbourne VIC 3000, Australia",
+          "country": "Australia",
+          "city": "3000",
+          "state": "Victoria",
+          "cover_letter": [],
+          "certificate": [],
+          "radius": "20",
+          "abn_number": null,
+          "availabilityOption": "fromDate1",
+          "availabilityDate": [
+            "2025-08-21",
+            "2025-08-22",
+            "2025-08-23",
+            "2025-08-24",
+            "2025-08-26",
+            "2025-08-25",
+            "2025-08-27",
+            "2025-08-28",
+            "2025-08-29",
+            "2025-08-30",
+            "2025-08-31"
+          ],
+          "fromDate": [
+            "2025-08-20"
+          ],
+          "availabilityDay": [],
+          "work_rights": "Permanent resident",
+          "Year_of_experiance": "10-15",
+          "languages_spoken": null,
+          "areas_expertise": null,
+          "percentage": null,
+          "salary_amount": 60000,
+          "salary_type": "monthly",
+          "aphra_number": null,
+          "willing_to_travel": true,
+          "travel_distance": "20",
+          "about_yourself": null,
+          "availabilityType": "fromDate",
+          "unavailabilityDate": [],
+          "dental_professional": {
+            "id": "857f045e-f66f-4d5f-bbfb-071c2b5aca98",
+            "gender": null,
+            "__typename": "dental_professionals"
+          },
+          "jobhirings": [],
+          "__typename": "job_profiles"
+        },
+        {
+          "id": "de116576-a2c3-4d5c-9220-639ea8e877a1",
+          "created_at": "2025-06-20T05:22:02.626387+00:00",
+          "updated_at": "2025-06-20T05:22:02.626387+00:00",
+          "skills": null,
+          "jobexperiences": [
+            {
+              "endYear": 2025,
+              "ejobdesp": "",
+              "endMonth": "Feb",
+              "job_title": "Senior Dental Hygienist",
+              "startYear": 2020,
+              "startMonth": "Feb",
+              "stillInRole": false,
+              "company_name": "Smile Care"
+            }
+          ],
+          "educations": [
+            {
+              "finishDate": "2013-06-18T18:30:00.000Z",
+              "institution": "Balaji Dental Hospital",
+              "qualification": "Mds",
+              "courseHighlights": "",
+              "qualificationFinished": true
+            }
+          ],
+          "upload_resume": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/resume/fa8caef0-722e-4c0d-a040-cdf5bfd57de2",
+              "name": "resume (2).pdf",
+              "type": "document",
+              "extension": "pdf"
+            }
+          ],
+          "job_designation": "Senior Dental Hygienist",
+          "current_company": "Smile Care ",
+          "current_ctc": "",
+          "dental_professional_id": "e3103405-adce-4ae8-af81-3cac95a4af84",
+          "post_anonymously": false,
+          "admin_status": "APPROVE",
+          "profile_image": [],
+          "full_name": "professionalDentist",
+          "mobile_number": "+61765765557",
+          "email_address": "sathish@nandalalainfotech.com",
+          "work_type": [
+            "Full Time"
+          ],
+          "profession_type": "Dental Hygienist",
+          "location": "Adelaide SA, Australia",
+          "country": "Australia",
+          "city": null,
+          "state": "South Australia",
+          "cover_letter": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/cover_letter/4e2158bf-4bff-4bc2-b7fc-50aa6c25db95",
+              "name": "coverletter.pdf",
+              "type": "document",
+              "extension": "pdf"
+            }
+          ],
+          "certificate": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/9ebe00fe-5b51-4287-a494-f87b95d0ca61",
+              "name": "certificate.pdf",
+              "type": "application/pdf",
+              "extension": "pdf"
+            }
+          ],
+          "radius": "10",
+          "abn_number": null,
+          "availabilityOption": "fromDate1",
+          "availabilityDate": [
+            "2025-08-01",
+            "2025-08-02",
+            "2025-08-03",
+            "2025-08-04",
+            "2025-08-05",
+            "2025-08-06",
+            "2025-08-07",
+            "2025-08-08",
+            "2025-08-09",
+            "2025-08-10",
+            "2025-08-11",
+            "2025-08-14",
+            "2025-08-12",
+            "2025-08-13",
+            "2025-08-15",
+            "2025-08-16",
+            "2025-08-17",
+            "2025-08-18",
+            "2025-08-19",
+            "2025-08-20",
+            "2025-08-22",
+            "2025-08-21",
+            "2025-08-23",
+            "2025-08-24",
+            "2025-08-25",
+            "2025-08-26",
+            "2025-08-27",
+            "2025-08-28",
+            "2025-08-30",
+            "2025-08-29"
+          ],
+          "fromDate": [
+            "2025-08-01"
+          ],
+          "availabilityDay": [],
+          "work_rights": "Permanent resident",
+          "Year_of_experiance": "5-10",
+          "languages_spoken": "English",
+          "areas_expertise": null,
+          "percentage": null,
+          "salary_amount": 50000,
+          "salary_type": "monthly",
+          "aphra_number": null,
+          "willing_to_travel": true,
+          "travel_distance": "21",
+          "about_yourself": null,
+          "availabilityType": "fromDate",
+          "unavailabilityDate": [],
+          "dental_professional": {
+            "id": "e3103405-adce-4ae8-af81-3cac95a4af84",
+            "gender": null,
+            "__typename": "dental_professionals"
+          },
+          "jobhirings": [
+            {
+              "id": "37e426d6-36ce-4d04-a07a-73a2129eec34",
+              "__typename": "jobhirings"
+            }
+          ],
+          "__typename": "job_profiles"
+        },
+        {
+          "id": "4a83543a-f123-4031-bbcd-209b5f301d2c",
+          "created_at": "2025-05-31T04:40:56.030647+00:00",
+          "updated_at": "2025-05-31T04:40:56.030647+00:00",
+          "skills": [
+            "Skill B",
+            "Skill C"
+          ],
+          "jobexperiences": [
+            {
+              "endYear": 2024,
+              "ejobdesp": "A paraprofessional works to assist a teacher throughout their daily classroom activities. Some of the duties include helping schedule and implement programs in accordance with the curriculum as well as general classroom and clerical duties such as maintaining a clean and safe environment or printing and preparing educational material. The typical career advancement for paraprofessionals is to be a teacher following further education and certification being obtained.\n",
+              "endMonth": "Mar",
+              "job_title": "Web developer",
+              "startYear": 2022,
+              "startMonth": "Jan",
+              "stillInRole": false,
+              "company_name": "Crono Private limited"
+            },
+            {
+              "endYear": 2020,
+              "ejobdesp": "A paraprofessional works to assist a teacher throughout their daily classroom activities. Some of the duties include helping schedule and implement programs in accordance with the curriculum as well as general classroom and clerical duties such as maintaining a clean and safe environment or printing and preparing educational material. The typical career advancement for paraprofessionals is to be a teacher following further education and certification being obtained.\n",
+              "endMonth": "May",
+              "job_title": "React Developer",
+              "startYear": 2014,
+              "startMonth": "Mar",
+              "stillInRole": false,
+              "company_name": "Zepto Info tech "
+            }
+          ],
+          "educations": [
+            {
+              "finishDate": "2024-05-14T18:30:00.000Z",
+              "institution": "Kongunadu College of Engineering and Technology",
+              "qualification": "B.Tech",
+              "courseHighlights": "Maintained a 97% satisfaction rating over a 24-month period as a customer care representative.\nIncreased client retention by 59% by implementing an efficient grievance resolution process and customer feedback system.",
+              "qualificationFinished": true
+            },
+            {
+              "finishDate": "2025-07-15T18:30:00.000Z",
+              "institution": "Ramakrishna College of Arts and Science",
+              "qualification": "BCA",
+              "courseHighlights": "Programming Languages: Proficient in C, C++, Java, Python\n\nWeb Development: HTML, CSS, JavaScript, PHP, and basics of React\n\nDatabase Management Systems: Hands-on experience with MySQL and Oracle\n\nData Structures and Algorithms: Core concepts of problem-solving and computational logic",
+              "qualificationFinished": false
+            }
+          ],
+          "upload_resume": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/resume/d59a26ac-b376-4db0-9bc6-592061d814d8",
+              "name": "pdf (1).pdf",
+              "type": "document",
+              "extension": "pdf"
+            }
+          ],
+          "job_designation": "Software Developer",
+          "current_company": "Crono Private Limited",
+          "current_ctc": "",
+          "dental_professional_id": "4357852e-bbf9-4ca3-bb35-fe301d60f5cf",
+          "post_anonymously": true,
+          "admin_status": "APPROVE",
+          "profile_image": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/3f64c71d-80dc-4a6a-8380-7652260a6309",
+              "name": "d4.png",
+              "type": "image",
+              "extension": "png"
+            }
+          ],
+          "full_name": "dentalprofessional",
+          "mobile_number": "5656854578",
+          "email_address": "dentalprofessional@gmail.com",
+          "work_type": [
+            "Full Time",
+            "Casual"
+          ],
+          "profession_type": "Dentist",
+          "location": "42 Marine Parade, Southport QLD 4215, Australia",
+          "country": "Australia",
+          "city": "4215",
+          "state": "Queensland",
+          "cover_letter": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/cover_letter/b4a69fae-71ba-421c-a0fa-d57662f2f371",
+              "name": "Kumar_FD_IT_React_Click_Academy (1).docx",
+              "type": "document",
+              "extension": "docx"
+            }
+          ],
+          "certificate": [
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/9e563970-0a5b-471a-8641-0bc3331926bd",
+              "name": "pdf (1).pdf",
+              "type": "application/pdf",
+              "extension": "pdf"
+            },
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/27225862-06e0-4ac6-b73b-d2f26459af3e",
+              "name": "clinic.jpg",
+              "type": "image/jpeg",
+              "extension": "jpg"
+            },
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/f901c658-4119-4722-a8ab-1ad21766934f",
+              "name": "Puviyarasu.docx",
+              "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "extension": "docx"
+            },
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/49515ba6-b8cf-48fc-b66b-d30544637091",
+              "name": "sample butterfly.jfif",
+              "type": "image/jpeg",
+              "extension": "jfif"
+            },
+            {
+              "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/c0052d18-dfb5-4d99-8de6-59f90c83d0e9",
+              "name": "resume-sample.pdf",
+              "type": "application/pdf",
+              "extension": "pdf"
+            }
+          ],
+          "radius": "20",
+          "abn_number": null,
+          "availabilityOption": "fromDate",
+          "availabilityDate": [],
+          "fromDate": [],
+          "availabilityDay": [
+            "Friday",
+            "Saturday"
+          ],
+          "work_rights": "Temporary resident",
+          "Year_of_experiance": "3-5",
+          "languages_spoken": "English",
+          "areas_expertise": "Javascript",
+          "percentage": null,
+          "salary_amount": 30000,
+          "salary_type": "monthly",
+          "aphra_number": "77474747474",
+          "willing_to_travel": true,
+          "travel_distance": "60",
+          "about_yourself": "Attend email marketing conference\nHire a Social Media Writer\nFind new clients\nUpdate company website\nFirst tax advisor meeting\nAcquire storage server\nSet up time logging system for our team\nFilm TV show pilot\nHire executive coach\nFind new coworking space",
+          "availabilityType": "fromDay",
+          "unavailabilityDate": [],
+          "dental_professional": {
+            "id": "4357852e-bbf9-4ca3-bb35-fe301d60f5cf",
+            "gender": "male",
+            "__typename": "dental_professionals"
+          },
+          "jobhirings": [
+            {
+              "id": "c5682c1d-482b-4cd3-ad14-8d00de75f236",
+              "__typename": "jobhirings"
+            }
+          ],
+          "__typename": "job_profiles"
+        }
+      ]
+    }
+  }
