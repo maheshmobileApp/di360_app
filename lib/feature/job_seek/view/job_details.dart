@@ -6,6 +6,7 @@ import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailsScreen extends StatelessWidget {
   final Jobs job;
@@ -63,7 +64,7 @@ class JobDetailsScreen extends StatelessWidget {
             child: Container(
               color: Colors.white,
               padding: EdgeInsets.all(16),
-              child: _buildBodyContent(),
+              child: _buildBodyContent(context),
             ),
           ),
         ],
@@ -71,7 +72,7 @@ class JobDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBodyContent() {
+  Widget _buildBodyContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -201,21 +202,7 @@ class JobDetailsScreen extends StatelessWidget {
         Text(
           '${job.location ?? ''}',
         ),
-        Container(
-          height: 180,
-          margin: EdgeInsets.symmetric(vertical: 10),
-          color: Colors.grey[300],
-          alignment: Alignment.center,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              ImageConst.mapsPng,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-          ),
-        ),
+        locationView(context),
         _sectionHeader('Gallery'),
         Row(
           children: List.generate(
@@ -273,6 +260,73 @@ class JobDetailsScreen extends StatelessWidget {
     );
   }
 
+  Widget locationView(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // job.location
+        _openLocationInMaps(context);
+      },
+      child: Container(
+        height: 180,
+        margin: EdgeInsets.symmetric(vertical: 10),
+        color: Colors.grey[300],
+        alignment: Alignment.center,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(
+            ImageConst.mapsPng,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openLocationInMaps(BuildContext context) async {
+    if (job.location == null || job.location!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Location not available'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final String location = Uri.encodeComponent(job.location!);
+
+    // Try Google Maps app first, then fallback to web
+    final String googleMapsApp = 'google.navigation:q=$location';
+    final String googleMapsWeb =
+        'https://www.google.com/maps/search/?api=1&query=$location';
+
+    try {
+      // Try to launch Google Maps app
+      final Uri appUri = Uri.parse(googleMapsApp);
+      if (await canLaunchUrl(appUri)) {
+        await launchUrl(appUri, mode: LaunchMode.externalApplication);
+        return;
+      }
+    } catch (e) {
+      print('Google Maps app not available: $e');
+    }
+
+    try {
+      // Fallback to web version
+      final Uri webUri = Uri.parse(googleMapsWeb);
+      await launchUrl(webUri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      print('Error launching maps: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not open maps application'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   Widget jobInfoItem(String svgPath, String text) {
     return Row(
