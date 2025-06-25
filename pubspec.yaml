@@ -46,11 +46,12 @@ dependencies:
   cached_network_image: ^3.3.1
   video_player: ^2.9.5
   chewie: ^1.10.0
-  #syncfusion_flutter_pdfviewer:
   youtube_player_flutter: ^9.1.1
   image_picker: ^1.1.2
   file_picker: ^10.1.9
   google_sign_in: ^6.2.2
+  url_launcher: ^6.3.1
+  flutter_inappwebview:
 
 dev_dependencies:
   flutter_test:

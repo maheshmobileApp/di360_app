@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +43,7 @@ showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
       context: context,
       builder: (_) {
         return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
             title: Text(message,
                 style: TextStyles.medium3(color: AppColors.black)),
             actions: [
@@ -56,11 +56,7 @@ showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
                     style: TextStyles.medium4(),
                   )),
               TextButton(
-                  onPressed: onBack ??
-                      () async {
-                        navigationService
-                            .pushNamedAndRemoveUntil(RouteList.dashBoard);
-                      },
+                  onPressed: onBack,
                   child: Text(
                     "Ok",
                     style: TextStyles.medium4(),

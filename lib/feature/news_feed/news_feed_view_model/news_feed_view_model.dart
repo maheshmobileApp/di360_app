@@ -254,27 +254,6 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
- /* {
-  "id": "02f7686e-9441-4dec-b535-5ca9d3cdbe6c",
-  "data": {
-    "description": "edit test",
-    "category_type": "4f560cba-fd05-486f-86d1-e579a05290f4",
-    "video_url": "",
-    "post_image": [
-      {
-        "id": "Feed.png-1750694881753",
-        "name": "Feed.png",
-        "type": "image/png",
-        "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/f04c1f82-5e79-4cfa-a779-704bf5af47b5"
-      }
-    ],
-    "web_url": "",
-    "user_role": "PRACTICE",
-    "user_id": "7306adc6-1efa-4a52-8c82-7e4e1922a5c5",
-    "status": "PUBLISHED",
-    "dental_practice_id": "7306adc6-1efa-4a52-8c82-7e4e1922a5c5"
-  }
-}*/
 }
 const String editTheFeedQuery = r'''
 mutation UpdateNewsfeed($id: uuid!, $data: newsfeeds_set_input!) {
