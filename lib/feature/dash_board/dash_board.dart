@@ -59,6 +59,8 @@ class DashBoard extends StatelessWidget {
                   label: 'Cart'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.person), label: 'Profile'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: 'Profile'),
             ],
           ),
         ),
