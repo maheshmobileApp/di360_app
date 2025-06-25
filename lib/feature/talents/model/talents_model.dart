@@ -1,18 +1,17 @@
-
 class GetTaltentModel {
-  final TalentsData data;
+  final TalentsData? data;
 
-  GetTaltentModel({required this.data});
+  GetTaltentModel({this.data});
 
   factory GetTaltentModel.fromJson(Map<String, dynamic> json) {
     return GetTaltentModel(
-      data: TalentsData.fromJson(json['data']),
+      data: json['data'] != null ? TalentsData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'data': data.toJson(),
+      'data': data?.toJson(),
     };
   }
 }
@@ -24,9 +23,11 @@ class TalentsData {
 
   factory TalentsData.fromJson(Map<String, dynamic> json) {
     return TalentsData(
-      jobProfiles: (json['job_profiles'] as List)
-          .map((item) => JobProfile.fromJson(item))
-          .toList(),
+      jobProfiles: json['job_profiles'] != null
+          ? (json['job_profiles'] as List)
+              .map((item) => JobProfile.fromJson(item))
+              .toList()
+          : [],
     );
   }
 
@@ -38,25 +39,25 @@ class TalentsData {
 }
 
 class JobProfile {
-  final String id;
-  final String createdAt;
-  final String updatedAt;
+  final String? id;
+  final String? createdAt;
+  final String? updatedAt;
   final List<String>? skills;
   final List<JobExperience> jobExperiences;
   final List<Education> educations;
   final List<FileUpload> uploadResume;
   final String? jobDesignation;
   final String? currentCompany;
-  final String currentCtc;
-  final String dentalProfessionalId;
+  final String? currentCtc;
+  final String? dentalProfessionalId;
   final bool postAnonymously;
-  final String adminStatus;
+  final String? adminStatus;
   final List<FileUpload> profileImage;
-  final String fullName;
-  final String mobileNumber;
-  final String emailAddress;
+  final String? fullName;
+  final String? mobileNumber;
+  final String? emailAddress;
   final List<String> workType;
-  final String professionType;
+  final String? professionType;
   final String? location;
   final String? country;
   final String? city;
@@ -65,7 +66,7 @@ class JobProfile {
   final List<FileUpload> certificate;
   final String? radius;
   final String? abnNumber;
-  final String availabilityOption;
+  final String? availabilityOption;
   final List<String> availabilityDate;
   final List<String> fromDate;
   final List<String> availabilityDay;
@@ -80,31 +81,31 @@ class JobProfile {
   final bool willingToTravel;
   final String? travelDistance;
   final String? aboutYourself;
-  final String availabilityType;
+  final String? availabilityType;
   final List<String> unavailabilityDate;
-  final DentalProfessional dentalProfessional;
+  final DentalProfessional? dentalProfessional;
   final List<JobHiring> jobHirings;
 
   JobProfile({
-    required this.id,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id,
+    this.createdAt,
+    this.updatedAt,
     this.skills,
     required this.jobExperiences,
     required this.educations,
     required this.uploadResume,
     this.jobDesignation,
     this.currentCompany,
-    required this.currentCtc,
-    required this.dentalProfessionalId,
-    required this.postAnonymously,
-    required this.adminStatus,
+    this.currentCtc,
+    this.dentalProfessionalId,
+    this.postAnonymously = false,
+    this.adminStatus,
     required this.profileImage,
-    required this.fullName,
-    required this.mobileNumber,
-    required this.emailAddress,
+    this.fullName,
+    this.mobileNumber,
+    this.emailAddress,
     required this.workType,
-    required this.professionType,
+    this.professionType,
     this.location,
     this.country,
     this.city,
@@ -113,7 +114,7 @@ class JobProfile {
     required this.certificate,
     this.radius,
     this.abnNumber,
-    required this.availabilityOption,
+    this.availabilityOption,
     required this.availabilityDate,
     required this.fromDate,
     required this.availabilityDay,
@@ -125,12 +126,12 @@ class JobProfile {
     this.salaryAmount,
     this.salaryType,
     this.aphraNumber,
-    required this.willingToTravel,
+    this.willingToTravel = false,
     this.travelDistance,
     this.aboutYourself,
-    required this.availabilityType,
+    this.availabilityType,
     required this.unavailabilityDate,
-    required this.dentalProfessional,
+    this.dentalProfessional,
     required this.jobHirings,
   });
 
@@ -140,45 +141,63 @@ class JobProfile {
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       skills: json['skills'] != null ? List<String>.from(json['skills']) : null,
-      jobExperiences: (json['jobexperiences'] as List)
-          .map((item) => JobExperience.fromJson(item))
-          .toList(),
-      educations: (json['educations'] as List)
-          .map((item) => Education.fromJson(item))
-          .toList(),
-      uploadResume: (json['upload_resume'] as List)
-          .map((item) => FileUpload.fromJson(item))
-          .toList(),
+      jobExperiences: json['jobexperiences'] != null
+          ? (json['jobexperiences'] as List)
+              .map((item) => JobExperience.fromJson(item))
+              .toList()
+          : [],
+      educations: json['educations'] != null
+          ? (json['educations'] as List)
+              .map((item) => Education.fromJson(item))
+              .toList()
+          : [],
+      uploadResume: json['upload_resume'] != null
+          ? (json['upload_resume'] as List)
+              .map((item) => FileUpload.fromJson(item))
+              .toList()
+          : [],
       jobDesignation: json['job_designation'],
       currentCompany: json['current_company'],
       currentCtc: json['current_ctc'],
       dentalProfessionalId: json['dental_professional_id'],
-      postAnonymously: json['post_anonymously'],
+      postAnonymously: json['post_anonymously'] ?? false,
       adminStatus: json['admin_status'],
-      profileImage: (json['profile_image'] as List)
-          .map((item) => FileUpload.fromJson(item))
-          .toList(),
+      profileImage: json['profile_image'] != null
+          ? (json['profile_image'] as List)
+              .map((item) => FileUpload.fromJson(item))
+              .toList()
+          : [],
       fullName: json['full_name'],
       mobileNumber: json['mobile_number'],
       emailAddress: json['email_address'],
-      workType: List<String>.from(json['work_type']),
+      workType:
+          json['work_type'] != null ? List<String>.from(json['work_type']) : [],
       professionType: json['profession_type'],
       location: json['location'],
       country: json['country'],
       city: json['city'],
       state: json['state'],
-      coverLetter: (json['cover_letter'] as List)
-          .map((item) => FileUpload.fromJson(item))
-          .toList(),
-      certificate: (json['certificate'] as List)
-          .map((item) => FileUpload.fromJson(item))
-          .toList(),
+      coverLetter: json['cover_letter'] != null
+          ? (json['cover_letter'] as List)
+              .map((item) => FileUpload.fromJson(item))
+              .toList()
+          : [],
+      certificate: json['certificate'] != null
+          ? (json['certificate'] as List)
+              .map((item) => FileUpload.fromJson(item))
+              .toList()
+          : [],
       radius: json['radius'],
       abnNumber: json['abn_number'],
       availabilityOption: json['availabilityOption'],
-      availabilityDate: List<String>.from(json['availabilityDate']),
-      fromDate: List<String>.from(json['fromDate']),
-      availabilityDay: List<String>.from(json['availabilityDay']),
+      availabilityDate: json['availabilityDate'] != null
+          ? List<String>.from(json['availabilityDate'])
+          : [],
+      fromDate:
+          json['fromDate'] != null ? List<String>.from(json['fromDate']) : [],
+      availabilityDay: json['availabilityDay'] != null
+          ? List<String>.from(json['availabilityDay'])
+          : [],
       workRights: json['work_rights'],
       yearOfExperience: json['Year_of_experiance'],
       languagesSpoken: json['languages_spoken'],
@@ -187,16 +206,21 @@ class JobProfile {
       salaryAmount: json['salary_amount'],
       salaryType: json['salary_type'],
       aphraNumber: json['aphra_number'],
-      willingToTravel: json['willing_to_travel'],
+      willingToTravel: json['willing_to_travel'] ?? false,
       travelDistance: json['travel_distance'],
       aboutYourself: json['about_yourself'],
       availabilityType: json['availabilityType'],
-      unavailabilityDate: List<String>.from(json['unavailabilityDate']),
-      dentalProfessional:
-          DentalProfessional.fromJson(json['dental_professional']),
-      jobHirings: (json['jobhirings'] as List)
-          .map((item) => JobHiring.fromJson(item))
-          .toList(),
+      unavailabilityDate: json['unavailabilityDate'] != null
+          ? List<String>.from(json['unavailabilityDate'])
+          : [],
+      dentalProfessional: json['dental_professional'] != null
+          ? DentalProfessional.fromJson(json['dental_professional'])
+          : null,
+      jobHirings: json['jobhirings'] != null
+          ? (json['jobhirings'] as List)
+              .map((item) => JobHiring.fromJson(item))
+              .toList()
+          : [],
     );
   }
 
@@ -246,7 +270,7 @@ class JobProfile {
       'about_yourself': aboutYourself,
       'availabilityType': availabilityType,
       'unavailabilityDate': unavailabilityDate,
-      'dental_professional': dentalProfessional.toJson(),
+      'dental_professional': dentalProfessional?.toJson(),
       'jobhirings': jobHirings.map((hiring) => hiring.toJson()).toList(),
     };
   }
@@ -337,16 +361,16 @@ class Education {
 }
 
 class FileUpload {
-  final String url;
-  final String name;
-  final String type;
-  final String extension;
+  final String? url;
+  final String? name;
+  final String? type;
+  final String? extension;
 
   FileUpload({
-    required this.url,
-    required this.name,
-    required this.type,
-    required this.extension,
+    this.url,
+    this.name,
+    this.type,
+    this.extension,
   });
 
   factory FileUpload.fromJson(Map<String, dynamic> json) {
@@ -369,14 +393,14 @@ class FileUpload {
 }
 
 class DentalProfessional {
-  final String id;
+  final String? id;
   final String? gender;
-  final String typeName;
+  final String? typeName;
 
   DentalProfessional({
-    required this.id,
+    this.id,
     this.gender,
-    required this.typeName,
+    this.typeName,
   });
 
   factory DentalProfessional.fromJson(Map<String, dynamic> json) {
@@ -397,12 +421,12 @@ class DentalProfessional {
 }
 
 class JobHiring {
-  final String id;
-  final String typeName;
+  final String? id;
+  final String? typeName;
 
   JobHiring({
-    required this.id,
-    required this.typeName,
+    this.id,
+    this.typeName,
   });
 
   factory JobHiring.fromJson(Map<String, dynamic> json) {
