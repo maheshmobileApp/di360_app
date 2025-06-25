@@ -7,9 +7,12 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
@@ -50,12 +53,10 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 needFeedViewModel,
                 addNeedFeedViewModel),
             addVertical(10),
-            (newsfeeds?.videoUrl == '' || newsfeeds?.videoUrl == null)
-                ? _buildImageRow()
-                : _mediaCard(
-                    child: LazyYoutubePlayer(
-                        youtubeUrl: newsfeeds?.videoUrl ?? ''),
-                    isFullWidth: true),
+            _buildImageRow(),
+            addVertical(5),
+            if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
+              LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
             addVertical(22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -69,7 +70,13 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                         : newsfeeds?.description ?? '',
                     style: TextStyles.regular2(color: AppColors.black),
                   ),
-                  addVertical(8),
+                  addVertical(10),
+                  if (newsfeeds?.webUrl != null &&
+                      newsfeeds!.webUrl!.isNotEmpty)
+                    webSiteText(newsfeeds?.webUrl ?? ''),
+                  if (newsfeeds?.webUrl != null &&
+                      newsfeeds!.webUrl!.isNotEmpty)
+                    addVertical(8),
                   Divider(color: AppColors.dividerColor),
                   addVertical(4),
                   _buildStatsRow(
@@ -179,10 +186,15 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 ).then((value) async {
                   if (value == 'edit') {
                     await addNewsVM.fetchNewsfeedCategories();
+                    await addNewsVM.editFeedObject(newsfeeds);
                     navigationService.navigateTo(RouteList.addNewsFeed);
-                    addNewsVM.editFeedObject(newsfeeds);
                   } else if (value == 'delete') {
-                    viewModel.deleteTheNewsFeed(context, newsfeeds?.id ?? '');
+                    showAlertMessage(context,
+                        'Are you really want to delete this NewsFeed ?',
+                        onBack: () {
+                      viewModel.deleteTheNewsFeed(context, newsfeeds?.id ?? '');
+                      navigationService.goBack();
+                    });
                   }
                 });
               },
@@ -224,9 +236,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         return InlineVideoPlayer(videoUrl: url);
       } else if (type == 'application/pdf') {
         return GestureDetector(
-          onTap: () {
-            // Handle PDF tap
-          },
+          onTap: () async =>
+              navigationService.push(ImageViewerScreen(postImage: mediaList)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -240,8 +251,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         );
       } else if (type == 'application/msword') {
         return GestureDetector(
-          onTap: () {
-            // Handle Word document tap
+          onTap: () async {
+            navigationService.push(ImageViewerScreen(postImage: mediaList));
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -275,7 +286,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           return _mediaCard(
             child: buildMediaContent(media),
             onTap: () {
-              // Optional: Add tap handler if needed
+              navigationService.push(ImageViewerScreen(postImage: mediaList));
             },
           );
         }).toList(),

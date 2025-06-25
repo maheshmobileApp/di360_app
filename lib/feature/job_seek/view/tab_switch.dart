@@ -22,7 +22,7 @@ class TabSwitch extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           boxShadow: [
             BoxShadow( 
-                color: Colors.black.withOpacity(.6),
+                color: Colors.black.withOpacity(0.87),
                 blurRadius: 12.0,
                 spreadRadius: 6.0,
                 offset: Offset(
@@ -50,7 +50,6 @@ class TabSwitch extends StatelessWidget {
           ],
         ));
   }
-
   Widget _tabButton(BuildContext context, String title, int index,
       bool isActive, void Function()? onTap) {
     return Expanded(

@@ -160,7 +160,9 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
       if (isBase64Image(url)) {
         try {
           final decodedBytes = base64Decode(url.split(',').last);
-          return Image.memory(decodedBytes, fit: BoxFit.cover);
+          return _fileCard(
+              Image.memory(decodedBytes, fit: BoxFit.cover), index, viewModel,
+              isExisting: true);
         } catch (e) {
           return Icon(Icons.broken_image);
         }

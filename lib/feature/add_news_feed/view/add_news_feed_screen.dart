@@ -31,8 +31,8 @@ class AddNewsFeedScreen extends StatelessWidget
               viewModel.clearFeedNews();
             },
             child: Icon(Icons.arrow_back)),
-        title: Text(viewModel.isEditNewsFeed == true ?
-          'Edit NewsFeed' : 'Add NewsFeed',
+        title: Text(
+          viewModel.isEditNewsFeed == true ? 'Edit NewsFeed' : 'Add NewsFeed',
           style: TextStyles.bold4(color: AppColors.whiteColor),
         ),
       ),
@@ -107,13 +107,15 @@ class AddNewsFeedScreen extends StatelessWidget
                 ),
                 addVertical(30),
                 AppButton(
-                    text: 'Add',
+                    text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
                       if (_formKey.currentState!.validate()) {
                         if (viewModel.selectedCategory == null) {
                           scaffoldMessenger('Please select category');
                         } else {
-                          viewModel.addNewsFeeds(context);
+                          viewModel.isEditNewsFeed == true
+                              ? viewModel.updateTheNewsFeeds(context)
+                              : viewModel.addNewsFeeds(context);
                         }
                       }
                     }),
