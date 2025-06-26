@@ -91,37 +91,81 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
     return Card(
       color: AppColors.whiteColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 23),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            addVertical(20),
-            Text(title,
-                style: TextStyles.regular3(color: AppColors.black)),
-            GridView.count(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          addVertical(18),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 23),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(title, style: TextStyles.regular3(color: AppColors.black)),
+                CircleAvatar(
+                  backgroundColor: AppColors.buttomBarColor,
+                  radius: 20,
+                  child: CircleAvatar(
+                    radius: 19,
+                    backgroundColor: AppColors.whiteColor,
+                    child: Icon(
+                      Icons.add,
+                      color: AppColors.black,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          addVertical(5),
+          Divider(),
+          addVertical(10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 23),
+            child: GridView.count(
+              padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
               crossAxisSpacing: 2,
+              mainAxisSpacing: 0,
               childAspectRatio: 0.55,
               children:
                   displayList.map((item) => buildCatalogueCard(item)).toList(),
             ),
-        
-            const SizedBox(height: 12),
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    showMore = !showMore;
-                  });
-                },
-                child: Text(showMore ? "View Less" : "View More"),
+          ),
+          addVertical(12),
+          Divider(),
+          addVertical(5),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 23),
+            child: GestureDetector(
+              onTap: () => setState(() {
+                showMore = !showMore;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(showMore ? "View Less" : "View More",
+                      style: TextStyles.regular3(color: AppColors.black)),
+                  CircleAvatar(
+                    backgroundColor: AppColors.buttomBarColor,
+                    radius: 20,
+                    child: CircleAvatar(
+                      radius: 19,
+                      backgroundColor: AppColors.whiteColor,
+                      child: Icon(
+                          showMore
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: AppColors.black),
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+          addVertical(10)
+        ],
       ),
     );
   }
