@@ -17,8 +17,9 @@ class DashBoardViewModel extends ChangeNotifier {
     NewsFeedScreen(),
     JobSeekView(),
     CataloguePage(),
-    //Center(child: Text('Cart Page')),
-    Center(child: Text('Profile Page'))
+    Center(child: Text('Profile Page')),
+    Center(child: Text('Cart Page')),
+
   ];
 
   void setIndex(int index, BuildContext context) {
