@@ -295,7 +295,7 @@ class JobDetailsScreen extends StatelessWidget {
       return;
     }
 
-    final String location = Uri.encodeComponent(job.location!);
+    final String location = Uri.encodeComponent(job.location!);   
 
     // Try Google Maps app first, then fallback to web
     final String googleMapsApp = 'google.navigation:q=$location';
