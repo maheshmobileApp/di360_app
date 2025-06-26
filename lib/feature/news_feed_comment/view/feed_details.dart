@@ -27,8 +27,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             ? _buildImageRow()
             : _mediaCard(
                 child: LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-                isFullWidth: true
-              ),
+                isFullWidth: true),
         addVertical(22),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -58,92 +57,104 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildImageRow() {
-  final mediaList = newsfeeds?.postImage ?? [];
+    final mediaList = newsfeeds?.postImage ?? [];
 
-  if (mediaList.isEmpty) return SizedBox();
+    if (mediaList.isEmpty) return SizedBox();
 
-  Widget buildMediaContent(media) {
-    final type = media.type ?? media.mimeType ?? '';
-    final url = media.url ?? '';
-    final name = media.name ?? '';
+    Widget buildMediaContent(media) {
+      final type = media.type ?? media.mimeType ?? '';
+      final url = media.url ?? '';
+      final name = media.name ?? '';
 
-    // Helper: check if base64
-    bool isBase64Image(String data) => data.startsWith('data:image/');
+      // Helper: check if base64
+      bool isBase64Image(String data) => data.startsWith('data:image/');
 
-    if (type.startsWith('image/') || type.startsWith('application/octet-stream')) {
-      if (isBase64Image(url)) {
-        try {
-          final decodedBytes = base64Decode(url.split(',').last);
-          return Image.memory(decodedBytes, fit: BoxFit.cover);
-        } catch (e) {
-          return Icon(Icons.broken_image);
+      if (type.startsWith('image/') ||
+          type.startsWith('application/octet-stream')) {
+        if (isBase64Image(url)) {
+          try {
+            final decodedBytes = base64Decode(url.split(',').last);
+            return Image.memory(decodedBytes, fit: BoxFit.cover);
+          } catch (e) {
+            return Icon(Icons.broken_image);
+          }
+        } else if (name.endsWith('.pdf')) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(ImageConst.pdf),
+              addVertical(11),
+              Text(name,
+                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                  textAlign: TextAlign.center),
+            ],
+          );
+        } else {
+          return CachedNetworkImageWidget(imageUrl: url);
         }
+      } else if (type == 'video/mp4') {
+        return InlineVideoPlayer(videoUrl: url);
+      } else if (type == 'application/pdf') {
+        return GestureDetector(
+          onTap: () {
+            // Handle PDF tap
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(ImageConst.pdf),
+              addVertical(11),
+              Text(name,
+                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                  textAlign: TextAlign.center),
+            ],
+          ),
+        );
+      } else if (type == 'application/msword') {
+        return GestureDetector(
+          onTap: () {
+            // Handle Word document tap
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.wordpress, size: 40),
+              addVertical(11),
+              Text(name,
+                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                  textAlign: TextAlign.center),
+            ],
+          ),
+        );
       } else {
         return CachedNetworkImageWidget(imageUrl: url);
       }
-    } else if (type == 'video/mp4') {
-      return InlineVideoPlayer(videoUrl: url);
-    } else if (type == 'application/pdf') {
-      return GestureDetector(
-        onTap: () {
-          // Handle PDF tap
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(ImageConst.pdf),
-            addVertical(11),
-            Text(name,
-                style: TextStyles.regular1(color: AppColors.lightGeryColor),
-                textAlign: TextAlign.center),
-          ],
-        ),
-      );
-    } else if (type == 'application/msword') {
-      return GestureDetector(
-        onTap: () {
-          // Handle Word document tap
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.wordpress,size: 40),
-            addVertical(11),
-            Text(name,
-                style: TextStyles.regular1(color: AppColors.lightGeryColor),
-                textAlign: TextAlign.center),
-          ],
-        ),
-      );
-    } else {
-      return CachedNetworkImageWidget(imageUrl: url);
     }
-  }
 
-  
-  if (mediaList.length == 1) {
-    final media = mediaList.first;
-    return _mediaCard(
-      child: buildMediaContent(media),
-      isFullWidth: true,
+    if (mediaList.length == 1) {
+      final media = mediaList.first;
+      return _mediaCard(
+        child: buildMediaContent(media),
+        isFullWidth: true,
+      );
+    }
+
+    // Multiple items
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: mediaList.map<Widget>((media) {
+          return _mediaCard(
+            child: buildMediaContent(media),
+            onTap: () {
+              // Optional: Add tap handler if needed
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
-  // Multiple items
-  return SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(
-      children: mediaList.map<Widget>((media) {
-        return _mediaCard(
-          child: buildMediaContent(media),
-          onTap: () {
-            // Optional: Add tap handler if needed
-          },
-        );
-      }).toList(),
-    ),
-  );
-}
   Widget _mediaCard({
     required Widget child,
     VoidCallback? onTap,

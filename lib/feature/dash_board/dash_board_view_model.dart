@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
@@ -15,7 +16,8 @@ class DashBoardViewModel extends ChangeNotifier {
     HomeScreen(),
     NewsFeedScreen(),
     JobSeekView(),
-    Center(child: Text('Cart Page')),
+    CataloguePage(),
+    //Center(child: Text('Cart Page')),
     Center(child: Text('Profile Page'))
   ];
 
