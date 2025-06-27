@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -39,6 +40,7 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<JobSeekViewModel>().fetchJobs();
         break;
       case 3:
+      context.read<CatalogueViewModel>().fetchCatalogue(context);
         break;
       default:
     }

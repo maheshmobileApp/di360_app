@@ -1,30 +1,20 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
-class CataloguePage extends StatefulWidget {
-  @override
-  _CataloguePageState createState() => _CataloguePageState();
-}
-
-class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
-  bool showMore = false;
-
-  // Sample dummy data (can be replaced with API or JSON)
-  final List<Map<String, String>> catalogues = List.generate(6, (index) {
-    return {
-      "title": "SMILE TECH",
-      "subtitle": "Schrack Catalogue",
-      "image":
-          "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/7c0f8164-065e-49aa-b568-3d4774b0d450",
-    };
-  });
-
+class CataloguePage extends StatelessWidget with BaseContextHelpers {
+  const CataloguePage({super.key});
   @override
   Widget build(BuildContext context) {
+    final vm = Provider.of<CatalogueViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
       body: ListView(
@@ -74,129 +64,151 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
             ),
           ),
           addVertical(15),
-
-          // Sections
-          catalogueSection("ALL CATALOGUES"),
-          const SizedBox(height: 24),
-          catalogueSection("PROMOTIONAL"),
+          ...vm.catalogueCategories
+              .map((cat) => buildCatalogueSection(context, vm, cat))
+              .toList(),
         ],
       ),
     );
   }
 
-  Widget catalogueSection(String title) {
-    // Control how many items to show
-    final displayList = showMore ? catalogues : catalogues.take(2).toList();
+  Widget buildCatalogueSection(
+      BuildContext context, CatalogueViewModel vm, CatalogueCategories cat) {
+    final showMore = vm.isShowMore(cat.name ?? '');
+    final displayList =
+        showMore ? cat.catalogues : cat.catalogues?.take(2).toList();
 
     return Card(
-      color: AppColors.whiteColor,
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          addVertical(18),
+          SizedBox(height: 18),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: TextStyles.regular3(color: AppColors.black)),
+                Text(
+                  cat.name ?? '',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black),
+                ),
                 CircleAvatar(
-                  backgroundColor: AppColors.buttomBarColor,
+                  backgroundColor: Colors.grey.shade200,
                   radius: 20,
                   child: CircleAvatar(
                     radius: 19,
-                    backgroundColor: AppColors.whiteColor,
-                    child: Icon(
-                      Icons.add,
-                      color: AppColors.black,
-                    ),
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.add, color: Colors.black),
                   ),
                 )
               ],
             ),
           ),
-          addVertical(5),
+          SizedBox(height: 10),
           Divider(),
-          addVertical(10),
+          SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: GridView.count(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
+              padding: EdgeInsets.all(0),
               physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               crossAxisCount: 2,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 0,
               childAspectRatio: 0.55,
-              children:
-                  displayList.map((item) => buildCatalogueCard(item)).toList(),
+              children: displayList!
+                  .map((c) => buildCatalogueCard(context, vm, c))
+                  .toList(),
             ),
           ),
-          addVertical(12),
+          SizedBox(height: 12),
           Divider(),
-          addVertical(5),
+          SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: GestureDetector(
-              onTap: () => setState(() {
-                showMore = !showMore;
-              }),
+              onTap: () => vm.toggleShowMore(cat.name ?? ''),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(showMore ? "View Less" : "View More",
-                      style: TextStyles.regular3(color: AppColors.black)),
+                  Text(
+                    showMore ? "View Less" : "View More",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: Colors.black),
+                  ),
                   CircleAvatar(
-                    backgroundColor: AppColors.buttomBarColor,
+                    backgroundColor: Colors.grey.shade200,
                     radius: 20,
                     child: CircleAvatar(
                       radius: 19,
-                      backgroundColor: AppColors.whiteColor,
+                      backgroundColor: Colors.white,
                       child: Icon(
-                          showMore
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: AppColors.black),
+                        showMore
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Colors.black,
+                      ),
                     ),
                   )
                 ],
               ),
             ),
           ),
-          addVertical(10)
+          SizedBox(height: 10),
         ],
       ),
     );
   }
 
-  Widget buildCatalogueCard(Map<String, String> item) {
+  Widget buildCatalogueCard(
+      BuildContext context, CatalogueViewModel vm, Catalogues c) {
     return Card(
-      color: AppColors.whiteColor,
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.network(item["image"]!,
-                  fit: BoxFit.cover, width: double.infinity),
+      child: GestureDetector(
+        onTap: () async {
+          await vm.getCatalogDetails(context, c.id ?? '');
+          await navigationService.navigateTo(RouteList.catalogueDetails);
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.network(
+                  c.thumbnailImage?.url ?? '',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (ctx, _, __) =>
+                      Icon(Icons.broken_image, size: 50),
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item["title"]!,
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(item["subtitle"]!, style: TextStyle(fontSize: 12)),
-              ],
-            ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    c.title ?? '',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  Text(
+                    c.dentalSupplier?.directories?.first.name ?? '',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

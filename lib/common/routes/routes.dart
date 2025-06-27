@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
+import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -31,7 +32,7 @@ class Routes {
           job: args as Jobs, // Replace JobModel with your actual job model type
         );
       },
-      //RouteList.commentScreen: (context) => CommentScreen()
+      RouteList.catalogueDetails: (context) => CatalogueDetailsScreen()
       };
   }
 }

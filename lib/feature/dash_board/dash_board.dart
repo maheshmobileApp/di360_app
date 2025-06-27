@@ -52,11 +52,11 @@ class DashBoard extends StatelessWidget {
                       color: AppColors.primaryColor),
                   label: 'Job Seek'),
               BottomNavigationBarItem(
-                  icon: SvgPicture.asset(ImageConst.cart,
+                  icon: SvgPicture.asset(ImageConst.catalogue,
                       color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: SvgPicture.asset(ImageConst.cart,
+                  activeIcon: SvgPicture.asset(ImageConst.catalogue,
                       color: AppColors.primaryColor),
-                  label: 'Cart'),
+                  label: 'Catalogue'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.person), label: 'Profile'),
               BottomNavigationBarItem(
@@ -64,109 +64,7 @@ class DashBoard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-      /*  BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        color: AppColors.buttomBarColor,
-        child: SizedBox(
-          height: 70,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              _buildNavItem(context, ImageConst.home, "Home", 0),
-              _buildNavItem(context, ImageConst.feed, "Feeds", 1),
-              _buildNavItemWithBadge(context, ImageConst.chat, "Messages", 2,
-                  showBadge: true),
-              const SizedBox(width: 40),
-              _buildNavItem(context, ImageConst.cart, "Cart", 3),
-              _buildProfileItem(context, 4),
-            ],
-          ),
-        ),
-      ),*/
+      )
     );
   }
-
-  /* Widget _buildNavItem(
-      BuildContext context, String icon, String label, int index) {
-    final navProvider = Provider.of<DashBoardViewModel>(context);
-    final isActive = navProvider.currentIndex == index;
-
-    return GestureDetector(
-      onTap: index >= 0 ? () => navProvider.setIndex(index) : null,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(icon,
-              color: isActive
-                  ? AppColors.black
-                  : AppColors.bottomBarSelectIconColor),
-          // Icon(icon, color: isActive ? Colors.black : Colors.grey),
-          Text(label,
-              style: TextStyle(
-                  color: isActive
-                      ? AppColors.black
-                      : AppColors.bottomBarSelectIconColor,
-                  fontSize: 12)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItemWithBadge(
-      BuildContext context, String icon, String label, int index,
-      {bool showBadge = false}) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: _buildNavItem(context, icon, label, index),
-        ),
-        if (showBadge)
-          const Positioned(
-            right: 12,
-            top: 2,
-            child: CircleAvatar(radius: 5, backgroundColor: Colors.orange),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildProfileItem(BuildContext context, int index) {
-    final navProvider = Provider.of<DashBoardViewModel>(context);
-    final isActive = navProvider.currentIndex == index;
-    return GestureDetector(
-      onTap: index >= 0 ? () => navProvider.setIndex(index) : null,
-      child: Stack(
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 14,
-                backgroundColor: Colors.orange,
-                child: Icon(Icons.person, size: 18, color: Colors.white),
-              ),
-              const SizedBox(height: 4),
-              Text("Profile",
-                  style: TextStyle(
-                      color: isActive
-                          ? AppColors.black
-                          : AppColors.bottomBarSelectIconColor,
-                      fontSize: 12)),
-            ],
-          ),
-          const Positioned(
-            right: 0,
-            top: 0,
-            child: CircleAvatar(radius: 5, backgroundColor: Colors.black),
-          ),
-        ],
-      ),
-    );
-  }*/
 }

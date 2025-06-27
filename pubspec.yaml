@@ -52,6 +52,8 @@ dependencies:
   google_sign_in: ^6.2.2
   url_launcher: ^6.3.1
   flutter_inappwebview:
+  smooth_page_indicator: ^1.2.1
+  syncfusion_flutter_pdfviewer: ^24.1.41
 
 dev_dependencies:
   flutter_test:
