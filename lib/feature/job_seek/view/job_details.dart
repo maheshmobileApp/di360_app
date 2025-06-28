@@ -38,22 +38,41 @@ class JobDetailsScreen extends StatelessWidget {
             ),
           ],
           content: SizedBox(
-              width: MediaQuery.of(context).size.width *
-                  0.9, // 90% of screen width
+              width: MediaQuery.of(context).size.width * 0.9,
               child: EnquiryForm()),
         );
       },
     );
   }
-
   void _showApplyForm(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const ApplyJobsForm();
-      },
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        contentPadding: EdgeInsets.all(16),
+        insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        actions: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: CustomRoundedButton(
+              text: "Continue",
+              onPressed: () {},
+              backgroundColor: Colors.orange,
+              textColor: Colors.white,
+            ),
+          ),
+        ],
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: SingleChildScrollView(
+            child: ApplyJobsForm(),
+          ),
+        ),
+      );
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +86,6 @@ class JobDetailsScreen extends StatelessWidget {
             elevation: 0,
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                // Show title only when collapsed
                 final top = constraints.biggest.height;
                 final isCollapsed =
                     top <= kToolbarHeight + MediaQuery.of(context).padding.top;
@@ -75,20 +93,19 @@ class JobDetailsScreen extends StatelessWidget {
                   centerTitle: false,
                   title: isCollapsed
                       ? Text(
-                            job.title ?? '',
+                          job.title ?? '',
                           style: TextStyle(color: Colors.black, fontSize: 16),
                         )
-                      : null, // No title when expanded
-                    background: CachedNetworkImageWidget(
-                      imageUrl: job.logo ?? '',
-                      width: double.infinity,
-                    )
+                      : null,
+                  background: CachedNetworkImageWidget(
+                    imageUrl: job.logo ?? '',
+                    width: double.infinity,
+                  ),
                 );
               },
             ),
             leading: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                // Calculate if the app bar is collapsed based on the available height
                 final top = constraints.biggest.height;
                 final isCollapsed =
                     top <= kToolbarHeight + MediaQuery.of(context).padding.top;
@@ -119,41 +136,33 @@ class JobDetailsScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Details
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                // Circle avatar or logo
                 Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey[300], // Placeholder color
+                    color: Colors.grey[300],
                   ),
                 ),
                 const SizedBox(width: 12),
-                // Title & Subtitle
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       job.title ?? '',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 4),
                     Text(
                       job.jRole ?? '',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ],
                 ),
@@ -180,7 +189,6 @@ class JobDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
-
         SizedBox(height: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,10 +197,9 @@ class JobDetailsScreen extends StatelessWidget {
                 '${job.yearsOfExperience ?? 0} Yrs Experience'),
             SizedBox(height: 12),
             jobInfoItem(ImageConst.briefcurrencySvg,
-                '${job.payMin ?? 0} - ${job.payMax ?? 0} '),
+                '${job.payMin ?? 0} - ${job.payMax ?? 0}'),
           ],
         ),
-
         SizedBox(height: 12),
         Wrap(
           spacing: 1,
@@ -221,16 +228,13 @@ class JobDetailsScreen extends StatelessWidget {
             subtitle: '${job.rateBilling}'),
         Divider(height: 30),
         _sectionHeader('Job Description'),
-        _sectionText(
-            '${job.description ?? ''}'),
+        _sectionText('${job.description ?? ''}'),
         SizedBox(height: 10),
         _sectionHeader('Key Responsibilities'),
-        _sectionText(
-            'NA'),
+        _sectionText('NA'),
         SizedBox(height: 10),
         _sectionHeader('About Company'),
-        _sectionText(
-            '${job.companyName}'),
+        _sectionText('${job.companyName}'),
         SizedBox(height: 10),
         InkWell(
           onTap: () {},
@@ -242,9 +246,7 @@ class JobDetailsScreen extends StatelessWidget {
         ),
         SizedBox(height: 20),
         _sectionHeader('Job Location'),
-        Text(
-          '${job.location ?? ''}',
-        ),
+        Text('${job.location ?? ''}'),
         locationView(context),
         _sectionHeader('Gallery'),
         Row(
@@ -278,22 +280,14 @@ class JobDetailsScreen extends StatelessWidget {
             if (job.instagramUrl!.isNotEmpty)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
-                  onPressed: ()async {
-                        final Uri appUri = Uri.parse(job.instagramUrl!);
+                  onPressed: () async {
+                    final Uri appUri = Uri.parse(job.instagramUrl!);
                     if (await canLaunchUrl(appUri)) {
                       await launchUrl(appUri,
                           mode: LaunchMode.externalApplication);
                       return;
                     }
                   }),
-        /*    if (job.facebookUrl!.isNotEmpty)
-              IconButton(
-                  icon: ImageWidget(imageUrl: ImageConst.linkedinSvg),
-                  onPressed: () {}),
-            if (job.facebookUrl!.isNotEmpty)
-              IconButton(
-                  icon: ImageWidget(imageUrl: ImageConst.twitterSvg),
-                  onPressed: () {}),*/
           ],
         ),
         SizedBox(height: 20),
@@ -336,7 +330,6 @@ class JobDetailsScreen extends StatelessWidget {
   Widget locationView(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // job.location
         _openLocationInMaps(context);
       },
       child: Container(
@@ -368,15 +361,12 @@ class JobDetailsScreen extends StatelessWidget {
       return;
     }
 
-    final String location = Uri.encodeComponent(job.location!);   
-
-    // Try Google Maps app first, then fallback to web
+    final String location = Uri.encodeComponent(job.location!);
     final String googleMapsApp = 'google.navigation:q=$location';
     final String googleMapsWeb =
         'https://www.google.com/maps/search/?api=1&query=$location';
 
     try {
-      // Try to launch Google Maps app
       final Uri appUri = Uri.parse(googleMapsApp);
       if (await canLaunchUrl(appUri)) {
         await launchUrl(appUri, mode: LaunchMode.externalApplication);
@@ -387,7 +377,6 @@ class JobDetailsScreen extends StatelessWidget {
     }
 
     try {
-      // Fallback to web version
       final Uri webUri = Uri.parse(googleMapsWeb);
       await launchUrl(webUri, mode: LaunchMode.externalApplication);
     } catch (e) {
@@ -426,14 +415,11 @@ class JobDetailsScreen extends StatelessWidget {
     );
   }
 
-
-
-
   Widget _sectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-      child: Text(title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      child:
+          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -487,7 +473,7 @@ class InfoItem extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF6E7C90), // Subtle bluish-gray
+                    color: Color(0xFF6E7C90),
                   ),
                 ),
               ],
