@@ -21,7 +21,7 @@ class HeaderImageView extends StatelessWidget {
           elevation: 0,
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              // Show title only when collapsed
+           
               final top = constraints.biggest.height;
               final isCollapsed =
                   top <= kToolbarHeight + MediaQuery.of(context).padding.top;
