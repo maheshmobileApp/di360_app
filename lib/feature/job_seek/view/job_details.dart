@@ -3,17 +3,22 @@ import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
+import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailsScreen extends StatelessWidget {
   final Jobs job;
-  const JobDetailsScreen({super.key, required this.job});
+  const JobDetailsScreen({
+    super.key,
+    required this.job,
+  });
   void _showEnquiryForm(BuildContext context) {
     showDialog(
       context: context,
@@ -292,32 +297,40 @@ class JobDetailsScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20),
-       Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Expanded(
-      child: CustomRoundedButton(
-        text: 'Enquiry',
-        onPressed: () => _showEnquiryForm(context),
-        backgroundColor: const Color(0xFFFFF3E8), // light orange
-        textColor: Colors.orange,
-      ),
-    ),
-    const SizedBox(width: 16),
-    Expanded(
-      child: CustomRoundedButton(
-        text: 'Apply',
-        onPressed:() => _showApplyForm(context),
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-      ),
-    ),
-  ],
-),
+        actionsWidget(context),
 
         SizedBox(height: 20),
       ],
     );
+  }
+
+  Widget actionsWidget(BuildContext context) {
+    final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+    if (provider.isHidleFolatingButton) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: CustomRoundedButton(
+              text: 'Enquiry',
+              onPressed: () => _showEnquiryForm(context),
+              backgroundColor: const Color(0xFFFFF3E8), // light orange
+              textColor: Colors.orange,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: CustomRoundedButton(
+              text: 'Apply',
+              onPressed: () => _showApplyForm(context),
+              backgroundColor: Colors.orange,
+              textColor: Colors.white,
+            ),
+          ),
+      ],
+    );
+    }
+    return SizedBox.shrink();
   }
 
   Widget locationView(BuildContext context) {

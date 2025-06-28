@@ -10,9 +10,14 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobSeekView extends StatelessWidget with BaseContextHelpers {
+class JobSeekView extends StatefulWidget {
   const JobSeekView({Key? key}) : super(key: key);
 
+  @override
+  State<JobSeekView> createState() => _JobSeekViewState();
+}
+
+class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     return Consumer<JobSeekViewModel>(
@@ -39,7 +44,7 @@ class JobSeekView extends StatelessWidget with BaseContextHelpers {
                       : TalentsView()),
             ],
           ),
-          floatingActionButton: TabSwitch(),
+          floatingActionButton:jobSeekViewModel.isHidleFolatingButton == false ? TabSwitch() : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
         );
@@ -59,10 +64,12 @@ class JobSeekView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildTalentsList(JobSeekViewModel vm) {
-    return ListView.builder(
-      itemCount: 1,
-      itemBuilder: (context, index) => JobSeekCard(jobsData: vm.jobs[index]),
-    );
+ 
+
+  @override
+  void initState() {
+    final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+    provider.toggleFloatingButtonVisibility();
+    super.initState();
   }
 }
