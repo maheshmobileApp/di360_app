@@ -1,0 +1,119 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:flutter/material.dart';
+
+class HeaderImageView extends StatelessWidget {
+  final String? logo;
+  final String? title;
+  final Widget? body;
+  const HeaderImageView({super.key, this.logo, this.title, this.body});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          expandedHeight: 240.0,
+          pinned: true,
+          foregroundColor: AppColors.black,
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.white),
+          elevation: 0,
+          flexibleSpace: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              // Show title only when collapsed
+              final top = constraints.biggest.height;
+              final isCollapsed =
+                  top <= kToolbarHeight + MediaQuery.of(context).padding.top;
+              return FlexibleSpaceBar(
+                  centerTitle: false,
+                  title: isCollapsed
+                      ? Text(
+                          title ?? '',
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        )
+                      : null, // No title when expanded
+                  background: Stack(
+                    children: [
+                      logo!=""||logo!.isNotEmpty?
+                      CachedNetworkImageWidget(
+                        imageUrl:logo ?? "",
+                        width: double.infinity,
+                      ):Container(
+                        height: double.maxFinite,
+                        color: AppColors.geryColor,
+                      ),
+                      Positioned(
+                        top: MediaQuery.of(context).padding.top + 40,
+                        left: 10,
+                        child: isCollapsed
+                            ? IconButton(
+                                icon: const Icon(Icons.arrow_back,
+                                    size: 24, color: Colors.black),
+                                onPressed: () => Navigator.pop(context),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: AppColors.whiteColor,
+                                radius: 20,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                              ),
+                      ),
+                    ],
+                  ));
+
+              //  CachedNetworkImageWidget(
+              //   imageUrl: logo ?? '',
+              //   width: double.infinity,
+              // ));
+            },
+          ),
+          leading: SizedBox.shrink(),
+          // leading: LayoutBuilder(
+          //   builder: (BuildContext context, BoxConstraints constraints) {
+          //     final top = constraints.biggest.height;
+          //     final isCollapsed =
+          //         top <= kToolbarHeight + MediaQuery.of(context).padding.top;
+
+          //     return  Padding(
+          //       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+          //       child: isCollapsed
+          //           ? IconButton(
+          //               icon: Icon(
+          //                 Icons.arrow_back,
+          //                 size: 20,
+          //                 color: Colors.black,
+          //               ),
+          //               onPressed: () => Navigator.pop(context),
+          //             )
+          //           : CircleAvatar(
+          //               backgroundColor: AppColors.whiteColor,
+          //               radius: 20,
+          //               child: IconButton(
+          //                 icon: Icon(
+          //                   Icons.arrow_back,
+          //                   size: 20,
+          //                   color: Colors.black,
+          //                 ),
+          //                 onPressed: () => Navigator.pop(context),
+          //               ),
+          //             ),
+          //     );
+
+          //   },
+          // ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+              color: Colors.white, padding: EdgeInsets.all(16), child: body),
+        ),
+      ],
+    );
+  }
+}
