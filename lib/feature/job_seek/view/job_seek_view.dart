@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_card.dart';
@@ -8,6 +9,7 @@ import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.da
 import 'package:di360_flutter/feature/talents/views/talents_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class JobSeekView extends StatefulWidget {
@@ -25,8 +27,34 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title: Text("Jobseek"),
-          ),
+        backgroundColor: AppColors.whiteColor,
+        title: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Text(
+              'Dental Interface',
+              style: TextStyles.bold4(color: AppColors.black),
+            ),
+            Positioned(
+              top: -9,
+              right: -18,
+              child: SvgPicture.asset(
+                ImageConst.logo,
+                height: 20,
+                width: 20,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          SvgPicture.asset(ImageConst.notification, color: AppColors.black),
+          addHorizontal(15),
+          SvgPicture.asset(ImageConst.search, color: AppColors.black),
+          addHorizontal(15),
+          SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          addHorizontal(15),
+        ],
+      ),
           body: Column(
             children: [
               Container(

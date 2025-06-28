@@ -47,11 +47,7 @@ class _EnquiryFormState extends State<EnquiryForm> {
           hintText: "Write Something...",
           maxLines: 5,
         ),
-         
-       
       ],
-      
-        
     );
   }
 }
