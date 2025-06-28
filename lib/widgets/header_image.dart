@@ -35,14 +35,15 @@ class HeaderImageView extends StatelessWidget {
                       : null, // No title when expanded
                   background: Stack(
                     children: [
-                      logo!=""||logo!.isNotEmpty?
-                      CachedNetworkImageWidget(
-                        imageUrl:logo ?? "",
-                        width: double.infinity,
-                      ):Container(
-                        height: double.maxFinite,
-                        color: AppColors.geryColor,
-                      ),
+                      logo != "" || logo!.isNotEmpty
+                          ? CachedNetworkImageWidget(
+                              imageUrl: logo ?? "",
+                              width: double.infinity,
+                            )
+                          : Container(
+                              height: double.maxFinite,
+                              color: AppColors.geryColor,
+                            ),
                       Positioned(
                         top: MediaQuery.of(context).padding.top + 40,
                         left: 10,
@@ -67,47 +68,9 @@ class HeaderImageView extends StatelessWidget {
                       ),
                     ],
                   ));
-
-              //  CachedNetworkImageWidget(
-              //   imageUrl: logo ?? '',
-              //   width: double.infinity,
-              // ));
             },
           ),
           leading: SizedBox.shrink(),
-          // leading: LayoutBuilder(
-          //   builder: (BuildContext context, BoxConstraints constraints) {
-          //     final top = constraints.biggest.height;
-          //     final isCollapsed =
-          //         top <= kToolbarHeight + MediaQuery.of(context).padding.top;
-
-          //     return  Padding(
-          //       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-          //       child: isCollapsed
-          //           ? IconButton(
-          //               icon: Icon(
-          //                 Icons.arrow_back,
-          //                 size: 20,
-          //                 color: Colors.black,
-          //               ),
-          //               onPressed: () => Navigator.pop(context),
-          //             )
-          //           : CircleAvatar(
-          //               backgroundColor: AppColors.whiteColor,
-          //               radius: 20,
-          //               child: IconButton(
-          //                 icon: Icon(
-          //                   Icons.arrow_back,
-          //                   size: 20,
-          //                   color: Colors.black,
-          //                 ),
-          //                 onPressed: () => Navigator.pop(context),
-          //               ),
-          //             ),
-          //     );
-
-          //   },
-          // ),
         ),
         SliverToBoxAdapter(
           child: Container(

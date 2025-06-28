@@ -86,46 +86,49 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
             SizedBox(height: 12),
             _sectionHeader("About me / Profile Summary"),
             SizedBox(height: 6),
-            _sectionText(
-                "The entire course was re-recorded from scratch and was therefore completely updated! It's now 100% up-to-date with the latest version of Angular again, covering crucial modern features like signals, standalone components etc."),
+            _sectionText("${talentList?.aboutYourself ?? ""}"),
             Divider(
               color: AppColors.geryColor,
             ),
             _sectionHeader("Key Responsibilities"),
             SizedBox(height: 6),
             _sectionText("${talentList?.aboutYourself ?? ""}"),
-            Divider(
-              color: AppColors.geryColor,
-            ),
-             SizedBox(height: 6),
-            Padding(
-              padding:  EdgeInsets.only(top: 0),
-              child: ExperienceAccordionItem(
-                details: ListView.separated(
-                 shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final item = talentViewmodel.experienceList[index];
-                    return ListTile(
-                      dense: true,
-                      onTap: () => talentViewmodel.toggleIndex(index),
-                      title: Text(item['title']),
-                      subtitle: talentViewmodel.expandedIndex == index
-                          ? Text('descriptions')
-                          : null,
-                      trailing: Icon(
-                        talentViewmodel.expandedIndex == index
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Colors.orange,
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => Divider(),
-                  itemCount: talentViewmodel.experienceList.length,
-                ),
-              ),
-            ),
+            SizedBox(height: 16),
+            _sectionHeader("Work Experience"),
+            SizedBox(height: 8),
+            (talentList?.jobExperiences.isNotEmpty ?? false)
+                ? ExperienceAccordionItem(
+                    details: ListView.separated(
+                      padding: EdgeInsets.all(6),
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final item = talentList?.jobExperiences[index];
+                        return ListTile(
+                          contentPadding: EdgeInsets.all(0),
+                          dense: true,
+                          onTap: () => talentViewmodel.toggleIndex(index),
+                          title: Text(
+                            "${item?.startYear}",
+                            style: TextStyles.medium2(),
+                          ),
+                          subtitle: talentViewmodel.expandedIndex == index
+                              ? Text(item?.jobTitle ?? "",
+                                  style: TextStyles.regular1())
+                              : null,
+                          trailing: Icon(
+                            talentViewmodel.expandedIndex == index
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: Colors.orange,
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => Divider(),
+                      itemCount: talentList!.jobExperiences.length,
+                    ),
+                  )
+                : SizedBox.shrink(),
             SizedBox(height: 16),
             _sectionHeader('Gallery'),
             SizedBox(height: 6),
@@ -162,7 +165,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                 onPressed: () {
                   // handle Enquiry
                 },
-                backgroundColor: AppColors.timeBgColor, 
+                backgroundColor: AppColors.timeBgColor,
                 textColor: AppColors.primaryColor,
               ),
             ),
