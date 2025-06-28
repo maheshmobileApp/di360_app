@@ -1,8 +1,11 @@
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
+import 'package:di360_flutter/feature/job_seek/view/apply_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
+import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
+import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
@@ -11,6 +14,41 @@ import 'package:url_launcher/url_launcher.dart';
 class JobDetailsScreen extends StatelessWidget {
   final Jobs job;
   const JobDetailsScreen({super.key, required this.job});
+  void _showEnquiryForm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(16),
+          insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          actions: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: CustomRoundedButton(
+                text: "Send",
+                onPressed: () {},
+                backgroundColor: Colors.orange,
+                textColor: Colors.white,
+              ),
+            ),
+          ],
+          content: SizedBox(
+              width: MediaQuery.of(context).size.width *
+                  0.9, // 90% of screen width
+              child: EnquiryForm()),
+        );
+      },
+    );
+  }
+
+  void _showApplyForm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const ApplyJobsForm();
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,7 +184,7 @@ class JobDetailsScreen extends StatelessWidget {
                 '${job.yearsOfExperience ?? 0} Yrs Experience'),
             SizedBox(height: 12),
             jobInfoItem(ImageConst.briefcurrencySvg,
-                '${job.payMin ?? 0}K - ${job.payMax ?? 0}K '),
+                '${job.payMin ?? 0} - ${job.payMax ?? 0} '),
           ],
         ),
 
@@ -221,10 +259,36 @@ class JobDetailsScreen extends StatelessWidget {
         _sectionHeader('Social Media Handles'),
         Row(
           children: [
-            IconButton(icon: Icon(Icons.facebook), onPressed: () {}),
-            IconButton(icon: Icon(Icons.camera_alt), onPressed: () {}),
-            IconButton(icon: Icon(Icons.business), onPressed: () {}),
-            IconButton(icon: Icon(Icons.close), onPressed: () {}),
+            if (job.facebookUrl!.isNotEmpty)
+              IconButton(
+                  icon: ImageWidget(imageUrl: ImageConst.facebookSvg),
+                  onPressed: () async {
+                    final Uri appUri = Uri.parse(job.facebookUrl!);
+                    if (await canLaunchUrl(appUri)) {
+                      await launchUrl(appUri,
+                          mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }),
+            if (job.instagramUrl!.isNotEmpty)
+              IconButton(
+                  icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
+                  onPressed: ()async {
+                        final Uri appUri = Uri.parse(job.instagramUrl!);
+                    if (await canLaunchUrl(appUri)) {
+                      await launchUrl(appUri,
+                          mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }),
+        /*    if (job.facebookUrl!.isNotEmpty)
+              IconButton(
+                  icon: ImageWidget(imageUrl: ImageConst.linkedinSvg),
+                  onPressed: () {}),
+            if (job.facebookUrl!.isNotEmpty)
+              IconButton(
+                  icon: ImageWidget(imageUrl: ImageConst.twitterSvg),
+                  onPressed: () {}),*/
           ],
         ),
         SizedBox(height: 20),
@@ -234,9 +298,7 @@ class JobDetailsScreen extends StatelessWidget {
     Expanded(
       child: CustomRoundedButton(
         text: 'Enquiry',
-        onPressed: () {
-          // handle Enquiry
-        },
+        onPressed: () => _showEnquiryForm(context),
         backgroundColor: const Color(0xFFFFF3E8), // light orange
         textColor: Colors.orange,
       ),
@@ -245,9 +307,7 @@ class JobDetailsScreen extends StatelessWidget {
     Expanded(
       child: CustomRoundedButton(
         text: 'Apply',
-        onPressed: () {
-          // handle Apply
-        },
+        onPressed:() => _showApplyForm(context),
         backgroundColor: Colors.orange,
         textColor: Colors.white,
       ),

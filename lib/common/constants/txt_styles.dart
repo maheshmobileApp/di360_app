@@ -85,7 +85,7 @@ class TextStyles {
         decoration: decoration);
   }
 
-  static bold1({Color? color}) {
+  static bold1({Color? color, required int fontSize}) {
     return TextStyle(
         fontSize: 12,
         color: color,
