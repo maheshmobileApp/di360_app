@@ -52,6 +52,13 @@ class ImageConst {
   static const String peopleSvg = '${_svgBasePath}people.svg';
   static const String briefcurrencySvg = '${_svgBasePath}briefcurrency.svg';
 
+  // Social Media
+  static const String facebookSvg = '${_svgBasePath}social/facebook.png';
+  static const String instagramSvg = '${_svgBasePath}social/instagram.png';
+  static const String linkedinSvg = '${_svgBasePath}social/linkedin.png';
+  static const String twitterSvg = '${_svgBasePath}social/twitter.png';
+  //assets/svgs/social/twitter.svg
+
   // PNG Assets
   static const String _pngBasePath = 'assets/pngs/';
 

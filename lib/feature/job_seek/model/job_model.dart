@@ -158,9 +158,9 @@ class Jobs {
     currentCompany = json['current_company'];
     endDateToggle = json['endDateToggle'];
     experience = json['experience'];
-    facebookUrl = json['facebook_url'];
+    facebookUrl = json['facebook_url'] ?? '';
     hiringPeriod = json['hiring_period'];
-    instagramUrl = json['instagram_url'];
+    instagramUrl = json['instagram_url'] ?? '';
     isFeatured = json['is_featured'];
     closingMessage = json['closing_message'];
     closedAt = json['closed_at'];
