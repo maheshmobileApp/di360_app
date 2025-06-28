@@ -236,7 +236,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
                   child: Align(
                     alignment: Alignment.bottomRight,
                     child: Text('Reply',
-                        style: TextStyles.bold1(color: AppColors.black)),
+                        style: TextStyles.bold2(color: AppColors.black)),
                   ),
                 ),
                 Container(

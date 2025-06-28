@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 class InputTextField extends StatelessWidget {
   final String title;
+  final bool isRequired;
   final TextEditingController? controller;
   final String? hintText;
   final double? width;
@@ -40,53 +41,66 @@ class InputTextField extends StatelessWidget {
   final String? obscuringCharacter;
   final TextCapitalization? textCapitalization;
   final String? suffixText;
-  const InputTextField(
-      {super.key,
-      required this.title,
-      this.label,
-      this.focusNode,
-      this.controller,
-      this.textAlign,
-      this.maxLines,
-      this.isfilled = false,
-      this.width,
-      this.contentPadding,
-      this.onChange,
-      this.border,
-      this.enableborder,
-      this.labelstyle,
-      this.fillcolor,
-      this.inputFormatters,
-      this.keyboardType,
-      this.hintText,
-      this.obsecureText = false,
-      this.suffixIcon,
-      this.hintstyle,
-      this.prefixIcon,
-      this.validator,
-      this.borderRadius,
-      this.maxLength,
-      this.titleColor,
-      this.enableBorderColor,
-      this.borderColor,
-      this.readOnly,
-      this.initialValue,
-      this.canRequestFocus,
-      this.onTap,
-      this.onSubmitted,
-      this.textInputAction,
-      this.obscuringCharacter,
-      this.textCapitalization,
-      this.suffixText});
+
+   InputTextField({
+    super.key,
+    required this.title,
+    this.isRequired = false,
+    this.controller,
+    this.textAlign,
+    this.maxLines,
+    this.isfilled = false,
+    this.width,
+    this.contentPadding,
+    this.onChange,
+    this.border,
+    this.enableborder,
+    this.labelstyle,
+    this.fillcolor,
+    this.inputFormatters,
+    this.keyboardType,
+    this.hintText,
+    this.obsecureText = false,
+    this.suffixIcon,
+    this.hintstyle,
+    this.prefixIcon,
+    this.validator,
+    this.borderRadius,
+    this.maxLength,
+    this.titleColor,
+    this.enableBorderColor,
+    this.borderColor,
+    this.readOnly,
+    this.initialValue,
+    this.canRequestFocus,
+    this.onTap,
+    this.onSubmitted,
+    this.textInputAction,
+    this.obscuringCharacter,
+    this.textCapitalization,
+    this.suffixText, this.label, this.focusNode,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        title == ''
-            ? const SizedBox()
-            : Text(title, style: TextStyles.regular3(color: AppColors.black)),
-        title == '' ? const SizedBox() : const SizedBox(height: 10),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyles.regular3(color: titleColor ?? AppColors.black),
+            ),
+            if (isRequired)
+              const Text(
+                ' *',
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+          ],
+        ),
+       SizedBox(height: 10),
         TextFormField(
           obscuringCharacter: obscuringCharacter ?? '*',
           focusNode:
@@ -115,29 +129,32 @@ class InputTextField extends StatelessWidget {
             filled: isfilled ?? false,
             enabledBorder: enableborder ??
                 OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide:
-                      const BorderSide(width: 1.5, color: AppColors.HINT_COLOR),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 16),
+                  borderSide: BorderSide(
+                    width: 1.5,
+                    color: AppColors.HINT_COLOR,
+                  ),
                 ),
             suffixText: suffixText,
-            labelText: label,
             contentPadding:
                 contentPadding ?? const EdgeInsets.fromLTRB(10, 10, 12, 0),
             suffixIcon: suffixIcon,
             hintText: hintText,
             hintStyle: hintstyle ??
                 TextStyles.dmsansLight(
-                    fontSize: 16, color: AppColors.inputHintColor),
+                  fontSize: 16,
+                  color: AppColors.inputHintColor,
+                ),
             prefixIcon: prefixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(borderRadius ?? 16),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(borderRadius ?? 16),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,

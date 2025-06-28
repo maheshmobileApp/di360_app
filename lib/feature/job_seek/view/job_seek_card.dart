@@ -17,8 +17,6 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Container(
-        
-        
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -30,13 +28,11 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
           boxShadow: [
             BoxShadow(
               color: Color.fromRGBO(116, 130, 148, 0.2),
-              blurRadius:15, 
+              blurRadius: 15,
               offset: Offset(0, 2),
             ),
           ],
         ),
-        
-        
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -59,7 +55,6 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
       
     );
   }
-
   Widget _chipWidget(List<dynamic> typeofEmployment) {
     return Wrap(
       direction: Axis.horizontal,
@@ -91,7 +86,6 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
       }).toList(),
     );
   }
-
   Widget _locationWidget(String location) {
     return Row(
       children: [
