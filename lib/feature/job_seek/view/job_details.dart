@@ -18,7 +18,25 @@ class JobDetailsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        return const EnquiryForm();
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(16),
+          insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          actions: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: CustomRoundedButton(
+                text: "Send",
+                onPressed: () {},
+                backgroundColor: Colors.orange,
+                textColor: Colors.white,
+              ),
+            ),
+          ],
+          content: SizedBox(
+              width: MediaQuery.of(context).size.width *
+                  0.9, // 90% of screen width
+              child: EnquiryForm()),
+        );
       },
     );
   }
