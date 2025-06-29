@@ -127,17 +127,22 @@ SUPPLIER
        c) Create Job
 
       
-      
   2. Dental Practice 
+
+       a) Dont see Apply or enquiry 
+       b) They will see both talents and job floater 
+       c) Create Job
 
 
   3. Dental Professional 
       a) will see enquiry and Apply 
       b) professional will only see JOb ( cant see talents) no floating 
+      c) Create Profile 
   
    
 
-  4. Admin 
+  4. Admin -> Web Access , no mobile app 
+ 
 
   ## Job Create
 
@@ -310,3 +315,15 @@ SUPPLIER
 ---
 
 Would you like this in a downloadable **PDF** or **Word doc** format for sharing or printing?
+
+
+Job Seek
+
+2) profile - Design 
+1) Crete job ->
+2) job listing
+3) list of applicants
+4) Banner
+5) Create Profile
+
+

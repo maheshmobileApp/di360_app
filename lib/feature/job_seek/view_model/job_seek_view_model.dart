@@ -34,7 +34,7 @@ class JobSeekViewModel extends ChangeNotifier {
         isHidleFolatingButton = false; // Dental Business Owner
         break;
       case "PRACTICE":
-        isHidleFolatingButton = true; // Dental Practice Owner
+        isHidleFolatingButton = false; // Dental Practice Owner
         break;
       default:
         isHidleFolatingButton = true; //
