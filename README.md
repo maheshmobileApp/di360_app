@@ -139,4 +139,174 @@ SUPPLIER
 
   4. Admin 
 
-  ##
+  ## Job Create
+
+
+
+# **Job Admin Form Flow Documentation**
+
+## **1. Add Job Details**
+
+**Fields:**
+
+* **Job Title** *(Text Input)*
+* **Company Name** *(Text Input)*
+* **Role** *(Dropdown)*
+
+  * Surgeon
+  * Dentist
+  * Dental Hygienist
+  * Dental Prosthetist
+  * Dental Specialist
+* **Type of Employment** *(Dropdown)*
+
+  * Locum
+  * Contract
+  * Casual
+  * Part-time
+  * Full-time
+  * **If `Locum` is selected** → Show **Locum Date Picker**
+
+---
+
+## **2. Search Location**
+
+**Fields:**
+
+* **Country** *(Dropdown or Auto-complete Input)*
+* **State** *(Dropdown or Auto-complete Input)*
+* **City / Post Code** *(Text Input or Auto-complete)*
+
+---
+
+## **3. Upload Branding**
+
+**Fields:**
+
+* **Upload Company Logo** *(Image Upload)*
+* **Upload Banner Image** *(Image Upload – Optional recommended dimensions)*
+
+---
+
+## **4. Set Publish Date**
+
+**Question:** *Do you want to set a publish date?*
+
+* **Yes** → Show **Date Picker**
+* **No** → Skip this section
+
+---
+
+## **5. Hiring Urgency**
+
+**Options:** *(Radio Buttons or Dropdown)*
+
+* Urgent
+* 1–2 Weeks
+* 2–4 Weeks
+* More than 4 Weeks
+
+---
+
+## **6. Number of Hires**
+
+**Options:** *(Radio Buttons or Dropdown)*
+
+* 1
+* 2
+* 3
+* 4
+* 5
+* 6+
+
+---
+
+## **7. Pay Information**
+
+**Fields:**
+
+* **Pay Range** *(Numeric Input)*:
+
+  * Minimum
+  * Maximum
+* **Pay Type** *(Dropdown)*
+
+  * Per Year
+  * Per Month
+  * Per Week
+  * Per Hour
+  * Commission
+
+---
+
+## **8. Benefits Offered**
+
+**Options:** *(Checkboxes - Multiple Select)*
+
+* Performance Bonus
+* Commission
+* Relocation Fees
+* Tips
+* Overtime Pay
+* Signing Bonus
+* Bonus
+* Annual Bonus
+* Quarterly Bonus
+* Employee Discount
+* Visa Sponsorship
+* Employee Mentoring Program
+* Professional Development Assistance
+* Company Car
+* Travel Reimbursement
+* Housing Allowance
+* Other *(Text Input appears if selected)*
+
+---
+
+## **9. Education Requirement**
+
+**Field:**
+
+* **Qualification(s)** *(Text Input — e.g., BDS, MDS)*
+
+---
+
+## **10. Experience & Media**
+
+**Fields:**
+
+* **Upload Clinic Photo** *(Image Upload)*
+* **Add Video Link** *(YouTube, Vimeo, etc.)*
+* **Website Link** *(URL Input)*
+* **Social Media Links:**
+
+  * Facebook *(URL)*
+  * Instagram *(URL)*
+  * LinkedIn *(URL)*
+
+---
+
+## **11. Finish**
+
+**Options:**
+
+* **Save as Draft** *(Saves form for later editing)*
+* **Preview Job** *(Opens read-only preview with the following features):*
+
+  * Summary of all sections
+  * Total Page Views *(Read-only Analytics)*
+* **Post Job** *(Submits job for publishing)*
+* **Cancel** *(Discard or exit form)*
+
+---
+
+### ✅ **Notes for Developers/Designers**
+
+* Implement **conditional rendering** for dependent fields (e.g., Locum → Locum Date).
+* Ensure **form validation** for required fields and valid formats (e.g., URLs, dates).
+* Optimize **media uploads** for file size and format constraints (JPEG/PNG for images).
+* Provide **tooltips/help icons** for complex sections like Pay Type and Benefits.
+
+---
+
+Would you like this in a downloadable **PDF** or **Word doc** format for sharing or printing?

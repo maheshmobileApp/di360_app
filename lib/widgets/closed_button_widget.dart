@@ -12,13 +12,16 @@ class CloseButtonWidget extends StatelessWidget {
       top: 0,
       child: GestureDetector(
         onTap: onTap,
-        child: const CircleAvatar(
-          radius: 14,
-          backgroundColor: Colors.pinkAccent,
-          child: Icon(
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.pinkAccent, width: 2),
+          ),
+          padding: const EdgeInsets.all(2), 
+          child: const Icon(
             Icons.close,
             size: 16,
-            color: Colors.white,
+            color: Colors.pinkAccent,
           ),
         ),
       ),
