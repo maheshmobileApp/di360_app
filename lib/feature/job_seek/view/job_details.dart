@@ -155,7 +155,7 @@ class JobDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      job.title ?? '',
+                      job.companyName ?? '',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -484,3 +484,10 @@ class InfoItem extends StatelessWidget {
     );
   }
 }
+
+
+/*
+Query
+mutataion 
+
+ */

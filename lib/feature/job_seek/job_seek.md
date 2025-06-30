@@ -44,3 +44,17 @@ mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
 }
 
 ## Enquiry
+mutation insert_jobenquiries($jobenquiryobject:job_enquiries_insert_input!) {
+  insert_job_enquiries_one(object: $jobenquiryobject) {
+    id
+  }
+}
+
+{"jobenquiryobject":{
+  "dental_supplierid":null,
+    "job_id":"61c87b15-781e-43cf-b80a-41960c1e6fe7",
+     "enquiry_userid":"1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+        "enquiry_description": "New Job Applly"
+
+}
+}
