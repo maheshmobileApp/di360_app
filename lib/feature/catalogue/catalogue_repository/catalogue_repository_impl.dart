@@ -2,8 +2,10 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_by_id_request.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository.dart';
 import 'package:di360_flutter/feature/catalogue/get_catalogue_request.dart';
+import 'package:di360_flutter/feature/catalogue/get_related_catalogues.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 
 class CatalogueRepositoryImpl extends CatalogueRepository {
   final HttpService http = HttpService();
@@ -37,9 +39,17 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
 
   @override
   Future<CataloguesByPk?> getCatalogueById(String catalogId) async {
-    final catalogueData = await http.query(catalogueByIdRequest,
-        variables: {"id": catalogId});
+    final catalogueData =
+        await http.query(catalogueByIdRequest, variables: {"id": catalogId});
     final result = CatalogueByIdData.fromJson(catalogueData);
     return result.cataloguesByPk;
+  }
+
+  @override
+  Future<List<CatalogData>?> getRelatedCatalogues(String catalogueId) async {
+    final catalogueData =
+        await http.query(getRelatedCatalogQuery, variables: {"id": catalogueId});
+    final result = ReletedCataloguData.fromJson(catalogueData);
+    return result.catalogues;
   }
 }

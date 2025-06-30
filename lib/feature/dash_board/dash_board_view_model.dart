@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -14,7 +15,7 @@ class DashBoardViewModel extends ChangeNotifier {
   int get currentIndex => _currentIndex;
 
   final pages = [
-    HomeScreen(),
+    CatalogueDetailsScreen(),
     NewsFeedScreen(),
     JobSeekView(),
     CataloguePage(),

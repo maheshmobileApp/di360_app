@@ -84,7 +84,7 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 18),
+          addVertical(18),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: Row(
@@ -109,9 +109,9 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          SizedBox(height: 10),
+          addVertical(10),
           Divider(),
-          SizedBox(height: 10),
+          addVertical(10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: GridView.count(
@@ -121,13 +121,18 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
               crossAxisCount: 2,
               childAspectRatio: 0.55,
               children: displayList!
-                  .map((c) => buildCatalogueCard(context, vm, c))
+                  .map((c) => buildCatalogueCard(context, vm, c, () async {
+                        await vm.getCatalogDetails(context, c.id ?? '');
+                        await vm.getReletedCatalog(context, cat.id ?? '');
+                        await navigationService
+                            .navigateTo(RouteList.catalogueDetails);
+                      }))
                   .toList(),
             ),
           ),
-          SizedBox(height: 12),
+          addVertical(12),
           Divider(),
-          SizedBox(height: 5),
+          addVertical(5),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: GestureDetector(
@@ -160,22 +165,19 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          addVertical(10),
         ],
       ),
     );
   }
 
-  Widget buildCatalogueCard(
-      BuildContext context, CatalogueViewModel vm, Catalogues c) {
+  Widget buildCatalogueCard(BuildContext context, CatalogueViewModel vm,
+      Catalogues c, Function()? onTap) {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: GestureDetector(
-        onTap: () async {
-          await vm.getCatalogDetails(context, c.id ?? '');
-          await navigationService.navigateTo(RouteList.catalogueDetails);
-        },
+        onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -196,14 +198,10 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    c.title ?? '',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  Text(
-                    c.dentalSupplier?.directories?.first.name ?? '',
-                    style: TextStyle(fontSize: 12),
-                  ),
+                  Text(c.title ?? '',
+                      style: TextStyles.regular2(color: AppColors.black)),
+                  Text(c.dentalSupplier?.directories?.first.name ?? '',
+                      style: TextStyles.regular1(color: AppColors.black))
                 ],
               ),
             )

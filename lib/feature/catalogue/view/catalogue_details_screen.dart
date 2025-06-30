@@ -1,31 +1,25 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class CatalogueDetailsScreen extends StatefulWidget {
+class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
   const CatalogueDetailsScreen({super.key});
-
-  @override
-  State<CatalogueDetailsScreen> createState() => _CatalogueDetailsScreenState();
-}
-
-class _CatalogueDetailsScreenState extends State<CatalogueDetailsScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
     final catalogueVM = Provider.of<CatalogueViewModel>(context);
-    final pdfUrl =
-        catalogueVM.cataloguesByIdData?.attachment?.url ?? '';
+    final pdfUrl = catalogueVM.cataloguesByIdData?.attachment?.url ?? '';
 
     return Scaffold(
+      backgroundColor: AppColors.buttomBarColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           onTap: () => navigationService.goBack(),
           child: Icon(Icons.arrow_back_ios_new, color: AppColors.black),
@@ -37,104 +31,125 @@ class _CatalogueDetailsScreenState extends State<CatalogueDetailsScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: ListView(
           children: [
-            Expanded(
+            SizedBox(
+              height: 500,
               child: Card(
-                elevation: 4,
-                child: Stack(
-                  alignment: Alignment.center,
+                color: AppColors.whiteColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                child: Column(
                   children: [
-                    PageView.builder(
-                      controller: _pageController,
-                      itemCount: 8, // Example: 8 pages
-                      scrollDirection: Axis.horizontal,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentPage = index;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
-                          child: HorizantalPdfViewerScreen(
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: InteractiveViewer(
+                          panEnabled: true,
+                          scaleEnabled: true,
+                          child: HorizantalPdf(
                             fileUrl: pdfUrl,
                             fileName: '',
-                          //  pageNumber: index + 1,
                           ),
-                        );
-                      },
-                    ),
-                    Positioned(
-                      left: 8,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back_ios_new,
-                            color: AppColors.black),
-                        onPressed: () {
-                          if (_currentPage > 0) {
-                            _pageController.previousPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease,
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      right: 8,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_forward_ios,
-                            color: AppColors.black),
-                        onPressed: () {
-                          if (_currentPage < 7) {
-                            _pageController.nextPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease,
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 16,
-                      child: SmoothPageIndicator(
-                        controller: _pageController,
-                        count: 8,
-                        effect: WormEffect(
-                          dotHeight: 8,
-                          dotWidth: 8,
-                          activeDotColor: AppColors.primaryColor,
                         ),
                       ),
-                    )
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 23),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CircleAvatar(
+                              radius: 16,
+                              backgroundColor: AppColors.primaryColor,
+                              child: Icon(Icons.download_rounded,
+                                  color: AppColors.whiteColor)),
+                          Text('DOWNLOAD CATALOGUE',
+                              style:
+                                  TextStyles.regular1(color: AppColors.black))
+                        ],
+                      ),
+                    ),
+                    addVertical(10)
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                // handle download logic
-              },
-              icon: Icon(Icons.download),
-              label: Text(
-                "Download Catalogue",
-                style: TextStyles.medium3(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-            const SizedBox(height: 16),
+            buildCatalogueSection(context, catalogueVM),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildCatalogueSection(BuildContext context, CatalogueViewModel vm) {
+    // final showMore = vm.isShowMore(cat.name ?? '');
+    // final displayList =
+    //     showMore ? cat.catalogues : cat.catalogues?.take(2).toList();
+
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          addVertical(18),
+          Center(
+            child: Text(
+              'RELATED CATALOGUES',
+              style: TextStyles.regular1(color: AppColors.black),
+            ),
+          ),
+          addVertical(10),
+          Divider(),
+          addVertical(10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 23),
+            child: GridView.count(
+              padding: EdgeInsets.all(0),
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              childAspectRatio: 0.55,
+              children: vm.reletedCatalogues
+                      ?.map((c) => buildCatalogueCard(context, c))
+                      .toList() ??
+                  [],
+            ),
+          ),
+          addVertical(10),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCatalogueCard(BuildContext context, CatalogData catalogues) {
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              child: Image.network(
+                catalogues.thumbnailImage?.url ?? '',
+                fit: BoxFit.cover,
+                width: double.infinity,
+                errorBuilder: (ctx, _, __) =>
+                    Icon(Icons.broken_image, size: 50),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(catalogues.title ?? '',
+                style: TextStyles.regular2(color: AppColors.black)),
+          )
+        ],
       ),
     );
   }
