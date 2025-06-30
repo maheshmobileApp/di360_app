@@ -60,7 +60,7 @@ class DashBoard extends StatelessWidget {
               BottomNavigationBarItem(
                   icon: Icon(Icons.person), label: 'Profile'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: 'Profile'),
+                  icon: Icon(Icons.person), label: 'LogOut'),
             ],
           ),
         ),

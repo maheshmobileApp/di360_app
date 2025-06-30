@@ -10,6 +10,8 @@ import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/talents/model/talents_model.dart';
+import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 
 import 'route_list.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +34,15 @@ class Routes {
           job: args as Jobs, // Replace JobModel with your actual job model type
         );
       },
-      RouteList.catalogueDetails: (context) => CatalogueDetailsScreen()
+      RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
+       RouteList.talentdetailsScreen: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return TalentsDetailsView(
+          talentList: args as JobProfile,
+        );
+      },
+
+      //RouteList.commentScreen: (context) => CommentScreen()
       };
   }
 }

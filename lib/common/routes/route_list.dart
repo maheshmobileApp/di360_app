@@ -14,4 +14,5 @@ class RouteList {
   static const String practiceDetailsScreen = '/practiceDetailsScreen';
   static const String jobdetailsScreen = '/jobdetailsScreen';
   static const String catalogueDetails = '/catalogueDetails';
+ static const String talentdetailsScreen = '/talentdetailsScreen';
 }

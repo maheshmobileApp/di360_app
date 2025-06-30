@@ -1,11 +1,16 @@
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
+import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
+import 'package:di360_flutter/main.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,13 +20,14 @@ class DashBoardViewModel extends ChangeNotifier {
   int get currentIndex => _currentIndex;
 
   final pages = [
-    CatalogueDetailsScreen(),
+    HomeScreen(),
     NewsFeedScreen(),
     JobSeekView(),
     CataloguePage(),
     Center(child: Text('Profile Page')),
-    Center(child: Text('Cart Page')),
-
+    Center(child: InkWell(
+      onTap: () => logOutAlert(navigatorKey.currentContext!),
+      child: Text('Logout')))
   ];
 
   void setIndex(int index, BuildContext context) {
@@ -47,4 +53,29 @@ class DashBoardViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+}
+
+Future logOutAlert(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text('Are you sure, do you want to Logout?',
+              style: TextStyles.medium4(color: AppColors.black)),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  navigationService.goBack();
+                },
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () async {
+                  await LocalStorage.clearAllData();
+                  navigationService.pushNamedAndRemoveUntil(RouteList.login);
+                },
+                child: const Text('Ok')),
+          ],
+        );
+      });
 }
