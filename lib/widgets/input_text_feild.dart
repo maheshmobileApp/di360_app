@@ -42,7 +42,7 @@ class InputTextField extends StatelessWidget {
   final TextCapitalization? textCapitalization;
   final String? suffixText;
 
-   InputTextField({
+  InputTextField({
     super.key,
     required this.title,
     this.isRequired = false,
@@ -78,7 +78,9 @@ class InputTextField extends StatelessWidget {
     this.textInputAction,
     this.obscuringCharacter,
     this.textCapitalization,
-    this.suffixText, this.label, this.focusNode,
+    this.suffixText,
+    this.label,
+    this.focusNode,
   });
 
   @override
@@ -94,13 +96,14 @@ class InputTextField extends StatelessWidget {
               style: TextStyles.regular3(color: titleColor ?? AppColors.black),
             ),
             if (isRequired)
-              const Text(
+              Text(
                 ' *',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
           ],
         ),
-       SizedBox(height: 10),
+        SizedBox(height: 10),
         TextFormField(
           obscuringCharacter: obscuringCharacter ?? '*',
           focusNode:
@@ -129,7 +132,7 @@ class InputTextField extends StatelessWidget {
             filled: isfilled ?? false,
             enabledBorder: enableborder ??
                 OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 16),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 8),
                   borderSide: BorderSide(
                     width: 1.5,
                     color: AppColors.HINT_COLOR,
@@ -140,14 +143,11 @@ class InputTextField extends StatelessWidget {
                 contentPadding ?? const EdgeInsets.fromLTRB(10, 10, 12, 0),
             suffixIcon: suffixIcon,
             hintText: hintText,
-            hintStyle: hintstyle ??
-                TextStyles.dmsansLight(
-                  fontSize: 16,
-                  color: AppColors.inputHintColor,
-                ),
+            hintStyle:
+                hintstyle ?? TextStyles.regular4(color: AppColors.dropDownHint),
             prefixIcon: prefixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 16),
+              borderRadius: BorderRadius.circular(borderRadius ?? 8),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,
