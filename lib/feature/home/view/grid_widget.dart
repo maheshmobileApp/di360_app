@@ -45,6 +45,8 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       dashBoardVM.setIndex(1, navigatorKey.currentContext!);
     } else if (title == 'Job Seek') {
       dashBoardVM.setIndex(2, navigatorKey.currentContext!);
+    } else if (title == 'Catalogue') {
+      dashBoardVM.setIndex(3, navigatorKey.currentContext!);
     } 
   }
 }

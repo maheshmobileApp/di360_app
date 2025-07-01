@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -21,7 +23,7 @@ class DashBoardViewModel extends ChangeNotifier {
     HomeScreen(),
     NewsFeedScreen(),
     JobSeekView(),
-    Center(child: Text('Cart Page')),
+    CataloguePage(),
     Center(child: Text('Profile Page')),
     Center(child: InkWell(
       onTap: () => logOutAlert(navigatorKey.currentContext!),
@@ -45,6 +47,7 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<JobSeekViewModel>().fetchJobs();
         break;
       case 3:
+      context.read<CatalogueViewModel>().fetchCatalogue(context);
         break;
       default:
     }

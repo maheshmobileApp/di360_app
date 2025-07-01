@@ -229,6 +229,21 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           }
         } else if (name.endsWith('.mp4')) {
           return InlineVideoPlayer(videoUrl: url);
+        } else if (name.endsWith('.pdf')) {
+          return GestureDetector(
+            onTap: () async =>
+                navigationService.push(ImageViewerScreen(postImage: mediaList)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(ImageConst.pdf),
+                addVertical(11),
+                Text(name,
+                    style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                    textAlign: TextAlign.center),
+              ],
+            ),
+          );
         } else {
           return CachedNetworkImageWidget(imageUrl: url);
         }

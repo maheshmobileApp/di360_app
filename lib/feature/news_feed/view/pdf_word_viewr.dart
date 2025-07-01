@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class FileViewerScreen extends StatefulWidget {
   final String fileUrl;
@@ -21,11 +26,11 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
   Widget build(BuildContext context) {
     String viewerUrl;
 
-    if (widget.fileUrl.toLowerCase().endsWith('.pdf')) {
+    if (widget.fileName.toLowerCase().endsWith('.pdf')) {
       viewerUrl = widget.fileUrl;
     } else {
       viewerUrl =
-          'https://docs.google.com/viewer?url=${widget.fileUrl}&embedded=true';
+          'https://docs.google.com/viewer?url=${Uri.encodeComponent(widget.fileUrl)}&embedded=true';
     }
 
     return Scaffold(
@@ -40,10 +45,14 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                   _isLoading = true;
                 });
               },
-              onLoadStop: (controller, url) {
+              onLoadStop: (controller, url) async {
                 setState(() {
                   _isLoading = false;
                 });
+                await controller.evaluateJavascript(source: """
+              document.body.style.backgroundColor = 'white';
+              document.documentElement.style.backgroundColor = 'white';
+            """);
               },
               onLoadError: (controller, url, code, message) {
                 setState(() {
@@ -58,6 +67,59 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           if (_isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
+    );
+  }
+}
+
+class PdfViewrWidget extends StatefulWidget {
+  final String fileUrl;
+  final String fileName;
+
+  const PdfViewrWidget({
+    super.key,
+    required this.fileUrl,
+    required this.fileName,
+  });
+
+  @override
+  State<PdfViewrWidget> createState() => _PdfViewrWidgetState();
+}
+
+class _PdfViewrWidgetState extends State<PdfViewrWidget> {
+  String? localPath;
+  int? totalPages;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    downloadPdf();
+  }
+
+  Future<void> downloadPdf() async {
+    final response = await http.get(Uri.parse(widget.fileUrl));
+    final dir = await getTemporaryDirectory();
+    final filePath = "${dir.path}/temp.pdf";
+    final file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes, flush: true);
+
+    setState(() {
+      localPath = filePath;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading || localPath == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return PDFView(
+      filePath: localPath,
+      swipeHorizontal: true,
+      autoSpacing: true,
+      pageFling: true,
     );
   }
 }
@@ -93,4 +155,3 @@ Widget webSiteText(String url) {
     ),
   );
 }
-

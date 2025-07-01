@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
+import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -33,6 +34,7 @@ class Routes {
           job: args as Jobs, // Replace JobModel with your actual job model type
         );
       },
+      RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
        RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return TalentsDetailsView(
