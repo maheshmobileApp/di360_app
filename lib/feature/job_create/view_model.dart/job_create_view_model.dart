@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,31 +15,39 @@ class JobCreateViewModel extends ChangeNotifier {
   String? selectedRole;
   String? selectedEmploymentType;
   String? selectCountry;
-  File?_logoFile; 
-   File? get logoFile => _logoFile;
-     String? logoFilePath;
 
   List<String> _selectedEmploymentChips = [];
   List<String> get selectedEmploymentChips => _selectedEmploymentChips;
 
- 
-   Future<void> pickLogoImage() async {
+  File? logoFile;
+   File? bannerFile;
+  Future<void> pickLogoImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery, 
-      imageQuality: 85
+      source: source,
+      imageQuality: 85,
     );
-    
     if (pickedFile != null) {
-      _logoFile = File(pickedFile.path);
-      logoFilePath = pickedFile.path;
-      notifyListeners(); // Notify UI to rebuild
+      logoFile = File(pickedFile.path);
+      NavigationService().goBack;
+      notifyListeners();
     }
   }
+  Future<void> pickBannerImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 85,
+    );
+    if (pickedFile != null) {
+      bannerFile = File(pickedFile.path);
+        NavigationService().goBack;
+      notifyListeners();
+    }
+  }
+
   final List<String> countryList = [
     "India",
     "us",
     "pk",
-   
   ];
   final List<String> roleOptions = [
     "Software Developer",
@@ -81,8 +90,9 @@ class JobCreateViewModel extends ChangeNotifier {
 
   void goToPreviousStep() {
     if (_currentStep > 0) {
-      pageController.previousPage(  duration: Duration(milliseconds: 300), curve: Curves.ease);
-      
+      pageController.previousPage(
+          duration: Duration(milliseconds: 300), curve: Curves.ease);
+
       _currentStep--;
       notifyListeners();
     }
@@ -102,11 +112,11 @@ class JobCreateViewModel extends ChangeNotifier {
     selectedRole = role;
     notifyListeners();
   }
-    void setSelectedCountry(String sc) {
+
+  void setSelectedCountry(String sc) {
     selectCountry = sc;
     notifyListeners();
   }
-
 
   void addEmploymentTypeChip(String empType) {
     if (!_selectedEmploymentChips.contains(empType)) {

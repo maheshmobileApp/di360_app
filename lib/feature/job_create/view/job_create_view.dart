@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view/job_info.dart';
 import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
+import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
 import 'package:di360_flutter/feature/job_create/view/other_links_view.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
@@ -66,7 +67,8 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
         return JobLocationView();
         case 2:
         return OtherLinksView();
-
+         case 3:
+         return LogoAndBannerView();
 
       default:
         return Center(child: Text("Step ${stepIndex + 1}"));

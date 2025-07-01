@@ -42,6 +42,8 @@ class ImageConst {
   static const String location = "assets/pngs/location.png";
   static const String experience = "assets/pngs/experience.png";
   static const String copy = "assets/pngs/copy.png";
+  static const String upload="assets/pngs/upload.png";
+  
 
   static const String _svgBasePath = 'assets/svgs/';
   
