@@ -47,65 +47,63 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: Expanded(
-          child: Stack(
-            children: [
-              PageView.builder(
-                controller: _controller,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: totalImages,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                itemBuilder: (_, index) {
-                  return KeepAliveWrapper(
-                      child: buildMediaContent(widget.postImage?[index]));
-                },
-              ),
-              if ((totalImages ?? 0) > 1) ...[
-                Positioned(
-                  left: 16,
-                  top: MediaQuery.of(context).size.height / 2 - 24,
-                  child: _currentIndex > 0
-                      ? GestureDetector(
-                          onTap: () => _goToPage(_currentIndex - 1),
-                          child: CircleAvatar(
-                            backgroundColor: AppColors.primaryColor,
-                            child: Icon(Icons.arrow_back_ios,
-                                color: AppColors.whiteColor),
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                ),
-                Positioned(
-                  right: 16,
-                  top: MediaQuery.of(context).size.height / 2 - 24,
-                  child: _currentIndex < (widget.postImage?.length ?? 0) - 1
-                      ? GestureDetector(
-                          onTap: () => _goToPage(_currentIndex + 1),
-                          child: CircleAvatar(
-                            backgroundColor: AppColors.primaryColor,
-                            child: Icon(Icons.arrow_forward_ios,
-                                color: AppColors.whiteColor),
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                ),
-              ],
+        body: Stack(
+          children: [
+            PageView.builder(
+              controller: _controller,
+            //  physics: NeverScrollableScrollPhysics(),
+              itemCount: totalImages,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              itemBuilder: (_, index) {
+                return KeepAliveWrapper(
+                    child: buildMediaContent(widget.postImage?[index]));
+              },
+            ),
+            if ((totalImages ?? 0) > 1) ...[
               Positioned(
-                  top: 40,
-                  right: 20,
-                  child: GestureDetector(
-                    onTap: () => navigationService.goBack(),
-                    child: CircleAvatar(
-                      backgroundColor: AppColors.primaryColor,
-                      child: Icon(Icons.close, color: AppColors.whiteColor),
-                    ),
-                  )),
+                left: 16,
+                top: MediaQuery.of(context).size.height / 2 - 24,
+                child: _currentIndex > 0
+                    ? GestureDetector(
+                        onTap: () => _goToPage(_currentIndex - 1),
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.primaryColor,
+                          child: Icon(Icons.arrow_back_ios,
+                              color: AppColors.whiteColor),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+              ),
+              Positioned(
+                right: 16,
+                top: MediaQuery.of(context).size.height / 2 - 24,
+                child: _currentIndex < (widget.postImage?.length ?? 0) - 1
+                    ? GestureDetector(
+                        onTap: () => _goToPage(_currentIndex + 1),
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.primaryColor,
+                          child: Icon(Icons.arrow_forward_ios,
+                              color: AppColors.whiteColor),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+              ),
             ],
-          ),
+            Positioned(
+                top: 40,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => navigationService.goBack(),
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.primaryColor,
+                    child: Icon(Icons.close, color: AppColors.whiteColor),
+                  ),
+                )),
+          ],
         ),
       ),
     );
@@ -130,13 +128,15 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
         }
       } else if (name.endsWith('.mp4')) {
         return InlineVideoPlayer(videoUrl: url);
+      } else if (name.endsWith('.pdf')) {
+        return PdfViewrWidget(fileUrl: url, fileName: name);
       } else {
         return CachedNetworkImageWidget(imageUrl: url);
       }
     } else if (type == 'video/mp4') {
       return InlineVideoPlayer(videoUrl: url);
     } else if (type == 'application/pdf') {
-      return FileViewerScreen(fileUrl: url, fileName: name);
+      return PdfViewrWidget(fileUrl: url, fileName: name);
     } else if (type == 'application/msword') {
       return FileViewerScreen(fileUrl: url, fileName: name);
     } else {

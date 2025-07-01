@@ -6,7 +6,9 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +25,14 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       color: AppColors.whiteColor,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         addVertical(10),
+        _buildImageRow(),
+        addVertical(10),
         (newsfeeds?.videoUrl == '' || newsfeeds?.videoUrl == null)
-            ? _buildImageRow()
+            ? SizedBox.shrink()
             : _mediaCard(
-                child: LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-                isFullWidth: true
-              ),
+                child:
+                    LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
+                isFullWidth: true),
         addVertical(22),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -36,7 +40,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (newsfeeds?.description == null || newsfeeds?.description == '')
+                (newsfeeds?.description == null ||
+                        newsfeeds?.description == '')
                     ? newsfeeds?.title ?? ''
                     : newsfeeds?.description ?? '',
                 style: TextStyles.regular2(color: AppColors.black),
@@ -58,92 +63,105 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildImageRow() {
-  final mediaList = newsfeeds?.postImage ?? [];
+    final mediaList = newsfeeds?.postImage ?? [];
 
-  if (mediaList.isEmpty) return SizedBox();
+    if (mediaList.isEmpty) return SizedBox();
 
-  Widget buildMediaContent(media) {
-    final type = media.type ?? media.mimeType ?? '';
-    final url = media.url ?? '';
-    final name = media.name ?? '';
+    Widget buildMediaContent(media) {
+      final type = media.type ?? media.mimeType ?? '';
+      final url = media.url ?? '';
+      final name = media.name ?? '';
 
-    // Helper: check if base64
-    bool isBase64Image(String data) => data.startsWith('data:image/');
+      // Helper: check if base64
+      bool isBase64Image(String data) => data.startsWith('data:image/');
 
-    if (type.startsWith('image/') || type.startsWith('application/octet-stream')) {
-      if (isBase64Image(url)) {
-        try {
-          final decodedBytes = base64Decode(url.split(',').last);
-          return Image.memory(decodedBytes, fit: BoxFit.cover);
-        } catch (e) {
-          return Icon(Icons.broken_image);
+      if (type.startsWith('image/') ||
+          type.startsWith('application/octet-stream')) {
+        if (isBase64Image(url)) {
+          try {
+            final decodedBytes = base64Decode(url.split(',').last);
+            return Image.memory(decodedBytes, fit: BoxFit.cover);
+          } catch (e) {
+            return Icon(Icons.broken_image);
+          }
+        } else if (name.endsWith('.pdf')) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(ImageConst.pdf),
+              addVertical(11),
+              Text(name,
+                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                  textAlign: TextAlign.center),
+            ],
+          );
+        } else {
+          return CachedNetworkImageWidget(imageUrl: url);
         }
+      } else if (type == 'video/mp4') {
+        return InlineVideoPlayer(videoUrl: url);
+      } else if (type == 'application/pdf') {
+        return GestureDetector(
+          onTap: () {
+            // Handle PDF tap
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(ImageConst.pdf),
+              addVertical(11),
+              Text(name,
+                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                  textAlign: TextAlign.center),
+            ],
+          ),
+        );
+      } else if (type == 'application/msword') {
+        return GestureDetector(
+          onTap: () {
+            // Handle Word document tap
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.wordpress, size: 40),
+              addVertical(11),
+              Text(name,
+                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                  textAlign: TextAlign.center),
+            ],
+          ),
+        );
       } else {
         return CachedNetworkImageWidget(imageUrl: url);
       }
-    } else if (type == 'video/mp4') {
-      return InlineVideoPlayer(videoUrl: url);
-    } else if (type == 'application/pdf') {
-      return GestureDetector(
-        onTap: () {
-          // Handle PDF tap
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(ImageConst.pdf),
-            addVertical(11),
-            Text(name,
-                style: TextStyles.regular1(color: AppColors.lightGeryColor),
-                textAlign: TextAlign.center),
-          ],
-        ),
-      );
-    } else if (type == 'application/msword') {
-      return GestureDetector(
-        onTap: () {
-          // Handle Word document tap
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.wordpress,size: 40),
-            addVertical(11),
-            Text(name,
-                style: TextStyles.regular1(color: AppColors.lightGeryColor),
-                textAlign: TextAlign.center),
-          ],
-        ),
-      );
-    } else {
-      return CachedNetworkImageWidget(imageUrl: url);
     }
-  }
 
-  
-  if (mediaList.length == 1) {
-    final media = mediaList.first;
-    return _mediaCard(
-      child: buildMediaContent(media),
-      isFullWidth: true,
+    if (mediaList.length == 1) {
+      final media = mediaList.first;
+      return _mediaCard(
+        child: buildMediaContent(media),
+        isFullWidth: true,
+      );
+    }
+
+    // Multiple items
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: mediaList.map<Widget>((media) {
+          return _mediaCard(
+            child: buildMediaContent(media),
+            onTap: () {
+              navigationService
+            .push(ImageViewerScreen(postImage: mediaList));
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
-  // Multiple items
-  return SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(
-      children: mediaList.map<Widget>((media) {
-        return _mediaCard(
-          child: buildMediaContent(media),
-          onTap: () {
-            // Optional: Add tap handler if needed
-          },
-        );
-      }).toList(),
-    ),
-  );
-}
   Widget _mediaCard({
     required Widget child,
     VoidCallback? onTap,
