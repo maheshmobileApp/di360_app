@@ -1,7 +1,7 @@
 class RouteList {
   RouteList._();
 
-  static const String initial = jobingo;
+  static const String initial = splash;
 
   static const String splash = '/splash';
   static const String preLogin = '/preLogin';
