@@ -27,4 +27,5 @@ class AppColors {
   static const Color locationTextColor = Color(0xFF5F6B7A);
   static const Color secondaryBlueColor = Color.fromRGBO(4, 113, 222, 0.15);
   static const Color primaryBlueColor = Color(0xff0471de);
+  static const Color dropDownHint = Color(0xffBAC1C8);
 }

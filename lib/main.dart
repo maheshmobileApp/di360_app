@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
         ChangeNotifierProvider(create: (_) => TalentsViewModel()),
+         ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
         ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
       ],
       child: MaterialApp(

@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
@@ -25,15 +26,16 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isHidleFolatingButton = false;
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    switch (type) {
-      case "PROFESSIONAL":
+    final userRole = UserRole.fromString(type);
+    switch (userRole) {
+      case UserRole.professional:
         // professional will only see JOb ( cant see talents) no floating
         isHidleFolatingButton = true; // Dental Professional
         break;
-      case "SUPPLIER":
+      case UserRole.supplier:
         isHidleFolatingButton = false; // Dental Business Owner
         break;
-      case "PRACTICE":
+      case UserRole.practice:
         isHidleFolatingButton = false; // Dental Practice Owner
         break;
       default:
