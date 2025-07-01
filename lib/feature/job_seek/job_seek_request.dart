@@ -48,3 +48,26 @@ String job_list_request = '''query getalljobs {
   }
 }
 ''';
+
+
+const String enqueryMutation = '''
+      mutation insert_Enquiry_one(\$object: job_enquiries_insert_input!) {
+        insert_job_enquiries_one(object: \$object) {
+          id
+          __typename
+        }
+      }
+    ''';
+const String applyJobMutation =
+    '''mutation insert_jobapplicants(\$applyJobobject:job_applicants_insert_input!) {
+  insert_job_applicants_one(object: \$applyJobobject) {
+    id
+  }
+} ''';
+
+const String hireMeMutation =
+    '''mutation insert_jobhirings(\$hireobject:jobhirings_insert_input!) {
+  insert_jobhirings_one(object: \$hireobject) {
+    id
+  }
+}''';
