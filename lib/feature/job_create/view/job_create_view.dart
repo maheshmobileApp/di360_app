@@ -66,7 +66,7 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
       case JobCreateSteps.JOBINFO:
         return JobInfo(); 
       case JobCreateSteps.LOGOANDBANNER:
-        return JobLocationView();
+        return LogoAndBannerView();
       case JobCreateSteps.JOBLOCATION:
         return Container();
       case JobCreateSteps.OTHERINFO:
