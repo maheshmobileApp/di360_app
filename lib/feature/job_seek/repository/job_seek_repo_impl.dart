@@ -22,16 +22,15 @@ class JobSeekRepoImpl extends JobSeekRepository {
   Future<Map<String, dynamic>> applyJob(ApplyJobRequest request) {
     return _http.mutation(
       applyJobMutation,
-      {'applyJobobject': request.toJson()},
+      {'object': request.toJson()},
     );
   }
 
   @override
   Future<Map<String, dynamic>> enquire(EnquireRequest request) {
-    // TODO: implement enquire
     return _http.mutation(
-      enqueryMutation,
-      {'jobenquiryobject': request.toJson()},
+      enquiryMutation,
+      {'object': request.toJson()},
     );
   }
 
@@ -40,7 +39,7 @@ class JobSeekRepoImpl extends JobSeekRepository {
     // TODO: implement hireMe
     return _http.mutation(
       hireMeMutation,
-      {'hireobject': request.toJson()},
+      {'object': request.toJson()},
     );
   }
 
