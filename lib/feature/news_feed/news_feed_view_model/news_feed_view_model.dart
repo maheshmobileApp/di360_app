@@ -42,7 +42,7 @@ class NewsFeedViewModel extends ChangeNotifier {
         "feedId": feedId,
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         // updateTheNewsFeedLikeCount(context, feedId, false);
         // removeTheLikeObject(context, feedId);
       }
@@ -67,7 +67,7 @@ class NewsFeedViewModel extends ChangeNotifier {
         }
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         // updateTheNewsFeedLikeCount(context, newsFeedId, true);
         // updateTheLikeObject(context, newsFeedId);
       }
@@ -231,7 +231,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     try {
       Loaders.circularShowLoader(context);
       var res = await _http.mutation(deleteTheNewsFeedQuery, {"id": feedId});
-      if (res != null) {
+      if (res.isNotEmpty) {
         removeTheNewsFeedObject(context, feedId);
         Loaders.circularHideLoader(context);
         scaffoldMessenger('Newsfeed deleted successfully');

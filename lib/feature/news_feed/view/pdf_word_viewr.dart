@@ -117,6 +117,7 @@ class _PdfViewrWidgetState extends State<PdfViewrWidget> {
 
     return PDFView(
       filePath: localPath,
+      enableSwipe: true,
       swipeHorizontal: true,
       autoSpacing: true,
       pageFling: true,

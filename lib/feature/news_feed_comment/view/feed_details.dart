@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
@@ -30,8 +31,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
         (newsfeeds?.videoUrl == '' || newsfeeds?.videoUrl == null)
             ? SizedBox.shrink()
             : _mediaCard(
-                child:
-                    LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
+                child: LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
                 isFullWidth: true),
         addVertical(22),
         Padding(
@@ -40,13 +40,16 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (newsfeeds?.description == null ||
-                        newsfeeds?.description == '')
+                (newsfeeds?.description == null || newsfeeds?.description == '')
                     ? newsfeeds?.title ?? ''
                     : newsfeeds?.description ?? '',
                 style: TextStyles.regular2(color: AppColors.black),
               ),
-              addVertical(8),
+              addVertical(10),
+              if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
+                webSiteText(newsfeeds?.webUrl ?? ''),
+              if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
+                addVertical(8),
               Divider(color: AppColors.dividerColor),
               addVertical(4),
               _buildStatsRow(
@@ -101,36 +104,26 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);
       } else if (type == 'application/pdf') {
-        return GestureDetector(
-          onTap: () {
-            // Handle PDF tap
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(ImageConst.pdf),
-              addVertical(11),
-              Text(name,
-                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
-                  textAlign: TextAlign.center),
-            ],
-          ),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(ImageConst.pdf),
+            addVertical(11),
+            Text(name,
+                style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                textAlign: TextAlign.center),
+          ],
         );
       } else if (type == 'application/msword') {
-        return GestureDetector(
-          onTap: () {
-            // Handle Word document tap
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.wordpress, size: 40),
-              addVertical(11),
-              Text(name,
-                  style: TextStyles.regular1(color: AppColors.lightGeryColor),
-                  textAlign: TextAlign.center),
-            ],
-          ),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.wordpress, size: 40),
+            addVertical(11),
+            Text(name,
+                style: TextStyles.regular1(color: AppColors.lightGeryColor),
+                textAlign: TextAlign.center),
+          ],
         );
       } else {
         return CachedNetworkImageWidget(imageUrl: url);
@@ -141,6 +134,9 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       final media = mediaList.first;
       return _mediaCard(
         child: buildMediaContent(media),
+        onTap: () {
+          navigationService.push(ImageViewerScreen(postImage: mediaList));
+        },
         isFullWidth: true,
       );
     }
@@ -153,8 +149,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           return _mediaCard(
             child: buildMediaContent(media),
             onTap: () {
-              navigationService
-            .push(ImageViewerScreen(postImage: mediaList));
+              navigationService.push(ImageViewerScreen(postImage: mediaList));
             },
           );
         }).toList(),
