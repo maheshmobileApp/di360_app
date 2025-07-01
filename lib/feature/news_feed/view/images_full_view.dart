@@ -51,7 +51,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
           children: [
             PageView.builder(
               controller: _controller,
-              physics: NeverScrollableScrollPhysics(),
+            //  physics: NeverScrollableScrollPhysics(),
               itemCount: totalImages,
               onPageChanged: (index) {
                 setState(() {
@@ -129,14 +129,14 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
       } else if (name.endsWith('.mp4')) {
         return InlineVideoPlayer(videoUrl: url);
       } else if (name.endsWith('.pdf')) {
-        return FileViewerScreen(fileUrl: url, fileName: name);
+        return PdfViewrWidget(fileUrl: url, fileName: name);
       } else {
         return CachedNetworkImageWidget(imageUrl: url);
       }
     } else if (type == 'video/mp4') {
       return InlineVideoPlayer(videoUrl: url);
     } else if (type == 'application/pdf') {
-      return FileViewerScreen(fileUrl: url, fileName: name);
+      return PdfViewrWidget(fileUrl: url, fileName: name);
     } else if (type == 'application/msword') {
       return FileViewerScreen(fileUrl: url, fileName: name);
     } else {

@@ -6,7 +6,9 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +25,13 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       color: AppColors.whiteColor,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         addVertical(10),
+        _buildImageRow(),
+        addVertical(10),
         (newsfeeds?.videoUrl == '' || newsfeeds?.videoUrl == null)
-            ? _buildImageRow()
+            ? SizedBox.shrink()
             : _mediaCard(
-                child: LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
+                child:
+                    LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
                 isFullWidth: true),
         addVertical(22),
         Padding(
@@ -35,7 +40,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (newsfeeds?.description == null || newsfeeds?.description == '')
+                (newsfeeds?.description == null ||
+                        newsfeeds?.description == '')
                     ? newsfeeds?.title ?? ''
                     : newsfeeds?.description ?? '',
                 style: TextStyles.regular2(color: AppColors.black),
@@ -147,7 +153,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           return _mediaCard(
             child: buildMediaContent(media),
             onTap: () {
-              // Optional: Add tap handler if needed
+              navigationService
+            .push(ImageViewerScreen(postImage: mediaList));
             },
           );
         }).toList(),
