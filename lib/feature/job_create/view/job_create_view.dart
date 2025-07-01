@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
 import 'package:di360_flutter/feature/job_create/view/other_links_view.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
+import 'package:di360_flutter/utils/job_create_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,8 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
               controller:jobCreateVM.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-                  jobCreateVM.totalSteps, (index) => _buildStep(index)),
+                  jobCreateVM.totalSteps,
+                  (index) => _buildStep(JobCreateSteps.values[index])),
             ),
           ),
           _bottomButtons(context, jobCreateVM),
@@ -59,19 +61,22 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
         currentStep: 0, totalSteps: 5, stepTitles: jobcreateVm.steps);
   }
 
-  Widget _buildStep(int stepIndex) {
+  Widget _buildStep(JobCreateSteps stepIndex) {
     switch (stepIndex) {
-      case 0:
-        return JobInfo();
-        case 1:
+      case JobCreateSteps.JOBINFO:
+        return JobInfo(); 
+      case JobCreateSteps.LOGOANDBANNER:
         return JobLocationView();
-        case 2:
+      case JobCreateSteps.JOBLOCATION:
+        return Container();
+      case JobCreateSteps.OTHERINFO:
+        return Container();
+      case JobCreateSteps.PAY:
+        return Container();
+      case JobCreateSteps.OTHERLINKS:
         return OtherLinksView();
-         case 3:
-         return LogoAndBannerView();
-
       default:
-        return Center(child: Text("Step ${stepIndex + 1}"));
+        return Center(child: Text("Step ${stepIndex.value + 1}"));
     }
   }
 
