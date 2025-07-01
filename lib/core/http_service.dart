@@ -57,7 +57,8 @@ class HttpService {
     }
   }
 
-  Future mutation(document, variables, {showLoading = true}) async {
+  Future<Map<String, dynamic>> mutation(document, variables,
+      {showLoading = true}) async {
     var response;
     try {
       response =
