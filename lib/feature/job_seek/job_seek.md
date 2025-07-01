@@ -44,3 +44,62 @@ mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
 }
 
 ## Enquiry
+mutation insert_jobenquiries($jobenquiryobject:job_enquiries_insert_input!) {
+  insert_job_enquiries_one(object: $jobenquiryobject) {
+    id
+  }
+}
+
+{"jobenquiryobject":{
+  "dental_supplierid":null,
+    "job_id":"61c87b15-781e-43cf-b80a-41960c1e6fe7",
+     "enquiry_userid":"1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+        "enquiry_description": "New Job Applly"
+
+}
+}
+
+
+https://dental-360-dev.hasura.app/v1/graphql
+
+
+
+{"operationName":"insert_Enquiry_one","variables":{"object":{"enquiry_description":"need this job ","job_id":"3b65f260-a014-4b52-a0a8-22d9a1f99a8d","enquiry_userid":"87692fe6-21ea-48d5-98f3-9896a634ca8a"}},
+
+
+"query":"mutation insert_Enquiry_one($object: job_enquiries_insert_input!) {\n  insert_job_enquiries_one(object: $object) {\n    id\n    __typename\n  }\n}\n"}
+
+
+
+// New method for inserting job enquiry
+  Future<Map<String, dynamic>?> insertEnquiry({
+    required String enquiryDescription,
+    required String jobId,
+    required String enquiryUserId,
+    bool showLoading = true,
+  }) async {
+    const String document = '''
+      mutation insert_Enquiry_one(\$object: job_enquiries_insert_input!) {
+        insert_job_enquiries_one(object: \$object) {
+          id
+          __typename
+        }
+      }
+    ''';
+
+    final variables = {
+      "object": {
+        "enquiry_description": enquiryDescription,
+        "job_id": jobId,
+        "enquiry_userid": enquiryUserId,
+      }
+    };
+
+    try {
+      final response = await mutation(document, variables, showLoading: showLoading);
+      return response;
+    } catch (e, s) {
+      print("Error inserting enquiry: $e, $s");
+      return null;
+    }
+  }

@@ -28,4 +28,8 @@ class TalentsViewModel extends ChangeNotifier {
     talentList = await repo.getTalentDetails();
     notifyListeners();
   }
+
+   Future<bool> hireMe() async {
+    return true;
+   }
 }

@@ -39,7 +39,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               _logoWithTitle(
                 context,
                 jobsData?.logo ?? "",
-                jobsData?.title ?? "",
+                jobsData?.companyName ?? "",
                 jobsData?.jRole ?? "",
                 _getShortTime(jobsData?.createdAt ?? ""),
               ),
