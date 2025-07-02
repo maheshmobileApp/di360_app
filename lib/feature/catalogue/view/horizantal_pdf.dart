@@ -1,8 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:open_file_plus/open_file_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class HorizantalPdf extends StatefulWidget {
@@ -21,78 +20,82 @@ class HorizantalPdf extends StatefulWidget {
 
 class _HorizantalPdfState extends State<HorizantalPdf> {
   String? localPath;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    downloadAndLoadFile();
+    downloadPdf();
   }
 
-  Future<void> downloadAndLoadFile() async {
-    final response = await http.get(Uri.parse(widget.fileUrl));
-    final contentType = response.headers['content-type'];
-
-    final dir = await getTemporaryDirectory();
-    final fileName = widget.fileName.isEmpty ? 'temp' : widget.fileName;
-
-    if (contentType?.contains('pdf') == true) {
-      final file = File("${dir.path}/$fileName.pdf");
-      await file.writeAsBytes(response.bodyBytes, flush: true);
-
+  @override
+  void didUpdateWidget(covariant HorizantalPdf oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fileUrl != widget.fileUrl) {
       setState(() {
-        localPath = file.path;
-      });
-    } else if (contentType?.contains('msword') == true ||
-        contentType?.contains('officedocument.wordprocessingml.document') ==
-            true) {
-      final file = File("${dir.path}/$fileName.docx");
-      await file.writeAsBytes(response.bodyBytes, flush: true);
-
-        OpenFile.open(file.path);
-
-      // Optionally show a placeholder instead of PDFView
-      setState(() {
+        isLoading = true;
         localPath = null;
       });
-    } else {
-      setState(() {
-        localPath = null;
-      });
-
-      _showUnsupportedFileDialog(contentType);
+      downloadPdf();
     }
   }
 
-  void _showUnsupportedFileDialog(String? contentType) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Unsupported File"),
-        content: Text(
-            "This file cannot be previewed in-app. Content-Type: $contentType"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          )
-        ],
-      ),
-    );
+  Future<void> downloadPdf() async {
+    if (widget.fileUrl.isEmpty) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final response = await http.get(Uri.parse(widget.fileUrl));
+      final dir = await getTemporaryDirectory();
+      final filePath =
+          "${dir.path}/${widget.fileName.isNotEmpty ? widget.fileName : 'temp.pdf'}";
+
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+
+      setState(() {
+        localPath = file.path;
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint("PDF download error: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (localPath == null) {
-      return const Center(
-        child: Text("Cannot preview this file."),
-      );
+      return const Center(child: Text("Failed to load PDF."));
     }
 
     return PDFView(
-      filePath: localPath,
+      filePath: localPath!,
+      enableSwipe: true,
       swipeHorizontal: true,
-      autoSpacing: true,
+      autoSpacing: false,
+      pageSnap: true,
       pageFling: true,
+      fitEachPage: true,
+      onError: (error) {
+        debugPrint("PDF View error: $error");
+      },
+      onRender: (_pages) {
+        debugPrint("PDF rendered!");
+      },
+      onPageChanged: (page, total) {
+        debugPrint("Page changed: $page/$total");
+      },
     );
   }
 }

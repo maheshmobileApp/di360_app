@@ -14,8 +14,6 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final catalogueVM = Provider.of<CatalogueViewModel>(context);
-    final pdfUrl = catalogueVM.cataloguesByIdData?.attachment?.url ?? '';
-
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
       appBar: AppBar(
@@ -32,10 +30,10 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: ListView(
+        child: Column(
           children: [
             SizedBox(
-              height: 500,
+              height: 450,
               child: Card(
                 color: AppColors.whiteColor,
                 shape: RoundedRectangleBorder(
@@ -45,13 +43,12 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: InteractiveViewer(
-                          panEnabled: true,
-                          scaleEnabled: true,
-                          child: HorizantalPdf(
-                            fileUrl: pdfUrl,
-                            fileName: '',
+                        child: HorizantalPdf(
+                          key: ValueKey(
+                            catalogueVM.cataloguesByIdData?.attachment?.url ?? '',
                           ),
+                          fileUrl: catalogueVM.cataloguesByIdData?.attachment?.url ?? '',
+                          fileName: '',
                         ),
                       ),
                     ),
@@ -62,22 +59,22 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
-                              radius: 16,
-                              backgroundColor: AppColors.primaryColor,
-                              child: Icon(Icons.download_rounded,
-                                  color: AppColors.whiteColor)),
+                            radius: 16,
+                            backgroundColor: AppColors.primaryColor,
+                            child: Icon(Icons.download_rounded,
+                                color: AppColors.whiteColor),
+                          ),
                           Text('DOWNLOAD CATALOGUE',
-                              style:
-                                  TextStyles.regular1(color: AppColors.black))
+                              style: TextStyles.regular1(color: AppColors.black)),
                         ],
                       ),
                     ),
-                    addVertical(10)
+                    addVertical(10),
                   ],
                 ),
               ),
             ),
-            buildCatalogueSection(context, catalogueVM),
+            Expanded(child: buildCatalogueSection(context, catalogueVM)),
           ],
         ),
       ),
@@ -85,71 +82,75 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget buildCatalogueSection(BuildContext context, CatalogueViewModel vm) {
-    // final showMore = vm.isShowMore(cat.name ?? '');
-    // final displayList =
-    //     showMore ? cat.catalogues : cat.catalogues?.take(2).toList();
-
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          addVertical(18),
-          Center(
-            child: Text(
-              'RELATED CATALOGUES',
-              style: TextStyles.regular1(color: AppColors.black),
+    return SingleChildScrollView(
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            addVertical(18),
+            Center(
+              child: Text(
+                'RELATED CATALOGUES',
+                style: TextStyles.regular1(color: AppColors.black),
+              ),
             ),
-          ),
-          addVertical(10),
-          Divider(),
-          addVertical(10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 23),
-            child: GridView.count(
-              padding: EdgeInsets.all(0),
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              childAspectRatio: 0.55,
-              children: vm.reletedCatalogues
-                      ?.map((c) => buildCatalogueCard(context, c))
-                      .toList() ??
-                  [],
+            addVertical(10),
+            Divider(),
+            addVertical(10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 23),
+              child: GridView.count(
+                padding: EdgeInsets.all(0),
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                childAspectRatio: 0.55,
+                children: vm.reletedCatalogues
+                        ?.map((c) => buildCatalogueCard(context, c, vm))
+                        .toList() ??
+                    [],
+              ),
             ),
-          ),
-          addVertical(10),
-        ],
+            addVertical(10),
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildCatalogueCard(BuildContext context, CatalogData catalogues) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.network(
-                catalogues.thumbnailImage?.url ?? '',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                errorBuilder: (ctx, _, __) =>
-                    Icon(Icons.broken_image, size: 50),
+  Widget buildCatalogueCard(
+      BuildContext context, CatalogData catalogues, CatalogueViewModel vm) {
+    return GestureDetector(
+      onTap: () async {
+        await vm.getCatalogDetails(context, catalogues.id ?? '');
+      },
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.network(
+                  catalogues.thumbnailImage?.url ?? '',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (ctx, _, __) =>
+                      Icon(Icons.broken_image, size: 50),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(catalogues.title ?? '',
-                style: TextStyles.regular2(color: AppColors.black)),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(catalogues.title ?? '',
+                  style: TextStyles.regular2(color: AppColors.black)),
+            )
+          ],
+        ),
       ),
     );
   }

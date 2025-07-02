@@ -53,7 +53,6 @@ dependencies:
   url_launcher: ^6.3.1
   flutter_inappwebview:
   flutter_pdfview:
-  open_file_plus: ^3.4.1+1
 
 dev_dependencies:
   flutter_test:
