@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class CustomRoundedButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
-  final Color backgroundColor;
-  final Color textColor;
+  final Color? backgroundColor;
+  final Color? textColor;
   final double width;
   final double height;
 
@@ -12,8 +12,8 @@ class CustomRoundedButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    required this.backgroundColor,
-    required this.textColor,
+     this.backgroundColor,
+     this.textColor,
     this.width = 140,
     this.height = 50,
   });

@@ -104,7 +104,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
           jobCreateVM.addEmploymentTypeChip(v as String);
         },
         items:
-            jobCreateVM.empType.map<DropdownMenuItem<Object>>((String value) {
+            jobCreateVM.empOptions.map<DropdownMenuItem<Object>>((String value) {
           return DropdownMenuItem<Object>(
             value: value,
             child: Text(value),

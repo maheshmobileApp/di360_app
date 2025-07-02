@@ -18,6 +18,7 @@ class OtherLinksView extends StatelessWidget with BaseContextHelpers {
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionHeader("Other Links"),
             SizedBox(

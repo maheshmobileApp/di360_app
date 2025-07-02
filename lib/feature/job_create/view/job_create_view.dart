@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
 import 'package:di360_flutter/feature/job_create/view/other_links_view.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_create_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,9 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(onPressed: () {
+          NavigationService().goBack();
+        }, icon: Icon(Icons.arrow_back_ios)),
         title: Text(
           "Create New Job",
           style: TextStyles.medium2(),
@@ -58,7 +61,7 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildStepProgressBar(currentStep, totalSteps,JobCreateViewModel jobcreateVm) {
     return StepsView(
-        currentStep: 0, totalSteps: 5, stepTitles: jobcreateVm.steps);
+        currentStep: 0, totalSteps: 6, stepTitles: jobcreateVm.steps);
   }
 
   Widget _buildStep(JobCreateSteps stepIndex) {
@@ -68,7 +71,7 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
       case JobCreateSteps.LOGOANDBANNER:
         return LogoAndBannerView();
       case JobCreateSteps.JOBLOCATION:
-        return Container();
+        return JobLocationView();
       case JobCreateSteps.OTHERINFO:
         return Container();
       case JobCreateSteps.PAY:
