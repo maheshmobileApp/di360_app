@@ -1,13 +1,16 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
   final JobSeekRepository repo = JobSeekRepoImpl(); // 👈 Create repo here
+  String? _enquiryData;
 
   JobSeekViewModel() {
     fetchJobs();
@@ -25,15 +28,16 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isHidleFolatingButton = false;
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    switch (type) {
-      case "PROFESSIONAL":
+    final userRole = UserRole.fromString(type);
+    switch (userRole) {
+      case UserRole.professional:
         // professional will only see JOb ( cant see talents) no floating
         isHidleFolatingButton = true; // Dental Professional
         break;
-      case "SUPPLIER":
+      case UserRole.supplier:
         isHidleFolatingButton = false; // Dental Business Owner
         break;
-      case "PRACTICE":
+      case UserRole.practice:
         isHidleFolatingButton = false; // Dental Practice Owner
         break;
       default:
@@ -54,5 +58,20 @@ class JobSeekViewModel extends ChangeNotifier {
     var jobData = await repo.getPopularJobs();
     jobs = jobData.jobs ?? [];
     notifyListeners();
+  }
+
+  void onChangeEnquireData(String data) {
+    _enquiryData = data;
+  }
+
+  void jobEnquire(String jobId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    var enquireData = EnquireRequest(
+      enquiryDescription: _enquiryData ?? '',
+      jobId: jobId,
+      enquiryUserId: userId,
+    );
+    final equire = await repo.enquire(enquireData);
+    print(equire);
   }
 }

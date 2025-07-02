@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 class CustomChipView extends StatelessWidget {
   final String? label;
   final List<dynamic> typesList;
+  final Widget? icon;
   const CustomChipView({
     super.key,
     this.label,
-    required this.typesList,
+    required this.typesList, this.icon,
   });
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CustomChipView extends StatelessWidget {
       runSpacing: 2,
       children: typesList.map<Widget>((type) {
         return Padding(
-          padding: const EdgeInsets.all(2.0),
+          padding:  EdgeInsets.all(2.0),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             margin: EdgeInsets.only(right: 8),

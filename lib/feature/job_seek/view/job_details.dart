@@ -31,7 +31,10 @@ class JobDetailsScreen extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: CustomRoundedButton(
                 text: "Send",
-                onPressed: () {},
+                onPressed: () {
+                  Provider.of<JobSeekViewModel>(context, listen: false)
+                      .jobEnquire(job.id!);
+                },
                 backgroundColor: Colors.orange,
                 textColor: Colors.white,
               ),

@@ -1,0 +1,51 @@
+{
+    "data": {
+        "jobs_role_list": [
+            {
+                "id": "ceb24d6f-33a1-408a-8014-14b94a5df55a",
+                "role_name": "Surgen",
+                "created_at": "2025-05-08T06:14:40.163764+00:00",
+                "updated_at": "2025-05-08T06:14:40.163764+00:00",
+                "created_by": "ADMIN",
+                "created_by_user_id": "49495d3b-9be3-425f-8220-ecc09b802375",
+                "__typename": "jobs_role_list"
+            },
+            {
+                "id": "020c842c-96e3-4885-bbb3-5992fe1c185d",
+                "role_name": "Dentist",
+                "created_at": "2025-05-06T05:59:54.958621+00:00",
+                "updated_at": "2025-05-06T05:59:54.958621+00:00",
+                "created_by": "ADMIN",
+                "created_by_user_id": "49495d3b-9be3-425f-8220-ecc09b802375",
+                "__typename": "jobs_role_list"
+            },
+            {
+                "id": "a0f40004-33df-463d-a032-ca1339a529c4",
+                "role_name": "Dental Hygienist",
+                "created_at": "2025-04-28T06:08:06.133762+00:00",
+                "updated_at": "2025-04-28T06:08:06.133762+00:00",
+                "created_by": "ADMIN",
+                "created_by_user_id": "49495d3b-9be3-425f-8220-ecc09b802375",
+                "__typename": "jobs_role_list"
+            },
+            {
+                "id": "4abbbdf6-187f-4e41-8221-acc14b3cbd8d",
+                "role_name": "Dental Prosthetist",
+                "created_at": "2025-04-22T06:32:56.042658+00:00",
+                "updated_at": "2025-04-22T06:32:56.042658+00:00",
+                "created_by": "ADMIN",
+                "created_by_user_id": "49495d3b-9be3-425f-8220-ecc09b802375",
+                "__typename": "jobs_role_list"
+            },
+            {
+                "id": "b1b92ec8-4de3-42f5-bf9c-b95b29bdb1b4",
+                "role_name": "Dental Specialist",
+                "created_at": "2025-04-22T06:29:25.308915+00:00",
+                "updated_at": "2025-04-22T06:29:25.308915+00:00",
+                "created_by": "ADMIN",
+                "created_by_user_id": "49495d3b-9be3-425f-8220-ecc09b802375",
+                "__typename": "jobs_role_list"
+            }
+        ]
+    }
+}
