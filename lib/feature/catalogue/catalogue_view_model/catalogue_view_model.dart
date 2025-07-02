@@ -1,18 +1,43 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository_impl.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/filter_catagories_res.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/filter_suppliers_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:flutter/material.dart';
 
 class CatalogueViewModel extends ChangeNotifier {
   final CatalogueRepositoryImpl repo = CatalogueRepositoryImpl();
 
+  CatalogueViewModel() {
+    getFilterCatagorie();
+    getFilterSupplier();
+  }
+
   List<CatalogueCategories> catalogueCategories = [];
   CataloguesByPk? cataloguesByIdData;
   List<CatalogData>? reletedCatalogues = [];
+  List<FilterCategories>? filterCategories = [];
+  List<DentalSuppliers>? filterSuppliers = [];
 
   Map<String, bool> showMoreMap = {};
+
+  late Map<String, List<FilterItem>> filterOptions;
+
+  Map<String, Set<int>> selectedIndices = {
+    'suppliers': {},
+    'categories': {},
+    'favourites': {},
+  };
+
+  Map<String, bool> sectionVisibility = {
+    'suppliers': true,
+    'categories': true,
+    'favourites': true,
+  };
 
   Future<void> fetchCatalogue(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 1));
@@ -23,7 +48,7 @@ class CatalogueViewModel extends ChangeNotifier {
     for (var cat in catalogueCategories) {
       showMoreMap[cat.name ?? ''] = false;
     }
-
+    //getFilterSupplier();
     notifyListeners();
   }
 
@@ -48,7 +73,7 @@ class CatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-   Future<void> getReletedCatalog(BuildContext context, String id) async {
+  Future<void> getReletedCatalog(BuildContext context, String id) async {
     Loaders.circularShowLoader(context);
     final res = await repo.getRelatedCatalogues(id);
     if (res != null) {
@@ -59,4 +84,160 @@ class CatalogueViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> getFilterCatagorie() async {
+    final res = await repo.getFilterCatagories();
+    if (res != null) {
+      filterCategories = res;
+      initializeFilterOptions();
+    }
+    notifyListeners();
+  }
+
+  Future<void> getFilterSupplier() async {
+    final res = await repo.getFilterSuppliers();
+    if (res != null) {
+      filterSuppliers = res;
+      initializeFilterOptions();
+    }
+    notifyListeners();
+  }
+
+  Future<void> addToFavourites(String id, List<Catalogues>? catalogues) async {
+    updateTheLikeObject(catalogues, id);
+    final res = await repo.addLikeCatalogue(id);
+    if (res != null) {}
+    notifyListeners();
+  }
+
+  Future<void> removeFromFavourites(List<Catalogues>? catalogues, String id) async {
+    removeTheLikeObject(catalogues, id);
+    final res = await repo.removeLikeCatalogue(id);
+    if (res != null) {}
+    notifyListeners();
+  }
+
+  Future<void> updateTheLikeObject(
+      List<Catalogues>? catalogues, String id) async {
+    final catalog = catalogues?.firstWhere((v) => v.id == id);
+    final newLike = await insertCatalogeLikeObj();
+    catalog?.catalogueFavorites?.insert(0, newLike);
+    notifyListeners();
+  }
+
+  Future<CatalogueFavorites> insertCatalogeLikeObj() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    if (type == 'PROFESSIONAL') {
+      return CatalogueFavorites(
+        id: null,
+        catalogueId: null,
+        type: type,
+        dentalPracticeId: null,
+        dentalProfessionalId: userId,
+        dentalSupplierId: null,
+      );
+    } else if (type == 'SUPPLIER') {
+      return CatalogueFavorites(
+        id: null,
+        catalogueId: null,
+        type: type,
+        dentalPracticeId: null,
+        dentalProfessionalId: null,
+        dentalSupplierId: userId,
+      );
+    } else if (type == 'PRACTICE') {
+      return CatalogueFavorites(
+        id: null,
+        catalogueId: null,
+        type: type,
+        dentalPracticeId: userId,
+        dentalProfessionalId: null,
+        dentalSupplierId: null,
+      );
+    }
+    throw Exception("Invalid user type");
+  }
+
+  Future<void> removeTheLikeObject(
+      List<Catalogues>? catalogues, String id) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final catalog = catalogues?.firstWhere((v) => v.id == id);
+    catalog?.catalogueFavorites?.removeWhere((v) =>
+        v.dentalPracticeId == userId ||
+        v.dentalProfessionalId == userId ||
+        v.dentalSupplierId == userId);
+    notifyListeners();
+  }
+
+  void initializeFilterOptions() {
+    filterOptions = {
+      'suppliers': filterSuppliers?.map((e) {
+            return FilterItem(
+              name: e.name ?? '',
+              id: e.id.toString(),
+            );
+          }).toList() ??
+          [],
+      'categories': filterCategories?.map((e) {
+            return FilterItem(
+              name: e.name ?? '',
+              id: e.id.toString(),
+            );
+          }).toList() ??
+          [],
+      'favourites': [
+        FilterItem(name: 'My Favourites', id: 'fav'),
+      ],
+    };
+
+    notifyListeners();
+  }
+
+  void toggleSection(String section) {
+    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
+    notifyListeners();
+  }
+
+  void selectItem(String section, int index) {
+    final currentSet = selectedIndices[section] ?? {};
+
+    if (currentSet.contains(index)) {
+      currentSet.remove(index);
+    } else {
+      currentSet.add(index);
+    }
+
+    selectedIndices[section] = currentSet;
+    notifyListeners();
+  }
+
+  void clearSelections() {
+    selectedIndices.updateAll((key, value) => {});
+    notifyListeners();
+  }
+
+  void printSelectedItems() {
+    selectedIndices.forEach((section, indices) {
+      final items = filterOptions[section];
+      if (items != null && indices.isNotEmpty) {
+        print("Selected items in $section:");
+        for (final i in indices) {
+          print(items[i].name);
+        }
+      }
+    });
+  }
+}
+
+class FilterItem {
+  final String name;
+  final String id;
+  bool isSelected;
+
+  FilterItem({
+    required this.name,
+    required this.id,
+    this.isSelected = false,
+  });
 }

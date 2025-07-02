@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
+import 'package:di360_flutter/feature/catalogue/view/catalogue_like_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -49,14 +50,18 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
                     ),
                   ),
                   addHorizontal(12),
-                  CircleAvatar(
-                    radius: 23,
-                    backgroundColor: AppColors.HINT_COLOR,
+                  GestureDetector(
+                    onTap: () => navigationService
+                        .navigateTo(RouteList.catalogueFilterScreen),
                     child: CircleAvatar(
-                      radius: 22,
-                      backgroundColor: AppColors.whiteColor,
-                      child: SvgPicture.asset(ImageConst.filter,
-                          color: AppColors.black),
+                      radius: 23,
+                      backgroundColor: AppColors.HINT_COLOR,
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor: AppColors.whiteColor,
+                        child: SvgPicture.asset(ImageConst.filter,
+                            color: AppColors.black),
+                      ),
                     ),
                   )
                 ],
@@ -119,14 +124,14 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               crossAxisCount: 2,
-              childAspectRatio: 0.55,
+              childAspectRatio: 0.53,
               children: displayList!
                   .map((c) => buildCatalogueCard(context, vm, c, () async {
                         await vm.getCatalogDetails(context, c.id ?? '');
                         await vm.getReletedCatalog(context, cat.id ?? '');
                         await navigationService
                             .navigateTo(RouteList.catalogueDetails);
-                      }))
+                      }, displayList))
                   .toList(),
             ),
           ),
@@ -172,7 +177,7 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget buildCatalogueCard(BuildContext context, CatalogueViewModel vm,
-      Catalogues c, Function()? onTap) {
+      Catalogues c, Function()? onTap, List<Catalogues>? catalogues) {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -195,13 +200,21 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(c.title ?? '',
-                      style: TextStyles.regular2(color: AppColors.black)),
-                  Text(c.dentalSupplier?.directories?.first.name ?? '',
-                      style: TextStyles.regular1(color: AppColors.black))
+                  Flexible(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                        Text(c.dentalSupplier?.directories?.first.name ?? '',
+                            style: TextStyles.regular2(
+                                color: AppColors.primaryColor)),
+                        addVertical(5),
+                        Text(c.title ?? '',
+                            style: TextStyles.regular1(color: AppColors.black))
+                      ])),
+                  CatalogueLikeWidget(cat: c, catalogues: catalogues)
                 ],
               ),
             )

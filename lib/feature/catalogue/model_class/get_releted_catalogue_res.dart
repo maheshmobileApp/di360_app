@@ -44,7 +44,7 @@ class CatalogData {
   String? title;
   String? dentalSupplierId;
   ThumbnailImage? thumbnailImage;
-  List<CatalogueFavorites>? catalogueFavorites;
+  List<CatalogueFavoritesReleated>? catalogueFavorites;
   CatalogueCategory? catalogueCategory;
   String? sTypename;
 
@@ -65,9 +65,9 @@ class CatalogData {
         ? new ThumbnailImage.fromJson(json['thumbnail_image'])
         : null;
     if (json['catalogue_favorites'] != null) {
-      catalogueFavorites = <CatalogueFavorites>[];
+      catalogueFavorites = <CatalogueFavoritesReleated>[];
       json['catalogue_favorites'].forEach((v) {
-        catalogueFavorites!.add(new CatalogueFavorites.fromJson(v));
+        catalogueFavorites!.add(new CatalogueFavoritesReleated.fromJson(v));
       });
     }
     catalogueCategory = json['catalogue_category'] != null
@@ -167,7 +167,7 @@ class CatalogueCategory {
   }
 }
 
-class CatalogueFavorites {
+class CatalogueFavoritesReleated {
   String? id;
   String? catalogueId;
   String? type;
@@ -176,7 +176,7 @@ class CatalogueFavorites {
   String? dentalPracticeId;
   String? sTypename;
 
-  CatalogueFavorites(
+  CatalogueFavoritesReleated(
       {this.id,
       this.catalogueId,
       this.type,
@@ -185,7 +185,7 @@ class CatalogueFavorites {
       this.dentalPracticeId,
       this.sTypename});
 
-  CatalogueFavorites.fromJson(Map<String, dynamic> json) {
+  CatalogueFavoritesReleated.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     catalogueId = json['catalogue_id'];
     type = json['type'];
