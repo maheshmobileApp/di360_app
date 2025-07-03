@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
+import 'package:di360_flutter/widgets/gallary_view.dart';
 import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -252,20 +253,8 @@ class JobDetailsScreen extends StatelessWidget {
         Text('${job.location ?? ''}'),
         locationView(context),
         _sectionHeader('Gallery'),
-        Row(
-          children: List.generate(
-              job.clinicLogo!.length,
-              (index) => Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      child: CachedNetworkImageWidget(
-                        imageUrl: job.clinicLogo![index].url ?? '',
-                      ),
-                    ),
-                  )),
-        ),
+        GalleryView(
+            imageUrls: job.clinicLogo!.map((e) => e.url ?? '').toList()),
         _sectionHeader('Social Media Handles'),
         Row(
           children: [
