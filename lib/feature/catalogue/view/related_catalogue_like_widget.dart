@@ -1,14 +1,13 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CatalogueLikeWidget extends StatelessWidget {
-  final Catalogues? cat;
-  final List<Catalogues>? catalogues;
-  const CatalogueLikeWidget({super.key, this.cat, this.catalogues});
+class RelatedCatalogueLikeWidget extends StatelessWidget {
+  final CatalogData? cat;
+  RelatedCatalogueLikeWidget({super.key, this.cat});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +16,8 @@ class CatalogueLikeWidget extends StatelessWidget {
     final isLiked = isLikedByCurrentUser(feedVM.userID ?? '');
     return GestureDetector(
       onTap: () => isLiked
-          ? catalogVM.catalogueUnLike(catalogues, cat?.id ?? '')
-          : catalogVM.catalogueLike(catalogues, cat?.id ?? ''),
+          ? catalogVM.relatedCatalogueUnLike(cat?.id ?? '')
+          : catalogVM.releatedCatalogueLike(cat?.id ?? ''),
       child: CircleAvatar(
           radius: 14,
           backgroundColor: AppColors.buttomBarColor,

@@ -4,7 +4,9 @@ class GetReletedCatalogueRes {
   GetReletedCatalogueRes({this.data});
 
   GetReletedCatalogueRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new ReletedCataloguData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new ReletedCataloguData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -61,9 +63,18 @@ class CatalogData {
     id = json['id'];
     title = json['title'];
     dentalSupplierId = json['dental_supplier_id'];
-    thumbnailImage = json['thumbnail_image'] != null
-        ? new ThumbnailImage.fromJson(json['thumbnail_image'])
-        : null;
+    if (json['thumbnail_image'] != null) {
+      if (json['thumbnail_image'] is Map<String, dynamic>) {
+        thumbnailImage = ThumbnailImage.fromJson(json['thumbnail_image']);
+      } else if (json['thumbnail_image'] is List) {
+        final list = json['thumbnail_image'] as List;
+        if (list.isNotEmpty) {
+          thumbnailImage = ThumbnailImage.fromJson(list[0]);
+        }
+      }
+    } else {
+      thumbnailImage = null;
+    }
     if (json['catalogue_favorites'] != null) {
       catalogueFavorites = <CatalogueFavoritesReleated>[];
       json['catalogue_favorites'].forEach((v) {

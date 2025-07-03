@@ -103,25 +103,11 @@ class CatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addToFavourites(String id, List<Catalogues>? catalogues) async {
-    updateTheLikeObject(catalogues, id);
-    final res = await repo.addLikeCatalogue(id);
-    if (res != null) {}
-    notifyListeners();
-  }
-
-  Future<void> removeFromFavourites(List<Catalogues>? catalogues, String id) async {
-    removeTheLikeObject(catalogues, id);
-    final res = await repo.removeLikeCatalogue(id);
-    if (res != null) {}
-    notifyListeners();
-  }
-
-  Future<void> updateTheLikeObject(
-      List<Catalogues>? catalogues, String id) async {
+  Future<void> catalogueLike(List<Catalogues>? catalogues, String id) async {
     final catalog = catalogues?.firstWhere((v) => v.id == id);
     final newLike = await insertCatalogeLikeObj();
     catalog?.catalogueFavorites?.insert(0, newLike);
+    await repo.addLikeCatalogue(id);
     notifyListeners();
   }
 
@@ -159,15 +145,68 @@ class CatalogueViewModel extends ChangeNotifier {
     throw Exception("Invalid user type");
   }
 
-  Future<void> removeTheLikeObject(
-      List<Catalogues>? catalogues, String id) async {
+  Future<void> catalogueUnLike(List<Catalogues>? catalogues, String id) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final catalog = catalogues?.firstWhere((v) => v.id == id);
     catalog?.catalogueFavorites?.removeWhere((v) =>
         v.dentalPracticeId == userId ||
         v.dentalProfessionalId == userId ||
         v.dentalSupplierId == userId);
+    await repo.removeLikeCatalogue(id);
     notifyListeners();
+  }
+
+  Future<void> releatedCatalogueLike(String id) async {
+    final catalog = reletedCatalogues?.firstWhere((v) => v.id == id);
+    final newLike = await insertRelatedCatalogeLikeObj();
+    catalog?.catalogueFavorites?.insert(0, newLike);
+    await repo.addLikeCatalogue(id);
+    notifyListeners();
+  }
+
+  Future<void> relatedCatalogueUnLike(String id) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final catalog = reletedCatalogues?.firstWhere((v) => v.id == id);
+    catalog?.catalogueFavorites?.removeWhere((v) =>
+        v.dentalPracticeId == userId ||
+        v.dentalProfessionalId == userId ||
+        v.dentalSupplierId == userId);
+    await repo.removeLikeCatalogue(id);
+    notifyListeners();
+  }
+
+  Future<CatalogueFavoritesReleated> insertRelatedCatalogeLikeObj() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    if (type == 'PROFESSIONAL') {
+      return CatalogueFavoritesReleated(
+        id: null,
+        catalogueId: null,
+        type: type,
+        dentalPracticeId: null,
+        dentalProfessionalId: userId,
+        dentalSupplierId: null,
+      );
+    } else if (type == 'SUPPLIER') {
+      return CatalogueFavoritesReleated(
+        id: null,
+        catalogueId: null,
+        type: type,
+        dentalPracticeId: null,
+        dentalProfessionalId: null,
+        dentalSupplierId: userId,
+      );
+    } else if (type == 'PRACTICE') {
+      return CatalogueFavoritesReleated(
+        id: null,
+        catalogueId: null,
+        type: type,
+        dentalPracticeId: userId,
+        dentalProfessionalId: null,
+        dentalSupplierId: null,
+      );
+    }
+    throw Exception("Invalid user type");
   }
 
   void initializeFilterOptions() {

@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
+import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,10 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
-          onTap: () => navigationService.goBack(),
+          onTap: () async {
+            await catalogueVM.fetchCatalogue(context);
+            navigationService.goBack();
+          },
           child: Icon(Icons.arrow_back_ios_new, color: AppColors.black),
         ),
         centerTitle: true,
@@ -45,9 +49,12 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                         padding: const EdgeInsets.all(10.0),
                         child: HorizantalPdf(
                           key: ValueKey(
-                            catalogueVM.cataloguesByIdData?.attachment?.url ?? '',
+                            catalogueVM.cataloguesByIdData?.attachment?.url ??
+                                '',
                           ),
-                          fileUrl: catalogueVM.cataloguesByIdData?.attachment?.url ?? '',
+                          fileUrl:
+                              catalogueVM.cataloguesByIdData?.attachment?.url ??
+                                  '',
                           fileName: '',
                         ),
                       ),
@@ -65,7 +72,8 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                                 color: AppColors.whiteColor),
                           ),
                           Text('DOWNLOAD CATALOGUE',
-                              style: TextStyles.regular1(color: AppColors.black)),
+                              style:
+                                  TextStyles.regular1(color: AppColors.black)),
                         ],
                       ),
                     ),
@@ -146,8 +154,16 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(catalogues.title ?? '',
-                  style: TextStyles.regular2(color: AppColors.black)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text(catalogues.title ?? '',
+                        style: TextStyles.regular2(color: AppColors.black)),
+                  ),
+                  RelatedCatalogueLikeWidget(cat: catalogues),
+                ],
+              ),
             )
           ],
         ),
