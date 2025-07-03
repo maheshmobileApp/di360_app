@@ -17,6 +17,8 @@ class CatalogueViewModel extends ChangeNotifier {
     getFilterSupplier();
   }
 
+  TextEditingController searchController = TextEditingController();
+
   List<CatalogueCategories> catalogueCategories = [];
   CataloguesByPk? cataloguesByIdData;
   List<CatalogData>? reletedCatalogues = [];
@@ -43,12 +45,11 @@ class CatalogueViewModel extends ChangeNotifier {
     await Future.delayed(const Duration(seconds: 1));
 
     Loaders.circularShowLoader(context);
-    catalogueCategories = await repo.getCatalogue();
+    catalogueCategories = await repo.getCatalogue(searchController.text);
     Loaders.circularHideLoader(context);
     for (var cat in catalogueCategories) {
       showMoreMap[cat.name ?? ''] = false;
     }
-    //getFilterSupplier();
     notifyListeners();
   }
 

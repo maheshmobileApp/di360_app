@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/svg.dart';
@@ -44,16 +45,19 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              controller: filterProvider.searchController,
+                              onFieldSubmitted: (value) async{
+                              await  filterProvider.fetchCatalogue(context);
+                                navigationService.goBack();
+                              },
                               decoration: InputDecoration(
                                 hintText: 'What are you looking for?',
                                 hintStyle: TextStyles.dmsansLight(
                                   color: AppColors.black,
                                   fontSize: 18,
                                 ),
-                                suffixIcon: Icon(
-                                  Icons.search,
-                                  color: AppColors.black,
-                                ),
+                                suffixIcon:
+                                    Icon(Icons.search, color: AppColors.black),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -74,71 +78,86 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                     addVertical(12),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 23),
-                      child: Column(
-                        children:
-                            filterProvider.filterOptions.entries.map((entry) {
-                          final section = entry.key;
-                          final items = entry.value;
-                          final isVisible =
-                              filterProvider.sectionVisibility[section] ?? true;
+                      child: filterProvider.filterOptions.isNotEmpty
+                          ? Column(
+                              children: filterProvider.filterOptions.entries
+                                  .map((entry) {
+                                final section = entry.key;
+                                final items = entry.value;
+                                final isVisible =
+                                    filterProvider.sectionVisibility[section] ??
+                                        true;
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ListTile(
-                                contentPadding: EdgeInsets.all(0),
-                                minTileHeight: 30,
-                                minVerticalPadding: 0,
-                                title: Text(
-                                  'Filter by $section',
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListTile(
+                                      contentPadding: EdgeInsets.all(0),
+                                      minTileHeight: 30,
+                                      minVerticalPadding: 0,
+                                      title: Text(
+                                        'Filter by $section',
+                                        style: TextStyles.regular3(
+                                          color: AppColors.black,
+                                        ),
+                                      ),
+                                      trailing: InkWell(
+                                        child: Icon(
+                                          isVisible
+                                              ? Icons.keyboard_arrow_up
+                                              : Icons.keyboard_arrow_down,
+                                        ),
+                                        onTap: () =>
+                                            filterProvider.toggleSection(
+                                          section,
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(),
+                                    if (isVisible)
+                                      ...items.asMap().entries.map((item) {
+                                        final index = item.key;
+                                        final filter = item.value;
+                                        final selected = filterProvider
+                                                .selectedIndices[section]
+                                                ?.contains(index) ??
+                                            false;
+
+                                        return CheckboxListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          value: selected,
+                                          activeColor: AppColors.primaryColor,
+                                          onChanged: (val) {
+                                            filterProvider.selectItem(
+                                                section, index);
+                                          },
+                                          title: Text(
+                                            filter.name,
+                                            style: TextStyles.regular3(
+                                              color: AppColors.lightGeryColor,
+                                            ),
+                                          ),
+                                          controlAffinity:
+                                              ListTileControlAffinity.leading,
+                                        );
+                                      }).toList(),
+                                    SizedBox(height: 16),
+                                  ],
+                                );
+                              }).toList(),
+                            )
+                          : Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Text(
+                                  "No filters available.",
                                   style: TextStyles.regular3(
-                                    color: AppColors.black,
-                                  ),
-                                ),
-                                trailing: InkWell(
-                                  child: Icon(
-                                    isVisible
-                                        ? Icons.keyboard_arrow_up
-                                        : Icons.keyboard_arrow_down,
-                                  ),
-                                  onTap: () => filterProvider.toggleSection(
-                                    section,
+                                    color: AppColors.lightGeryColor,
                                   ),
                                 ),
                               ),
-                              Divider(),
-                              if (isVisible)
-                                ...items.asMap().entries.map((item) {
-                                  final index = item.key;
-                                  final filter = item.value;
-                                  final selected = filterProvider
-                                          .selectedIndices[section]
-                                          ?.contains(index) ??
-                                      false;
-
-                                  return CheckboxListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    value: selected,
-                                    activeColor: AppColors.primaryColor,
-                                    onChanged: (val) {
-                                      filterProvider.selectItem(
-                                          section, index);
-                                    },
-                                    title: Text(
-                                      filter.name,
-                                      style: TextStyles.regular3(
-                                        color: AppColors.lightGeryColor,
-                                      ),
-                                    ),
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  );
-                                }).toList(),
-                              SizedBox(height: 16),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                            ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

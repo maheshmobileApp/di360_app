@@ -24,18 +24,18 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
   String? adminId;
 
   @override
-  Future<List<CatalogueCategories>> getCatalogue() async {
+  Future<List<CatalogueCategories>> getCatalogue(String? searchText) async {
     final catalogueData = await http.query(getCatalogueRequest, variables: {
       "andList": [
         {
           "_or": [
             {
               "dental_supplier": {
-                "name": {"_ilike": "%%"}
+                "name": {"_ilike": "%$searchText%"}
               }
             },
             {
-              "title": {"_ilike": "%%"}
+              "title": {"_ilike": "%$searchText%"}
             }
           ],
           "status": {

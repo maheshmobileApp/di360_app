@@ -40,6 +40,10 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      controller: vm.searchController,
+                      onFieldSubmitted: (value) {
+                        vm.fetchCatalogue(context);
+                      },
                       decoration: InputDecoration(
                           hintText: 'What are you looking for?',
                           hintStyle: TextStyles.dmsansLight(
