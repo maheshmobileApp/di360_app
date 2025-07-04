@@ -12,36 +12,38 @@ class JobLocationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
        final jobCreateVM = Provider.of<JobCreateViewModel>(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-            _sectionHeader("Job Location"),
-             SizedBox(
-                height: 16,
-              ),
-              InputTextField(
-                hintText: "Location",
-                title: "Search Location",
-                isRequired: true,
-              ),
-              SizedBox(height: 10,),
-              _buildCountryList(jobCreateVM),
-              SizedBox(height: 10,),
-               InputTextField(
-                hintText: "Enter city / Post code",
-                title: "State",
-                isRequired: true,
-              ),
-              SizedBox(height: 10),
-               InputTextField(
-                hintText: "Enter city / Post code",
-                title: "City / Post Code",
-                isRequired: true,
-              ),
-              SizedBox(height: 8),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+              _sectionHeader("Job Location"),
+               SizedBox(
+                  height: 16,
+                ),
+                InputTextField(
+                  hintText: "Location",
+                  title: "Search Location",
+                  isRequired: true,
+                ),
+                SizedBox(height: 10,),
+                _buildCountryList(jobCreateVM),
+                SizedBox(height: 10,),
+                 InputTextField(
+                  hintText: "Enter city / Post code",
+                  title: "State",
+                  isRequired: true,
+                ),
+                SizedBox(height: 10),
+                 InputTextField(
+                  hintText: "Enter city / Post code",
+                  title: "City / Post Code",
+                  isRequired: true,
+                ),
+                SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
