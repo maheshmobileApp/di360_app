@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository_impl.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/filter_catagories_res.dart';
@@ -115,7 +116,7 @@ class CatalogueViewModel extends ChangeNotifier {
   Future<CatalogueFavorites> insertCatalogeLikeObj() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == 'PROFESSIONAL') {
+    if (type == UserRole.professional) {
       return CatalogueFavorites(
         id: null,
         catalogueId: null,
@@ -124,7 +125,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: userId,
         dentalSupplierId: null,
       );
-    } else if (type == 'SUPPLIER') {
+    } else if (type == UserRole.supplier) {
       return CatalogueFavorites(
         id: null,
         catalogueId: null,
@@ -133,7 +134,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: null,
         dentalSupplierId: userId,
       );
-    } else if (type == 'PRACTICE') {
+    } else if (type == UserRole.practice) {
       return CatalogueFavorites(
         id: null,
         catalogueId: null,
@@ -179,7 +180,7 @@ class CatalogueViewModel extends ChangeNotifier {
   Future<CatalogueFavoritesReleated> insertRelatedCatalogeLikeObj() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == 'PROFESSIONAL') {
+    if (type == UserRole.professional) {
       return CatalogueFavoritesReleated(
         id: null,
         catalogueId: null,
@@ -188,7 +189,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: userId,
         dentalSupplierId: null,
       );
-    } else if (type == 'SUPPLIER') {
+    } else if (type == UserRole.supplier) {
       return CatalogueFavoritesReleated(
         id: null,
         catalogueId: null,
@@ -197,7 +198,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: null,
         dentalSupplierId: userId,
       );
-    } else if (type == 'PRACTICE') {
+    } else if (type == UserRole.practice) {
       return CatalogueFavoritesReleated(
         id: null,
         catalogueId: null,

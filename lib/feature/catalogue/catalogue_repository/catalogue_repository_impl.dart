@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/querys/remove_like_catalogue_query.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class CatalogueRepositoryImpl extends CatalogueRepository {
   final HttpService http = HttpService();
@@ -88,9 +89,9 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
       "favObj": {
         "catalogue_id": catalogueId,
         "type": type,
-        "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
-        "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
-        "dental_practice_id": type == 'PRACTICE' ? userId : null,
+        "dental_supplier_id": type == UserRole.supplier ? userId : null,
+        "dental_professional_id": type == UserRole.professional ? userId : null,
+        "dental_practice_id": type == UserRole.practice ? userId : null,
       }
     });
     return data;
