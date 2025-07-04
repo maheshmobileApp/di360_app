@@ -26,7 +26,7 @@ Request Pyalod:
 }
 }
 
-## HireME
+## HireME 
 
 mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
   insert_jobhirings_one(object: $hireobject) {
@@ -43,7 +43,7 @@ mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
 }
 }
 
-## Enquiry
+## Enquiry : Done 
 mutation insert_jobenquiries($jobenquiryobject:job_enquiries_insert_input!) {
   insert_job_enquiries_one(object: $jobenquiryobject) {
     id
@@ -69,37 +69,38 @@ https://dental-360-dev.hasura.app/v1/graphql
 
 "query":"mutation insert_Enquiry_one($object: job_enquiries_insert_input!) {\n  insert_job_enquiries_one(object: $object) {\n    id\n    __typename\n  }\n}\n"}
 
+## Get Job Apply Status
 
-
-// New method for inserting job enquiry
-  Future<Map<String, dynamic>?> insertEnquiry({
-    required String enquiryDescription,
-    required String jobId,
-    required String enquiryUserId,
-    bool showLoading = true,
-  }) async {
-    const String document = '''
-      mutation insert_Enquiry_one(\$object: job_enquiries_insert_input!) {
-        insert_job_enquiries_one(object: \$object) {
-          id
-          __typename
-        }
-      }
-    ''';
-
-    final variables = {
-      "object": {
-        "enquiry_description": enquiryDescription,
-        "job_id": jobId,
-        "enquiry_userid": enquiryUserId,
-      }
-    };
-
-    try {
-      final response = await mutation(document, variables, showLoading: showLoading);
-      return response;
-    } catch (e, s) {
-      print("Error inserting enquiry: $e, $s");
-      return null;
+query getajobswithmyprofile($job_id: uuid, $dental_professional_id: uuid) {
+  job_applicants(
+    where: {
+      _and: [
+        { job_id: { _eq: $job_id } },
+        { dental_professional_id: { _eq: $dental_professional_id } }
+      ]
+    }
+  ) {
+    id
+    job_id
+    attachments
+    dental_professional_id
+    dental_professional {
+      email
+      phone
+      last_name
+      first_name
+      profile_image
+      created_at
     }
   }
+}
+
+## 
+Apply
+Hire Me 
+
+
+Search
+Filter
+Banner
+
