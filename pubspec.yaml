@@ -83,6 +83,8 @@ flutter:
     - assets/svgs/
     - assets/fonts/
     - assets/svgs/social/
+    - assets/roles.json
+    - assets/job_type.json
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

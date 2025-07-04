@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class InputTextField extends StatelessWidget {
-  final String title;
+  final String? title;
   final bool isRequired;
   final TextEditingController? controller;
   final String? hintText;
@@ -44,7 +44,7 @@ class InputTextField extends StatelessWidget {
 
   InputTextField({
     super.key,
-    required this.title,
+     this.title,
     this.isRequired = false,
     this.controller,
     this.textAlign,
@@ -92,7 +92,7 @@ class InputTextField extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              title,
+              title ??"",
               style: TextStyles.regular3(color: titleColor ?? AppColors.black),
             ),
             if (isRequired)

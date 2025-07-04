@@ -30,7 +30,7 @@ class Routes {
       RouteList.signup: (context) => SignupScreen(),
       RouteList.roleScreen: (context) => RoleSelectionScreen(),
       RouteList.practiceDetailsScreen: (context) => PracticeDetailsScreen(),
-      RouteList.jobingo: (context) => JobCreateView(),
+      RouteList.jobCreate: (context) => JobCreateView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobDetailsScreen(
