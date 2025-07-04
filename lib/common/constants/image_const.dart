@@ -42,12 +42,12 @@ class ImageConst {
   static const String location = "assets/pngs/location.png";
   static const String experience = "assets/pngs/experience.png";
   static const String copy = "assets/pngs/copy.png";
-  static const String upload="assets/pngs/upload.png";
-  
+  static const String upload = "assets/pngs/upload.png";
+
+  static const String calender = "assets/pngs/CalendarBlank.png";
   static const String catalogueBg = "assets/pngs/catalogueBG.png";
 
   static const String _svgBasePath = 'assets/svgs/';
-  
 
   // Job related SVG icons
   static const String briefcaseSvg = '${_svgBasePath}briefcase.svg';
@@ -56,18 +56,18 @@ class ImageConst {
   static const String graduationSvg = '${_svgBasePath}graduation.svg';
   static const String peopleSvg = '${_svgBasePath}people.svg';
   static const String briefcurrencySvg = '${_svgBasePath}briefcurrency.svg';
-   static const String doller = '${_svgBasePath}doller.svg';
+  static const String doller = '${_svgBasePath}doller.svg';
   static const String hummanresourse = '${_svgBasePath}human-resources 1.svg';
   static const String locationsvg = '${_svgBasePath}locationsvg.svg';
   static const String copySvg = '${_svgBasePath}copy.svg';
-   //static const String 
+  //static const String
 
   // Social Mediaassets/svgs/locationsvg.svg
   static const String facebookSvg = '${_svgBasePath}social/facebook.png';
   static const String instagramSvg = '${_svgBasePath}social/instagram.png';
   static const String linkedinSvg = '${_svgBasePath}social/linkedin.png';
   static const String twitterSvg = '${_svgBasePath}social/twitter.png';
-  
+
   //assets/svgs/social/twitter.svg
 
   // PNG Assets

@@ -54,7 +54,8 @@ dependencies:
   flutter_inappwebview:
   dotted_border: ^2.1.0
   flutter_pdfview:
-  open_file_plus: ^3.4.1+1
+  open_file: ^3.5.10
+  
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +85,8 @@ flutter:
     - assets/svgs/
     - assets/fonts/
     - assets/svgs/social/
+    - assets/roles.json
+    - assets/job_type.json
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
