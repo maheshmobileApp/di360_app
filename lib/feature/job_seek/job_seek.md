@@ -94,3 +94,13 @@ query getajobswithmyprofile($job_id: uuid, $dental_professional_id: uuid) {
     }
   }
 }
+
+## 
+Apply
+Hire Me 
+
+
+Search
+Filter
+Banner
+
