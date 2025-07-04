@@ -4,7 +4,9 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view/job_info.dart';
 import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
 import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
+import 'package:di360_flutter/feature/job_create/view/other_info_view.dart';
 import 'package:di360_flutter/feature/job_create/view/other_links_view.dart';
+import 'package:di360_flutter/feature/job_create/view/pay_details.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -61,7 +63,7 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildStepProgressBar(currentStep, totalSteps,JobCreateViewModel jobcreateVm) {
     return StepsView(
-        currentStep: 0, totalSteps: 6, stepTitles: jobcreateVm.steps);
+        currentStep: jobcreateVm.currentStep, totalSteps: jobcreateVm.totalSteps, stepTitles: jobcreateVm.steps);
   }
 
   Widget _buildStep(JobCreateSteps stepIndex) {
@@ -73,9 +75,9 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
       case JobCreateSteps.JOBLOCATION:
         return JobLocationView();
       case JobCreateSteps.OTHERINFO:
-        return Container();
+        return OtherInfoView();
       case JobCreateSteps.PAY:
-        return Container();
+        return PayDetails();
       case JobCreateSteps.OTHERLINKS:
         return OtherLinksView();
       default:
