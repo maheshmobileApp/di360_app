@@ -82,11 +82,11 @@ getNotificationsCount() async {
       var response =
           await _http.mutation(updateProfessionalNotification, {"id": Id});
 
-      if (response != null) {
-        Loaders.circularHideLoader(context);
-      } else {
+      if (response.isEmpty) {
         Loaders.circularHideLoader(context);
         scaffoldMessenger('Unable to Mark as Read');
+      } else {
+        Loaders.circularHideLoader(context);
       }
     } catch (e) {
       Loaders.circularHideLoader(context);

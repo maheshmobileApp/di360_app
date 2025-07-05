@@ -57,16 +57,32 @@ const String enquiryMutation =
           __typename
         }
       }''';
-const String applyJobMutation =
-    '''mutation insert_jobapplicants(\$applyJobobject:job_applicants_insert_input!) {
-  insert_job_applicants_one(object: \$applyJobobject) {
-    id
-  }
-} ''';
+// const String applyJobMutation =
+//     '''mutation insert_jobapplicants(\$applyJobobject:job_applicants_insert_input!) {
+//   insert_job_applicants_one(object: \$applyJobobject) {
+//     id
+//   }
+// } ''';
 
 const String hireMeMutation =
     '''mutation insert_jobhirings(\$hireobject:jobhirings_insert_input!) {
   insert_jobhirings_one(object: \$hireobject) {
     id
+  }
+}''';
+
+String applyJobMutation =
+    r'''mutation insert_jobapplicants($applyJobobject: job_applicants_insert_input!) {
+  insert_job_applicants_one(object: $applyJobobject) {
+    id
+    __typename
+  }
+}''';
+
+String sendMessageMutation =
+    r'''mutation insert_message_one($object: job_applicant_messages_insert_input!) {
+  insert_job_applicant_messages_one(object: $object) {
+    id
+    __typename
   }
 }''';

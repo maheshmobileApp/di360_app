@@ -10,9 +10,7 @@ import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/logout_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

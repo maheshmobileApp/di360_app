@@ -58,7 +58,7 @@ class LoginViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(loginSchema, _variables);
-      if (res != null) {
+      if (res.isNotEmpty) {
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);

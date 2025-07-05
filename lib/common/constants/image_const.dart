@@ -23,6 +23,7 @@ class ImageConst {
   static const String cart = "assets/svgs/cart.svg";
   static const String filter = "assets/svgs/filter.svg";
   static const String addFeed = "assets/svgs/addFeed.svg";
+  static const String noCatalogue = "assets/svgs/no_catalogues.svg";
 
   /// PNGS
   static const String pre_login = "assets/pngs/pre_login.png";
