@@ -11,4 +11,6 @@ abstract class JobSeekRepository {
   Future<Map<String, dynamic>> hireMe(HireMeRequest request);
   Future<Map<String, dynamic>> uploadTheResume(String filePath);
   Future<Map<String, dynamic>> sendMessageRequest(SendMessageRequest jobId);
+  Future<Map<String, dynamic>> getJobApplyStatus(
+      String jobId, String dentalProfessionalId);
 }

@@ -56,6 +56,17 @@ class JobSeekRepoImpl extends JobSeekRepository {
       {'object': request.toJson()},
     );
   }
+  
+  @override
+  Future<Map<String, dynamic>> getJobApplyStatus(
+      String jobId, String dentalProfessionalId) {
+    final jobApplyStatus = _http.query(jobApplyStatusQuery, variables: {
+      'job_id': jobId,
+      'dental_professional_id': dentalProfessionalId,
+    });
+    print(jobApplyStatus);
+    throw UnimplementedError();
+  }
 
   
 }
