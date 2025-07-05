@@ -54,7 +54,7 @@ dependencies:
   flutter_inappwebview:
   dotted_border: ^2.1.0
   flutter_pdfview:
-  open_file: ^3.5.10
+  smooth_page_indicator: ^1.2.1
   uuid: ^3.0.7
   
 

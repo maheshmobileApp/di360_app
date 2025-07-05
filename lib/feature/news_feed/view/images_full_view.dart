@@ -35,15 +35,17 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
 
   void _goToPage(int index) {
     if (index >= 0 && index < (widget.postImage?.length ?? 0)) {
-      _controller.animateToPage(index,
-          duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _controller.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final totalImages = widget.postImage?.length;
-
+    final totalImages = widget.postImage?.length ?? 0;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -51,7 +53,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
           children: [
             PageView.builder(
               controller: _controller,
-            //  physics: NeverScrollableScrollPhysics(),
+              physics: isScrollablePage(widget.postImage?[_currentIndex])
+                  ? const PageScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
               itemCount: totalImages,
               onPageChanged: (index) {
                 setState(() {
@@ -59,11 +63,11 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
                 });
               },
               itemBuilder: (_, index) {
-                return KeepAliveWrapper(
-                    child: buildMediaContent(widget.postImage?[index]));
+                final media = widget.postImage?[index];
+                return buildMediaContent(media);
               },
             ),
-            if ((totalImages ?? 0) > 1) ...[
+            if (totalImages > 1) ...[
               Positioned(
                 left: 16,
                 top: MediaQuery.of(context).size.height / 2 - 24,
@@ -81,7 +85,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
               Positioned(
                 right: 16,
                 top: MediaQuery.of(context).size.height / 2 - 24,
-                child: _currentIndex < (widget.postImage?.length ?? 0) - 1
+                child: _currentIndex < totalImages - 1
                     ? GestureDetector(
                         onTap: () => _goToPage(_currentIndex + 1),
                         child: CircleAvatar(
@@ -94,27 +98,47 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
               ),
             ],
             Positioned(
-                top: 40,
-                right: 20,
-                child: GestureDetector(
-                  onTap: () => navigationService.goBack(),
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.primaryColor,
-                    child: Icon(Icons.close, color: AppColors.whiteColor),
-                  ),
-                )),
+              top: 40,
+              right: 20,
+              child: GestureDetector(
+                onTap: () => navigationService.goBack(),
+                child: CircleAvatar(
+                  backgroundColor: AppColors.primaryColor,
+                  child: Icon(Icons.close, color: AppColors.whiteColor),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget buildMediaContent(media) {
+  bool isScrollablePage(PostImage? media) {
+    if (media == null) return true;
+    final name = media.name?.toLowerCase() ?? '';
+    final type = media.type ?? media.mimeType ?? '';
+
+    if (name.endsWith('.pdf') || type == 'application/pdf') {
+      return false;
+    }
+    if (name.endsWith('.doc') ||
+        name.endsWith('.docx') ||
+        type == 'application/msword') {
+      return false;
+    }
+    return true;
+  }
+
+  Widget buildMediaContent(PostImage? media) {
+    if (media == null) {
+      return Center(child: Icon(Icons.broken_image, color: Colors.white));
+    }
+
     final type = media.type ?? media.mimeType ?? '';
     final url = media.url ?? '';
     final name = media.name ?? '';
 
-    // Helper: check if base64
     bool isBase64Image(String data) => data.startsWith('data:image/');
 
     if (type.startsWith('image/') ||
@@ -122,16 +146,23 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
       if (isBase64Image(url)) {
         try {
           final decodedBytes = base64Decode(url.split(',').last);
-          return Image.memory(decodedBytes, fit: BoxFit.cover);
+          return Center(
+            child: Image.memory(
+              decodedBytes,
+              fit: BoxFit.contain,
+            ),
+          );
         } catch (e) {
-          return Icon(Icons.broken_image);
+          return Center(child: Icon(Icons.broken_image, color: Colors.white));
         }
-      } else if (name.endsWith('.mp4')) {
+      } else if (name.toLowerCase().endsWith('.mp4')) {
         return InlineVideoPlayer(videoUrl: url);
-      } else if (name.endsWith('.pdf')) {
+      } else if (name.toLowerCase().endsWith('.pdf')) {
         return PdfViewrWidget(fileUrl: url, fileName: name);
       } else {
-        return CachedNetworkImageWidget(imageUrl: url);
+        return Center(
+          child: CachedNetworkImageWidget(imageUrl: url),
+        );
       }
     } else if (type == 'video/mp4') {
       return InlineVideoPlayer(videoUrl: url);
@@ -140,27 +171,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
     } else if (type == 'application/msword') {
       return FileViewerScreen(fileUrl: url, fileName: name);
     } else {
-      return CachedNetworkImageWidget(imageUrl: url);
+      return Center(
+        child: CachedNetworkImageWidget(imageUrl: url),
+      );
     }
-  }
-}
-
-class KeepAliveWrapper extends StatefulWidget {
-  final Widget child;
-  const KeepAliveWrapper({required this.child});
-
-  @override
-  _KeepAliveWrapperState createState() => _KeepAliveWrapperState();
-}
-
-class _KeepAliveWrapperState extends State<KeepAliveWrapper>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.child;
   }
 }
