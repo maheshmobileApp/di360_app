@@ -17,6 +17,7 @@ class JobSeekViewModel extends ChangeNotifier {
   final JobSeekRepository repo = JobSeekRepoImpl(); // 👈 Create repo here
   String? _enquiryData;
   Jobs? selectedJob;
+  bool isJobApplied = false;
   List<Jobs> jobs = [];
   JobSeekViewModel() {
     fetchJobs();
@@ -112,7 +113,20 @@ class JobSeekViewModel extends ChangeNotifier {
 
   void getApplyJobStatus(String jobId, String dentalProfessionalId) async {
     try {
-      await repo.getJobApplyStatus(jobId, dentalProfessionalId);
+      final result = await repo.getJobApplyStatus(jobId, dentalProfessionalId);
+      if (result.jobApplicants.isNotEmpty) {
+        final myApplicationStatus = result.jobApplicants.where((applicant) {
+          return applicant.dentalProfessionalId == dentalProfessionalId;
+        }).toList();
+        if (myApplicationStatus.isNotEmpty) {
+          isJobApplied = true;
+          notifyListeners();
+        } else {
+          isJobApplied = false;
+          notifyListeners();
+        }
+        // Handle the result as needed
+      }
     } catch (e) {
       // Handle error
       print("Error fetching job apply status: $e");

@@ -80,6 +80,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -292,7 +293,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 
   Widget actionsWidget(BuildContext context) {
-    final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+    final provider = Provider.of<JobSeekViewModel>(context);
     if (provider.isHidleFolatingButton) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -308,8 +309,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: CustomRoundedButton(
-              text: 'Apply',
-              onPressed: () => _showApplyForm(context),
+              text: provider.isJobApplied ? 'Applied' : 'Apply',
+              onPressed: () =>
+                  provider.isJobApplied ? null : _showApplyForm(context),
               backgroundColor: Colors.orange,
               textColor: Colors.white,
             ),

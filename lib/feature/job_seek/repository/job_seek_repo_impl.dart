@@ -2,6 +2,7 @@
 
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_request.dart';
+import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
@@ -50,22 +51,22 @@ class JobSeekRepoImpl extends JobSeekRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> sendMessageRequest(SendMessageRequest request) {
-    return _http.mutation(
+  Future<Map<String, dynamic>> sendMessageRequest(
+      SendMessageRequest request) async {
+    return await _http.mutation(
       sendMessageMutation,
       {'object': request.toJson()},
     );
   }
   
   @override
-  Future<Map<String, dynamic>> getJobApplyStatus(
-      String jobId, String dentalProfessionalId) {
-    final jobApplyStatus = _http.query(jobApplyStatusQuery, variables: {
+  Future<JobApplicantsResponse> getJobApplyStatus(
+      String jobId, String dentalProfessionalId) async {
+    final jobApplyStatus = await _http.query(jobApplyStatusQuery, variables: {
       'job_id': jobId,
       'dental_professional_id': dentalProfessionalId,
     });
-    print(jobApplyStatus);
-    throw UnimplementedError();
+    return JobApplicantsResponse.fromJson(jobApplyStatus);
   }
 
   
