@@ -128,7 +128,7 @@ class SignupViewModel extends ChangeNotifier {
           "professionType": selectedCategory?.name
         }
       });
-      if (res != null) {
+      if (res.isNotEmpty) {
         final result = SignUpData.fromJson(res);
         await LocalStorage.setStringVal(
             LocalStorageConst.name, result.insertClientsOne?.name ?? '');

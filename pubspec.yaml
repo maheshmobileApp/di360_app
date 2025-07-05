@@ -57,6 +57,7 @@ dependencies:
   open_file: ^3.5.10
   uuid: ^3.0.7
   fluttertoast: ^8.2.12
+  smooth_page_indicator: ^1.2.1
   
 
 dev_dependencies:

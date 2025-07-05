@@ -74,7 +74,7 @@ class CommentViewModel extends ChangeNotifier {
         }
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
       }
@@ -95,7 +95,7 @@ class CommentViewModel extends ChangeNotifier {
         "data": {"comments": commentController.text, "comments_attachments": []}
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
       } else {
@@ -114,7 +114,7 @@ class CommentViewModel extends ChangeNotifier {
     try {
       var res = await _http.mutation(deleteCommentQuery, {"id": id});
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
       } else {
@@ -194,7 +194,7 @@ class CommentViewModel extends ChangeNotifier {
         }
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
       } else {
@@ -220,7 +220,7 @@ class CommentViewModel extends ChangeNotifier {
         }
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
       } else {
@@ -240,7 +240,7 @@ class CommentViewModel extends ChangeNotifier {
     try {
       var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
       } else {

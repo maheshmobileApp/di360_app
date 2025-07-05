@@ -112,7 +112,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
         }
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         uploadedFiles.clear();
         Loaders.circularHideLoader(context);
         scaffoldMessenger('Newsfeed submitted successfully');
@@ -163,7 +163,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
         }
       });
 
-      if (res != null) {
+      if (res.isNotEmpty) {
         uploadedFiles.clear();
         updateTheNewsFeedObject(context, res['update_newsfeeds_by_pk']);
         Loaders.circularHideLoader(context);

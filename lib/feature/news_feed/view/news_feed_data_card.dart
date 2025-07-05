@@ -289,6 +289,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       final media = mediaList.first;
       return _mediaCard(
         child: buildMediaContent(media),
+        onTap: () {
+          navigationService.push(ImageViewerScreen(postImage: mediaList));
+        },
         isFullWidth: true,
       );
     }
