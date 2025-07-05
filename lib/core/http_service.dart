@@ -30,7 +30,7 @@ class HttpService {
     return response;
   }
 
-  Future uploadImage(filePath) async {
+  Future<dynamic> uploadImage(filePath) async {
     MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
     var _data = {
       "file": _uploadImage,
