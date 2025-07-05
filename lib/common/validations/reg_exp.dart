@@ -1,13 +1,28 @@
+
+
+
+String? validateLink(String? value) {
+  if (value == null || value.trim().isEmpty) return null; 
+
+  final urlPattern = r'^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$';
+  final isValid = RegExp(urlPattern).hasMatch(value.trim());
+
+  return isValid ? null : 'Enter a valid URL';
+}
+
+
 bool phoneNoValid(String phoneNo) {
-  return RegExp('^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}\$')
+  return RegExp(r'^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$')
       .hasMatch(phoneNo);
 }
 
+
 bool checkEmailValidation(String email) {
   return RegExp(
-          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      .hasMatch(email);
+    r"^[a-zA-Z0-9.a-zA-Z0-9.!#\$%&'*+\-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+$"
+  ).hasMatch(email);
 }
+
 
 bool checkPostalCode(String code) {
   return RegExp(
@@ -15,6 +30,7 @@ bool checkPostalCode(String code) {
     caseSensitive: false,
   ).hasMatch(code);
 }
+
 
 bool isValidAustralianPhoneNumber(String phone) {
   final pattern = RegExp(r'^(\+61|0)[23478]\d{8}$');

@@ -11,63 +11,74 @@ class JobLocationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-       final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+    final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              _sectionHeader("Job Location"),
-               SizedBox(
-                  height: 16,
-                ),
-                InputTextField(
-                  hintText: "Location",
-                  title: "Search Location",
-                  isRequired: true,
-                ),
-                SizedBox(height: 10,),
-                _buildCountryList(jobCreateVM),
-                SizedBox(height: 10,),
-                 InputTextField(
-                  hintText: "Enter city / Post code",
-                  title: "State",
-                  isRequired: true,
-                ),
-                SizedBox(height: 10),
-                 InputTextField(
-                  hintText: "Enter city / Post code",
-                  title: "City / Post Code",
-                  isRequired: true,
-                ),
-                SizedBox(height: 8),
+            _sectionHeader("Job Location"),
+            const SizedBox(height: 16),
+            InputTextField(
+              controller: jobCreateVM.locationSearchController,
+              hintText: "Location",
+              title: "Search Location",
+              isRequired: true,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter location' : null,
+            ),
+            const SizedBox(height: 10),
+            _buildCountryList(jobCreateVM),
+            const SizedBox(height: 10),
+            InputTextField(
+              controller: jobCreateVM.stateController,
+              hintText: "Enter state",
+              title: "State",
+              isRequired: true,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter state' : null,
+            ),
+            const SizedBox(height: 10),
+            InputTextField(
+              controller: jobCreateVM.cityPostCodeController,
+              hintText: "Enter city / Post code",
+              title: "City / Post Code",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter city or post code'
+                  : null,
+            ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
     );
   }
-   Widget _sectionHeader(String title) {
+  Widget _sectionHeader(String title) {
     return Text(
       title,
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
-   Widget _buildCountryList(JobCreateViewModel jobCreateVM) {
+  Widget _buildCountryList(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-        isRequired: true,
-        value: jobCreateVM.selectCountry,
-        title: "Country",
-        onChanged: (v) {
-         jobCreateVM.setSelectedCountry(v as String);
-        },
-        items: jobCreateVM.countryList
-            .map<DropdownMenuItem<Object>>((String value) {
-          return DropdownMenuItem<Object>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        hintText: "Select Country");
+      isRequired: true,
+      value: jobCreateVM.selectCountry,
+      title: "Country",
+      onChanged: (v) {
+        jobCreateVM.setSelectedCountry(v as String);
+      },
+      items: jobCreateVM.countryList.map<DropdownMenuItem<Object>>((String value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select Country",
+      validator: (value) =>
+          value == null || value.toString().isEmpty ? 'Please select a country' : null,
+    );
   }
 }
