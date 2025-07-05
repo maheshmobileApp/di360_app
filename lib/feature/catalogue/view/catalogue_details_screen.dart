@@ -33,9 +33,10 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
+            addVertical(6),
             SizedBox(
               height: 450,
               child: Card(
@@ -46,7 +47,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.only(left: 10,right: 10,top: 10),
                         child: HorizantalPdf(
                           key: ValueKey(
                             catalogueVM.cataloguesByIdData?.attachment?.url ??

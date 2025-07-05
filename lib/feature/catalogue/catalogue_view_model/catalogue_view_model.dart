@@ -42,11 +42,32 @@ class CatalogueViewModel extends ChangeNotifier {
     'favourites': true,
   };
 
+  Map<String, bool> expandedCategories = {};
+
+  void initializeExpanded(List<CatalogueCategories> categories) {
+    if (categories.isNotEmpty) {
+      expandedCategories[categories.first.name ?? ''] = true;
+    }
+    notifyListeners();
+  }
+
+  bool isExpanded(String categoryName) {
+    return expandedCategories[categoryName] ?? false;
+  }
+
+  void toggleExpanded(String categoryName) {
+    expandedCategories[categoryName] =
+        !(expandedCategories[categoryName] ?? false);
+    notifyListeners();
+  }
+
   Future<void> fetchCatalogue(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 1));
 
     Loaders.circularShowLoader(context);
-    catalogueCategories = await repo.getCatalogue(searchController.text);
+    catalogueCategories =
+        await repo.getCatalogue(searchController.text, catagroies, suppliers);
+    initializeExpanded(catalogueCategories);
     Loaders.circularHideLoader(context);
     for (var cat in catalogueCategories) {
       showMoreMap[cat.name ?? ''] = false;
@@ -216,14 +237,14 @@ class CatalogueViewModel extends ChangeNotifier {
       'suppliers': filterSuppliers?.map((e) {
             return FilterItem(
               name: e.name ?? '',
-              id: e.id.toString(),
+              id: e.id ?? '',
             );
           }).toList() ??
           [],
       'categories': filterCategories?.map((e) {
             return FilterItem(
               name: e.name ?? '',
-              id: e.id.toString(),
+              id: e.id ?? '',
             );
           }).toList() ??
           [],
@@ -255,16 +276,28 @@ class CatalogueViewModel extends ChangeNotifier {
 
   void clearSelections() {
     selectedIndices.updateAll((key, value) => {});
+    searchController.clear();
+    suppliers = [];
+    catagroies = [];
     notifyListeners();
   }
 
+  List<String> suppliers = [];
+  List<String> catagroies = [];
+
   void printSelectedItems() {
+    suppliers = [];
+    catagroies = [];
     selectedIndices.forEach((section, indices) {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {
-        print("Selected items in $section:");
         for (final i in indices) {
-          print(items[i].name);
+          final id = items[i].id;
+          if (section == "suppliers") {
+            suppliers.add(id);
+          } else if (section == "categories") {
+            catagroies.add(id);
+          }
         }
       }
     });

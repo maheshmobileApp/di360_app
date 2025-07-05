@@ -25,28 +25,49 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
   String? adminId;
 
   @override
-  Future<List<CatalogueCategories>> getCatalogue(String? searchText) async {
-    final catalogueData = await http.query(getCatalogueRequest, variables: {
-      "andList": [
-        {
-          "_or": [
-            {
-              "dental_supplier": {
-                "name": {"_ilike": "%$searchText%"}
-              }
-            },
-            {
-              "title": {"_ilike": "%$searchText%"}
+  Future<List<CatalogueCategories>> getCatalogue(String? searchText,
+      List<String>? categories, List<String>? suppliers) async {
+    final andList = <Map<String, dynamic>>[
+      {
+        "_or": [
+          {
+            "dental_supplier": {
+              "name": {"_ilike": "%$searchText%"}
             }
-          ],
-          "status": {
-            "_in": ["APPROVED", "SCHEDULED"]
+          },
+          {
+            "title": {"_ilike": "%$searchText%"}
           }
+        ],
+        "status": {
+          "_in": ["APPROVED", "SCHEDULED"]
         }
-      ],
-      "limit": 50,
-      "offset": 0
-    });
+      }
+    ];
+    if (suppliers != null && suppliers.isNotEmpty) {
+      andList.add({
+        "dental_supplier_id": {
+          "_in": suppliers,
+        }
+      });
+    }
+    if (categories != null && categories.isNotEmpty) {
+      andList.add({
+        "catalogue_category_id": {
+          "_in": categories,
+        }
+      });
+    }
+
+    final catalogueData = await http.query(
+      getCatalogueRequest,
+      variables: {
+        "andList": andList,
+        "limit": 50,
+        "offset": 0,
+      },
+    );
+
     final result = CatalogueData.fromJson(catalogueData);
     return result.catalogueCategories ?? [];
   }
