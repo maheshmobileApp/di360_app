@@ -55,6 +55,7 @@ dependencies:
   dotted_border: ^2.1.0
   flutter_pdfview:
   open_file: ^3.5.10
+  uuid: ^3.0.7
   
 
 dev_dependencies:
