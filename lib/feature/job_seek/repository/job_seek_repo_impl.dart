@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 
 
@@ -22,7 +23,7 @@ class JobSeekRepoImpl extends JobSeekRepository {
   Future<Map<String, dynamic>> applyJob(ApplyJobRequest request) {
     return _http.mutation(
       applyJobMutation,
-      {'object': request.toJson()},
+      {'applyJobobject': request.toJson()},
     );
   }
 
@@ -36,9 +37,22 @@ class JobSeekRepoImpl extends JobSeekRepository {
 
   @override
   Future<Map<String, dynamic>> hireMe(HireMeRequest request) {
-    // TODO: implement hireMe
     return _http.mutation(
       hireMeMutation,
+      {'object': request.toJson()},
+    );
+  }
+  
+  @override
+  Future<Map<String, dynamic>> uploadTheResume(String filePath) async {
+    var value = await _http.uploadImage(filePath);
+    return value;
+  }
+
+  @override
+  Future<Map<String, dynamic>> sendMessageRequest(SendMessageRequest request) {
+    return _http.mutation(
+      sendMessageMutation,
       {'object': request.toJson()},
     );
   }
