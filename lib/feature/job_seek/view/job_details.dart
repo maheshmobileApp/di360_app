@@ -51,6 +51,7 @@ class JobDetailsScreen extends StatelessWidget {
     );
   }
   void _showApplyForm(BuildContext context) {
+    Provider.of<JobSeekViewModel>(context, listen: false).setSelectedJob(job);
     NavigationService().navigateTo(
       RouteList.applyJob,
     );
