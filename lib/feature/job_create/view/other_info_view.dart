@@ -171,7 +171,6 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildEducation(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-      isRequired: true,
       value: jobCreateVM.selectEducation,
       title: "Education level",
       onChanged: (v) => jobCreateVM.setSelectedEducation(v as String),
@@ -182,8 +181,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Select level",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select education level' : null,
+    
     );
   }
 

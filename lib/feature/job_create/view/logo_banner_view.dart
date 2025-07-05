@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
-
+ final homeViewModel = Provider.of<HomeViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -23,7 +24,6 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
           addVertical(20),
           LogoContainer(
             title: "Logo",
-            isRequired: true,
             imageFile: jobCreateVM.logoFile,
             onTap: () => _imagePickerSelection(
               context,
@@ -31,17 +31,9 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
               () => jobCreateVM.pickLogoImage(ImageSource.camera),
             ),
           ),
-          if (jobCreateVM.logoFile == null)
-            const Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Text('Please upload a logo',
-                  style: TextStyle(color: Colors.red)),
-            ),
-
           addVertical(8),
           LogoContainer(
             title: "Banner",
-            isRequired: true,
             imageFile: jobCreateVM.bannerFile,
             onTap: () => _imagePickerSelection(
               context,
@@ -49,12 +41,6 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
               () => jobCreateVM.pickBannerImage(ImageSource.camera),
             ),
           ),
-          if (jobCreateVM.bannerFile == null)
-            const Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Text('Please upload a banner',
-                  style: TextStyle(color: Colors.red)),
-            ),
         ],
       ),
     );
@@ -66,6 +52,7 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
+
   void _imagePickerSelection(
     BuildContext context,
     VoidCallback? galleryOnTap,

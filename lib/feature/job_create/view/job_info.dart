@@ -22,7 +22,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionHeader("Job Info"),
-            const SizedBox(height: 16),
+             SizedBox(height: 16),
 
             InputTextField(
               controller: jobCreateVM.jobTitleController,
@@ -42,19 +42,19 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
               validator: (value) =>
                   value == null || value.isEmpty ? 'Please enter company name' : null,
             ),
-            const SizedBox(height: 8),
+             SizedBox(height: 8),
 
             _buildRoleTypes(jobCreateVM),
-            const SizedBox(height: 8),
+             SizedBox(height: 8),
 
             _buildEmpTypes(jobCreateVM),
-            const SizedBox(height: 8),
+             SizedBox(height: 8),
 
             _showEmpTypes(jobCreateVM),
-            const SizedBox(height: 8),
+             SizedBox(height: 8),
 
             if (jobCreateVM.showLocumDate) ...[
-        const SizedBox(height: 8,),
+         SizedBox(height: 8,),
        CustomDatePicker(
        controller: jobCreateVM.locumDateController,
        text: null,
@@ -78,10 +78,10 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
       return null;
     },
   ),
-  const Divider(thickness: 4),
-  const SizedBox(height: 16),
+   Divider(thickness: 4),
+   SizedBox(height: 16),
   _sectionHeader("Job Description"),
-  const SizedBox(height: 16),
+   SizedBox(height: 16),
   InputTextField(
     controller: jobCreateVM.jobDescController,
     hintText: "Enter job description here",

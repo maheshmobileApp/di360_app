@@ -100,55 +100,77 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
     }
   }
 
-  Widget _bottomButtons(
-      BuildContext context, JobCreateViewModel jobCreateVM) {
-    bool isLastStep = jobCreateVM.currentStep == jobCreateVM.totalSteps - 1;
-    bool isFirstStep = jobCreateVM.currentStep == 0;
+  Widget _bottomButtons(BuildContext context, JobCreateViewModel jobCreateVM) {
+    int currentStep = jobCreateVM.currentStep;
+    bool isLastStep = currentStep == jobCreateVM.totalSteps - 1;
+    bool isFirstStep = currentStep == 0;
+
     return Container(
-      height: getSize(context).height * 0.1,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.87),
-          blurRadius: 5.0,
-        )
-      ], color: AppColors.whiteColor),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+      height: 80,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.whiteColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5.0,
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          /// Previous Button
+          if (!isFirstStep)
             Expanded(
               child: CustomRoundedButton(
-                height: 42,
-                text: 'Save Draft',
+                  fontSize: 12,
+                text: 'Previous',
+                height:42,
                 onPressed: () {
                   jobCreateVM.goToPreviousStep();
                 },
-                backgroundColor: AppColors.timeBgColor,
-                textColor: AppColors.primaryColor,
+                backgroundColor: AppColors.geryColor,
+                textColor: Colors.black,
               ),
             ),
-            SizedBox(width: 16),
-            Expanded(
-              child: CustomRoundedButton(
-                text: isLastStep ? 'Save Job' : 'Next',
-                height: 42,
-                onPressed: () {
-                  final currentFormKey =
-                      jobCreateVM.formKeys[jobCreateVM.currentStep];
-                  if (currentFormKey.currentState?.validate() ?? false) {
-                    if (isLastStep) {
-                    } else {
-                      jobCreateVM.goToNextStep();
-                    }
+          if (!isFirstStep) const SizedBox(width: 16),
+
+          /// Save Draft Button
+          Expanded(
+            child: CustomRoundedButton(
+              fontSize: 12,
+              text: 'Save Draft',
+              height:42,
+              onPressed: () {
+                print("Save Draft Clicked");
+                // Add your save draft logic
+              },
+              backgroundColor: AppColors.timeBgColor,
+              textColor: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(width: 16),
+
+          Expanded(
+            child: CustomRoundedButton(
+              text: isLastStep ? 'Submit' : 'Next',
+              height:42,
+                fontSize: 12,
+              onPressed: () {
+                final currentFormKey =
+                    jobCreateVM.formKeys[jobCreateVM.currentStep];
+                if (currentFormKey.currentState?.validate() ?? false) {
+                  if (isLastStep) {
+                  } else {
+                    jobCreateVM.goToNextStep();
                   }
-                },
-                backgroundColor: AppColors.primaryColor,
-                textColor: AppColors.whiteColor,
-              ),
+                }
+              },
+              backgroundColor: AppColors.primaryColor,
+              textColor: AppColors.whiteColor,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

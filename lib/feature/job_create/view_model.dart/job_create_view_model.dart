@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
@@ -58,8 +60,18 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // Form & PageView
   final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
-  final List<GlobalKey<FormState>> formKeys = List.generate(6, (_) => GlobalKey<FormState>());
-  final List<String> steps = ['Job Info', 'Logo, etc', 'Location', 'Other info', 'Pay', 'Links'];
+  final List<GlobalKey<FormState>> formKeys =
+      List.generate(6, (_) => GlobalKey<FormState>());
+
+  final List<int> stepsWithValidation = [0, 2, 4];
+  final List<String> steps = [
+    'Job Info',
+    'Logo, etc',
+    'Location',
+    'Other info',
+    'Pay',
+    'Links'
+  ];
   final PageController pageController = PageController();
   int _currentStep = 0;
   int get currentStep => _currentStep;
@@ -67,12 +79,41 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // Static data
   final List<String> countryList = ["India", "us", "pk"];
-  final List<String> HireList = ["urgently", "1-2 weeks", "2-4 weeks", "More than 4 weeks"];
+  final List<String> HireList = [
+    "urgently",
+    "1-2 weeks",
+    "2-4 weeks",
+    "More than 4 weeks"
+  ];
   final List<String> positionsOptions = ["1", "2", "3", "4", "5", "6+"];
-  final List<String> experienceOptions = ["0", "1-2", "3-5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35", "35-40", "40+"];
-  final List<String> educationLevels = ["High School", "Diploma", "Graduate", "Postgraduate", "PhD"];
+  final List<String> experienceOptions = [
+    "0",
+    "1-2",
+    "3-5",
+    "5-10",
+    "10-15",
+    "15-20",
+    "20-25",
+    "25-30",
+    "30-35",
+    "35-40",
+    "40+"
+  ];
+  final List<String> educationLevels = [
+    "High School",
+    "Diploma",
+    "Graduate",
+    "Postgraduate",
+    "PhD"
+  ];
   final List<String> payRanges = ["Range"];
-  final List<String> rateTypes = ["Per year", "Per month", "Per week", "Per hour", "Commission"];
+  final List<String> rateTypes = [
+    "Per year",
+    "Per month",
+    "Per week",
+    "Per hour",
+    "Commission"
+  ];
 
   // Employment types
   final List<String> _selectedEmploymentChips = [];
@@ -89,7 +130,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     if (!validateCurrentStep()) return;
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
-      pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
+      pageController.nextPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.ease);
       notifyListeners();
     }
   }
@@ -97,7 +139,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   void goToPreviousStep() {
     if (_currentStep > 0) {
       _currentStep--;
-      pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
+      pageController.previousPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.ease);
       notifyListeners();
     }
   }
@@ -112,7 +155,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Validation Methods ─────
   bool validateCurrentStep() {
-    if (_currentStep == 1) return validateLogoAndBanner();
+    // if (_currentStep == 1) return validateLogoAndBanner();
     if (_currentStep == 5) return validateOtherLinksStep();
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
@@ -125,15 +168,24 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     return otherLinksFormKey.currentState?.validate() ?? false;
   }
 
-  String? validateMinSalary() => validateSalaryField(minSalaryController.text, field: 'minimum');
-  String? validateMaxSalary() => validateSalaryField(maxSalaryController.text, field: 'maximum');
-  String? validateVideoLink(String? _) => validateOptionalUrl(videoLinkController.text);
-  String? validateWebsite(String? _) => validateOptionalUrl(websiteController.text);
-  String? validateFacebook(String? _) => validateOptionalUrl(facebookController.text);
-  String? validateInstagram(String? _) => validateOptionalUrl(instgramController.text);
-  String? validateLinkedIn(String? _) => validateOptionalUrl(linkedInController.text);
-  String? validateStartDateField(String? _) => validateStartDate(isStartDateEnabled, startDate);
-  String? validateEndDateField(String? _) => validateEndDate(isEndDateEnabled, endDate);
+  String? validateMinSalary() =>
+      validateSalaryField(minSalaryController.text, field: 'minimum');
+  String? validateMaxSalary() =>
+      validateSalaryField(maxSalaryController.text, field: 'maximum');
+  String? validateVideoLink(String? _) =>
+      validateOptionalUrl(videoLinkController.text);
+  String? validateWebsite(String? _) =>
+      validateOptionalUrl(websiteController.text);
+  String? validateFacebook(String? _) =>
+      validateOptionalUrl(facebookController.text);
+  String? validateInstagram(String? _) =>
+      validateOptionalUrl(instgramController.text);
+  String? validateLinkedIn(String? _) =>
+      validateOptionalUrl(linkedInController.text);
+  String? validateStartDateField(String? _) =>
+      validateStartDate(isStartDateEnabled, startDate);
+  String? validateEndDateField(String? _) =>
+      validateEndDate(isEndDateEnabled, endDate);
 
   // ───── Dropdown setters ─────
   void setSelectedRole(String? value) {
@@ -230,12 +282,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  List<String> getSelectedEmploymentTypes() => List.from(_selectedEmploymentChips);
+  List<String> getSelectedEmploymentTypes() =>
+      List.from(_selectedEmploymentChips);
 
   // ───── File Pickers ─────
   Future<void> pickLogoImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source, imageQuality: 85);
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
+      final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+
       logoFile = File(pickedFile.path);
       NavigationService().goBack();
       notifyListeners();
@@ -243,7 +299,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> pickBannerImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source, imageQuality: 85);
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
       bannerFile = File(pickedFile.path);
       NavigationService().goBack();
