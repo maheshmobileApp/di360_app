@@ -59,13 +59,21 @@ String talentsRequest = r'''query GetJobProfileData {
   }
 }''';
 
-/*
-mutation insert_Enquiry_one($object: talent_enquiries_insert_input!) {
+String hireMeMutation =  r'''
+mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
+  insert_jobhirings_one(object: $hireobject) {
+    id
+  }
+}''';
+
+String enquiryMutation = r'''mutation insert_Enquiry_one($object: talent_enquiries_insert_input!) {
   insert_talent_enquiries_one(object: $object) {
     id
     __typename
   }
-}
+} ''';
+/*
+
 
 {
   "object": {

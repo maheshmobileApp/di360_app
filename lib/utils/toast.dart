@@ -7,7 +7,7 @@ class ToastMessage {
     // Implement your toast message logic here
     // For example, using Flutter's built-in SnackBar or a third-party package
       Fluttertoast.showToast(
-                    msg: 'Failed to send enquiry. Please try again.',
+      msg: message,
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     timeInSecForIosWeb: 1,

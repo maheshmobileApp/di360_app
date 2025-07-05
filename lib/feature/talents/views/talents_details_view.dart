@@ -1,9 +1,16 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
+import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
+import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/education_data_withicon.dart';
@@ -42,6 +49,10 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
             .where((e) => e.isNotEmpty)
             .toList() ??
         [];
+    String profleImage = '';
+    if (talentList!.profileImage.isNotEmpty) {
+      profleImage = talentList!.profileImage.first.url ?? '';
+    } 
     return Column(
       children: [
         Column(
@@ -52,7 +63,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                 showTime: false,
                 createdAt: talentList?.createdAt ?? "",
                 role: talentList?.jobDesignation ?? "",
-                imageUrl: ""),
+                imageUrl: profleImage),
             SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,6 +174,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                 height: 42,
                 text: 'Enquiry',
                 onPressed: () {
+                  _showEnquiryForm(context);
                   // handle Enquiry
                 },
                 backgroundColor: AppColors.timeBgColor,
@@ -174,8 +186,18 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
               child: CustomRoundedButton(
                 text: 'Hire Me',
                 height: 42,
-                onPressed: () {
-                  // handle Hire Me
+                onPressed: () async {
+                  final userId =
+                      await LocalStorage.getStringVal(LocalStorageConst.userId);
+                  final provider =
+                      Provider.of<TalentsViewModel>(context, listen: false);
+                  final hireRequest = HireMeRequest(
+                      dentalProfessionalId: userId,
+                      dentalSupplierId: null,
+                      message: '',
+                      attachments: []);
+                  await provider.hireMe(hireRequest);
+                  ToastMessage.show('Hire Me Request sent successfully!');
                 },
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.whiteColor,
@@ -199,5 +221,46 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
         maxLines: 4,
         overflow: TextOverflow.ellipsis,
         style: TextStyles.regular1(color: AppColors.locationTextColor));
+  }
+
+  void _showEnquiryForm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(16),
+          insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          actions: [
+            CustomRoundedButton(
+              text: "Send",
+              onPressed: () async {
+                navigationService.goBack();
+                final provider =
+                    Provider.of<TalentsViewModel>(context, listen: false);
+                final userId =
+                    await LocalStorage.getStringVal(LocalStorageConst.userId);
+                final enquire = EnquiryRequest(
+                    enquiryDescription: provider.enquiryData ?? '',
+                    talentId: talentList?.id ?? '',
+                    enquiryFrom: userId);
+                await provider.enquire(enquire);
+                ToastMessage.show('Enquiry sent successfully!');
+              },
+              backgroundColor: Colors.orange,
+              textColor: Colors.white,
+            ),
+          ],
+          content: SizedBox(
+              width: 320,
+              child: EnquiryForm(
+                onChange: (String onchageValue) {
+                  final provider =
+                      Provider.of<TalentsViewModel>(context, listen: false);
+                  provider.onChangeEnquireData(onchageValue);
+                },
+              )),
+        );
+      },
+    );
   }
 }

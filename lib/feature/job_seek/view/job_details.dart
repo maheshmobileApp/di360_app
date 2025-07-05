@@ -64,7 +64,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ),
           ],
           content: SizedBox(
-            width: 320, child: EnquiryForm()),
+              width: 320,
+              child: EnquiryForm(
+                onChange: (String onchageValue) {
+                  final provider =
+                      Provider.of<JobSeekViewModel>(context, listen: false);
+                  provider.onChangeEnquireData(onchageValue);
+                },
+              )),
         );
       },
     );
