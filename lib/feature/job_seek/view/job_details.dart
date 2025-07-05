@@ -1,11 +1,13 @@
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
-import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/gallary_view.dart';
@@ -16,12 +18,31 @@ import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class JobDetailsScreen extends StatelessWidget {
+class JobDetailsScreen extends StatefulWidget {
   final Jobs job;
   const JobDetailsScreen({
     super.key,
     required this.job,
   });
+
+  @override
+  State<JobDetailsScreen> createState() => _JobDetailsScreenState();
+}
+
+class _JobDetailsScreenState extends State<JobDetailsScreen> {
+  @override
+  void initState() {
+    getJobApplyStatus();
+    super.initState();
+  }
+
+  void getJobApplyStatus() async {
+    final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    provider.getApplyJobStatus(widget.job.id ?? "", userId);
+  }
+
+
   void _showEnquiryForm(BuildContext context) {
     showDialog(
       context: context,
@@ -30,58 +51,31 @@ class JobDetailsScreen extends StatelessWidget {
           contentPadding: EdgeInsets.all(16),
           insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           actions: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: CustomRoundedButton(
-                text: "Send",
-                onPressed: () {
-                  Provider.of<JobSeekViewModel>(context, listen: false)
-                      .jobEnquire(job.id!);
-                },
-                backgroundColor: Colors.orange,
-                textColor: Colors.white,
-              ),
+            CustomRoundedButton(
+              text: "Send",
+              onPressed: () async {
+                navigationService.goBack();
+                await Provider.of<JobSeekViewModel>(context, listen: false)
+                    .jobEnquire(widget.job.id!);
+                ToastMessage.show('Enquiry sent successfully!');
+              },
+              backgroundColor: Colors.orange,
+              textColor: Colors.white,
             ),
           ],
           content: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: EnquiryForm()),
+            width: 320, child: EnquiryForm()),
         );
       },
     );
   }
+
   void _showApplyForm(BuildContext context) {
-    Provider.of<JobSeekViewModel>(context, listen: false).setSelectedJob(job);
+    Provider.of<JobSeekViewModel>(context, listen: false)
+        .setSelectedJob(widget.job);
     NavigationService().navigateTo(
       RouteList.applyJob,
     );
-    return;
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        contentPadding: EdgeInsets.all(16),
-        insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        actions: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: CustomRoundedButton(
-              text: "Continue",
-              onPressed: () {},
-              backgroundColor: Colors.orange,
-              textColor: Colors.white,
-            ),
-          ),
-        ],
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: SingleChildScrollView(
-              child: ApplyJobsView(),
-          ),
-        ),
-      );
-    },
-  );
 }
 
   @override
@@ -104,12 +98,12 @@ class JobDetailsScreen extends StatelessWidget {
                   centerTitle: false,
                   title: isCollapsed
                       ? Text(
-                          job.title ?? '',
+                          widget.job.title ?? '',
                           style: TextStyle(color: Colors.black, fontSize: 16),
                         )
                       : null,
                   background: CachedNetworkImageWidget(
-                    imageUrl: job.logo ?? '',
+                    imageUrl: widget.job.logo ?? '',
                     width: double.infinity,
                   ),
                 );
@@ -166,13 +160,13 @@ class JobDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      job.companyName ?? '',
+                      widget.job.companyName ?? '',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 4),
                     Text(
-                      job.jRole ?? '',
+                      widget.job.jRole ?? '',
                       style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ],
@@ -190,7 +184,7 @@ class JobDetailsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                Jiffy.parse(job.createdAt ?? '').fromNow(),
+                Jiffy.parse(widget.job.createdAt ?? '').fromNow(),
                 style: TextStyle(
                   color: Colors.orange,
                   fontSize: 12,
@@ -205,17 +199,17 @@ class JobDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             jobInfoItem(ImageConst.briefcaseSvg,
-                '${job.yearsOfExperience ?? 0} Yrs Experience'),
+                '${widget.job.yearsOfExperience ?? 0} Yrs Experience'),
             SizedBox(height: 12),
             jobInfoItem(ImageConst.briefcurrencySvg,
-                '${job.payMin ?? 0} - ${job.payMax ?? 0}'),
+                '${widget.job.payMin ?? 0} - ${widget.job.payMax ?? 0}'),
           ],
         ),
         SizedBox(height: 12),
         Wrap(
           spacing: 1,
           runSpacing: 2,
-          children: job.typeofEmployment
+          children: widget.job.typeofEmployment
                   ?.map((type) => customFilterChip(type.toString()))
                   .toList() ??
               [],
@@ -224,11 +218,11 @@ class JobDetailsScreen extends StatelessWidget {
         InfoItem(
             iconPath: ImageConst.hiringSvg,
             title: 'Looking for hire',
-            subtitle: '${job.hiringPeriod}'),
+            subtitle: '${widget.job.hiringPeriod}'),
         InfoItem(
             iconPath: ImageConst.graduationSvg,
             title: 'Education Level',
-            subtitle: '${job.education}'),
+            subtitle: '${widget.job.education}'),
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
@@ -236,51 +230,51 @@ class JobDetailsScreen extends StatelessWidget {
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
-            subtitle: '${job.rateBilling}'),
+            subtitle: '${widget.job.rateBilling}'),
         Divider(height: 30),
         _sectionHeader('Job Description'),
-        _sectionText('${job.description ?? ''}'),
+        _sectionText('${widget.job.description ?? ''}'),
         SizedBox(height: 10),
         _sectionHeader('Key Responsibilities'),
         _sectionText('NA'),
         SizedBox(height: 10),
         _sectionHeader('About Company'),
-        _sectionText('${job.companyName}'),
+        _sectionText('${widget.job.companyName}'),
         SizedBox(height: 10),
         InkWell(
           onTap: () {},
           child: Text(
-            '${job.currentCompany ?? ''}',
+            '${widget.job.currentCompany ?? ''}',
             style: TextStyle(
                 color: Colors.blue, decoration: TextDecoration.underline),
           ),
         ),
         SizedBox(height: 20),
         _sectionHeader('Job Location'),
-        Text('${job.location ?? ''}'),
+        Text('${widget.job.location ?? ''}'),
         locationView(context),
         _sectionHeader('Gallery'),
         GalleryView(
-            imageUrls: job.clinicLogo!.map((e) => e.url ?? '').toList()),
+            imageUrls: widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
         _sectionHeader('Social Media Handles'),
         Row(
           children: [
-            if (job.facebookUrl!.isNotEmpty)
+            if (widget.job.facebookUrl!.isNotEmpty)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.facebookSvg),
                   onPressed: () async {
-                    final Uri appUri = Uri.parse(job.facebookUrl!);
+                    final Uri appUri = Uri.parse(widget.job.facebookUrl!);
                     if (await canLaunchUrl(appUri)) {
                       await launchUrl(appUri,
                           mode: LaunchMode.externalApplication);
                       return;
                     }
                   }),
-            if (job.instagramUrl!.isNotEmpty)
+            if (widget.job.instagramUrl!.isNotEmpty)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
                   onPressed: () async {
-                    final Uri appUri = Uri.parse(job.instagramUrl!);
+                    final Uri appUri = Uri.parse(widget.job.instagramUrl!);
                     if (await canLaunchUrl(appUri)) {
                       await launchUrl(appUri,
                           mode: LaunchMode.externalApplication);
@@ -350,7 +344,7 @@ class JobDetailsScreen extends StatelessWidget {
   }
 
   Future<void> _openLocationInMaps(BuildContext context) async {
-    if (job.location == null || job.location!.isEmpty) {
+    if (widget.job.location == null || widget.job.location!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Location not available'),
@@ -360,7 +354,7 @@ class JobDetailsScreen extends StatelessWidget {
       return;
     }
 
-    final String location = Uri.encodeComponent(job.location!);
+    final String location = Uri.encodeComponent(widget.job.location!);
     final String googleMapsApp = 'google.navigation:q=$location';
     final String googleMapsWeb =
         'https://www.google.com/maps/search/?api=1&query=$location';
