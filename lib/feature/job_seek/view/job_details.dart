@@ -1,9 +1,11 @@
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
-import 'package:di360_flutter/feature/job_seek/view/apply_foam.dart';
+import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/gallary_view.dart';
@@ -49,6 +51,10 @@ class JobDetailsScreen extends StatelessWidget {
     );
   }
   void _showApplyForm(BuildContext context) {
+    NavigationService().navigateTo(
+      RouteList.applyJob,
+    );
+    return;
   showDialog(
     context: context,
     builder: (context) {
@@ -69,7 +75,7 @@ class JobDetailsScreen extends StatelessWidget {
         content: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: SingleChildScrollView(
-            child: ApplyJobsForm(),
+              child: ApplyJobsView(),
           ),
         ),
       );

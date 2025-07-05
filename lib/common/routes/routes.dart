@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.da
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
+import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
@@ -30,6 +31,7 @@ class Routes {
       RouteList.roleScreen: (context) => RoleSelectionScreen(),
       RouteList.practiceDetailsScreen: (context) => PracticeDetailsScreen(),
       RouteList.jobCreate: (context) => JobCreateView(),
+      RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobDetailsScreen(

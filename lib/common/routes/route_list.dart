@@ -16,5 +16,6 @@ class RouteList {
   static const String catalogueDetails = '/catalogueDetails';
  static const String talentdetailsScreen = '/talentdetailsScreen';
   static const String jobCreate="/jobCreate";
+  static const String applyJob = '/applyJob';
   //static const String commentScreen = '/commentScreen';
 }
