@@ -23,9 +23,11 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: () {
-          NavigationService().goBack();
-        }, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+            onPressed: () {
+              NavigationService().goBack();
+            },
+            icon: Icon(Icons.arrow_back_ios)),
         title: Text(
           "Create New Job",
           style: TextStyles.medium2(),
@@ -45,14 +47,17 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
       ),
       body: Column(
         children: [
-          _buildStepProgressBar(jobCreateVM.currentStep,jobCreateVM.totalSteps, jobCreateVM),
+          _buildStepProgressBar(
+              jobCreateVM.currentStep, jobCreateVM.totalSteps, jobCreateVM),
           Expanded(
             child: PageView(
-              controller:jobCreateVM.pageController,
+              controller: jobCreateVM.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-                  jobCreateVM.totalSteps,
-                  (index) => _buildStep(JobCreateSteps.values[index])),
+                jobCreateVM.totalSteps,
+                (index) => _buildStep(
+                    JobCreateSteps.values[index], jobCreateVM.formKeys[index]),
+              ),
             ),
           ),
           _bottomButtons(context, jobCreateVM),
@@ -61,15 +66,25 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildStepProgressBar(currentStep, totalSteps,JobCreateViewModel jobcreateVm) {
+  Widget _buildStepProgressBar(
+      currentStep, totalSteps, JobCreateViewModel jobcreateVm) {
     return StepsView(
-        currentStep: jobcreateVm.currentStep, totalSteps: jobcreateVm.totalSteps, stepTitles: jobcreateVm.steps);
+        currentStep: jobcreateVm.currentStep,
+        totalSteps: jobcreateVm.totalSteps,
+        stepTitles: jobcreateVm.steps);
   }
 
-  Widget _buildStep(JobCreateSteps stepIndex) {
+  Widget _buildStep(JobCreateSteps stepIndex, GlobalKey<FormState> key) {
+    return Form(
+      key: key,
+      child: _getStepWidget(stepIndex),
+    );
+  }
+
+  Widget _getStepWidget(JobCreateSteps stepIndex) {
     switch (stepIndex) {
       case JobCreateSteps.JOBINFO:
-        return JobInfo(); 
+        return JobInfo();
       case JobCreateSteps.LOGOANDBANNER:
         return LogoAndBannerView();
       case JobCreateSteps.JOBLOCATION:
@@ -81,11 +96,12 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
       case JobCreateSteps.OTHERLINKS:
         return OtherLinksView();
       default:
-        return Center(child: Text("Step ${stepIndex.value + 1}"));
+        return Center(child: Text("Step \${stepIndex.value + 1}"));
     }
   }
 
-  Widget _bottomButtons(BuildContext context, JobCreateViewModel jobCreateVM) {
+  Widget _bottomButtons(
+      BuildContext context, JobCreateViewModel jobCreateVM) {
     bool isLastStep = jobCreateVM.currentStep == jobCreateVM.totalSteps - 1;
     bool isFirstStep = jobCreateVM.currentStep == 0;
     return Container(
@@ -118,7 +134,14 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
                 text: isLastStep ? 'Save Job' : 'Next',
                 height: 42,
                 onPressed: () {
-                  jobCreateVM.goToNextStep();
+                  final currentFormKey =
+                      jobCreateVM.formKeys[jobCreateVM.currentStep];
+                  if (currentFormKey.currentState?.validate() ?? false) {
+                    if (isLastStep) {
+                    } else {
+                      jobCreateVM.goToNextStep();
+                    }
+                  }
                 },
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.whiteColor,

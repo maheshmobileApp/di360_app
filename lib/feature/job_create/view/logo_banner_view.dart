@@ -13,32 +13,48 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionHeader("Logo & Banner"),
           addVertical(20),
           LogoContainer(
-              title: "Logo",
-              isRequired: true,
-              imageFile: jobCreateVM.logoFile,
-              onTap: () => _imagePickerSelection(context, () {
-                    jobCreateVM.pickLogoImage(ImageSource.gallery);
-                  }, () {
-                    jobCreateVM.pickLogoImage(ImageSource.camera);
-                  })),
+            title: "Logo",
+            isRequired: true,
+            imageFile: jobCreateVM.logoFile,
+            onTap: () => _imagePickerSelection(
+              context,
+              () => jobCreateVM.pickLogoImage(ImageSource.gallery),
+              () => jobCreateVM.pickLogoImage(ImageSource.camera),
+            ),
+          ),
+          if (jobCreateVM.logoFile == null)
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text('Please upload a logo',
+                  style: TextStyle(color: Colors.red)),
+            ),
+
           addVertical(8),
           LogoContainer(
-              isRequired: true,
-              title: "Banner",
-              imageFile: jobCreateVM.bannerFile,
-              onTap: () => _imagePickerSelection(context, () {
-                    jobCreateVM.pickBannerImage(ImageSource.gallery);
-                  }, () {
-                    jobCreateVM.pickBannerImage(ImageSource.camera);
-                  })),
+            title: "Banner",
+            isRequired: true,
+            imageFile: jobCreateVM.bannerFile,
+            onTap: () => _imagePickerSelection(
+              context,
+              () => jobCreateVM.pickBannerImage(ImageSource.gallery),
+              () => jobCreateVM.pickBannerImage(ImageSource.camera),
+            ),
+          ),
+          if (jobCreateVM.bannerFile == null)
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text('Please upload a banner',
+                  style: TextStyle(color: Colors.red)),
+            ),
         ],
       ),
     );
@@ -50,26 +66,29 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
-
   void _imagePickerSelection(
-      BuildContext context, Function()? galleryOnTap, Function()? cameraOnTap) {
+    BuildContext context,
+    VoidCallback? galleryOnTap,
+    VoidCallback? cameraOnTap,
+  ) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext) {
-          return Wrap(
-            children: [
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Gallery'),
-                onTap: galleryOnTap,
-              ),
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Camera'),
-                onTap: cameraOnTap,
-              ),
-            ],
-          );
-        });
+      context: context,
+      builder: (_) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Gallery'),
+              onTap: galleryOnTap,
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Camera'),
+              onTap: cameraOnTap,
+            ),
+          ],
+        );
+      },
+    );
   }
 }

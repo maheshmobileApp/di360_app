@@ -4,7 +4,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +13,10 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -25,12 +25,16 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _checkBox(jobCreateVM.isStartDateEnabled, (val) {
-                  jobCreateVM.toggleStartDate(val ?? false);
-                }, "Start Date"),
-                _checkBox(jobCreateVM.isEndDateEnabled, (val) {
-                  jobCreateVM.toggleEndDate(val ?? false);
-                }, "End Date"),
+                _checkBox(
+                  jobCreateVM.isStartDateEnabled,
+                  (val) => jobCreateVM.toggleStartDate(val ?? false),
+                  "Start Date",
+                ),
+                _checkBox(
+                  jobCreateVM.isEndDateEnabled,
+                  (val) => jobCreateVM.toggleEndDate(val ?? false),
+                  "End Date",
+                ),
               ],
             ),
             Row(
@@ -45,10 +49,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             : '',
                       ),
                       onTap: jobCreateVM.isStartDateEnabled
-                          ? () {
-                              pickAndSetDate(context, jobCreateVM.setStartDate);
-                            }
+                          ? () => pickAndSetDate(context, jobCreateVM.setStartDate)
                           : null,
+                      validator: (_) => jobCreateVM.validateStartDate(
+                        jobCreateVM.isStartDateEnabled,
+                        jobCreateVM.startDate,
+                      ),
                     ),
                   ),
                 ),
@@ -63,16 +69,18 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             : '',
                       ),
                       onTap: jobCreateVM.isEndDateEnabled
-                          ? () {
-                              pickAndSetDate(context, jobCreateVM.setEndDate);
-                            }
+                          ? () => pickAndSetDate(context, jobCreateVM.setEndDate)
                           : null,
+                      validator: (_) => jobCreateVM.validateEndDate(
+                        jobCreateVM.isEndDateEnabled,
+                        jobCreateVM.endDate,
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
-            addVertical(4),
+            addVertical(16),
             _buildHireData(jobCreateVM),
             addVertical(8),
             _buildPositions(jobCreateVM),
@@ -90,15 +98,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
     return Row(
       children: [
         Checkbox(
-          
-          visualDensity:VisualDensity.compact ,
-          autofocus: false,
-          value: value, onChanged: onChanged),
-        Text(
-          text,
-          style: TextStyles.regular2(),
+          visualDensity: VisualDensity.compact,
+          value: value,
+          onChanged: onChanged,
         ),
-        SizedBox(width: 20),
+        Text(text, style: TextStyles.regular2()),
+        const SizedBox(width: 20),
       ],
     );
   }
@@ -112,74 +117,74 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildHireData(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-        isRequired: true,
-        value: jobCreateVM.selectHire,
-        title: "How quickly to Hire",
-        onChanged: (v) {
-          jobCreateVM.setSelectedHireRange(v as String);
-        },
-        items:
-            jobCreateVM.HireList.map<DropdownMenuItem<Object>>((String value) {
-          return DropdownMenuItem<Object>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        hintText: "Eg: immediate, 1 month, etc...");
+      isRequired: true,
+      value: jobCreateVM.selectHire,
+      title: "How quickly to Hire",
+      onChanged: (v) => jobCreateVM.setSelectedHireRange(v as String),
+      items: jobCreateVM.HireList.map((value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Eg: immediate, 1 month, etc...",
+      validator: (value) =>
+          value == null || value.toString().isEmpty ? 'Please select hiring time' : null,
+    );
   }
 
   Widget _buildPositions(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-        isRequired: true,
-        value: jobCreateVM.selectPositions,
-        title: "No. of Positions",
-        onChanged: (v) {
-          jobCreateVM.setSelectedPositions(v as String);
-        },
-        items: jobCreateVM.positionsOptions
-            .map<DropdownMenuItem<Object>>((String value) {
-          return DropdownMenuItem<Object>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        hintText: "select 0-100");
+      isRequired: true,
+      value: jobCreateVM.selectPositions,
+      title: "No. of Positions",
+      onChanged: (v) => jobCreateVM.setSelectedPositions(v as String),
+      items: jobCreateVM.positionsOptions.map((value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select 0-100",
+      validator: (value) =>
+          value == null || value.toString().isEmpty ? 'Please select position count' : null,
+    );
   }
 
   Widget _buildExperience(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-        isRequired: true,
-        value: jobCreateVM.selectExperience,
-        title: "Experience",
-        onChanged: (v) {
-          jobCreateVM.setSelectedExperience(v as String);
-        },
-        items: jobCreateVM.experienceOptions
-            .map<DropdownMenuItem<Object>>((String value) {
-          return DropdownMenuItem<Object>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        hintText: "select 0-20");
+      isRequired: true,
+      value: jobCreateVM.selectExperience,
+      title: "Experience",
+      onChanged: (v) => jobCreateVM.setSelectedExperience(v as String),
+      items: jobCreateVM.experienceOptions.map((value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select 0-20",
+      validator: (value) =>
+          value == null || value.toString().isEmpty ? 'Please select experience' : null,
+    );
   }
 
   Widget _buildEducation(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-        isRequired: true,
-        value: jobCreateVM.selectEducation,
-        title: "Education level",
-        onChanged: (v) {
-          jobCreateVM.setSelectedEducation(v as String);
-        },
-        items: jobCreateVM.educationLevels
-            .map<DropdownMenuItem<Object>>((String value) {
-          return DropdownMenuItem<Object>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        hintText: "select level");
+      isRequired: true,
+      value: jobCreateVM.selectEducation,
+      title: "Education level",
+      onChanged: (v) => jobCreateVM.setSelectedEducation(v as String),
+      items: jobCreateVM.educationLevels.map((value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select level",
+      validator: (value) =>
+          value == null || value.toString().isEmpty ? 'Please select education level' : null,
+    );
   }
 
   Future<void> pickAndSetDate(
@@ -192,9 +197,8 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
-
     if (picked != null) {
-      setDate(picked); // Use the passed callback
+      setDate(picked);
     }
   }
 }

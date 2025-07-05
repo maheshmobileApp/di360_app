@@ -2,34 +2,37 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 
-class CustomDropDown extends StatelessWidget {
+class CustomDropDown<T> extends StatelessWidget {
   final String title;
-  final List<DropdownMenuItem<Object>> items;
-  final Function(Object?) onChanged;
-  // final List<DropdownMenuEntry<Object?>> dropdownMenuEntries;
+  final List<DropdownMenuItem<T>> items;
+  final Function(T?) onChanged;
   final Function()? onTap;
   final String hintText;
   final Color? bgcolor;
   final BoxDecoration? decoration;
   final TextStyle? style;
   final TextStyle? hintstyle;
-  final Object? value;
+  final T? value;
   final bool isRequired;
   final Color? titleColor;
-  const CustomDropDown(
-      {super.key,
-      required this.title,
-      this.style,
-      this.hintstyle,
-      required this.items,
-      required this.onChanged,
-      required this.hintText,
-      this.value,
-      this.decoration,
-      this.bgcolor,
-      this.onTap,
-      this.isRequired = false,
-      this.titleColor});
+  final String? Function(T?)? validator;
+
+  const CustomDropDown({
+    super.key,
+    required this.title,
+    required this.items,
+    required this.onChanged,
+    required this.hintText,
+    this.value,
+    this.style,
+    this.hintstyle,
+    this.decoration,
+    this.bgcolor,
+    this.onTap,
+    this.isRequired = false,
+    this.titleColor,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,57 +40,43 @@ class CustomDropDown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               title,
               style: TextStyles.regular3(color: titleColor ?? AppColors.black),
             ),
             if (isRequired)
-              Text(
+              const Text(
                 ' *',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
           ],
         ),
-        SizedBox(
-          height: 8,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8), // Rounded corners
-            border: Border.all(
-              color: AppColors.geryColor, // Border color
-              width: 1.5, // Border width
+        const SizedBox(height: 8),
+        DropdownButtonFormField<T>(
+          value: value,
+          validator: validator,
+          onChanged: onChanged,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            filled: bgcolor != null,
+            fillColor: bgcolor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: AppColors.geryColor, width: 1.5),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: AppColors.geryColor, width: 1.5),
             ),
           ),
-          child: Row(
-            
-            children: [
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton(
-                  elevation: 1,
-                  // style: TextStyles.regular4(),
-                  // padding: EdgeInsets.only(left: 8, right: 8,top: 2),
-                  items: items,
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: AppColors.black,
-                  ),
-                  value: value,
-                  hint: Text(
-                    hintText,
-                    //  style: TextStyles.para2(),
-                    style: TextStyles.regular4(color: AppColors.dropDownHint)
-                  ),
-                  onChanged: onChanged,
-                )),
-              ),
-            ],
+          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
+          hint: Text(
+            hintText,
+            style: hintstyle ?? TextStyles.regular4(color: AppColors.dropDownHint),
           ),
+          items: items,
         ),
       ],
     );
