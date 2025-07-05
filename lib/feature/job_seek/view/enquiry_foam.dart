@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EnquiryForm extends StatefulWidget {
-  const EnquiryForm({super.key});
+  EnquiryForm({
+    super.key,
+    required this.onChange,
+  });
+  Function(String onchageValue) onChange;
 
   @override
   State<EnquiryForm> createState() => _EnquiryFormState();
@@ -47,9 +51,7 @@ class _EnquiryFormState extends State<EnquiryForm> {
             ),
             InputTextField(
               onChange: (value) {
-                final provider =
-                    Provider.of<JobSeekViewModel>(context, listen: false);
-                provider.onChangeEnquireData(value);
+                widget.onChange(value);
               },
               title: "",
               controller: _messageController,

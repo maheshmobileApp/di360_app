@@ -11,6 +11,10 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
   TalentsCard({super.key,  this.talentList});
   @override
   Widget build(BuildContext context) {
+    String profleImage = '';
+    if (talentList!.profileImage.isNotEmpty) {
+      profleImage = talentList!.profileImage.first.url ?? '';
+    } 
     return Card(
       color: AppColors.whiteColor,
       shape: RoundedRectangleBorder(
@@ -27,7 +31,7 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 _logoWithTitle(
                   context,
-                  "",
+                  profleImage,
                 talentList?.fullName??"",
                   talentList?.professionType ??"",
                 ),
