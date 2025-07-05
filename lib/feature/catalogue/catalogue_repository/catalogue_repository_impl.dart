@@ -106,13 +106,14 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
   Future<dynamic> addLikeCatalogue(String? catalogueId) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userRole = UserRole.fromString(type);
     final data = await http.mutation(addLikeCatalogueQuery, {
       "favObj": {
         "catalogue_id": catalogueId,
         "type": type,
-        "dental_supplier_id": type == UserRole.supplier ? userId : null,
-        "dental_professional_id": type == UserRole.professional ? userId : null,
-        "dental_practice_id": type == UserRole.practice ? userId : null,
+        "dental_supplier_id": userRole == UserRole.supplier ? userId : null,
+        "dental_professional_id": userRole == UserRole.professional ? userId : null,
+        "dental_practice_id": userRole == UserRole.practice ? userId : null,
       }
     });
     return data;

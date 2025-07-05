@@ -41,8 +41,6 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                 child: buildFilters(filterProvider),
               ),
             ),
-
-            // ✅ FIXED BOTTOM BUTTONS
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
@@ -122,10 +120,8 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                 CircleAvatar(
                   radius: 22,
                   backgroundColor: AppColors.black,
-                  child: SvgPicture.asset(
-                    ImageConst.filter,
-                    color: AppColors.whiteColor,
-                  ),
+                  child: SvgPicture.asset(ImageConst.filter,
+                      color: AppColors.whiteColor),
                 )
               ],
             ),
