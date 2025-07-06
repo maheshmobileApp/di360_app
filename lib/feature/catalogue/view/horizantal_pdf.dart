@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,11 +11,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class HorizantalPdf extends StatefulWidget {
   final String fileUrl;
   final String fileName;
+  final bool? isfullScreen;
 
   const HorizantalPdf({
     super.key,
     required this.fileUrl,
     required this.fileName,
+    this.isfullScreen = false,
   });
 
   @override
@@ -84,46 +88,85 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
       return const Center(child: Text("Failed to load PDF."));
     }
 
-    return Column(
-      children: [
-        Expanded(
-          child: PDFView(
-            filePath: localPath!,
-            enableSwipe: true,
-            swipeHorizontal: true,
-            autoSpacing: false,
-            pageSnap: true,
-            pageFling: true,
-            fitEachPage: true,
-            onError: (error) {
-              debugPrint("PDF View error: $error");
-            },
-            onRender: (_pages) {
-              setState(() {
-                totalPages = _pages;
-              });
-            },
-            onPageChanged: (page, total) {
-              setState(() {
-                currentPage = page ?? 0;
-              });
-              debugPrint("Page changed: $page/$total");
-            },
-          ),
-        ),
-        if (totalPages != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 6),
-            child: SmoothPageIndicator(
-              controller: PageController(initialPage: currentPage),
-              count: totalPages!,
-              effect: ScrollingDotsEffect(
-                dotWidth: 10,dotHeight: 10,
-                activeDotColor: AppColors.primaryColor
+    return widget.isfullScreen == true
+        ? Scaffold(
+            appBar: AppBar(
+              backgroundColor: AppColors.whiteColor,
+              leading: GestureDetector(
+                onTap: () => navigationService.goBack(),
+                child: Icon(Icons.arrow_back_ios_new, color: AppColors.black),
+              ),
+              centerTitle: true,
+              title: Text(
+                widget.fileName,
+                style:
+                    TextStyles.semiBold(color: AppColors.black, fontSize: 16),
               ),
             ),
-          ),
-      ],
-    );
+            body: PDFView(
+              filePath: localPath!,
+              enableSwipe: true,
+              swipeHorizontal: false,
+              autoSpacing: false,
+              pageSnap: true,
+              pageFling: true,
+              fitEachPage: true,
+              onError: (error) {
+                debugPrint("PDF View error: $error");
+              },
+              onRender: (_pages) {
+                setState(() {
+                  totalPages = _pages;
+                });
+              },
+              onPageChanged: (page, total) {
+                setState(() {
+                  currentPage = page ?? 0;
+                });
+                debugPrint("Page changed: $page/$total");
+              },
+            ))
+        : Column(
+            children: [
+              Expanded(
+                child: PDFView(
+                  filePath: localPath!,
+                  enableSwipe: true,
+                  swipeHorizontal: widget.isfullScreen == false ? true : false,
+                  autoSpacing: false,
+                  pageSnap: true,
+                  pageFling: true,
+                  fitEachPage: true,
+                  onError: (error) {
+                    debugPrint("PDF View error: $error");
+                  },
+                  onRender: (_pages) {
+                    setState(() {
+                      totalPages = _pages;
+                    });
+                  },
+                  onPageChanged: (page, total) {
+                    setState(() {
+                      currentPage = page ?? 0;
+                    });
+                    debugPrint("Page changed: $page/$total");
+                  },
+                ),
+              ),
+              if (totalPages != null && widget.isfullScreen == false)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  child: SmoothPageIndicator(
+                    controller: PageController(initialPage: currentPage),
+                    count: totalPages!,
+                    effect: ScrollingDotsEffect(
+                        dotWidth: 10,
+                        dotHeight: 10,
+                        activeDotColor: AppColors.primaryColor),
+                  ),
+                ),
+            ],
+          );
   }
 }

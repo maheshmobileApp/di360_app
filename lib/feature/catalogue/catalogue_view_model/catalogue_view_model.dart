@@ -137,7 +137,8 @@ class CatalogueViewModel extends ChangeNotifier {
   Future<CatalogueFavorites> insertCatalogeLikeObj() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == UserRole.professional) {
+    final userRole = UserRole.fromString(type);
+    if (userRole == UserRole.professional) {
       return CatalogueFavorites(
         id: null,
         catalogueId: null,
@@ -146,7 +147,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: userId,
         dentalSupplierId: null,
       );
-    } else if (type == UserRole.supplier) {
+    } else if (userRole == UserRole.supplier) {
       return CatalogueFavorites(
         id: null,
         catalogueId: null,
@@ -155,7 +156,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: null,
         dentalSupplierId: userId,
       );
-    } else if (type == UserRole.practice) {
+    } else if (userRole == UserRole.practice) {
       return CatalogueFavorites(
         id: null,
         catalogueId: null,
@@ -201,7 +202,8 @@ class CatalogueViewModel extends ChangeNotifier {
   Future<CatalogueFavoritesReleated> insertRelatedCatalogeLikeObj() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == UserRole.professional) {
+    final userRole = UserRole.fromString(type);
+    if (userRole == UserRole.professional) {
       return CatalogueFavoritesReleated(
         id: null,
         catalogueId: null,
@@ -210,7 +212,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: userId,
         dentalSupplierId: null,
       );
-    } else if (type == UserRole.supplier) {
+    } else if (userRole == UserRole.supplier) {
       return CatalogueFavoritesReleated(
         id: null,
         catalogueId: null,
@@ -219,7 +221,7 @@ class CatalogueViewModel extends ChangeNotifier {
         dentalProfessionalId: null,
         dentalSupplierId: userId,
       );
-    } else if (type == UserRole.practice) {
+    } else if (userRole == UserRole.practice) {
       return CatalogueFavoritesReleated(
         id: null,
         catalogueId: null,
