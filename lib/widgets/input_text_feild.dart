@@ -154,7 +154,7 @@ class InputTextField extends StatelessWidget {
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 16),
+              borderRadius: BorderRadius.circular(borderRadius ??8),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,

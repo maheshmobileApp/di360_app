@@ -1,124 +1,97 @@
 import 'package:di360_flutter/common/validations/reg_exp.dart';
 
 mixin ValidationMixins {
-  String? validatePhoneNumber(value) {
-    if (value!.isEmpty) {
-      String errortext = "Please enter your Mobile Number";
-      return errortext;
-    } else if (!isValidAustralianPhoneNumber(value)) {
-      String errortext = 'Enter vaild  mobile number';
-      return errortext;
-    }
-
+  String? validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) return "Please enter your Mobile Number";
+    if (!isValidAustralianPhoneNumber(value)) return 'Enter valid mobile number';
     return null;
   }
 
-  String? validateFirstName(value) {
-    if (value!.isEmpty) {
-      return "Please enter first name";
-    }
+  String? validateFirstName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter first name";
     return null;
   }
 
-  String? validatelastName(value) {
-    if (value!.isEmpty) {
-      return "Please enter last name";
-    }
+  String? validateLastName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter last name";
     return null;
   }
 
-  String? validatePassword(value) {
-    if (value!.isEmpty) {
-      return "Please enter password";
-    }
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) return "Please enter password";
     return null;
   }
 
-  String? validateName(value) {
-    if (value!.isEmpty) {
-      return "Please enter your name";
-    }
+  String? validateName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter your name";
     return null;
   }
 
-  String? validateEmail(value) {
-    if (value!.isEmpty) {
-      return "Please enter your email";
-    } else if (!checkEmailValidation(value)) {
-      return 'Enter vaild email';
-    }
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) return "Please enter your email";
+    if (!checkEmailValidation(value)) return 'Enter valid email';
     return null;
   }
 
-  String? validateRegistration(value) {
-    if (value!.isEmpty) {
-      return "Please enter registration no";
-    }
+  String? validateRegistration(String? value) {
+    if (value == null || value.isEmpty) return "Please enter registration no";
     return null;
   }
 
-  String? validatename(value) {
-    if (value!.isEmpty) {
-      return "Please enter name";
-    }
+  String? validateBusiness(String? value) {
+    if (value == null || value.isEmpty) return "Please enter business name";
     return null;
   }
 
-  String? validateNumber(value) {
-    if (value!.isEmpty) {
-      return "Please enter telephone number";
-    }
+  String? validateState(String? value) {
+    if (value == null || value.isEmpty) return "Please enter state";
     return null;
   }
 
-  String? validateDesc(value) {
-    if (value!.isEmpty) {
-      return "Please enter description";
-    }
+  String? validatePostalCode(String? value) {
+    if (value == null || value.isEmpty) return "Please enter postal code";
+    if (!checkPostalCode(value)) return 'Enter valid postal code';
+    return null;
+  }
+
+  String? validateDesc(String? value) {
+    if (value == null || value.isEmpty) return "Please enter description";
     return null;
   }
 
   String? validateCategory(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please select a category';
-    }
+    if (value == null || value.isEmpty) return 'Please select a category';
     return null;
   }
 
   String? validateOptionalUrl(String? value) {
     if (value == null || value.trim().isEmpty) return null;
-
     final trimmed = value.trim();
     final uri = Uri.tryParse(trimmed);
-
-    if (uri == null ||
-        !(uri.isAbsolute &&
-            (uri.hasScheme &&
-                (uri.scheme == 'http' || uri.scheme == 'https')))) {
+    if (uri == null || !(uri.isAbsolute && uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https'))) {
       return 'Please enter a valid URL';
     }
-
     return null;
   }
 
-  String? validateBusiness(value) {
-    if (value!.isEmpty) {
-      return "Please enter business name";
-    }
+  String? validateRequiredDropdown(String? value, String fieldName) {
+    if (value == null || value.isEmpty) return 'Please select $fieldName';
     return null;
   }
 
-  String? validateState(value) {
-    if (value!.isEmpty) {
-      return "Please enter state";
-    }
+  String? validateSalaryField(String? value, {required String field}) {
+    if (value == null || value.trim().isEmpty) return 'Please enter $field salary';
+    if (double.tryParse(value.trim()) == null) return 'Please enter a valid number';
     return null;
   }
 
-  String? validatePostalCode(value) {
-    if (value!.isEmpty) {
-      return "Please enter postal code";
-    }
+  String? validateStartDate(bool isEnabled, DateTime? startDate) {
+    if (isEnabled && startDate == null) return 'Please select a start date';
+    return null;
+  }
+
+  String? validateEndDate(bool isEnabled, DateTime? endDate) {
+    if (isEnabled && endDate == null) return 'Please select an end date';
     return null;
   }
 }

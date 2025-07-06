@@ -86,3 +86,18 @@ String sendMessageMutation =
     __typename
   }
 }''';
+
+String jobApplyStatusQuery =
+    r'''query getajobswithmyprofile($job_id: uuid, $dental_professional_id: uuid) {
+  job_applicants(
+    where: {
+      _and: [
+        { job_id: { _eq: $job_id } },
+        { dental_professional_id: { _eq: $dental_professional_id } }
+      ]
+    }
+  ) {
+    id
+    dental_professional_id
+  }
+}''';

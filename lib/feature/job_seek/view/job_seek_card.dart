@@ -208,19 +208,6 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   }
 
   String? _getShortTime(String createdAt) {
-    try {
-      final date = Jiffy.parse(createdAt);
-      final now = Jiffy.now();
-
-      final diffDays = now.diff(date, unit: Unit.day);
-      if (diffDays == 0) {
-        final diffHours = now.diff(date, unit: Unit.hour);
-        return '${diffHours}.h ago';
-      } else {
-        return '${diffDays}.d ago';
-      }
-    } catch (_) {
-      return null;
-    }
+    return Jiffy.parse(createdAt).fromNow();
   }
 }

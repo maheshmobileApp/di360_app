@@ -6,8 +6,9 @@ class CustomRoundedButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
   final double width;
+  final double? fontSize;
   final double height;
-
+final TextStyle? txtstyle;
   const CustomRoundedButton({
     super.key,
     required this.text,
@@ -15,7 +16,7 @@ class CustomRoundedButton extends StatelessWidget {
      this.backgroundColor,
      this.textColor,
     this.width = 140,
-    this.height = 50,
+    this.height = 50, this.txtstyle, this.fontSize,
   });
 
   @override
@@ -34,9 +35,9 @@ class CustomRoundedButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: TextStyle(
+          style:  txtstyle ??  TextStyle(
             color: textColor,
-            fontSize: 16,
+            fontSize:fontSize?? 16,
             fontWeight: FontWeight.w600,
           ),
         ),

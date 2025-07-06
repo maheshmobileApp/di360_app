@@ -7,22 +7,18 @@ class CloseButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      right: 0,
-      top: 0,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.pinkAccent, width: 2),
-          ),
-          padding: const EdgeInsets.all(2), 
-          child: const Icon(
-            Icons.close,
-            size: 16,
-            color: Colors.pinkAccent,
-          ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.pinkAccent, width: 2),
+        ),
+        padding: const EdgeInsets.all(2), 
+        child: const Icon(
+          Icons.close,
+          size: 16,
+          color: Colors.pinkAccent,
         ),
       ),
     );

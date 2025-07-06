@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EnquiryForm extends StatefulWidget {
-  const EnquiryForm({super.key});
+  EnquiryForm({
+    super.key,
+    required this.onChange,
+  });
+  Function(String onchageValue) onChange;
 
   @override
   State<EnquiryForm> createState() => _EnquiryFormState();
@@ -22,19 +26,22 @@ class _EnquiryFormState extends State<EnquiryForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: CloseButtonWidget(
-              onTap: () => Navigator.pop(context),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CloseButtonWidget(
+                  onTap: () => Navigator.pop(context),
+                ),
+              ],
             ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
+            const Text(
               "Enquiry",
               style: TextStyle(
                 fontSize: 20,
@@ -42,20 +49,17 @@ class _EnquiryFormState extends State<EnquiryForm> {
                 color: Colors.deepOrange,
               ),
             ),
-          ),
-          SizedBox(height: 16),
-          InputTextField(
-            onChange: (value) {
-              final provider =
-                  Provider.of<JobSeekViewModel>(context, listen: false);
-              provider.onChangeEnquireData(value);
-            },
-            title: "Message",
-            controller: _messageController,
-            hintText: "Write Something...",
-            maxLines: 5,
-          ),
-        ],
+            InputTextField(
+              onChange: (value) {
+                widget.onChange(value);
+              },
+              title: "",
+              controller: _messageController,
+              hintText: "Write Something...",
+              maxLines: 5,
+            ),
+          ],
+        ),
       ),
     );
   }
