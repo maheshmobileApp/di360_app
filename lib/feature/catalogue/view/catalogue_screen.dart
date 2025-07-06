@@ -274,6 +274,7 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
                         addVertical(5),
                         Text(
                           c.title ?? '',
+                          maxLines: 1,
                           style: TextStyles.regular1(color: AppColors.black),
                         )
                       ],

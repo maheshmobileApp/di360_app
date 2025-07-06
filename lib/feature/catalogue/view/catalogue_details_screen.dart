@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widg
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
@@ -82,9 +83,15 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                                 isfullScreen: true,
                               ));
                             },
-                            child: Text('View PDF',
-                                style: TextStyles.regular4(
-                                    color: AppColors.black)),
+                            child: Row(
+                              children: [
+                                Icon(Icons.remove_red_eye,color: AppColors.primaryColor),
+                                addHorizontal(5),
+                                Text('View PDF',
+                                    style: TextStyles.regular4(
+                                        color: AppColors.black)),
+                              ],
+                            ),
                           ),
                           GestureDetector(
                             onTap: () async {
@@ -121,7 +128,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                 ),
               ),
             ),
-            Expanded(child: buildCatalogueSection(context, catalogueVM)),
+            buildCatalogueSection(context, catalogueVM),
           ],
         ),
       ),
@@ -129,42 +136,56 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget buildCatalogueSection(BuildContext context, CatalogueViewModel vm) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          addVertical(18),
-          Center(
-              child: Text('RELATED CATALOGUES',
-                  style:
-                      TextStyles.bold1(color: AppColors.black, fontSize: 16))),
-          addVertical(10),
-          Divider(),
-          addVertical(10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                // padding: EdgeInsets.all(0),
-                // physics: NeverScrollableScrollPhysics(),
-                // shrinkWrap: true,
-                // crossAxisCount: 2,
-                // childAspectRatio: 0.60,
-                children: vm.reletedCatalogues
-                        ?.map((c) => buildCatalogueCard(context, c, vm))
-                        .toList() ??
-                    [],
+  return Card(
+    color: AppColors.whiteColor,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        addVertical(18),
+        Center(
+          child: Text('RELATED CATALOGUES',
+              style: TextStyles.bold1(color: AppColors.black, fontSize: 16)),
+        ),
+        addVertical(10),
+        Divider(),
+        addVertical(10),
+        SizedBox(
+          height: 250, // Enough height for the card
+          child: PageView.builder(
+            controller: vm.pageController,
+            itemCount: vm.reletedCatalogues?.length ?? 0,
+            onPageChanged: vm.onPageChanged,
+            itemBuilder: (context, index) {
+              final catalogue = vm.reletedCatalogues?[index];
+              if (catalogue == null) return SizedBox();
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: buildCatalogueCard(context, catalogue, vm),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Center(
+            child: SmoothPageIndicator(
+              controller: vm.pageController,
+              count: vm.reletedCatalogues?.length ?? 0,
+              effect: ScrollingDotsEffect(
+                dotWidth: 10,
+                dotHeight: 10,
+                activeDotColor: AppColors.primaryColor,
               ),
             ),
           ),
-          addVertical(10),
-        ],
-      ),
-    );
-  }
+        ),
+        addVertical(10),
+      ],
+    ),
+  );
+}
+
 
   Widget buildCatalogueCard(
       BuildContext context, CatalogData catalogues, CatalogueViewModel vm) {

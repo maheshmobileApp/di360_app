@@ -61,6 +61,20 @@ class CatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  final PageController pageController = PageController();
+  int currentPage = 0;
+
+  void onPageChanged(int index) {
+    currentPage = index;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
   Future<void> fetchCatalogue(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 1));
 
