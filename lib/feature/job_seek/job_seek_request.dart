@@ -98,16 +98,6 @@ String jobApplyStatusQuery =
     }
   ) {
     id
-    job_id
-    attachments
     dental_professional_id
-    dental_professional {
-      email
-      phone
-      last_name
-      first_name
-      profile_image
-      created_at
-    }
   }
 }''';

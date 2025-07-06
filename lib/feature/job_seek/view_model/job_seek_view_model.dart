@@ -20,7 +20,6 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   JobSeekViewModel() {
-    fetchJobs();
   }
   int _selectedTabIndex = 0;
   int get selectedTabIndex => _selectedTabIndex;
