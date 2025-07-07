@@ -7,42 +7,34 @@ import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
-
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
-  final JobSeekRepository repo = JobSeekRepoImpl(); // 👈 Create repo here
+  final JobSeekRepository repo = JobSeekRepoImpl();
+  
+
   String? _enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
   List<Jobs> jobs = [];
-  JobSeekViewModel() {
-  }
+
   int _selectedTabIndex = 0;
   int get selectedTabIndex => _selectedTabIndex;
 
   bool isHidleFolatingButton = false;
+
+  JobSeekViewModel() {
+    initializeFilters();
+  }
+
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userRole = UserRole.fromString(type);
-    switch (userRole) {
-      case UserRole.professional:
-        // professional will only see JOb ( cant see talents) no floating
-        isHidleFolatingButton = true; // Dental Professional
-        break;
-      case UserRole.supplier:
-        isHidleFolatingButton = false; // Dental Business Owner
-        break;
-      case UserRole.practice:
-        isHidleFolatingButton = false; // Dental Practice Owner
-        break;
-      default:
-        isHidleFolatingButton = true; //
-    }
-    //Dental Professional
+    isHidleFolatingButton = userRole == UserRole.professional;
     notifyListeners();
   }
 
@@ -50,7 +42,7 @@ class JobSeekViewModel extends ChangeNotifier {
     _selectedTabIndex = index;
     notifyListeners();
   }
- 
+
   Future<void> fetchJobs() async {
     var jobData = await repo.getPopularJobs();
     jobs = jobData.jobs ?? [];
@@ -71,10 +63,9 @@ class JobSeekViewModel extends ChangeNotifier {
     try {
       await repo.enquire(enquireData);
       return true;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
-
   }
 
   void setSelectedJob(Jobs job) {
@@ -82,53 +73,180 @@ class JobSeekViewModel extends ChangeNotifier {
   }
 
   Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
-    ApplyJobRequest payload = applyJobRequest;
-    payload.jobId = selectedJob?.id ?? '';
+    applyJobRequest.jobId = selectedJob?.id ?? '';
     final generatedID = GeneratedId.generateId();
-    payload.id = generatedID;
-    final uploadImage = await repo.uploadTheResume(payload.attachments.url);
+    applyJobRequest.id = generatedID;
+
+    final uploadImage = await repo.uploadTheResume(applyJobRequest.attachments.url);
     final response = UploadResponse.fromJson(uploadImage);
-    Attachment attachment = Attachment(
+    applyJobRequest.attachments = Attachment(
       url: response.url,
       name: response.name,
       type: response.mimeType,
     );
-    payload.attachments = attachment;
+
     try {
-      await repo.applyJob(payload);
+      await repo.applyJob(applyJobRequest);
       sendMessage(applyJobRequest.message, generatedID);
       return true;
-    } catch (e) {
+    } catch (_) {
       return false;
+    }
+  }
+
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
+  final TextEditingController locumDateController = TextEditingController();
+
+  Map<String, List<FilterOption>> filterOptions = {
+    "Location": [FilterOption(name: "Hyderabad"), FilterOption(name: "Bangalore")],
+    "Type": [FilterOption(name: "Full-time"), FilterOption(name: "Part-time")],
+  };
+
+  Map<String, List<int>> selectedIndices = {};
+  Map<String, bool> sectionVisibility = {};
+
+  void initializeFilters() {
+    for (var key in filterOptions.keys) {
+      selectedIndices[key] = [];
+      sectionVisibility[key] = true;
+    }
+  }
+
+  void toggleSection(String section) {
+    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
+    notifyListeners();
+  }
+
+  void selectItem(String section, int index) {
+    if (selectedIndices[section]?.contains(index) ?? false) {
+      selectedIndices[section]?.remove(index);
+    } else {
+      selectedIndices[section]?.add(index);
+    }
+    notifyListeners();
+  }
+
+  void clearSelections() {
+    for (var key in selectedIndices.keys) {
+      selectedIndices[key]?.clear();
+    }
+    selectedEmploymentChips.clear();
+    selectedProfessions.clear();
+    selectedExperience = null;
+    selectedSort = null;
+    locationController.clear();
+    searchController.clear();
+    locumDateController.clear();
+    showLocumDate = false;
+    notifyListeners();
+  }
+
+  void printSelectedItems() {
+    debugPrint("Selected Filters:");
+    filterOptions.forEach((key, items) {
+      final selected = selectedIndices[key]?.map((i) => items[i].name).toList();
+      debugPrint("$key: $selected");
+    });
+    debugPrint("Employment Chips: $selectedEmploymentChips");
+    debugPrint("Professions: $selectedProfessions");
+    debugPrint("Experience: $selectedExperience");
+    debugPrint("Sort: $selectedSort");
+    debugPrint("Locum Date: ${locumDateController.text}");
+  }
+
+  List<String> get employmentOptions => ["Locum", "Contract", "Casual", "Part Time", "Full Time"];
+  List<String> selectedEmploymentChips = [];
+
+  List<String> get professionOptions => [
+    "Surgen",
+    "Dentist",
+    "Dental Hygienist",
+    "Dental Prosthetist",
+    "Dental Specialist"
+  ];
+  List<String> selectedProfessions = [];
+
+  bool showLocumDate = false;
+
+  void toggleEmploymentFilter(String option) {
+    if (selectedEmploymentChips.contains(option)) {
+      selectedEmploymentChips.remove(option);
+      if (option == "Locum") {
+        showLocumDate = false;
+        locumDateController.clear();
+      }
+    } else {
+      selectedEmploymentChips.add(option);
+      if (option == "Locum") {
+        showLocumDate = true;
+      }
+    }
+    notifyListeners();
+  }
+
+  List<String> experienceOptions = ["0", "1–2", "3–5", "5–10", "10–15", "15–20"];
+  String? selectedExperience;
+
+  List<String> sortOptions = ["A to Z", "Z to A"];
+  String? selectedSort;
+
+  void toggleProfession(String profession) {
+    if (selectedProfessions.contains(profession)) {
+      selectedProfessions.remove(profession);
+    } else {
+      selectedProfessions.add(profession);
+    }
+    notifyListeners();
+  }
+
+  void setExperience(String value) {
+    selectedExperience = value;
+    notifyListeners();
+  }
+
+  void setSort(String value) {
+    selectedSort = value;
+    notifyListeners();
+  }
+
+  void pickCustomDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      locumDateController.text = DateFormat('yyyy-MM-dd').format(picked);
+      notifyListeners();
     }
   }
 
   void sendMessage(String message, String applicationId) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final payload = SendMessageRequest(
-        jobApplicantId: applicationId, message: message, messageFrom: userId);
+      jobApplicantId: applicationId,
+      message: message,
+      messageFrom: userId,
+    );
     await repo.sendMessageRequest(payload);
   }
 
   void getApplyJobStatus(String jobId, String dentalProfessionalId) async {
     try {
       final result = await repo.getJobApplyStatus(jobId, dentalProfessionalId);
-      if (result.jobApplicants.isNotEmpty) {
-        final myApplicationStatus = result.jobApplicants.where((applicant) {
-          return applicant.dentalProfessionalId == dentalProfessionalId;
-        }).toList();
-        if (myApplicationStatus.isNotEmpty) {
-          isJobApplied = true;
-          notifyListeners();
-        } else {
-          isJobApplied = false;
-          notifyListeners();
-        }
-        // Handle the result as needed
-      }
+      isJobApplied = result.jobApplicants.any(
+        (applicant) => applicant.dentalProfessionalId == dentalProfessionalId,
+      );
+      notifyListeners();
     } catch (e) {
-      // Handle error
       print("Error fetching job apply status: $e");
     }
   }
+}
+
+class FilterOption {
+  final String name;
+  FilterOption({required this.name});
 }
