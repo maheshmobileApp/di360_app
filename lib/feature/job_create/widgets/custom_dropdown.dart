@@ -39,7 +39,7 @@ class CustomDropDown<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+       if(title.isNotEmpty) Row(
           children: [
             Text(
               title,

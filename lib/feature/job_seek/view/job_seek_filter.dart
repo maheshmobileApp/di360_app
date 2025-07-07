@@ -171,14 +171,12 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               onToggle: (_) {},
               child: _locationSearchBar(model),
             ),
-            // const Divider(),
             _filterSection(
               title: 'Filter by Profession',
               options: model.professionOptions,
               selected: model.selectedProfessions,
               onToggle: model.toggleProfession,
             ),
-            const Divider(),
             _filterSection(
               title: 'Filter by Employment Type',
               options: model.employmentOptions,
@@ -214,7 +212,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                     .toList(),
                 value: model.selectedSort,
                 onChanged: (val) {
-                  if (val != null) model.setSort(val);
+                  if (val != null)  model.setSort(val);
                 },
               ),
             ),
