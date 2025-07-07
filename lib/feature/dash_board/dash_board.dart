@@ -15,56 +15,57 @@ class DashBoard extends StatelessWidget {
     final currentIndex = dashBoardVM.currentIndex;
 
     return Scaffold(
-      body: dashBoardVM.pages[currentIndex],
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        child: Container(
-          // height: 80,
-          child: BottomNavigationBar(
-            backgroundColor: AppColors.backgroundColor,
-            currentIndex: dashBoardVM.currentIndex,
-            onTap: (index) => dashBoardVM.setIndex(index, context),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppColors.primaryColor,
-            unselectedItemColor: AppColors.bottomNavUnSelectedColor,
-            selectedLabelStyle: TextStyles.medium1(),
-            unselectedLabelStyle: TextStyles.regular2(),
-            items: [
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset(ImageConst.home,
-                      color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: SvgPicture.asset(ImageConst.home,
-                      color: AppColors.primaryColor),
-                  label: 'Home'),
-              BottomNavigationBarItem(
-                  icon: Image.asset(ImageConst.feed,
-                      color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: Image.asset(ImageConst.feed,
-                      color: AppColors.primaryColor),
-                  label: 'Feeds'),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset(ImageConst.jobSeek,
-                      color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: SvgPicture.asset(ImageConst.jobSeek,
-                      color: AppColors.primaryColor),
-                  label: 'Job Seek'),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset(ImageConst.catalogue,
-                      color: AppColors.bottomNavUnSelectedColor),
-                  activeIcon: SvgPicture.asset(ImageConst.catalogue,
-                      color: AppColors.primaryColor),
-                  label: 'Catalogue'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: 'Profile'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: 'LogOut'),
-            ],
+        body: dashBoardVM.pages[currentIndex],
+        bottomNavigationBar: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-        ),
-      )
-    );
+          child: Container(
+            // height: 80,
+            child: BottomNavigationBar(
+              backgroundColor: AppColors.backgroundColor,
+              currentIndex: dashBoardVM.currentIndex,
+              onTap: (index) => dashBoardVM.setIndex(index, context),
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: AppColors.primaryColor,
+              unselectedItemColor: AppColors.bottomNavUnSelectedColor,
+              selectedLabelStyle: TextStyles.medium1(),
+              unselectedLabelStyle: TextStyles.regular1(),
+              items: [
+                BottomNavigationBarItem(
+                    icon: SvgPicture.asset(ImageConst.home,
+                        color: AppColors.bottomNavUnSelectedColor),
+                    activeIcon: SvgPicture.asset(ImageConst.home,
+                        color: AppColors.primaryColor),
+                    label: 'Home'),
+                BottomNavigationBarItem(
+                    icon: Image.asset(ImageConst.feed,
+                        color: AppColors.bottomNavUnSelectedColor),
+                    activeIcon: Image.asset(ImageConst.feed,
+                        color: AppColors.primaryColor),
+                    label: 'Feeds'),
+                BottomNavigationBarItem(
+                    icon: SvgPicture.asset(ImageConst.jobSeek,
+                        color: AppColors.bottomNavUnSelectedColor),
+                    activeIcon: SvgPicture.asset(ImageConst.jobSeek,
+                        color: AppColors.primaryColor),
+                    label: 'Job Seek'),
+                BottomNavigationBarItem(
+                    icon: SvgPicture.asset(ImageConst.catalogue,
+                        height: 25,
+                        width: 25,
+                        color: AppColors.bottomNavUnSelectedColor),
+                    activeIcon: SvgPicture.asset(ImageConst.catalogue,
+                        height: 25, width: 25, color: AppColors.primaryColor),
+                    label: 'Catalogue'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person), label: 'Profile'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person), label: 'LogOut'),
+              ],
+            ),
+          ),
+        ));
   }
 }

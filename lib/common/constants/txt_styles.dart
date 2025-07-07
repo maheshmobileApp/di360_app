@@ -76,13 +76,14 @@ class TextStyles {
   }
 
   static semiBold(
-      {Color? color, double? fontSize, TextDecoration? decoration}) {
+      {Color? color, double? fontSize, TextDecoration? decoration,Color? decorationColor}) {
     return TextStyle(
         fontSize: fontSize ?? 12,
         color: color,
         fontFamily: dmSansFamily,
         fontWeight: FontWeight.w600,
-        decoration: decoration);
+        decoration: decoration,
+        decorationColor: decorationColor);
   }
 
   static bold1({Color? color, required int fontSize}) {

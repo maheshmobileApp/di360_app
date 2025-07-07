@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
@@ -28,6 +29,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
+    final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     return Container(
       color: AppColors.whiteColor,
       child: GestureDetector(
@@ -53,7 +55,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 needFeedViewModel,
                 addNeedFeedViewModel),
             addVertical(10),
-            _buildImageRow(),
+            _buildImageRow(catalogueViewModel, context),
             addVertical(5),
             if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
               LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
@@ -205,7 +207,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildImageRow() {
+  Widget _buildImageRow(CatalogueViewModel catalogueVM, BuildContext context) {
     final mediaList = newsfeeds?.postImage ?? [];
 
     if (mediaList.isEmpty) return SizedBox();
@@ -289,9 +291,18 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       final media = mediaList.first;
       return _mediaCard(
         child: buildMediaContent(media),
-        onTap: () {
-          navigationService.push(ImageViewerScreen(postImage: mediaList));
-        },
+        onTap: newsfeeds?.feedType == 'CATALOGUE'
+            ? () async {
+                await catalogueVM.getCatalogDetails(
+                    context, newsfeeds?.payload?.catalogueId ?? '');
+                final id =
+                    catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+                await catalogueVM.getReletedCatalog(context, id);
+                await navigationService.navigateTo(RouteList.catalogueDetails);
+              }
+            : () {
+                navigationService.push(ImageViewerScreen(postImage: mediaList));
+              },
         isFullWidth: true,
       );
     }
@@ -303,9 +314,21 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         children: mediaList.map<Widget>((media) {
           return _mediaCard(
             child: buildMediaContent(media),
-            onTap: () {
-              navigationService.push(ImageViewerScreen(postImage: mediaList));
-            },
+            onTap: newsfeeds?.feedType == 'CATALOGUE'
+                ? () async {
+                    await catalogueVM.getCatalogDetails(
+                        context, newsfeeds?.payload?.catalogueId ?? '');
+                    final id =
+                        catalogueVM.cataloguesByIdData?.catalogueCategoryId ??
+                            '';
+                    await catalogueVM.getReletedCatalog(context, id);
+                    await navigationService
+                        .navigateTo(RouteList.catalogueDetails);
+                  }
+                : () {
+                    navigationService
+                        .push(ImageViewerScreen(postImage: mediaList));
+                  },
           );
         }).toList(),
       ),

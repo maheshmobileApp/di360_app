@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -109,18 +110,53 @@ class _PdfViewrWidgetState extends State<PdfViewrWidget> {
     });
   }
 
+  int currentPage = 0;
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading || localPath == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return PDFView(
-      filePath: localPath,
-      enableSwipe: true,
-      swipeHorizontal: true,
-      autoSpacing: true,
-      pageFling: true,
+    return Column(
+      children: [
+        Expanded(
+          child: PDFView(
+            filePath: localPath,
+            enableSwipe: true,
+            swipeHorizontal: true,
+            autoSpacing: false,
+            pageSnap: true,
+            pageFling: false,
+            fitEachPage: true,
+            onError: (error) {
+              debugPrint("PDF View error: $error");
+            },
+            onRender: (_pages) {
+              setState(() {
+                totalPages = _pages;
+              });
+            },
+            onPageChanged: (page, total) {
+              setState(() {
+                currentPage = page ?? 0;
+              });
+            },
+          ),
+        ),
+        if (totalPages != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: SmoothPageIndicator(
+              controller: PageController(initialPage: currentPage),
+              count: totalPages!,
+              effect: ScrollingDotsEffect(
+                  dotWidth: 10,
+                  dotHeight: 10,
+                  activeDotColor: AppColors.primaryColor),
+            ),
+          )
+      ],
     );
   }
 }

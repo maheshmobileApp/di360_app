@@ -103,28 +103,46 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
                     TextStyles.semiBold(color: AppColors.black, fontSize: 16),
               ),
             ),
-            body: PDFView(
-              filePath: localPath!,
-              enableSwipe: true,
-              swipeHorizontal: false,
-              autoSpacing: false,
-              pageSnap: true,
-              pageFling: true,
-              fitEachPage: true,
-              onError: (error) {
-                debugPrint("PDF View error: $error");
-              },
-              onRender: (_pages) {
-                setState(() {
-                  totalPages = _pages;
-                });
-              },
-              onPageChanged: (page, total) {
-                setState(() {
-                  currentPage = page ?? 0;
-                });
-                debugPrint("Page changed: $page/$total");
-              },
+            body: Column(
+              children: [
+                Expanded(
+                  child: PDFView(
+                    filePath: localPath!,
+                    enableSwipe: true,
+                    swipeHorizontal: true,
+                    autoSpacing: false,
+                    pageSnap: true,
+                    pageFling: true,
+                    fitEachPage: true,
+                    onError: (error) {
+                      debugPrint("PDF View error: $error");
+                    },
+                    onRender: (_pages) {
+                      setState(() {
+                        totalPages = _pages;
+                      });
+                    },
+                    onPageChanged: (page, total) {
+                      setState(() {
+                        currentPage = page ?? 0;
+                      });
+                    },
+                  ),
+                ),
+                if (totalPages != null && widget.isfullScreen == true)
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    child: SmoothPageIndicator(
+                      controller: PageController(initialPage: currentPage),
+                      count: totalPages!,
+                      effect: ScrollingDotsEffect(
+                          dotWidth: 10,
+                          dotHeight: 10,
+                          activeDotColor: AppColors.primaryColor),
+                    ),
+                  )
+              ],
             ))
         : Column(
             children: [
@@ -132,10 +150,10 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
                 child: PDFView(
                   filePath: localPath!,
                   enableSwipe: true,
-                  swipeHorizontal: widget.isfullScreen == false ? true : false,
+                  swipeHorizontal: true,
                   autoSpacing: false,
                   pageSnap: true,
-                  pageFling: true,
+                  pageFling: false,
                   fitEachPage: true,
                   onError: (error) {
                     debugPrint("PDF View error: $error");
@@ -149,7 +167,6 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
                     setState(() {
                       currentPage = page ?? 0;
                     });
-                    debugPrint("Page changed: $page/$total");
                   },
                 ),
               ),
@@ -165,7 +182,7 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
                         dotHeight: 10,
                         activeDotColor: AppColors.primaryColor),
                   ),
-                ),
+                )
             ],
           );
   }

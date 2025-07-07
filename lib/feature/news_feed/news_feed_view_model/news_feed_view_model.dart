@@ -19,6 +19,13 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   List<NewsfeedCategories>? newsfeedCategories;
 
+  String? selectedCategoryId;
+
+  void updateSelectedCategory(String? categoryId) {
+  selectedCategoryId = categoryId;
+  notifyListeners();
+}
+
   String? adminId;
   String? supplierId;
   String? practiceId;

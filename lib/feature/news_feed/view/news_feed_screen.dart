@@ -90,17 +90,29 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                                   child: Text(
                                     v.categoryName ?? '',
                                     style: TextStyles.semiBold(
-                                        color: AppColors.black, fontSize: 14),
+                                        color: newsFeedVM.selectedCategoryId ==
+                                                v.id
+                                            ? AppColors.primaryColor
+                                            : AppColors.black,
+                                        fontSize: 14,
+                                        decoration:
+                                            newsFeedVM.selectedCategoryId ==
+                                                    v.id
+                                                ? TextDecoration.underline
+                                                : TextDecoration.none,
+                                        decorationColor:
+                                            AppColors.primaryColor),
                                   ),
                                 ))
                             .toList() ??
                         [],
                   ).then((value) {
+                    newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
                     if ((value as dynamic)?.categoryName == 'Catalog') {
                       newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
                     } else {
                       newsFeedVM.basedOnCategoriesGetFeeds(
-                          context, false, (value as dynamic)?.id);
+                          context, false, value?.id ?? '');
                     }
                   });
                 },
@@ -114,6 +126,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                       onTap: () {
                         homeViewModel.getAllNewsfeeds(context);
                         newsFeedVM.updateApplyCatageories(false);
+                        newsFeedVM.updateSelectedCategory(null);
                       },
                       child: Icon(Icons.close, color: AppColors.black))
                 ],

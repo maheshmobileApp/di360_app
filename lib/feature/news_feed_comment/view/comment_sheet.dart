@@ -25,33 +25,83 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
     with BaseContextHelpers {
   final Map<String, double> _replyHeights = {};
   final Map<String, GlobalKey> _replyKeys = {};
+  List<NewsFeedsComments>? _sortedComments;
 
-  // @override
-  // void dispose() {
-  //   final viewModel = Provider.of<CommentViewModel>(context, listen: false);
-  //   if (viewModel.replyFocusNode.hasFocus) {
-  //     viewModel.replyFocusNode.unfocus();
-  //   }
-  //   super.dispose();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _initializeSortedComments();
+  }
+
+  void _initializeSortedComments() {
+    if (widget.newsfeeds?.newsFeedsComments != null) {
+      // Create a deep copy to ensure we have a fresh list
+      _sortedComments = List.from(widget.newsfeeds!.newsFeedsComments!);
+      _sortedComments!.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+      
+      // Pre-create GlobalKeys to avoid duplicates
+      for (var comment in _sortedComments!) {
+        if (comment.id != null && !_replyKeys.containsKey(comment.id)) {
+          _replyKeys[comment.id!] = GlobalKey();
+        }
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(CommentBottomSheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Always reinitialize when widget updates to ensure fresh data
+    if (oldWidget.newsfeeds != widget.newsfeeds || 
+        _hasCommentsChanged(oldWidget.newsfeeds?.newsFeedsComments, widget.newsfeeds?.newsFeedsComments)) {
+      _initializeSortedComments();
+    }
+  }
+
+  // Helper method to check if comments have actually changed
+  bool _hasCommentsChanged(List<NewsFeedsComments>? oldComments, List<NewsFeedsComments>? newComments) {
+    if (oldComments == null && newComments == null) return false;
+    if (oldComments == null || newComments == null) return true;
+    if (oldComments.length != newComments.length) return true;
+    
+    // Check if any comment content has changed
+    for (int i = 0; i < oldComments.length; i++) {
+      if (oldComments[i].id != newComments[i].id ||
+          oldComments[i].comments != newComments[i].comments ||
+          oldComments[i].createdAt != newComments[i].createdAt) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommentViewModel>(context);
+    
+    // Always use the latest data from widget.newsfeeds
+    final currentComments = widget.newsfeeds?.newsFeedsComments;
+    
+    // Update sorted comments if the source data has changed
+    if (currentComments != null && 
+        (_sortedComments == null || _hasCommentsChanged(_sortedComments, currentComments))) {
+      _initializeSortedComments();
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: widget.newsfeeds?.newsFeedsComments?.isEmpty ?? true
+      child: _sortedComments?.isEmpty ?? true
           ? Center(
               child: Text('No Comments',
                   style: TextStyles.clashSemiBold(
                       color: AppColors.black, fontSize: 20)))
           : ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: widget.newsfeeds?.newsFeedsComments?.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _sortedComments?.length ?? 0,
               itemBuilder: (context, index) {
-                final comments = widget.newsfeeds?.newsFeedsComments?[index];
+                final comments = _sortedComments?[index];
                 return _buildCommentTile(
                     comments, viewModel, widget.newsfeeds?.id ?? '');
               },
@@ -61,21 +111,16 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
 
   Widget _buildCommentTile(
       NewsFeedsComments? comments, CommentViewModel viewModel, String feedId) {
-    final replyKey =
-        _replyKeys.putIfAbsent(comments?.id ?? '', () => GlobalKey());
+    
+    if (comments?.id == null) {
+      return const SizedBox.shrink();
+    }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = replyKey.currentContext;
-      if (context != null) {
-        final renderBox = context.findRenderObject() as RenderBox;
-        final newHeight = renderBox.size.height - 35;
-        if (_replyHeights[comments?.id] != newHeight) {
-          setState(() {
-            _replyHeights[comments?.id ?? ''] = newHeight;
-          });
-        }
-      }
-    });
+    final replyKey = _replyKeys[comments!.id!];
+    
+    if (replyKey == null) {
+      return const SizedBox.shrink();
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -92,22 +137,22 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
                   radius: 20,
                   child: ClipOval(
                     child: CachedNetworkImageWidget(
-                      imageUrl: comments?.commentProImg ??
-                          comments?.dentalSupplier?.logo?.url ??
-                          comments?.dentalPractice?.logo?.url ??
-                          comments?.dentalProfessional?.profileImage?.url ??
-                          comments?.adminUser?.profileImage ??
+                      imageUrl: comments.commentProImg ??
+                          comments.dentalSupplier?.logo?.url ??
+                          comments.dentalPractice?.logo?.url ??
+                          comments.dentalProfessional?.profileImage?.url ??
+                          comments.adminUser?.profileImage ??
                           '',
                       errorWidget: SvgPicture.asset(ImageConst.logo),
                     ),
                   ),
                 ),
               ),
-              if ((comments?.commentReply?.isNotEmpty ?? false))
+              if ((comments.commentReply?.isNotEmpty ?? false))
                 Container(
                   width: 2,
-                  height: (comments?.commentReply?.isNotEmpty ?? false)
-                      ? (_replyHeights[comments?.id]
+                  height: (comments.commentReply?.isNotEmpty ?? false)
+                      ? (_replyHeights[comments.id]
                               ?.clamp(0, double.infinity) ??
                           80)
                       : 0,
@@ -131,13 +176,13 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(comments?.commenterName ?? '',
+                          Text(comments.commenterName ?? '',
                               style: TextStyles.semiBold(
                                   color: AppColors.black, fontSize: 14)),
                           addHorizontal(20),
                           Expanded(
                             child: Text(
-                              jiffyDataWidget(comments?.createdAt ?? '',
+                              jiffyDataWidget(comments.createdAt ?? '',
                                   format: 'dd MMMM yyyy'),
                               style: TextStyles.regular2(
                                   color: AppColors.lightGeryColor),
@@ -145,78 +190,17 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
                             ),
                           ),
                           addHorizontal(15),
-                          if (comments?.dentalAdminId == viewModel.userID ||
-                              comments?.dentalPracticeId == viewModel.userID ||
-                              comments?.dentalProfessionalId ==
+                          if (comments.dentalAdminId == viewModel.userID ||
+                              comments.dentalPracticeId == viewModel.userID ||
+                              comments.dentalProfessionalId ==
                                   viewModel.userID ||
-                              comments?.dentalSupplierId == viewModel.userID)
-                            GestureDetector(
-                              onTapDown: (TapDownDetails details) {
-                                final offset = details.globalPosition;
-                                showMenu(
-                                  context: context,
-                                  position: RelativeRect.fromLTRB(
-                                      offset.dx, offset.dy, 0, 0),
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  items: [
-                                    PopupMenuItem(
-                                      value: 'edit',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.edit,
-                                              color: Colors.blue, size: 18),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Edit',
-                                            style: TextStyles.semiBold(
-                                                color: Colors.blue,
-                                                fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'delete',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.delete,
-                                              color: Colors.red, size: 18),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Delete',
-                                            style: TextStyles.semiBold(
-                                                color: Colors.red,
-                                                fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ).then((value) {
-                                  if (value == 'edit') {
-                                    FocusScope.of(navigatorKey.currentContext!)
-                                        .requestFocus(viewModel.replyFocusNode);
-                                    final comment = comments?.comments ?? '';
-                                    viewModel.commentController.text = comment;
-                                    viewModel.updateIsReply(
-                                        false, comments?.id ?? '', '',
-                                        commentupdate: true);
-                                  } else if (value == 'delete') {
-                                    viewModel.deleteTheComment(
-                                        context, comments?.id ?? '', feedId);
-                                  }
-                                });
-                              },
-                              child: Icon(Icons.more_horiz, size: 20),
-                            )
+                              comments.dentalSupplierId == viewModel.userID)
+                            _buildCommentMenu(comments, viewModel, feedId),
                         ],
                       ),
                       addVertical(6),
                       Text(
-                        comments?.comments ?? '',
+                        comments.comments ?? '',
                         style: TextStyles.regular2(
                             color: AppColors.bottomNavUnSelectedColor),
                       ),
@@ -225,38 +209,155 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
                 ),
                 addVertical(5),
                 GestureDetector(
-                  onTap: () {
-                    viewModel.updateHintText('Reply to @${comments?.commenterName}',removeReplyVal: true);
-                    viewModel.commentController.clear();
-                    viewModel.updateIsReply(true, comments?.id ?? '',
-                        comments?.commenterName ?? '');
-                    FocusScope.of(navigatorKey.currentContext!)
-                        .requestFocus(viewModel.replyFocusNode);
-                  },
+                  onTap: () => _handleReplyTap(comments, viewModel),
                   child: Align(
                     alignment: Alignment.bottomRight,
                     child: Text('Reply',
                         style: TextStyles.bold2(color: AppColors.black)),
                   ),
                 ),
-                Container(
-                  key: replyKey,
-                  child: ListView.builder(
-                    itemCount: comments?.commentReply?.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final commentReply = comments?.commentReply?[index];
-                      return ReplyCommentWidget(
-                          comments: commentReply, feedId: feedId);
-                    },
-                  ),
-                )
+                _buildRepliesSection(comments, feedId, replyKey),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildCommentMenu(NewsFeedsComments comments, CommentViewModel viewModel, String feedId) {
+    return GestureDetector(
+      onTapDown: (TapDownDetails details) {
+        final offset = details.globalPosition;
+        showMenu(
+          context: context,
+          position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          items: [
+            PopupMenuItem(
+              value: 'edit',
+              child: Row(
+                children: [
+                  const Icon(Icons.edit, color: Colors.blue, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Edit',
+                    style: TextStyles.semiBold(color: Colors.blue, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  const Icon(Icons.delete, color: Colors.red, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Delete',
+                    style: TextStyles.semiBold(color: Colors.red, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ).then((value) {
+          if (value == 'edit') {
+            _handleEditComment(comments, viewModel);
+          } else if (value == 'delete') {
+            viewModel.deleteTheComment(context, comments.id ?? '', feedId);
+          }
+        });
+      },
+      child: const Icon(Icons.more_horiz, size: 20),
+    );
+  }
+
+  void _handleEditComment(NewsFeedsComments comments, CommentViewModel viewModel) {
+    FocusScope.of(navigatorKey.currentContext!)
+        .requestFocus(viewModel.replyFocusNode);
+    final comment = comments.comments ?? '';
+    viewModel.commentController.text = comment;
+    viewModel.updateIsReply(false, comments.id ?? '', '', commentupdate: true);
+  }
+
+  void _handleReplyTap(NewsFeedsComments comments, CommentViewModel viewModel) {
+    viewModel.updateHintText('Reply to @${comments.commenterName}', removeReplyVal: true);
+    viewModel.commentController.clear();
+    viewModel.updateIsReply(true, comments.id ?? '', comments.commenterName ?? '');
+    FocusScope.of(navigatorKey.currentContext!)
+        .requestFocus(viewModel.replyFocusNode);
+  }
+
+  Widget _buildRepliesSection(NewsFeedsComments comments, String feedId, GlobalKey replyKey) {
+    return MeasureSize(
+      onChange: (size) {
+        final newHeight = size.height - 35;
+        if (_replyHeights[comments.id] != newHeight) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _replyHeights[comments.id ?? ''] = newHeight;
+              });
+            }
+          });
+        }
+      },
+      child: Container(
+        key: replyKey,
+        child: ListView.builder(
+          itemCount: comments.commentReply?.length ?? 0,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            final commentReply = comments.commentReply?[index];
+            return ReplyCommentWidget(comments: commentReply, feedId: feedId);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// Helper widget to measure size changes
+class MeasureSize extends StatefulWidget {
+  final Widget child;
+  final ValueChanged<Size> onChange;
+
+  const MeasureSize({
+    Key? key,
+    required this.onChange,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  State<MeasureSize> createState() => _MeasureSizeState();
+}
+
+class _MeasureSizeState extends State<MeasureSize> {
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback(postFrameCallback);
+    return Container(
+      key: widgetKey,
+      child: widget.child,
+    );
+  }
+
+  var widgetKey = GlobalKey();
+  var oldSize;
+
+  void postFrameCallback(_) {
+    var context = widgetKey.currentContext;
+    if (context == null) return;
+
+    var newSize = context.size;
+    if (oldSize == newSize) return;
+
+    oldSize = newSize;
+    widget.onChange(newSize!);
   }
 }
