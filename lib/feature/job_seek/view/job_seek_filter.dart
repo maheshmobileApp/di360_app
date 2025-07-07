@@ -21,23 +21,28 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     final model = Provider.of<JobSeekViewModel>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.buttomBarColor,
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
+        title: Text("Filter Jobs",
+            style: TextStyle(fontSize: 20, color: AppColors.black)),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
             Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  height: getSize(context).height * 0.25,
-                  decoration: const BoxDecoration(color: AppColors.geryColor),
-                  child: Image.asset(
-                    ImageConst.jobHeaderPng,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                addVertical(16),
+                // Container(
+                //   width: double.infinity,
+                //   height: getSize(context).height * 0.25,
+                //   decoration: const BoxDecoration(color: AppColors.geryColor),
+                //   child: Image.asset(
+                //     ImageConst.jobHeaderPng,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
+                // addVertical(30),
                 buildSearchBar(model, context),
               ],
             ),
@@ -134,7 +139,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          const Divider(),
+          // const Divider(),
         ],
       ),
     );
@@ -160,14 +165,14 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               onToggle: (_) {},
               child: _locationSearchBar(model),
             ),
-            const Divider(),
+            // const Divider(),
             _filterSection(
               title: 'Filter by Profession',
               options: model.professionOptions,
               selected: model.selectedProfessions,
               onToggle: model.toggleProfession,
             ),
-            const Divider(),
+            //  const Divider(),
             _filterSection(
               title: 'Filter by Employment Type',
               options: model.employmentOptions,
@@ -175,7 +180,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               onToggle: model.toggleEmploymentFilter,
               child: model.showLocumDate ? _locumDateSection(context, model) : null,
             ),
-            const Divider(),
+            //   const Divider(),
             _filterSectionWithDropdown(
               title: 'Filter by Experience',
               child: CustomDropDown<String>(
@@ -190,7 +195,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                 },
               ),
             ),
-            const Divider(),
+            // const Divider(),
             _filterSectionWithDropdown(
               title: 'Sort By Alphabetical Order',
               child: CustomDropDown<String>(
