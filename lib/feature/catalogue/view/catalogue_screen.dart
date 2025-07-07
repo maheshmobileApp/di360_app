@@ -91,28 +91,13 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
             addVertical(16),
 
             Expanded(
-              child: vm.catalogueCategories.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(ImageConst.noCatalogue),
-                          addVertical(10),
-                          Text(
-                            "No Catalogues",
-                            style: TextStyles.medium2(color: AppColors.black),
-                          ),
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: vm.catalogueCategories
-                            .map((cat) =>
-                                buildCatalogueSection(context, vm, cat))
-                            .toList(),
-                      ),
-                    ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: vm.catalogueCategories
+                      .map((cat) => buildCatalogueSection(context, vm, cat))
+                      .toList(),
+                ),
+              ),
             ),
           ],
         ),
@@ -127,111 +112,128 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
         showMore ? cat.catalogues : cat.catalogues?.take(2).toList();
     final expanded = vm.isExpanded(cat.name ?? '');
 
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          addVertical(18),
-
-          // Clickable header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 23),
-            child: GestureDetector(
-              onTap: () {
-                vm.toggleExpanded(cat.name ?? '');
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    cat.name ?? '',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.black),
-                  ),
-                  CircleAvatar(
-                    backgroundColor: Colors.grey.shade200,
-                    radius: 20,
-                    child: CircleAvatar(
-                      radius: 19,
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        expanded ? Icons.remove : Icons.add,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          addVertical(10),
-
-          if (expanded) ...[
-            Divider(),
-            addVertical(10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 23),
-              child: GridView.count(
-                padding: EdgeInsets.all(0),
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                childAspectRatio: 0.55,
-                children: displayList!
-                    .map((c) => buildCatalogueCard(context, vm, c, () async {
-                          await vm.getCatalogDetails(context, c.id ?? '');
-                          await vm.getReletedCatalog(context, cat.id ?? '');
-                          await navigationService
-                              .navigateTo(RouteList.catalogueDetails);
-                        }, displayList))
-                    .toList(),
-              ),
-            ),
-            addVertical(12),
-            Divider(),
-            addVertical(5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 23),
-              child: GestureDetector(
-                onTap: () => vm.toggleShowMore(cat.name ?? ''),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      showMore ? "View Less" : "View More",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Colors.grey.shade200,
-                      radius: 20,
-                      child: CircleAvatar(
-                        radius: 19,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          showMore
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
+    return vm.catalogueCategories.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(ImageConst.noCatalogue),
+                addVertical(10),
+                Text(
+                  "No Catalogues",
+                  style: TextStyles.medium2(color: AppColors.black),
                 ),
-              ),
+              ],
             ),
-            addVertical(10),
-          ],
-        ],
-      ),
-    );
+          )
+        : Card(
+            color: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                addVertical(18),
+
+                // Clickable header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 23),
+                  child: GestureDetector(
+                    onTap: () {
+                      vm.toggleExpanded(cat.name ?? '');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          cat.name ?? '',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.black),
+                        ),
+                        CircleAvatar(
+                          backgroundColor: Colors.grey.shade200,
+                          radius: 20,
+                          child: CircleAvatar(
+                            radius: 19,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              expanded ? Icons.remove : Icons.add,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                addVertical(10),
+
+                if (expanded) ...[
+                  Divider(),
+                  addVertical(10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 23),
+                    child: GridView.count(
+                      padding: EdgeInsets.all(0),
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.55,
+                      children: displayList!
+                          .map((c) =>
+                              buildCatalogueCard(context, vm, c, () async {
+                                await vm.getCatalogDetails(context, c.id ?? '');
+                                await vm.getReletedCatalog(
+                                    context, cat.id ?? '');
+                                await navigationService
+                                    .navigateTo(RouteList.catalogueDetails);
+                              }, displayList))
+                          .toList(),
+                    ),
+                  ),
+                  addVertical(12),
+                  Divider(),
+                  addVertical(5),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 23),
+                    child: GestureDetector(
+                      onTap: () => vm.toggleShowMore(cat.name ?? ''),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            showMore ? "View Less" : "View More",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                          CircleAvatar(
+                            backgroundColor: Colors.grey.shade200,
+                            radius: 20,
+                            child: CircleAvatar(
+                              radius: 19,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                showMore
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  addVertical(10),
+                ],
+              ],
+            ),
+          );
   }
 
   Widget buildCatalogueCard(BuildContext context, CatalogueViewModel vm,

@@ -142,16 +142,14 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        addVertical(18),
+        addVertical(16),
         Center(
           child: Text('RELATED CATALOGUES',
               style: TextStyles.bold1(color: AppColors.black, fontSize: 16)),
         ),
-        addVertical(10),
         Divider(),
-        addVertical(10),
         SizedBox(
-          height: 250, // Enough height for the card
+          height: 250,
           child: PageView.builder(
             controller: vm.pageController,
             itemCount: vm.reletedCatalogues?.length ?? 0,
@@ -180,7 +178,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
             ),
           ),
         ),
-        addVertical(10),
+      //  addVertical(10),
       ],
     ),
   );
