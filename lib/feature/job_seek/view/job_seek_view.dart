@@ -46,14 +46,21 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
             ),
           ],
         ),
-        actions: [
-          SvgPicture.asset(ImageConst.notification, color: AppColors.black),
-          addHorizontal(15),
-          SvgPicture.asset(ImageConst.search, color: AppColors.black),
-          addHorizontal(15),
-          SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-          addHorizontal(15),
-        ],
+      actions: [
+  SvgPicture.asset(ImageConst.notification, color: AppColors.black),
+  addHorizontal(15),
+
+  SvgPicture.asset(ImageConst.search, color: AppColors.black),
+  addHorizontal(15),
+
+  GestureDetector(
+    onTap: () => navigationService.navigateTo(RouteList.JobSeekFilterScreen),
+    child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+  ),
+  addHorizontal(15),
+],
+
+
       ),
           body: Column(
             children: [
