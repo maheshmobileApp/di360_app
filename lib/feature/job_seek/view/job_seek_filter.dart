@@ -57,7 +57,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                   Expanded(
                     child: CustomRoundedButton(
                       text: 'Clear',
-                      fontSize: 12,
+                      fontSize: 16,
                       height: 42,
                       onPressed: () async {
                         model.clearSelections();
@@ -72,7 +72,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                   Expanded(
                     child: CustomRoundedButton(
                       text: 'Apply',
-                      fontSize: 12,
+                      fontSize: 16,
                       height: 42,
                       onPressed: () async {
                         model.printSelectedItems();
@@ -86,6 +86,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                 ],
               ),
             ),
+            SizedBox(height: 20,)
           ],
         ),
       ),
