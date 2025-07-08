@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogu
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,14 +40,38 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
           children: [
             addVertical(6),
             SizedBox(
-              height: 420,
+              height: 400,
               child: Card(
                 color: AppColors.whiteColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   children: [
-                    Expanded(
+                    addVertical(10),
+                    SizedBox(
+                      height: 330,
+                      child: GestureDetector(
+                        onTap: () {
+                          final pdf =
+                              catalogueVM.cataloguesByIdData?.attachment;
+                          navigationService.push(HorizantalPdf(
+                            key: ValueKey(
+                              pdf?.url ?? '',
+                            ),
+                            fileUrl: pdf?.url ?? '',
+                            fileName: pdf?.name ?? '',
+                            isfullScreen: true,
+                          ));
+                        },
+                        child: CachedNetworkImageWidget(
+                          imageUrl: catalogueVM
+                                  .cataloguesByIdData?.thumbnailImage?.url ??
+                              '',
+                              fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    /*  Expanded(
                       child: Padding(
                         padding:
                             const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -62,7 +87,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                           isfullScreen: false,
                         ),
                       ),
-                    ),
+                    ),*/
                     Divider(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -173,7 +198,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
       },
       child: Container(
         padding: EdgeInsets.only(right: 15),
-        height: 230,
+        height: 250,
         width: 150,
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(12)),
@@ -185,7 +210,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
                   catalogues.thumbnailImage?.url ?? '',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   width: double.infinity,
                   errorBuilder: (ctx, _, __) =>
                       Icon(Icons.broken_image, size: 50),

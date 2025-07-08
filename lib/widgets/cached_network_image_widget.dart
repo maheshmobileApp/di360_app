@@ -7,18 +7,24 @@ class CachedNetworkImageWidget extends StatelessWidget {
   final String imageUrl;
   final double? width;
   final double? height;
+  final BoxFit? fit;
 
   final Widget? errorWidget;
   const CachedNetworkImageWidget(
-      {super.key, required this.imageUrl, this.errorWidget, this.width, this.height});
+      {super.key,
+      required this.imageUrl,
+      this.errorWidget,
+      this.width,
+      this.height,
+      this.fit});
 
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-      width:width,
+      width: width,
       height: height,
       imageUrl: imageUrl,
-      fit: BoxFit.cover,
+      fit: fit ?? BoxFit.cover,
       progressIndicatorBuilder: (context, url, downloadProgress) => Center(
           child: CupertinoActivityIndicator(
         // value: downloadProgress.progress,

@@ -144,6 +144,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                           style: TextStyles.clashSemiBold(
                               color: AppColors.black, fontSize: 20)))
                   : ListView.builder(
+                    controller: newsFeedVM.feedScrollController,
                       itemCount:
                           homeViewModel.allNewsFeedsData?.newsfeeds?.length,
                       itemBuilder: (context, index) {
