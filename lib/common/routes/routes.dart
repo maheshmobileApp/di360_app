@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
+import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
@@ -33,6 +34,7 @@ class Routes {
       RouteList.roleScreen: (context) => RoleSelectionScreen(),
       RouteList.practiceDetailsScreen: (context) => PracticeDetailsScreen(),
       RouteList.jobCreate: (context) => JobCreateView(),
+      RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
        RouteList.account: (context) => AccountScreen(),
       RouteList.jobdetailsScreen: (context) {

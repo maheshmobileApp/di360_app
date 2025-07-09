@@ -20,4 +20,6 @@ class RouteList {
   static const String jobCreate = "/jobCreate";
   static const String applyJob = '/applyJob';
   static const String account = '/account';
+  static const String  JobSeekFilterScreen= '/JobSeekFilterScreen';
+  //static const String commentScreen = '/commentScreen';
 }

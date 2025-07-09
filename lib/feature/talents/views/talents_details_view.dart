@@ -143,7 +143,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
             SizedBox(height: 16),
             _sectionHeader('Gallery'),
             SizedBox(height: 6),
-            GalleryView(imageUrls: []),
+            
             SizedBox(height: 16),
             _sectionHeader("Certifications"),
             SizedBox(height: 6),
