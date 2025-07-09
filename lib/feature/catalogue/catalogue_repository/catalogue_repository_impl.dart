@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_r
 import 'package:di360_flutter/feature/catalogue/querys/filter_catagories_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/filter_supplier_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/get_catalogue_request.dart';
+import 'package:di360_flutter/feature/catalogue/querys/get_catalogues_by_id_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/get_related_catalogues.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/filter_catagories_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_res.dart';
@@ -26,7 +27,7 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
 
   @override
   Future<List<CatalogueCategories>> getCatalogue(String? searchText,
-      List<String>? categories, List<String>? suppliers) async {
+      List<String>? categories, List<String>? suppliers, String loginId) async {
     final andList = <Map<String, dynamic>>[
       {
         "_or": [
@@ -60,16 +61,20 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
     }
 
     final catalogueData = await http.query(
-      getCatalogueRequest,
+      loginId.isEmpty ? getCatalogueRequest : getCatalogueByIdRequest,
       variables: {
         "andList": andList,
         "limit": 50,
         "offset": 0,
+        if (loginId.isNotEmpty) "loginId": loginId
       },
     );
-
-    final result = CatalogueData.fromJson(catalogueData);
-    return result.catalogueCategories ?? [];
+    if (catalogueData != null) {
+      final result = CatalogueData.fromJson(catalogueData);
+      return result.catalogueCategories ?? [];
+    } else {
+      return [];
+    }
   }
 
   @override
@@ -112,7 +117,8 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
         "catalogue_id": catalogueId,
         "type": type,
         "dental_supplier_id": userRole == UserRole.supplier ? userId : null,
-        "dental_professional_id": userRole == UserRole.professional ? userId : null,
+        "dental_professional_id":
+            userRole == UserRole.professional ? userId : null,
         "dental_practice_id": userRole == UserRole.practice ? userId : null,
       }
     });

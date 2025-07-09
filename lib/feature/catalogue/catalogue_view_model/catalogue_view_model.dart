@@ -29,6 +29,10 @@ class CatalogueViewModel extends ChangeNotifier {
   Map<String, bool> showMoreMap = {};
 
   late Map<String, List<FilterItem>> filterOptions;
+  List<String> suppliers = [];
+  List<String> catagroies = [];
+  String? selectedUserId;
+  bool? cataloguesLoading;
 
   Map<String, Set<int>> selectedIndices = {
     'suppliers': {},
@@ -76,16 +80,23 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchCatalogue(BuildContext context) async {
+    cataloguesLoading = true;
     await Future.delayed(const Duration(seconds: 1));
-
     Loaders.circularShowLoader(context);
-    catalogueCategories =
-        await repo.getCatalogue(searchController.text, catagroies, suppliers);
-    initializeExpanded(catalogueCategories);
-    Loaders.circularHideLoader(context);
-    for (var cat in catalogueCategories) {
-      showMoreMap[cat.name ?? ''] = false;
+    var res = await repo.getCatalogue(
+        searchController.text, catagroies, suppliers, selectedUserId ?? '');
+    if (res != []) {
+      catalogueCategories = res;
+      initializeExpanded(catalogueCategories);
+      Loaders.circularHideLoader(context);
+      for (var cat in catalogueCategories) {
+        showMoreMap[cat.name ?? ''] = false;
+      }
+    } else {
+      catalogueCategories = [];
+      Loaders.circularHideLoader(context);
     }
+    cataloguesLoading = false;
     notifyListeners();
   }
 
@@ -248,7 +259,8 @@ class CatalogueViewModel extends ChangeNotifier {
     throw Exception("Invalid user type");
   }
 
-  void initializeFilterOptions() {
+  void initializeFilterOptions() async {
+    final user_id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     filterOptions = {
       'suppliers': filterSuppliers?.map((e) {
             return FilterItem(
@@ -265,7 +277,7 @@ class CatalogueViewModel extends ChangeNotifier {
           }).toList() ??
           [],
       'favourites': [
-        FilterItem(name: 'My Favourites', id: 'fav'),
+        FilterItem(name: 'My Favourites', id: user_id),
       ],
     };
 
@@ -293,13 +305,11 @@ class CatalogueViewModel extends ChangeNotifier {
   void clearSelections() {
     selectedIndices.updateAll((key, value) => {});
     searchController.clear();
+    selectedUserId = null;
     suppliers = [];
     catagroies = [];
     notifyListeners();
   }
-
-  List<String> suppliers = [];
-  List<String> catagroies = [];
 
   void printSelectedItems() {
     suppliers = [];
@@ -313,6 +323,8 @@ class CatalogueViewModel extends ChangeNotifier {
             suppliers.add(id);
           } else if (section == "categories") {
             catagroies.add(id);
+          } else if (section == "favourites") {
+            selectedUserId = id;
           }
         }
       }
