@@ -91,6 +91,7 @@ flutter:
     - assets/roles.json
     - assets/job_type.json
     - assets/account.json
+    - assets/profile/account
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

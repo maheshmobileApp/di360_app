@@ -1,48 +1,100 @@
-
-
 {
   "data": [
     {
       "title": "Account",
       "subTitle": [
-        "News Feeds",
-        "My Profile",
-        "My Favourites",
-        "Location"
+        {
+          "title": "News Feeds",
+          "asset": "assets/account/addFeed.svg"
+        },
+        {
+          "title": "My Profile",
+          "asset": ""
+        },
+        {
+          "title": "My Favourites",
+          "asset": ""
+        },
+        {
+          "title": "Location",
+          "asset": ""
+        }
       ]
     },
     {
-      "title": "Jobeek",
+      "title": "JobSeek",
       "subTitle": [
-        "Job Profile",
-        "Jobs",
-        "Applied Jobs",
-        "Saved Jobs",
-        "Enquiries"
+        {
+          "title": "Job Profile",
+          "asset": "assets/profile/jobseek/briefcurrency.svg"
+        },
+        {
+          "title": "Jobs",
+          "asset": ""
+        },
+        {
+          "title": "Applied Jobs",
+          "asset": ""
+        },
+        {
+          "title": "Saved Jobs",
+          "asset": ""
+        },
+        {
+          "title": "Enquiries",
+          "asset": ""
+        }
       ]
     },
     {
       "title": "Inventory",
       "subTitle": [
-        "My Directories",
-        "My Orders",
-        "My Bids",
-        "My Enquiries"
+        {
+          "title": "My Directories",
+          "asset": ""
+        },
+        {
+          "title": "My Orders",
+          "asset": ""
+        },
+        {
+          "title": "My Bids",
+          "asset": ""
+        },
+        {
+          "title": "My Enquiries",
+          "asset": ""
+        }
       ]
     },
     {
       "title": "Payments & Others",
       "subTitle": [
-        "Account Pay Requests",
-        "My Subscriptions",
-        "Support Centre"
+        {
+          "title": "Account Pay Requests",
+          "asset": ""
+        },
+        {
+          "title": "My Subscriptions",
+          "asset": ""
+        },
+        {
+          "title": "Support Centre",
+          "asset": ""
+        }
       ]
     },
     {
       "title": "Pre Owned",
       "subTitle": [
-        "Pre Owned Supplies",
-        "Pre Owned Orders"
+        {
+          "title": "Pre Owned Supplies",
+          "asset": ""
+        },
+        {
+          "title": "Pre Owned Orders",
+          "asset": ""
+        }
       ]
     }
   ]
