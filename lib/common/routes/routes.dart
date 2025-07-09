@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
@@ -33,6 +34,7 @@ class Routes {
       RouteList.practiceDetailsScreen: (context) => PracticeDetailsScreen(),
       RouteList.jobCreate: (context) => JobCreateView(),
       RouteList.applyJob: (context) => ApplyJobsView(),
+       RouteList.account: (context) => AccountScreen(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobDetailsScreen(

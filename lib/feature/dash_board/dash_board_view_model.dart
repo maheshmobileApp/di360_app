@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -24,7 +25,8 @@ class DashBoardViewModel extends ChangeNotifier {
     NewsFeedScreen(),
     JobSeekView(),
     CataloguePage(),
-    Center(child: Text('Profile Page')),
+    AccountScreen(),
+    //Center(child: Text('Profile Page')),
    LogoutView()
   ];
 
@@ -46,6 +48,9 @@ class DashBoardViewModel extends ChangeNotifier {
         break;
       case 3:
       context.read<CatalogueViewModel>().fetchCatalogue(context);
+        break;
+         case 4:
+        // Account screen – nothing to fetch here
         break;
       default:
     }

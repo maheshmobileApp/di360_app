@@ -1,0 +1,49 @@
+
+
+{
+  "data": [
+    {
+      "title": "Account",
+      "subTitle": [
+        "News Feeds",
+        "My Profile",
+        "My Favourites",
+        "Location"
+      ]
+    },
+    {
+      "title": "Jobeek",
+      "subTitle": [
+        "Job Profile",
+        "Jobs",
+        "Applied Jobs",
+        "Saved Jobs",
+        "Enquiries"
+      ]
+    },
+    {
+      "title": "Inventory",
+      "subTitle": [
+        "My Directories",
+        "My Orders",
+        "My Bids",
+        "My Enquiries"
+      ]
+    },
+    {
+      "title": "Payments & Others",
+      "subTitle": [
+        "Account Pay Requests",
+        "My Subscriptions",
+        "Support Centre"
+      ]
+    },
+    {
+      "title": "Pre Owned",
+      "subTitle": [
+        "Pre Owned Supplies",
+        "Pre Owned Orders"
+      ]
+    }
+  ]
+}
