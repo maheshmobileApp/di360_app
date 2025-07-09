@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +25,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
+    final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     return Container(
       color: AppColors.whiteColor,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -50,6 +54,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
                 webSiteText(newsfeeds?.webUrl ?? ''),
               if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
                 addVertical(8),
+              if (newsfeeds?.feedType == 'CATALOGUE')
+                _buildCatalogueRow(catalogueViewModel, context),
               Divider(color: AppColors.dividerColor),
               addVertical(4),
               _buildStatsRow(
@@ -241,5 +247,49 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             e.dentalProfessional?.id == userId ||
             e.dentalSupplier?.id == userId) ??
         false;
+  }
+
+  
+  Widget _buildCatalogueRow(
+      CatalogueViewModel catalogueVM, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.email_outlined, color: AppColors.primaryColor),
+                addHorizontal(6),
+                Text(newsfeeds?.dentalSupplier?.email ?? '',
+                    style: TextStyles.regular1(color: AppColors.black)),
+              ],
+            ),
+            addVertical(8),
+            Row(
+              children: [
+                Icon(Icons.phone, color: AppColors.primaryColor),
+                addHorizontal(6),
+                Text(newsfeeds?.dentalSupplier?.phone ?? '',
+                    style: TextStyles.regular1(color: AppColors.black)),
+              ],
+            )
+          ],
+        ),
+        AppButton(
+            text: 'View',
+            height: 40,
+            width: 100,
+            onTap: () async {
+              await catalogueVM.getCatalogDetails(
+                  context, newsfeeds?.payload?.catalogueId ?? '');
+              final id =
+                  catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+              await catalogueVM.getReletedCatalog(context, id);
+              await navigationService.navigateTo(RouteList.catalogueDetails);
+            })
+      ],
+    );
   }
 }
