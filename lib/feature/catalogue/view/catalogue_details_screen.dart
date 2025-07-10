@@ -67,27 +67,10 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                           imageUrl: catalogueVM
                                   .cataloguesByIdData?.thumbnailImage?.url ??
                               '',
-                              fit: BoxFit.contain,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
-                    /*  Expanded(
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 10, right: 10, top: 10),
-                        child: HorizantalPdf(
-                          key: ValueKey(
-                            catalogueVM.cataloguesByIdData?.attachment?.url ??
-                                '',
-                          ),
-                          fileUrl:
-                              catalogueVM.cataloguesByIdData?.attachment?.url ??
-                                  '',
-                          fileName: '',
-                          isfullScreen: false,
-                        ),
-                      ),
-                    ),*/
                     Divider(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -208,12 +191,17 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                child: Image.network(
-                  catalogues.thumbnailImage?.url ?? '',
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  errorBuilder: (ctx, _, __) =>
-                      Icon(Icons.broken_image, size: 50),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(color: AppColors.hintColor, width: 10)),
+                  child: Image.network(
+                    catalogues.thumbnailImage?.url ?? '',
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    errorBuilder: (ctx, _, __) =>
+                        Icon(Icons.broken_image, size: 50),
+                  ),
                 ),
               ),
             ),

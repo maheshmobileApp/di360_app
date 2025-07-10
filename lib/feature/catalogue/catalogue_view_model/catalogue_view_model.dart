@@ -33,6 +33,12 @@ class CatalogueViewModel extends ChangeNotifier {
   List<String> catagroies = [];
   String? selectedUserId;
   bool? cataloguesLoading;
+  bool? catalogFilterApply;
+
+  void updateCatalogFilterApply(bool val) {
+    catalogFilterApply = val;
+    notifyListeners();
+  }
 
   Map<String, Set<int>> selectedIndices = {
     'suppliers': {},
@@ -302,12 +308,14 @@ class CatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearSelections() {
+  void clearSelections(BuildContext context) {
     selectedIndices.updateAll((key, value) => {});
     searchController.clear();
     selectedUserId = null;
     suppliers = [];
     catagroies = [];
+    updateCatalogFilterApply(false);
+    fetchCatalogue(context);
     notifyListeners();
   }
 
@@ -318,6 +326,7 @@ class CatalogueViewModel extends ChangeNotifier {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {
         for (final i in indices) {
+          updateCatalogFilterApply(true);
           final id = items[i].id;
           if (section == "suppliers") {
             suppliers.add(id);
