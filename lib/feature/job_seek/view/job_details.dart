@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
@@ -263,6 +264,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         locationView(context),
         _sectionHeader('Gallery'),
         GalleryView(
+            mediaList: widget.job.clinicLogo!
+                .map((e) =>
+                    PostImage(url: e.url, type: e.type, extension: e.extension))
+                .toList(),
             imageUrls: widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
         _sectionHeader('Social Media Handles'),
         Row(

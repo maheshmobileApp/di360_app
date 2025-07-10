@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';   
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 

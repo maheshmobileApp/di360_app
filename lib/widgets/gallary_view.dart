@@ -1,9 +1,13 @@
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
-import 'package:di360_flutter/widgets/image_gallery_popup.dart';
+
 
 class GalleryView extends StatelessWidget {
   final List<String> imageUrls;
+  final List<PostImage> mediaList;
   final double imageSize;
   final Axis direction;
   final EdgeInsetsGeometry spacing;
@@ -12,25 +16,17 @@ class GalleryView extends StatelessWidget {
     super.key,
     required this.imageUrls,
     this.imageSize = 50,
+    required this.mediaList,
     this.direction = Axis.horizontal,
     this.spacing = const EdgeInsets.all(4),
   });
 
   void _openImageGallery(BuildContext context, int initialIndex) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ImageGalleryPopup(
-          imageUrls: imageUrls,
-          initialIndex: initialIndex,
-        ),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
+
+    navigationService.push(
+      ImageViewerScreen(
+        initialIndex: initialIndex,
+        postImage: mediaList,
       ),
     );
   }

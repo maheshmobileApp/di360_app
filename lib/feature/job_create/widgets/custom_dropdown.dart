@@ -39,7 +39,7 @@ class CustomDropDown<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+       if(title.isNotEmpty) Row(
           children: [
             Text(
               title,
@@ -54,6 +54,7 @@ class CustomDropDown<T> extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
+          dropdownColor: Colors.white,
           value: value,
           validator: validator,
           onChanged: onChanged,
