@@ -5,19 +5,19 @@
       "subTitle": [
         {
           "title": "News Feeds",
-          "asset": "assets/account/addFeed.svg"
+          "asset": "assets/profile/account/Feed.svg"
         },
         {
           "title": "My Profile",
-          "asset": ""
+          "asset": "assets/profile/account/profile.svg"
         },
         {
           "title": "My Favourites",
-          "asset": ""
+          "asset": "assets/profile/account/heart (1) 1.svg"
         },
         {
           "title": "Location",
-          "asset": ""
+          "asset": "assets/profile/account/locations.svg"
         }
       ]
     },
@@ -26,23 +26,23 @@
       "subTitle": [
         {
           "title": "Job Profile",
-          "asset": "assets/profile/jobseek/briefcurrency.svg"
+          "asset": "assets/profile/jobseek/#000000ff.svg"
         },
         {
           "title": "Jobs",
-          "asset": ""
+          "asset": "assets/profile/jobseek/#000000ff (1).svg"
         },
         {
           "title": "Applied Jobs",
-          "asset": ""
+          "asset": "assets/profile/jobseek/my jobs.svg"
         },
         {
           "title": "Saved Jobs",
-          "asset": ""
+          "asset": "assets/profile/jobseek/bookmark (1) 1.svg"
         },
         {
           "title": "Enquiries",
-          "asset": ""
+          "asset": "assets/profile/jobseek/#000000ff (2).svg"
         }
       ]
     },
@@ -51,19 +51,19 @@
       "subTitle": [
         {
           "title": "My Directories",
-          "asset": ""
+          "asset": "assets/profile/inventory/directory.svg"
         },
         {
           "title": "My Orders",
-          "asset": ""
+          "asset": "assets/profile/inventory/#000000ff (3).svg"
         },
         {
           "title": "My Bids",
-          "asset": ""
+          "asset": "assets/profile/inventory/law 1.svg"
         },
         {
           "title": "My Enquiries",
-          "asset": ""
+          "asset": "assets/profile/inventory/help 1.svg"
         }
       ]
     },
@@ -72,15 +72,15 @@
       "subTitle": [
         {
           "title": "Account Pay Requests",
-          "asset": ""
+          "asset": "assets/profile/payments&others/credit-card 1.svg"
         },
         {
           "title": "My Subscriptions",
-          "asset": ""
+          "asset": "assets/profile/payments&others/subscription 1.svg"
         },
         {
           "title": "Support Centre",
-          "asset": ""
+          "asset": "assets/profile/payments&others/call-center 1.svg"
         }
       ]
     },
@@ -89,11 +89,11 @@
       "subTitle": [
         {
           "title": "Pre Owned Supplies",
-          "asset": ""
+          "asset": "assets/profile/pre owned/medical-supplies 2.svg"
         },
         {
           "title": "Pre Owned Orders",
-          "asset": ""
+          "asset": "assets/profile/pre owned/shopping-cart 1.svg"
         }
       ]
     }

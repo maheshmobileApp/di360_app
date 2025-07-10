@@ -1,36 +1,43 @@
-class GetAccountSectionsModel {
-  List<AccountSection>? data;
+class ProfileSection {
+  final String title;
+  final List<SubTitleItem> subTitle;
 
-  GetAccountSectionsModel({this.data});
+  ProfileSection({required this.title, required this.subTitle});
 
-  factory GetAccountSectionsModel.fromJson(Map<String, dynamic> json) {
-    return GetAccountSectionsModel(
-      data: (json['data'] as List<dynamic>?)
-          ?.map((e) => AccountSection.fromJson(e))
+  factory ProfileSection.fromJson(Map<String, dynamic> json) {
+    return ProfileSection(
+      title: json['title'],
+      subTitle: (json['subTitle'] as List)
+          .map((item) => SubTitleItem.fromJson(item))
           .toList(),
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'data': data?.map((e) => e.toJson()).toList(),
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'subTitle': subTitle.map((item) => item.toJson()).toList(),
+    };
+  }
 }
 
-class AccountSection {
-  String? title;
-  List<String>? subTitle;
+class SubTitleItem {
+  final String title;
+  final String asset;
 
-  AccountSection({this.title, this.subTitle});
+  SubTitleItem({required this.title, required this.asset});
 
-  factory AccountSection.fromJson(Map<String, dynamic> json) {
-    return AccountSection(
+  factory SubTitleItem.fromJson(Map<String, dynamic> json) {
+    return SubTitleItem(
       title: json['title'],
-      subTitle: (json['subTitle'] as List<dynamic>?)?.cast<String>(),
+      asset: json['asset'],
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'title': title,
-        'subTitle': subTitle,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'asset': asset,
+    };
+  }
 }

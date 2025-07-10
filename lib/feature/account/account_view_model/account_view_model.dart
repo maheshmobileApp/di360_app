@@ -1,37 +1,33 @@
-import 'package:flutter/foundation.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repository.dart';
+import 'package:flutter/foundation.dart';
 
-class AccountViewModel extends ChangeNotifier {
-  final AccountRepository accountRepository;
 
-  AccountViewModel(this.accountRepository);
+class ProfileViewModel extends ChangeNotifier {
+  final ProfileRepository _repository;
 
-  List<AccountSection> _sections = [];
+  ProfileViewModel(this._repository);
+
+  List<ProfileSection> _sections = [];
   bool _isLoading = false;
+  String? _error;
 
-  List<AccountSection> get sections => _sections;
+  List<ProfileSection> get sections => _sections;
   bool get isLoading => _isLoading;
+  String? get error => _error;
 
-  /// Loads account sections from the repository (e.g., local JSON)
-  Future<void> loadAccountData() async {
+  Future<void> fetchProfileSections() async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      _sections = await accountRepository.getAccountSections();
+      _sections = await _repository.getProfileSections();
     } catch (e) {
-      debugPrint("Error loading account sections: $e");
-      _sections = [];
+      _error = e.toString();
     }
 
     _isLoading = false;
     notifyListeners();
-  }
-
-  /// Optional tap handler for future navigation
-  void onSectionItemTap(String sectionTitle, String itemTitle) {
-    debugPrint("Tapped on $itemTitle from $sectionTitle");
-    // Navigation or logic can be added here if needed
   }
 }

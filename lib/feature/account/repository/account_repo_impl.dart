@@ -1,14 +1,18 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import '../account_model/account_model.dart';
-import 'account_repository.dart';
 
-class AccountRepoImpl extends AccountRepository {
+
+import 'dart:convert';
+import 'package:di360_flutter/feature/account/account_model/account_model.dart';
+import 'package:di360_flutter/feature/account/repository/account_repository.dart';
+import 'package:flutter/services.dart';
+
+
+class ProfileRepositoryImpl implements ProfileRepository {
   @override
-  Future<List<AccountSection>> getAccountSections() async {
-    final response = await rootBundle.loadString('assets/account.json');
+  Future<List<ProfileSection>> getProfileSections() async {
+    final String response = await rootBundle.loadString('assets/account.json');
     final data = json.decode(response);
-    final model = GetAccountSectionsModel.fromJson(data);
-    return model.data ?? [];
+    return (data['data'] as List)
+        .map((item) => ProfileSection.fromJson(item))
+        .toList();
   }
 }
