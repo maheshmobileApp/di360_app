@@ -11,8 +11,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class CataloguePage extends StatelessWidget with BaseContextHelpers {
+class CataloguePage extends StatefulWidget {
   const CataloguePage({super.key});
+
+  @override
+  State<CataloguePage> createState() => _CataloguePageState();
+}
+
+class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
+  bool _showScrollToTop = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 200) {
+        if (!_showScrollToTop) {
+          setState(() => _showScrollToTop = true);
+        }
+      } else {
+        if (_showScrollToTop) {
+          setState(() => _showScrollToTop = false);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,32 +122,47 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
             addVertical(16),
 
             Expanded(
-              child: vm.catalogueCategories.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(ImageConst.noCatalogue),
-                          addVertical(10),
-                          Text(
-                            "No Catalogues",
-                            style: TextStyles.medium2(color: AppColors.black),
-                          ),
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: (vm.catalogueCategories.isEmpty &&
+                        vm.cataloguesLoading == false)
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(ImageConst.noCatalogue),
+                            addVertical(10),
+                            Text(
+                              "No Catalogues",
+                              style: TextStyles.medium2(color: AppColors.black),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Column(
                         children: vm.catalogueCategories
                             .map((cat) =>
                                 buildCatalogueSection(context, vm, cat))
                             .toList(),
                       ),
-                    ),
+              ),
             ),
           ],
         ),
       ),
+      floatingActionButton: _showScrollToTop
+          ? FloatingActionButton(
+              backgroundColor: AppColors.primaryColor,
+              onPressed: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.easeOut,
+                );
+              },
+              child: Icon(Icons.arrow_upward, color: Colors.white),
+            )
+          : null,
     );
   }
 
@@ -274,6 +320,7 @@ class CataloguePage extends StatelessWidget with BaseContextHelpers {
                         addVertical(5),
                         Text(
                           c.title ?? '',
+                          maxLines: 1,
                           style: TextStyles.regular1(color: AppColors.black),
                         )
                       ],

@@ -19,6 +19,15 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   List<NewsfeedCategories>? newsfeedCategories;
 
+  String? selectedCategoryId;
+
+  void updateSelectedCategory(String? categoryId) {
+  selectedCategoryId = categoryId;
+  notifyListeners();
+}
+
+ScrollController feedScrollController = ScrollController();
+
   String? adminId;
   String? supplierId;
   String? practiceId;
@@ -199,6 +208,7 @@ class NewsFeedViewModel extends ChangeNotifier {
       if (response != null) {
         final result = AllNewsFeedData.fromJson(response);
         context.read<HomeViewModel>().allNewsFeedsData = result;
+        feedScrollController.jumpTo(0);
         updateApplyCatageories(true);
         Loaders.circularHideLoader(context);
       } else {

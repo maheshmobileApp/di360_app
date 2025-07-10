@@ -199,6 +199,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     desController.clear();
     selectedFiles.clear();
     existingImages.clear();
+    isEditNewsFeed = false;
     selectedCategory = null;
     uploadedFiles.clear();
     notifyListeners();

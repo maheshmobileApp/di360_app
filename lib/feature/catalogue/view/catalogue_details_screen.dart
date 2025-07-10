@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogu
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,14 +40,38 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
           children: [
             addVertical(6),
             SizedBox(
-              height: 380,
+              height: 400,
               child: Card(
                 color: AppColors.whiteColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   children: [
-                    Expanded(
+                    addVertical(10),
+                    SizedBox(
+                      height: 330,
+                      child: GestureDetector(
+                        onTap: () {
+                          final pdf =
+                              catalogueVM.cataloguesByIdData?.attachment;
+                          navigationService.push(HorizantalPdf(
+                            key: ValueKey(
+                              pdf?.url ?? '',
+                            ),
+                            fileUrl: pdf?.url ?? '',
+                            fileName: pdf?.name ?? '',
+                            isfullScreen: true,
+                          ));
+                        },
+                        child: CachedNetworkImageWidget(
+                          imageUrl: catalogueVM
+                                  .cataloguesByIdData?.thumbnailImage?.url ??
+                              '',
+                              fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    /*  Expanded(
                       child: Padding(
                         padding:
                             const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -62,10 +87,10 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                           isfullScreen: false,
                         ),
                       ),
-                    ),
+                    ),*/
                     Divider(),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -82,9 +107,16 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                                 isfullScreen: true,
                               ));
                             },
-                            child: Text('View PDF',
-                                style: TextStyles.regular4(
-                                    color: AppColors.black)),
+                            child: Row(
+                              children: [
+                                Icon(Icons.remove_red_eye,
+                                    color: AppColors.primaryColor),
+                                addHorizontal(5),
+                                Text('View PDF',
+                                    style: TextStyles.regular4(
+                                        color: AppColors.black)),
+                              ],
+                            ),
                           ),
                           GestureDetector(
                             onTap: () async {
@@ -121,7 +153,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                 ),
               ),
             ),
-            Expanded(child: buildCatalogueSection(context, catalogueVM)),
+            buildCatalogueSection(context, catalogueVM),
           ],
         ),
       ),
@@ -130,37 +162,29 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
 
   Widget buildCatalogueSection(BuildContext context, CatalogueViewModel vm) {
     return Card(
-      color: Colors.white,
+      color: AppColors.whiteColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          addVertical(18),
+          addVertical(16),
           Center(
-              child: Text('RELATED CATALOGUES',
-                  style:
-                      TextStyles.bold1(color: AppColors.black, fontSize: 16))),
-          addVertical(10),
+            child: Text('RELATED CATALOGUES',
+                style: TextStyles.bold1(color: AppColors.black, fontSize: 16)),
+          ),
           Divider(),
-          addVertical(10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                // padding: EdgeInsets.all(0),
-                // physics: NeverScrollableScrollPhysics(),
-                // shrinkWrap: true,
-                // crossAxisCount: 2,
-                // childAspectRatio: 0.60,
                 children: vm.reletedCatalogues
                         ?.map((c) => buildCatalogueCard(context, c, vm))
                         .toList() ??
                     [],
               ),
             ),
-          ),
-          addVertical(10),
+          )
         ],
       ),
     );
@@ -174,7 +198,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
       },
       child: Container(
         padding: EdgeInsets.only(right: 15),
-        height: 230,
+        height: 250,
         width: 150,
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(12)),
@@ -186,7 +210,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
                   catalogues.thumbnailImage?.url ?? '',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   width: double.infinity,
                   errorBuilder: (ctx, _, __) =>
                       Icon(Icons.broken_image, size: 50),
@@ -199,8 +223,11 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
-                    child: Text(catalogues.title ?? '',
-                        style: TextStyles.regular2(color: AppColors.black)),
+                    child: SizedBox(
+                      height: 45,
+                      child: Text(catalogues.title ?? '',
+                          style: TextStyles.regular2(color: AppColors.black)),
+                    ),
                   ),
                   RelatedCatalogueLikeWidget(cat: catalogues),
                 ],

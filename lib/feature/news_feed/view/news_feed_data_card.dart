@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
@@ -13,6 +14,7 @@ import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
@@ -28,6 +30,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
+    final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     return Container(
       color: AppColors.whiteColor,
       child: GestureDetector(
@@ -53,7 +56,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 needFeedViewModel,
                 addNeedFeedViewModel),
             addVertical(10),
-            _buildImageRow(),
+            _buildImageRow(catalogueViewModel, context),
             addVertical(5),
             if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
               LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
@@ -77,6 +80,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   if (newsfeeds?.webUrl != null &&
                       newsfeeds!.webUrl!.isNotEmpty)
                     addVertical(8),
+                  if (newsfeeds?.feedType == 'CATALOGUE')
+                    _buildCatalogueRow(catalogueViewModel, context),
                   Divider(color: AppColors.dividerColor),
                   addVertical(4),
                   _buildStatsRow(
@@ -205,7 +210,50 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildImageRow() {
+  Widget _buildCatalogueRow(
+      CatalogueViewModel catalogueVM, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.email_outlined, color: AppColors.primaryColor),
+                addHorizontal(6),
+                Text(newsfeeds?.dentalSupplier?.email ?? '',
+                    style: TextStyles.regular1(color: AppColors.black)),
+              ],
+            ),
+            addVertical(8),
+            Row(
+              children: [
+                Icon(Icons.phone, color: AppColors.primaryColor),
+                addHorizontal(6),
+                Text(newsfeeds?.dentalSupplier?.phone ?? '',
+                    style: TextStyles.regular1(color: AppColors.black)),
+              ],
+            )
+          ],
+        ),
+        AppButton(
+            text: 'View',
+            height: 40,
+            width: 100,
+            onTap: () async {
+              await catalogueVM.getCatalogDetails(
+                  context, newsfeeds?.payload?.catalogueId ?? '');
+              final id =
+                  catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+              await catalogueVM.getReletedCatalog(context, id);
+              await navigationService.navigateTo(RouteList.catalogueDetails);
+            })
+      ],
+    );
+  }
+
+  Widget _buildImageRow(CatalogueViewModel catalogueVM, BuildContext context) {
     final mediaList = newsfeeds?.postImage ?? [];
 
     if (mediaList.isEmpty) return SizedBox();
@@ -302,11 +350,10 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       child: Row(
         children: mediaList.map<Widget>((media) {
           return _mediaCard(
-            child: buildMediaContent(media),
-            onTap: () {
-              navigationService.push(ImageViewerScreen(postImage: mediaList));
-            },
-          );
+              child: buildMediaContent(media),
+              onTap: () {
+                navigationService.push(ImageViewerScreen(postImage: mediaList));
+              });
         }).toList(),
       ),
     );

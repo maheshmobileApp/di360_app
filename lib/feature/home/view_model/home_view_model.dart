@@ -13,15 +13,15 @@ class HomeViewModel extends ChangeNotifier {
   AllNewsFeedData? allNewsFeedsData;
   String? userName;
   String? profilePic;
+  String? userID;
 
   getFollowersCount(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     getUserDetails();
     try {
-      var res = await _http.query(getFollowersQuery, variables: {
-        'userId': userId
-      });
+      var res =
+          await _http.query(getFollowersQuery, variables: {'userId': userId});
       if (res != null) {
         Loaders.circularHideLoader(context);
         final result = GetFollowersData.fromJson(res);
@@ -49,11 +49,15 @@ class HomeViewModel extends ChangeNotifier {
     } catch (e) {}
     notifyListeners();
   }
-  getUserDetails()async{
-    final name =await LocalStorage.getStringVal(LocalStorageConst.name);
-    final img =await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+
+  getUserDetails() async {
+    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
+    final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+    final user_id =
+        await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     this.userName = name;
     this.profilePic = img;
+    this.userID = user_id;
     notifyListeners();
   }
 }
