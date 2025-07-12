@@ -1,10 +1,10 @@
-class JobSeekFilterWorktypeRespon {
- JobRoleData? data;
+class JobSeekFilterWorktypeModel {
+  Data? data;
 
-  JobSeekFilterWorktypeRespon({this.data});
+  JobSeekFilterWorktypeModel({this.data});
 
-  JobSeekFilterWorktypeRespon.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new JobRoleData.fromJson(json['data']) : null;
+  JobSeekFilterWorktypeModel.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -16,51 +16,50 @@ class JobSeekFilterWorktypeRespon {
   }
 }
 
-class JobRoleData {
-  List<JobsRoleList>? jobsRoleList;
+class Data {
+  List<JobTypes>? jobTypes;
 
-  JobRoleData({this.jobsRoleList});
+  Data({this.jobTypes});
 
- JobRoleData.fromJson(Map<String, dynamic> json) {
-    if (json['jobs_role_list'] != null) {
-      jobsRoleList = <JobsRoleList>[];
-      json['jobs_role_list'].forEach((v) {
-        jobsRoleList!.add(new JobsRoleList.fromJson(v));
+  Data.fromJson(Map<String, dynamic> json) {
+    if (json['job_types'] != null) {
+      jobTypes = <JobTypes>[];
+      json['job_types'].forEach((v) {
+        jobTypes!.add(new JobTypes.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.jobsRoleList != null) {
-      data['jobs_role_list'] =
-          this.jobsRoleList!.map((v) => v.toJson()).toList();
+    if (this.jobTypes != null) {
+      data['job_types'] = this.jobTypes!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class JobsRoleList {
+class JobTypes {
   String? id;
-  String? roleName;
+  String? employeeTypeName;
   String? createdAt;
   String? updatedAt;
   String? createdBy;
   String? createdByUserId;
   String? sTypename;
 
-  JobsRoleList(
+  JobTypes(
       {this.id,
-      this.roleName,
+      this.employeeTypeName,
       this.createdAt,
       this.updatedAt,
       this.createdBy,
       this.createdByUserId,
       this.sTypename});
 
-  JobsRoleList.fromJson(Map<String, dynamic> json) {
+  JobTypes.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    roleName = json['role_name'];
+    employeeTypeName = json['employee_type_name'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     createdBy = json['created_by'];
@@ -71,7 +70,7 @@ class JobsRoleList {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['role_name'] = this.roleName;
+    data['employee_type_name'] = this.employeeTypeName;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['created_by'] = this.createdBy;
