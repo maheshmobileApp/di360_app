@@ -103,4 +103,3 @@ class JobSeekRepoImpl extends JobSeekRepository {
 
   
 }
-
