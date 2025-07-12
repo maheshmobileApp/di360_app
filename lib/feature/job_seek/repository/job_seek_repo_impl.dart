@@ -12,7 +12,6 @@ import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_re
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 
-
 class JobSeekRepoImpl extends JobSeekRepository {
   final HttpService _http = HttpService();
 
@@ -74,41 +73,34 @@ class JobSeekRepoImpl extends JobSeekRepository {
   }
 
   @override
-Future<List<JobSeekFilterProfessionRespon>> getJobFilterProfessions() async {
-  try {
-    final data = await _http.query(getAllJobsRoleListQuery);
-    final roleList = data['jobs_role_list'];
+  Future<List<JobSeekFilterProfessionRespon>> getJobFilterProfessions() async {
+    try {
+      final data = await _http.query(getAllEmployeeTypeListQuery);
+      final roleList = data['jobs_role_list'];
 
-    if (roleList == null || roleList is! List) {
-      throw Exception("jobs_role_list is null or not a list");
+      if (roleList == null || roleList is! List) {
+        throw Exception("jobs_role_list is null or not a list");
+      }
+
+      final result = JobSeekFilterProfessionListResponse.fromJson(data);
+      return result.jobsRoleList;
+    } catch (e, st) {
+      print("Error fetching professions: $e");
+      print(st);
+      return [];
     }
+  }
 
-    final result = JobSeekFilterProfessionListResponse.fromJson(data);
-    return result.jobsRoleList;
-  } catch (e, st) {
-    print("Error fetching professions: $e");
-    print(st);
-    return [];
+  @override
+  Future<List<JobsRoleList>> getJobFilterWorktypes() async {
+    try {
+      final data = await _http.query(getAllJobsRoleListQuery);
+      final result = JobRoleData.fromJson(data);
+      return result.jobsRoleList ?? [];
+    } catch (e, st) {
+      print("Error fetching work types: $e");
+      print(st);
+      return [];
+    }
   }
 }
-
-@override
-Future<List<JobsRoleList>> getJobFilterWorktypes() async {
-  try {
-    final data = await _http.query(getAllEmployeeTypeListQuery);
-    
-
-   
-
-    final result = JobRoleData.fromJson(data);
-    return result.jobsRoleList ?? [];
-  } catch (e, st) {
-    print("Error fetching work types: $e");
-    print(st);
-    return [];
-  }
-}
-
-  
-}
-

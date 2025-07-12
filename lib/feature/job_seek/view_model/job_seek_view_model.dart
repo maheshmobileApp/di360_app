@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
-import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -14,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
-  final JobSeekRepository repo = JobSeekRepoImpl();
+  final JobSeekRepoImpl repo = JobSeekRepoImpl();
 
   JobSeekViewModel() {
     initializeFilters();
@@ -24,16 +23,16 @@ class JobSeekViewModel extends ChangeNotifier {
   // Load Profession & Worktype filters
   Future<void> loadProfessionAndWorkTypeFilters() async {
    //// await Future.wait([
-      loadProfessionFilters();
+    //  loadProfessionFilters();
       loadWorkTypeFilters();
     //]);
     notifyListeners();
   }
 
-  Future<void> loadProfessionFilters() async {
-    final result = await repo.getJobFilterProfessions();
-    professionOptions = result.map((e) => e.roleName).toList();
-  }
+  // Future<void> loadProfessionFilters() async {
+  //   final result = await repo.getJobFilterProfessions();
+  //   professionOptions = result.map((e) => e.roleName).toList();
+  // }
 
   Future<void> loadWorkTypeFilters() async {
     final result = await repo.getJobFilterWorktypes();

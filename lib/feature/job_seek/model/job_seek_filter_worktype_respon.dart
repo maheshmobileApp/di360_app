@@ -1,9 +1,9 @@
-class JobSeekFilterWorktypeRespon {
- JobRoleData? data;
+class JobSeekRoleTypeRes {
+  JobRoleData? data;
 
-  JobSeekFilterWorktypeRespon({this.data});
+  JobSeekRoleTypeRes({this.data});
 
-  JobSeekFilterWorktypeRespon.fromJson(Map<String, dynamic> json) {
+  JobSeekRoleTypeRes.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new JobRoleData.fromJson(json['data']) : null;
   }
 
@@ -21,7 +21,7 @@ class JobRoleData {
 
   JobRoleData({this.jobsRoleList});
 
- JobRoleData.fromJson(Map<String, dynamic> json) {
+  JobRoleData.fromJson(Map<String, dynamic> json) {
     if (json['jobs_role_list'] != null) {
       jobsRoleList = <JobsRoleList>[];
       json['jobs_role_list'].forEach((v) {
