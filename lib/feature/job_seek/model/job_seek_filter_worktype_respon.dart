@@ -1,52 +1,82 @@
 class JobSeekFilterWorktypeRespon {
-  final String id;
-  final String employeeTypeName;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String createdBy;
-  final String createdByUserId;
+ JobRoleData? data;
 
-  JobSeekFilterWorktypeRespon({
-    required this.id,
-    required this.employeeTypeName,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.createdBy,
-    required this.createdByUserId,
-  });
+  JobSeekFilterWorktypeRespon({this.data});
 
-  factory JobSeekFilterWorktypeRespon.fromJson(Map<String, dynamic> json) {
-    return JobSeekFilterWorktypeRespon(
-      id: json['id'] as String,
-      employeeTypeName: json['employee_type_name'] as String,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      createdBy: json['created_by'] as String,
-      createdByUserId: json['created_by_user_id'] as String,
-    );
+  JobSeekFilterWorktypeRespon.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? new JobRoleData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'employee_type_name': employeeTypeName,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-      'created_by': createdBy,
-      'created_by_user_id': createdByUserId,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    return data;
   }
 }
 
-class JobSeekFilterWorktypeListResponse {
-  final List<JobSeekFilterWorktypeRespon> jobTypes;
+class JobRoleData {
+  List<JobsRoleList>? jobsRoleList;
 
-  JobSeekFilterWorktypeListResponse({required this.jobTypes});
+  JobRoleData({this.jobsRoleList});
 
-  factory JobSeekFilterWorktypeListResponse.fromJson(Map<String, dynamic> json) {
-    final types = json['job_types'] as List<dynamic>;
-    return JobSeekFilterWorktypeListResponse(
-      jobTypes: types.map((e) => JobSeekFilterWorktypeRespon.fromJson(e)).toList(),
-    );
+ JobRoleData.fromJson(Map<String, dynamic> json) {
+    if (json['jobs_role_list'] != null) {
+      jobsRoleList = <JobsRoleList>[];
+      json['jobs_role_list'].forEach((v) {
+        jobsRoleList!.add(new JobsRoleList.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.jobsRoleList != null) {
+      data['jobs_role_list'] =
+          this.jobsRoleList!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class JobsRoleList {
+  String? id;
+  String? roleName;
+  String? createdAt;
+  String? updatedAt;
+  String? createdBy;
+  String? createdByUserId;
+  String? sTypename;
+
+  JobsRoleList(
+      {this.id,
+      this.roleName,
+      this.createdAt,
+      this.updatedAt,
+      this.createdBy,
+      this.createdByUserId,
+      this.sTypename});
+
+  JobsRoleList.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    roleName = json['role_name'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    createdBy = json['created_by'];
+    createdByUserId = json['created_by_user_id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['role_name'] = this.roleName;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['created_by'] = this.createdBy;
+    data['created_by_user_id'] = this.createdByUserId;
+    data['__typename'] = this.sTypename;
+    return data;
   }
 }

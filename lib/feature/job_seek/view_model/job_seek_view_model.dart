@@ -15,8 +15,34 @@ import 'package:intl/intl.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
   final JobSeekRepository repo = JobSeekRepoImpl();
-  
 
+  JobSeekViewModel() {
+    initializeFilters();
+    loadProfessionAndWorkTypeFilters();
+  }
+
+  // Load Profession & Worktype filters
+  Future<void> loadProfessionAndWorkTypeFilters() async {
+   //// await Future.wait([
+      loadProfessionFilters();
+      loadWorkTypeFilters();
+    //]);
+    notifyListeners();
+  }
+
+  Future<void> loadProfessionFilters() async {
+    final result = await repo.getJobFilterProfessions();
+    professionOptions = result.map((e) => e.roleName).toList();
+  }
+
+  Future<void> loadWorkTypeFilters() async {
+    final result = await repo.getJobFilterWorktypes();
+    
+    employmentOptions = result.map((e) => e.roleName ?? "").toList();
+    notifyListeners();
+  }
+
+  
   String? _enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
@@ -26,10 +52,6 @@ class JobSeekViewModel extends ChangeNotifier {
   int get selectedTabIndex => _selectedTabIndex;
 
   bool isHidleFolatingButton = false;
-
-  JobSeekViewModel() {
-    initializeFilters();
-  }
 
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -155,16 +177,10 @@ class JobSeekViewModel extends ChangeNotifier {
     debugPrint("Locum Date: ${locumDateController.text}");
   }
 
-  List<String> get employmentOptions => ["Locum", "Contract", "Casual", "Part Time", "Full Time"];
+  List<String> employmentOptions = [];
   List<String> selectedEmploymentChips = [];
 
-  List<String> get professionOptions => [
-    "Surgen",
-    "Dentist",
-    "Dental Hygienist",
-    "Dental Prosthetist",
-    "Dental Specialist"
-  ];
+  List<String> professionOptions = [];
   List<String> selectedProfessions = [];
 
   bool showLocumDate = false;

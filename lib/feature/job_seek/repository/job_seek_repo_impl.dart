@@ -1,8 +1,5 @@
-
-
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_filter_profession_request.dart';
-import 'package:di360_flutter/feature/job_seek/job_seek_filter_request.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_filter_worktype_request.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
@@ -11,7 +8,6 @@ import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_respon.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_response.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_respon.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
@@ -77,31 +73,42 @@ class JobSeekRepoImpl extends JobSeekRepository {
     return JobApplicantsResponse.fromJson(jobApplyStatus);
   }
 
-  // ✅ Fetch Job Role List (Professions)
   @override
-  Future<List<JobSeekFilterProfessionRespon>> getJobFilterProfessions() async {
+Future<List<JobSeekFilterProfessionRespon>> getJobFilterProfessions() async {
+  try {
     final data = await _http.query(getAllJobsRoleListQuery);
+    final roleList = data['jobs_role_list'];
+
+    if (roleList == null || roleList is! List) {
+      throw Exception("jobs_role_list is null or not a list");
+    }
+
     final result = JobSeekFilterProfessionListResponse.fromJson(data);
     return result.jobsRoleList;
+  } catch (e, st) {
+    print("Error fetching professions: $e");
+    print(st);
+    return [];
   }
+}
 
-  // ✅ Fetch Work Types List (Employment Types)
-  @override
-  Future<List<JobSeekFilterWorktypeRespon>> getJobFilterWorktypes() async {
+@override
+Future<List<JobsRoleList>> getJobFilterWorktypes() async {
+  try {
     final data = await _http.query(getAllEmployeeTypeListQuery);
-    final result = JobSeekFilterWorktypeListResponse.fromJson(data);
-    return result.jobTypes;
-  }
+    
 
-  // ✅ Fetch Filtered Jobs List (Job Results)
-  @override
-  Future<List<JobSeekFilterResponse>> getFilteredJobs(Map<String, dynamic> variables) async {
-    final data = await _http.query(
-      getAllJobsFilterQuery,
-      variables: variables,
-    );
-    final result = GetJobSeekFilterRes.fromJson(data);
-    return result.data?.jobs ?? [];
+   
+
+    final result = JobRoleData.fromJson(data);
+    return result.jobsRoleList ?? [];
+  } catch (e, st) {
+    print("Error fetching work types: $e");
+    print(st);
+    return [];
   }
+}
+
+  
 }
 

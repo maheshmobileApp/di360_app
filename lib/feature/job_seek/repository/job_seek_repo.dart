@@ -4,7 +4,6 @@ import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_respon.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_response.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_respon.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 
@@ -18,6 +17,6 @@ abstract class JobSeekRepository {
   Future<Map<String, dynamic>> sendMessageRequest(SendMessageRequest request);
   Future<JobApplicantsResponse> getJobApplyStatus(String jobId, String dentalProfessionalId);
   Future<List<JobSeekFilterProfessionRespon>> getJobFilterProfessions();
-  Future<List<JobSeekFilterWorktypeRespon>> getJobFilterWorktypes();
-  Future<List<JobSeekFilterResponse>> getFilteredJobs(Map<String, dynamic> variables);
+  Future<List<JobsRoleList>> getJobFilterWorktypes();
+  
 }
