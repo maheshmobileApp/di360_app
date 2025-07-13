@@ -95,11 +95,11 @@ flutter:
     - assets/profile/inventory/
     - assets/profile/payments&others/
     - assets/profile/pre owned/
-    - assets\account.json
-    - assets\svgs\accountprofile.svg
-    - assets\svgs\logout 1.svg
-    - assets\get profession.json
-    - assets\getworktype.json
+    - assets/account.json
+    - assets/svgs/accountprofile.svg
+    - assets/svgs/logout 1.svg
+    - assets/getprofession.json
+    - assets/getworktype.json
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
