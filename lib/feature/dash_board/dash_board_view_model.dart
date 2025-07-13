@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -25,7 +26,7 @@ class DashBoardViewModel extends ChangeNotifier {
     NewsFeedScreen(),
     JobSeekView(),
     CataloguePage(),
-    Center(child: Text('Profile Page')),
+    MyCatalogueScreen(),
    LogoutView()
   ];
 
