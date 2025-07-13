@@ -5,8 +5,6 @@ import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_model.dart';
-//import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_model.dart';
-//import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 
 abstract class JobSeekRepository {

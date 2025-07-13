@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
-//import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -20,18 +19,6 @@ class JobSeekViewModel extends ChangeNotifier {
     getJobRoles();
    getJobWorkTypes();
   }
-
- /* Future<void> getJobRoles() async {
-    final result = await repo.getJobRoles();
-    professionOptions = result.map((e) => e.roleName ?? '').toList();
-  }
-
-  Future<void> getJobWorkTypes() async {
-    final result = await repo.getJobWorkTypes();
-    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
-  }*/
-
-  
   String? _enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
@@ -165,12 +152,6 @@ class JobSeekViewModel extends ChangeNotifier {
     debugPrint("Sort: $selectedSort");
     debugPrint("Locum Date: ${locumDateController.text}");
   }
-
- /* List<String> employmentOptions = [];
-  List<String> selectedEmploymentChips = [];
-
-  List<String> professionOptions = [];
-  List<String> selectedProfessions = [];*/
 
   bool showLocumDate = false;
 

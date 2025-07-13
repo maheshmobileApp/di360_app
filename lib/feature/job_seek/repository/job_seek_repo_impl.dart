@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:di360_flutter/core/http_service.dart';
-//import 'package:di360_flutter/feature/job_seek/job_seek_filter_profession_request.dart';
-//import 'package:di360_flutter/feature/job_seek/job_seek_filter_worktype_request.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
@@ -80,12 +78,10 @@ class JobSeekRepoImpl extends JobSeekRepository {
       final response = await rootBundle.loadString('assets/getprofession.json');
       final data = json.decode(response);
       final model = JobSeekFilterProfessionModel.fromJson(data);
-      print("data read");
       return model.data?.jobsRoleList ?? [];
       
     } catch (e) {
-      // You can handle or log the error more gracefully if needed
-      print("data  not read");
+     
       throw Exception('Failed to load job roles from local asset: $e');
     }
   }
