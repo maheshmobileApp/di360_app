@@ -6,7 +6,7 @@ import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
-import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
+//import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -14,9 +14,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
-  final JobSeekRepository repo = JobSeekRepoImpl();
-  
+  final JobSeekRepoImpl repo = JobSeekRepoImpl();
 
+  JobSeekViewModel() {
+    getJobRoles();
+   getJobWorkTypes();
+  }
+
+ /* Future<void> getJobRoles() async {
+    final result = await repo.getJobRoles();
+    professionOptions = result.map((e) => e.roleName ?? '').toList();
+  }
+
+  Future<void> getJobWorkTypes() async {
+    final result = await repo.getJobWorkTypes();
+    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
+  }*/
+
+  
   String? _enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
@@ -26,10 +41,6 @@ class JobSeekViewModel extends ChangeNotifier {
   int get selectedTabIndex => _selectedTabIndex;
 
   bool isHidleFolatingButton = false;
-
-  JobSeekViewModel() {
-    initializeFilters();
-  }
 
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -155,17 +166,11 @@ class JobSeekViewModel extends ChangeNotifier {
     debugPrint("Locum Date: ${locumDateController.text}");
   }
 
-  List<String> get employmentOptions => ["Locum", "Contract", "Casual", "Part Time", "Full Time"];
+ /* List<String> employmentOptions = [];
   List<String> selectedEmploymentChips = [];
 
-  List<String> get professionOptions => [
-    "Surgen",
-    "Dentist",
-    "Dental Hygienist",
-    "Dental Prosthetist",
-    "Dental Specialist"
-  ];
-  List<String> selectedProfessions = [];
+  List<String> professionOptions = [];
+  List<String> selectedProfessions = [];*/
 
   bool showLocumDate = false;
 
@@ -185,12 +190,27 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> employmentOptions = [];
+  List<String> selectedEmploymentChips = [];
+  List<String> professionOptions = [];
+  List<String> selectedProfessions = [];
   List<String> experienceOptions = ["0", "1–2", "3–5", "5–10", "10–15", "15–20"];
   String? selectedExperience;
 
   List<String> sortOptions = ["A to Z", "Z to A"];
   String? selectedSort;
 
+ Future<void> getJobRoles() async {
+    final result = await repo.getJobRoles();
+    professionOptions = result.map((e) => e.roleName ?? '').toList();
+    notifyListeners();
+  }
+
+  Future<void> getJobWorkTypes() async {
+    final result = await repo.getJobWorkTypes();
+    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
+    notifyListeners();
+  }
   void toggleProfession(String profession) {
     if (selectedProfessions.contains(profession)) {
       selectedProfessions.remove(profession);

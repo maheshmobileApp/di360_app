@@ -1,20 +1,18 @@
-
-
+import 'dart:convert';
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/feature/job_seek/job_seek_filter_profession_request.dart';
-import 'package:di360_flutter/feature/job_seek/job_seek_filter_request.dart';
-import 'package:di360_flutter/feature/job_seek/job_seek_filter_worktype_request.dart';
+//import 'package:di360_flutter/feature/job_seek/job_seek_filter_profession_request.dart';
+//import 'package:di360_flutter/feature/job_seek/job_seek_filter_worktype_request.dart';
 import 'package:di360_flutter/feature/job_seek/job_seek_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_respon.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_response.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_respon.dart';
+import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
+import 'package:flutter/services.dart';
 
 
 class JobSeekRepoImpl extends JobSeekRepository {
@@ -76,32 +74,32 @@ class JobSeekRepoImpl extends JobSeekRepository {
     );
     return JobApplicantsResponse.fromJson(jobApplyStatus);
   }
-
-  // ✅ Fetch Job Role List (Professions)
+    @override
+ Future<List<JobsRoleList>> getJobRoles() async {
+    try {
+      final response = await rootBundle.loadString('assets/getprofession.json');
+      final data = json.decode(response);
+      final model = JobSeekFilterProfessionModel.fromJson(data);
+      print("data read");
+      return model.data?.jobsRoleList ?? [];
+      
+    } catch (e) {
+      // You can handle or log the error more gracefully if needed
+      print("data  not read");
+      throw Exception('Failed to load job roles from local asset: $e');
+    }
+  }
   @override
-  Future<List<JobSeekFilterProfessionRespon>> getJobFilterProfessions() async {
-    final data = await _http.query(getAllJobsRoleListQuery);
-    final result = JobSeekFilterProfessionListResponse.fromJson(data);
-    return result.jobsRoleList;
+  Future<List<JobTypes>> getJobWorkTypes() async {
+    try {
+      final response = await rootBundle.loadString('assets/getworktype.json');
+      final data = json.decode(response);
+      final model = JobSeekFilterWorktypeModel.fromJson(data);
+      return model.data?.jobTypes ?? [];
+    } catch (e) {
+      throw Exception('Failed to load work types from local asset: $e');
+    }
   }
 
-  // ✅ Fetch Work Types List (Employment Types)
-  @override
-  Future<List<JobSeekFilterWorktypeRespon>> getJobFilterWorktypes() async {
-    final data = await _http.query(getAllEmployeeTypeListQuery);
-    final result = JobSeekFilterWorktypeListResponse.fromJson(data);
-    return result.jobTypes;
-  }
-
-  // ✅ Fetch Filtered Jobs List (Job Results)
-  @override
-  Future<List<JobSeekFilterResponse>> getFilteredJobs(Map<String, dynamic> variables) async {
-    final data = await _http.query(
-      getAllJobsFilterQuery,
-      variables: variables,
-    );
-    final result = GetJobSeekFilterRes.fromJson(data);
-    return result.data?.jobs ?? [];
-  }
+  
 }
-
