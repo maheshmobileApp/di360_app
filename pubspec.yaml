@@ -90,6 +90,14 @@ flutter:
     - assets/svgs/social/
     - assets/roles.json
     - assets/job_type.json
+    - assets/profile/account/
+    - assets/profile/jobseek/
+    - assets/profile/inventory/
+    - assets/profile/payments&others/
+    - assets/profile/pre owned/
+    - assets\account.json
+    - assets\svgs\accountprofile.svg
+    - assets\svgs\logout 1.svg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

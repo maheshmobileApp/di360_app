@@ -70,3 +70,23 @@ class GalleryView extends StatelessWidget {
     );
   }
 }
+
+
+/*
+
+[
+{
+ name:"spiderMan".
+ childer:[
+ {
+ "name":"spiderMan1",
+ "imageUrl":"""
+ }
+ ]
+
+
+}
+
+]
+
+ */
