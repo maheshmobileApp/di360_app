@@ -1,4 +1,6 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
+import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -9,7 +11,6 @@ import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
-import 'package:di360_flutter/feature/logout_view.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -28,7 +29,7 @@ class DashBoardViewModel extends ChangeNotifier {
     CataloguePage(),
     AccountScreen(),
     //Center(child: Text('Profile Page')),
-   LogoutView()
+    MyCataloguesScreen()
   ];
 
   void setIndex(int index, BuildContext context) {
@@ -49,10 +50,12 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<JobSeekViewModel>().fetchJobs();
         break;
       case 3:
-      context.read<CatalogueViewModel>().fetchCatalogue(context);
+        context.read<CatalogueViewModel>().fetchCatalogue(context);
         break;
-         case 4:
-        // Account screen – nothing to fetch here
+      case 4:
+        break;
+      case 5:
+        context.read<AddCatalogueViewModel>().getMyCataloguesData(context);
         break;
       default:
     }
