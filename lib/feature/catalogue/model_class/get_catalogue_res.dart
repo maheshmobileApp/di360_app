@@ -49,7 +49,7 @@ class CatalogueCategories {
 
   CatalogueCategories({this.id, this.name, this.catalogues, this.sTypename});
 
-  CatalogueCategories.fromJson(Map<String, dynamic> json) {
+  CatalogueCategories. fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     if (json['catalogues'] != null) {

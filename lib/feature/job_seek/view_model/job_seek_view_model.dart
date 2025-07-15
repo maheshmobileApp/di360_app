@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
@@ -17,17 +18,26 @@ class JobSeekViewModel extends ChangeNotifier {
 
   JobSeekViewModel() {
     getJobRoles();
-   getJobWorkTypes();
+    getJobWorkTypes();
   }
+
+  // ------------------ Job Data ------------------
   String? _enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
   List<Jobs> jobs = [];
+  List<JobSeekFilterModel> filteredJobs = [];
 
+  // ------------------ Tab & Floating Button ------------------
   int _selectedTabIndex = 0;
   int get selectedTabIndex => _selectedTabIndex;
 
   bool isHidleFolatingButton = false;
+
+  void setSelectedIndex(int index) {
+    _selectedTabIndex = index;
+    notifyListeners();
+  }
 
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -36,36 +46,7 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedIndex(int index) {
-    _selectedTabIndex = index;
-    notifyListeners();
-  }
-
-  Future<void> fetchJobs() async {
-    var jobData = await repo.getPopularJobs();
-    jobs = jobData.jobs ?? [];
-    notifyListeners();
-  }
-
-  void onChangeEnquireData(String data) {
-    _enquiryData = data;
-  }
-
-  Future<bool> jobEnquire(String jobId) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    var enquireData = EnquireRequest(
-      enquiryDescription: _enquiryData ?? '',
-      jobId: jobId,
-      enquiryUserId: userId,
-    );
-    try {
-      await repo.enquire(enquireData);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
+  // ------------------ Apply Job ------------------
   void setSelectedJob(Jobs job) {
     selectedJob = job;
   }
@@ -77,6 +58,7 @@ class JobSeekViewModel extends ChangeNotifier {
 
     final uploadImage = await repo.uploadTheResume(applyJobRequest.attachments.url);
     final response = UploadResponse.fromJson(uploadImage);
+
     applyJobRequest.attachments = Attachment(
       url: response.url,
       name: response.name,
@@ -89,138 +71,6 @@ class JobSeekViewModel extends ChangeNotifier {
       return true;
     } catch (_) {
       return false;
-    }
-  }
-
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController searchController = TextEditingController();
-  final TextEditingController locumDateController = TextEditingController();
-
-  Map<String, List<FilterOption>> filterOptions = {
-    "Location": [FilterOption(name: "Hyderabad"), FilterOption(name: "Bangalore")],
-    "Type": [FilterOption(name: "Full-time"), FilterOption(name: "Part-time")],
-  };
-
-  Map<String, List<int>> selectedIndices = {};
-  Map<String, bool> sectionVisibility = {};
-
-  void initializeFilters() {
-    for (var key in filterOptions.keys) {
-      selectedIndices[key] = [];
-      sectionVisibility[key] = true;
-    }
-  }
-
-  void toggleSection(String section) {
-    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
-    notifyListeners();
-  }
-
-  void selectItem(String section, int index) {
-    if (selectedIndices[section]?.contains(index) ?? false) {
-      selectedIndices[section]?.remove(index);
-    } else {
-      selectedIndices[section]?.add(index);
-    }
-    notifyListeners();
-  }
-
-  void clearSelections() {
-    for (var key in selectedIndices.keys) {
-      selectedIndices[key]?.clear();
-    }
-    selectedEmploymentChips.clear();
-    selectedProfessions.clear();
-    selectedExperience = null;
-    selectedSort = null;
-    locationController.clear();
-    searchController.clear();
-    locumDateController.clear();
-    showLocumDate = false;
-    notifyListeners();
-  }
-
-  void printSelectedItems() {
-    debugPrint("Selected Filters:");
-    filterOptions.forEach((key, items) {
-      final selected = selectedIndices[key]?.map((i) => items[i].name).toList();
-      debugPrint("$key: $selected");
-    });
-    debugPrint("Employment Chips: $selectedEmploymentChips");
-    debugPrint("Professions: $selectedProfessions");
-    debugPrint("Experience: $selectedExperience");
-    debugPrint("Sort: $selectedSort");
-    debugPrint("Locum Date: ${locumDateController.text}");
-  }
-
-  bool showLocumDate = false;
-
-  void toggleEmploymentFilter(String option) {
-    if (selectedEmploymentChips.contains(option)) {
-      selectedEmploymentChips.remove(option);
-      if (option == "Locum") {
-        showLocumDate = false;
-        locumDateController.clear();
-      }
-    } else {
-      selectedEmploymentChips.add(option);
-      if (option == "Locum") {
-        showLocumDate = true;
-      }
-    }
-    notifyListeners();
-  }
-
-  List<String> employmentOptions = [];
-  List<String> selectedEmploymentChips = [];
-  List<String> professionOptions = [];
-  List<String> selectedProfessions = [];
-  List<String> experienceOptions = ["0", "1–2", "3–5", "5–10", "10–15", "15–20"];
-  String? selectedExperience;
-
-  List<String> sortOptions = ["A to Z", "Z to A"];
-  String? selectedSort;
-
- Future<void> getJobRoles() async {
-    final result = await repo.getJobRoles();
-    professionOptions = result.map((e) => e.roleName ?? '').toList();
-    notifyListeners();
-  }
-
-  Future<void> getJobWorkTypes() async {
-    final result = await repo.getJobWorkTypes();
-    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
-    notifyListeners();
-  }
-  void toggleProfession(String profession) {
-    if (selectedProfessions.contains(profession)) {
-      selectedProfessions.remove(profession);
-    } else {
-      selectedProfessions.add(profession);
-    }
-    notifyListeners();
-  }
-
-  void setExperience(String value) {
-    selectedExperience = value;
-    notifyListeners();
-  }
-
-  void setSort(String value) {
-    selectedSort = value;
-    notifyListeners();
-  }
-
-  void pickCustomDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      locumDateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      notifyListeners();
     }
   }
 
@@ -245,9 +95,263 @@ class JobSeekViewModel extends ChangeNotifier {
       print("Error fetching job apply status: $e");
     }
   }
+
+  void onChangeEnquireData(String data) {
+    _enquiryData = data;
+  }
+
+  Future<bool> jobEnquire(String jobId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    var enquireData = EnquireRequest(
+      enquiryDescription: _enquiryData ?? '',
+      jobId: jobId,
+      enquiryUserId: userId,
+    );
+    try {
+      await repo.enquire(enquireData);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // ------------------ Filter Logic ------------------
+
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController locumDateController = TextEditingController();
+
+  Map<String, List<FilterItem>> filterOptions = {};
+  Map<String, Set<int>> selectedIndices = {
+    'profession': {},
+    'employment': {},
+    'experience': {},
+    'availability': {},
+  };
+
+  Map<String, bool> sectionVisibility = {
+    'profession': true,
+    'employment': true,
+    'experience': true,
+    'availability': true,
+  };
+
+  List<String> selectedProfessions = [];
+  List<String> selectedEmploymentChips = [];
+  List<String> selectedExperience = [];
+  List<String> selectedLocumDates = [];
+
+  List<String> professionOptions = [];
+  List<String> employmentOptions = [];
+
+  List<String> experienceOptions = ["0", "1–2", "3–5", "5–10", "10–15", "15–20"];
+  String? selectedExperienceDropdown;
+
+  List<String> sortOptions = ["A to Z", "Z to A"];
+  String? selectedSort;
+
+  bool showLocumDate = false;
+  bool isLoading = false;
+
+  // ------------------ INIT ------------------
+
+  Future<void> getJobRoles() async {
+    final result = await repo.getJobRoles();
+    professionOptions = result.map((e) => e.roleName ?? '').toList();
+    notifyListeners();
+  }
+
+  Future<void> getJobWorkTypes() async {
+    final result = await repo.getJobWorkTypes();
+    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
+    notifyListeners();
+  }
+
+  Future<void> initializeFilterOptions() async {
+    final roles = await repo.getJobRoles();
+    final types = await repo.getJobWorkTypes();
+
+    filterOptions = {
+      'profession': roles.map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? '')).toList(),
+      'employment': types.map((e) => FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? '')).toList(),
+      'experience': List.generate(10, (i) => FilterItem(name: "${i + 1} Years", id: "${i + 1}")),
+      'availability': [],
+    };
+
+    notifyListeners();
+  }
+
+  void toggleSection(String section) {
+    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
+    notifyListeners();
+  }
+
+  void selectItem(String section, int index) {
+    final currentSet = selectedIndices[section] ?? {};
+    if (currentSet.contains(index)) {
+      currentSet.remove(index);
+    } else {
+      currentSet.add(index);
+    }
+    selectedIndices[section] = currentSet;
+    notifyListeners();
+  }
+
+  void toggleEmploymentFilter(String option) {
+    if (selectedEmploymentChips.contains(option)) {
+      selectedEmploymentChips.remove(option);
+      if (option == "Locum") {
+        showLocumDate = false;
+        locumDateController.clear();
+        selectedLocumDates.clear();
+      }
+    } else {
+      selectedEmploymentChips.add(option);
+      if (option == "Locum") {
+        showLocumDate = true;
+      }
+    }
+    notifyListeners();
+  }
+
+  void toggleProfession(String profession) {
+    if (selectedProfessions.contains(profession)) {
+      selectedProfessions.remove(profession);
+    } else {
+      selectedProfessions.add(profession);
+    }
+    notifyListeners();
+  }
+
+  void setExperience(String value) {
+    selectedExperienceDropdown = value;
+    notifyListeners();
+  }
+
+  void setSort(String value) {
+    selectedSort = value;
+    notifyListeners();
+  }
+
+  // ------------------ Locum Multi-Date Picker ------------------
+
+  bool showMultiCalendar = false;
+  List<DateTime> selectedLocumDatesObjects = [];
+
+  void toggleCalendarVisibility() {
+    showMultiCalendar = !showMultiCalendar;
+    notifyListeners();
+  }
+
+  void toggleLocumDate(DateTime date) {
+    if (selectedLocumDatesObjects.any((d) =>
+        d.year == date.year && d.month == date.month && d.day == date.day)) {
+      selectedLocumDatesObjects.removeWhere((d) =>
+          d.year == date.year && d.month == date.month && d.day == date.day);
+    } else {
+      selectedLocumDatesObjects.add(date);
+    }
+
+    selectedLocumDates = selectedLocumDatesObjects
+        .map((d) => DateFormat('d/M/yyyy').format(d))
+        .toList();
+
+    locumDateController.text = selectedLocumDates.join(" | ");
+    notifyListeners();
+  }
+
+  void removeLocumDate(DateTime date) {
+    selectedLocumDatesObjects.removeWhere((d) =>
+        d.year == date.year && d.month == date.month && d.day == date.day);
+
+    selectedLocumDates = selectedLocumDatesObjects
+        .map((d) => DateFormat('d/M/yyyy').format(d))
+        .toList();
+
+    locumDateController.text = selectedLocumDates.join(" | ");
+    notifyListeners();
+  }
+
+  void updateLocumDateControllerText() {
+    locumDateController.text = selectedLocumDates.join(" | ");
+    notifyListeners();
+  }
+
+  // ------------------ Filter Apply Logic ------------------
+
+  void collectSelectedFilterIds() {
+    selectedProfessions.clear();
+    selectedEmploymentChips.clear();
+    selectedExperience.clear();
+
+    selectedIndices.forEach((section, indices) {
+      final items = filterOptions[section];
+      if (items != null) {
+        for (final i in indices) {
+          if (i < items.length) {
+            final id = items[i].id;
+            if (section == 'profession') {
+              selectedProfessions.add(id);
+            } else if (section == 'employment') {
+              selectedEmploymentChips.add(id);
+            } else if (section == 'experience') {
+              selectedExperience.add(id);
+            }
+          }
+        }
+      }
+    });
+  }
+
+  Future<void> applyFilters() async {
+    collectSelectedFilterIds();
+
+    isLoading = true;
+    notifyListeners();
+
+    final result = await repo.fetchFilteredJobs(
+      selectedProfessions,
+      selectedEmploymentChips,
+      selectedExperience,
+      selectedLocumDates,
+      null,
+    );
+
+    filteredJobs = result;
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void clearSelections() {
+    selectedIndices.updateAll((key, value) => {});
+    selectedProfessions.clear();
+    selectedEmploymentChips.clear();
+    selectedExperience.clear();
+    selectedSort = null;
+    selectedLocumDates.clear();
+    selectedLocumDatesObjects.clear();
+    showLocumDate = false;
+    locationController.clear();
+    locumDateController.clear();
+    notifyListeners();
+  }
+
+  void printSelectedItems() {
+    debugPrint("Selected Filters:");
+    selectedIndices.forEach((section, indices) {
+      final items = filterOptions[section];
+      if (items != null) {
+        final selected = indices.map((i) => items[i].name).toList();
+        debugPrint("$section: $selected");
+      }
+    });
+    debugPrint("Locum Dates: $selectedLocumDates");
+  }
 }
 
-class FilterOption {
+// Safe Filter Item model
+class FilterItem {
   final String name;
-  FilterOption({required this.name});
+  final String id;
+
+  FilterItem({required this.name, required this.id});
 }

@@ -1,13 +1,11 @@
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
+import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
@@ -27,128 +25,56 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             style: TextStyle(fontSize: 20, color: AppColors.black)),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Column(
-              children: [
-                // Container(
-                //   width: double.infinity,
-                //   height: getSize(context).height * 0.25,
-                //   decoration: const BoxDecoration(color: AppColors.geryColor),
-                //   child: Image.asset(
-                //     ImageConst.jobHeaderPng,
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
-                addVertical(30),
-                buildSearchBar(model),
-              ],
-            ),
             Expanded(
-              child: SingleChildScrollView(
-                child: buildFilters(context, model),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
+              child: ListView(
                 children: [
-                  Expanded(
-                    child: CustomRoundedButton(
-                      text: 'Clear',
-                      fontSize: 16,
-                      height: 42,
-                      onPressed: () async {
-                        model.clearSelections();
-                        model.fetchJobs();
-                        navigationService.goBack();
-                      },
-                      backgroundColor: AppColors.timeBgColor,
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomRoundedButton(
-                      text: 'Apply',
-                      fontSize: 16,
-                      height: 42,
-                      onPressed: () async {
-                        model.printSelectedItems();
-                        model.fetchJobs();
-                        navigationService.goBack();
-                      },
-                      backgroundColor: AppColors.primaryColor,
-                      textColor: Colors.white,
-                    ),
-                  ),
+                  buildFilters(context, model),
                 ],
               ),
             ),
-            SizedBox(height: 20,)
+            Row(
+              children: [
+                Expanded(
+                  child: CustomRoundedButton(
+                    text: 'Clear',
+                    fontSize: 16,
+                    height: 42,
+                    onPressed: () async {
+                      model.clearSelections();
+                      navigationService.goBack();
+                    },
+                    backgroundColor: AppColors.timeBgColor,
+                    textColor: Colors.black,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomRoundedButton(
+                    text: 'Apply',
+                    fontSize: 16,
+                    height: 42,
+                    onPressed: () async {
+                      model.applyFilters(); // key updated call
+                      navigationService.goBack();
+                    },
+                    backgroundColor: AppColors.primaryColor,
+                    textColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget buildSearchBar(JobSeekViewModel model) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-        color: AppColors.whiteColor,
-      ),
-      child: Column(
-        children: [
-          addVertical(14),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 23),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: model.searchController,
-                    onFieldSubmitted: (_) => navigationService.goBack(),
-                    decoration: InputDecoration(
-                      hintText: 'What are you looking for?',
-                      hintStyle: TextStyles.dmsansLight(
-                        color: AppColors.black,
-                        fontSize: 18,
-                      ),
-                      suffixIcon: GestureDetector(
-                          onTap: () async {
-                            if (model.searchController.text.isNotEmpty) {
-                              //await filterProvider.fetchCatalogue(context);
-                              navigationService.goBack();
-                            }
-                          },
-                          child: Icon(Icons.search, color: AppColors.black)),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                addHorizontal(10),
-                CircleAvatar(
-                  radius: 22,
-                  backgroundColor: AppColors.black,
-                  child: SvgPicture.asset(ImageConst.filter,
-                      color: AppColors.whiteColor),
-                )
-              ],
-            ),
-          ),
-          // Divider()
-        ],
-      ),
-    );
-  }
-
   Widget buildFilters(BuildContext context, JobSeekViewModel model) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16.0, vertical: 12.0), // Outer spacing
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.whiteColor,
@@ -190,25 +116,25 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               _filterSectionWithDropdown(
                 title: 'Filter by Experience',
                 child: CustomDropDown<String>(
-                  title: '',
-                  hintText: 'Select Experience',
-                  items: model.experienceOptions
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(
-                            e,
-                            style: TextStyles.regular3(
-                                color: AppColors.lightGeryColor),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  value: model.selectedExperience,
-                  onChanged: (val) {
-                    if (val != null) model.setExperience(val);
-                  },
-                ),
+     title: '',
+  hintText: 'Select Experience',
+  items: model.experienceOptions
+      .map(
+        (e) => DropdownMenuItem(
+          value: e,
+          child: Text(
+            e,
+            style: TextStyles.regular3(color: AppColors.lightGeryColor),
+          ),
+        ),
+      )
+      .toList(),
+  value: model.selectedExperienceDropdown, // <-- Fix applied here
+  onChanged: (val) {
+    if (val != null) model.setExperience(val); // Already correct
+  },
+),
+
               ),
               _filterSectionWithDropdown(
                 title: 'Sort By Alphabetical Order',
@@ -240,46 +166,42 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
- Widget _locationSearchBar(JobSeekViewModel model) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Divider(height: 0),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(30),
-          ),
+  Widget _locationSearchBar(JobSeekViewModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: model.locationController,
-                  decoration: InputDecoration(
-                    hintText: 'Search Location',
-                    hintStyle:
-                        TextStyles.regular3(color: AppColors.lightGeryColor),
-                    border: InputBorder.none,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: model.locationController,
+                    decoration: InputDecoration(
+                      hintText: 'Search Location',
+                      hintStyle:
+                          TextStyles.regular3(color: AppColors.lightGeryColor),
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.search, size: 22),
-                onPressed: () {
-                  // Your search logic here
-                },
-              ),
-            ],
+                IconButton(
+                  icon: const Icon(Icons.search, size: 22),
+                  onPressed: () {},
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 
   Widget _filterSection({
     required String title,
@@ -291,17 +213,13 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(height: 0),
         Theme(
           data: ThemeData().copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
             tilePadding: const EdgeInsets.symmetric(horizontal: 16),
             title: Text(
               title,
-              style: TextStyles.regular3(
-                color: AppColors.black,
-                //fontSize: 18,
-              ),
+              style: TextStyles.regular3(color: AppColors.black),
             ),
             initiallyExpanded: true,
             childrenPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -338,7 +256,6 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(height: 0), // Top border
         Theme(
           data: ThemeData().copyWith(
             dividerColor: Colors.transparent,
@@ -349,19 +266,12 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             tilePadding: const EdgeInsets.symmetric(horizontal: 16),
             title: Text(
               title,
-              style: TextStyles.regular3(
-                color: AppColors.black,
-                //fontSize: 18,
-              ),
+              style: TextStyles.regular3(color: AppColors.black),
             ),
             trailing: const Icon(Icons.expand_more),
             initiallyExpanded: true,
-            childrenPadding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 0,
-              bottom: 8,
-            ),
+            childrenPadding:
+                const EdgeInsets.only(left: 16, right: 16, bottom: 8),
             children: [
               child,
             ],
@@ -372,45 +282,33 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _locumDateSection(BuildContext context, JobSeekViewModel model) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          Text(
-            'Availability Date',
-            style: TextStyles.regular3(
-              color: AppColors.black,
-              //fontSize: 18,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MultiDateCalendarPicker(
+         selectedDates: model.selectedLocumDatesObjects, 
+          onToggleDate: (date) {
+            model.toggleLocumDate(date);
+            model.updateLocumDateControllerText();
+          },
+          title: "Availability Date",
+        ),
+        const SizedBox(height: 12),
+        if (model.selectedLocumDates.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children:model.selectedLocumDatesObjects.map((date) {
+      return Chip(
+      label: Text(DateFormat('MMM d, yyyy').format(date)), // ✅ date is DateTime
+     onDeleted: () {
+      model.removeLocumDate(date); // ✅ passes DateTime as expected
+     },
+   );
+     }).toList(),
+
           ),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: SizedBox(
-              width: 250,
-              child: CustomDatePicker(
-                controller: model.locumDateController,
-                hintText: "Choose locum dates",
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (date != null) {
-                    model.locumDateController.text =
-                        DateFormat('yyyy-MM-dd').format(date);
-                  }
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
+      ],
     );
   }
 }
