@@ -21,5 +21,5 @@ class RouteList {
   static const String applyJob = '/applyJob';
   static const String account = '/account';
   static const String  JobSeekFilterScreen= '/JobSeekFilterScreen';
-  //static const String commentScreen = '/commentScreen';
+  static const String addCatalogScreen = '/addCatalogScreen';
 }

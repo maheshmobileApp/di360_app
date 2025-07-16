@@ -1,9 +1,13 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CatalogueCard extends StatelessWidget with BaseContextHelpers {
   final Catalogues? item;
@@ -12,6 +16,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final myCatalogVM = Provider.of<AddCatalogueViewModel>(context);
     Color statusColor;
     switch (item?.status) {
       case 'APPROVED':
@@ -70,7 +75,10 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               ),
             ),
           ),
-          Positioned(right: 2, top: 15, child: menuWidget())
+          Positioned(
+              right: 2,
+              top: 15,
+              child: menuWidget(myCatalogVM, context, item?.id))
         ],
       ),
     );
@@ -87,8 +95,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(titleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
-        ]),
-        //  menuWidget()
+        ])
       ],
     );
   }
@@ -124,25 +131,71 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget() {
+  Widget menuWidget(
+      AddCatalogueViewModel vm, BuildContext context, String? id) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
+      color: AppColors.whiteColor,
       padding: const EdgeInsets.all(0),
       onSelected: (value) {
         if (value == "View") {
+          vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
         } else if (value == "Inactive") {
-        } else if (value == "Delete") {}
+          showAlertMessage(context, 'Do you really want to change status?',
+              onBack: () {
+            navigationService.goBack();
+            vm.inActiveCatalogue(context, id);
+          });
+        } else if (value == "Delete") {
+          showAlertMessage(
+              context, 'Are you sure you want to delete this catalogue?',
+              onBack: () {
+            navigationService.goBack();
+            vm.removeCatalogue(context, id);
+          });
+        } else if (value == "sendApproval") {
+          showAlertMessage(context, 'Do you really want to change status?',
+              onBack: () {
+            navigationService.goBack();
+            vm.sendApprovalCatalogue(context, id);
+          });
+        }
       },
       itemBuilder: (context) => [
-        const PopupMenuItem(value: "View", child: Text("View")),
-        const PopupMenuItem(value: "Edit", child: Text("Edit")),
-        const PopupMenuItem(value: "Inactive", child: Text("Inactive")),
-        const PopupMenuItem(
-          value: "Delete",
-          child: Text("Delete", style: TextStyle(color: Colors.red)),
-        ),
+        PopupMenuItem(
+            value: "View",
+            child: _buildRow(
+                Icons.remove_red_eye, AppColors.black, "View Catalogue")),
+        if (vm.selectedStatus == 'Approved & Scheduled' ||
+            vm.selectedStatus == 'Reject')
+          PopupMenuItem(
+              value: "Inactive",
+              child: _buildRow(
+                  Icons.local_activity, AppColors.primaryColor, "Inactive")),
+        if (vm.selectedStatus == 'Draft')
+          PopupMenuItem(
+              value: "sendApproval",
+              child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
+                  "Send for Approval")),
+        if (vm.selectedStatus != 'Approved & Scheduled')
+          PopupMenuItem(
+              value: "Edit",
+              child:
+                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
+        PopupMenuItem(
+            value: "Delete",
+            child:
+                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),
       ],
     );
+  }
+
+  Widget _buildRow(IconData? icon, Color? color, String? title) {
+    return Row(children: [
+      Icon(icon, color: color),
+      addHorizontal(8),
+      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
+    ]);
   }
 }

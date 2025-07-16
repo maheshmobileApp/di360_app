@@ -29,4 +29,5 @@ class AppColors {
   static const Color primaryBlueColor = Color(0xff0471de);
   static const Color dropDownHint = Color(0xffBAC1C8);
   static const Color greenColor = Color(0xff00934F);
+  static const Color redColor = Color(0xffD71313);
 }
