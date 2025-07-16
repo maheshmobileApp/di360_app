@@ -1,8 +1,6 @@
 const String getAllJobsFilterQuery = r'''
-query getalljobsFilter(
-  \$where: jobs_bool_exp!
-) {
-  jobs(where: \$where, order_by: {created_at: desc}) {
+query getalljobsFilter($where: jobs_bool_exp!) {
+  jobs(where: $where, order_by: {created_at: desc}) {
     id
     title
     j_type

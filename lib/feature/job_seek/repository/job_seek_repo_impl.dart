@@ -10,9 +10,6 @@ import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
-
-//import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
-//import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:flutter/services.dart';
@@ -101,52 +98,59 @@ class JobSeekRepoImpl extends JobSeekRepository {
       throw Exception('Failed to load work types from local asset: $e');
     }
   }
+
 @override
 Future<List<JobSeekFilterModel>> fetchFilteredJobs(
   List<String>? roles,
   List<String>? employmentTypes,
   List<String>? experienceYears,
   List<String>? availabilityDates,
-  String? status,
 ) async {
   final andList = <Map<String, dynamic>>[];
 
-  if (status != null && status.isNotEmpty) {
-    andList.add({"status": {"_eq": status}});
-  }
 
   if (roles != null && roles.isNotEmpty) {
-    andList.add({"j_role": {"_in": roles}});
+    andList.add({
+      "j_role": {"_in": roles},
+    });
   }
 
   if (employmentTypes != null && employmentTypes.isNotEmpty) {
-    andList.add({"TypeofEmployment": {"_has_keys_any": employmentTypes}});
+    andList.add({
+      "TypeofEmployment": {"_has_keys_any": employmentTypes},
+    });
   }
 
   if (experienceYears != null && experienceYears.isNotEmpty) {
-    andList.add({"years_of_experience": {"_eq": experienceYears.first}});
+    andList.add({
+      "years_of_experience": {"_in": experienceYears},
+    });
   }
 
   if (availabilityDates != null && availabilityDates.isNotEmpty) {
-    andList.add({"availability_date": {"_has_keys_any": availabilityDates}});
+    andList.add({
+      "availability_date": {"_has_keys_any": availabilityDates},
+    });
   }
 
-  final variables = {"where": {"_and": andList}};
+  final variables = {
+    "where": {
+      "_and": andList,
+    }
+  };
 
-  final response = await _http.query(
+
+  final result = await _http.query(
     getAllJobsFilterQuery,
     variables: variables,
   );
 
-  if (response != null && response['jobs'] != null) {
-    return (response['jobs'] as List)
-        .map((e) => JobSeekFilterModel.fromJson(e))
-        .toList();
-  } else {
-    return [];
-  }
+  final jobsList = result['jobs'] as List<dynamic>?;
+
+  if (jobsList == null) return [];
+
+  return jobsList.map((e) => JobSeekFilterModel.fromJson(e)).toList();
 }
- 
 
 
 }

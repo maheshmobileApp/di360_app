@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
+import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
@@ -17,18 +18,17 @@ class JobSeekViewModel extends ChangeNotifier {
   final JobSeekRepoImpl repo = JobSeekRepoImpl();
 
   JobSeekViewModel() {
+    initializeFilterOptions();
     getJobRoles();
     getJobWorkTypes();
   }
 
-  // ------------------ Job Data ------------------
   String? _enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   List<JobSeekFilterModel> filteredJobs = [];
 
-  // ------------------ Tab & Floating Button ------------------
   int _selectedTabIndex = 0;
   int get selectedTabIndex => _selectedTabIndex;
 
@@ -46,7 +46,6 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ------------------ Apply Job ------------------
   void setSelectedJob(Jobs job) {
     selectedJob = job;
   }
@@ -114,77 +113,101 @@ class JobSeekViewModel extends ChangeNotifier {
       return false;
     }
   }
+  Future<void> fetchJobs() async {
+    var jobData = await repo.getPopularJobs();
+    jobs = jobData.jobs ?? [];
 
-  // ------------------ Filter Logic ------------------
-
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController locumDateController = TextEditingController();
-
-  Map<String, List<FilterItem>> filterOptions = {};
-  Map<String, Set<int>> selectedIndices = {
-    'profession': {},
-    'employment': {},
-    'experience': {},
-    'availability': {},
-  };
-
-  Map<String, bool> sectionVisibility = {
-    'profession': true,
-    'employment': true,
-    'experience': true,
-    'availability': true,
-  };
-
-  List<String> selectedProfessions = [];
-  List<String> selectedEmploymentChips = [];
-  List<String> selectedExperience = [];
-  List<String> selectedLocumDates = [];
-
-  List<String> professionOptions = [];
-  List<String> employmentOptions = [];
-
-  List<String> experienceOptions = ["0", "1–2", "3–5", "5–10", "10–15", "15–20"];
-  String? selectedExperienceDropdown;
-
-  List<String> sortOptions = ["A to Z", "Z to A"];
-  String? selectedSort;
-
-  bool showLocumDate = false;
-  bool isLoading = false;
-
-  // ------------------ INIT ------------------
-
-  Future<void> getJobRoles() async {
-    final result = await repo.getJobRoles();
-    professionOptions = result.map((e) => e.roleName ?? '').toList();
     notifyListeners();
   }
 
-  Future<void> getJobWorkTypes() async {
-    final result = await repo.getJobWorkTypes();
-    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
-    notifyListeners();
-  }
+final TextEditingController locationController = TextEditingController();
+final TextEditingController locumDateController = TextEditingController();
 
+late Map<String, List<FilterItem>> filterOptions;
+
+List<String> selectedProfessions = [];
+List<String> selectedEmploymentTypes = [];
+List<String> selectedExperiences = [];
+List<String> selectedAvailability = [];  
+
+Map<String, Set<int>> selectedIndices = {
+  'profession': {},
+  'employment': {},
+  'experience': {},
+  'availability': {}, 
+};
+
+Map<String, bool> sectionVisibility = {
+  'profession': true,
+  'employment': true,
+  'experience': true,
+  'availability': true,
+};
+
+List<DateTime> selectedLocumDatesObjects = [];
+bool showLocumDate = false;
+bool showMultiCalendar = false;
+bool isLoading = false;
+
+String? selectedExperienceDropdown;
+String? selectedSort;
+
+final List<String> sortOptions = ['A to Z', 'Z to A'];
+List<String> experienceOptions = List.generate(10, (i) => "${i + 1} Years");
+
+Future<void> getJobRoles() async {
+  final result = await repo.getJobRoles();
+  filterOptions['profession'] = result
+      .map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? ''))
+      .toList();
+  notifyListeners();
+}
+
+Future<void> getJobWorkTypes() async {
+  final result = await repo.getJobWorkTypes();
+  filterOptions['employment'] = result
+      .map((e) => FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? ''))
+      .toList();
+  notifyListeners();
+}
   Future<void> initializeFilterOptions() async {
-    final roles = await repo.getJobRoles();
-    final types = await repo.getJobWorkTypes();
+  final roles = await repo.getJobRoles();
+  final types = await repo.getJobWorkTypes();
 
-    filterOptions = {
-      'profession': roles.map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? '')).toList(),
-      'employment': types.map((e) => FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? '')).toList(),
-      'experience': List.generate(10, (i) => FilterItem(name: "${i + 1} Years", id: "${i + 1}")),
-      'availability': [],
-    };
+  filterOptions = {
+    'profession': roles.map((e) =>
+     FilterItem(name: e.roleName ?? '', id: e.roleName ?? '')).toList(),
+    'employment': types.map((e) => 
+    FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? '')).toList(),
+    'experience': List.generate(10, (i) => 
+    FilterItem(name: "${i + 1} Years", id: "${i + 1}")),
+    'availability': [],
+  };
+  notifyListeners();
+}
+List<FilterItem> getSortedProfessionOptions() {
+    final list = filterOptions['profession'] ?? [];
+    return applySorting(list, (item) => item.name.capitalizeFirstLetter());
+  }
 
-    notifyListeners();
+  List<FilterItem> getSortedEmploymentOptions() {
+    final list = filterOptions['employment'] ?? [];
+    return applySorting(list, (item) => item.name.capitalizeFirstLetter());
+  }
+
+  List<T> applySorting<T>(List<T> list, String Function(T) getField) {
+    if (selectedSort == 'A to Z') {
+      list.sort((a, b) => getField(a).toLowerCase().compareTo(getField(b).toLowerCase()));
+    } else if (selectedSort == 'Z to A') {
+      list.sort((a, b) => getField(b).toLowerCase().compareTo(getField(a).toLowerCase()));
+    }
+    return list;
   }
 
   void toggleSection(String section) {
     sectionVisibility[section] = !(sectionVisibility[section] ?? true);
     notifyListeners();
   }
-
   void selectItem(String section, int index) {
     final currentSet = selectedIndices[section] ?? {};
     if (currentSet.contains(index)) {
@@ -192,34 +215,57 @@ class JobSeekViewModel extends ChangeNotifier {
     } else {
       currentSet.add(index);
     }
+
+    if (section == 'employment') {
+      final id = filterOptions[section]?[index].id;
+      if (id == "Locum") {
+        showLocumDate = currentSet.contains(index);
+        if (!showLocumDate) {
+          selectedLocumDatesObjects.clear();
+          locumDateController.clear();
+        }
+      }
+    }
+
     selectedIndices[section] = currentSet;
     notifyListeners();
   }
 
-  void toggleEmploymentFilter(String option) {
-    if (selectedEmploymentChips.contains(option)) {
-      selectedEmploymentChips.remove(option);
-      if (option == "Locum") {
-        showLocumDate = false;
-        locumDateController.clear();
-        selectedLocumDates.clear();
-      }
-    } else {
-      selectedEmploymentChips.add(option);
-      if (option == "Locum") {
-        showLocumDate = true;
-      }
-    }
+  void toggleCalendarVisibility() {
+    showMultiCalendar = !showMultiCalendar;
     notifyListeners();
   }
 
-  void toggleProfession(String profession) {
-    if (selectedProfessions.contains(profession)) {
-      selectedProfessions.remove(profession);
+  void toggleLocumDate(DateTime date) {
+    if (selectedLocumDatesObjects.any((d) => isSameDate(d, date))) {
+      selectedLocumDatesObjects.removeWhere((d) => isSameDate(d, date));
     } else {
-      selectedProfessions.add(profession);
+      selectedLocumDatesObjects.add(date);
     }
+
+    updateLocumDateControllerText();
+  }
+
+  void removeLocumDate(DateTime date) {
+    selectedLocumDatesObjects.removeWhere((d) => isSameDate(d, date));
+    updateLocumDateControllerText();
+  }
+
+  void updateLocumDateControllerText() {
+    final formatted =
+        selectedLocumDatesObjects.map((d) => 
+        DateFormat('d/M/yyyy').format(d)).toList();
+    locumDateController.text = formatted.join(" | ");
     notifyListeners();
+  }
+
+  List<String> get selectedLocumDates => selectedLocumDatesObjects
+      .map((d) => 
+      DateFormat('yyyy-MM-dd').format(d))
+      .toList();
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   void setExperience(String value) {
@@ -228,106 +274,14 @@ class JobSeekViewModel extends ChangeNotifier {
   }
 
   void setSort(String value) {
-    selectedSort = value;
-    notifyListeners();
-  }
-
-  // ------------------ Locum Multi-Date Picker ------------------
-
-  bool showMultiCalendar = false;
-  List<DateTime> selectedLocumDatesObjects = [];
-
-  void toggleCalendarVisibility() {
-    showMultiCalendar = !showMultiCalendar;
-    notifyListeners();
-  }
-
-  void toggleLocumDate(DateTime date) {
-    if (selectedLocumDatesObjects.any((d) =>
-        d.year == date.year && d.month == date.month && d.day == date.day)) {
-      selectedLocumDatesObjects.removeWhere((d) =>
-          d.year == date.year && d.month == date.month && d.day == date.day);
-    } else {
-      selectedLocumDatesObjects.add(date);
-    }
-
-    selectedLocumDates = selectedLocumDatesObjects
-        .map((d) => DateFormat('d/M/yyyy').format(d))
-        .toList();
-
-    locumDateController.text = selectedLocumDates.join(" | ");
-    notifyListeners();
-  }
-
-  void removeLocumDate(DateTime date) {
-    selectedLocumDatesObjects.removeWhere((d) =>
-        d.year == date.year && d.month == date.month && d.day == date.day);
-
-    selectedLocumDates = selectedLocumDatesObjects
-        .map((d) => DateFormat('d/M/yyyy').format(d))
-        .toList();
-
-    locumDateController.text = selectedLocumDates.join(" | ");
-    notifyListeners();
-  }
-
-  void updateLocumDateControllerText() {
-    locumDateController.text = selectedLocumDates.join(" | ");
-    notifyListeners();
-  }
-
-  // ------------------ Filter Apply Logic ------------------
-
-  void collectSelectedFilterIds() {
-    selectedProfessions.clear();
-    selectedEmploymentChips.clear();
-    selectedExperience.clear();
-
-    selectedIndices.forEach((section, indices) {
-      final items = filterOptions[section];
-      if (items != null) {
-        for (final i in indices) {
-          if (i < items.length) {
-            final id = items[i].id;
-            if (section == 'profession') {
-              selectedProfessions.add(id);
-            } else if (section == 'employment') {
-              selectedEmploymentChips.add(id);
-            } else if (section == 'experience') {
-              selectedExperience.add(id);
-            }
-          }
-        }
-      }
-    });
-  }
-
-  Future<void> applyFilters() async {
-    collectSelectedFilterIds();
-
-    isLoading = true;
-    notifyListeners();
-
-    final result = await repo.fetchFilteredJobs(
-      selectedProfessions,
-      selectedEmploymentChips,
-      selectedExperience,
-      selectedLocumDates,
-      null,
-    );
-
-    filteredJobs = result;
-    isLoading = false;
-    notifyListeners();
-  }
-
+  selectedSort = value;
+  notifyListeners();
+}
+  
   void clearSelections() {
     selectedIndices.updateAll((key, value) => {});
-    selectedProfessions.clear();
-    selectedEmploymentChips.clear();
-    selectedExperience.clear();
+    selectedExperienceDropdown = null;
     selectedSort = null;
-    selectedLocumDates.clear();
     selectedLocumDatesObjects.clear();
     showLocumDate = false;
     locationController.clear();
@@ -335,23 +289,50 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void printSelectedItems() {
-    debugPrint("Selected Filters:");
-    selectedIndices.forEach((section, indices) {
-      final items = filterOptions[section];
-      if (items != null) {
-        final selected = indices.map((i) => items[i].name).toList();
-        debugPrint("$section: $selected");
+ void printSelectedItems() {
+  selectedProfessions = [];
+  selectedEmploymentTypes = [];
+  selectedExperiences = [];
+  selectedAvailability = [];  
+
+  selectedIndices.forEach((section, indices) {
+    final items = filterOptions[section];
+    if (items != null && indices.isNotEmpty) {
+      for (final i in indices) {
+        final id = items[i].id;
+        if (section == "profession") {
+          selectedProfessions.add(id);
+        } else if (section == "employment") {
+          selectedEmploymentTypes.add(id);
+        }
       }
-    });
-    debugPrint("Locum Dates: $selectedLocumDates");
+    }
+  });
+  if (selectedExperienceDropdown != null) {
+    selectedExperiences.add(selectedExperienceDropdown!);
   }
+  if (selectedLocumDatesObjects.isNotEmpty) {
+    selectedAvailability = selectedLocumDatesObjects
+        .map((d) => DateFormat('yyyy-MM-dd').format(d))
+        .toList();
+  }
+
+  debugPrint("Profession: $selectedProfessions");
+  debugPrint("Employment: $selectedEmploymentTypes");
+  debugPrint("Experience: $selectedExperiences");
+  debugPrint("Availability: $selectedAvailability");
 }
 
-// Safe Filter Item model
+}
+
 class FilterItem {
   final String name;
   final String id;
+  bool isSelected;
 
-  FilterItem({required this.name, required this.id});
+  FilterItem({
+    required this.name,
+    required this.id,
+    this.isSelected = false,
+  });
 }

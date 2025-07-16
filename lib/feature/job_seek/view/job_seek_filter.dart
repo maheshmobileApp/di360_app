@@ -25,7 +25,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             style: TextStyle(fontSize: 20, color: AppColors.black)),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           children: [
             Expanded(
@@ -44,6 +44,8 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                     height: 42,
                     onPressed: () async {
                       model.clearSelections();
+                      await model
+                          .fetchJobs(); 
                       navigationService.goBack();
                     },
                     backgroundColor: AppColors.timeBgColor,
@@ -57,7 +59,8 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                     fontSize: 16,
                     height: 42,
                     onPressed: () async {
-                      model.applyFilters(); // key updated call
+                       model.printSelectedItems(); 
+   
                       navigationService.goBack();
                     },
                     backgroundColor: AppColors.primaryColor,
@@ -93,22 +96,28 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             children: [
               _filterSection(
                 title: 'Filter by Location',
-                options: const [],
-                selected: const [],
+                options: const [], 
+                selectedIndices: const {}, 
                 onToggle: (_) {},
                 child: _locationSearchBar(model),
               ),
               _filterSection(
                 title: 'Filter by Profession',
-                options: model.professionOptions,
-                selected: model.selectedProfessions,
-                onToggle: model.toggleProfession,
+                options: model.filterOptions['profession']
+                        ?.map((e) => e.name)
+                        .toList() ??
+                    [],
+                selectedIndices: model.selectedIndices['profession'] ?? {},
+                onToggle: (index) => model.selectItem('profession', index),
               ),
               _filterSection(
                 title: 'Filter by Employment Type',
-                options: model.employmentOptions,
-                selected: model.selectedEmploymentChips,
-                onToggle: model.toggleEmploymentFilter,
+                options: model.filterOptions['employment']
+                        ?.map((e) => e.name)
+                        .toList() ??
+                    [],
+                selectedIndices: model.selectedIndices['employment'] ?? {},
+                onToggle: (index) => model.selectItem('employment', index),
                 child: model.showLocumDate
                     ? _locumDateSection(context, model)
                     : null,
@@ -116,25 +125,27 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               _filterSectionWithDropdown(
                 title: 'Filter by Experience',
                 child: CustomDropDown<String>(
-     title: '',
-  hintText: 'Select Experience',
-  items: model.experienceOptions
-      .map(
-        (e) => DropdownMenuItem(
-          value: e,
-          child: Text(
-            e,
-            style: TextStyles.regular3(color: AppColors.lightGeryColor),
-          ),
-        ),
-      )
-      .toList(),
-  value: model.selectedExperienceDropdown, // <-- Fix applied here
-  onChanged: (val) {
-    if (val != null) model.setExperience(val); // Already correct
-  },
-),
-
+                  title: '',
+                  hintText: 'Select Experience',
+                  items: model.experienceOptions
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e,
+                            style: TextStyles.regular3(
+                                color: AppColors.lightGeryColor),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  value:
+                      model.selectedExperienceDropdown, 
+                  onChanged: (val) {
+                    if (val != null)
+                      model.setExperience(val); 
+                  },
+                ),
               ),
               _filterSectionWithDropdown(
                 title: 'Sort By Alphabetical Order',
@@ -206,8 +217,8 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
   Widget _filterSection({
     required String title,
     required List<String> options,
-    required List<String> selected,
-    required Function(String) onToggle,
+    required Set<int> selectedIndices,
+    required Function(int) onToggle,
     Widget? child,
   }) {
     return Column(
@@ -225,21 +236,21 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             childrenPadding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
               if (options.isNotEmpty)
-                ...options.map(
-                  (opt) => CheckboxListTile(
+                ...List.generate(options.length, (index) {
+                  final opt = options[index];
+                  return CheckboxListTile(
                     title: Text(
                       opt,
-                      style: TextStyles.regular3(
-                        color: AppColors.lightGeryColor,
-                      ),
+                      style:
+                          TextStyles.regular3(color: AppColors.lightGeryColor),
                     ),
-                    value: selected.contains(opt),
-                    onChanged: (_) => onToggle(opt),
+                    value: selectedIndices.contains(index),
+                    onChanged: (_) => onToggle(index),
                     activeColor: AppColors.primaryColor,
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
-                  ),
-                ),
+                  );
+                }),
               if (child != null) child,
               const SizedBox(height: 10),
             ],
@@ -286,7 +297,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MultiDateCalendarPicker(
-         selectedDates: model.selectedLocumDatesObjects, 
+          selectedDates: model.selectedLocumDatesObjects,
           onToggleDate: (date) {
             model.toggleLocumDate(date);
             model.updateLocumDateControllerText();
@@ -298,15 +309,15 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
           Wrap(
             spacing: 8,
             runSpacing: 4,
-            children:model.selectedLocumDatesObjects.map((date) {
-      return Chip(
-      label: Text(DateFormat('MMM d, yyyy').format(date)), // ✅ date is DateTime
-     onDeleted: () {
-      model.removeLocumDate(date); // ✅ passes DateTime as expected
-     },
-   );
-     }).toList(),
-
+            children: model.selectedLocumDatesObjects.map((date) {
+              return Chip(
+                label: Text(DateFormat('MMM d, yyyy')
+                    .format(date)), 
+                onDeleted: () {
+                  model.removeLocumDate(date); 
+                },
+              );
+            }).toList(),
           ),
       ],
     );

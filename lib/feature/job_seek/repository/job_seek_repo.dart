@@ -21,14 +21,14 @@ abstract class JobSeekRepository {
   Future<JobApplicantsResponse> getJobApplyStatus(String jobId, String dentalProfessionalId);
   Future<List<JobsRoleList>> getJobRoles();
   Future<List<JobTypes>> getJobWorkTypes();
-  
   Future<List<JobSeekFilterModel>> fetchFilteredJobs(
-    List<String>? roles,
-    List<String>? employmentTypes,
-    List<String>? experienceYears,
-    List<String>? availabilityDates,
-    String? status,
-  );
+  List<String>? roles,
+  List<String>? employmentTypes,
+  List<String>? experienceYears,
+  List<String>? availabilityDates,
+  
+);
+
  //Future<List<JobSeekResponseModel>> fetchFilteredJobs(JobSeekFilterModel filter)
  
 }
