@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
@@ -325,14 +326,3 @@ List<FilterItem> getSortedProfessionOptions() {
 
 }
 
-class FilterItem {
-  final String name;
-  final String id;
-  bool isSelected;
-
-  FilterItem({
-    required this.name,
-    required this.id,
-    this.isSelected = false,
-  });
-}
