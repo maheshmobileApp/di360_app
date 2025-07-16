@@ -235,7 +235,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
-            subtitle: '0'),
+            subtitle: '${widget.job.jobApplicantsAggregate?.aggregate?.count ?? 0}'),
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',

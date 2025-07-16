@@ -18,61 +18,67 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     final model = Provider.of<JobSeekViewModel>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        title: Text("Filter Jobs",
-            style: TextStyle(fontSize: 20, color: AppColors.black)),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  buildFilters(context, model),
-                ],
-              ),
-            ),
-            Row(
+  backgroundColor: AppColors.whiteColor,
+  appBar: AppBar(
+    automaticallyImplyLeading: true,
+    backgroundColor: AppColors.whiteColor,
+    elevation: 0,
+    title: Text(
+      "Filter Jobs",
+      style: TextStyle(fontSize: 20, color: AppColors.black),
+    ),
+    iconTheme: IconThemeData(color: AppColors.black),
+  ),
+  body: SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.all(16.0), 
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
               children: [
-                Expanded(
-                  child: CustomRoundedButton(
-                    text: 'Clear',
-                    fontSize: 16,
-                    height: 42,
-                    onPressed: () async {
-                      model.clearSelections();
-                      await model
-                          .fetchJobs(); 
-                      navigationService.goBack();
-                    },
-                    backgroundColor: AppColors.timeBgColor,
-                    textColor: Colors.black,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomRoundedButton(
-                    text: 'Apply',
-                    fontSize: 16,
-                    height: 42,
-                    onPressed: () async {
-                       model.printSelectedItems(); 
-   
-                      navigationService.goBack();
-                    },
-                    backgroundColor: AppColors.primaryColor,
-                    textColor: Colors.white,
-                  ),
-                ),
+                buildFilters(context, model),
               ],
             ),
-          ],
-        ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: CustomRoundedButton(
+                  text: 'Clear',
+                  fontSize: 16,
+                  height: 42,
+                  onPressed: () async {
+                    model.clearSelections();
+                    await model.fetchJobs();
+                    navigationService.goBack();
+                  },
+                  backgroundColor: AppColors.timeBgColor,
+                  textColor: Colors.black,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: CustomRoundedButton(
+                  text: 'Apply',
+                  fontSize: 16,
+                  height: 42,
+                  onPressed: () async {
+                    model.printSelectedItems();
+                    navigationService.goBack();
+                  },
+                  backgroundColor: AppColors.primaryColor,
+                  textColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-    );
+    ),
+  ),
+);
+
   }
 
   Widget buildFilters(BuildContext context, JobSeekViewModel model) {
