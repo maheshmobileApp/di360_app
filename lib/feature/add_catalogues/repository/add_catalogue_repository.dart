@@ -10,4 +10,5 @@ abstract class AddCatalogueRepository {
   Future<void> sendApprovalCatalogue(String? id);
   Future<void> inActiveCatalogue(String? id);
   Future<List<CatalogueCategories>?> getCatagorys();
+  Future<dynamic> editCatalogue(dynamic variables);
 }

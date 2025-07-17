@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_re
 import 'package:di360_flutter/feature/add_catalogues/querys/add_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catagorys_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catalogue_view_query.dart';
+import 'package:di360_flutter/feature/add_catalogues/querys/edit_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/get_my_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/inactive_view_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/remove_catalogue_query.dart';
@@ -74,5 +75,11 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
     });
     final result = CatagoryData.fromJson(data);
     return result.catalogueCategories;
+  }
+  
+  @override
+  Future<dynamic> editCatalogue(variables) async{
+    final data = await http.mutation(editCatalogueQuery, variables);
+    return data;
   }
 }

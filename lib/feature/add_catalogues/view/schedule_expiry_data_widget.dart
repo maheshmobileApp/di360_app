@@ -10,7 +10,7 @@ class ScheduleExpiryPage extends StatelessWidget {
 
   Future<void> _pickScheduleDate(BuildContext context) async {
     final provider = context.read<AddCatalogueViewModel>();
-
+    provider.scheduleDate = null;
     final picked = await showDatePicker(
       context: context,
       initialDate: provider.scheduleDate ?? DateTime.now(),

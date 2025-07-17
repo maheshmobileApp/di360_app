@@ -43,6 +43,7 @@ class CataloguesByPk {
   Attachment? attachment;
   int? monthsCount;
   String? schedulerDay;
+  String? expiryDay;
   Attachment? thumbnailImage;
   int? views;
   String? status;
@@ -57,6 +58,7 @@ class CataloguesByPk {
       this.attachment,
       this.monthsCount,
       this.schedulerDay,
+      this.expiryDay,
       this.thumbnailImage,
       this.views,
       this.status,
@@ -73,6 +75,7 @@ class CataloguesByPk {
         : null;
     monthsCount = json['months_count'];
     schedulerDay = json['schedulerDay'];
+    expiryDay = json['expiryDay'];
     thumbnailImage = json['thumbnail_image'] != null
         ? new Attachment.fromJson(json['thumbnail_image'])
         : null;
@@ -95,6 +98,7 @@ class CataloguesByPk {
     }
     data['months_count'] = this.monthsCount;
     data['schedulerDay'] = this.schedulerDay;
+    data['expiryDay'] = this.expiryDay;
     if (this.thumbnailImage != null) {
       data['thumbnail_image'] = this.thumbnailImage!.toJson();
     }

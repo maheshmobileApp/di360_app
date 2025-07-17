@@ -159,6 +159,7 @@ class MyCataloguesScreen extends StatelessWidget with BaseContextHelpers {
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
+            myCatalogVM.clearAddCatalogueData();
             navigationService.navigateTo(RouteList.addCatalogScreen);
           },
           child: SvgPicture.asset(ImageConst.addFeed),

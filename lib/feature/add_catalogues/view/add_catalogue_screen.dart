@@ -105,21 +105,28 @@ class AddCatalogueScreen extends StatelessWidget
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AppButton(
-                          text: 'Save as Draft',
-                          height: 43,
-                          width: 150,
-                        ),
+                            text: 'Save as Draft',
+                            height: 43,
+                            width: 150,
+                            onTap: () {
+                              if (formKey.currentState!.validate() &&
+                                  validateURlAndData(addCataloguVM)) {
+                                addCataloguVM.editCatalogueData(context, true);
+                              }
+                            }),
                         AppButton(
-                          text: 'Send for Approval',
-                          height: 43,
-                          width: 170,
-                          onTap: () {
-                            if (formKey.currentState!.validate() &&
-                                validateURlAndData(addCataloguVM)) {
-                              addCataloguVM.addCatalogueData(context);
-                            }
-                          },
-                        )
+                            text: 'Send for Approval',
+                            height: 43,
+                            width: 170,
+                            onTap: () {
+                              if (formKey.currentState!.validate() &&
+                                  validateURlAndData(addCataloguVM)) {
+                                addCataloguVM.isEditCatalogue
+                                    ? addCataloguVM.editCatalogueData(
+                                        context, false)
+                                    : addCataloguVM.addCatalogueData(context);
+                              }
+                            })
                       ],
                     )
                   ],
@@ -133,7 +140,8 @@ class AddCatalogueScreen extends StatelessWidget
   }
 
   bool validateURlAndData(AddCatalogueViewModel addCataloguVM) {
-    if (addCataloguVM.thumbnailImagePath == null) {
+    if (addCataloguVM.thumbnailImagePath == null &&
+        addCataloguVM.thumbnailServerPath == null) {
       scaffoldMessenger('Please select thumbnail image');
       return false;
     } else if (addCataloguVM.pdfPath == null) {

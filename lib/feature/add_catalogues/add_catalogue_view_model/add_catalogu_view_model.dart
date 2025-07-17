@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
@@ -42,19 +43,27 @@ class AddCatalogueViewModel extends ChangeNotifier {
   };
 
   List<String>? catalogStatus = [];
-
+  String? editCatalogueId;
+  String? monthCount;
   List<Catalogues>? myCatalogueList;
   CataloguesByPk? cataloguView;
   List<CatalogueCategories>? catagorysList;
   TextEditingController catalogueNameController = TextEditingController();
   CatalogueCategories? selectedCatagory;
   String? thumbnailImagePath;
-  dynamic thumbnailImageUrl;
+  String? thumbnailServerPath;
+  dynamic thumbnailImageObj;
   String? pdfPath;
   dynamic pdfPathUrl;
+  bool isEditCatalogue = false;
 
   void updateSelectedCatagory(CatalogueCategories? catagory) {
     selectedCatagory = catagory;
+    notifyListeners();
+  }
+
+  void updateEditCatalogueVal(bool val) {
+    isEditCatalogue = val;
     notifyListeners();
   }
 
@@ -85,35 +94,34 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  DateTime? _scheduleDate;
-  DateTime? _expiryDate;
+  // DateTime? _scheduleDate;
+  // DateTime? _expiryDate;
 
-  DateTime? get scheduleDate => _scheduleDate;
-  DateTime? get expiryDate => _expiryDate;
+  DateTime? scheduleDate;
+  DateTime? expiryDate;
 
   void setScheduleDate(DateTime date) {
-    _scheduleDate = date;
+    scheduleDate = date;
 
     // reset expiry if it’s invalid
-    if (_expiryDate != null &&
-        _expiryDate!.isBefore(_scheduleDate!.add(const Duration(days: 1)))) {
-      _expiryDate = null;
+    if (expiryDate != null &&
+        expiryDate!.isBefore(expiryDate!.add(const Duration(days: 1)))) {
+      expiryDate = null;
     }
 
     notifyListeners();
   }
 
   void setExpiryDate(DateTime date) {
-    _expiryDate = date;
+    expiryDate = date;
     notifyListeners();
   }
 
   Future<String> pickFiles(List<String>? allowedExtensions) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: allowedExtensions
-    );
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: allowedExtensions);
     notifyListeners();
     return result?.files.first.path ?? '';
   }
@@ -121,10 +129,10 @@ class AddCatalogueViewModel extends ChangeNotifier {
   Future<void> thumbnailImage() async {
     final res = await pickFiles(['jpg', 'png', 'jpeg']);
     if (res != '') {
+      thumbnailServerPath == null;
       thumbnailImagePath = res;
       var value = await _http.uploadImage(res);
-      thumbnailImageUrl = value;
-      print(thumbnailImageUrl);
+      thumbnailImageObj = value;
       notifyListeners();
     }
   }
@@ -135,7 +143,6 @@ class AddCatalogueViewModel extends ChangeNotifier {
       pdfPath = res;
       var value = await _http.uploadImage(res);
       pdfPathUrl = value;
-      print(pdfPathUrl);
       notifyListeners();
     }
   }
@@ -145,10 +152,10 @@ class AddCatalogueViewModel extends ChangeNotifier {
     final isoString = DateTime.now().toUtc().toIso8601String();
 
     Loaders.circularShowLoader(context);
-    if (thumbnailImageUrl == null) {
+    if (thumbnailImageObj == null) {
       var value = await _http.uploadImage(thumbnailImagePath);
-      thumbnailImageUrl = value;
-      print(thumbnailImageUrl);
+      thumbnailImageObj = value;
+      print(thumbnailImageObj);
       notifyListeners();
     }
     if (pdfPathUrl == null) {
@@ -161,7 +168,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       "catalogueObj": {
         "title": catalogueNameController.text,
         "catalogue_category_id": selectedCatagory?.id,
-        "thumbnail_image": thumbnailImageUrl,
+        "thumbnail_image": thumbnailImageObj,
         "attachment": pdfPathUrl,
         "dental_supplier_id": id,
         "catalogue_status": "ACTIVE",
@@ -190,12 +197,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
   clearAddCatalogueData() {
     catalogueNameController.clear();
     thumbnailImagePath = null;
-    thumbnailImageUrl = null;
+    thumbnailImageObj = null;
+    thumbnailServerPath = null;
     pdfPath = null;
     pdfPathUrl = null;
     selectedCatagory = null;
-    _scheduleDate = null;
-    _expiryDate = null;
+    scheduleDate = null;
+    expiryDate = null;
+    updateEditCatalogueVal(false);
     notifyListeners();
   }
 
@@ -287,10 +296,93 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> editCatalogue(
+      BuildContext context, String? id, String expDate) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.cataloguView(id);
+    if (res != null) {
+      cataloguView = res;
+      updateEditCatalogueVal(true);
+      editDataAssign(res, expDate);
+      Loaders.circularHideLoader(context);
+      navigationService.navigateTo(RouteList.addCatalogScreen);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> editDataAssign(
+      CataloguesByPk? cataloguView, String expirysDate) async {
+    catalogueNameController.text = cataloguView?.title ?? '';
+    thumbnailImageObj = cataloguView?.thumbnailImage;
+    thumbnailServerPath = cataloguView?.thumbnailImage?.url ?? '';
+    editCatalogueId = cataloguView?.id ?? '';
+    monthCount = '${cataloguView?.monthsCount ?? ''}';
+    pdfPath = cataloguView?.attachment?.name ?? '';
+    pdfPathUrl = cataloguView?.attachment;
+    assignTheSelectedCatagory(cataloguView?.catalogueCategory?.id);
+    scheduleDate = DateTime.parse(cataloguView?.schedulerDay ?? '');
+    expiryDate = DateTime.parse(expirysDate);
+    notifyListeners();
+  }
+
+  assignTheSelectedCatagory(String? id) {
+    final obj = catagorysList?.firstWhere((v) => v.id == id);
+    updateSelectedCatagory(obj);
+    notifyListeners();
+  }
+
   Future<void> getCatagorysData() async {
     final res = await repo.getCatagorys();
     if (res != null) {
       catagorysList = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> editCatalogueData(BuildContext context, bool isDarft) async {
+    Loaders.circularShowLoader(context);
+    if (thumbnailImageObj == null) {
+      var value = await _http.uploadImage(thumbnailImagePath);
+      thumbnailImageObj = value;
+      notifyListeners();
+    }
+    if (pdfPathUrl == null) {
+      var value = await _http.uploadImage(pdfPath);
+      pdfPathUrl = value;
+      notifyListeners();
+    }
+    final res = await repo.editCatalogue({
+      "id": editCatalogueId,
+      "updateObj": {
+        "title": catalogueNameController.text,
+        "catalogue_category_id": selectedCatagory?.id,
+        "thumbnail_image": thumbnailImageObj,
+        "attachment": pdfPathUrl,
+        "catalogue_status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
+        "status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
+        "schedulerDay":
+            '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
+        "months_count": monthCount,
+        "expiryDay":
+            '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
+      }
+    });
+    if (res != null) {
+      if (isDarft) {
+        selectedStatus = 'Draft';
+        catalogStatus = ['DRAFT'];
+      } else {
+        selectedStatus = 'Pending Approval';
+        catalogStatus = ['PENDING_APPROVAL'];
+      }
+      Loaders.circularHideLoader(context);
+      navigationService.goBack();
+      clearAddCatalogueData();
+      getMyCataloguesData(navigatorKey.currentContext!);
+    } else {
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

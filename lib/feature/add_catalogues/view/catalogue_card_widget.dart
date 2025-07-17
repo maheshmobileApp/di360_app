@@ -78,7 +78,8 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           Positioned(
               right: 2,
               top: 15,
-              child: menuWidget(myCatalogVM, context, item?.id))
+              child: menuWidget(
+                  myCatalogVM, context, item?.id, item?.expiryDay ?? ''))
         ],
       ),
     );
@@ -131,8 +132,8 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget(
-      AddCatalogueViewModel vm, BuildContext context, String? id) {
+  Widget menuWidget(AddCatalogueViewModel vm, BuildContext context, String? id,
+      String expDate) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
@@ -141,6 +142,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
         if (value == "View") {
           vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
+          vm.editCatalogue(context, id, expDate);
         } else if (value == "Inactive") {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {

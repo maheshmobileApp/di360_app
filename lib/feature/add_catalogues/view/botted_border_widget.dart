@@ -81,27 +81,31 @@ class UploadSection extends StatelessWidget {
                       : addCataloguVM.thumbnailImagePath != null
                           ? Image.file(File(addCataloguVM.thumbnailImagePath!),
                               fit: BoxFit.cover)
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(ImageConst.upload),
-                                const SizedBox(height: 12),
-                                Text(
-                                  titleInsideBox,
-                                  style: TextStyles.medium2(
-                                      color: AppColors.black),
-                                  textAlign: TextAlign.center,
+                          : addCataloguVM.thumbnailServerPath != null
+                              ? Image.network(
+                                  addCataloguVM.thumbnailServerPath ?? '',
+                                  fit: BoxFit.cover)
+                              : Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(ImageConst.upload),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      titleInsideBox,
+                                      style: TextStyles.medium2(
+                                          color: AppColors.black),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      subTitleInsideBox,
+                                      style: TextStyles.regular1(
+                                          color: AppColors.dropDownHint),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  subTitleInsideBox,
-                                  style: TextStyles.regular1(
-                                      color: AppColors.dropDownHint),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
                 ),
                 if (showTrailingIcon) Image.asset(ImageConst.upload)
               ]),
