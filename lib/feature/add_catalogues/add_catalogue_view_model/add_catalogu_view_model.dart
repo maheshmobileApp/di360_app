@@ -364,7 +364,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
         "schedulerDay":
             '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
-        "months_count": monthCount,
+        "months_count": int.tryParse(monthCount ?? ''),
         "expiryDay":
             '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
       }
