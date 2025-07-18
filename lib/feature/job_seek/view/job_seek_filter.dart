@@ -50,7 +50,6 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                   height: 42,
                   onPressed: () async {
                     model.clearSelections();
-                    await model.fetchJobs();
                     navigationService.goBack();
                   },
                   backgroundColor: AppColors.timeBgColor,

@@ -10,10 +10,13 @@ import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
 import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
+import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
   final JobSeekRepoImpl repo = JobSeekRepoImpl();
@@ -24,32 +27,105 @@ class JobSeekViewModel extends ChangeNotifier {
     getJobWorkTypes();
   }
 
-  String? _enquiryData;
-  Jobs? selectedJob;
-  bool isJobApplied = false;
-  List<Jobs> jobs = [];
-  List<JobSeekFilterModel> filteredJobs = [];
-
+String? _enquiryData;
+Jobs? selectedJob;
+bool isJobApplied = false;
+List<Jobs> jobs = [];
+List<JobSeekFilterModel> filteredJobs = [];
+final TextEditingController locationController = TextEditingController();
+final TextEditingController locumDateController = TextEditingController();
+late Map<String, List<FilterItem>> filterOptions;
+List<String> selectedProfessions = [];
+List<String> selectedEmploymentTypes = [];
+List<String> selectedExperiences = [];
+List<String> selectedAvailability = [];  
+Map<String, Set<int>> selectedIndices = {
+  'profession': {},
+  'employment': {},
+  'experience': {},
+  'availability': {}, 
+};
+Map<String, bool> sectionVisibility = {
+  'profession': true,
+  'employment': true,
+  'experience': true,
+  'availability': true,
+};
+List<DateTime> selectedLocumDatesObjects = [];
+bool showLocumDate = false;
+bool showMultiCalendar = false;
+bool isLoading = false;
+String? selectedExperienceDropdown;
+String? selectedSort;
+final List<String> sortOptions = ['A to Z', 'Z to A'];
+List<String> experienceOptions = ["0",
+    "1-2",
+    "3-5",
+    "5-10",
+    "10-15",
+    "15-20",
+    "20-25",
+    "25-30",
+    "30-35",
+    "35-40",
+    "40+"
+];
+   //selcetd incex api shuld call...
   int _selectedTabIndex = 0;
-  int get selectedTabIndex => _selectedTabIndex;
 
+  int get selectedTabIndex => _selectedTabIndex;
+  bool _isTabLoading = false;
+
+  bool get isTabLoading => _isTabLoading;
   bool isHidleFolatingButton = false;
 
-  void setSelectedIndex(int index) {
+  Future<void> setSelectedIndex(int index, BuildContext context) async {
+    if (_selectedTabIndex == index) return;
     _selectedTabIndex = index;
+    _isTabLoading = true;
+    notifyListeners();
+    if (index == 0) {
+      await fetchJobs(context);
+    } else {
+      final talentsVM = Provider.of<TalentsViewModel>(context, listen: false);
+      await talentsVM.fetchTalentProfiles(context);
+    }
+    _isTabLoading = false;
     notifyListeners();
   }
-
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userRole = UserRole.fromString(type);
     isHidleFolatingButton = userRole == UserRole.professional;
     notifyListeners();
   }
-
   void setSelectedJob(Jobs job) {
     selectedJob = job;
   }
+  //added refres..
+ bool _isRefreshing = false;
+bool get isRefreshing => _isRefreshing;
+
+Future<void> refreshJobs(BuildContext context) async {
+  _isRefreshing = true;
+  notifyListeners();
+
+  await fetchJobsForSelectedTab(context);
+  _isRefreshing = false;
+  notifyListeners();
+}
+
+Future<void> fetchJobsForSelectedTab(BuildContext context) async {
+  if (_selectedTabIndex == 0) {
+   
+    await fetchFilteredJobs(context);
+  } else {
+    
+  }
+}
+Future<void> fetchFilteredJobs(BuildContext context) async {
+  
+}
 
   Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
     applyJobRequest.jobId = selectedJob?.id ?? '';
@@ -114,47 +190,19 @@ class JobSeekViewModel extends ChangeNotifier {
       return false;
     }
   }
-  Future<void> fetchJobs() async {
+  //added loaders...
+  Future<void> fetchJobs(BuildContext context) async {
+  Loaders.circularShowLoader(context);
+
+  try {
     var jobData = await repo.getPopularJobs();
     jobs = jobData.jobs ?? [];
-
+  } finally {
+    Loaders.circularHideLoader(context); 
     notifyListeners();
   }
+}
 
-final TextEditingController locationController = TextEditingController();
-final TextEditingController locumDateController = TextEditingController();
-
-late Map<String, List<FilterItem>> filterOptions;
-
-List<String> selectedProfessions = [];
-List<String> selectedEmploymentTypes = [];
-List<String> selectedExperiences = [];
-List<String> selectedAvailability = [];  
-
-Map<String, Set<int>> selectedIndices = {
-  'profession': {},
-  'employment': {},
-  'experience': {},
-  'availability': {}, 
-};
-
-Map<String, bool> sectionVisibility = {
-  'profession': true,
-  'employment': true,
-  'experience': true,
-  'availability': true,
-};
-
-List<DateTime> selectedLocumDatesObjects = [];
-bool showLocumDate = false;
-bool showMultiCalendar = false;
-bool isLoading = false;
-
-String? selectedExperienceDropdown;
-String? selectedSort;
-
-final List<String> sortOptions = ['A to Z', 'Z to A'];
-List<String> experienceOptions = List.generate(10, (i) => "${i + 1} Years");
 
 Future<void> getJobRoles() async {
   final result = await repo.getJobRoles();
@@ -171,6 +219,7 @@ Future<void> getJobWorkTypes() async {
       .toList();
   notifyListeners();
 }
+
   Future<void> initializeFilterOptions() async {
   final roles = await repo.getJobRoles();
   final types = await repo.getJobWorkTypes();
@@ -317,12 +366,7 @@ List<FilterItem> getSortedProfessionOptions() {
         .map((d) => DateFormat('yyyy-MM-dd').format(d))
         .toList();
   }
-
-  debugPrint("Profession: $selectedProfessions");
-  debugPrint("Employment: $selectedEmploymentTypes");
-  debugPrint("Experience: $selectedExperiences");
-  debugPrint("Availability: $selectedAvailability");
-}
+ }
 
 }
 

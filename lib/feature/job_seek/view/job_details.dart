@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -43,7 +44,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     provider.getApplyJobStatus(widget.job.id ?? "", userId);
   }
 
-
   void _showEnquiryForm(BuildContext context) {
     showDialog(
       context: context,
@@ -84,11 +84,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     NavigationService().navigateTo(
       RouteList.applyJob,
     );
-}
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -124,13 +123,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 final isCollapsed =
                     top <= kToolbarHeight + MediaQuery.of(context).padding.top;
 
-                return IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: isCollapsed ? Colors.black : Colors.white,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                );
+                return isCollapsed
+                    ? IconButton(
+                        icon: const Icon(Icons.arrow_back,
+                            size: 24, color: Colors.black),
+                        onPressed: () => Navigator.pop(context),
+                      )
+                    : CircleAvatar(
+                        backgroundColor: AppColors.whiteColor,
+                        radius: 20,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back,
+                              size: 20, color: Colors.black),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      );
               },
             ),
           ),
@@ -235,7 +242,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
-            subtitle: '${widget.job.jobApplicantsAggregate?.aggregate?.count ?? 0}'),
+            subtitle:
+                '${widget.job.jobApplicantsAggregate?.aggregate?.count ?? 0}'),
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
@@ -298,7 +306,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ),
         SizedBox(height: 20),
         actionsWidget(context),
-
         SizedBox(height: 20),
       ],
     );
@@ -314,7 +321,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             child: CustomRoundedButton(
               text: 'Enquiry',
               onPressed: () => _showEnquiryForm(context),
-              backgroundColor: const Color(0xFFFFF3E8), // light orange
+              backgroundColor: const Color(0xFFFFF3E8),
               textColor: Colors.orange,
             ),
           ),
@@ -328,8 +335,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               textColor: Colors.white,
             ),
           ),
-      ],
-    );
+        ],
+      );
     }
     return SizedBox.shrink();
   }
@@ -425,8 +432,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   Widget _sectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-      child:
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text(title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 

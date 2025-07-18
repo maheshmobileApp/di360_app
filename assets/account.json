@@ -4,20 +4,31 @@
       "title": "Account",
       "subTitle": [
         {
-          "title": "News Feeds",
-          "asset": "assets/profile/account/Feed.svg"
-        },
-        {
           "title": "My Profile",
           "asset": "assets/profile/account/profile.svg"
         },
+          {
+          "title": "My Subscriptions",
+          "asset": "assets/profile/payments&others/subscription 1.svg"
+        }
+      
+      ]
+    },
+     {
+      "title": "My Directory",
+      "subTitle": [
         {
-          "title": "My Favourites",
-          "asset": "assets/profile/account/heart (1) 1.svg"
-        },
+          "title": "My Directory",
+          "asset": "assets/profile/inventory/directory.svg"
+        }
+      ]
+    },
+    {
+      "title": " Appointments",
+      "subTitle": [
         {
-          "title": "Location",
-          "asset": "assets/profile/account/locations.svg"
+          "title": "Appointments",
+          "asset": "assets/profile/inventory/directory.svg"
         }
       ]
     },
@@ -26,6 +37,14 @@
       "subTitle": [
         {
           "title": "Job Profile",
+          "asset": "assets/profile/jobseek/#000000ff.svg"
+        },
+        {
+          "title": "Job Listings",
+          "asset": "assets/profile/jobseek/#000000ff.svg" 
+        },
+        {
+          "title": "Talent Request",
           "asset": "assets/profile/jobseek/#000000ff.svg"
         },
         {
@@ -46,56 +65,35 @@
         }
       ]
     },
-    {
-      "title": "Inventory",
+   
+    
+     {
+      "title": "Catalogues",
       "subTitle": [
         {
-          "title": "My Directories",
-          "asset": "assets/profile/inventory/directory.svg"
-        },
-        {
-          "title": "My Orders",
-          "asset": "assets/profile/inventory/#000000ff (3).svg"
-        },
-        {
-          "title": "My Bids",
-          "asset": "assets/profile/inventory/law 1.svg"
-        },
-        {
-          "title": "My Enquiries",
-          "asset": "assets/profile/inventory/help 1.svg"
+          "title": "Catalogues",
+          "asset": "assets/profile/payments&others/call-center 1.svg"
         }
       ]
     },
-    {
-      "title": "Payments & Others",
+     {
+      "title": "Banners",
       "subTitle": [
         {
-          "title": "Account Pay Requests",
-          "asset": "assets/profile/payments&others/credit-card 1.svg"
-        },
-        {
-          "title": "My Subscriptions",
-          "asset": "assets/profile/payments&others/subscription 1.svg"
-        },
-        {
-          "title": "Support Centre",
+          "title": "Banners",
           "asset": "assets/profile/payments&others/call-center 1.svg"
         }
       ]
     },
     {
-      "title": "Pre Owned",
+      "title": "Support Request",
       "subTitle": [
         {
-          "title": "Pre Owned Supplies",
-          "asset": "assets/profile/pre owned/medical-supplies 2.svg"
-        },
-        {
-          "title": "Pre Owned Orders",
-          "asset": "assets/profile/pre owned/shopping-cart 1.svg"
+          "title": "Support Request",
+          "asset": "assets/profile/payments&others/call-center 1.svg"
         }
       ]
     }
+    
   ]
 }

@@ -3,18 +3,19 @@ import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 
 import 'package:di360_flutter/feature/talents/repository/talent_repo_impl.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class TalentsViewModel extends ChangeNotifier {
   final TalentRepoImpl repo = TalentRepoImpl();
   String? enquiryData;
-  TalentsViewModel() {
-    fetchTalentProfiles();
-  }
+
+  TalentsViewModel();
 
   int? _expandedIndex;
-
   int? get expandedIndex => _expandedIndex;
+
+  List<JobProfile> talentList = [];
 
   void toggleIndex(int index) {
     if (_expandedIndex == index) {
@@ -25,11 +26,15 @@ class TalentsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<JobProfile> talentList = [];
+  Future<void> fetchTalentProfiles(BuildContext context) async {
+    Loaders.circularShowLoader(context);
 
-  Future<void> fetchTalentProfiles() async {
-    talentList = await repo.getTalentDetails();
-    notifyListeners();
+    try {
+      talentList = await repo.getTalentDetails();
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
   }
 
   Future<bool> hireMe(HireMeRequest request) async {
