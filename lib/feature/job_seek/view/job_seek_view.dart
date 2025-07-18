@@ -104,24 +104,21 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 ? const CircularProgressIndicator()
                 : const Text(""),
           )
-        : Padding(
-            padding: const EdgeInsets.only(bottom: 80), 
-            child: ListView.builder(
-              itemCount: vm.jobs.length,
-              itemBuilder: (context, index) {
-                final jobData = vm.jobs[index];
-                return InkWell(
-                  onTap: () {
-                    navigationService.navigateToWithParams(
-                      RouteList.jobdetailsScreen,
-                      params: jobData,
-                    );
-                  },
-                  child: JobSeekCard(jobsData: jobData),
+        : ListView.builder(
+          itemCount: vm.jobs.length,
+          itemBuilder: (context, index) {
+            final jobData = vm.jobs[index];
+            return InkWell(
+              onTap: () {
+                navigationService.navigateToWithParams(
+                  RouteList.jobdetailsScreen,
+                  params: jobData,
                 );
               },
-            ),
-          ),
+              child: JobSeekCard(jobsData: jobData),
+            );
+          },
+        ),
   );
 }
 

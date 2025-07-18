@@ -96,7 +96,21 @@ List<String> experienceOptions = ["0",
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userRole = UserRole.fromString(type);
-    isHidleFolatingButton = userRole == UserRole.professional;
+    switch (userRole) {
+      case UserRole.professional:
+        // professional will only see JOb ( cant see talents) no floating
+        isHidleFolatingButton = true; // Dental Professional
+        break;
+      case UserRole.supplier:
+        isHidleFolatingButton = false; // Dental Business Owner
+        break;
+      case UserRole.practice:
+        isHidleFolatingButton = false; // Dental Practice Owner
+        break;
+      default:
+        isHidleFolatingButton = true; //
+    }
+
     notifyListeners();
   }
   void setSelectedJob(Jobs job) {
