@@ -1,5 +1,5 @@
 String job_list_request = '''query getalljobs {
-  jobs {
+ jobs(order_by: {created_at: desc}){
     id
     title
     j_type

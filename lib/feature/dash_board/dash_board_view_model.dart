@@ -46,7 +46,7 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<NewsFeedViewModel>().updateApplyCatageories(false);
         break;
       case 2:
-        context.read<JobSeekViewModel>().fetchJobs();
+        context.read<JobSeekViewModel>().fetchJobs(context);
         break;
       case 3:
       context.read<CatalogueViewModel>().fetchCatalogue(context);
