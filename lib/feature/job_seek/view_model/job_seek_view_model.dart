@@ -1,87 +1,145 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
-//import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
+import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
+import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class JobSeekViewModel extends ChangeNotifier {
   final JobSeekRepoImpl repo = JobSeekRepoImpl();
 
   JobSeekViewModel() {
+    initializeFilterOptions();
     getJobRoles();
-   getJobWorkTypes();
+    getJobWorkTypes();
   }
 
- /* Future<void> getJobRoles() async {
-    final result = await repo.getJobRoles();
-    professionOptions = result.map((e) => e.roleName ?? '').toList();
-  }
-
-  Future<void> getJobWorkTypes() async {
-    final result = await repo.getJobWorkTypes();
-    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
-  }*/
-
-  
-  String? _enquiryData;
-  Jobs? selectedJob;
-  bool isJobApplied = false;
-  List<Jobs> jobs = [];
-
+String? _enquiryData;
+Jobs? selectedJob;
+bool isJobApplied = false;
+List<Jobs> jobs = [];
+List<JobSeekFilterModel> filteredJobs = [];
+final TextEditingController locationController = TextEditingController();
+final TextEditingController locumDateController = TextEditingController();
+late Map<String, List<FilterItem>> filterOptions;
+List<String> selectedProfessions = [];
+List<String> selectedEmploymentTypes = [];
+List<String> selectedExperiences = [];
+List<String> selectedAvailability = [];  
+Map<String, Set<int>> selectedIndices = {
+  'profession': {},
+  'employment': {},
+  'experience': {},
+  'availability': {}, 
+};
+Map<String, bool> sectionVisibility = {
+  'profession': true,
+  'employment': true,
+  'experience': true,
+  'availability': true,
+};
+List<DateTime> selectedLocumDatesObjects = [];
+bool showLocumDate = false;
+bool showMultiCalendar = false;
+bool isLoading = false;
+String? selectedExperienceDropdown;
+String? selectedSort;
+final List<String> sortOptions = ['A to Z', 'Z to A'];
+List<String> experienceOptions = ["0",
+    "1-2",
+    "3-5",
+    "5-10",
+    "10-15",
+    "15-20",
+    "20-25",
+    "25-30",
+    "30-35",
+    "35-40",
+    "40+"
+];
+   //selcetd incex api shuld call...
   int _selectedTabIndex = 0;
-  int get selectedTabIndex => _selectedTabIndex;
 
+  int get selectedTabIndex => _selectedTabIndex;
+  bool _isTabLoading = false;
+
+  bool get isTabLoading => _isTabLoading;
   bool isHidleFolatingButton = false;
 
+  Future<void> setSelectedIndex(int index, BuildContext context) async {
+    if (_selectedTabIndex == index) return;
+    _selectedTabIndex = index;
+    _isTabLoading = true;
+    notifyListeners();
+    if (index == 0) {
+      await fetchJobs(context);
+    } else {
+      final talentsVM = Provider.of<TalentsViewModel>(context, listen: false);
+      await talentsVM.fetchTalentProfiles(context);
+    }
+    _isTabLoading = false;
+    notifyListeners();
+  }
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userRole = UserRole.fromString(type);
-    isHidleFolatingButton = userRole == UserRole.professional;
-    notifyListeners();
-  }
-
-  void setSelectedIndex(int index) {
-    _selectedTabIndex = index;
-    notifyListeners();
-  }
-
-  Future<void> fetchJobs() async {
-    var jobData = await repo.getPopularJobs();
-    jobs = jobData.jobs ?? [];
-    notifyListeners();
-  }
-
-  void onChangeEnquireData(String data) {
-    _enquiryData = data;
-  }
-
-  Future<bool> jobEnquire(String jobId) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    var enquireData = EnquireRequest(
-      enquiryDescription: _enquiryData ?? '',
-      jobId: jobId,
-      enquiryUserId: userId,
-    );
-    try {
-      await repo.enquire(enquireData);
-      return true;
-    } catch (_) {
-      return false;
+    switch (userRole) {
+      case UserRole.professional:
+        // professional will only see JOb ( cant see talents) no floating
+        isHidleFolatingButton = true; // Dental Professional
+        break;
+      case UserRole.supplier:
+        isHidleFolatingButton = false; // Dental Business Owner
+        break;
+      case UserRole.practice:
+        isHidleFolatingButton = false; // Dental Practice Owner
+        break;
+      default:
+        isHidleFolatingButton = true; //
     }
-  }
 
+    notifyListeners();
+  }
   void setSelectedJob(Jobs job) {
     selectedJob = job;
   }
+  //added refres..
+ bool _isRefreshing = false;
+bool get isRefreshing => _isRefreshing;
+
+Future<void> refreshJobs(BuildContext context) async {
+  _isRefreshing = true;
+  notifyListeners();
+
+  await fetchJobsForSelectedTab(context);
+  _isRefreshing = false;
+  notifyListeners();
+}
+
+Future<void> fetchJobsForSelectedTab(BuildContext context) async {
+  if (_selectedTabIndex == 0) {
+   
+    await fetchFilteredJobs(context);
+  } else {
+    
+  }
+}
+Future<void> fetchFilteredJobs(BuildContext context) async {
+  
+}
 
   Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
     applyJobRequest.jobId = selectedJob?.id ?? '';
@@ -90,6 +148,7 @@ class JobSeekViewModel extends ChangeNotifier {
 
     final uploadImage = await repo.uploadTheResume(applyJobRequest.attachments.url);
     final response = UploadResponse.fromJson(uploadImage);
+
     applyJobRequest.attachments = Attachment(
       url: response.url,
       name: response.name,
@@ -102,144 +161,6 @@ class JobSeekViewModel extends ChangeNotifier {
       return true;
     } catch (_) {
       return false;
-    }
-  }
-
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController searchController = TextEditingController();
-  final TextEditingController locumDateController = TextEditingController();
-
-  Map<String, List<FilterOption>> filterOptions = {
-    "Location": [FilterOption(name: "Hyderabad"), FilterOption(name: "Bangalore")],
-    "Type": [FilterOption(name: "Full-time"), FilterOption(name: "Part-time")],
-  };
-
-  Map<String, List<int>> selectedIndices = {};
-  Map<String, bool> sectionVisibility = {};
-
-  void initializeFilters() {
-    for (var key in filterOptions.keys) {
-      selectedIndices[key] = [];
-      sectionVisibility[key] = true;
-    }
-  }
-
-  void toggleSection(String section) {
-    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
-    notifyListeners();
-  }
-
-  void selectItem(String section, int index) {
-    if (selectedIndices[section]?.contains(index) ?? false) {
-      selectedIndices[section]?.remove(index);
-    } else {
-      selectedIndices[section]?.add(index);
-    }
-    notifyListeners();
-  }
-
-  void clearSelections() {
-    for (var key in selectedIndices.keys) {
-      selectedIndices[key]?.clear();
-    }
-    selectedEmploymentChips.clear();
-    selectedProfessions.clear();
-    selectedExperience = null;
-    selectedSort = null;
-    locationController.clear();
-    searchController.clear();
-    locumDateController.clear();
-    showLocumDate = false;
-    notifyListeners();
-  }
-
-  void printSelectedItems() {
-    debugPrint("Selected Filters:");
-    filterOptions.forEach((key, items) {
-      final selected = selectedIndices[key]?.map((i) => items[i].name).toList();
-      debugPrint("$key: $selected");
-    });
-    debugPrint("Employment Chips: $selectedEmploymentChips");
-    debugPrint("Professions: $selectedProfessions");
-    debugPrint("Experience: $selectedExperience");
-    debugPrint("Sort: $selectedSort");
-    debugPrint("Locum Date: ${locumDateController.text}");
-  }
-
- /* List<String> employmentOptions = [];
-  List<String> selectedEmploymentChips = [];
-
-  List<String> professionOptions = [];
-  List<String> selectedProfessions = [];*/
-
-  bool showLocumDate = false;
-
-  void toggleEmploymentFilter(String option) {
-    if (selectedEmploymentChips.contains(option)) {
-      selectedEmploymentChips.remove(option);
-      if (option == "Locum") {
-        showLocumDate = false;
-        locumDateController.clear();
-      }
-    } else {
-      selectedEmploymentChips.add(option);
-      if (option == "Locum") {
-        showLocumDate = true;
-      }
-    }
-    notifyListeners();
-  }
-
-  List<String> employmentOptions = [];
-  List<String> selectedEmploymentChips = [];
-  List<String> professionOptions = [];
-  List<String> selectedProfessions = [];
-  List<String> experienceOptions = ["0", "1–2", "3–5", "5–10", "10–15", "15–20"];
-  String? selectedExperience;
-
-  List<String> sortOptions = ["A to Z", "Z to A"];
-  String? selectedSort;
-
- Future<void> getJobRoles() async {
-    final result = await repo.getJobRoles();
-    professionOptions = result.map((e) => e.roleName ?? '').toList();
-    notifyListeners();
-  }
-
-  Future<void> getJobWorkTypes() async {
-    final result = await repo.getJobWorkTypes();
-    employmentOptions = result.map((e) => e.employeeTypeName ?? '').toList();
-    notifyListeners();
-  }
-  void toggleProfession(String profession) {
-    if (selectedProfessions.contains(profession)) {
-      selectedProfessions.remove(profession);
-    } else {
-      selectedProfessions.add(profession);
-    }
-    notifyListeners();
-  }
-
-  void setExperience(String value) {
-    selectedExperience = value;
-    notifyListeners();
-  }
-
-  void setSort(String value) {
-    selectedSort = value;
-    notifyListeners();
-  }
-
-  void pickCustomDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      locumDateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      notifyListeners();
     }
   }
 
@@ -264,9 +185,202 @@ class JobSeekViewModel extends ChangeNotifier {
       print("Error fetching job apply status: $e");
     }
   }
+
+  void onChangeEnquireData(String data) {
+    _enquiryData = data;
+  }
+
+  Future<bool> jobEnquire(String jobId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    var enquireData = EnquireRequest(
+      enquiryDescription: _enquiryData ?? '',
+      jobId: jobId,
+      enquiryUserId: userId,
+    );
+    try {
+      await repo.enquire(enquireData);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+  //added loaders...
+  Future<void> fetchJobs(BuildContext context) async {
+  Loaders.circularShowLoader(context);
+
+  try {
+    var jobData = await repo.getPopularJobs();
+    jobs = jobData.jobs ?? [];
+  } finally {
+    Loaders.circularHideLoader(context); 
+    notifyListeners();
+  }
 }
 
-class FilterOption {
-  final String name;
-  FilterOption({required this.name});
+
+Future<void> getJobRoles() async {
+  final result = await repo.getJobRoles();
+  filterOptions['profession'] = result
+      .map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? ''))
+      .toList();
+  notifyListeners();
 }
+
+Future<void> getJobWorkTypes() async {
+  final result = await repo.getJobWorkTypes();
+  filterOptions['employment'] = result
+      .map((e) => FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? ''))
+      .toList();
+  notifyListeners();
+}
+
+  Future<void> initializeFilterOptions() async {
+  final roles = await repo.getJobRoles();
+  final types = await repo.getJobWorkTypes();
+
+  filterOptions = {
+    'profession': roles.map((e) =>
+     FilterItem(name: e.roleName ?? '', id: e.roleName ?? '')).toList(),
+    'employment': types.map((e) => 
+    FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? '')).toList(),
+    'experience': List.generate(10, (i) => 
+    FilterItem(name: "${i + 1} Years", id: "${i + 1}")),
+    'availability': [],
+  };
+  notifyListeners();
+}
+List<FilterItem> getSortedProfessionOptions() {
+    final list = filterOptions['profession'] ?? [];
+    return applySorting(list, (item) => item.name.capitalizeFirstLetter());
+  }
+
+  List<FilterItem> getSortedEmploymentOptions() {
+    final list = filterOptions['employment'] ?? [];
+    return applySorting(list, (item) => item.name.capitalizeFirstLetter());
+  }
+
+  List<T> applySorting<T>(List<T> list, String Function(T) getField) {
+    if (selectedSort == 'A to Z') {
+      list.sort((a, b) => getField(a).toLowerCase().compareTo(getField(b).toLowerCase()));
+    } else if (selectedSort == 'Z to A') {
+      list.sort((a, b) => getField(b).toLowerCase().compareTo(getField(a).toLowerCase()));
+    }
+    return list;
+  }
+
+  void toggleSection(String section) {
+    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
+    notifyListeners();
+  }
+  void selectItem(String section, int index) {
+    final currentSet = selectedIndices[section] ?? {};
+    if (currentSet.contains(index)) {
+      currentSet.remove(index);
+    } else {
+      currentSet.add(index);
+    }
+
+    if (section == 'employment') {
+      final id = filterOptions[section]?[index].id;
+      if (id == "Locum") {
+        showLocumDate = currentSet.contains(index);
+        if (!showLocumDate) {
+          selectedLocumDatesObjects.clear();
+          locumDateController.clear();
+        }
+      }
+    }
+
+    selectedIndices[section] = currentSet;
+    notifyListeners();
+  }
+
+  void toggleCalendarVisibility() {
+    showMultiCalendar = !showMultiCalendar;
+    notifyListeners();
+  }
+
+  void toggleLocumDate(DateTime date) {
+    if (selectedLocumDatesObjects.any((d) => isSameDate(d, date))) {
+      selectedLocumDatesObjects.removeWhere((d) => isSameDate(d, date));
+    } else {
+      selectedLocumDatesObjects.add(date);
+    }
+
+    updateLocumDateControllerText();
+  }
+
+  void removeLocumDate(DateTime date) {
+    selectedLocumDatesObjects.removeWhere((d) => isSameDate(d, date));
+    updateLocumDateControllerText();
+  }
+
+  void updateLocumDateControllerText() {
+    final formatted =
+        selectedLocumDatesObjects.map((d) => 
+        DateFormat('d/M/yyyy').format(d)).toList();
+    locumDateController.text = formatted.join(" | ");
+    notifyListeners();
+  }
+
+  List<String> get selectedLocumDates => selectedLocumDatesObjects
+      .map((d) => 
+      DateFormat('yyyy-MM-dd').format(d))
+      .toList();
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  void setExperience(String value) {
+    selectedExperienceDropdown = value;
+    notifyListeners();
+  }
+
+  void setSort(String value) {
+  selectedSort = value;
+  notifyListeners();
+}
+  
+  void clearSelections() {
+    selectedIndices.updateAll((key, value) => {});
+    selectedExperienceDropdown = null;
+    selectedSort = null;
+    selectedLocumDatesObjects.clear();
+    showLocumDate = false;
+    locationController.clear();
+    locumDateController.clear();
+    notifyListeners();
+  }
+
+ void printSelectedItems() {
+  selectedProfessions = [];
+  selectedEmploymentTypes = [];
+  selectedExperiences = [];
+  selectedAvailability = [];  
+
+  selectedIndices.forEach((section, indices) {
+    final items = filterOptions[section];
+    if (items != null && indices.isNotEmpty) {
+      for (final i in indices) {
+        final id = items[i].id;
+        if (section == "profession") {
+          selectedProfessions.add(id);
+        } else if (section == "employment") {
+          selectedEmploymentTypes.add(id);
+        }
+      }
+    }
+  });
+  if (selectedExperienceDropdown != null) {
+    selectedExperiences.add(selectedExperienceDropdown!);
+  }
+  if (selectedLocumDatesObjects.isNotEmpty) {
+    selectedAvailability = selectedLocumDatesObjects
+        .map((d) => DateFormat('yyyy-MM-dd').format(d))
+        .toList();
+  }
+ }
+
+}
+

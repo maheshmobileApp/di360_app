@@ -66,15 +66,10 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
       return false;
     }
     if (_emailController.text.trim().isNotEmpty &&
-        !RegExp(r'^[^@]+@[^@]+\.[^@]+')
-            .hasMatch(_emailController.text.trim())) {
+        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_emailController.text.trim())) {
       _showErrorSnackBar('Please enter a valid email address');
       return false;
     }
-    // if (_resumeFile == null) {
-    //   _showErrorSnackBar('Please upload your resume');
-    //   return false;
-    // }
     return true;
   }
 
@@ -91,8 +86,12 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
     if (_validateForm()) {
       final dentalProfessionalId =
           await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+      final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+      final jobId = provider.selectedJob?.id ?? '';
+
       ApplyJobRequest payload = ApplyJobRequest(
-        jobId: '',
+        jobId: jobId,
         dentalProfessionalId: dentalProfessionalId,
         message: _messageController.text.trim(),
         attachments: _resumeFile != null
@@ -102,20 +101,24 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
       );
 
       Loaders.circularShowLoader(context);
-      final result = await Provider.of<JobSeekViewModel>(context, listen: false)
-          .applyJob(payload);
+      final result = await provider.applyJob(payload);
       Loaders.circularHideLoader(context);
+
       if (result) {
+        //  fetch apply status (no await, because it's a void function)
+        provider.getApplyJobStatus(jobId, dentalProfessionalId);
+
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+          SnackBar(
             content: Text(
               'Application submitted successfully!',
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: AppColors.primaryColor,
-        ),
+          ),
         );
-      Navigator.pop(context);
+
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -151,8 +154,7 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
               style: TextButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: AppColors.whiteColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -207,7 +209,6 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
             ),
             SizedBox(height: 16),
             ResumeUploadWidget(
-              
               onFileSelected: _onResumeSelected,
               isRequired: false,
             ),
@@ -220,7 +221,7 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
               controller: _messageController,
               focusNode: _messageFocus,
             ),
-            SizedBox(height: 24), // Add some bottom padding
+            SizedBox(height: 24),
           ],
         ),
       ),

@@ -7,33 +7,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
+      create: (_) =>
+          ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: _buildAppBar(),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {
-            if (vm.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
             if (vm.error != null) {
               return Center(child: Text('Error: ${vm.error}'));
             }
-
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 _buildProfileHeader(),
                 const SizedBox(height: 16),
-                ...vm.sections
+                ...vm.visibleSections
                     .map((section) => _buildSection(context, section))
                     .toList(),
                 const SizedBox(height: 12),
@@ -45,7 +40,6 @@ class AccountScreen extends StatelessWidget {
       ),
     );
   }
-
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.white,
@@ -89,71 +83,71 @@ class AccountScreen extends StatelessWidget {
   }
 
   Widget _buildProfileHeader() {
-  return Column(
-    children: [
-      const SizedBox(height: 20),
-      CircleAvatar(
-        radius: 42,
-        backgroundColor: Colors.grey.shade200,
-        child: SvgPicture.asset(
-          ImageConst.accountProfile,
-          width: 50,
-          height: 50,
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        CircleAvatar(
+          radius: 42,
+          backgroundColor: Colors.grey.shade200,
+          child: SvgPicture.asset(
+            ImageConst.accountProfile,
+            width: 50,
+            height: 50,
+          ),
         ),
-      ),
-      const SizedBox(height: 8),
-      const Text(
-        "Profile Name",
-        style: TextStyle(
-          fontFamily: "Poppins",
-          fontWeight: FontWeight.w500,
-          fontSize: 15,
-          color: Colors.black,
+        const SizedBox(height: 8),
+        const Text(
+          "Profile Name",
+          style: TextStyle(
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+            color: Colors.black,
+          ),
         ),
-      ),
-      const Text(
-        "Job Designation",
-        style: TextStyle(
-          fontFamily: "Poppins",
-          fontWeight: FontWeight.w500,
-          fontSize: 12,
-          color: Color.fromRGBO(116, 130, 148, 1),
+        const Text(
+          "Job Designation",
+          style: TextStyle(
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+            color: Color.fromRGBO(116, 130, 148, 1),
+          ),
         ),
-      ),
-      const SizedBox(height: 12),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(255, 241, 229, 1),
-          borderRadius: BorderRadius.circular(6),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(255, 241, 229, 1),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: const [
+                  Text("200", style: TextStyle(fontWeight: FontWeight.w700)),
+                  SizedBox(width: 4),
+                  Text("Followers", style: TextStyle(color: Colors.orange)),
+                ],
+              ),
+              Container(width: 1, height: 20, color: Color(0xFFE0E0E0)),
+              Row(
+                children: const [
+                  Text("150", style: TextStyle(fontWeight: FontWeight.w700)),
+                  SizedBox(width: 4),
+                  Text("Following", style: TextStyle(color: Colors.orange)),
+                ],
+              ),
+            ],
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: const [
-                Text("200", style: TextStyle(fontWeight: FontWeight.w700)),
-                SizedBox(width: 4),
-                Text("Followers", style: TextStyle(color: Colors.orange)),
-              ],
-            ),
-            Container(width: 1, height: 20, color: Color(0xFFE0E0E0)),
-            Row(
-              children: const [
-                Text("150", style: TextStyle(fontWeight: FontWeight.w700)),
-                SizedBox(width: 4),
-                Text("Following", style: TextStyle(color: Colors.orange)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-
-  Widget _buildSection(BuildContext context, ProfileSection section) {
+  Widget _buildSection(BuildContext context, ProfileCategory section)
+ {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -208,7 +202,7 @@ class AccountScreen extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          // TODO: Navigation
+                        
                         },
                       ),
                       if (!isLast)
@@ -224,7 +218,7 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
- Widget _buildLogoutTile() {
+  Widget _buildLogoutTile() {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(

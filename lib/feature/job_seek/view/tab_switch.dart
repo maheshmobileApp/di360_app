@@ -16,8 +16,8 @@ class TabSwitch extends StatelessWidget {
     final tabViewModel = Provider.of<JobSeekViewModel>(context);
 
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 43, right: 43),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.only(top: 20, left: 43, right: 43),
+      padding: const EdgeInsets.all(10),
       height: 60,
       width: 290,
       decoration: BoxDecoration(
@@ -25,9 +25,9 @@ class TabSwitch extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
         boxShadow: [
           BoxShadow(
-            color: Color.fromRGBO(116, 130, 148, 0.3),
+            color: const Color.fromRGBO(116, 130, 148, 0.3),
             blurRadius: 20,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -35,17 +35,19 @@ class TabSwitch extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _tabButton(
+            context: context,
             title: "Popular Jobs",
             width: 110,
             isActive: tabViewModel.selectedTabIndex == 0,
-            onTap: () => tabViewModel.setSelectedIndex(0),
+            index: 0,
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           _tabButton(
+            context: context,
             title: "Talents",
             width: 100,
             isActive: tabViewModel.selectedTabIndex == 1,
-            onTap: () => tabViewModel.setSelectedIndex(1),
+            index: 1,
           ),
         ],
       ),
@@ -53,21 +55,27 @@ class TabSwitch extends StatelessWidget {
   }
 
   Widget _tabButton({
+    required BuildContext context,
     required String title,
     required double width,
     required bool isActive,
-    required VoidCallback onTap,
+    required int index,
   }) {
+    final tabViewModel = Provider.of<JobSeekViewModel>(context, listen: false);
+
     return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(isActive ? 100 : 30),
+      onTap: () {
+        tabViewModel.setSelectedIndex(index, context);
+        onTabChange?.call(index);
+      },
+      borderRadius: BorderRadius.circular(100),
       child: Container(
         height: 40,
         width: width,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: isActive ? AppColors.primaryColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(isActive ? 100 : 30),
+          borderRadius: BorderRadius.circular(100),
         ),
         child: Text(
           title,
@@ -77,10 +85,9 @@ class TabSwitch extends StatelessWidget {
             fontWeight: FontWeight.w500,
             fontSize: 14,
             height: 1,
-            letterSpacing: 0,
             color: isActive
-                ? Color.fromRGBO(255, 255, 255, 1)
-                : Color.fromRGBO(116, 130, 148, 1),
+                ? Colors.white
+                : const Color.fromRGBO(116, 130, 148, 1),
           ),
         ),
       ),
