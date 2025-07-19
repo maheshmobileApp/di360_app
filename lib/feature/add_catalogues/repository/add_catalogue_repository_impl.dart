@@ -1,11 +1,15 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catalogue_view_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_count_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/add_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catagorys_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catalogue_view_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/edit_catalogue_query.dart';
+import 'package:di360_flutter/feature/add_catalogues/querys/get_catalogue_counts_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/get_my_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/inactive_view_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/remove_catalogue_query.dart';
@@ -76,10 +80,23 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
     final result = CatagoryData.fromJson(data);
     return result.catalogueCategories;
   }
-  
+
   @override
-  Future<dynamic> editCatalogue(variables) async{
+  Future<dynamic> editCatalogue(variables) async {
     final data = await http.mutation(editCatalogueQuery, variables);
     return data;
+  }
+
+  @override
+  Future<CatalogueCountData> catalogueCounts() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final data = await http.query(GetCatalogueCountsQuery, variables: {
+      "title": "%%",
+      "categoryName": "%%",
+      "supplierId": userId
+    });
+
+    final result = CatalogueCountData.fromJson(data);
+    return result;
   }
 }

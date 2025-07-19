@@ -1,5 +1,6 @@
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catalogue_view_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_count_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
 
 abstract class AddCatalogueRepository {
@@ -11,4 +12,5 @@ abstract class AddCatalogueRepository {
   Future<void> inActiveCatalogue(String? id);
   Future<List<CatalogueCategories>?> getCatagorys();
   Future<dynamic> editCatalogue(dynamic variables);
+  Future<CatalogueCountData> catalogueCounts();
 }

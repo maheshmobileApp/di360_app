@@ -69,8 +69,15 @@ class MyCataloguesScreen extends StatelessWidget with BaseContextHelpers {
               SvgPicture.asset(ImageConst.search, color: AppColors.black),
               addHorizontal(15),
               GestureDetector(
+                  onTap: () =>
+                      navigationService.navigateTo(RouteList.myCatalogueFilter),
                   child: SvgPicture.asset(ImageConst.filter,
                       color: AppColors.black)),
+              if (myCatalogVM.catalogFilterApply == true)
+                GestureDetector(
+                  onTap: () => myCatalogVM.clearSelections(),
+                  child: Icon(Icons.close, color: AppColors.black),
+                ),
               addHorizontal(15)
             ]),
         body: Column(
@@ -116,7 +123,7 @@ class MyCataloguesScreen extends StatelessWidget with BaseContextHelpers {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              "${myCatalogVM.counts[status]}",
+                              "${myCatalogVM.statusCountMap[status]}",
                               style: TextStyles.regular2(
                                   color: isSelected
                                       ? AppColors.black

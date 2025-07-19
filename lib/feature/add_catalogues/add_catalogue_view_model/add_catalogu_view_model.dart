@@ -19,7 +19,9 @@ class AddCatalogueViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
 
   AddCatalogueViewModel() {
+    getCatalogCounts();
     getCatagorysData();
+    initializeFilterOptions();
   }
 
   String selectedStatus = 'All';
@@ -33,14 +35,21 @@ class AddCatalogueViewModel extends ChangeNotifier {
     'Reject'
   ];
 
-  final Map<String, int> counts = {
-    'All': 10,
-    'Draft': 0,
-    'Pending Approval': 1,
-    'Approved & Scheduled': 1,
-    'Expired': 0,
-    'Reject': 2,
-  };
+  int? allCatalogueCount = 0;
+  int? draftCatalogueCount = 0;
+  int? pendingApprovalCatalogueCount = 0;
+  int? approvedScheduledCatalogueCount = 0;
+  int? expiredCatalogueCount = 0;
+  int? rejectCatalogueCount = 0;
+
+  Map<String, int?> get statusCountMap => {
+        'All': allCatalogueCount,
+        'Draft': draftCatalogueCount,
+        'Pending Approval': pendingApprovalCatalogueCount,
+        'Approved & Scheduled': approvedScheduledCatalogueCount,
+        'Expired': expiredCatalogueCount,
+        'Reject': rejectCatalogueCount,
+      };
 
   List<String>? catalogStatus = [];
   String? editCatalogueId;
@@ -94,21 +103,15 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // DateTime? _scheduleDate;
-  // DateTime? _expiryDate;
-
   DateTime? scheduleDate;
   DateTime? expiryDate;
 
   void setScheduleDate(DateTime date) {
     scheduleDate = date;
-
-    // reset expiry if it’s invalid
     if (expiryDate != null &&
         expiryDate!.isBefore(expiryDate!.add(const Duration(days: 1)))) {
       expiryDate = null;
     }
-
     notifyListeners();
   }
 
@@ -214,8 +217,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
     final res = await repo.getMyCatalogues({
       "limit": 70,
       "offset": 0,
-      "searchTitle": "%%",
-      "searchCategory": "%%",
+      "searchTitle": "%${searchController.text}%",
+      "searchCategory": "%$selectedCatagoryName%",
       "searchCompany": "%%",
       "status": catalogStatus?.isEmpty == true
           ? [
@@ -229,6 +232,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
           : catalogStatus,
       "dental_supplier_id": id
     });
+    getCatalogCounts();
     if (res != null) {
       myCatalogueList = res;
       Loaders.circularHideLoader(context);
@@ -296,7 +300,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editCatalogue(
+  Future<void> editCatalogueNavigator(
       BuildContext context, String? id, String expDate) async {
     Loaders.circularShowLoader(context);
     final res = await repo.cataloguView(id);
@@ -377,6 +381,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
         selectedStatus = 'Pending Approval';
         catalogStatus = ['PENDING_APPROVAL'];
       }
+      getCatalogCounts();
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddCatalogueData();
@@ -386,4 +391,108 @@ class AddCatalogueViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> getCatalogCounts() async {
+    final res = await repo.catalogueCounts();
+    allCatalogueCount = ((res.expired?.aggregate?.count ?? 0) +
+        (res.scheduled?.aggregate?.count ?? 0) +
+        (res.approved?.aggregate?.count ?? 0) +
+        (res.pending?.aggregate?.count ?? 0) +
+        (res.draft?.aggregate?.count ?? 0) +
+        (res.rejected?.aggregate?.count ?? 0));
+    pendingApprovalCatalogueCount = res.pending?.aggregate?.count;
+    draftCatalogueCount = res.draft?.aggregate?.count;
+    approvedScheduledCatalogueCount = ((res.scheduled?.aggregate?.count ?? 0) +
+        (res.approved?.aggregate?.count ?? 0));
+    expiredCatalogueCount = res.expired?.aggregate?.count;
+    rejectCatalogueCount = res.rejected?.aggregate?.count;
+    notifyListeners();
+  }
+
+  late Map<String, List<FilterItem>> filterOptions;
+  bool? catalogFilterApply;
+  TextEditingController searchController = TextEditingController();
+
+  void updateCatalogFilterApply(bool val) {
+    catalogFilterApply = val;
+    notifyListeners();
+  }
+
+  void toggleSection(String section) {
+    sectionVisibility[section] = !(sectionVisibility[section] ?? true);
+    notifyListeners();
+  }
+
+  void selectItem(String section, int index) {
+    final currentSet = selectedIndices[section] ?? {};
+    if (currentSet.contains(index)) {
+      selectedIndices[section] = {};
+    } else {
+      selectedIndices[section] = {index};
+    }
+    notifyListeners();
+  }
+
+  Map<String, Set<int>> selectedIndices = {'catagory': {}, 'status': {}};
+
+  Map<String, bool> sectionVisibility = {'catagory': true, 'status': true};
+
+  List<String> catagory = ['Company', 'Monthly', 'New Product', 'Promotional'];
+  String? selectedCatagoryName;
+
+  void initializeFilterOptions() async {
+    filterOptions = {
+      'Catagory': catagory.map((e) {
+        return FilterItem(
+          name: e,
+          id: '',
+        );
+      }).toList(),
+      'Status': statuses.map((e) {
+        return FilterItem(
+          name: e,
+          id: '',
+        );
+      }).toList()
+    };
+    notifyListeners();
+  }
+
+  void clearSelections() {
+    selectedIndices.updateAll((key, value) => {});
+    searchController.clear();
+    selectedCatagoryName = null;
+    updateCatalogFilterApply(false);
+    getMyCataloguesData(navigatorKey.currentContext!);
+    notifyListeners();
+  }
+
+  void printSelectedItems() {
+    selectedIndices.forEach((section, indices) {
+      final items = filterOptions[section];
+      if (items != null && indices.isNotEmpty) {
+        for (final i in indices) {
+          updateCatalogFilterApply(true);
+          final name = items[i].name;
+          if (section == "Catagory") {
+            selectedCatagoryName = name;
+          } else if (section == "Status") {
+            changeStatus(name, navigatorKey.currentContext!);
+          }
+        }
+      }
+    });
+  }
+}
+
+class FilterItem {
+  final String name;
+  final String id;
+  bool isSelected;
+
+  FilterItem({
+    required this.name,
+    required this.id,
+    this.isSelected = false,
+  });
 }

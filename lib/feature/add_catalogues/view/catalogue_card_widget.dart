@@ -142,7 +142,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
         if (value == "View") {
           vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
-          vm.editCatalogue(context, id, expDate);
+          vm.editCatalogueNavigator(context, id, expDate);
         } else if (value == "Inactive") {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {
