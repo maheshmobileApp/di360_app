@@ -23,4 +23,5 @@ class RouteList {
   static const String JobSeekFilterScreen = '/JobSeekFilterScreen';
   static const String addCatalogScreen = '/addCatalogScreen';
   static const String myCatalogueFilter = '/myCatalogueFilter';
+  static const String myCatalogueScreen = '/myCatalogueScreen';
 }

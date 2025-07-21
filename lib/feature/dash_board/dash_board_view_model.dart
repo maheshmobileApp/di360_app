@@ -1,6 +1,4 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
-import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
-import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -28,8 +26,7 @@ class DashBoardViewModel extends ChangeNotifier {
     JobSeekView(),
     CataloguePage(),
     AccountScreen(),
-    //Center(child: Text('Profile Page')),
-    MyCataloguesScreen()
+    Center(child: Text('Profile Page')),
   ];
 
   void setIndex(int index, BuildContext context) {
@@ -55,7 +52,6 @@ class DashBoardViewModel extends ChangeNotifier {
       case 4:
         break;
       case 5:
-        context.read<AddCatalogueViewModel>().getMyCataloguesData(context);
         break;
       default:
     }
