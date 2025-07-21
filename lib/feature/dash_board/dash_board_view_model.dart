@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
-import 'package:di360_flutter/feature/logout_view.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -27,8 +26,7 @@ class DashBoardViewModel extends ChangeNotifier {
     JobSeekView(),
     CataloguePage(),
     AccountScreen(),
-    //Center(child: Text('Profile Page')),
-   LogoutView()
+    Center(child: Text('Profile Page')),
   ];
 
   void setIndex(int index, BuildContext context) {
@@ -49,10 +47,11 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<JobSeekViewModel>().fetchJobs(context);
         break;
       case 3:
-      context.read<CatalogueViewModel>().fetchCatalogue(context);
+        context.read<CatalogueViewModel>().fetchCatalogue(context);
         break;
-         case 4:
-        // Account screen – nothing to fetch here
+      case 4:
+        break;
+      case 5:
         break;
       default:
     }

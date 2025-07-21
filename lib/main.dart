@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
@@ -14,12 +15,17 @@ import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart'
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 
@@ -40,21 +46,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
         ChangeNotifierProvider(create: (_) => TalentsViewModel()),
-         ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
+        ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
         ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
+        ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
       ],
       child: MaterialApp(
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: 'dmSans',
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        navigatorObservers: [navigationService],
-        initialRoute: RouteList.initial,
-        routes: Routes.routes
-      ),
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: 'dmSans',
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          navigatorObservers: [navigationService],
+          initialRoute: RouteList.initial,
+          routes: Routes.routes),
     );
   }
 }

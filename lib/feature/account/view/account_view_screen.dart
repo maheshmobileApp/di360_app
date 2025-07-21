@@ -1,8 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +36,7 @@ class AccountScreen extends StatelessWidget {
                     .map((section) => _buildSection(context, section))
                     .toList(),
                 const SizedBox(height: 12),
-                _buildLogoutTile(),
+                _buildLogoutTile(context),
               ],
             );
           },
@@ -40,6 +44,7 @@ class AccountScreen extends StatelessWidget {
       ),
     );
   }
+
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.white,
@@ -146,8 +151,7 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, ProfileCategory section)
- {
+  Widget _buildSection(BuildContext context, ProfileCategory section) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -202,7 +206,10 @@ class AccountScreen extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                        
+                          if (item.title == 'Catalogues') {
+                            context.read<AddCatalogueViewModel>().getMyCataloguesData(context);
+                            navigationService.navigateTo(RouteList.myCatalogueScreen);
+                          }
                         },
                       ),
                       if (!isLast)
@@ -218,31 +225,34 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLogoutTile() {
+  Widget _buildLogoutTile(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F6F9),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            ImageConst.logout,
-            width: 20,
-            height: 20,
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            "Logout",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              fontFamily: "Poppins",
-              color: Color(0xFF242424),
+      child: GestureDetector(
+        onTap: () => logOutAlert(context),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              ImageConst.logout,
+              width: 20,
+              height: 20,
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            const Text(
+              "Logout",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: "Poppins",
+                color: Color(0xFF242424),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

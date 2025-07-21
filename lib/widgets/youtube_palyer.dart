@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 
 class LazyYoutubePlayer extends StatefulWidget {
   final String youtubeUrl;
@@ -23,13 +23,32 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     _videoId = YoutubePlayer.convertUrlToId(widget.youtubeUrl) ?? '';
     _controller = YoutubePlayerController(
       initialVideoId: _videoId,
-      flags: const YoutubePlayerFlags(autoPlay: true),
-    );
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+      ),
+    )..addListener(_fullScreenListener);
+  }
+
+  void _fullScreenListener() {
+    if (_controller.value.isFullScreen) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    }
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_fullScreenListener);
     _controller.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     super.dispose();
   }
 

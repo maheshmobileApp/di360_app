@@ -94,4 +94,9 @@ mixin ValidationMixins {
     if (isEnabled && endDate == null) return 'Please select an end date';
     return null;
   }
+  
+  String? validateCatagoryName(String? value) {
+    if (value == null || value.isEmpty) return 'Please select category name';
+    return null;
+  }
 }
