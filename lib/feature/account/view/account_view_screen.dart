@@ -218,6 +218,11 @@ class AccountScreen extends StatelessWidget  with BaseContextHelpers{
                         navigationService
                               .navigateTo(RouteList.jobCreate);
                         }
+                        else if(item.title=='Job Profile')
+                        {
+                        navigationService
+                              .navigateTo(RouteList.JobProfileView);
+                        }
                       },
                     ),
                     if (!isLast)
