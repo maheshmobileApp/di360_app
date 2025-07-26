@@ -25,8 +25,7 @@ class DashBoardViewModel extends ChangeNotifier {
     NewsFeedScreen(),
     JobSeekView(),
     CataloguePage(),
-    AccountScreen(),
-    Center(child: Text('Profile Page')),
+    AccountScreen()
   ];
 
   void setIndex(int index, BuildContext context) {
@@ -50,8 +49,6 @@ class DashBoardViewModel extends ChangeNotifier {
         context.read<CatalogueViewModel>().fetchCatalogue(context);
         break;
       case 4:
-        break;
-      case 5:
         break;
       default:
     }
