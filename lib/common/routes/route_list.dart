@@ -24,4 +24,6 @@ class RouteList {
   static const String addCatalogScreen = '/addCatalogScreen';
   static const String myCatalogueFilter = '/myCatalogueFilter';
   static const String myCatalogueScreen = '/myCatalogueScreen';
+  static const String directory = '/myDirectory';
+  static const String directoryFilter = '/directoryFilter';
 }
