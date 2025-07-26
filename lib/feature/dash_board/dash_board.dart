@@ -60,9 +60,7 @@ class DashBoard extends StatelessWidget {
                         height: 25, width: 25, color: AppColors.primaryColor),
                     label: 'Catalogue'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Profile'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'LogOut'),
+                    icon: Icon(Icons.person), label: 'Profile')
               ],
             ),
           ),
