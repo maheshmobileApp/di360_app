@@ -31,9 +31,9 @@ scaffoldMessenger(String msg, {Color? color}) {
       content:
           Text(msg, style: TextStyles.medium3(color: AppColors.whiteColor)),
       backgroundColor:
-          color ?? AppColors.primaryColor, // Customize the background color
+          color ?? AppColors.primaryColor,
       duration:
-          const Duration(seconds: 2), // Duration the SnackBar will be shown
+          const Duration(seconds: 2),
     ),
   );
 }

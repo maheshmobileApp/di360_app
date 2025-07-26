@@ -5,9 +5,11 @@
     <application
         android:label="di360_flutter"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
             android:usesCleartextTraffic="true"
             android:launchMode="singleTop"

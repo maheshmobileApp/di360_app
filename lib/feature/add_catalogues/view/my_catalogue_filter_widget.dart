@@ -1,4 +1,4 @@
-import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +9,12 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 
-class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
-  const CatalogueFilterScreen({super.key});
+class MyCatalogueFilterWidget extends StatelessWidget with BaseContextHelpers {
+  const MyCatalogueFilterWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final filterProvider = Provider.of<CatalogueViewModel>(context);
+    final filterProvider = Provider.of<AddCatalogueViewModel>(context);
 
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
@@ -51,7 +51,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                     height: 40,
                     width: 150,
                     onTap: () async {
-                      filterProvider.clearSelections(context);
+                      filterProvider.clearSelections();
                       navigationService.goBack();
                     },
                   ),
@@ -61,7 +61,6 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                     width: 150,
                     onTap: () async {
                       filterProvider.printSelectedItems();
-                      await filterProvider.fetchCatalogue(context);
                       navigationService.goBack();
                     },
                   ),
@@ -75,7 +74,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget buildSearchBar(
-      CatalogueViewModel filterProvider, BuildContext context) {
+      AddCatalogueViewModel filterProvider, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -93,7 +92,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                   child: TextFormField(
                     controller: filterProvider.searchController,
                     onFieldSubmitted: (value) async {
-                      await filterProvider.fetchCatalogue(context);
+                      await filterProvider.getMyCataloguesData(context);
                       navigationService.goBack();
                     },
                     decoration: InputDecoration(
@@ -106,7 +105,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                           onTap: () async {
                             if (filterProvider
                                 .searchController.text.isNotEmpty) {
-                              await filterProvider.fetchCatalogue(context);
+                              await filterProvider.getMyCataloguesData(context);
                               navigationService.goBack();
                             }
                           },
@@ -131,7 +130,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget buildFilters(CatalogueViewModel filterProvider) {
+  Widget buildFilters(AddCatalogueViewModel filterProvider) {
     if (filterProvider.filterOptions.isEmpty) {
       return Center(
         child: Padding(

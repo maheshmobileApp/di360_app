@@ -114,6 +114,11 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                           ),
                         ),
                       ),
+                    ),
+                    if(vm.catalogFilterApply == true) 
+                    GestureDetector(
+                      onTap: () => vm.clearSelections(context),
+                      child: Icon(Icons.close,color: AppColors.black),
                     )
                   ],
                 ),
