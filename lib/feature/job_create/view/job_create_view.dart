@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view/job_info.dart';
 import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
 import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
@@ -15,13 +14,19 @@ import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobCreateView extends StatelessWidget with BaseContextHelpers {
+class JobCreateView extends StatefulWidget {
   JobCreateView({super.key});
 
+  @override
+  State<JobCreateView> createState() => _JobCreateViewState();
+}
+
+class _JobCreateViewState extends State<JobCreateView> {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
