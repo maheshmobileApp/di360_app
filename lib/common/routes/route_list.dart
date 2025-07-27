@@ -25,4 +25,6 @@ class RouteList {
   static const String myCatalogueFilter = '/myCatalogueFilter';
   static const String myCatalogueScreen = '/myCatalogueScreen';
   static const String JobProfileView= '/JobProfileView';
+  static const String JobListingScreen= '/JobListingScreen';
+
 }
