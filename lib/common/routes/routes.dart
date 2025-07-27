@@ -6,6 +6,8 @@ import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.da
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
+import 'package:di360_flutter/feature/directors/view/director_screen.dart';
+import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
@@ -61,6 +63,8 @@ class Routes {
       RouteList.addCatalogScreen: (context) => AddCatalogueScreen(),
       RouteList.myCatalogueFilter: (context) => MyCatalogueFilterWidget(),
       RouteList.myCatalogueScreen: (context) => MyCataloguesScreen(),
+      RouteList.directory: (context) => DirectorScreen(),
+      RouteList.directoryFilter: (context) => DirectoriesFilterScreen(),
     };
   }
 }
