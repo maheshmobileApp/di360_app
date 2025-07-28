@@ -19,23 +19,20 @@ class JobListingScreen extends StatefulWidget {
   State<JobListingScreen> createState() => _JobListingScreenState();
 }
 
-class _JobListingScreenState extends State<JobListingScreen> with BaseContextHelpers {
+class _JobListingScreenState extends State<JobListingScreen>
+    with BaseContextHelpers {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-      Provider.of<JobSeekViewModel>(context, listen: false).fetchJobs(context)
-
-    );
+    // Future.microtask(() => Provider.of<JobSeekViewModel>(context, listen: false)
+    //     .fetchJobs(context));
   }
-
 
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
     final jobListingVM = Provider.of<JobListingsViewModel>(context);
-    final VM = Provider.of<JobSeekViewModel>(context);
-    
+
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
@@ -107,10 +104,10 @@ class _JobListingScreenState extends State<JobListingScreen> with BaseContextHel
                   bool isSelected = jobListingVM.selectedStatus == status;
                   return GestureDetector(
                     onTap: () {
-
+                      jobListingVM.changeStatus(status, context);
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
+                      margin:  EdgeInsets.symmetric(
                           horizontal: 3, vertical: 10),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
@@ -131,9 +128,9 @@ class _JobListingScreenState extends State<JobListingScreen> with BaseContextHel
                                   : AppColors.black,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -142,7 +139,7 @@ class _JobListingScreenState extends State<JobListingScreen> with BaseContextHel
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              "${jobListingVM.statusCountMap[status]}",
+                              "0",
                               style: TextStyles.regular2(
                                 color: isSelected
                                     ? AppColors.black
@@ -159,31 +156,30 @@ class _JobListingScreenState extends State<JobListingScreen> with BaseContextHel
             ),
             Divider(),
             Expanded(
-        child:VM .jobs.isEmpty
-        ? Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "No Jobs Found",
-                style: TextStyles.medium2(color: AppColors.black),
-              ),
-            ],
-          ),
-        )
-      : ListView.builder(
-          itemCount: VM .jobs.length,
-          itemBuilder: (context, index) {
-            final jobData =VM .jobs[index];
-            return 
-              JobListingCard(
-    jobsData: jobData,
-  vm: jobListingVM,
-);
-
-          },
-         ),
-        ),
+              child: jobListingVM.myJobListingList.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "No Jobs Found",
+                            style: TextStyles.medium2(color: AppColors.black),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: jobListingVM.myJobListingList.length,
+                      itemBuilder: (context, index) {
+                        final jobData = jobListingVM.myJobListingList[index];
+                        return JobListingCard(
+                          jobsListingData: jobData,
+                          vm: jobListingVM,
+                          index: index,
+                        );
+                      },
+                    ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
