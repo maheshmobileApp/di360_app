@@ -9,6 +9,8 @@ import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
+import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
+import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -42,6 +44,8 @@ class Routes {
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
+      RouteList.JobProfileView: (context) => JobProfileView(),
+      RouteList.JobListingScreen: (context) => JobListingScreen(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobDetailsScreen(
