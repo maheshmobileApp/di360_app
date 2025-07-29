@@ -321,6 +321,49 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  createJob() {
+    if (!formKeys[0].currentState!.validate()) return;
+
+    final jobInfo = {
+      "title": "",
+      "description": jobDescController.text,
+      "company_name": companyNameController.text,
+      "j_role": '',
+      "job_role_id": '',
+      'TypeofEmployment': [],
+      'availability_date': []
+    };
+
+    final logo = {
+
+    };
+
+    final jobLocation = {};
+    
+
+
+
+    final jobData = {
+      'jobTitle': jobTitleController.text,
+      'companyName': companyNameController.text,
+      'jobDescription': jobDescController.text,
+      'videoLink': videoLinkController.text,
+      'website': websiteController.text,
+      'facebook': facebookController.text,
+      'instagram': instgramController.text,
+      'linkedIn': linkedInController.text,
+      'locationSearch': locationSearchController.text,
+      'state': stateController.text,
+      'cityPostCode': cityPostCodeController.text,
+      'minSalary': minSalaryController.text,
+      'maxSalary': maxSalaryController.text,
+      'locumDate': locumDateController.text,
+      'selectedRole': selectedRole,
+      'selectedEmploymentTypes': getSelectedEmploymentTypes(),
+      // Add other fields as necessary
+    };
+  }
+
   // ───── Clean up ─────
   @override
   void dispose() {
