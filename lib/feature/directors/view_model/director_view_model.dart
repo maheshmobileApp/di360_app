@@ -30,7 +30,7 @@ class DirectorViewModel extends ChangeNotifier {
   Future<void> getDirectorsList(BuildContext context) async {
     directorsList = [];
     Loaders.circularShowLoader(context);
-    final res = await repository.getDirectors(_selectedCategoryId ?? '');
+    final res = await repository.getDirectors(_selectedCategoryId ?? '','');
     if (res.isNotEmpty) {
       directorsList = res;
       await getBannerList();
