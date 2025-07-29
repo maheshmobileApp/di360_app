@@ -1,6 +1,10 @@
 const String getJobListingQuary = r'''
-    query getjobposts($limit: Int, $offset: Int, $status: String) {
-  jobs(limit: $limit, offset: $offset, where: {status: {_eq: $status}}) {
+query getjobposts($limit: Int, $offset: Int, $status: [String!]) {
+  jobs(
+    limit: $limit
+    offset: $offset
+    where: { status: { _in: $status } }
+  ) {
     id   
     created_at   
     logo
@@ -19,4 +23,4 @@ const String getJobListingQuary = r'''
     short_id
     status
   }
-} ''';
+}''';

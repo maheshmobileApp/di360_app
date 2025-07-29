@@ -18,7 +18,6 @@ class JobListingsViewModel extends ChangeNotifier {
     'Expired',
     'Reject',
   ];
-  
 
   // Map<String, int?> get statusCountMap {
   //   return {
@@ -32,32 +31,32 @@ class JobListingsViewModel extends ChangeNotifier {
   //   };
   // }
 
-  String? listingStatus;
+  List<String>? listingStatus = [];
 
   List<JobsListingDetails> myJobListingList = [];
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {
-      // listingStatus =
-      //   "DRAFT",
-      //   "PENDING_APPROVAL",
-      //   "ACTIVE",
-      //   "INACTIVE",
-      //   "EXPIRED",
-      //   "REJECTED",
-      // ;
+      listingStatus = [
+        "DRAFT",
+        "PENDING_APPROVAL",
+        "ACTIVE",
+        "INACTIVE",
+        "EXPIRED",
+        "REJECTED"
+      ];
     } else if (status == 'Draft') {
-      listingStatus = 'DRAFT';
+      listingStatus = ['DRAFT'];
     } else if (status == 'Pending Approval') {
-      listingStatus = 'PENDING_APPROVAL';
+      listingStatus = ['PENDING_APPROVAL'];
     } else if (status == 'Active') {
-      listingStatus = "ACTIVE";
+      listingStatus = ["ACTIVE"];
     } else if (status == 'InActive') {
-      listingStatus = 'INACTIVE';
+      listingStatus = ['INACTIVE'];
     } else if (status == 'Expired') {
-      listingStatus = 'EXPIRED';
+      listingStatus = ['EXPIRED'];
     } else if (status == 'Reject') {
-      listingStatus = 'REJECTED';
+      listingStatus = ['REJECTED'];
     }
     getMyJobListingData(context);
     notifyListeners();
@@ -95,10 +94,20 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> getMyJobListingData(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    final res = await repo
-        .getMyJobListing({"limit": 10,
-         "offset": 0,
-          "status": listingStatus});
+    final res = await repo.getMyJobListing({
+      "limit": 10,
+      "offset": 0,
+      "status": listingStatus?.isEmpty == true
+          ? [
+              "DRAFT",
+              "PENDING_APPROVAL",
+              "ACTIVE",
+              "INACTIVE",
+              "EXPIRED",
+              "REJECTED"
+            ]
+          : listingStatus,
+    });
     print(res);
     print("ffffffff${res}");
     if (res != null) {
