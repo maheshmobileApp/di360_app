@@ -66,6 +66,10 @@ class _DirectorScreenState extends State<DirectorScreen>
             ),
             addVertical(16),
             SearchBarWidget(
+              controller: directorVM.searchController,
+              onFieldSubmitted: (value) async {
+                await directorVM.getDirectorsList(context);
+              },
               filterIconAction: () =>
                   navigationService.navigateTo(RouteList.directoryFilter),
             ),

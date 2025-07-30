@@ -13,7 +13,7 @@ class DirectorRepositoryImpl extends DirectorRepository {
 
   @override
   Future<List<Directories>> getDirectors(String catagoryId,String searchText) async {
-    final res = catagoryId.isEmpty || searchText.isEmpty
+    final res = (catagoryId.isEmpty && searchText.isEmpty)
         ? await http.query(getDirectorsQuery)
         : await http.query(GetDirectorBasedOnCatagoryQuery,
             variables: {"id": catagoryId, "name": "%$searchText%"});
