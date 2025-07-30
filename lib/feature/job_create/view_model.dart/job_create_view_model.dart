@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
@@ -12,14 +14,16 @@ import 'package:di360_flutter/services/navigation_services.dart';
 
 class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final JobCreateRepository repo = JobCreateRepoImpl();
+  final HttpService _http = HttpService();
 
   JobCreateViewModel() {
+    getUserId();
     fetchJobRoles();
     fetchEmpTypes();
   }
 
   // Controllers
-  final jobTitleController = TextEditingController();
+  final TextEditingController jobTitleController = TextEditingController();
   final companyNameController = TextEditingController();
   final jobDescController = TextEditingController();
   final videoLinkController = TextEditingController();
@@ -47,6 +51,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectHire;
   String? selectPositions;
   String? selectExperience;
+  String? supplierId;
+  String? practiceId;
+  String? userID;
+  String? logoPath;
+  dynamic banner_image;
 
   // Date settings
   bool isStartDateEnabled = false;
@@ -128,6 +137,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   // ───── Navigation Methods ─────
   void goToNextStep() {
     if (!validateCurrentStep()) return;
+    if (_currentStep == 1 && bannerFile != null) {
+      validateLogoAndBanner();
+    }
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
       pageController.nextPage(
@@ -155,13 +167,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Validation Methods ─────
   bool validateCurrentStep() {
-    // if (_currentStep == 1) return validateLogoAndBanner();
+    //  if (_currentStep == 1) return validateLogoAndBanner();
     if (_currentStep == 5) return validateOtherLinksStep();
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
 
-  bool validateLogoAndBanner() {
-    return logoFile != null && bannerFile != null;
+  void validateLogoAndBanner() async {
+    var value = await _http.uploadImage(bannerFile?.path);
+    banner_image = value['url'];
+    print(banner_image);
+    notifyListeners();
   }
 
   bool validateOtherLinksStep() {
@@ -286,17 +301,17 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       List.from(_selectedEmploymentChips);
 
   // ───── File Pickers ─────
-  Future<void> pickLogoImage(ImageSource source) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: source, imageQuality: 85);
-    if (pickedFile != null) {
-      final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+  // Future<void> pickLogoImage(ImageSource source) async {
+  //   final pickedFile =
+  //       await ImagePicker().pickImage(source: source, imageQuality: 85);
+  //   if (pickedFile != null) {
+  //     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
 
-      logoFile = File(pickedFile.path);
-      NavigationService().goBack();
-      notifyListeners();
-    }
-  }
+  //     logoFile = File(pickedFile.path);
+  //     NavigationService().goBack();
+  //     notifyListeners();
+  //   }
+  // }
 
   Future<void> pickBannerImage(ImageSource source) async {
     final pickedFile =
@@ -321,50 +336,86 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  createJob() {
-    if (!formKeys[0].currentState!.validate()) return;
+  getUserId() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final logo = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+    userID = userId;
+    logoPath = logo;
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    if (type == 'SUPPLIER') {
+      supplierId = userId;
+    } else if (type == 'PRACTICE') {
+      practiceId = userId;
+    }
+    notifyListeners();
+  }
 
-    final jobInfo = {
-      "title": "",
-      "description": jobDescController.text,
-      "company_name": companyNameController.text,
-      "j_role": '',
-      "job_role_id": '',
-      'TypeofEmployment': [],
-      'availability_date': []
-    };
-
-    final logo = {
-
-    };
-
-    final jobLocation = {};
-    
-
-
-
-    final jobData = {
-      'jobTitle': jobTitleController.text,
-      'companyName': companyNameController.text,
-      'jobDescription': jobDescController.text,
-      'videoLink': videoLinkController.text,
-      'website': websiteController.text,
-      'facebook': facebookController.text,
-      'instagram': instgramController.text,
-      'linkedIn': linkedInController.text,
-      'locationSearch': locationSearchController.text,
-      'state': stateController.text,
-      'cityPostCode': cityPostCodeController.text,
-      'minSalary': minSalaryController.text,
-      'maxSalary': maxSalaryController.text,
-      'locumDate': locumDateController.text,
-      'selectedRole': selectedRole,
-      'selectedEmploymentTypes': getSelectedEmploymentTypes(),
-      // Add other fields as necessary
+  Map<String, dynamic> jobData() {
+    return {
+      "postjobObj": {
+        "title": jobTitleController.text,
+        "j_type": "",
+        "j_role": selectedRole,
+        "description": jobDescController.text,
+        "TypeofEmployment": selectedEmploymentChips,
+        "availability_date": locumDateController.text,
+        "years_of_experience": selectExperience,
+        "dental_supplier_id": supplierId,
+        "dental_practice_id": practiceId,
+        "location": locationSearchController.text,
+        "logo": logoPath,
+        "state": stateController.text,
+        "city": cityPostCodeController.text,
+        "salary": "Range",
+        "pay_min": minSalaryController.text,
+        "pay_max": maxSalaryController.text,
+        "company_name": companyNameController.text,
+        "pay_range": selectedPayRange,
+        "education": selectEducation,
+        "video": videoLinkController.text,
+        "banner_image": banner_image,
+        "clinic_logo": [
+          // {
+          //   "url":
+          //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
+          //   "type": "image",
+          //   "extension": "jpeg"
+          // }
+        ],
+        "closed_at": null,
+        "status": "PENDING",
+        "active_status": "ACTIVE",
+        "website_url": websiteController.text,
+        "country": selectCountry,
+        "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
+        "offered_benefits": [],
+        "hiring_period": selectHire,
+        "no_of_people": selectPositions,
+        "rate_billing": selectRate,
+        "facebook_url": facebookController.text,
+        "instagram_url": instgramController.text,
+        "linkedin_url": linkedInController.text,
+        "timings": startDate,
+        "timingtoggle": isStartDateEnabled == true ? "YES" : "NO",
+        "auto_expiry_date": "",
+        "active_status_feed": "PENDING",
+        "feed_type": "JOBS"
+      }
     };
   }
 
-  // ───── Clean up ─────
+  Future<void> jobCreate(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final data = jobData();
+    final result = await repo.createJobListing(data);
+    if (result != null) {
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     jobTitleController.dispose();
