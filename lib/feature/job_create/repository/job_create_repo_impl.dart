@@ -28,7 +28,7 @@ class JobCreateRepoImpl extends JobCreateRepository {
   }
   
   @override
-  Future<dynamic> createJobListing(variables) async{
+  Future<dynamic> createJobListing(dynamic variables) async{
     final res = await http.mutation(addJobQuery, variables);
     return res;
   }

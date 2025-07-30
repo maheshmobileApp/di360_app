@@ -128,9 +128,9 @@ class _JobCreateViewState extends State<JobCreateView> {
           if (!isFirstStep)
             Expanded(
               child: CustomRoundedButton(
-                  fontSize: 12,
+                fontSize: 12,
                 text: 'Previous',
-                height:42,
+                height: 42,
                 onPressed: () {
                   jobCreateVM.goToPreviousStep();
                 },
@@ -145,10 +145,18 @@ class _JobCreateViewState extends State<JobCreateView> {
             child: CustomRoundedButton(
               fontSize: 12,
               text: 'Save Draft',
-              height:42,
-              onPressed: () {
-                print("Save Draft Clicked");
-                // Add your save draft logic
+              height: 42,
+              onPressed: () async {
+                final currentFormKey =
+                    jobCreateVM.formKeys[jobCreateVM.currentStep];
+                if (currentFormKey.currentState?.validate() ?? false) {
+                  if (isLastStep) {
+                    await jobCreateVM.createdJobListing(context, true);
+                    navigationService.goBack();
+                  } else {
+                    jobCreateVM.goToNextStep();
+                  }
+                }
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -159,13 +167,15 @@ class _JobCreateViewState extends State<JobCreateView> {
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep ? 'Submit' : 'Next',
-              height:42,
-                fontSize: 12,
-              onPressed: () {
+              height: 42,
+              fontSize: 12,
+              onPressed: () async {
                 final currentFormKey =
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
+                    await jobCreateVM.createdJobListing(context, false);
+                    navigationService.goBack();
                   } else {
                     jobCreateVM.goToNextStep();
                   }

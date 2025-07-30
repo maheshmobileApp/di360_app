@@ -350,15 +350,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Map<String, dynamic> jobData() {
-    return {
+  Future<void> createdJobListing(BuildContext context, bool isDraft) async {
+    Loaders.circularShowLoader(context);
+    final result = await repo.createJobListing({
       "postjobObj": {
         "title": jobTitleController.text,
         "j_type": "",
         "j_role": selectedRole,
         "description": jobDescController.text,
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": locumDateController.text,
+        "availability_date": [locumDateController.text],
         "years_of_experience": selectExperience,
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,
@@ -382,8 +383,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           //   "extension": "jpeg"
           // }
         ],
-        "closed_at": null,
-        "status": "PENDING",
+        "closed_at": endDate?.toUtc().toIso8601String(),
+        "status": isDraft ? "DRAFT" : "PENDING",
         "active_status": "ACTIVE",
         "website_url": websiteController.text,
         "country": selectCountry,
@@ -395,19 +396,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "facebook_url": facebookController.text,
         "instagram_url": instgramController.text,
         "linkedin_url": linkedInController.text,
-        "timings": startDate,
+        "timings": startDate?.toUtc().toIso8601String(),
         "timingtoggle": isStartDateEnabled == true ? "YES" : "NO",
-        "auto_expiry_date": "",
-        "active_status_feed": "PENDING",
+        //"auto_expiry_date": null,
+        "active_status_feed": isDraft ? null : "PENDING",
         "feed_type": "JOBS"
       }
-    };
-  }
-
-  Future<void> jobCreate(BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    final data = jobData();
-    final result = await repo.createJobListing(data);
+    });
     if (result != null) {
       Loaders.circularHideLoader(context);
     } else {
