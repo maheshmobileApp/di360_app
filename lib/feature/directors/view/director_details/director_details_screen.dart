@@ -1,5 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/feature/directors/view/director_basic_info.dart';
+import 'package:di360_flutter/feature/directors/view/director_details/director_basic_info.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:flutter/material.dart';
 
