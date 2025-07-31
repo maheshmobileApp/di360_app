@@ -66,6 +66,10 @@ class _DirectorScreenState extends State<DirectorScreen>
             ),
             addVertical(16),
             SearchBarWidget(
+              controller: directorVM.searchController,
+              onFieldSubmitted: (value) async {
+                await directorVM.getDirectorsList(context);
+              },
               filterIconAction: () =>
                   navigationService.navigateTo(RouteList.directoryFilter),
             ),
@@ -117,66 +121,73 @@ class _DirectorScreenState extends State<DirectorScreen>
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8),
-                                        child: Row(
-                                          children: List.generate(2, (i) {
-                                            if (i < item.length) {
-                                              final director = item[i];
-                                              return Expanded(
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors.whiteColor,
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .buttomBarColor),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        child:
-                                                            CachedNetworkImageWidget(
-                                                          imageUrl: director
-                                                                  .logo?.url ??
-                                                              director
-                                                                  .profileImage
-                                                                  ?.url ??
-                                                              '',
-                                                          height: 170,
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                          height: 1,
+                                        child: GestureDetector(
+                                          onTap: () => navigationService
+                                              .navigateTo(RouteList
+                                                  .directoryDetailsScreen),
+                                          child: Row(
+                                            children: List.generate(2, (i) {
+                                              if (i < item.length) {
+                                                final director = item[i];
+                                                return Expanded(
+                                                  child: Container(
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          AppColors.whiteColor,
+                                                      border: Border.all(
                                                           color: AppColors
-                                                              .dividerColor),
-                                                      addVertical(6),
-                                                      Text(
-                                                          director.name ??
-                                                              'Dental',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          maxLines: 2,
-                                                          style: TextStyles
-                                                              .medium2(
-                                                                  color: AppColors
-                                                                      .black)),
-                                                      addVertical(6)
-                                                    ],
+                                                              .buttomBarColor),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Column(
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          child:
+                                                              CachedNetworkImageWidget(
+                                                            imageUrl: director
+                                                                    .logo
+                                                                    ?.url ??
+                                                                director
+                                                                    .profileImage
+                                                                    ?.url ??
+                                                                '',
+                                                            height: 170,
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                            height: 1,
+                                                            color: AppColors
+                                                                .dividerColor),
+                                                        addVertical(6),
+                                                        Text(
+                                                            director.name ?? '',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            maxLines: 2,
+                                                            style: TextStyles
+                                                                .medium2(
+                                                                    color: AppColors
+                                                                        .black)),
+                                                        addVertical(6)
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            } else {
-                                              return Expanded(
-                                                  child: SizedBox());
-                                            }
-                                          }),
+                                                );
+                                              } else {
+                                                return Expanded(
+                                                    child: SizedBox());
+                                              }
+                                            }),
+                                          ),
                                         ),
                                       );
                                     } else if (item is Banners) {

@@ -9,7 +9,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class UserData extends StatelessWidget with BaseContextHelpers {
-  const UserData({super.key});
+  final String? imageUrl;
+  final String? userName;
+  final String? followerCount;
+  final String? followingCount;
+  const UserData(
+      {super.key,
+      this.imageUrl,
+      this.userName,
+      this.followerCount,
+      this.followingCount});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +39,8 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               child: CircleAvatar(
                 backgroundColor: AppColors.menuBGColor,
                 radius: 25,
-                child: Image.asset(ImageConst.menu, color: AppColors.whiteColor),
+                child:
+                    Image.asset(ImageConst.menu, color: AppColors.whiteColor),
               )),
           Positioned(
               right: 1,
@@ -46,8 +56,8 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                     child: Transform.scale(
                       scale: 1,
                       child: CachedNetworkImageWidget(
-                        imageUrl: homeViewModel.profilePic ?? '',
-                        errorWidget: Image.asset(ImageConst.prfImg)),
+                          imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
+                          errorWidget: Image.asset(ImageConst.prfImg)),
                     ),
                   ),
                 ),
@@ -73,14 +83,20 @@ class UserData extends StatelessWidget with BaseContextHelpers {
             Divider(color: AppColors.dividerColor),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(homeViewModel.userName ?? '',
+              child: Text(userName ?? homeViewModel.userName ?? '',
                   style: TextStyles.clashMedium(
                       fontSize: 20, color: AppColors.black)),
             ),
             Divider(color: AppColors.dividerColor),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              followerData('Followers', '${homeViewModel.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}'),
-              followerData('Following', '${homeViewModel.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}')
+              followerData(
+                  'Followers',
+                  followerCount ??
+                      '${homeViewModel.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}'),
+              followerData(
+                  'Following',
+                  followingCount ??
+                      '${homeViewModel.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}')
             ]),
             Divider(color: AppColors.dividerColor)
           ]))

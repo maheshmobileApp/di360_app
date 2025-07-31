@@ -90,11 +90,11 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
               children: [
                 Expanded(
                   child: TextFormField(
-                    // controller: filterProvider.searchController,
-                    // onFieldSubmitted: (value) async {
-                    //   await filterProvider.fetchCatalogue(context);
-                    //   navigationService.goBack();
-                    // },
+                     controller: filterProvider.searchController,
+                    onFieldSubmitted: (value) async {
+                      await filterProvider.getDirectorsList(context);
+                      navigationService.goBack();
+                    },
                     decoration: InputDecoration(
                       hintText: 'What are you looking for?',
                       hintStyle: TextStyles.dmsansLight(
@@ -103,11 +103,11 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
                       ),
                       suffixIcon: GestureDetector(
                           onTap: () async {
-                            // if (filterProvider
-                            //     .searchController.text.isNotEmpty) {
-                            //   await filterProvider.fetchCatalogue(context);
-                            //   navigationService.goBack();
-                            // }
+                            if (filterProvider
+                                .searchController.text.isNotEmpty) {
+                              await filterProvider.getDirectorsList(context);
+                              navigationService.goBack();
+                            }
                           },
                           child: Icon(Icons.search, color: AppColors.black)),
                       border: InputBorder.none,
