@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +56,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                   ),
                 ),
                   _jobTimeChip(time),
-                menuWidget(vm, context,index!),
+                menuWidget(vm, context,index!,jobsListingData?.id??"",jobsListingData?.status??""),
               ],
             ),
              addVertical(12),
@@ -80,6 +79,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     JobListingsViewModel vm,
     BuildContext context,
      int index,
+     String id,
+      String status,
   ) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
@@ -98,14 +99,14 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {
             navigationService.goBack();
-            // vm.inActiveCatalogue(context, id);
+             vm.updateJobListingStatus(context, id,status);
           });
         } else if (value == "Delete") {
           showAlertMessage(
               context, 'Are you sure you want to delete this catalogue?',
               onBack: () {
             navigationService.goBack();
-            // vm.removeCatalogue(context, id);
+             vm.removeJobsListingData(context, id);
           });
         }
       },

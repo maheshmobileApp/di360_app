@@ -133,7 +133,7 @@ class JobListingDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             jobInfoItem(ImageConst.briefcaseSvg,
-                '${job.experience ?? 0} Yrs Experience'),
+                '${job.yearsOfExperience ?? 0} Yrs Experience'),
             const SizedBox(height: 12),
             jobInfoItem(ImageConst.briefcurrencySvg,
                 '${job.payRange ?? 0} - ${job.payRange ?? 0}'),

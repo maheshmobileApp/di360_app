@@ -20,11 +20,6 @@ import 'package:di360_flutter/utils/user_role_enum.dart';
 class CatalogueRepositoryImpl extends CatalogueRepository {
   final HttpService http = HttpService();
 
-  String? professionId;
-  String? supplierId;
-  String? practiceId;
-  String? adminId;
-
   @override
   Future<List<CatalogueCategories>> getCatalogue(String? searchText,
       List<String>? categories, List<String>? suppliers, String loginId) async {
@@ -44,6 +39,7 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
           "_in": ["APPROVED", "SCHEDULED"]
         }
       }
+      
     ];
     if (suppliers != null && suppliers.isNotEmpty) {
       andList.add({
