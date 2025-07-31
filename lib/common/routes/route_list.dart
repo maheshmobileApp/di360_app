@@ -29,4 +29,5 @@ class RouteList {
    static const String JobListingDetailsScreen= '/JobListingDetailsScreen';
   static const String directory = '/myDirectory';
   static const String directoryFilter = '/directoryFilter';
+  static const String directoryDetailsScreen = '/directoryDetailsScreen';
 }

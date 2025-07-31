@@ -2,6 +2,7 @@ import 'package:di360_flutter/feature/directors/model_class/directories_catagory
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +18,7 @@ class DirectorViewModel extends ChangeNotifier {
   List<Banners> bannerList = [];
   List<DirectoryBusinessTypes>? catagoryTypesList;
   List<dynamic> interleavedList = [];
+  TextEditingController searchController = TextEditingController();
 
   String? _selectedCategoryId;
 
@@ -30,7 +32,8 @@ class DirectorViewModel extends ChangeNotifier {
   Future<void> getDirectorsList(BuildContext context) async {
     directorsList = [];
     Loaders.circularShowLoader(context);
-    final res = await repository.getDirectors(_selectedCategoryId ?? '');
+    final res = await repository.getDirectors(
+        _selectedCategoryId ?? '', searchController.text);
     if (res.isNotEmpty) {
       directorsList = res;
       await getBannerList();
@@ -83,6 +86,8 @@ class DirectorViewModel extends ChangeNotifier {
 
   void clearFilter() {
     _selectedCategoryId = null;
+    searchController.clear();
+    getDirectorsList(navigatorKey.currentContext!);
     notifyListeners();
   }
 }

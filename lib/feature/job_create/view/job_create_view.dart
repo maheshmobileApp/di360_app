@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view/job_info.dart';
 import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
 import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
@@ -15,13 +14,19 @@ import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobCreateView extends StatelessWidget with BaseContextHelpers {
+class JobCreateView extends StatefulWidget {
   JobCreateView({super.key});
 
+  @override
+  State<JobCreateView> createState() => _JobCreateViewState();
+}
+
+class _JobCreateViewState extends State<JobCreateView> {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
@@ -123,9 +128,9 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
           if (!isFirstStep)
             Expanded(
               child: CustomRoundedButton(
-                  fontSize: 12,
+                fontSize: 12,
                 text: 'Previous',
-                height:42,
+                height: 42,
                 onPressed: () {
                   jobCreateVM.goToPreviousStep();
                 },
@@ -140,10 +145,18 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
             child: CustomRoundedButton(
               fontSize: 12,
               text: 'Save Draft',
-              height:42,
-              onPressed: () {
-                print("Save Draft Clicked");
-                // Add your save draft logic
+              height: 42,
+              onPressed: () async {
+                final currentFormKey =
+                    jobCreateVM.formKeys[jobCreateVM.currentStep];
+                if (currentFormKey.currentState?.validate() ?? false) {
+                  if (isLastStep) {
+                    await jobCreateVM.createdJobListing(context, true);
+                    navigationService.goBack();
+                  } else {
+                    jobCreateVM.goToNextStep();
+                  }
+                }
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -154,13 +167,15 @@ class JobCreateView extends StatelessWidget with BaseContextHelpers {
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep ? 'Submit' : 'Next',
-              height:42,
-                fontSize: 12,
-              onPressed: () {
+              height: 42,
+              fontSize: 12,
+              onPressed: () async {
                 final currentFormKey =
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
+                    await jobCreateVM.createdJobListing(context, false);
+                    navigationService.goBack();
                   } else {
                     jobCreateVM.goToNextStep();
                   }

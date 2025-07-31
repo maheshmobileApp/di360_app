@@ -12,11 +12,11 @@ class DirectorRepositoryImpl extends DirectorRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<Directories>> getDirectors(String catagoryId) async {
-    final res = catagoryId.isEmpty
+  Future<List<Directories>> getDirectors(String catagoryId,String searchText) async {
+    final res = (catagoryId.isEmpty && searchText.isEmpty)
         ? await http.query(getDirectorsQuery)
         : await http.query(GetDirectorBasedOnCatagoryQuery,
-            variables: {"id": catagoryId});
+            variables: {"id": catagoryId, "name": "%$searchText%"});
     final result = DirectoriesData.fromJson(res);
     return result.directories ?? [];
   }
