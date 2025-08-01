@@ -1,9 +1,12 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
@@ -18,18 +21,18 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         children: [
           _sectionTitle('BASIC INFO',
               key: directionalVM.sectionKeys['Basic Info']),
-          _description(
-              'The entire course was re-recorded from scratch and was therefore completely updated! It’s now 100% up-to-date with the latest version of Angular again, covering crucial modern features like signals, standalone components etc. Many new deep-dive sections on these core topics were added, hence ensuring that you learn ALL about modern Angular in-depth. In addition, the course also still covers older Angular versions & syntax, so that you get the most out of this course, no matter with which Angular version you’re working.The entire course was re-recorded from scratch ..'),
+          addVertical(8),
+          _description(directionalVM.directorDetails?.description ?? ''),
           _sectionTitle('SERVICES', key: directionalVM.sectionKeys['Services']),
           addVertical(16),
-          _serviceButtons(context),
+          _serviceButtons(context,directionalVM),
           _sectionTitle('OUR TEAMS', key: directionalVM.sectionKeys['Team']),
-           _teamcard(),
+          _teamcard(),
           _sectionTitle('GALLERY', key: directionalVM.sectionKeys['Gallery']),
           _galleryCard(ImageConst.dentalgallery),
           _sectionTitle('OUR ACHIEVEMENTS',
               key: directionalVM.sectionKeys['Achievements']),
-           _archievementcard(),
+          _archievementcard(),
           _sectionTitle('OUR CERTIFICATIONS',
               key: directionalVM.sectionKeys['Certifications']),
           _certificationcard(),
@@ -39,8 +42,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           DirectorAppointmentform(),
           _sectionTitle('HOW TESTLS HAS HELPED OTHERS',
               key: directionalVM.sectionKeys['Testimonials']),
-            _testimonialCard() ,
-             _certificationcard(),
+          _testimonialCard(),
+          _certificationcard(),
           _sectionTitle('FAQ', key: directionalVM.sectionKeys['FAQ']),
           _faqSection(),
           _sectionTitle('GET IN TOUCH',
@@ -50,6 +53,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
+
   Widget _sectionTitle(String title, {Key? key}) {
     return Column(
       key: key,
@@ -83,26 +87,20 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
       ],
     );
   }
+
   Widget _description(String text) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Text(
-          text,
-          textAlign: TextAlign.left,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.black,
-            height: 1.57,
-            fontWeight: FontWeight.w300,
-            fontFamily: 'DM Sans',
-          ),
-        ),
+        child: HtmlWidget(text,
+            textStyle: TextStyles.regular3(color: AppColors.black)),
       );
 
-  Widget _serviceButtons(BuildContext context) => Padding(
+  Widget _serviceButtons(BuildContext context,DirectorViewModel vm) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
-          children: [
-            _outlinedButton(context, 'Product Consultation'),
+          children: 
+          //vm.directorDetails?.directoryServices?.map((ser) => _outlinedButton(context, 'Product Consultation')).toList() ?? []
+          [
+            _outlinedButton(context, 'Clinic Setup'),
             const SizedBox(width: 12),
             _outlinedButton(context, 'Clinic Setup'),
           ],
@@ -165,201 +163,65 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         ),
       );
 
- Widget _teamcard() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SizedBox(height: 10),
-      ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          ImageConst.teamcard, 
-          width: double.infinity,
-          height: 180,
-          fit: BoxFit.cover,
+  Widget _teamcard() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 10),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            ImageConst.teamcard,
+            width: double.infinity,
+            height: 180,
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      const SizedBox(height: 16),
-      CustomGrid(
-        children: List.generate(4, (index) {
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 1,
-            color: Colors.white,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
+        const SizedBox(height: 16),
+        CustomGrid(
+          children: List.generate(4, (index) {
+            return Card(
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 80,
-                    child: Image.asset(
-                     ImageConst.prfImg, 
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    "TEAM A",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Position",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "CANBERRA",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    ],
-  );
-}
-
- Widget _galleryCard(String imagePath) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    child: Card(
-      color: Colors.black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 3,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Image.asset(
-          imagePath,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: 200,
-        ),
-      ),
-    ),
-  );
-}
- Widget _archievementcard() {
-  return CustomGrid(
-    children: List.generate(4, (index) {
-      return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 1,
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Stack(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.picture_as_pdf,
-                    size: 48,
-                    color: Colors.black87,
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    "THERACOL",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1.2,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () {
-                   
-                  },
-                  child: const CircleAvatar(
-                    radius: 14,
-                    backgroundColor: Colors.black,
-                    child: Icon(
-                      Icons.download,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                  ),
+              elevation: 1,
+              color: Colors.white,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }),
-  );
-}
-Widget _certificationcard() {
-  return CustomGrid(
-    children: List.generate(4, (index) {
-      return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 2,
-        color: Colors.white, 
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white, 
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.asset(
-                  ImageConst.cerificatecard, 
-                  height: 140,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'SMILE TECH',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange,
-                        fontSize: 12,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 80,
+                      child: Image.asset(
+                        ImageConst.prfImg,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Scheduled catalogue',
+                    const SizedBox(height: 12),
+                    const Text(
+                      "TEAM A",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Position",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "CANBERRA",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -368,75 +230,214 @@ Widget _certificationcard() {
                   ],
                 ),
               ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 8, bottom: 8),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.orange,
-                    child: Icon(
-                      Icons.favorite,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget _galleryCard(String imagePath) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Card(
+        color: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 3,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 200,
           ),
         ),
-      );
-    }),
-  );
-}
-Widget _testimonialCard() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    child: Card(
-      color: Colors.black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "“The course content was amazing and thorough. I gained a lot of value and would recommend this to every developer serious about frontend frameworks.”",
-              style: TextStyle(
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: const [
-                CircleAvatar(
-                  backgroundColor: Colors.orange,
-                  radius: 8,
+    );
+  }
+
+  Widget _archievementcard() {
+    return CustomGrid(
+      children: List.generate(4, (index) {
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 1,
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.picture_as_pdf,
+                      size: 48,
+                      color: Colors.black87,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "THERACOL",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.2,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 8),
-                Text(
-                  "MEENA K.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    letterSpacing: 1.2,
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: const CircleAvatar(
+                      radius: 14,
+                      backgroundColor: Colors.black,
+                      child: Icon(
+                        Icons.download,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _certificationcard() {
+    return CustomGrid(
+      children: List.generate(4, (index) {
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: Image.asset(
+                    ImageConst.cerificatecard,
+                    height: 140,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'SMILE TECH',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Scheduled catalogue',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8, bottom: 8),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.orange,
+                      child: Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _testimonialCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        color: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "“The course content was amazing and thorough. I gained a lot of value and would recommend this to every developer serious about frontend frameworks.”",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: const [
+                  CircleAvatar(
+                    backgroundColor: Colors.orange,
+                    radius: 8,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    "MEENA K.",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   Widget _faqSection() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -483,6 +484,7 @@ Widget _testimonialCard() {
       ),
     );
   }
+
   Widget _contactFAQs() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(

@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
 import 'package:di360_flutter/main.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +74,7 @@ class DirectorViewModel extends ChangeNotifier {
   List<DirectoryBusinessTypes>? catagoryTypesList;
   List<dynamic> interleavedList = [];
   TextEditingController searchController = TextEditingController();
+  DirectoriesByPk? directorDetails;
 
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
@@ -152,6 +156,19 @@ class DirectorViewModel extends ChangeNotifier {
     _selectedCategoryId = null;
     searchController.clear();
     getDirectorsList(navigatorKey.currentContext!);
+    notifyListeners();
+  }
+
+  Future<void> GetDirectorDetails(String id) async {
+    Loaders.circularShowLoader(navigatorKey.currentContext!);
+    final res = await repository.directoriesDetailsQuery(id);
+    if (res != null) {
+      directorDetails = res;
+      Loaders.circularHideLoader(navigatorKey.currentContext!);
+      navigationService.navigateTo(RouteList.directoryDetailsScreen);
+    } else {
+      Loaders.circularHideLoader(navigatorKey.currentContext!);
+    }
     notifyListeners();
   }
 
