@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/directors/model_class/directories_catagory
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -15,15 +16,16 @@ class DirectorViewModel extends ChangeNotifier {
     getBannerList();
     getDirectorCatagoryList();
   }
- // Form key
+  // Form key
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // Controllers
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController appointmentDateController = TextEditingController();
-   
+  final TextEditingController appointmentDateController =
+      TextEditingController();
+
 // Dropdown Selections
   String? selectedTeamMember;
   String? selectedService;
@@ -45,28 +47,31 @@ class DirectorViewModel extends ChangeNotifier {
     QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
   ];
   // sectionKeys
- final Map<String, GlobalKey> sectionKeys = {
-  'Basic Info': GlobalKey(),
-  'Services': GlobalKey(),
-  'Team': GlobalKey(),
-  'Gallery': GlobalKey(),
-  'Achievements': GlobalKey(),
-  'Certifications': GlobalKey(),
-  'Book Appointment': GlobalKey(),
-  'Testimonials': GlobalKey(),
-  'FAQ': GlobalKey(),
-  'Contact Us': GlobalKey(),
-};
-bool isValidated = false;
+  final Map<String, GlobalKey> sectionKeys = {
+    'Basic Info': GlobalKey(),
+    'Services': GlobalKey(),
+    'Team': GlobalKey(),
+    'Gallery': GlobalKey(),
+    'Achievements': GlobalKey(),
+    'Certifications': GlobalKey(),
+    'Book Appointment': GlobalKey(),
+    'Testimonials': GlobalKey(),
+    'FAQ': GlobalKey(),
+    'Contact Us': GlobalKey(),
+  };
+  bool isValidated = false;
   bool validateForm() {
     isValidated = formKey.currentState?.validate() ?? false;
-    notifyListeners(); 
+    notifyListeners();
     return isValidated;
   }
+
   List<Directories> directorsList = [];
   List<Banners> bannerList = [];
   List<DirectoryBusinessTypes>? catagoryTypesList;
   List<dynamic> interleavedList = [];
+  TextEditingController searchController = TextEditingController();
+
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
   final List<File> _selectedFiles = [];
@@ -76,21 +81,23 @@ bool isValidated = false;
     _selectedCategoryId = categoryId;
     notifyListeners();
   }
-void scrollToSectionByLabel(String label) {
-  final key = sectionKeys[label];
-  if (key != null && key.currentContext != null) {
-    Scrollable.ensureVisible(
-      key.currentContext!,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+
+  void scrollToSectionByLabel(String label) {
+    final key = sectionKeys[label];
+    if (key != null && key.currentContext != null) {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
-}
 
   Future<void> getDirectorsList(BuildContext context) async {
     directorsList = [];
     Loaders.circularShowLoader(context);
-    final res = await repository.getDirectors(_selectedCategoryId ?? '','');
+    final res = await repository.getDirectors(
+        _selectedCategoryId ?? '', searchController.text);
     if (res.isNotEmpty) {
       directorsList = res;
       await getBannerList();
@@ -143,8 +150,11 @@ void scrollToSectionByLabel(String label) {
 
   void clearFilter() {
     _selectedCategoryId = null;
+    searchController.clear();
+    getDirectorsList(navigatorKey.currentContext!);
     notifyListeners();
   }
+
   Future<void> pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
@@ -155,6 +165,7 @@ void scrollToSectionByLabel(String label) {
       notifyListeners();
     }
   }
+
   void removeFile(int index) {
     _selectedFiles.removeAt(index);
     notifyListeners();
@@ -166,8 +177,8 @@ void scrollToSectionByLabel(String label) {
     emailController.dispose();
     appointmentDateController.dispose();
   }
-
 }
+
 class QuickLinkItem {
   final String label;
   final IconData icon;

@@ -43,13 +43,10 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                   value == null || value.isEmpty ? 'Please enter company name' : null,
             ),
              SizedBox(height: 8),
-
             _buildRoleTypes(jobCreateVM),
              SizedBox(height: 8),
-
             _buildEmpTypes(jobCreateVM),
              SizedBox(height: 8),
-
             _showEmpTypes(jobCreateVM),
              SizedBox(height: 8),
 

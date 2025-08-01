@@ -50,7 +50,7 @@ dependencies:
   image_picker: ^1.1.2
   file_picker: ^10.1.9
   google_sign_in: ^6.2.2
-  url_launcher: ^6.3.1
+  url_launcher:
   dotted_border: ^2.1.0
   flutter_pdfview:
   open_file: ^3.5.10

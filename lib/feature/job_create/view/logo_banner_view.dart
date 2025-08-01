@@ -1,9 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +17,7 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
- final homeViewModel = Provider.of<HomeViewModel>(context);
+    final homeViewModel = Provider.of<HomeViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -22,15 +25,34 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
         children: [
           _sectionHeader("Logo & Banner"),
           addVertical(20),
-          LogoContainer(
-            title: "Logo",
-            imageFile: jobCreateVM.logoFile,
-            onTap: () => _imagePickerSelection(
-              context,
-              () => jobCreateVM.pickLogoImage(ImageSource.gallery),
-              () => jobCreateVM.pickLogoImage(ImageSource.camera),
-            ),
+          Text(
+            "Logo",
+            style: TextStyles.regular3(color: AppColors.black),
           ),
+          addVertical(10),
+          DottedBorder(
+              color: Colors.grey,
+              strokeWidth: 2,
+              dashPattern: [6, 4],
+              borderType: BorderType.RRect,
+              radius: Radius.circular(8),
+              child: Container(
+                width: double.infinity,
+                height: getSize(context).height * 0.2,
+                child: CachedNetworkImageWidget(
+                    imageUrl: homeViewModel.profilePic ?? '',
+                    fit: BoxFit.contain,
+                    errorWidget: Image.asset(ImageConst.prfImg)),
+              )),
+          // LogoContainer(
+          //   title: "Logo",
+          //   imageFile: jobCreateVM.logoFile,
+          //   onTap: () => _imagePickerSelection(
+          //     context,
+          //     () => jobCreateVM.pickLogoImage(ImageSource.gallery),
+          //     () => jobCreateVM.pickLogoImage(ImageSource.camera),
+          //   ),
+          // ),
           addVertical(8),
           LogoContainer(
             title: "Banner",
