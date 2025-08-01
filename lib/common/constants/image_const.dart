@@ -47,10 +47,11 @@ class ImageConst {
   static const String experience = "assets/pngs/experience.png";
   static const String copy = "assets/pngs/copy.png";
   static const String upload = "assets/pngs/upload.png";
-
+  static const String dentalgallery = "assets/pngs/dentalgallery.png";
+   static const String teamcard = "assets/pngs/teamcard.png";
+    static const String cerificatecard = "assets/pngs/certificate.png";
   static const String calender = "assets/pngs/CalendarBlank.png";
   static const String catalogueBg = "assets/pngs/catalogueBG.png";
-
   static const String _svgBasePath = 'assets/svgs/';
 
   // Job related SVG icons

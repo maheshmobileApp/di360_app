@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.da
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_details_screen.dart';
+import 'package:di360_flutter/feature/directors/view/director_details/director_quicklincks.dart';
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
@@ -47,6 +48,9 @@ class Routes {
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) => JobProfileView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
+      RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
+
+      
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobDetailsScreen(
