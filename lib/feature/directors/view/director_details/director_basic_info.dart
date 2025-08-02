@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
@@ -19,42 +20,55 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle('BASIC INFO',
-              key: directionalVM.sectionKeys['Basic Info']),
+          if (directionalVM.directorDetails?.description != null)
+            _sectionTitle('BASIC INFO',
+                _description(directionalVM.directorDetails?.description ?? ''),
+                key: directionalVM.sectionKeys['Basic Info']),
           addVertical(8),
-          _description(directionalVM.directorDetails?.description ?? ''),
-          _sectionTitle('SERVICES', key: directionalVM.sectionKeys['Services']),
+          if (directionalVM.directorDetails?.directoryServices?.length != 0)
+            _sectionTitle('SERVICES', _serviceButtons(context, directionalVM),
+                key: directionalVM.sectionKeys['Services']),
           addVertical(16),
-          _serviceButtons(context,directionalVM),
-          _sectionTitle('OUR TEAMS', key: directionalVM.sectionKeys['Team']),
-          _teamcard(),
-          _sectionTitle('GALLERY', key: directionalVM.sectionKeys['Gallery']),
-          _galleryCard(ImageConst.dentalgallery),
-          _sectionTitle('OUR ACHIEVEMENTS',
-              key: directionalVM.sectionKeys['Achievements']),
-          _archievementcard(),
-          _sectionTitle('OUR CERTIFICATIONS',
-              key: directionalVM.sectionKeys['Certifications']),
-          _certificationcard(),
+          if (directionalVM.directorDetails?.directoryTeamMembers?.length != 0)
+            _sectionTitle('OUR TEAMS', _teamcard(directionalVM),
+                key: directionalVM.sectionKeys['Team']),
+          if (directionalVM.directorDetails?.directoryGalleryPosts?.length !=
+                  0 &&
+              directionalVM
+                      .directorDetails?.directoryGalleryPosts?.first.image !=
+                  0)
+            _sectionTitle('GALLERY', _galleryCard(directionalVM),
+                key: directionalVM.sectionKeys['Gallery']),
+          if (directionalVM.directorDetails?.directoryDocuments?.length != 0)
+            _sectionTitle('OUR DOCUMENT', _documentCard(directionalVM),
+                key: directionalVM.sectionKeys['Document']),
+          if (directionalVM.directorDetails?.directoryAchievements?.length != 0)
+            _sectionTitle('OUR ACHIEVEMENTS', _archievementcard(directionalVM),
+                key: directionalVM.sectionKeys['Achievements']),
+          if (directionalVM.directorDetails?.directoryCertifications?.length !=
+              0)
+            _sectionTitle(
+                'OUR CERTIFICATIONS', _certificationcard(directionalVM),
+                key: directionalVM.sectionKeys['Certifications']),
           _sectionTitle('Book an appointment with <Clinic Name>',
+              DirectorAppointmentform(),
               key: directionalVM.sectionKeys['Book Appointment']),
           addVertical(10),
-          DirectorAppointmentform(),
-          _sectionTitle('HOW TESTLS HAS HELPED OTHERS',
-              key: directionalVM.sectionKeys['Testimonials']),
-          _testimonialCard(),
-          _certificationcard(),
-          _sectionTitle('FAQ', key: directionalVM.sectionKeys['FAQ']),
-          _faqSection(),
-          _sectionTitle('GET IN TOUCH',
+          if (directionalVM.directorDetails?.directoryTestimonials?.length != 0)
+            _sectionTitle(
+                'HOW TESTLS HAS HELPED OTHERS', _testimonialCard(directionalVM),
+                key: directionalVM.sectionKeys['Testimonials']),
+          if (directionalVM.directorDetails?.directoryFaqs?.length != 0)
+            _sectionTitle('FAQ', _faqSection(directionalVM),
+                key: directionalVM.sectionKeys['FAQ']),
+          _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM),
               key: directionalVM.sectionKeys['Contact Us']),
-          _contactFAQs(),
         ],
       ),
     );
   }
 
-  Widget _sectionTitle(String title, {Key? key}) {
+  Widget _sectionTitle(String title, Widget? child, {Key? key}) {
     return Column(
       key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +98,9 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             ),
           ],
         ),
+        Container(
+          child: child,
+        )
       ],
     );
   }
@@ -94,18 +111,16 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             textStyle: TextStyles.regular3(color: AppColors.black)),
       );
 
-  Widget _serviceButtons(BuildContext context,DirectorViewModel vm) => Padding(
+  Widget _serviceButtons(BuildContext context, DirectorViewModel vm) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
-          children: 
-          //vm.directorDetails?.directoryServices?.map((ser) => _outlinedButton(context, 'Product Consultation')).toList() ?? []
-          [
-            _outlinedButton(context, 'Clinic Setup'),
-            const SizedBox(width: 12),
-            _outlinedButton(context, 'Clinic Setup'),
-          ],
-        ),
+            children: List.generate(
+                vm.directorDetails?.directoryServices?.length ?? 0, (index) {
+          final services = vm.directorDetails?.directoryServices?[index];
+          return _outlinedButton(context, services?.name ?? '');
+        })),
       );
+
   Widget _outlinedButton(BuildContext context, String label) => Expanded(
         child: OutlinedButton(
           onPressed: () {
@@ -163,27 +178,29 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         ),
       );
 
-  Widget _teamcard() {
+  Widget _teamcard(DirectorViewModel vm) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 10),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            ImageConst.teamcard,
-            width: double.infinity,
-            height: 180,
-            fit: BoxFit.cover,
-          ),
-        ),
+        vm.directorDetails?.bannerImage == null
+            ? SizedBox()
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImageWidget(
+                  imageUrl: vm.directorDetails?.bannerImage?.url ?? '',
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.cover,
+                )),
         const SizedBox(height: 16),
         CustomGrid(
-          children: List.generate(4, (index) {
+          children: List.generate(
+              vm.directorDetails?.directoryTeamMembers?.length ?? 0, (index) {
+            final teamData = vm.directorDetails?.directoryTeamMembers?[index];
             return Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+                  borderRadius: BorderRadius.circular(16)),
               elevation: 1,
               color: Colors.white,
               child: Container(
@@ -196,15 +213,13 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 80,
-                      child: Image.asset(
-                        ImageConst.prfImg,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                        height: 100,
+                        child: CachedNetworkImageWidget(
+                            imageUrl: teamData?.image?.url ?? '',
+                            fit: BoxFit.contain)),
                     const SizedBox(height: 12),
-                    const Text(
-                      "TEAM A",
+                    Text(
+                      teamData?.name ?? '',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -212,16 +227,17 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      "Position",
+                    Text(
+                      teamData?.specialization ?? '',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      "CANBERRA",
+                    Divider(),
+                    Text(
+                      teamData?.location ?? '',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -237,52 +253,43 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _galleryCard(String imagePath) {
+  Widget _galleryCard(DirectorViewModel vm) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Card(
-        color: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 3,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Image.asset(
-            imagePath,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 200,
-          ),
-        ),
-      ),
-    );
+            borderRadius: BorderRadius.circular(16),
+            child: CustomGrid(
+                children: vm.directorDetails!.directoryGalleryPosts!.map((img) {
+              return img.image?.length != 0
+                  ? CachedNetworkImageWidget(
+                      imageUrl: img.image?.first.url ?? '')
+                  : SizedBox();
+            }).toList())));
   }
 
-  Widget _archievementcard() {
+  Widget _documentCard(DirectorViewModel vm) {
     return CustomGrid(
-      children: List.generate(4, (index) {
+      childAspectRatio: 0.80,
+      children: List.generate(
+          vm.directorDetails?.directoryDocuments?.length ?? 0, (index) {
+        final doc = vm.directorDetails?.directoryDocuments?[index];
         return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 1,
-          color: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 0,
+          color: AppColors.hintColor,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(15),
             child: Stack(
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.picture_as_pdf,
-                      size: 48,
-                      color: Colors.black87,
-                    ),
+                    Image.asset(ImageConst.pdf),
                     const SizedBox(height: 12),
-                    const Text(
-                      "THERACOL",
+                    Divider(),
+                    Text(
+                      doc?.name ?? '',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -297,7 +304,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   right: 0,
                   child: GestureDetector(
                     onTap: () {},
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 14,
                       backgroundColor: Colors.black,
                       child: Icon(
@@ -316,137 +323,156 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _certificationcard() {
+  Widget _archievementcard(DirectorViewModel vm) {
     return CustomGrid(
-      children: List.generate(4, (index) {
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 2,
-          color: Colors.white,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ClipRRect(
+      children: List.generate(
+          vm.directorDetails?.directoryAchievements?.length ?? 0, (index) {
+        final achieve = vm.directorDetails?.directoryAchievements?[index];
+        return Container(
+          decoration: BoxDecoration(
+              color: AppColors.hintColor,
+              borderRadius: BorderRadius.circular(16)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.asset(
-                    ImageConst.cerificatecard,
-                    height: 140,
-                    fit: BoxFit.cover,
-                  ),
+                  child: CachedNetworkImageWidget(
+                      imageUrl: achieve?.attachments?.url ?? '',
+                      height: 170,
+                      fit: BoxFit.contain)),
+              const SizedBox(height: 8),
+              Divider(),
+              Text(
+                achieve?.title ?? '',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange,
+                  fontSize: 12,
                 ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'SMILE TECH',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
-                          fontSize: 12,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Scheduled catalogue',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8, bottom: 8),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.orange,
-                      child: Icon(
-                        Icons.favorite,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       }),
     );
   }
 
-  Widget _testimonialCard() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        color: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+  Widget _certificationcard(DirectorViewModel vm) {
+    return CustomGrid(
+      children: List.generate(
+          vm.directorDetails?.directoryCertifications?.length ?? 0, (index) {
+        final certificate = vm.directorDetails?.directoryCertifications?[index];
+        return Container(
+          decoration: BoxDecoration(
+              color: AppColors.hintColor,
+              borderRadius: BorderRadius.circular(16)),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                "“The course content was amazing and thorough. I gained a lot of value and would recommend this to every developer serious about frontend frameworks.”",
+              ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: CachedNetworkImageWidget(
+                      imageUrl: certificate?.attachments?.url ?? '',
+                      height: 170,
+                      fit: BoxFit.contain)),
+              const SizedBox(height: 8),
+              Divider(),
+              Text(
+                certificate?.title ?? '',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white,
-                  fontStyle: FontStyle.italic,
-                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange,
+                  fontSize: 12,
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: const [
-                  CircleAvatar(
-                    backgroundColor: Colors.orange,
-                    radius: 8,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    "MEENA K.",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
-  Widget _faqSection() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 12, top: 16, bottom: 6),
-          ),
-          _faqItem("1. Test Ques1", "Test Ans1."),
-        ],
-      );
+  Widget _testimonialCard(DirectorViewModel vm) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+          children: vm.directorDetails!.directoryTestimonials!
+              .map(
+                (data) => Card(
+                  color: Colors.black,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data.message ?? '',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.orange,
+                              radius: 23,
+                              child: CircleAvatar(
+                                radius: 22,
+                                child: ClipOval(
+                                  child: Transform.scale(
+                                    scale: 0.9,
+                                    child: CachedNetworkImageWidget(
+                                      imageUrl: data.profileImage?.url ?? '',
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              data.name ?? '',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+              .toList()),
+    );
+  }
+
+  Widget _faqSection(DirectorViewModel vm) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: vm.directorDetails!.directoryFaqs!
+          .map((val) => Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 12, top: 16, bottom: 6),
+                  ),
+                  _faqItem(val.question ?? "", val.answer ?? ""),
+                ],
+              ))
+          .toList());
 
   Widget _faqItem(String question, String answer) {
     return Padding(
@@ -485,111 +511,90 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs() => Padding(
+  Widget _contactFAQs(DirectorViewModel vm) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Icon(Icons.location_on, color: Colors.black),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Airport Service Rd,\nInternational Airport, Dum Dum,\nKolkata, West Bengal 700052, India',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: const [
-                Icon(Icons.email, color: Colors.black),
-                SizedBox(width: 10),
-                Text(
-                  'smiletech@yopmail.com',
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.location_on, color: Colors.black),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  vm.directorDetails?.address ?? '',
                   style: TextStyle(fontSize: 14),
                 ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: const [
-                Icon(Icons.phone, color: Colors.black),
-                SizedBox(width: 10),
-                Text(
-                  '0430 972 666',
-                  style: TextStyle(fontSize: 14),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: const [
-                Icon(Icons.facebook, color: Colors.black),
-                SizedBox(width: 15),
-                Icon(Icons.camera_alt, color: Colors.black),
-                SizedBox(width: 15),
-                Icon(Icons.link, color: Colors.black),
-                SizedBox(width: 15),
-                Icon(Icons.shop, color: Colors.black),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                ImageConst.mapsPng,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 180,
               ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              Icon(Icons.email, color: Colors.black),
+              SizedBox(width: 10),
+              Text(
+                vm.directorDetails?.email ?? '',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              Icon(Icons.phone, color: Colors.black),
+              SizedBox(width: 10),
+              Text(
+                vm.directorDetails?.phone ?? '',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: const [
+              Icon(Icons.facebook, color: Colors.black),
+              SizedBox(width: 15),
+              Icon(Icons.camera_alt, color: Colors.black),
+              SizedBox(width: 15),
+              Icon(Icons.link, color: Colors.black),
+              SizedBox(width: 15),
+              Icon(Icons.shop, color: Colors.black),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              ImageConst.mapsPng,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 180,
             ),
-            const SizedBox(height: 25),
-            Row(
-              children: const [
-                Text(
-                  'MON TO WED',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  '10:00 AM – 4:00 PM',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.orange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: const [
-                Text(
-                  'THURSDAY',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(width: 20),
-                Text(
-                  '10:00 AM – 7:00 PM',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.orange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 25),
+          Column(
+              children: vm.directorDetails!.directoryLocations!
+                  .map((val) => Row(
+                        children: [
+                          Text(
+                            val.weekName ?? '',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            val.clinicTime ?? '',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ))
+                  .toList()),
+        ]),
       );
 }

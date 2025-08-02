@@ -53,6 +53,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                               ),
                               child: GestureDetector(
                                 onTap: () async{
+                                  print(director.id);
                                 await  value.GetDirectorDetails(director.id ?? '');
                                 },
                                 child: Column(
