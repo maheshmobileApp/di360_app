@@ -1,8 +1,10 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.dart';
+import 'package:di360_flutter/feature/directors/querys/directories_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_all_banners.dart';
 import 'package:di360_flutter/feature/directors/querys/get_director_based_on_catagory.dart';
 import 'package:di360_flutter/feature/directors/querys/get_directors_query.dart';
@@ -12,7 +14,8 @@ class DirectorRepositoryImpl extends DirectorRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<Directories>> getDirectors(String catagoryId,String searchText) async {
+  Future<List<Directories>> getDirectors(
+      String catagoryId, String searchText) async {
     final res = (catagoryId.isEmpty && searchText.isEmpty)
         ? await http.query(getDirectorsQuery)
         : await http.query(GetDirectorBasedOnCatagoryQuery,
@@ -45,5 +48,13 @@ class DirectorRepositoryImpl extends DirectorRepository {
     final res = await http.query(directoriesCatagoryQuery);
     final result = DirectoriesCatagoryData.fromJson(res);
     return result.directoryBusinessTypes ?? [];
+  }
+
+  @override
+  Future<DirectoriesByPk?> directoriesDetailsQuery(String id) async {
+    final res =
+        await http.query(directories_Details_Query, variables: {"id": id});
+    final result = DirectoryDetailsData.fromJson(res);
+    return result.directoriesByPk;
   }
 }
