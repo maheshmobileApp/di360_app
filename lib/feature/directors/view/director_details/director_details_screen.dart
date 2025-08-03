@@ -27,8 +27,10 @@ class DirectorDetailsScreen extends StatelessWidget {
             child: UserData(
               imageUrl: directionalVM.directorDetails?.profileImage?.url,
               userName: directionalVM.directorDetails?.professionType,
-              followerCount: "1024",
-              followingCount: "326",
+              followerCount:
+                  '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
+              followingCount:
+                  '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
             ),
           ),
           SliverToBoxAdapter(
