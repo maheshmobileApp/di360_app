@@ -35,7 +35,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           if (directionalVM.directorDetails?.directoryGalleryPosts?.length !=
                   0 &&
               directionalVM
-                      .directorDetails?.directoryGalleryPosts?.first.image !=
+                      .directorDetails?.directoryGalleryPosts?.first.image?.length !=
                   0)
             _sectionTitle('GALLERY', _galleryCard(directionalVM),
                 key: directionalVM.sectionKeys['Gallery']),
@@ -50,9 +50,12 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             _sectionTitle(
                 'OUR CERTIFICATIONS', _certificationcard(directionalVM),
                 key: directionalVM.sectionKeys['Certifications']),
-          _sectionTitle('Book an appointment with <Clinic Name>',
-              DirectorAppointmentform(),
-              key: directionalVM.sectionKeys['Book Appointment']),
+          if (directionalVM
+                  .directorDetails?.directoryAppointmentSlots?.length !=
+              0)
+            _sectionTitle('Book an appointment with <Clinic Name>',
+                DirectorAppointmentform(),
+                key: directionalVM.sectionKeys['Book Appointment']),
           addVertical(10),
           if (directionalVM.directorDetails?.directoryTestimonials?.length != 0)
             _sectionTitle(
@@ -61,8 +64,9 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           if (directionalVM.directorDetails?.directoryFaqs?.length != 0)
             _sectionTitle('FAQ', _faqSection(directionalVM),
                 key: directionalVM.sectionKeys['FAQ']),
-          _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM),
-              key: directionalVM.sectionKeys['Contact Us']),
+          if (directionalVM.directorDetails?.directoryLocations?.length != 0)
+            _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM),
+                key: directionalVM.sectionKeys['Contact Us']),
         ],
       ),
     );
@@ -98,6 +102,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             ),
           ],
         ),
+        SizedBox(height: 10),
         Container(
           child: child,
         )

@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
+import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
+import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -14,6 +17,7 @@ import 'package:flutter/material.dart';
 
 class DirectorViewModel extends ChangeNotifier {
   final DirectorRepositoryImpl repository = DirectorRepositoryImpl();
+  final HttpService _http = HttpService();
 
   DirectorViewModel() {
     getBannerList();
@@ -77,6 +81,7 @@ class DirectorViewModel extends ChangeNotifier {
   List<dynamic> interleavedList = [];
   TextEditingController searchController = TextEditingController();
   DirectoriesByPk? directorDetails;
+  GetFollowersData? getFollowersData;
 
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
@@ -166,11 +171,23 @@ class DirectorViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
+      getFollowersCount(directorDetails?.id ?? '');
       Loaders.circularHideLoader(navigatorKey.currentContext!);
       navigationService.navigateTo(RouteList.directoryDetailsScreen);
     } else {
       Loaders.circularHideLoader(navigatorKey.currentContext!);
     }
+    notifyListeners();
+  }
+
+  getFollowersCount(String id) async {
+    try {
+      var res = await _http.query(getFollowersQuery, variables: {'userId': id});
+      if (res != null) {
+        final result = GetFollowersData.fromJson(res);
+        getFollowersData = result;
+      }
+    } catch (e) {}
     notifyListeners();
   }
 
