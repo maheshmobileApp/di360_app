@@ -18,8 +18,18 @@ class DirectorRepositoryImpl extends DirectorRepository {
       String catagoryId, String searchText) async {
     final res = (catagoryId.isEmpty && searchText.isEmpty)
         ? await http.query(getDirectorsQuery)
-        : await http.query(GetDirectorBasedOnCatagoryQuery,
-            variables: {"id": catagoryId, "name": "%$searchText%"});
+        : await http.query(GetDirectorBasedOnCatagoryQuery, variables: {
+            "andList": [
+              if (searchText.isNotEmpty)
+                {
+                  "name": {"_ilike": "%$searchText%"}
+                },
+              if (catagoryId.isNotEmpty)
+                {
+                  "directory_category_id": {"_eq": catagoryId}
+                }
+            ]
+          });
     final result = DirectoriesData.fromJson(res);
     return result.directories ?? [];
   }

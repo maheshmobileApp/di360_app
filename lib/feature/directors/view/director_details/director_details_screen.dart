@@ -1,10 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_basic_info.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class DirectorDetailsScreen extends StatelessWidget {
@@ -15,12 +17,14 @@ class DirectorDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          navigationService.navigateTo(RouteList.directorQuickLinks);
-        },
-        backgroundColor: AppColors.primaryColor,
-        child: const Icon(Icons.filter_list, color: Colors.white),
-      ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          onPressed: () {
+            navigationService.navigateTo(RouteList.directorQuickLinks);
+          },
+          backgroundColor: AppColors.primaryColor,
+          child:
+              SvgPicture.asset(ImageConst.filter, color: AppColors.whiteColor)),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

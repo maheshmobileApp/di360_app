@@ -1,12 +1,7 @@
 const String GetDirectorBasedOnCatagoryQuery = r'''
-query getDirectories($id: uuid!, $name: String) {
+query getDirectories($andList: [directories_bool_exp!]) {
   directories(
-    where: {
-      directory_category_id: { _eq: $id },
-      _or: [
-        { name: { _ilike: $name } }
-      ]
-    },
+    where: { _and: $andList }
     order_by: { created_at: desc }
   ) {
     id

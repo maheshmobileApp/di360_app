@@ -49,7 +49,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                 color: AppColors.whiteColor,
                                 border:
                                     Border.all(color: AppColors.buttomBarColor),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10)
                               ),
                               child: GestureDetector(
                                 onTap: () async{

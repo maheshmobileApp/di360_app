@@ -34,8 +34,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                 key: directionalVM.sectionKeys['Team']),
           if (directionalVM.directorDetails?.directoryGalleryPosts?.length !=
                   0 &&
-              directionalVM
-                      .directorDetails?.directoryGalleryPosts?.first.image?.length !=
+              directionalVM.directorDetails?.directoryGalleryPosts?.first.image
+                      ?.length !=
                   0)
             _sectionTitle('GALLERY', _galleryCard(directionalVM),
                 key: directionalVM.sectionKeys['Gallery']),
@@ -118,66 +118,73 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
 
   Widget _serviceButtons(BuildContext context, DirectorViewModel vm) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Row(
-            children: List.generate(
-                vm.directorDetails?.directoryServices?.length ?? 0, (index) {
-          final services = vm.directorDetails?.directoryServices?[index];
-          return _outlinedButton(context, services?.name ?? '');
-        })),
+        child: Expanded(
+          child: Column(
+              children: vm.directorDetails?.directoryServices
+                      ?.map((data) => Row(
+                              children: List.generate(2, (index) {
+                            return _outlinedButton(context, data.name ?? '');
+                          })))
+                      .toList() ??
+                  []),
+        ),
       );
 
   Widget _outlinedButton(BuildContext context, String label) => Expanded(
-        child: OutlinedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                contentPadding: const EdgeInsets.all(20),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          label,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 5, bottom: 8),
+          child: OutlinedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  contentPadding: const EdgeInsets.all(20),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            label,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: const Icon(Icons.close, color: Colors.orange),
-                        ),
-                      ],
-                    ),
-                    const Divider(height: 20),
-                    Text(
-                      '$label test',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child:
+                                const Icon(Icons.close, color: Colors.orange),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 20),
+                      Text(
+                        '$label test',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-          style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+              );
+            },
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              side: BorderSide(color: Colors.grey.shade300),
+              padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            side: BorderSide(color: Colors.grey.shade300),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
           ),
         ),
@@ -198,13 +205,14 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   height: 180,
                   fit: BoxFit.cover,
                 )),
-        const SizedBox(height: 16),
+        addVertical(5),
         CustomGrid(
           children: List.generate(
               vm.directorDetails?.directoryTeamMembers?.length ?? 0, (index) {
             final teamData = vm.directorDetails?.directoryTeamMembers?[index];
             return Card(
               shape: RoundedRectangleBorder(
+                  side: BorderSide(color: AppColors.HINT_COLOR),
                   borderRadius: BorderRadius.circular(16)),
               elevation: 1,
               color: Colors.white,
@@ -218,7 +226,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                        height: 100,
+                        height: 125,
                         child: CachedNetworkImageWidget(
                             imageUrl: teamData?.image?.url ?? '',
                             fit: BoxFit.contain)),
@@ -260,7 +268,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
 
   Widget _galleryCard(DirectorViewModel vm) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: CustomGrid(
@@ -341,8 +349,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: BorderRadius.circular(16),
                   child: CachedNetworkImageWidget(
                       imageUrl: achieve?.attachments?.url ?? '',
                       height: 170,
@@ -378,8 +385,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: BorderRadius.circular(16),
                   child: CachedNetworkImageWidget(
                       imageUrl: certificate?.attachments?.url ?? '',
                       height: 170,
@@ -472,7 +478,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           .map((val) => Column(
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(left: 12, top: 16, bottom: 6),
+                    padding: EdgeInsets.only(left: 12, top: 6, bottom: 6),
                   ),
                   _faqItem(val.question ?? "", val.answer ?? ""),
                 ],
