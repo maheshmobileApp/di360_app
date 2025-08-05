@@ -201,58 +201,52 @@ class DirectorAppointmentform extends StatelessWidget
 
   static Widget _buildUploadField(
       BuildContext context, DirectorViewModel viewModel) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Upload supporting images', style: TextStyles.medium2()),
-        const SizedBox(height: 6),
-        GestureDetector(
-          onTap: viewModel.pickFiles,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.upload),
-                SizedBox(width: 8),
-                Text('Select File(s)'),
-              ],
-            ),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text('Upload supporting images', style: TextStyles.medium2()),
+      const SizedBox(height: 6),
+      GestureDetector(
+        onTap: viewModel.pickFiles,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: const Row(
+            children: [
+              Icon(Icons.upload),
+              SizedBox(width: 8),
+              Text('Select File(s)'),
+            ],
           ),
         ),
-        const SizedBox(height: 12),
-        Wrap(
+      ),
+      const SizedBox(height: 12),
+      Wrap(
           spacing: 12,
           runSpacing: 12,
           children: List.generate(viewModel.selectedFiles.length, (index) {
             final file = viewModel.selectedFiles[index];
-            return Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    file,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
+            return Stack(children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  file,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
-                Positioned(
-                  top: -8,
-                  right: -8,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, size: 20),
-                    onPressed: () => viewModel.removeFile(index),
-                  ),
+              ),
+              Positioned(
+                top: -8,
+                right: -8,
+                child: IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: () => viewModel.removeFile(index),
                 ),
-              ],
-            );
-          }),
-        ),
-      ],
-    );
+              )
+            ]);
+          }))
+    ]);
   }
 }
