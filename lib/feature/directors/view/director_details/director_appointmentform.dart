@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
@@ -8,7 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class DirectorAppointmentform extends StatelessWidget with BaseContextHelpers  {
+class DirectorAppointmentform extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   const DirectorAppointmentform({super.key});
 
   @override
@@ -21,41 +23,35 @@ class DirectorAppointmentform extends StatelessWidget with BaseContextHelpers  {
         child: Column(
           children: [
             InputTextField(
-              title: 'First Name',
-              isRequired: true,
-              hintText: 'Enter First Name',
-              controller: directionalVM.firstNameController,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please Enter First Name'
-                  : null,
-            ),
+                title: 'First Name',
+                isRequired: true,
+                hintText: 'Enter First Name',
+                controller: directionalVM.firstNameController,
+                validator: validateFirstName),
             InputTextField(
-              title: 'Last Name',
-              isRequired: true,
-              hintText: 'Enter Last Name',
-            ),
+                title: 'Last Name',
+                isRequired: true,
+                hintText: 'Enter Last Name',
+                controller: directionalVM.lastNameController,
+                validator: validateLastName),
             InputTextField(
-              title: 'Phone Number',
-              isRequired: true,
-              hintText: 'Enter Phone Number',
-              controller: directionalVM.phoneController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please Enter Phone Number'
-                  : null,
-            ),
+                title: 'Phone Number',
+                isRequired: true,
+                hintText: 'Enter Phone Number',
+                controller: directionalVM.phoneController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$')),
+                ],
+                maxLength: 12,
+                validator: validatePhoneNumber),
             InputTextField(
-              title: 'Email',
-              isRequired: true,
-              hintText: 'Enter Email',
-              controller: directionalVM.emailController,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please Enter Email' : null,
-            ),
-           addVertical(16),
+                title: 'Email',
+                isRequired: true,
+                hintText: 'Enter Email',
+                controller: directionalVM.emailController,
+                validator: validateEmail),
+            addVertical(16),
             InputTextField(
               title: 'Appointment Date',
               isRequired: true,
@@ -93,7 +89,7 @@ class DirectorAppointmentform extends StatelessWidget with BaseContextHelpers  {
                               onDateChanged: (pickedDate) {
                                 directionalVM.appointmentDateController.text =
                                     DateFormat('dd-MM-yyyy').format(pickedDate);
-                                Navigator.pop(context); 
+                                Navigator.pop(context);
                               },
                             ),
                           ],
@@ -146,51 +142,57 @@ class DirectorAppointmentform extends StatelessWidget with BaseContextHelpers  {
                   : null,
             ),
             addVertical(10),
+            InputTextField(
+              title: 'Description',
+              isRequired: true,
+              hintText: 'Enter description',
+              controller: directionalVM.descController,
+              validator: validateDesc,
+            ),
+            addVertical(10),
             _buildUploadField(context, directionalVM),
-            addVertical(5),
+            addVertical(10),
             ElevatedButton(
-  onPressed: () {
-    if (directionalVM.validateForm()) {
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.black,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    minimumSize: const Size(297, 50), 
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(25), 
-    ),
-    elevation: 0, 
-  ),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      const Text(
-        'SUBMIT DETAILS',
-        style: TextStyle(
-          letterSpacing: 2,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
-        ),
-      ),
-      Container(
-        width: 36,
-        height: 36,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.orange,
-        ),
-        child: const Icon(
-          Icons.arrow_forward_ios,
-          color: Colors.white,
-          size: 20,
-        ),
-      ),
-    ],
-  ),
-),
-
+              onPressed: () {
+                if (directionalVM.validateForm()) {}
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                minimumSize: const Size(297, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                elevation: 0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'SUBMIT DETAILS',
+                    style: TextStyle(
+                      letterSpacing: 2,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.orange,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

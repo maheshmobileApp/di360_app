@@ -15,59 +15,60 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final filterProvider = Provider.of<DirectorViewModel>(context);
-
-    return Scaffold(
-      backgroundColor: AppColors.buttomBarColor,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    ImageConst.catalogueBg,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                addVertical(16),
-                buildSearchBar(filterProvider, context),
-                //  addVertical(16),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: buildFilters(filterProvider, context),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.buttomBarColor,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              Column(
                 children: [
-                  AppButton(
-                    text: 'Clear',
-                    height: 40,
-                    width: 150,
-                    onTap: () async {
-                       filterProvider.clearFilter();
-                      navigationService.goBack();
-                    },
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      ImageConst.catalogueBg,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  AppButton(
-                    text: 'Apply',
-                    height: 40,
-                    width: 150,
-                    onTap: () async {
-                       await filterProvider.getDirectorsList(context);
-                      navigationService.goBack();
-                    },
-                  ),
+                  addVertical(16),
+                  buildSearchBar(filterProvider, context),
+                  //  addVertical(16),
                 ],
               ),
-            )
-          ],
+              Expanded(
+                child: SingleChildScrollView(
+                  child: buildFilters(filterProvider, context),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    AppButton(
+                      text: 'Clear',
+                      height: 40,
+                      width: 150,
+                      onTap: () async {
+                        filterProvider.clearFilter();
+                        navigationService.goBack();
+                      },
+                    ),
+                    AppButton(
+                      text: 'Apply',
+                      height: 40,
+                      width: 150,
+                      onTap: () async {
+                        await filterProvider.getDirectorsList(context);
+                        navigationService.goBack();
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -90,7 +91,7 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
               children: [
                 Expanded(
                   child: TextFormField(
-                     controller: filterProvider.searchController,
+                    controller: filterProvider.searchController,
                     onFieldSubmitted: (value) async {
                       await filterProvider.getDirectorsList(context);
                       navigationService.goBack();
@@ -154,44 +155,50 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
         ),
         child: Column(
           children: filterProvider.catagoryTypesList
-              ?.map((type) => Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      tilePadding: const EdgeInsets.symmetric(horizontal: 24),
-                      collapsedBackgroundColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      childrenPadding: const EdgeInsets.only(bottom: 8),
-                      title: Text(
-                        type.name ?? '',
-                        style: TextStyles.regular3(color: AppColors.black),
-                      ),
-                      children: type.directoryCategories?.map((category) {
-                        final isSelected =
-                            filterProvider.selectedCategoryId == category.id;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            value: isSelected,
-                            activeColor: AppColors.primaryColor,
-                            onChanged: (val) {
-                              filterProvider
-                                  .selectSingleCategory(category.id ?? '');
-                            },
-                            title: Text(
-                              category.name ?? '',
-                              style: TextStyles.regular3(
-                                color: AppColors.lightGeryColor,
-                              ),
-                            ),
-                            controlAffinity: ListTileControlAffinity.leading,
+                  ?.map((type) => Theme(
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
+                        child: ExpansionTile(
+                          tilePadding:
+                              const EdgeInsets.symmetric(horizontal: 24),
+                          collapsedBackgroundColor: Colors.transparent,
+                          backgroundColor: Colors.transparent,
+                          childrenPadding: const EdgeInsets.only(bottom: 8),
+                          title: Text(
+                            type.name ?? '',
+                            style: TextStyles.regular3(color: AppColors.black),
                           ),
-                        );
-                      }).toList() ?? [],
-                    ),
-                  ))
-              .toList() ?? [],
+                          children: type.directoryCategories?.map((category) {
+                                final isSelected =
+                                    filterProvider.selectedCategoryId ==
+                                        category.id;
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: CheckboxListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    value: isSelected,
+                                    activeColor: AppColors.primaryColor,
+                                    onChanged: (val) {
+                                      filterProvider.selectSingleCategory(
+                                          category.id ?? '');
+                                    },
+                                    title: Text(
+                                      category.name ?? '',
+                                      style: TextStyles.regular3(
+                                        color: AppColors.lightGeryColor,
+                                      ),
+                                    ),
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                  ),
+                                );
+                              }).toList() ??
+                              [],
+                        ),
+                      ))
+                  .toList() ??
+              [],
         ));
   }
 }

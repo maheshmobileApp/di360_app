@@ -28,8 +28,10 @@ class DirectorViewModel extends ChangeNotifier {
 
   // Controllers
   final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
   final TextEditingController appointmentDateController =
       TextEditingController();
 
@@ -82,6 +84,8 @@ class DirectorViewModel extends ChangeNotifier {
   TextEditingController searchController = TextEditingController();
   DirectoriesByPk? directorDetails;
   GetFollowersData? getFollowersData;
+  bool _removeIcon = false;
+  bool get removeIcon => _removeIcon;
 
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
@@ -90,6 +94,7 @@ class DirectorViewModel extends ChangeNotifier {
   List<File> get selectedFiles => _selectedFiles;
   void selectSingleCategory(String categoryId) {
     _selectedCategoryId = categoryId;
+    updateTheRemoveIcon(true);
     notifyListeners();
   }
 
@@ -159,9 +164,15 @@ class DirectorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateTheRemoveIcon(bool val) {
+    _removeIcon = val;
+    notifyListeners();
+  }
+
   void clearFilter() {
     _selectedCategoryId = null;
     searchController.clear();
+    updateTheRemoveIcon(false);
     getDirectorsList(navigatorKey.currentContext!);
     notifyListeners();
   }
