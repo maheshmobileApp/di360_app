@@ -29,7 +29,9 @@ class DirectorDetailsScreen extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: UserData(
-              imageUrl: directionalVM.directorDetails?.profileImage?.url,
+              imageUrl: directionalVM.directorDetails?.logo?.url ??
+                  directionalVM.directorDetails?.profileImage?.url ??
+                  '',
               userName: directionalVM.directorDetails?.professionType,
               followerCount:
                   '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',

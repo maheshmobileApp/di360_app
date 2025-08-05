@@ -28,8 +28,10 @@ class DirectorViewModel extends ChangeNotifier {
 
   // Controllers
   final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
   final TextEditingController appointmentDateController =
       TextEditingController();
 

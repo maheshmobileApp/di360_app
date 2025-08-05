@@ -53,10 +53,11 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   backgroundColor: AppColors.primaryColor,
                   radius: 60,
                   child: ClipOval(
-                    child: Transform.scale(
-                      scale: 1,
+                    child: SizedBox(
+                      height: 120,width: 120,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
+                          fit: BoxFit.fill,
                           errorWidget: Image.asset(ImageConst.prfImg)),
                     ),
                   ),

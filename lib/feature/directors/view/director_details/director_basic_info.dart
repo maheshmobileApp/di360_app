@@ -103,9 +103,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           ],
         ),
         SizedBox(height: 10),
-        Container(
-          child: child,
-        )
+        Container(child: child)
       ],
     );
   }
@@ -202,8 +200,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                 child: CachedNetworkImageWidget(
                   imageUrl: vm.directorDetails?.bannerImage?.url ?? '',
                   width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
+                  height: 150,
+                  fit: BoxFit.fill
                 )),
         addVertical(5),
         CustomGrid(
@@ -217,20 +215,19 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               elevation: 1,
               color: Colors.white,
               child: Container(
-                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16)
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                        height: 125,
+                        height: 110,
                         child: CachedNetworkImageWidget(
                             imageUrl: teamData?.image?.url ?? '',
-                            fit: BoxFit.contain)),
-                    const SizedBox(height: 12),
+                            fit: BoxFit.fill)),
+                    const SizedBox(height: 5),
                     Text(
                       teamData?.name ?? '',
                       style: TextStyle(
@@ -247,10 +244,10 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                         color: Colors.grey,
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Divider(),
                     Text(
                       teamData?.location ?? '',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -288,7 +285,9 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         final doc = vm.directorDetails?.directoryDocuments?[index];
         return Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(
+                side: BorderSide(color: AppColors.HINT_COLOR),
+                borderRadius: BorderRadius.circular(16)),
           elevation: 0,
           color: AppColors.hintColor,
           child: Padding(
@@ -344,6 +343,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         return Container(
           decoration: BoxDecoration(
               color: AppColors.hintColor,
+              border: Border.all(color: AppColors.HINT_COLOR),
               borderRadius: BorderRadius.circular(16)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -380,6 +380,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         return Container(
           decoration: BoxDecoration(
               color: AppColors.hintColor,
+              border: Border.all(color: AppColors.HINT_COLOR),
               borderRadius: BorderRadius.circular(16)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -441,8 +442,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                               child: CircleAvatar(
                                 radius: 22,
                                 child: ClipOval(
-                                  child: Transform.scale(
-                                    scale: 0.9,
+                                  child: SizedBox(
+                                    height: 40,width: 40,
                                     child: CachedNetworkImageWidget(
                                       imageUrl: data.profileImage?.url ?? '',
                                       fit: BoxFit.fill,
