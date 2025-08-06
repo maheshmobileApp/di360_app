@@ -1,4 +1,7 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -8,9 +11,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class JobListingDetailsScreen extends StatelessWidget {
+class JobListingDetailsScreen extends StatelessWidget with BaseContextHelpers {
   final JobsListingDetails job;
-
   const JobListingDetailsScreen({
     super.key,
     required this.job,
@@ -24,8 +26,8 @@ class JobListingDetailsScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 240.0,
             pinned: true,
-            backgroundColor: Colors.white,
-            iconTheme: const IconThemeData(color: Colors.white),
+            backgroundColor: AppColors.whiteColor,
+            iconTheme: const IconThemeData(color: AppColors.black),
             elevation: 0,
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
@@ -37,8 +39,7 @@ class JobListingDetailsScreen extends StatelessWidget {
                   title: isCollapsed
                       ? Text(
                           job.title ?? '',
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 16),
+                          style: TextStyles.medium2(color: AppColors.black),
                         )
                       : null,
                   background: CachedNetworkImageWidget(
@@ -48,18 +49,14 @@ class JobListingDetailsScreen extends StatelessWidget {
                 );
               },
             ),
-            leading: Builder(
-              builder: (context) {
-                return IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () => Navigator.pop(context),
-                );
-              },
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppColors.black),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
           SliverToBoxAdapter(
             child: Container(
-              color: Colors.white,
+              color: AppColors.whiteColor,
               padding: const EdgeInsets.all(16),
               child: _buildBodyContent(context),
             ),
@@ -84,34 +81,32 @@ class JobListingDetailsScreen extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey[300],
+                    color: AppColors.geryColor,
                   ),
                 ),
-                const SizedBox(width: 12),
+                addHorizontal(12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       job.companyName ?? '',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyles.medium3(color: AppColors.black),
                     ),
-                    const SizedBox(height: 4),
+                    addVertical(4),
                     Text(
                       job.jRole ?? '',
-                      style: const TextStyle(
-                          fontSize: 14, color: Colors.black54),
+                      style: TextStyles.regular2(
+                          color: AppColors.bottomNavUnSelectedColor),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.orange.shade50, Colors.white],
+                  colors: [AppColors.timeBgColor, AppColors.whiteColor],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 ),
@@ -119,16 +114,13 @@ class JobListingDetailsScreen extends StatelessWidget {
               ),
               child: Text(
                 Jiffy.parse(job.createdAt ?? '').fromNow(),
-                style: const TextStyle(
-                  color: Colors.orange,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyles.medium1(
+                    color: AppColors.primaryColor, fontSize: 12),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        addVertical(16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -139,7 +131,7 @@ class JobListingDetailsScreen extends StatelessWidget {
                 '${job.payRange ?? 0} - ${job.payRange ?? 0}'),
           ],
         ),
-        const SizedBox(height: 12),
+        addVertical(12),
         Wrap(
           spacing: 1,
           runSpacing: 2,
@@ -149,55 +141,35 @@ class JobListingDetailsScreen extends StatelessWidget {
               [],
         ),
         const Divider(height: 30),
-        // InfoItem(
-        //     iconPath: ImageConst.hiringSvg,
-        //     title: 'Looking for hire',
-        //     subtitle: '${job.}'),
         InfoItem(
-            iconPath: ImageConst.graduationSvg,
-            title: 'Education Level',
-            subtitle: '${job.education}'),
-        // InfoItem(
-        //     iconPath: ImageConst.peopleSvg,
-        //     title: 'No. Positions',
-        //     subtitle:
-        //         '${job.jobApplicantsAggregate?.aggregate?.count ?? 0}'),
-        // InfoItem(
-        //     iconPath: ImageConst.briefcurrencySvg,
-        //     title: 'Rate',
-        //     subtitle: '${job.rateBilling}'),
+          iconPath: ImageConst.graduationSvg,
+          title: 'Education Level',
+          subtitle: '${job.education}',
+        ),
         const Divider(height: 30),
         _sectionHeader('Job Description'),
         _sectionText('${job.description ?? ''}'),
-        const SizedBox(height: 10),
+       addVertical(10),
         _sectionHeader('Key Responsibilities'),
         _sectionText('NA'),
-        const SizedBox(height: 10),
+       addVertical(10),
         _sectionHeader('About Company'),
         _sectionText('${job.companyName}'),
-        const SizedBox(height: 10),
+        addVertical(10),
         InkWell(
           onTap: () {},
-          child: Text(
-            '${job.companyName ?? ''}',
-            style: const TextStyle(
-                color: Colors.blue,
-                decoration: TextDecoration.underline),
-          ),
+          child: Text('${job.companyName ?? ''}',
+              style: TextStyles.semiBold(
+                color: AppColors.primaryColor,
+              )),
         ),
-        const SizedBox(height: 20),
+       addVertical(20),
         _sectionHeader('Job Location'),
-        Text('${job.location ?? ''}'),
+        Text('${job.location ?? ''}',
+            style: TextStyles.regular2(color: AppColors.secondaryColor)),
         locationView(context),
         _sectionHeader('Gallery'),
-        // GalleryView(
-        //     mediaList: job.l!
-        //         .map((e) => PostImage(
-        //             url: e.url, type: e.type, extension: e.extension))
-        //         .toList(),
-        //     imageUrls: job.clinicLogo!.map((e) => e.url ?? '').toList()),
         _sectionHeader('Social Media Handles'),
-        
       ],
     );
   }
@@ -208,7 +180,7 @@ class JobListingDetailsScreen extends StatelessWidget {
       child: Container(
         height: 180,
         margin: const EdgeInsets.symmetric(vertical: 10),
-        color: Colors.grey[300],
+        color: AppColors.geryColor,
         alignment: Alignment.center,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
@@ -226,9 +198,10 @@ class JobListingDetailsScreen extends StatelessWidget {
   Future<void> _openLocationInMaps(BuildContext context) async {
     if (job.location == null || job.location!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Location not available'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: Text('Location not available',
+              style: TextStyles.regular1(color: AppColors.whiteColor)),
+          backgroundColor: AppColors.redColor,
         ),
       );
       return;
@@ -252,9 +225,10 @@ class JobListingDetailsScreen extends StatelessWidget {
       await launchUrl(webUri, mode: LaunchMode.externalApplication);
     } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not open maps application'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: Text('Could not open maps application',
+              style: TextStyles.regular1(color: AppColors.whiteColor)),
+          backgroundColor: AppColors.redColor,
         ),
       );
     }
@@ -268,18 +242,15 @@ class JobListingDetailsScreen extends StatelessWidget {
           svgPath,
           width: 20,
           height: 20,
-          colorFilter:
-              const ColorFilter.mode(Colors.blueGrey, BlendMode.srcIn),
+          colorFilter: const ColorFilter.mode(
+              AppColors.bottomNavUnSelectedColor, BlendMode.srcIn),
         ),
-        const SizedBox(width: 8),
+        addHorizontal(8),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.blueGrey,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style:
+                TextStyles.medium3(color: AppColors.bottomNavUnSelectedColor),
           ),
         ),
       ],
@@ -289,13 +260,12 @@ class JobListingDetailsScreen extends StatelessWidget {
   Widget _sectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-      child: Text(title,
-          style:
-              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text(title, style: TextStyles.medium3(color: AppColors.black)),
     );
   }
 
   Widget _sectionText(String text) {
-    return Text(text, style: TextStyle(color: Colors.grey[700]));
+    return Text(text,
+        style: TextStyles.regular2(color: AppColors.lightGeryColor));
   }
 }

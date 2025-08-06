@@ -26,10 +26,12 @@ class RouteList {
   static const String myCatalogueScreen = '/myCatalogueScreen';
   static const String JobProfileView= '/JobProfileView';
   static const String JobListingScreen= '/JobListingScreen';
-   static const String JobListingDetailsScreen= '/JobListingDetailsScreen';
+  static const String JobListingDetailsScreen= '/JobListingDetailsScreen';
   static const String directory = '/myDirectory';
   static const String directoryFilter = '/directoryFilter';
   static const String directoryDetailsScreen = '/directoryDetailsScreen';
-   static const String directorQuickLinks = '/directorQuickLinks';
-
+  static const String directorQuickLinks = '/directorQuickLinks';
+  static const String  TalentListingScreen=' TalentListingScreen';
+  static const String TalentListingFilter = '/TalentListingFilter';
+ 
 }
