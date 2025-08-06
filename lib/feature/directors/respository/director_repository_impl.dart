@@ -1,8 +1,10 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/querys/book_appointment_query.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_all_banners.dart';
@@ -66,5 +68,14 @@ class DirectorRepositoryImpl extends DirectorRepository {
         await http.query(directories_Details_Query, variables: {"id": id});
     final result = DirectoryDetailsData.fromJson(res);
     return result.directoriesByPk;
+  }
+
+  @override
+  Future<List<DirectoryAppointments>> appointmentsSlots(String id) async {
+    final data = await http.query(bookAppointmentQuery, variables: {
+      "id": [id]
+    });
+    final res = SlotsData.fromJson(data);
+    return res.directoryAppointments ?? [];
   }
 }

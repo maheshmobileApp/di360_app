@@ -22,18 +22,21 @@ class DirectorAppointmentform extends StatelessWidget
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
+            addVertical(8),
             InputTextField(
                 title: 'First Name',
                 isRequired: true,
                 hintText: 'Enter First Name',
                 controller: directionalVM.firstNameController,
                 validator: validateFirstName),
+            addVertical(12),
             InputTextField(
                 title: 'Last Name',
                 isRequired: true,
                 hintText: 'Enter Last Name',
                 controller: directionalVM.lastNameController,
                 validator: validateLastName),
+            addVertical(12),
             InputTextField(
                 title: 'Phone Number',
                 isRequired: true,
@@ -45,13 +48,14 @@ class DirectorAppointmentform extends StatelessWidget
                 ],
                 maxLength: 12,
                 validator: validatePhoneNumber),
+            addVertical(12),
             InputTextField(
                 title: 'Email',
                 isRequired: true,
                 hintText: 'Enter Email',
                 controller: directionalVM.emailController,
                 validator: validateEmail),
-            addVertical(16),
+            addVertical(12),
             InputTextField(
               title: 'Appointment Date',
               isRequired: true,
@@ -141,7 +145,7 @@ class DirectorAppointmentform extends StatelessWidget
                   ? 'Please Select Service'
                   : null,
             ),
-            addVertical(10),
+            addVertical(12),
             InputTextField(
               title: 'Description',
               isRequired: true,
@@ -149,9 +153,9 @@ class DirectorAppointmentform extends StatelessWidget
               controller: directionalVM.descController,
               validator: validateDesc,
             ),
-            addVertical(10),
+            addVertical(12),
             _buildUploadField(context, directionalVM),
-            addVertical(10),
+            addVertical(12),
             ElevatedButton(
               onPressed: () {
                 if (directionalVM.validateForm()) {}

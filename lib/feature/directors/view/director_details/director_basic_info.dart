@@ -9,6 +9,7 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
   const DirectorBasicInfo({super.key});
@@ -198,11 +199,10 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             : ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: CachedNetworkImageWidget(
-                  imageUrl: vm.directorDetails?.bannerImage?.url ?? '',
-                  width: double.infinity,
-                  height: 150,
-                  fit: BoxFit.fill
-                )),
+                    imageUrl: vm.directorDetails?.bannerImage?.url ?? '',
+                    width: double.infinity,
+                    height: 150,
+                    fit: BoxFit.fill)),
         addVertical(5),
         CustomGrid(
           children: List.generate(
@@ -216,9 +216,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               color: Colors.white,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16)
-                ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -272,7 +271,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                 children: vm.directorDetails!.directoryGalleryPosts!.map((img) {
               return img.image?.length != 0
                   ? CachedNetworkImageWidget(
-                      imageUrl: img.image?.first.url ?? '')
+                      imageUrl: img.image?.first.url ?? '',
+                      fit: BoxFit.fill,)
                   : SizedBox();
             }).toList())));
   }
@@ -284,10 +284,9 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           vm.directorDetails?.directoryDocuments?.length ?? 0, (index) {
         final doc = vm.directorDetails?.directoryDocuments?[index];
         return Card(
-          shape:
-              RoundedRectangleBorder(
-                side: BorderSide(color: AppColors.HINT_COLOR),
-                borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+              side: BorderSide(color: AppColors.HINT_COLOR),
+              borderRadius: BorderRadius.circular(16)),
           elevation: 0,
           color: AppColors.hintColor,
           child: Padding(
@@ -315,7 +314,15 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   top: 0,
                   right: 0,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      final url = doc?.attachment?.url ?? '';
+                      if (await canLaunchUrl(Uri.parse(url))) {
+                        await launchUrl(
+                          Uri.parse(url),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                     child: CircleAvatar(
                       radius: 14,
                       backgroundColor: Colors.black,
@@ -353,8 +360,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   child: CachedNetworkImageWidget(
                       imageUrl: achieve?.attachments?.url ?? '',
                       height: 170,
-                      fit: BoxFit.contain)),
-              const SizedBox(height: 8),
+                      fit: BoxFit.fill)),
               Divider(),
               Text(
                 achieve?.title ?? '',
@@ -390,8 +396,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   child: CachedNetworkImageWidget(
                       imageUrl: certificate?.attachments?.url ?? '',
                       height: 170,
-                      fit: BoxFit.contain)),
-              const SizedBox(height: 8),
+                      fit: BoxFit.fill)),
               Divider(),
               Text(
                 certificate?.title ?? '',
@@ -443,7 +448,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                                 radius: 22,
                                 child: ClipOval(
                                   child: SizedBox(
-                                    height: 40,width: 40,
+                                    height: 40,
+                                    width: 40,
                                     child: CachedNetworkImageWidget(
                                       imageUrl: data.profileImage?.url ?? '',
                                       fit: BoxFit.fill,
