@@ -250,7 +250,7 @@ Widget _statusChip(String status) {
         if (value == "Preview") {
          {
             navigationService.navigateToWithParams(
-              RouteList.TalentListingDetailsScreen,
+              RouteList.JobListingDetailsScreen,
             );
           }
         } else if (value == "Cancel") {
