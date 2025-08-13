@@ -13,11 +13,14 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
   final JobsListingDetails? jobsListingData;
   final JobListingsViewModel vm;
   final int? index;
+
   const JobListingCard({
     super.key,
     required this.jobsListingData,
-    required this.vm, this.index,
+    required this.vm,
+    this.index,
   });
+
   @override
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobsListingData?.createdAt ?? '') ?? '';
@@ -26,12 +29,9 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: const Color.fromRGBO(220, 224, 228, 1),
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
           boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(116, 130, 148, 0.2),
@@ -52,25 +52,182 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                     jobsListingData?.logo ?? '',
                     jobsListingData?.companyName ?? '',
                     jobsListingData?.jRole ?? '',
-                    time,
                   ),
                 ),
-                  _jobTimeChip(time),
-                menuWidget(vm, context,index!,jobsListingData?.id??"",jobsListingData?.status??""),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _jobTimeChip(time),
+                    menuWidget(
+                      vm,
+                      context,
+                      index!,
+                      jobsListingData?.id ?? '',
+                      jobsListingData?.status ?? '',
+                    ),
+                  ],
+                ),
               ],
             ),
-             addVertical(12),
+            addVertical(12),
             _chipWidget(jobsListingData?.typeofEmployment ?? []),
             addVertical(10),
             _descriptionWidget(jobsListingData?.description ?? ''),
-            Divider(),
+            const Divider(),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-              Icon(Icons.arrow_back_ios,color: AppColors.buttonColor,size: 10,)
-            ],)
+                _roundedButton("Message"),
+              addHorizontal(10),
+                _roundedButton("Enquiry"),
+                const Spacer(),
+                const Icon(Icons.arrow_forward_ios, 
+                color: AppColors.primaryColor, size: 10),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _logoWithTitle(
+    BuildContext context,
+    String logo,
+    String company,
+    String title,
+  ) {
+    return Row(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: AppColors.geryColor,
+              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
+              radius: 30,
+              child: logo.isEmpty
+                  ? const Icon(Icons.business, size: 20, 
+                  color: AppColors.lightGeryColor)
+                  : null,
+            ),
+            Positioned(
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: AppColors.whiteColor, width: 1),
+                ),
+                child: Text(
+                  'Active',
+                  style: TextStyles.medium1(
+                    color: AppColors.greenColor,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        addHorizontal(12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(company, style: TextStyles.medium2(color: AppColors.black)),
+              addVertical(2),
+              Text(title, style: TextStyles.regular2(color: AppColors.black)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _descriptionWidget(String description) {
+    return SizedBox(
+      height: 36,
+      width: double.infinity,
+      child: Text(
+        description,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
+      ),
+    );
+  }
+
+  Widget _chipWidget(List<dynamic> types) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: types.map((type) {
+        final label = type?.toString() == 'null' ? 'N/A' : type.toString();
+        return Container(
+          height: 21,
+          width: 71,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColors.secondaryBlueColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyles.regular1(
+                color: AppColors.primaryBlueColor,
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _jobTimeChip(String time) {
+    return Container(
+      margin: const EdgeInsets.only(top: 4, right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.timeBgColor,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        time,
+        style: TextStyles.medium1(
+          color: AppColors.primaryColor,
+          fontSize: 10,
+        ),
+      ),
+    );
+  }
+
+  Widget _roundedButton(String label) {
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: AppColors.timeBgColor,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            label == "Message" ? Icons.message_outlined : Icons.help_outline,
+            size: 16,
+            color: AppColors.primaryColor,
+          ),
+          addHorizontal(4),
+          Text(
+            label,
+            style: TextStyles.medium1(color: AppColors.primaryColor, 
+            fontSize: 13),
+          ),
+        ],
       ),
     );
   }
@@ -78,214 +235,73 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
   Widget menuWidget(
     JobListingsViewModel vm,
     BuildContext context,
-     int index,
-     String id,
-      String status,
+    int index,
+    String id,
+    String status,
   ) {
     return PopupMenuButton<String>(
-      iconColor: AppColors.bottomNavUnSelectedColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      offset: const Offset(0, 40),
       color: AppColors.whiteColor,
-      padding: EdgeInsets.all(0),
+      padding: EdgeInsets.zero,
+      icon: const Icon(Icons.more_vert, color: AppColors.bottomNavUnSelectedColor),
       onSelected: (value) {
-        if (value == "Edit") {
-          // vm.getCatalogueView(context, id);
-        } else if (value == "Active") {
-        } else if (value == "Preview") {
-          navigationService.navigateToWithParams(
-            RouteList.JobListingDetailsScreen,
-             params: vm.myJobListingList[index],
-          );
-        } else if (value == "Inactive") {
-          showAlertMessage(context, 'Do you really want to change status?',
-              onBack: () {
-            navigationService.goBack();
-             vm.updateJobListingStatus(context, id,status);
-          });
-        } else if (value == "Delete") {
-          showAlertMessage(
-              context, 'Are you sure you want to delete this catalogue?',
-              onBack: () {
-            navigationService.goBack();
-             vm.removeJobsListingData(context, id);
-          });
+        switch (value) {
+          case "Edit":
+            // vm.getCatalogueView(context, id);
+            break;
+          case "Preview":
+            navigationService.navigateToWithParams(
+              RouteList.JobListingDetailsScreen,
+              params: vm.myJobListingList[index],
+            );
+            break;
+          case "Inactive":
+            showAlertMessage(context, 'Do you really want to change status?', onBack: () {
+              navigationService.goBack();
+              vm.updateJobListingStatus(context, id, status);
+            });
+            break;
+          case "Delete":
+            showAlertMessage(context, 'Are you sure you want to delete this listing?', onBack: () {
+              navigationService.goBack();
+              vm.removeJobsListingData(context, id);
+            });
+            break;
         }
       },
       itemBuilder: (context) => [
-        PopupMenuItem(
-          value: "Preview",
-          child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
-        ),
-        PopupMenuItem(
-            value: "Edit",
-            child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
-        PopupMenuItem(
-            value: "Delete",
-            child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),
-        if (vm.selectedStatus == 'Draft' ||
-            vm.selectedStatus == 'Pending Approval' ||
-            vm.selectedStatus == "Active" ||
-            vm.selectedStatus == "Expired" ||
-            vm.selectedStatus == "All")
-          PopupMenuItem(
-              value: "Inactive",
-              child: _buildRow(
-                  Icons.local_activity, AppColors.primaryColor, "Inactive")),
+        _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
+        _popupItem("Pending", Icons.loop, AppColors.primaryBlueColor),
+        _popupItem("Edit", Icons.edit_outlined, AppColors.primaryBlueColor),
+        if (vm.selectedStatus != "InActive")
+          _popupItem("Inactive", Icons.bolt_outlined, AppColors.primaryColor),
         if (vm.selectedStatus == "InActive")
-          PopupMenuItem(
-              value: "Active",
-              child: _buildRow(
-                  Icons.local_activity, AppColors.primaryColor, "Active")),
+          _popupItem("Active", Icons.bolt_outlined, AppColors.greenColor),
+        _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
       ],
     );
   }
 
-  Widget _buildRow(IconData? icon, Color? color, String? title) {
-    return Row(children: [
-      Icon(icon, color: color),
-      addHorizontal(8),
-      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
-    ]);
+  PopupMenuItem<String> _popupItem(String label, IconData icon, Color color) {
+    return PopupMenuItem(
+      value: label,
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 18),
+          addHorizontal(8),
+          Text(label, style: TextStyles.semiBold(color: color, fontSize: 14)),
+        ],
+      ),
+    );
   }
-}
 
-Widget _logoWithTitle(BuildContext context, String logo, String company,
-    String title, String time) {
-  return Row(
-    children: [
-      Stack(children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey.shade200,
-          backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
-          radius: 30,
-          child: logo.isEmpty
-              ? Icon(Icons.business, size: 20, color: Colors.grey)
-              : null,
-        ),
-        Positioned(
-            bottom: 0,
-            left: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'Active',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.green,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            )),
-      ]),
-      SizedBox(width: 12),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(company,
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-            SizedBox(height: 2),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 13)),
-                ),
-              
-              ],
-            ),
-          ],
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _descriptionWidget(String description) {
-  return SizedBox(
-    width: double.infinity,
-    height: 36,
-    child: Text(
-      description,
-      style: TextStyle(
-        fontFamily: 'Poppins',
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        height: 1,
-        color: Color.fromRGBO(116, 130, 148, 1),
-      ),
-      overflow: TextOverflow.ellipsis,
-      maxLines: 3,
-    ),
-  );
-}
-
-Widget _chipWidget(List<dynamic> typeofEmployment) {
-  return Wrap(
-    direction: Axis.horizontal,
-    spacing: 10,
-    runSpacing: 10,
-    children: typeofEmployment.map<Widget>((type) {
-      return Container(
-        height: 21,
-        width: 71,
-        padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(4, 113, 222, 0.15),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Center(
-          child: Text(
-            type.toString() == 'null' ? 'N/A' : type.toString(),
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              height: 1,
-              color: Color.fromRGBO(4, 113, 222, 1),
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      );
-    }).toList(),
-  );
-}
-
-Widget _jobTimeChip(String time) {
-  return Padding(
-    padding:  EdgeInsets.only(top: 20),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      height: 19,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(255, 236, 225, 1),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        time,
-        style: const TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          height: 1,
-          color: Color.fromRGBO(255, 112, 0, 1),
-        ),
-      ),
-    ),
-  );
-}
-
-String? _getShortTime(String createdAt) {
-  try {
-    return Jiffy.parse(createdAt).fromNow();
-  } catch (e) {
-    return '';
+  String? _getShortTime(String createdAt) {
+    try {
+      return Jiffy.parse(createdAt).fromNow();
+    } catch (_) {
+      return '';
+    }
   }
 }

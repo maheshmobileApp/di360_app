@@ -2,6 +2,7 @@ import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
@@ -26,6 +27,8 @@ import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
+import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 
@@ -51,14 +54,18 @@ class Routes {
       RouteList.JobProfileView: (context) => JobProfileView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
+      RouteList.TalentListingScreen: (context) => TalentListingScreen(),
+      RouteList.TalentListingFilter: (context) => TalentListingFilter(),
+      RouteList.adddirectorview: (context) => AddDirectorView(),
 
-      
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobDetailsScreen(
-          job: args as Jobs, // Replace JobModel with your actual job model type
+          job: args as Jobs,
         );
       },
+     
+      
       RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -72,11 +79,11 @@ class Routes {
       RouteList.myCatalogueScreen: (context) => MyCataloguesScreen(),
       RouteList.directory: (context) => DirectorScreen(),
       RouteList.directoryFilter: (context) => DirectoriesFilterScreen(),
-       RouteList.JobListingDetailsScreen: (context) {
+      RouteList.JobListingDetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingDetailsScreen(
           job: args as JobsListingDetails,
-        // Replace JobModel with your actual job model type
+          // Replace JobModel with your actual job model type
         );
       },
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
