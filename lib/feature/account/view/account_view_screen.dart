@@ -227,6 +227,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
                           }
+                           else if (item.title == 'My Directory') {
+                            navigationService
+                                .navigateTo(RouteList.adddirectorview);
+                          }
                         },
                       ),
                       if (!isLast)
