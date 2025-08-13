@@ -1,10 +1,13 @@
 const String bookAppointmentQuery = r'''
-query getBookedSelService($id: [uuid!]!) {
-  directory_appointments(where: {directory_service_id: {_in: $id}}) {
+query ggetServices($id: uuid!) {
+  directory_appointment_slots(where: {directory_id: {_eq: $id}}) {
     id
-    timeslot
+    directory_id
+    service_name
     directory_service_id
-    appointment_date
+    serviceMember
+    day_wise_timeslots
+    weekdays
     __typename
   }
 }

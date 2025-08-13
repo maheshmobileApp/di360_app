@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -115,77 +116,80 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             textStyle: TextStyles.regular3(color: AppColors.black)),
       );
 
-  Widget _serviceButtons(BuildContext context, DirectorViewModel vm) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Expanded(
-          child: Column(
-              children: vm.directorDetails?.directoryServices
-                      ?.map((data) => Row(
-                              children: List.generate(2, (index) {
-                            return _outlinedButton(context, data.name ?? '');
-                          })))
-                      .toList() ??
-                  []),
-        ),
-      );
+  Widget _serviceButtons(BuildContext context, DirectorViewModel vm) {
+    final services = vm.directorDetails?.directoryServices ?? [];
 
-  Widget _outlinedButton(BuildContext context, String label) => Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 5, bottom: 8),
-          child: OutlinedButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  contentPadding: const EdgeInsets.all(20),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            label,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child:
-                                const Icon(Icons.close, color: Colors.orange),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 20),
-                      Text(
-                        '$label test',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        children: List.generate(
+          (services.length / 2).ceil(), // Number of rows
+          (rowIndex) {
+            final startIndex = rowIndex * 2;
+            final endIndex = (startIndex + 2 <= services.length)
+                ? startIndex + 2
+                : services.length;
+
+            final rowItems = services.sublist(startIndex, endIndex);
+
+            return Row(
+              children: rowItems
+                  .map((data) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: _outlinedButton(context, data.name ?? ''),
+                        ),
+                      ))
+                  .toList(),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _outlinedButton(BuildContext context, String label) => Padding(
+        padding: const EdgeInsets.only(right: 5, bottom: 8),
+        child: OutlinedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              side: BorderSide(color: Colors.grey.shade300),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+                contentPadding: const EdgeInsets.all(20),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(label,
+                            style: TextStyles.bold6(color: AppColors.black)),
+                        GestureDetector(
+                          onTap: () => navigationService.goBack,
+                          child: const Icon(Icons.close,
+                              color: AppColors.primaryColor),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 20),
+                    Text('$label ',
+                        style: TextStyles.medium3(color: AppColors.black)),
+                  ],
+                ),
               ),
-            ),
+            );
+          },
+          style: OutlinedButton.styleFrom(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            side: BorderSide(color: Colors.grey.shade300),
+            padding: const EdgeInsets.symmetric(vertical: 16),
           ),
+          child: Text(label, style: TextStyles.bold6(color: AppColors.black)),
         ),
       );
 
@@ -267,14 +271,17 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: CustomGrid(
-                children: vm.directorDetails!.directoryGalleryPosts!.map((img) {
-              return img.image?.length != 0
-                  ? CachedNetworkImageWidget(
-                      imageUrl: img.image?.first.url ?? '',
-                      fit: BoxFit.fill,)
-                  : SizedBox();
-            }).toList())));
+            child: vm.directorDetails!.directoryGalleryPosts!.map((img) {
+              return CustomGrid(
+                  children: img.image!.map((url) {
+                return img.image?.length != 0
+                    ? CachedNetworkImageWidget(
+                        imageUrl: url.url ?? '',
+                        fit: BoxFit.fill,
+                      )
+                    : SizedBox();
+              }).toList());
+            }).first));
   }
 
   Widget _documentCard(DirectorViewModel vm) {

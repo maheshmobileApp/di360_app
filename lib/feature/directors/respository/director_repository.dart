@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.d
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 
 abstract class DirectorRepository {
   Future<List<Directories>> getDirectors(String catagoryId,String searchText);
@@ -10,4 +11,5 @@ abstract class DirectorRepository {
   Future<List<DirectoryBusinessTypes>> directoriesCatagory();
   Future<DirectoriesByPk?> directoriesDetailsQuery(String id);
   Future<List<DirectoryAppointments>> appointmentsSlots(String id);
+  Future<List<DirectoryTeamMember>> getTeamMembers(String id);
 }

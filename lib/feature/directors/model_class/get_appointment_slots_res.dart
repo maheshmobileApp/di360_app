@@ -22,9 +22,9 @@ class SlotsData {
   SlotsData({this.directoryAppointments});
 
   SlotsData.fromJson(Map<String, dynamic> json) {
-    if (json['directory_appointments'] != null) {
+    if (json['directory_appointment_slots'] != null) {
       directoryAppointments = <DirectoryAppointments>[];
-      json['directory_appointments'].forEach((v) {
+      json['directory_appointment_slots'].forEach((v) {
         directoryAppointments!.add(new DirectoryAppointments.fromJson(v));
       });
     }
@@ -33,7 +33,7 @@ class SlotsData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.directoryAppointments != null) {
-      data['directory_appointments'] =
+      data['directory_appointment_slots'] =
           this.directoryAppointments!.map((v) => v.toJson()).toList();
     }
     return data;
@@ -42,62 +42,54 @@ class SlotsData {
 
 class DirectoryAppointments {
   String? id;
-  Timeslot? timeslot;
-  String? directoryServiceId;
-  String? appointmentDate;
+  String? directoryId;
+  List<String>? serviceName;
+  List<String>? directoryServiceId;
+  List<String>? serviceMember;
+  List<String>? dayWiseTimeslots;
+  List<String>? weekdays;
   String? sTypename;
 
   DirectoryAppointments(
       {this.id,
-      this.timeslot,
+      this.directoryId,
+      this.serviceName,
       this.directoryServiceId,
-      this.appointmentDate,
+      this.serviceMember,
+      this.dayWiseTimeslots,
+      this.weekdays,
       this.sTypename});
 
   DirectoryAppointments.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    timeslot = json['timeslot'] != null
-        ? new Timeslot.fromJson(json['timeslot'])
-        : null;
-    directoryServiceId = json['directory_service_id'];
-    appointmentDate = json['appointment_date'];
+    directoryId = json['directory_id'];
+    serviceName = json['service_name'] is List
+        ? List<String>.from(json['service_name'])
+        : [];
+    directoryServiceId = json['directory_service_id'] is List
+        ? List<String>.from(json['directory_service_id'])
+        : [];
+    serviceMember = json['serviceMember'] is List
+        ? List<String>.from(json['serviceMember'])
+        : [];
+    dayWiseTimeslots = json['day_wise_timeslots'] is List
+        ? List<String>.from(json['day_wise_timeslots'])
+        : [];
+    weekdays =
+        json['weekdays'] is List ? List<String>.from(json['weekdays']) : [];
     sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    if (this.timeslot != null) {
-      data['timeslot'] = this.timeslot!.toJson();
-    }
+    data['directory_id'] = this.directoryId;
+    data['service_name'] = this.serviceName;
     data['directory_service_id'] = this.directoryServiceId;
-    data['appointment_date'] = this.appointmentDate;
+    data['serviceMember'] = this.serviceMember;
+    data['day_wise_timeslots'] = this.dayWiseTimeslots;
+    data['weekdays'] = this.weekdays;
     data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class Timeslot {
-  String? doctor;
-  bool? desable;
-  List<String>? service;
-  String? timeSlotStart;
-
-  Timeslot({this.doctor, this.desable, this.service, this.timeSlotStart});
-
-  Timeslot.fromJson(Map<String, dynamic> json) {
-    doctor = json['doctor'];
-    desable = json['desable'];
-    service = json['service'].cast<String>();
-    timeSlotStart = json['timeSlotStart'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['doctor'] = this.doctor;
-    data['desable'] = this.desable;
-    data['service'] = this.service;
-    data['timeSlotStart'] = this.timeSlotStart;
     return data;
   }
 }

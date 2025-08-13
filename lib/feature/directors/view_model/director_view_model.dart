@@ -4,8 +4,10 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -83,9 +85,21 @@ class DirectorViewModel extends ChangeNotifier {
   List<dynamic> interleavedList = [];
   TextEditingController searchController = TextEditingController();
   DirectoriesByPk? directorDetails;
+  List<DirectoryAppointments>? appointmentSlots = [];
+  List<DirectoryTeamMember>? teamMembers = [];
+  DirectoryAppointments? dayWiseTimeslots;
   GetFollowersData? getFollowersData;
   bool _removeIcon = false;
   bool get removeIcon => _removeIcon;
+
+  String? _timeSlotSelected;
+
+  String? get timeSlotSelected => _timeSlotSelected;
+
+  void updateTimeSlotSelect(String value) {
+    _timeSlotSelected = value;
+    notifyListeners();
+  }
 
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
@@ -183,6 +197,8 @@ class DirectorViewModel extends ChangeNotifier {
     if (res != null) {
       directorDetails = res;
       getFollowersCount(directorDetails?.id ?? '');
+      getAppointmentSlots(id);
+      getTeamMembersData(id);
       Loaders.circularHideLoader(navigatorKey.currentContext!);
       navigationService.navigateTo(RouteList.directoryDetailsScreen);
     } else {
@@ -215,6 +231,28 @@ class DirectorViewModel extends ChangeNotifier {
 
   void removeFile(int index) {
     _selectedFiles.removeAt(index);
+    notifyListeners();
+  }
+
+  Future<void> getAppointmentSlots(String id) async {
+    final res = await repository.appointmentsSlots(id);
+    appointmentSlots = res;
+    notifyListeners();
+  } 
+
+  Future<void> getTeamMembersData(String id) async {
+    final res = await repository.getTeamMembers(id);
+    teamMembers = res;
+    notifyListeners();
+  }
+
+  void timeSlots(String day) {
+    final slots = appointmentSlots;
+    for (var slot in slots!) {
+      if (slot.weekdays!.contains(day)) {
+        dayWiseTimeslots = slot;
+      }
+    }
     notifyListeners();
   }
 

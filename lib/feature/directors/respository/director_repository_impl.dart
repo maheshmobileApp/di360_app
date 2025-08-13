@@ -4,12 +4,14 @@ import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.d
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/querys/book_appointment_query.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_all_banners.dart';
 import 'package:di360_flutter/feature/directors/querys/get_director_based_on_catagory.dart';
 import 'package:di360_flutter/feature/directors/querys/get_directors_query.dart';
+import 'package:di360_flutter/feature/directors/querys/get_team_members.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository.dart';
 
 class DirectorRepositoryImpl extends DirectorRepository {
@@ -72,10 +74,15 @@ class DirectorRepositoryImpl extends DirectorRepository {
 
   @override
   Future<List<DirectoryAppointments>> appointmentsSlots(String id) async {
-    final data = await http.query(bookAppointmentQuery, variables: {
-      "id": [id]
-    });
+    final data = await http.query(bookAppointmentQuery, variables: {"id": id});
     final res = SlotsData.fromJson(data);
     return res.directoryAppointments ?? [];
+  }
+
+  @override
+  Future<List<DirectoryTeamMember>> getTeamMembers(String id) async {
+    final data = await http.query(team_members_querys, variables: {"id": id});
+    final res = TeamMembersData.fromJson(data);
+    return res.directoryTeamMembers ?? [];
   }
 }
