@@ -40,13 +40,13 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
             title: 'Services',
             hintText: 'Select',
             isRequired: true,
-            value: serviceList.contains(addDirectorVM.selectedService)
-                ? addDirectorVM.selectedService
+            value: serviceList.contains(addDirectorVM.selectedTeamService)
+                ? addDirectorVM.selectedTeamService
                 : null,
             items: serviceList
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
-            onChanged: (val) => addDirectorVM.selectedService = val,
+            onChanged: (val) => addDirectorVM.selectedTeamService = val,
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please Select Service' : null,
           ),

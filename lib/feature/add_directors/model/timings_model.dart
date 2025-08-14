@@ -1,15 +1,15 @@
 
 class TimingsModel {
-  final String  SelectadTime;
-  final String  ServiceStarTime ;
-  final String  ServiceEndTime ;
-  final bool  AllDay;
-  final String Repeat;
+  final  DateTime? SelectadTime;
+  final  DateTime?  ServiceStarTime ;
+  final  DateTime? ServiceEndTime ;
+   final bool  AllDay;
+ 
  TimingsModel({
     required this.SelectadTime,
     required this.ServiceStarTime,
-    required this.  ServiceEndTime,
+    required this. ServiceEndTime,
     required this.AllDay,
-    required this.Repeat,
+   
   });
 }

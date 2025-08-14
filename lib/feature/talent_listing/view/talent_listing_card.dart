@@ -153,22 +153,23 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
   );
 }
 
-Widget _statusChip(String status) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-    decoration: BoxDecoration(
-      color: const Color.fromRGBO(253, 245, 229, 1),
-      borderRadius: BorderRadius.circular(30),
-    ),
-    child: Text(
-      status,
-      style: TextStyles.semiBold(
-        fontSize: 12,
-        color: const Color(0xFFFF9900),
+ Widget _statusChip(String status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(253, 245, 229, 1),
+        borderRadius: BorderRadius.circular(30),
       ),
-    ),
-  );
-}
+      child: Text(
+        status,
+        style: TextStyles.semiBold(
+          fontSize: 12,
+          color: const Color.fromRGBO(225, 146, 0, 1),
+        ),
+      ),
+    );
+  }
+
 
  Widget _TalentTimeChip(String time) {
   return Container(
@@ -223,7 +224,7 @@ Widget _statusChip(String status) {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            label == "Message" ? Icons.message_outlined : Icons.help_outline,
+            label == "Message" ? Icons.chat : Icons.live_help_outlined,
             size: 16,
             color: AppColors.primaryColor,
           ),

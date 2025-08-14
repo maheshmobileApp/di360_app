@@ -58,8 +58,9 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
          addVertical(20),
            InputTextField(
           hintText: "Enter your text here",
-          maxLength: 500,
-          maxLines: 5,
+           controller: AddDirectorVM.ServiceDescriptionController,
+           maxLength: 500,
+           maxLines: 5,
           title: "Short Description",
         ), 
       ]),
@@ -90,7 +91,7 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
         onChanged: onChanged,
       ),
       Text(label, style: TextStyles.regular2()),
-      const SizedBox(width: 20),
+      SizedBox(width: 20),
     ],
   );
 }
@@ -102,20 +103,20 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
   ) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
+      shape:  RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) {
         return Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
+              leading:  Icon(Icons.photo_library),
+              title:Text('Gallery'),
               onTap: galleryOnTap,
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
+              leading:  Icon(Icons.camera_alt),
+              title:  Text('Camera'),
               onTap: cameraOnTap,
             ),
           ],

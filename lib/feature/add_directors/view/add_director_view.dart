@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_appoinment
 import 'package:di360_flutter/feature/add_directors/view/add_director_archiement.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_basic_info.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_certificate.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_document.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_fqs.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_gallery.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_services.dart';
@@ -93,6 +94,8 @@ Widget _getStepWidget(AddDirectoryStep stepIndex) {
       return AddDirectorCertificate();
     case AddDirectoryStep.Achievements:
       return AddDirectorArchiement();
+       case AddDirectoryStep.Documents:
+      return  AddDirectorDocument();
     case AddDirectoryStep.OurTeam:
       return AddDirectorTeamMember();
         case AddDirectoryStep. Gallery:
