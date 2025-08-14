@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_directories_deta
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/querys/book_appointment_query.dart';
+import 'package:di360_flutter/feature/directors/querys/get_time_slots_query.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_all_banners.dart';
@@ -74,7 +75,7 @@ class DirectorRepositoryImpl extends DirectorRepository {
 
   @override
   Future<List<DirectoryAppointments>> appointmentsSlots(String id) async {
-    final data = await http.query(bookAppointmentQuery, variables: {"id": id});
+    final data = await http.query(getTimeSlots, variables: {"id": id});
     final res = SlotsData.fromJson(data);
     return res.directoryAppointments ?? [];
   }
@@ -84,5 +85,12 @@ class DirectorRepositoryImpl extends DirectorRepository {
     final data = await http.query(team_members_querys, variables: {"id": id});
     final res = TeamMembersData.fromJson(data);
     return res.directoryTeamMembers ?? [];
+  }
+
+  @override
+  Future<dynamic> bookAppointmentDirector(variables) async {
+    final data = await http.mutation(bookAppointmentQuery, variables);
+    print(variables);
+    return data;
   }
 }

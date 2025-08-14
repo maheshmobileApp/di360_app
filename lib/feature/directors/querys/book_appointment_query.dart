@@ -1,13 +1,7 @@
 const String bookAppointmentQuery = r'''
-query ggetServices($id: uuid!) {
-  directory_appointment_slots(where: {directory_id: {_eq: $id}}) {
+mutation addApptToDash($apptData: directory_appointments_insert_input!) {
+  insert_directory_appointments_one(object: $apptData) {
     id
-    directory_id
-    service_name
-    directory_service_id
-    serviceMember
-    day_wise_timeslots
-    weekdays
     __typename
   }
 }

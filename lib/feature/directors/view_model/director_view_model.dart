@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
@@ -13,6 +11,7 @@ import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +40,7 @@ class DirectorViewModel extends ChangeNotifier {
   String? selectedTeamMember;
   String? selectedService;
 
-  // Static Dropdown Lists
-  final List<String> teamMemberList = ['All Team Member', 'George'];
-  final List<String> serviceList = ['124356'];
+  final List<String> serviceList = ['Test'];
 
   final List<QuickLinkItem> quickLinkItems = [
     QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -103,9 +100,9 @@ class DirectorViewModel extends ChangeNotifier {
 
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
-  final List<File> _selectedFiles = [];
+  String? supportingImg;
+  dynamic supportingImageObj;
 
-  List<File> get selectedFiles => _selectedFiles;
   void selectSingleCategory(String categoryId) {
     _selectedCategoryId = categoryId;
     updateTheRemoveIcon(true);
@@ -220,17 +217,14 @@ class DirectorViewModel extends ChangeNotifier {
 
   Future<void> pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
+      allowMultiple: false,
       type: FileType.image,
     );
     if (result != null) {
-      _selectedFiles.addAll(result.paths.map((path) => File(path!)));
-      notifyListeners();
+      supportingImg = result.files.first.path;
+      var value = await _http.uploadImage(supportingImg);
+      supportingImageObj = value;
     }
-  }
-
-  void removeFile(int index) {
-    _selectedFiles.removeAt(index);
     notifyListeners();
   }
 
@@ -238,11 +232,44 @@ class DirectorViewModel extends ChangeNotifier {
     final res = await repository.appointmentsSlots(id);
     appointmentSlots = res;
     notifyListeners();
-  } 
+  }
 
   Future<void> getTeamMembersData(String id) async {
     final res = await repository.getTeamMembers(id);
     teamMembers = res;
+    notifyListeners();
+  }
+
+  Future<void> bookAppointment(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final res = await repository.bookAppointmentDirector({
+      "apptData": {
+        "name": firstNameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "appointment_date": appointmentDateController.text,
+        "message": descController.text,
+        "last_name": lastNameController.text,
+        "directory_id": dayWiseTimeslots?.directoryId,
+        "timeslot": {
+          "timeSlotStart": _timeSlotSelected,
+          "desable": false,
+          "doctor": dayWiseTimeslots?.serviceMember?.first,
+          "service": [dayWiseTimeslots?.serviceName?.first]
+        },
+        "directory_service_id": dayWiseTimeslots?.directoryServiceId?.first,
+        "service_name": selectedService,
+        "attachments": supportingImageObj,
+        "status": "PENDING"
+      }
+    });
+    if (res["insert_directory_appointments_one"] != null) {
+      scaffoldMessenger('Appointment Booked Successfully');
+      disposeControllers();
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
     notifyListeners();
   }
 
@@ -257,10 +284,17 @@ class DirectorViewModel extends ChangeNotifier {
   }
 
   void disposeControllers() {
-    firstNameController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    appointmentDateController.dispose();
+    firstNameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    appointmentDateController.clear();
+    lastNameController.clear();
+    descController.clear();
+    selectedTeamMember = null;
+    selectedService = null;
+    supportingImageObj = null;
+    supportingImg = null;
+    notifyListeners();
   }
 }
 

@@ -12,4 +12,5 @@ abstract class DirectorRepository {
   Future<DirectoriesByPk?> directoriesDetailsQuery(String id);
   Future<List<DirectoryAppointments>> appointmentsSlots(String id);
   Future<List<DirectoryTeamMember>> getTeamMembers(String id);
+  Future<dynamic> bookAppointmentDirector(dynamic variables);
 }
