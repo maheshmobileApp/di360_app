@@ -1,0 +1,383 @@
+{
+  "data": {
+    "job_profiles": [
+      {
+        "id": "198ba395-a301-47a4-84f0-603245b09149",
+        "created_at": "2025-07-31T06:00:50.026084+00:00",
+        "updated_at": "2025-07-31T06:00:50.026084+00:00",
+        "skills": [
+          "Skill A"
+        ],
+        "jobexperiences": [
+          {
+            "ejobdesp": "Senior Dentist",
+            "job_title": "Test",
+            "startYear": 2000,
+            "startMonth": "Jan",
+            "stillInRole": true,
+            "company_name": "Test"
+          }
+        ],
+        "educations": [],
+        "upload_resume": [],
+        "job_designation": "Dentsit",
+        "current_company": "Test",
+        "current_ctc": "",
+        "dental_professional_id": "a73da174-5444-45f2-ab0f-602982abb9fc",
+        "post_anonymously": false,
+        "admin_status": "PENDING",
+        "profile_image": [
+          {
+            "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/bf0f2e7e-81e6-4981-81d7-db888512139e",
+            "name": "8816447_orig.jpg",
+            "type": "image",
+            "extension": "jpeg"
+          }
+        ],
+        "full_name": "finaluser",
+        "mobile_number": "‪+61474175354‬",
+        "email_address": "Testuser1@yopmail.com",
+        "work_type": [
+          "Full Time"
+        ],
+        "profession_type": "Dentist",
+        "location": "Goodwood Rd, Wayville SA 5034, Australia",
+        "country": "Australia",
+        "city": "5034",
+        "state": "South Australia",
+        "cover_letter": [],
+        "certificate": [],
+        "radius": "22",
+        "abn_number": null,
+        "availabilityOption": "immediate1",
+        "availabilityDate": [],
+        "fromDate": [],
+        "availabilityDay": [
+          "Monday",
+          "Wednesday",
+          "Friday"
+        ],
+        "work_rights": "Permanent resident",
+        "Year_of_experiance": "10-15",
+        "languages_spoken": "English",
+        "areas_expertise": null,
+        "percentage": null,
+        "salary_amount": 1000,
+        "salary_type": "weekly",
+        "aphra_number": "9658965896589",
+        "willing_to_travel": false,
+        "travel_distance": null,
+        "about_yourself": "This is a test Data",
+        "availabilityType": "fromDay",
+        "unavailabilityDate": [],
+        "dental_professional": {
+          "id": "a73da174-5444-45f2-ab0f-602982abb9fc",
+          "gender": null
+        },
+        "jobhirings": []
+      },
+      {
+        "id": "83391870-e278-4e21-b9cf-5cacc7d58fef",
+        "created_at": "2025-07-31T04:28:39.245892+00:00",
+        "updated_at": "2025-07-31T04:28:39.245892+00:00",
+        "skills": [
+          "Skill B"
+        ],
+        "jobexperiences": [
+          {
+            "endYear": "",
+            "ejobdesp": "",
+            "endMonth": "",
+            "job_title": "Test",
+            "startYear": 2020,
+            "startMonth": "Jan",
+            "stillInRole": false,
+            "company_name": "test"
+          }
+        ],
+        "educations": [
+          {
+            "finishDate": "",
+            "institution": "test",
+            "qualification": "Test",
+            "courseHighlights": "",
+            "qualificationFinished": true
+          }
+        ],
+        "upload_resume": [
+          {
+            "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/resume/22f63a9d-3aa5-4444-8876-e89d8d621052",
+            "name": "Dental Degree Certificate_.pdf",
+            "type": "document",
+            "extension": "pdf"
+          }
+        ],
+        "job_designation": "Senior Dentist",
+        "current_company": "Test",
+        "current_ctc": "",
+        "dental_professional_id": "c012fe34-a8b3-4b8d-b34f-a85e5b908d7d",
+        "post_anonymously": false,
+        "admin_status": "PENDING",
+        "profile_image": [
+          {
+            "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/550be068-fd50-428c-b49c-bccb857204b8",
+            "name": "360_F_174471058_EYViRGGeHlZdI7hvADjG6deZnvfgAtXE.jpg",
+            "type": "image",
+            "extension": "jpeg"
+          }
+        ],
+        "full_name": "profthree",
+        "mobile_number": "+61475214756",
+        "email_address": "test3@yopmail.com",
+        "work_type": [
+          "Contractor",
+          "Full Time"
+        ],
+        "profession_type": "Dentist",
+        "location": "Adelaide SA, Australia",
+        "country": "Australia",
+        "city": "9658",
+        "state": "South Australia",
+        "cover_letter": [
+          {
+            "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/cover_letter/8081f9df-2b29-4ff3-a684-0c59e5daa1ee",
+            "name": "New client onboarding.pdf",
+            "type": "document",
+            "extension": "pdf"
+          }
+        ],
+        "certificate": [
+          {
+            "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/certificate/7702bec3-1c4f-4db9-862b-c8790bb1710e",
+            "name": "New client onboarding.pdf",
+            "type": "application/pdf",
+            "extension": "pdf"
+          }
+        ],
+        "radius": "22",
+        "abn_number": "1477855555",
+        "availabilityOption": "immediate1",
+        "availabilityDate": [],
+        "fromDate": [],
+        "availabilityDay": [
+          "Monday",
+          "Wednesday",
+          "Friday"
+        ],
+        "work_rights": "Australian citizen",
+        "Year_of_experiance": "5-10",
+        "languages_spoken": "English",
+        "areas_expertise": "Prosthetics",
+        "percentage": "25",
+        "salary_amount": 30000,
+        "salary_type": "yearly",
+        "aphra_number": "785477555445",
+        "willing_to_travel": false,
+        "travel_distance": null,
+        "about_yourself": "This is test",
+        "availabilityType": "fromDay",
+        "unavailabilityDate": [],
+        "dental_professional": {
+          "id": "c012fe34-a8b3-4b8d-b34f-a85e5b908d7d",
+          "gender": null
+        },
+        "jobhirings": []
+      },
+      {
+        "id": "7cb531de-1891-4d86-8cc4-7e97fcd28b3d",
+        "created_at": "2025-07-30T13:49:54.082163+00:00",
+        "updated_at": "2025-07-30T13:49:54.082163+00:00",
+        "skills": [
+          "Skill B"
+        ],
+        "jobexperiences": [
+          {
+            "endYear": "",
+            "ejobdesp": "",
+            "endMonth": "",
+            "job_title": "Senior Dentist",
+            "startYear": 2000,
+            "startMonth": "Jan",
+            "stillInRole": false,
+            "company_name": "Test Company"
+          }
+        ],
+        "educations": [],
+        "upload_resume": [],
+        "job_designation": "Test",
+        "current_company": "Test",
+        "current_ctc": "",
+        "dental_professional_id": "f9782258-0072-44ca-b8bf-e3da1d89286f",
+        "post_anonymously": false,
+        "admin_status": "PENDING",
+        "profile_image": [
+          {
+            "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/687c6a71-810b-4edf-9ab8-9a7fdfdc3b14",
+            "name": "visa-study-australia.jpg",
+            "type": "image",
+            "extension": "jpeg"
+          }
+        ],
+        "full_name": "proftwo",
+        "mobile_number": "99655754712",
+        "email_address": "test@yopmail.com",
+        "work_type": [
+          "Contractor",
+          "Full Time",
+          "Part Time"
+        ],
+        "profession_type": "Dentist",
+        "location": "1638 Steve Irwin Way, Beerwah QLD 4519, Australia",
+        "country": "Australia",
+        "city": "4519",
+        "state": "Queensland",
+        "cover_letter": [],
+        "certificate": [],
+        "radius": "22",
+        "abn_number": "9856985698",
+        "availabilityOption": "immediate1",
+        "availabilityDate": [],
+        "fromDate": [],
+        "availabilityDay": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "work_rights": "Permanent resident",
+        "Year_of_experiance": "5-10",
+        "languages_spoken": "English",
+        "areas_expertise": null,
+        "percentage": "5",
+        "salary_amount": 5000,
+        "salary_type": "hourly",
+        "aphra_number": "96586547777",
+        "willing_to_travel": true,
+        "travel_distance": "80",
+        "about_yourself": "Test",
+        "availabilityType": "fromDay",
+        "unavailabilityDate": [],
+        "dental_professional": {
+          "id": "f9782258-0072-44ca-b8bf-e3da1d89286f",
+          "gender": null
+        },
+        "jobhirings": []
+      },
+      {
+        "id": "d5dfdb39-f0e9-4d8c-9392-86deea6a501d",
+        "created_at": "2025-07-30T05:57:42.130356+00:00",
+        "updated_at": "2025-07-30T05:57:42.130356+00:00",
+        "skills": null,
+        "jobexperiences": [],
+        "educations": [],
+        "upload_resume": [],
+        "job_designation": "Senior Dentist",
+        "current_company": "Test Company",
+        "current_ctc": "",
+        "dental_professional_id": "599868d4-60ed-4938-af5f-7872aa811d3f",
+        "post_anonymously": false,
+        "admin_status": "PENDING",
+        "profile_image": [],
+        "full_name": "Professionalfive",
+        "mobile_number": "+614521445221",
+        "email_address": "fiveaccess@yopmail.com",
+        "work_type": [
+          "Full Time",
+          "Part Time"
+        ],
+        "profession_type": "Dentist",
+        "location": "Adelaide SA, Australia",
+        "country": "Australia",
+        "city": "5412",
+        "state": "South Australia",
+        "cover_letter": [],
+        "certificate": [],
+        "radius": "55",
+        "abn_number": null,
+        "availabilityOption": "immediate1",
+        "availabilityDate": [],
+        "fromDate": [],
+        "availabilityDay": [
+          "Monday",
+          "Wednesday",
+          "Friday",
+          "Saturday"
+        ],
+        "work_rights": "Australian citizen",
+        "Year_of_experiance": "5-10",
+        "languages_spoken": "English",
+        "areas_expertise": null,
+        "percentage": null,
+        "salary_amount": 2000,
+        "salary_type": "hourly",
+        "aphra_number": "965896896568",
+        "willing_to_travel": true,
+        "travel_distance": "20",
+        "about_yourself": null,
+        "availabilityType": "fromDay",
+        "unavailabilityDate": [],
+        "dental_professional": {
+          "id": "599868d4-60ed-4938-af5f-7872aa811d3f",
+          "gender": null
+        },
+        "jobhirings": []
+      },
+      {
+        "id": "04bcb290-6fe3-4530-991e-2edd0ee8b9af",
+        "created_at": "2025-07-24T08:12:32.064022+00:00",
+        "updated_at": "2025-07-24T08:12:32.064022+00:00",
+        "skills": [
+          "Skill B"
+        ],
+        "jobexperiences": [],
+        "educations": [],
+        "upload_resume": [],
+        "job_designation": "Senior Dentist",
+        "current_company": "St jose University",
+        "current_ctc": "",
+        "dental_professional_id": "22d16a63-a44e-4772-870c-f3197eeacce0",
+        "post_anonymously": false,
+        "admin_status": "PENDING",
+        "profile_image": [],
+        "full_name": "testh",
+        "mobile_number": "+61478554774",
+        "email_address": "testyy@yopmail.com",
+        "work_type": [
+          "Full Time"
+        ],
+        "profession_type": "Dentist",
+        "location": "Adelaide SA, Australia",
+        "country": "Australia",
+        "city": "9874",
+        "state": "South Australia",
+        "cover_letter": [],
+        "certificate": [],
+        "radius": "33",
+        "abn_number": null,
+        "availabilityOption": "immediate1",
+        "availabilityDate": [],
+        "fromDate": [],
+        "availabilityDay": [],
+        "work_rights": "Permanent resident",
+        "Year_of_experiance": "10-15",
+        "languages_spoken": "English",
+        "areas_expertise": "Dental",
+        "percentage": null,
+        "salary_amount": 2000,
+        "salary_type": "weekly",
+        "aphra_number": "147852369",
+        "willing_to_travel": false,
+        "travel_distance": null,
+        "about_yourself": "This ia  TEST profile",
+        "availabilityType": "fromDay",
+        "unavailabilityDate": [],
+        "dental_professional": {
+          "id": "22d16a63-a44e-4772-870c-f3197eeacce0",
+          "gender": null
+        },
+         "jobhirings": []
+    }
+  ]
+}
+}

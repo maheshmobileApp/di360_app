@@ -27,7 +27,8 @@ class ImageConst {
   static const String logout = 'assets/svgs/logout 1.svg';
   static const String accountProfile = 'assets/svgs/accountprofile.svg';
   static const String NoDirectory = 'assets/svgs/no_directoy.svg';
-
+  static const String certificate = 'assets/svgs/certificate.svg';
+  static const String service= 'assets/svgs/service.svg';
   /// PNGS
   static const String pre_login = "assets/pngs/pre_login.png";
   static const String menu = "assets/pngs/menu.png";
