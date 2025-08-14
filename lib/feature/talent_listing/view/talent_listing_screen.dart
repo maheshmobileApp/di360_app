@@ -12,7 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class TalentListingScreen extends StatefulWidget {
-  const  TalentListingScreen({super.key});
+  const TalentListingScreen({super.key});
 
   @override
   State<TalentListingScreen> createState() => _TalentListingScreenState();
@@ -23,149 +23,164 @@ class _TalentListingScreenState extends State<TalentListingScreen>
   @override
   void initState() {
     super.initState();
+    // Optional: Trigger initial data fetch if not already in ViewModel
+    // Provider.of<TalentListingViewModel>(context, listen: false).fetchTalentListings();
   }
+
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
-    final vm= Provider.of<TalentListingViewModel>(context);
+    final vm = Provider.of<TalentListingViewModel>(context);
+
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          title: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Text(
-                'Dental Interface',
-                style: TextStyles.bold4(color: AppColors.black),
-              ),
-              Positioned(
-                top: -9,
-                right: -18,
-                child: SvgPicture.asset(
-                  ImageConst.logo,
-                  height: 20,
-                  width: 20,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            Builder(
-              builder: (context) => GestureDetector(
-                  onTap: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      SvgPicture.asset(ImageConst.notification,
-                          color: AppColors.black),
-                      if (notificationVM.notificationCount != 0)
-                        Positioned(
-                            top: -16,
-                            right: -13,
-                            child: CircleAvatar(
-                                radius: 12,
-                                backgroundColor: AppColors.primaryColor,
-                                child: Text(
-                                    '${notificationVM.notificationCount}',
-                                    style: TextStyles.medium1(
-                                        color: AppColors.whiteColor))))
-                    ],
-                  )),
+        title: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Text(
+              'Dental Interface',
+              style: TextStyles.bold4(color: AppColors.black),
             ),
-            addHorizontal(15),
-            SvgPicture.asset(ImageConst.search, color: AppColors.black),
-            addHorizontal(15),
-            GestureDetector(
-              onTap: () =>
-                  navigationService.navigateTo(RouteList.TalentListingFilter),
-              child:
-                  SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+            Positioned(
+              top: -9,
+              right: -18,
+              child: SvgPicture.asset(
+                ImageConst.logo,
+                height: 20,
+                width: 20,
+              ),
             ),
-            addHorizontal(15),
           ],
         ),
-      body: Column(
-          children: [
-            SizedBox(
-              height: 60,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount:  vm.statuses.length,
-                itemBuilder: (context, index) {
-                  String status =  vm.statuses[index];
-                  bool isSelected =  vm.selectedStatuscount == status;
-                  return GestureDetector(
-                    onTap: () {
-                       vm.changeStatus(status, context);
-                    },
-                    child: Container(
-                      margin:  EdgeInsets.symmetric(
-                          horizontal: 3, vertical: 10),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.primaryColor
-                            : AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: AppColors.primaryColor),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            status,
-                            style: TextStyles.regular2(
-                              color: isSelected
-                                  ? AppColors.whiteColor
-                                  : AppColors.black,
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.whiteColor
-                                  : AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                               "${ vm.statusCountMap[status]}",
-                              style: TextStyles.regular2(
-                                color: isSelected
-                                    ? AppColors.black
-                                    : AppColors.whiteColor,
-                              ),
-                            ),
-                          ),
-                        ],
+        actions: [
+          Builder(
+            builder: (context) => GestureDetector(
+              onTap: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  SvgPicture.asset(ImageConst.notification,
+                      color: AppColors.black),
+                  if (notificationVM.notificationCount != 0)
+                    Positioned(
+                      top: -16,
+                      right: -13,
+                      child: CircleAvatar(
+                        radius: 12,
+                        backgroundColor: AppColors.primaryColor,
+                        child: Text(
+                          '${notificationVM.notificationCount}',
+                          style: TextStyles.medium1(
+                              color: AppColors.whiteColor),
+                        ),
                       ),
                     ),
-                  );
-                },
+                ],
               ),
             ),
-            Divider(),
-          Expanded(
-            child: FutureBuilder(
-              future: vm.repo.getTalentListings(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final profiles = snapshot.data!;
-                return ListView.builder(
-                  itemCount: profiles.length,
-                  itemBuilder: (context, index) {
-                    return TalentListingCard(profile: profiles[index]);
+          ),
+          addHorizontal(15),
+          SvgPicture.asset(ImageConst.search, color: AppColors.black),
+          addHorizontal(15),
+          GestureDetector(
+            onTap: () =>
+                navigationService.navigateTo(RouteList.TalentListingFilter),
+            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          ),
+          addHorizontal(15),
+        ],
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 60,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: vm.statuses.length,
+              itemBuilder: (context, index) {
+                String status = vm.statuses[index];
+                bool isSelected = vm.selectedStatus == status;
+                return GestureDetector(
+                  onTap: () {
+                    vm.changeStatus(status, context);
                   },
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 3, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primaryColor
+                          : AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(color: AppColors.primaryColor),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          status,
+                          style: TextStyles.regular2(
+                            color: isSelected
+                                ? AppColors.whiteColor
+                                : AppColors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.whiteColor
+                                : AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            "${vm.statusCountMap[status] ?? 0}",
+                            style: TextStyles.regular2(
+                              color: isSelected
+                                  ? AppColors.black
+                                  : AppColors.whiteColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
+          ),
+          const Divider(),
+          Expanded(
+            child: vm.myTalentListingList.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "No Talents Found",
+                          style: TextStyles.medium2(color: AppColors.black),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: vm.myTalentListingList.length,
+                    itemBuilder: (context, index) {
+                      final talentData = vm.myTalentListingList[index];
+                      return TalentListingCard(
+                        jobProfiles: talentData,
+                        vm: vm,
+                        index: index,
+                      );
+                    },
+                  ),
           ),
         ],
       ),

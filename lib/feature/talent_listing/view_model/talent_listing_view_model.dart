@@ -1,14 +1,15 @@
-import 'package:di360_flutter/feature/talent_listing/model/talent_profile_response.dart';
-import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_listings_response.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
+import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:flutter/material.dart';
 
+
 class TalentListingViewModel extends ChangeNotifier {
-  
-final TalentListingRepository repo = TalentListingRepoImpl();
+  final TalentListingRepository repo = TalentListingRepoImpl();
 
-List<TalentProfile>? talentProfiles;
-
+  TalentListingViewModel() {
+    fetchTalentStatusCounts();
+  }
   final List<String> roleOptions = [
     "Surgen",
     "Dentist",
@@ -29,41 +30,12 @@ List<TalentProfile>? talentProfiles;
     "CANCELLED",
     "ENQUIRY",
   ];
-  final List<String> statuses = [
-    'All',
-    'Pending',
-    'Approval',
-    'Rejected',
-    'Cancelled',
-    'Enquiry',
-  ];
-  // Selected status
-  String selectedStatuscount = 'All';
 
+  // Selected filters
   String? selectedRole;
   String? selectedEmploymentType;
   String? selectedState;
- // Map of counts for each status (mocked here)
-  final Map<String, int> statusCountMap = {
-    'All': 10,
-    'Pending': 2,
-    'Approval': 3,
-    'Rejected': 1,
-    'Cancelled': 2,
-    'Enquiry': 2,
-  };
- Future<void> fetchTalentProfiles() async {
-  try {
-    talentProfiles = await repo.getTalentListings();
-    notifyListeners();
-  } catch (e) {
-    debugPrint("Failed to load profiles: $e");
-  }
-}
- void changeStatus(String status, BuildContext context) {
-     selectedStatuscount = status;
-    notifyListeners();
-  }
+
   void setRole(String val) {
     selectedRole = val;
     notifyListeners();
@@ -82,13 +54,97 @@ List<TalentProfile>? talentProfiles;
   void clearSelections() {
     selectedRole = null;
     selectedEmploymentType = null;
-     selectedState = null;
+    selectedState = null;
+    notifyListeners();
+  }
+
+  // Status filter
+  String selectedStatus = 'All';
+  final List<String> statuses = [
+    'All',
+    'Pending',
+    'Approval',
+    'Rejected',
+    'Cancelled',
+    'Enquiry',
+  ];
+
+  int? AllTalentCount = 0;
+  int? PendingCount = 0;
+  int? ApprovalCount = 0;
+  int? RejectedCount = 0;
+  int? CancelledStatusCount = 0;
+  int? EnquiryStatusCount = 0;
+
+  Map<String, int?> get statusCountMap => {
+        'All': AllTalentCount,
+        'Pending': PendingCount,
+        'Approval': ApprovalCount,
+        'Rejected': RejectedCount,
+        'Cancelled': CancelledStatusCount,
+        'Enquiry': EnquiryStatusCount,
+      };
+
+  List<String>? listingStatus = [];
+  String? suppliersId;
+  String? practiceId;
+
+ List<TalentsListingDetails> myTalentListingList = [];
+
+  void changeStatus(String status, BuildContext context) {
+    selectedStatus = status;
+
+    if (status == 'All') {
+      listingStatus = [
+        "PENDING",
+        "APPROVAL",
+        "REJECTED",
+        "CANCELLED",
+        "ENQUIRY",
+      ];
+    } else if (status == 'Pending') {
+      listingStatus = ['PENDING'];
+    } else if (status == 'Approval') {
+      listingStatus = ["APPROVAL"];
+    } else if (status == 'Rejected') {
+      listingStatus = ['REJECTED'];
+    } else if (status == 'Cancelled') {
+      listingStatus = ['CANCELLED'];
+    } else if (status == 'Enquiry') {
+      listingStatus = ['ENQUIRY'];
+    }
+
+    getMyTalentListingData();
+    notifyListeners();
+  }
+
+  Future<void> fetchTalentStatusCounts() async {
+    final res = await repo.talentCounts();
+
+    AllTalentCount = (res.all?.aggregate?.count ?? 0);
+    PendingCount = res.pending?.aggregate?.count;
+    ApprovalCount = res.approved?.aggregate?.count;
+    RejectedCount = res.rejected?.aggregate?.count;
+    CancelledStatusCount = res.cancelled?.aggregate?.count;
+    EnquiryStatusCount = res.enquiry?.aggregate?.count;
+
+    notifyListeners();
+  }
+
+  Future<void> getMyTalentListingData() async {
+    final res = await repo.getMyTalentListing(listingStatus);
+    fetchTalentStatusCounts();
+    
+    if (res != null) {
+      myTalentListingList = res; 
+    }
+
     notifyListeners();
   }
 
   void printSelectedItems() {
-    debugPrint("Selected Role: \$selectedRole");
-    debugPrint("Selected Employment Type: \$selectedEmploymentType");
-    debugPrint("Selected Status: \$selectedState");
+    debugPrint("Selected Role: $selectedRole");
+    debugPrint("Selected Employment Type: $selectedEmploymentType");
+    debugPrint("Selected Status: $selectedState");
   }
 }
