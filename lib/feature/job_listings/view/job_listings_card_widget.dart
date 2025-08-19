@@ -26,66 +26,104 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     final String time = _getShortTime(jobsListingData?.createdAt ?? '') ?? '';
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: AppColors.borderColor, width: 1),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromRGBO(116, 130, 148, 0.2),
-              blurRadius: 15,
-              offset: Offset(0, 2),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              border: Border(
+                left: BorderSide(
+                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
+                right: BorderSide(
+                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
+                top: BorderSide(
+                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
+              ),
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _logoWithTitle(
-                    context,
-                    jobsListingData?.logo ?? '',
-                    jobsListingData?.companyName ?? '',
-                    jobsListingData?.jRole ?? '',
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                // 👉 all your existing card content goes here
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _jobTimeChip(time),
-                    menuWidget(
-                      vm,
-                      context,
-                      index!,
-                      jobsListingData?.id ?? '',
-                      jobsListingData?.status ?? '',
+                    Expanded(
+                      child: _logoWithTitle(
+                        context,
+                        jobsListingData?.logo ?? '',
+                        jobsListingData?.companyName ?? '',
+                        jobsListingData?.jRole ?? '',
+                      ),
                     ),
+                    Row(
+                      children: [
+                        _jobTimeChip(time),
+                        addHorizontal(4),
+                        menuWidget(
+                          vm,
+                          context,
+                          index!,
+                          jobsListingData?.id ?? '',
+                          jobsListingData?.status ?? '',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                addVertical(12),
+                _chipWidget(jobsListingData?.typeofEmployment ?? []),
+                addVertical(10),
+                _descriptionWidget(jobsListingData?.description ?? ''),
+                const Divider(),
+                Row(
+                  children: [
+                    _roundedButton("Message"),
+                    addHorizontal(10),
+                    _roundedButton("Enquiry"),
+                    const Spacer(),
+                    const Icon(Icons.arrow_forward_ios,
+                        color: AppColors.primaryColor, size: 10),
                   ],
                 ),
               ],
             ),
-            addVertical(12),
-            _chipWidget(jobsListingData?.typeofEmployment ?? []),
-            addVertical(10),
-            _descriptionWidget(jobsListingData?.description ?? ''),
-            const Divider(),
-            Row(
-              children: [
-                _roundedButton("Message"),
-              addHorizontal(10),
-                _roundedButton("Enquiry"),
-                const Spacer(),
-                const Icon(Icons.arrow_forward_ios, 
-                color: AppColors.primaryColor, size: 10),
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromRGBO(116, 130, 148, 0.15),
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
+                ),
               ],
             ),
-          ],
-        ),
+            child: InkWell(
+              onTap: () => navigationService
+                  .navigateTo(RouteList.JobListingApplicantscreen),
+              child: Center(
+                child: Text(
+                  "${jobsListingData?.jobApplicantsAggregate?.aggregate?.count ?? 0} Applicants applied for this role",
+                  style: TextStyles. medium1(
+                    color: AppColors.black,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -106,8 +144,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
               radius: 30,
               child: logo.isEmpty
-                  ? const Icon(Icons.business, size: 20, 
-                  color: AppColors.lightGeryColor)
+                  ? const Icon(Icons.business,
+                      size: 20, color: AppColors.lightGeryColor)
                   : null,
             ),
             Positioned(
@@ -115,7 +153,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.whiteColor,
+                  color: Color.fromRGBO(229, 244, 237, 1),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
@@ -189,18 +227,25 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
 
   Widget _jobTimeChip(String time) {
     return Container(
-      margin: const EdgeInsets.only(top: 4, right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      height: 19,
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: AppColors.timeBgColor,
+        gradient: const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color.fromRGBO(255, 241, 229, 0),
+            Color.fromRGBO(255, 241, 229, 1),
+          ],
+        ),
         borderRadius: BorderRadius.circular(5),
       ),
+      alignment: Alignment.centerRight,
       child: Text(
         time,
-        style: TextStyles.medium1(
-          color: AppColors.primaryColor,
-          fontSize: 10,
-        ),
+        textAlign: TextAlign.right,
+        style: TextStyles.semiBold(
+            fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),
       ),
     );
   }
@@ -224,8 +269,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           addHorizontal(4),
           Text(
             label,
-            style: TextStyles.medium1(color: AppColors.primaryColor, 
-            fontSize: 13),
+            style:
+                TextStyles.medium1(color: AppColors.primaryColor, fontSize: 13),
           ),
         ],
       ),
@@ -245,7 +290,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
       offset: const Offset(0, 40),
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
-      icon: const Icon(Icons.more_vert, color: AppColors.bottomNavUnSelectedColor),
+      icon: const Icon(Icons.more_vert,
+          color: AppColors.bottomNavUnSelectedColor),
       onSelected: (value) {
         switch (value) {
           case "Edit":
@@ -258,13 +304,16 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             );
             break;
           case "Inactive":
-            showAlertMessage(context, 'Do you really want to change status?', onBack: () {
+            showAlertMessage(context, 'Do you really want to change status?',
+                onBack: () {
               navigationService.goBack();
               vm.updateJobListingStatus(context, id, status);
             });
             break;
           case "Delete":
-            showAlertMessage(context, 'Are you sure you want to delete this listing?', onBack: () {
+            showAlertMessage(
+                context, 'Are you sure you want to delete this listing?',
+                onBack: () {
               navigationService.goBack();
               vm.removeJobsListingData(context, id);
             });

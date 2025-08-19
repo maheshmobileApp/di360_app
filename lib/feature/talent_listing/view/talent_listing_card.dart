@@ -139,7 +139,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
               type,
               style: TextStyles.semiBold(
                 fontSize: 14,
-                color: AppColors.blueColor,
+                color: AppColors.primaryBlueColor,
                 decoration: TextDecoration.underline,
                 decorationColor: AppColors.blueColor,
               ),
