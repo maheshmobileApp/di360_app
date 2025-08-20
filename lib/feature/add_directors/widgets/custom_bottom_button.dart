@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomButton extends StatelessWidget {
@@ -28,7 +29,7 @@ class CustomBottomButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: Color(0xFFEFEFEF))),
-        color: Colors.white,
+        color: AppColors.buttomBarColor,
       ),
       child: Row(
         children: [

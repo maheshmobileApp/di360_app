@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class AddDirectorService extends StatelessWidget with BaseContextHelpers {
   const AddDirectorService({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
@@ -201,59 +201,107 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
   }
 
   void showServiceOptionsBottomSheet(
-      BuildContext context, ServiceModel service, int index) {
-    final AddDirectorVM =
-        Provider.of<AddDirectorViewModel>(context, listen: false);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-     backgroundColor: AppColors.black,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.6,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.buttomBarColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    BuildContext context, ServiceModel service, int index) {
+  final addDirectorVM = Provider.of<AddDirectorViewModel>(context, listen: false);
+  
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColors.black,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.5, 
+        maxChildSize: 0.8,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: AppColors.buttomBarColor,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: AppColors.buttomBarColor,
+                          backgroundImage: service.imageFile != null
+                              ? FileImage(service.imageFile!)
+                              : null,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                service.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                service.description,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Appointment: ${service.appointment ? 'Yes' : 'No'}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  CustomBottomButton(
+                    onFirst: () {
+                      addDirectorVM.Services.remove(service);
+                      Navigator.pop(context);
+                    },
+                    onSecond: () {
+                      Navigator.pop(context);
+                      showEditServiceBottomSheet(context, service, index);
+                    },
+                    firstLabel: "Delete",
+                    secondLabel: "Edit",
+                    firstBgColor: AppColors.timeBgColor,
+                    firstTextColor: AppColors.primaryColor,
+                    secondBgColor: AppColors.primaryColor,
+                    secondTextColor: AppColors.whiteColor,
+                  )
+                ],
               ),
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  
-                  children: [
-                    Expanded(
-                        child: CustomBottomButton(
-                      onFirst: () {
-                        AddDirectorVM.Services.remove(service);
-                        Navigator.pop(context);
-                      },
-                      onSecond: () {
-                        Navigator.pop(context);
-                        showEditServiceBottomSheet(context, service, index);
-                      },
-                      firstLabel: "Delete",
-                      secondLabel: "Edit",
-                      firstBgColor: AppColors.timeBgColor,
-                      firstTextColor: AppColors.primaryColor,
-                      secondBgColor: AppColors.primaryColor,
-                      secondTextColor: AppColors.whiteColor,
-                    ))
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
   void showEditServiceBottomSheet(
       BuildContext context, ServiceModel service, int index) {
     final AddDirectorVM =

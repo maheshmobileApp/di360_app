@@ -94,6 +94,28 @@ mixin ValidationMixins {
     if (isEnabled && endDate == null) return 'Please select an end date';
     return null;
   }
+  String? validateServiceStartTimeDate(bool isEnabled, DateTime? ServiceStartTimeDate) {
+    if (isEnabled && ServiceStartTimeDate == null)
+     return 'Please select a  Service start time';
+    return null;
+  }
+
+  String? validateServiceEndTimeDate(bool isEnabled, DateTime? ServiceEndTimeDate) {
+    if (isEnabled && ServiceEndTimeDate == null) 
+    return 'Please select an  Service end time';
+    return null;
+  }
+  String? validateBreakStartTimeDate(bool isEnabled, DateTime? BreakStartTimeDate) {
+    if (isEnabled && BreakStartTimeDate == null) 
+    return 'Please select a Break start time';
+    return null;
+  }
+
+  String?validateBreakEndTimeDate (bool isEnabled, DateTime? BreakEndTimeDate) {
+    if (isEnabled && BreakEndTimeDate == null) 
+    return 'Please select an Break end time';
+    return null;
+  }
   
   String? validateCatagoryName(String? value) {
     if (value == null || value.isEmpty) return 'Please select category name';

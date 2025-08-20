@@ -41,27 +41,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _addButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
-        backgroundColor: AppColors.timeBgColor,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      child: Text(
-        label,
-        style: TextStyles.semiBold(fontSize: 14, color: AppColors.primaryColor),
-      ),
-    );
-  }
-
+  
   Widget _TimmingCard() {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

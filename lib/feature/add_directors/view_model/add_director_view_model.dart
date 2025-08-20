@@ -22,7 +22,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   final TextEditingController CertificateNameController =
       TextEditingController();
   final TextEditingController ServiceNameController = TextEditingController();
-   final TextEditingController ServiceDescriptionController =
+  final TextEditingController ServiceDescriptionController =
       TextEditingController();
   final TextEditingController AchievementNameController =
       TextEditingController();
@@ -81,13 +81,14 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   //Foam valodation
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(9, (_) => GlobalKey<FormState>());
+      List.generate(10, (_) => GlobalKey<FormState>());
   final List<int> stepsWithValidation = [0];
   final List<String> steps = [
     'Basic',
     'Services',
     'Certificates',
     'Achievements',
+    'Documents',
     'OurTeam',
     'Gallery',
     'Appointments',
@@ -129,6 +130,10 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedAccount;
   String? selectedBusineestype;
   ServiceModel? selectedService;
+  TeamMembersModel?selectedteamember;
+  AppoinmentsModel ?selectedAppoinment;
+  TimingsModel ?selectedTimigs;
+  SocialLinksModel ?selectedSocialLinks;
 
   //
   // Other fields
@@ -166,9 +171,10 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     if (_currentStep != 0) return true;
     return formKeys[0].currentState?.validate() ?? false;
   }
-   //
-   // Step navigation
- void goToNextStep() {
+
+  //
+  // Step navigation
+  void goToNextStep() {
     if (!validateCurrentStep()) return;
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
@@ -235,16 +241,15 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     Services.add(ServiceModel(
       name: ServiceNameController.text,
       appointment: Service,
-      description:ServiceDescriptionController.text,
+      description: ServiceDescriptionController.text,
       imageFile: serviefile,
     ));
     ServiceNameController.clear();
     Service = true;
     serviefile = null;
-   ServiceDescriptionController .clear();
+    ServiceDescriptionController.clear();
     notifyListeners();
   }
-
   void addCertificates() {
     Certificates.add(CertificateModel(
       name: CertificateNameController.text,
@@ -254,7 +259,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     certificateFile = null;
     notifyListeners();
   }
-
   void addDocument() {
     Documents.add(DocumentModel(
       name: DocumentNameController.text,
@@ -264,7 +268,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     documentFile = null;
     notifyListeners();
   }
-
   void addAchievement() {
     Achievements.add(AchievementModel(
       name: AchievementNameController.text,
@@ -274,7 +277,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     achievementFile = null;
     notifyListeners();
   }
-
   void addTeamMember() {
     TeamMembers.add(TeamMembersModel(
       name: TeamMemberNameController.text,
@@ -294,7 +296,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     userFile = null;
     notifyListeners();
   }
-
   void addGallery() {
     Gallerys.add(GalleryModel(
       imageFile: galleryFile,
@@ -302,36 +303,37 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     galleryFile = null;
     notifyListeners();
   }
-  /*void addAppointments() {
-   Appoinments.add(AppoinmentsModel(
-     TeamMemberName:
-      Services:
-      Selectaday:
-      ServiceTime:
-      ServiceStarTime :
-      ServiceEndTime :
-      BreackStarTime:
-      BreackEndTime :
-    ));
-   
-    notifyListeners();
-  }
-  void addTimings() {
+  void addAppointments() {
+  Appoinments.add(
+    AppoinmentsModel(
+      teamMemberName: selectedTeamMember,
+      services: selectedTeamService,
+      selectADay: selectedDays,
+      serviceTime: ServiceTimeDate,
+      serviceStartTime: ServiceStartTimeDate,
+      serviceEndTime: ServiceEndTimeDate,
+      breakStartTime: BreakStartTimeDate,
+      breakEndTime: BreakEndTimeDate,
+    ),
+  );
+  notifyListeners();
+}
+void addTimings() {
   Timings.add(TimingsModel(
-      SelectadTime:
+       SelectadTime: SelectTime,
+       ServiceStarTime: ServiceStartTimeDate,
+      ServiceEndTime: ServiceEndTimeDate,
+      AllDay: true,
     ));
-   
     notifyListeners();
   }
   void addSocialLinks() {
     SocialLinks.add(SocialLinksModel(
      AccountName: SocialAccountsController.text,
-     SocialAccountsURl:  
     ));
     SocialAccountsController.clear();
-
     notifyListeners();
-  }*/
+  }
   //
   // Load & update methods
   void loadServiceData(ServiceModel service) {
@@ -340,17 +342,88 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     Service = service.appointment;
     serviefile = service.imageFile;
   }
+  void updateService(int index) {
+    Services[index] = ServiceModel(
+      name: ServiceNameController.text,
+      description: ServiceDescriptionController.text,
+      appointment: Service,
+      imageFile: serviefile,
+    );
+    notifyListeners();
+  }
+  void loadTeamData(TeamMembersModel TeamMembers) {
+    TeamMemberNameController.text = TeamMembers.name;
+    TeamMemberDesignationController.text = TeamMembers.Designation;
+    TeamMemberPhoneNumberController.text = TeamMembers.PhoneNumber;
+    TeamMemberEmailIDController.text = TeamMembers.EmailID;
+    Appointments = TeamMembers.appointment;
+    OurTeam = TeamMembers.ourTeam;
+    userFile = TeamMembers.imageFile;
+  }
+  void updateTeam(int index) {
+    TeamMembers[index] = TeamMembersModel(
+      name: TeamMemberNameController.text,
+      Designation: TeamMemberDesignationController.text,
+      PhoneNumber: TeamMemberPhoneNumberController.text,
+      EmailID: TeamMemberEmailIDController.text,
+      appointment: Appointments,
+      ourTeam: OurTeam,
+      imageFile: userFile,
+    );
+    notifyListeners();
+  }
+void loadAppointmentData(AppoinmentsModel appointment) {
+  selectedTeamMember = appointment.teamMemberName;
+  selectedTeamService = appointment.services;
+  selectedDays = appointment.selectADay;
+  ServiceTimeDate = appointment.serviceTime;
+  ServiceStartTimeDate = appointment.serviceStartTime;
+  ServiceEndTimeDate = appointment.serviceEndTime;
+  BreakStartTimeDate = appointment.breakStartTime;
+  BreakEndTimeDate = appointment.breakEndTime;
+}
 
- void updateService(int index) {
-  Services[index] = ServiceModel(
-    name: ServiceNameController.text,
-    description: ServiceDescriptionController.text,
-    appointment: Service,
-    imageFile: serviefile,
+void updateAppointment(int index) {
+  Appoinments[index] = AppoinmentsModel(
+    teamMemberName: selectedTeamMember ?? '',
+    services: selectedTeamService ?? '',
+    selectADay: selectedDays ?? '',
+    serviceTime: ServiceTimeDate,
+    serviceStartTime: ServiceStartTimeDate,
+    serviceEndTime: ServiceEndTimeDate,
+    breakStartTime: BreakStartTimeDate,
+    breakEndTime: BreakEndTimeDate,
   );
+
   notifyListeners();
 }
 
+void loadTimingsData(TimingsModel timing) {
+  ServiceTimeDate = timing.SelectadTime;
+  ServiceStartTimeDate = timing.ServiceStarTime;
+  ServiceEndTimeDate = timing.ServiceEndTime;
+ AllDay = timing.AllDay;
+}
+
+void updateTimings(int index) {
+  Timings[index] = TimingsModel(
+    SelectadTime: ServiceTimeDate,
+    ServiceStarTime: ServiceStartTimeDate,
+    ServiceEndTime: ServiceEndTimeDate,
+    AllDay: AllDay,
+   
+  );
+  notifyListeners();
+}
+void loadSocialLinksData(SocialLinksModel socialLink) {
+  SocialAccountsController.text = socialLink.AccountName;
+}
+void updateSocialLinks(int index) {
+  SocialLinks[index] = SocialLinksModel(
+    AccountName: SocialAccountsController.text,
+  );
+  notifyListeners();
+}
 
   //imagepickers...
   Future<void> pickLogoImage(ImageSource source) async {
@@ -439,7 +512,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     ABNNumberController.dispose();
     CertificateNameController.dispose();
     ServiceNameController.dispose();
-     ServiceDescriptionController.dispose();
+    ServiceDescriptionController.dispose();
     AchievementNameController.dispose();
     DocumentNameController.dispose();
     TeamMemberNameController.dispose();
