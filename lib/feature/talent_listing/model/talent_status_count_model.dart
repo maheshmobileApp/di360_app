@@ -1,10 +1,10 @@
 class TalentListingCountRes {
-  TalentData? data;
+  TalentCountData? data;
 
   TalentListingCountRes({this.data});
 
   TalentListingCountRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new TalentData.fromJson(json['data']) : null;
+    data = json['data'] != null ? new TalentCountData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -15,14 +15,14 @@ class TalentListingCountRes {
     return data;
   }
 }
-class TalentData {
+class TalentCountData {
   All? all;
   Approved? approved;
   Pending? pending;
   Rejected? rejected;
   Enquiry? enquiry;
   Cancelled? cancelled;
-  TalentData(
+  TalentCountData(
       {this.all,
       this.approved,
       this.pending,
@@ -30,7 +30,7 @@ class TalentData {
       this.enquiry,
       this.cancelled});
 
-  TalentData.fromJson(Map<String, dynamic> json) {
+ TalentCountData.fromJson(Map<String, dynamic> json) {
     all = json['all'] != null ? new All.fromJson(json['all']) : null;
     approved =
         json['approved'] != null ? new Approved.fromJson(json['approved']) : null;

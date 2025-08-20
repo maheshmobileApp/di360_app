@@ -12,6 +12,8 @@ class JobListingsViewModel extends ChangeNotifier {
   }
   final Map<String, bool> _jobActiveStatus = {};
   String selectedStatus = 'All';
+   String selectedstatusesforapplicatnts = 'All';
+
   final List<String> statuses = [
     'All',
     'Draft',
@@ -20,6 +22,13 @@ class JobListingsViewModel extends ChangeNotifier {
     'InActive',
     'Expired',
     'Reject',
+  ];
+  final List<String> statusesforapplicatnts = [
+    'All',
+    'Applied',
+    'Shortlisted',
+    'Interviews',
+    
   ];
 
   int? allJobTalentCount = 0;
@@ -39,11 +48,26 @@ class JobListingsViewModel extends ChangeNotifier {
         'Expired': expiredStatusCount,
         'Reject': rejectStatusCount,
       };
+  final Map<String,int> statusCountMapforapplicatnts =
+  {
+   'All':10,
+    'Applied':2,
+    'Shortlisted':2,
+    'Interviews':5,
+  };
 
   List<String>? listingStatus = [];
   String? suppliersId;
   String? practiceId;
   List<JobsListingDetails> myJobListingList = [];
+
+  void  changeStatusforapplicatnts(String status,
+  BuildContext context)
+  {
+  selectedstatusesforapplicatnts=status;
+  notifyListeners();
+  }
+
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {

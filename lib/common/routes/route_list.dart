@@ -33,6 +33,7 @@ class RouteList {
   static const String directorQuickLinks = '/directorQuickLinks';
   static const String  TalentListingScreen=' TalentListingScreen';
   static const String TalentListingFilter = '/TalentListingFilter';
+  static const String JobListingApplicantscreen ='/JobListingApplicantscreen';
   static const String  adddirectorview = 'adddirectorview';
  
 }

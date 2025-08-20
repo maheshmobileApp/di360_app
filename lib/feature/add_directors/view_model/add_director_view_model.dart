@@ -154,17 +154,14 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     Service = value;
     notifyListeners();
   }
-
   void toggleAppointments(bool value) {
     Appointments = value;
     notifyListeners();
   }
-
   void toggleAllDay(bool value) {
     AllDay = value;
     notifyListeners();
   }
-
   void toggleOurTeam(bool value) {
     OurTeam = value;
     notifyListeners();
@@ -203,7 +200,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
-
   //
   void setSelectedBusineestype(String emp) {
     selectedBusineestype = emp;
@@ -239,7 +235,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     SelectTime = date;
     notifyListeners();
   }
-
   //
   // Add methods
   void addService() {
@@ -510,7 +505,6 @@ void updateSocialLinks(int index) {
       notifyListeners();
     }
   }
-
   @override
   void dispose() {
     MobileNumberController.dispose();
