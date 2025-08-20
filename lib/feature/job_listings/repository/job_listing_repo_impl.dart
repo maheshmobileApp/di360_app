@@ -4,10 +4,12 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_status_count_model.dart';
 import 'package:di360_flutter/feature/job_listings/quary/delete_job_listing_quary.dart';
+import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_listing_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/job_status_count_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/update_joblisting_status_quary.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repository.dart';
+import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
 
 class JobListingRepoImpl extends JobListingRepository {
   final HttpService http = HttpService();
@@ -43,6 +45,7 @@ class JobListingRepoImpl extends JobListingRepository {
     return result.jobs ?? [];
   }
 
+
   @override
   Future<dynamic> removeJobListing(String? id) async {
     final jobListingData = await http.mutation(deleteJobListing, {"id": id});
@@ -73,4 +76,19 @@ class JobListingRepoImpl extends JobListingRepository {
     print(result);
     return result;
   }
+  @override
+  Future<List<JobApplicant>?> getJobApplicants(List<Map<String, dynamic>> andList) async {
+    try {
+      final response = await http.query(
+        getJobApplicantsQuary,
+        variables: {"andList": andList},
+      );
+
+      final result = JobApplicantsResponse.fromJson(response);
+      return result.jobApplicants ?? [];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
+
