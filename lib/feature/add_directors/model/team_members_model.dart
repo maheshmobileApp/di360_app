@@ -3,7 +3,7 @@ import 'dart:io';
 class TeamMembersModel {
   final String name;
   final String Designation;
-  final int PhoneNumber;
+  final String PhoneNumber;
   final String EmailID;
   final File? imageFile;
   final bool appointment;

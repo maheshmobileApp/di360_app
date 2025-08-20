@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_timings_foam.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:flutter/material.dart';
 
 class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
@@ -18,8 +19,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _sectionHeader('Add Business Timings'),
-               _addButton(
-                  context,
+               CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
                     showTimingsBottomSheet(context);
@@ -41,27 +41,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _addButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
-        backgroundColor: AppColors.timeBgColor,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      child: Text(
-        label,
-        style: TextStyles.semiBold(fontSize: 14, color: AppColors.primaryColor),
-      ),
-    );
-  }
-
+  
   Widget _TimmingCard() {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

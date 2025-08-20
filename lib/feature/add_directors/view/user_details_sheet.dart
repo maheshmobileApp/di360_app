@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class UserDetailsSheet extends StatelessWidget {
   const UserDetailsSheet({Key? key}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,7 +17,6 @@ class UserDetailsSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Row(
               children: [
                 const CircleAvatar(
@@ -43,8 +42,6 @@ class UserDetailsSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-
-            // Phone
             Row(
               children: [
                 const Icon(Icons.phone, size: 16),
@@ -53,8 +50,6 @@ class UserDetailsSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-
-            // Email
             Row(
               children: [
                 const Icon(Icons.email, size: 16),
@@ -63,22 +58,16 @@ class UserDetailsSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-
-            // Show in Appointments
             Text('Show in Appointments',
                 style: TextStyle(fontSize: 13, color: Colors.grey)),
             const SizedBox(height: 4),
             Text('Yes', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
             const SizedBox(height: 12),
-
-            // Show in our team
             Text('Show in our team',
                 style: TextStyle(fontSize: 13, color: Colors.grey)),
             const SizedBox(height: 4),
             Text('Yes', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
             const SizedBox(height: 24),
-
-            // Buttons
             Row(
               children: [
                 Expanded(

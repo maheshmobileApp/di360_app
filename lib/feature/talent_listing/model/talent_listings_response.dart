@@ -1,18 +1,43 @@
 class TalentProfileResponse {
-  final List<TalentProfile> jobProfiles;
+TalentListing? data;
 
- TalentProfileResponse({required this.jobProfiles});
+  TalentProfileResponse({this.data});
 
-  factory TalentProfileResponse.fromJson(Map<String, dynamic> json) {
-    return TalentProfileResponse(
-      jobProfiles: (json['data']['job_profiles'] as List)
-          .map((e) =>  TalentProfile.fromJson(e))
+  TalentProfileResponse.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? new TalentListing.fromJson(json['data']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    return data;
+  }
+}
+class TalentListing {
+  List<TalentsListingDetails>? jobProfiles;
+
+  TalentListing({this.jobProfiles});
+
+  factory TalentListing.fromJson(Map<String, dynamic> json) {
+    return TalentListing(
+      jobProfiles: (json['job_profiles'] as List<dynamic>?)
+          ?.map((v) => TalentsListingDetails.fromJson(
+              v as Map<String, dynamic>)) // Strong type casting
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (jobProfiles != null)
+        'job_profiles': jobProfiles!.map((v) => v.toJson()).toList(),
+    };
+  }
 }
 
-class TalentProfile {
+class TalentsListingDetails {
   final String id;
   final String createdAt;
   final String updatedAt;
@@ -60,7 +85,7 @@ class TalentProfile {
   final DentalProfessional dentalProfessional;
   final List<dynamic> jobhirings;
 
-  TalentProfile({
+  TalentsListingDetails({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
@@ -109,8 +134,8 @@ class TalentProfile {
     required this.jobhirings,
   });
 
-  factory TalentProfile.fromJson(Map<String, dynamic> json) {
-    return  TalentProfile(
+  factory TalentsListingDetails.fromJson(Map<String, dynamic> json) {
+    return TalentsListingDetails(
       id: json['id'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
@@ -172,7 +197,97 @@ class TalentProfile {
       jobhirings: json['jobhirings'] ?? [],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'skills': skills,
+      'jobexperiences': jobExperiences.map((e) => {
+            'job_title': e.jobTitle,
+            'company_name': e.companyName,
+            'startYear': e.startYear,
+            'startMonth': e.startMonth,
+            'endYear': e.endYear,
+            'endMonth': e.endMonth,
+            'stillInRole': e.stillInRole,
+            'ejobdesp': e.ejobdesp,
+          }).toList(),
+      'educations': educations.map((e) => {
+            'finishDate': e.finishDate,
+            'institution': e.institution,
+            'qualification': e.qualification,
+            'courseHighlights': e.courseHighlights,
+            'qualificationFinished': e.qualificationFinished,
+          }).toList(),
+      'upload_resume': uploadResume.map((e) => {
+            'url': e.url,
+            'name': e.name,
+            'type': e.type,
+            'extension': e.extension,
+          }).toList(),
+      'job_designation': jobDesignation,
+      'current_company': currentCompany,
+      'current_ctc': currentCtc,
+      'dental_professional_id': dentalProfessionalId,
+      'post_anonymously': postAnonymously,
+      'admin_status': adminStatus,
+      'profile_image': profileImage.map((e) => {
+            'url': e.url,
+            'name': e.name,
+            'type': e.type,
+            'extension': e.extension,
+          }).toList(),
+      'full_name': fullName,
+      'mobile_number': mobileNumber,
+      'email_address': emailAddress,
+      'work_type': workType,
+      'profession_type': professionType,
+      'location': location,
+      'country': country,
+      'city': city,
+      'state': state,
+      'cover_letter': coverLetter.map((e) => {
+            'url': e.url,
+            'name': e.name,
+            'type': e.type,
+            'extension': e.extension,
+          }).toList(),
+      'certificate': certificate.map((e) => {
+            'url': e.url,
+            'name': e.name,
+            'type': e.type,
+            'extension': e.extension,
+          }).toList(),
+      'radius': radius,
+      'abn_number': abnNumber,
+      'availabilityOption': availabilityOption,
+      'availabilityDate': availabilityDate,
+      'fromDate': fromDate,
+      'availabilityDay': availabilityDay,
+      'work_rights': workRights,
+      'Year_of_experiance': yearOfExperience,
+      'languages_spoken': languagesSpoken,
+      'areas_expertise': areasExpertise,
+      'percentage': percentage,
+      'salary_amount': salaryAmount,
+      'salary_type': salaryType,
+      'aphra_number': aphraNumber,
+      'willing_to_travel': willingToTravel,
+      'travel_distance': travelDistance,
+      'about_yourself': aboutYourself,
+      'availabilityType': availabilityType,
+      'unavailabilityDate': unavailabilityDate,
+      'dental_professional': {
+        'id': dentalProfessional.id,
+        'gender': dentalProfessional.gender,
+      },
+      'jobhirings': jobhirings,
+    };
+  }
 }
+
 
 class JobExperience {
   final String jobTitle;

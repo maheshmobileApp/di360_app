@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_socilalinks_foam.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 
 import 'package:flutter/material.dart';
 
@@ -19,8 +20,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _sectionHeader('Add social links'),
-               _addButton(
-                  context,
+               CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
                     showSocialMediaBottomSheet(context);
@@ -41,28 +41,6 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
-
-  Widget _addButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
-        backgroundColor: AppColors.timeBgColor,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      child: Text(
-        label,
-        style: TextStyles.semiBold(fontSize: 14, color: AppColors.primaryColor),
-      ),
-    );
-  }
-
   Widget _SocialLinkCard() {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -73,7 +51,6 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Main Content
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,8 +70,6 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
             ],
           ),
         ),
-
-        // More icon
         const Icon(
           Icons.more_vert,
           size: 16,

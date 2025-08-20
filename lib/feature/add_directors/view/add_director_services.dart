@@ -4,14 +4,17 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/service_model.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_services_foam.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddDirectorService extends StatelessWidget with BaseContextHelpers {
   const AddDirectorService({super.key});
+  
   @override
   Widget build(BuildContext context) {
-    final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -22,8 +25,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _sectionHeader('Add Service'),
-                _addButton(
-                  context,
+                CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
                     showNewServiceBottomSheet(context);
@@ -32,9 +34,11 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
               ],
             ),
             addVertical(16),
-            ...AddDirectorVM.Services
-                .map((service) => _ServiceCard(context, service))
-                .toList(),
+            ...addDirectorVM.Services.asMap().entries.map((entry) {
+              final index = entry.key;
+              final service = entry.value;
+              return _ServiceCard(context, service, index);
+            }).toList(),
           ],
         ),
       ),
@@ -48,7 +52,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _ServiceCard(BuildContext context, ServiceModel service) {
+  Widget _ServiceCard(BuildContext context, ServiceModel service, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -61,7 +65,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.buttomBarColor,
             backgroundImage: service.imageFile != null
                 ? FileImage(service.imageFile!)
                 : null,
@@ -85,7 +89,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                     text: 'Appointment : ',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade600,
+                      color: AppColors.lightGeryColor,
                     ),
                     children: [
                       TextSpan(
@@ -99,7 +103,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   service.description,
                   style: TextStyle(
@@ -112,14 +116,19 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              showServiceOptionsBottomSheet(context, service, index);
+            },
+            child: const Icon(Icons.more_vert, size: 20),
+          ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
               Provider.of<AddDirectorViewModel>(context, listen: false)
                   .Services
                   .remove(service);
-              Provider.of<AddDirectorViewModel>(context, listen: false);
-  
             },
             child: const Icon(
               Icons.delete_outline,
@@ -132,35 +141,13 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _addButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
-        backgroundColor: AppColors.timeBgColor,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      child: Text(
-        label,
-        style: TextStyles.semiBold(fontSize: 14, color: AppColors.primaryColor),
-      ),
-    );
-  }
-
   void showNewServiceBottomSheet(BuildContext context) {
     final addDirectorVM =
         Provider.of<AddDirectorViewModel>(context, listen: false);
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+     backgroundColor: AppColors.black,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -173,7 +160,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
           builder: (context, scrollController) {
             return Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.buttomBarColor,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: SafeArea(
@@ -190,65 +177,184 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                         child: AddDirectorServicesFoam(),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      decoration: const BoxDecoration(
-                        border:
-                            Border(top: BorderSide(color: Color(0xFFEFEFEF))),
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 48,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFFF1E5),
-                                  foregroundColor: AppColors.primaryColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  textStyle: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  elevation: 0,
+                    CustomBottomButton(
+                      onFirst: () => Navigator.pop(context),
+                      onSecond: () {
+                        addDirectorVM.addService();
+                        Navigator.pop(context);
+                      },
+                      firstLabel: "Close",
+                      secondLabel: "Add",
+                      firstBgColor: AppColors.timeBgColor,
+                      firstTextColor: AppColors.primaryColor,
+                      secondBgColor: AppColors.primaryColor,
+                      secondTextColor: AppColors.whiteColor,
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void showServiceOptionsBottomSheet(
+    BuildContext context, ServiceModel service, int index) {
+  final addDirectorVM = Provider.of<AddDirectorViewModel>(context, listen: false);
+  
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColors.black,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.5, 
+        maxChildSize: 0.8,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: AppColors.buttomBarColor,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: AppColors.buttomBarColor,
+                          backgroundImage: service.imageFile != null
+                              ? FileImage(service.imageFile!)
+                              : null,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                service.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.black,
                                 ),
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Close"),
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: SizedBox(
-                              height: 48,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryColor,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  textStyle: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  elevation: 0,
+                              const SizedBox(height: 4),
+                              Text(
+                                service.description,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
                                 ),
-                                onPressed: () {
-                                  addDirectorVM.addService();
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Add"),
                               ),
-                            ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Appointment: ${service.appointment ? 'Yes' : 'No'}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  CustomBottomButton(
+                    onFirst: () {
+                      addDirectorVM.Services.remove(service);
+                      Navigator.pop(context);
+                    },
+                    onSecond: () {
+                      Navigator.pop(context);
+                      showEditServiceBottomSheet(context, service, index);
+                    },
+                    firstLabel: "Delete",
+                    secondLabel: "Edit",
+                    firstBgColor: AppColors.timeBgColor,
+                    firstTextColor: AppColors.primaryColor,
+                    secondBgColor: AppColors.primaryColor,
+                    secondTextColor: AppColors.whiteColor,
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+  void showEditServiceBottomSheet(
+      BuildContext context, ServiceModel service, int index) {
+    final AddDirectorVM =
+        Provider.of<AddDirectorViewModel>(context, listen: false);
+    AddDirectorVM.selectedService = service;
+    AddDirectorVM.loadServiceData(service);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.black,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          maxChildSize: 0.95,
+          minChildSize: 0.6,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color:  AppColors.buttomBarColor,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 20),
+                        child: AddDirectorServicesFoam(),
                       ),
                     ),
+                    CustomBottomButton(
+                      onFirst: () {
+                        AddDirectorVM.Services.remove(service);
+                        Navigator.pop(context);
+                      },
+                      onSecond: () {
+                        Navigator.pop(context);
+                      AddDirectorVM.updateService(index);
+                      },
+                      firstLabel: "Delete",
+                      secondLabel: "Save",
+                      firstBgColor: AppColors.timeBgColor,
+                      firstTextColor: AppColors.primaryColor,
+                      secondBgColor: AppColors.primaryColor,
+                      secondTextColor: AppColors.whiteColor,
+                    )
                   ],
                 ),
               ),
