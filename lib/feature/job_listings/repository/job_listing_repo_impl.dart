@@ -1,6 +1,8 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_listings/model/get_job_applicants_count_respo.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_status_count_model.dart';
 import 'package:di360_flutter/feature/job_listings/quary/delete_job_listing_quary.dart';
@@ -9,7 +11,7 @@ import 'package:di360_flutter/feature/job_listings/quary/get_job_listing_quary.d
 import 'package:di360_flutter/feature/job_listings/quary/job_status_count_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/update_joblisting_status_quary.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repository.dart';
-import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
+
 
 class JobListingRepoImpl extends JobListingRepository {
   final HttpService http = HttpService();
@@ -67,7 +69,7 @@ class JobListingRepoImpl extends JobListingRepository {
 
     if (type == "SUPPLIER") {
       variables["supplierId"] = userId;
-    }
+    } 
     if (type == "PRACTICE") {
       variables["dental_practice_id"] = userId;
     }
@@ -76,19 +78,45 @@ class JobListingRepoImpl extends JobListingRepository {
     print(result);
     return result;
   }
-  @override
-  Future<List<JobApplicant>?> getJobApplicants(List<Map<String, dynamic>> andList) async {
-    try {
-      final response = await http.query(
-        getJobApplicantsQuary,
-        variables: {"andList": andList},
-      );
 
-      final result = JobApplicantsResponse.fromJson(response);
-      return result.jobApplicants ?? [];
-    } catch (e) {
-      rethrow;
-    }
+@override
+Future<List<JobApplicants>?>getJobApplicants(
+    List<String>?  listingStatusforapplicants, String jobId) async {
+  final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+  final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+  final andList = <Map<String, dynamic>>[
+    {
+      "status": {
+        "_in": { listingStatusforapplicants?.isEmpty==true
+            ? ["APPLIED", "INTERVIEWS", "ACCEPTED", "REJECT", "SHORTLISTED"]
+            :  listingStatusforapplicants
+      }
+      }
+    },
+  ];
+  if (type == "JOBID") {
+    andList.add({"job_id": {"_eq": userId}});
   }
+  final lisingdataforapplicants= await http.query(
+    getJobApplicantsQuary,
+    variables: {"andList": andList},
+  );
+  final result = JobApplicantsData.fromJson(lisingdataforapplicants);
+  return result. jobApplicants ?? [];
 }
+
+@override
+Future<GetJobApllicantsCountData> getJobApplicantsCount(String jobId) async {
+  final Map<String, dynamic> variables = {
+    "job_id": jobId,
+  };
+
+  final data = await http.query(getJobStatusCount, variables: variables);
+  final result = GetJobApllicantsCountResp.fromJson(data);
+  return result.data!; 
+}
+
+}
+
 

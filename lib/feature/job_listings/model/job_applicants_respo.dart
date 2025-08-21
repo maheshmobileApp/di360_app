@@ -1,56 +1,61 @@
 class JobApplicantsResponse {
   JobApplicantsData? data;
-
   JobApplicantsResponse({this.data});
 
-  factory JobApplicantsResponse.fromJson(Map<String, dynamic> json) {
-    return JobApplicantsResponse(
-      data: json['data'] != null ? JobApplicantsData.fromJson(json['data']) : null,
-    );
+  JobApplicantsResponse.fromJson(Map<String, dynamic> json) {
+    final root = json['data'] is Map<String, dynamic> ? json['data'] as Map<String, dynamic> : json;
+    data = JobApplicantsData.fromJson(root);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'data': data?.toJson(),
-    };
+    final Map<String, dynamic> data = {};
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    return data;
   }
 }
-
 class JobApplicantsData {
-  List<JobApplicant>? jobApplicants;
+  List<JobApplicants>? jobApplicants;
 
-JobApplicantsData({this.jobApplicants});
+  JobApplicantsData({this.jobApplicants});
 
-  factory JobApplicantsData.fromJson(Map<String, dynamic> json) {
-    return JobApplicantsData(
-      jobApplicants: json['job_applicants'] != null
-          ? (json['job_applicants'] as List)
-              .map((e) => JobApplicant.fromJson(e))
-              .toList()
-          : [],
-    );
+  JobApplicantsData.fromJson(Map<String, dynamic> json) {
+    final raw = json['job_applicants'];
+    if (raw is List) {
+      jobApplicants = raw
+          .whereType<Map<String, dynamic>>()
+          .map(JobApplicants.fromJson)
+          .toList();
+    } else if (raw is Map<String, dynamic>) {
+      jobApplicants = [JobApplicants.fromJson(raw)];
+    } else {
+      jobApplicants = <JobApplicants>[];
+    }
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'job_applicants': jobApplicants?.map((e) => e.toJson()).toList(),
-    };
+    final Map<String, dynamic> data = {};
+    if (jobApplicants != null) {
+      data['job_applicants'] = jobApplicants!.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
 }
 
-class JobApplicant {
+class JobApplicants {
   String? id;
   String? jobId;
-  List<dynamic>? attachments;
+  List<Attachments>? attachments;
   String? status;
   String? firstName;
   String? cityName;
   String? dentalProfessionalId;
   DentalProfessional? dentalProfessional;
   List<dynamic>? jobApplicantMessages;
-  List<JobEnquiry>? jobEnquiries;
+  List<JobEnquiries>? jobEnquiries;
 
-  JobApplicant({
+  JobApplicants({
     this.id,
     this.jobId,
     this.attachments,
@@ -63,41 +68,80 @@ class JobApplicant {
     this.jobEnquiries,
   });
 
-  factory JobApplicant.fromJson(Map<String, dynamic> json) {
-    return JobApplicant(
-      id: json['id'],
-      jobId: json['job_id'],
-      attachments: json['attachments'] ?? [],
-      status: json['status'],
-      firstName: json['first_name'],
-      cityName: json['city_name'],
-      dentalProfessionalId: json['dental_professional_id'],
-      dentalProfessional: json['dental_professional'] != null
-          ? DentalProfessional.fromJson(json['dental_professional'])
-          : null,
-      jobApplicantMessages: json['job_applicant_messages'] ?? [],
-      jobEnquiries: json['job_enquiries'] != null
-          ? (json['job_enquiries'] as List)
-              .map((e) => JobEnquiry.fromJson(e))
-              .toList()
-          : [],
-    );
+  JobApplicants.fromJson(Map<String, dynamic> json) {
+    id = json['id'] as String?;
+    jobId = json['job_id'] as String?;
+    final atts = json['attachments'];
+    if (atts is List) {
+      attachments = atts
+          .whereType<Map<String, dynamic>>()
+          .map(Attachments.fromJson)
+          .toList();
+    } else if (atts is Map<String, dynamic>) {
+      attachments = [Attachments.fromJson(atts)];
+    } else {
+      attachments = <Attachments>[];
+    }
+
+    status = json['status'] as String?;
+    firstName = json['first_name'] as String?;
+    cityName = json['city_name'] as String?;
+    dentalProfessionalId = json['dental_professional_id'] as String?;
+
+    final dp = json['dental_professional'];
+    dentalProfessional = (dp is Map<String, dynamic>)
+        ? DentalProfessional.fromJson(dp)
+        : null;
+    final msgs = json['job_applicant_messages'];
+    if (msgs is List) {
+      jobApplicantMessages = msgs;
+    } else if (msgs == null) {
+      jobApplicantMessages = <dynamic>[];
+    } else {
+      
+      jobApplicantMessages = [msgs];
+    }
+    final enqu = json['job_enquiries'];
+    if (enqu is List) {
+      jobEnquiries = enqu
+          .whereType<Map<String, dynamic>>()
+          .map(JobEnquiries.fromJson)
+          .toList();
+    } else if (enqu is Map<String, dynamic>) {
+      jobEnquiries = [JobEnquiries.fromJson(enqu)];
+    } else {
+      jobEnquiries = <JobEnquiries>[];
+    }
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'job_id': jobId,
-      'attachments': attachments,
-      'status': status,
-      'first_name': firstName,
-      'city_name': cityName,
-      'dental_professional_id': dentalProfessionalId,
-      'dental_professional': dentalProfessional?.toJson(),
-      'job_applicant_messages': jobApplicantMessages,
-      'job_enquiries': jobEnquiries?.map((e) => e.toJson()).toList(),
-    };
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['job_id'] = jobId;
+    if (attachments != null) {
+      data['attachments'] = attachments!.map((v) => v.toJson()).toList();
+    }
+    data['status'] = status;
+    data['first_name'] = firstName;
+    data['city_name'] = cityName;
+    data['dental_professional_id'] = dentalProfessionalId;
+    if (dentalProfessional != null) {
+      data['dental_professional'] = dentalProfessional!.toJson();
+    }
+    if (jobApplicantMessages != null) {
+      data['job_applicant_messages'] = jobApplicantMessages;
+    }
+    if (jobEnquiries != null) {
+      data['job_enquiries'] = jobEnquiries!.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
+}
+
+class Attachments {
+  Attachments();
+  Attachments.fromJson(Map<String, dynamic> json);
+  Map<String, dynamic> toJson() => {};
 }
 
 class DentalProfessional {
@@ -119,30 +163,28 @@ class DentalProfessional {
     this.createdAt,
   });
 
-  factory DentalProfessional.fromJson(Map<String, dynamic> json) {
-    return DentalProfessional(
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      lastName: json['last_name'],
-      firstName: json['first_name'],
-      profileImage: json['profile_image'] != null
-          ? ProfileImage.fromJson(json['profile_image'])
-          : null,
-      createdAt: json['created_at'],
-    );
+  DentalProfessional.fromJson(Map<String, dynamic> json) {
+    name = json['name'] as String?;
+    email = json['email'] as String?;
+    phone = json['phone'] as String?;
+    lastName = json['last_name'] as String?;
+    firstName = json['first_name'] as String?;
+    final pi = json['profile_image'];
+    profileImage =
+        (pi is Map<String, dynamic>) ? ProfileImage.fromJson(pi) : null;
+    createdAt = json['created_at'] as String?;
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'email': email,
-      'phone': phone,
-      'last_name': lastName,
-      'first_name': firstName,
-      'profile_image': profileImage?.toJson(),
-      'created_at': createdAt,
-    };
+    final Map<String, dynamic> data = {};
+    data['name'] = name;
+    data['email'] = email;
+    data['phone'] = phone;
+    data['last_name'] = lastName;
+    data['first_name'] = firstName;
+    if (profileImage != null) data['profile_image'] = profileImage!.toJson();
+    data['created_at'] = createdAt;
+    return data;
   }
 }
 
@@ -169,63 +211,54 @@ class ProfileImage {
     this.mimeType,
   });
 
-  factory ProfileImage.fromJson(Map<String, dynamic> json) {
-    return ProfileImage(
-      url: json['url'],
-      name: json['name'],
-      size: json['size'],
-      status: json['status'],
-      fileId: json['file_id'],
-      isPublic: json['isPublic'],
-      directory: json['directory'],
-      extension: json['extension'],
-      mimeType: json['mime_type'],
-    );
+  ProfileImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'] as String?;
+    name = json['name'] as String?;
+    size = json['size'] as int?;
+    status = json['status'] as String?;
+    fileId = json['file_id'] as String?;
+    isPublic = json['isPublic'] as bool?;
+    directory = json['directory'] as String?;
+    extension = json['extension'] as String?;
+    mimeType = json['mime_type'] as String?;
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'url': url,
-      'name': name,
-      'size': size,
-      'status': status,
-      'file_id': fileId,
-      'isPublic': isPublic,
-      'directory': directory,
-      'extension': extension,
-      'mime_type': mimeType,
-    };
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['name'] = name;
+    data['size'] = size;
+    data['status'] = status;
+    data['file_id'] = fileId;
+    data['isPublic'] = isPublic;
+    data['directory'] = directory;
+    data['extension'] = extension;
+    data['mime_type'] = mimeType;
+    return data;
   }
 }
 
-class JobEnquiry {
+class JobEnquiries {
   String? id;
-  String? enquiryUserId;
+  String? enquiryUserid;
   String? enquiryDescription;
   String? jobId;
 
-  JobEnquiry({
-    this.id,
-    this.enquiryUserId,
-    this.enquiryDescription,
-    this.jobId,
-  });
+  JobEnquiries({this.id, this.enquiryUserid, this.enquiryDescription, this.jobId});
 
-  factory JobEnquiry.fromJson(Map<String, dynamic> json) {
-    return JobEnquiry(
-      id: json['id'],
-      enquiryUserId: json['enquiry_userid'],
-      enquiryDescription: json['enquiry_description'],
-      jobId: json['job_id'],
-    );
+  JobEnquiries.fromJson(Map<String, dynamic> json) {
+    id = json['id'] as String?;
+    enquiryUserid = json['enquiry_userid'] as String?;
+    enquiryDescription = json['enquiry_description'] as String?;
+    jobId = json['job_id'] as String?;
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'enquiry_userid': enquiryUserId,
-      'enquiry_description': enquiryDescription,
-      'job_id': jobId,
-    };
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['enquiry_userid'] = enquiryUserid;
+    data['enquiry_description'] = enquiryDescription;
+    data['job_id'] = jobId;
+    return data;
   }
 }
