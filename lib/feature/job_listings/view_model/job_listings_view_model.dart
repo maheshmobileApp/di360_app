@@ -1,4 +1,3 @@
-import 'package:di360_flutter/feature/job_listings/model/get_job_applicants_count_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repo_impl.dart';
