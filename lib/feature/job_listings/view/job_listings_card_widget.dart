@@ -282,7 +282,62 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget(
+  // Widget menuWidget(
+  //   JobListingsViewModel vm,
+  //   BuildContext context,
+  //   int index,
+  //   String id,
+  //   String status,
+  // ) {
+  //   return PopupMenuButton<String>(
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //     elevation: 4,
+  //     offset: const Offset(0, 40),
+  //     color: AppColors.whiteColor,
+  //     padding: EdgeInsets.zero,
+  //     icon: const Icon(Icons.more_vert,
+  //         color: AppColors.bottomNavUnSelectedColor),
+  //     onSelected: (value) {
+  //       switch (value) {
+  //         case "Edit":
+  //           // vm.getCatalogueView(context, id);
+  //           break;
+  //         case "Preview":
+  //           navigationService.navigateToWithParams(
+  //             RouteList.JobListingDetailsScreen,
+  //             params: vm.myJobListingList[index],
+  //           );
+  //           break;
+  //         case "Inactive":
+  //           showAlertMessage(context, 'Do you really want to change status?',
+  //               onBack: () {
+  //             navigationService.goBack();
+  //             vm.updateJobListingStatus(context, id, status);
+  //           });
+  //           break;
+  //         case "Delete":
+  //           showAlertMessage(
+  //               context, 'Are you sure you want to delete this listing?',
+  //               onBack: () {
+  //             navigationService.goBack();
+  //             vm.removeJobsListingData(context, id);
+  //           });
+  //           break;
+  //       }
+  //     },
+  //     itemBuilder: (context) => [
+  //       _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
+  //       _popupItem("Pending", Icons.loop, AppColors.primaryBlueColor),
+  //       _popupItem("Edit", Icons.edit_outlined, AppColors.primaryBlueColor),
+  //       if (vm.selectedStatus != "InActive")
+  //         _popupItem("Inactive", Icons.bolt_outlined, AppColors.primaryColor),
+  //       if (vm.selectedStatus == "InActive")
+  //         _popupItem("Active", Icons.bolt_outlined, AppColors.greenColor),
+  //       _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
+  //     ],
+  //   );
+  // }
+Widget menuWidget(
     JobListingsViewModel vm,
     BuildContext context,
     int index,
@@ -290,52 +345,69 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     String status,
   ) {
     return PopupMenuButton<String>(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      offset: const Offset(0, 40),
+      iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
-      padding: EdgeInsets.zero,
-      icon: const Icon(Icons.more_vert,
-          color: AppColors.bottomNavUnSelectedColor),
+      padding: EdgeInsets.all(0),
       onSelected: (value) {
-        switch (value) {
-          case "Edit":
-            // vm.getCatalogueView(context, id);
-            break;
-          case "Preview":
-            navigationService.navigateToWithParams(
-              RouteList.JobListingDetailsScreen,
-              params: vm.myJobListingList[index],
-            );
-            break;
-          case "Inactive":
-            showAlertMessage(context, 'Do you really want to change status?',
-                onBack: () {
-              navigationService.goBack();
-              vm.updateJobListingStatus(context, id, status);
-            });
-            break;
-          case "Delete":
-            showAlertMessage(
-                context, 'Are you sure you want to delete this listing?',
-                onBack: () {
-              navigationService.goBack();
-              vm.removeJobsListingData(context, id);
-            });
-            break;
+        if (value == "Edit") {
+          // vm.getCatalogueView(context, id);
+        } else if (value == "Active") {
+        } else if (value == "Preview") {
+          navigationService.navigateToWithParams(
+            RouteList.JobListingDetailsScreen,
+            params: vm.myJobListingList[index],
+          );
+        } else if (value == "InActive") {
+          showAlertMessage(context, 'Do you really want to change status?',
+              onBack: () {
+            navigationService.goBack();
+            vm.updateJobListingStatus(context, id, status);
+          });
+        } else if (value == "Delete") {
+          showAlertMessage(
+              context, 'Are you sure you want to delete this catalogue?',
+              onBack: () {
+            navigationService.goBack();
+            vm.removeJobsListingData(context, id);
+          });
         }
       },
       itemBuilder: (context) => [
-        _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        _popupItem("Pending", Icons.loop, AppColors.primaryBlueColor),
-        _popupItem("Edit", Icons.edit_outlined, AppColors.primaryBlueColor),
-        if (vm.selectedStatus != "InActive")
-          _popupItem("Inactive", Icons.bolt_outlined, AppColors.primaryColor),
+        PopupMenuItem(
+          value: "Preview",
+          child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
+        ),
+        PopupMenuItem(
+            value: "Edit",
+            child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
+        PopupMenuItem(
+            value: "Delete",
+            child:
+                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),
+        if (vm.selectedStatus == 'Draft' ||
+            vm.selectedStatus == 'Pending Approval' ||
+            vm.selectedStatus == "Active" ||
+            vm.selectedStatus == "Expired" ||
+            vm.selectedStatus == "All")
+          PopupMenuItem(
+              value: "Inactive",
+              child: _buildRow(
+                  Icons.local_activity, AppColors.primaryColor, "Inactive")),
         if (vm.selectedStatus == "InActive")
-          _popupItem("Active", Icons.bolt_outlined, AppColors.greenColor),
-        _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
+          PopupMenuItem(
+              value: "Active",
+              child: _buildRow(
+                  Icons.local_activity, AppColors.primaryColor, "Active")),
       ],
     );
+  }
+
+  Widget _buildRow(IconData? icon, Color? color, String? title) {
+    return Row(children: [
+      Icon(icon, color: color),
+      addHorizontal(8),
+      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
+    ]);
   }
 
   PopupMenuItem<String> _popupItem(String label, IconData icon, Color color) {
