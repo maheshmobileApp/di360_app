@@ -10,13 +10,6 @@ import 'package:flutter/material.dart';
 class JobListingsViewModel extends ChangeNotifier {
   final JobListingRepoImpl repo = JobListingRepoImpl();
 
-  JobListingsViewModel() {
-    fetchJobStatusCounts();
-    if (jobId != null && jobId!.isNotEmpty) {
-      fetchJobApplicantsCount(jobId!);
-    }
-  }
-
 
   bool isLoading = false;
   String? errorMessage;
