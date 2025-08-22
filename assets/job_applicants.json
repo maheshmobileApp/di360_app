@@ -1,0 +1,51 @@
+{
+    "data": {
+        "job_applicants": [
+            {
+                "id": "e88ecc09-f450-4744-8f05-962517bc2c77",
+                "job_id": "5eecb6d4-5968-4b85-947a-b56fd378357d",
+                "attachments": [
+                    {}
+                ],
+                "status": "SHORTLISTED",
+                "first_name": null,
+                "city_name": null,
+                "dental_professional_id": "e3103405-adce-4ae8-af81-3cac95a4af84",
+                "dental_professional": {
+                    "name": "professionalDentist",
+                    "email": "felix@nandalalainfotech.com",
+                    "phone": "‪+61268686868‬",
+                    "last_name": null,
+                    "first_name": null,
+                    "profile_image": {
+                        "url": "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/b7becb7b-3f67-458d-a1b4-4c1d238462e2",
+                        "name": "360_F_306124857_EoRE4KeltvnQH1vN5adZYrkMlzzUc0Wh.jpg",
+                        "size": 10522,
+                        "status": "success",
+                        "file_id": "b7becb7b-3f67-458d-a1b4-4c1d238462e2",
+                        "isPublic": true,
+                        "directory": "project",
+                        "extension": "jpeg",
+                        "mime_type": "image/jpeg"
+                    },
+                    "created_at": "2025-06-19T05:57:43.929732+00:00"
+                },
+                "job_applicant_messages": [],
+                "job_enquiries": [
+                    {
+                        "id": "cd165f39-bad6-4809-b317-795f5ed8c66c",
+                        "enquiry_userid": "4357852e-bbf9-4ca3-bb35-fe301d60f5cf",
+                        "enquiry_description": "",
+                        "job_id": "5eecb6d4-5968-4b85-947a-b56fd378357d"
+                    },
+                    {
+                        "id": "b1664fbe-cfcb-4b18-88da-cac236ba7166",
+                        "enquiry_userid": "4357852e-bbf9-4ca3-bb35-fe301d60f5cf",
+                        "enquiry_description": "",
+                        "job_id": "5eecb6d4-5968-4b85-947a-b56fd378357d"
+                    }
+                ]
+            }
+        ]
+    }
+}

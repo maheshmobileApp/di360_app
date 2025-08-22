@@ -23,8 +23,9 @@ class _JobListingScreenState extends State<JobListingScreen>
   @override
   void initState() {
     super.initState();
-    // Future.microtask(() => Provider.of<JobSeekViewModel>(context, listen: false)
-    //     .fetchJobs(context));
+    // final jobListingVM =
+    //     Provider.of<JobListingsViewModel>(context, listen: false);
+    // jobListingVM.fetchJobStatusCounts();
   }
 
   @override

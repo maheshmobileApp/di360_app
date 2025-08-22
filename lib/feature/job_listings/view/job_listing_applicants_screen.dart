@@ -131,9 +131,9 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
                       ),
                     )
                   : ListView.builder(
-                      itemCount: jobListingVM.myJobListingList.length,
+                      itemCount: jobListingVM.myApplicantsList.length,
                       itemBuilder: (context, index) {
-                        final jobData = jobListingVM.myJobListingList[index];
+                        final jobData = jobListingVM.myApplicantsList[index];
                         print( jobListingVM.myJobListingList.length);
                         return JobListingApplicantsCard(
                           jobsListingData: jobData,

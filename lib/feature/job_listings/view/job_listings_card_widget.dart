@@ -8,6 +8,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class JobListingCard extends StatelessWidget with BaseContextHelpers {
   final JobsListingDetails? jobsListingData;
@@ -23,6 +24,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<JobListingsViewModel>(context);
     final String time = _getShortTime(jobsListingData?.createdAt ?? '') ?? '';
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -111,14 +113,17 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
             child: InkWell(
-              onTap: () => navigationService
-                  .navigateTo(RouteList.JobListingApplicantscreen),
+              onTap: () async {
+                viewModel.jobId = jobsListingData?.id ?? '';
+                await viewModel.getMyJobApplicantsgData(
+                    context, jobsListingData?.id ?? '');
+                navigationService
+                    .navigateTo(RouteList.JobListingApplicantscreen);
+              },
               child: Center(
                 child: Text(
                   "${jobsListingData?.jobApplicantsAggregate?.aggregate?.count ?? 0} Applicants applied for this role",
-                  style: TextStyles. medium1(
-                    color: AppColors.black,
-                  ),
+                  style: TextStyles.medium1(color: AppColors.black),
                 ),
               ),
             ),

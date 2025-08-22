@@ -2,7 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
-  final JobsListingDetails? jobsListingData;
+  final JobApplicants? jobsListingData;
   final JobListingsViewModel vm;
   final int? index;
 
@@ -23,6 +23,9 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final applicant = jobsListingData;
+    final professional = applicant?.dentalProfessional;
+
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Container(
@@ -41,6 +44,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ---- Top Section: Avatar + Name + Role + Menu ----
             Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
@@ -49,18 +53,31 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                   CircleAvatar(
                     radius: 22,
                     backgroundColor: AppColors.geryColor,
+                    backgroundImage: professional?.profileImage?.url != null
+                        ? NetworkImage(professional!.profileImage!.url!)
+                        : null,
+                    child: professional?.profileImage?.url == null
+                        ? const Icon(Icons.person,
+                            color: AppColors.whiteColor)
+                        : null,
                   ),
                   addHorizontal(12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("User name",
-                            style: TextStyles.semiBold(color: AppColors.black)),
+                        Text(
+                          "${professional?.firstName ?? applicant?.firstName ?? "User"} ${professional?.lastName ?? ""}",
+                          style:
+                              TextStyles.semiBold(color: AppColors.black),
+                        ),
                         addVertical(2),
-                        Text("Job Role",
-                            style: TextStyles.regular2(
-                                color: AppColors.bottomNavUnSelectedColor)),
+                        Text(
+                          professional?.name ?? "Job Role",
+                          style: TextStyles.regular2(
+                            color: AppColors.bottomNavUnSelectedColor,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -68,12 +85,14 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                     vm,
                     context,
                     index ?? 0,
-                    jobsListingData?.id ?? '',
-                    jobsListingData?.status ?? '',
+                    applicant?.id ?? '',
+                    applicant?.status ?? '',
                   ),
                 ],
               ),
             ),
+
+            // ---- City + Experience ----
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
@@ -81,11 +100,12 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                   Row(
                     children: [
                       const Icon(Icons.location_on_outlined,
-                          size: 16, color: AppColors.bottomNavUnSelectedColor),
+                          size: 16,
+                          color: AppColors.bottomNavUnSelectedColor),
                       addHorizontal(6),
                       Expanded(
                         child: Text(
-                          jobsListingData?.location ??
+                          applicant?.cityName ??
                               "123 Marsh Street, Armidale, NSW",
                           style: TextStyles.regular1(
                               color: AppColors.bottomNavUnSelectedColor),
@@ -98,13 +118,13 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        ImageConst.briefcaseSvg, 
+                        ImageConst.briefcaseSvg,
                         height: 16,
                         width: 16,
                       ),
                       addHorizontal(6),
                       Text(
-                        "${jobsListingData?.yearsOfExperience ?? '5'} Yrs Experience",
+                        "${applicant?.status ?? '0'} Yrs Experience",
                         style: TextStyles.regular1(
                           color: AppColors.bottomNavUnSelectedColor,
                         ),
@@ -114,18 +134,24 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                 ],
               ),
             ),
+
+            // ---- Profile Summary ----
             addVertical(8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                jobsListingData?.description ??
-                    "About me / Profile Summary, short description here...",
+                applicant?.jobApplicantMessages != null &&
+                        applicant!.jobApplicantMessages!.isNotEmpty
+                    ? applicant.jobApplicantMessages!.first.toString()
+                    : "About me / Profile Summary, short description here...",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyles.regular1(
                     color: AppColors.bottomNavUnSelectedColor),
               ),
             ),
+
+            // ---- Bottom Buttons ----
             addVertical(8),
             const Divider(height: 1),
             Padding(
@@ -147,6 +173,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  // ---- Helper Buttons ----
   Widget _roundedButton(String label) {
     return Container(
       height: 32,
@@ -176,6 +203,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  // ---- Popup Menu ----
   Widget menuWidget(
     JobListingsViewModel vm,
     BuildContext context,
@@ -206,8 +234,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       itemBuilder: (context) => [
         _popupItem("View", Icons.remove_red_eye, AppColors.black),
         _popupItem("Accept", Icons.check_circle_outline, AppColors.greenColor),
-        _popupItem(
-            "Shortlist", Icons.person_add_alt, AppColors.primaryBlueColor),
+        _popupItem("Shortlist", Icons.person_add_alt, AppColors.primaryBlueColor),
         _popupItem("Decline", Icons.block, AppColors.primaryBlueColor),
       ],
     );
@@ -220,7 +247,8 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
         children: [
           Icon(icon, color: color, size: 18),
           addHorizontal(8),
-          Text(label, style: TextStyles.semiBold(color: color, fontSize: 14)),
+          Text(label,
+              style: TextStyles.semiBold(color: color, fontSize: 14)),
         ],
       ),
     );
