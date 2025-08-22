@@ -232,6 +232,14 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
         }
       },
       itemBuilder: (context) => [
+        //  _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
+        // _popupItem("Pending", Icons.loop, AppColors.primaryBlueColor),
+        // _popupItem("Edit", Icons.edit_outlined, AppColors.primaryBlueColor),
+        // if (vm.selectedStatus != "InActive")
+        //   _popupItem("Inactive", Icons.bolt_outlined, AppColors.primaryColor),
+        // if (vm.selectedStatus == "InActive")
+        //   _popupItem("Active", Icons.bolt_outlined, AppColors.greenColor),
+        // _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
         _popupItem("View", Icons.remove_red_eye, AppColors.black),
         _popupItem("Accept", Icons.check_circle_outline, AppColors.greenColor),
         _popupItem("Shortlist", Icons.person_add_alt, AppColors.primaryBlueColor),

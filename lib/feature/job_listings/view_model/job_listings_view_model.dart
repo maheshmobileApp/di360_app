@@ -173,8 +173,7 @@ class JobListingsViewModel extends ChangeNotifier {
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
-    inActiveCount = (res.inactive?.aggregate?.count ?? 0) +
-        (res.approved?.aggregate?.count ?? 0);
+    inActiveCount =res.inactive?.aggregate?.count ?? 0;   
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     notifyListeners();
