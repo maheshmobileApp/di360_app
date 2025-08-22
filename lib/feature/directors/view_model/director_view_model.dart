@@ -42,20 +42,8 @@ class DirectorViewModel extends ChangeNotifier {
 
   final List<String> serviceList = ['Test'];
 
-  final List<QuickLinkItem> quickLinkItems = [
-    QuickLinkItem(label: 'Basic Info', icon: Icons.info),
-    QuickLinkItem(label: 'Services', icon: Icons.medical_services),
-    QuickLinkItem(label: 'Team', icon: Icons.people),
-    QuickLinkItem(label: 'Gallery', icon: Icons.photo_library),
-    QuickLinkItem(label: 'Document', icon: Icons.edit_document),
-    QuickLinkItem(label: 'Achievements', icon: Icons.emoji_events),
-    QuickLinkItem(label: 'Certifications', icon: Icons.verified),
-    QuickLinkItem(label: 'Book Appointment', icon: Icons.calendar_today),
-    QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
-    QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
-    QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
-  ];
-  // sectionKeys
+  List<QuickLinkItem> quickLinkItems = [];
+ 
   final Map<String, GlobalKey> sectionKeys = {
     'Basic Info': GlobalKey(),
     'Services': GlobalKey(),
@@ -193,6 +181,31 @@ class DirectorViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
+      quickLinkItems = [
+        if (directorDetails?.description != null)
+          QuickLinkItem(label: 'Basic Info', icon: Icons.info),
+        if (directorDetails?.directoryServices?.length != 0)
+          QuickLinkItem(label: 'Services', icon: Icons.medical_services),
+        if (directorDetails?.directoryTeamMembers?.length != 0)
+          QuickLinkItem(label: 'Team', icon: Icons.people),
+        if (directorDetails?.directoryGalleryPosts?.length != 0 &&
+            directorDetails?.directoryGalleryPosts?.first.image?.length != 0)
+          QuickLinkItem(label: 'Gallery', icon: Icons.photo_library),
+        if (directorDetails?.directoryDocuments?.length != 0)
+          QuickLinkItem(label: 'Document', icon: Icons.edit_document),
+        if (directorDetails?.directoryAchievements?.length != 0)
+          QuickLinkItem(label: 'Achievements', icon: Icons.emoji_events),
+        if (directorDetails?.directoryCertifications?.length != 0)
+          QuickLinkItem(label: 'Certifications', icon: Icons.verified),
+        if (directorDetails?.directoryAppointmentSlots?.length != 0)
+          QuickLinkItem(label: 'Book Appointment', icon: Icons.calendar_today),
+          if (directorDetails?.directoryTestimonials?.length != 0)
+        QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
+        if (directorDetails?.directoryFaqs?.length != 0)
+        QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
+        if (directorDetails?.directoryLocations?.length != 0)
+        QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
+      ];
       getFollowersCount(directorDetails?.id ?? '');
       getAppointmentSlots(id);
       getTeamMembersData(id);

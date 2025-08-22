@@ -22,6 +22,17 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          directionalVM.directorDetails?.bannerImage == null
+              ? SizedBox()
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImageWidget(
+                      imageUrl:
+                          directionalVM.directorDetails?.bannerImage?.url ?? '',
+                      width: double.infinity,
+                      height: 150,
+                      fit: BoxFit.fill)),
+          addVertical(5),
           if (directionalVM.directorDetails?.description != null)
             _sectionTitle('BASIC INFO',
                 _description(directionalVM.directorDetails?.description ?? ''),
@@ -135,11 +146,10 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             return Row(
               children: rowItems
                   .map((data) => Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: _outlinedButton(context, data.name ?? ''),
-                        ),
-                      ))
+                          child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: _outlinedButton(context, data.name ?? ''),
+                      )))
                   .toList(),
             );
           },
@@ -189,80 +199,65 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             side: BorderSide(color: Colors.grey.shade300),
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
-          child: Text(label, style: TextStyles.bold6(color: AppColors.black)),
+          child: Text(label,
+              textAlign: TextAlign.center,
+              style: TextStyles.bold6(color: AppColors.black)),
         ),
       );
 
   Widget _teamcard(DirectorViewModel vm) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 10),
-        vm.directorDetails?.bannerImage == null
-            ? SizedBox()
-            : ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImageWidget(
-                    imageUrl: vm.directorDetails?.bannerImage?.url ?? '',
-                    width: double.infinity,
-                    height: 150,
-                    fit: BoxFit.fill)),
-        addVertical(5),
-        CustomGrid(
-          children: List.generate(
-              vm.directorDetails?.directoryTeamMembers?.length ?? 0, (index) {
-            final teamData = vm.directorDetails?.directoryTeamMembers?[index];
-            return Card(
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: AppColors.HINT_COLOR),
-                  borderRadius: BorderRadius.circular(16)),
-              elevation: 1,
-              color: Colors.white,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        height: 110,
-                        child: CachedNetworkImageWidget(
-                            imageUrl: teamData?.image?.url ?? '',
-                            fit: BoxFit.fill)),
-                    const SizedBox(height: 5),
-                    Text(
-                      teamData?.name ?? '',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      teamData?.specialization ?? '',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Divider(),
-                    Text(
-                      teamData?.location ?? '',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+    return CustomGrid(
+      children: List.generate(
+          vm.directorDetails?.directoryTeamMembers?.length ?? 0, (index) {
+        final teamData = vm.directorDetails?.directoryTeamMembers?[index];
+        return Card(
+          shape: RoundedRectangleBorder(
+              side: BorderSide(color: AppColors.HINT_COLOR),
+              borderRadius: BorderRadius.circular(16)),
+          elevation: 1,
+          color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                    height: 110,
+                    child: CachedNetworkImageWidget(
+                        imageUrl: teamData?.image?.url ?? '',
+                        fit: BoxFit.fill)),
+                const SizedBox(height: 5),
+                Text(
+                  teamData?.name ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-            );
-          }),
-        ),
-      ],
+                const SizedBox(height: 4),
+                Text(
+                  teamData?.specialization ?? '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                Divider(),
+                Text(
+                  teamData?.location ?? '',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 
