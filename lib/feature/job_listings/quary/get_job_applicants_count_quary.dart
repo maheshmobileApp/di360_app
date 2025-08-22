@@ -1,4 +1,4 @@
-const String getJobStatusCount = r'''
+const String getJobApplicantCountQuery = r'''
 query getApplicantsStatusCounts($job_id: uuid!) {
   all: job_applicants_aggregate(
     where: { job_id: { _eq: $job_id } }

@@ -11,6 +11,6 @@ abstract class JobListingRepository {
   Future<JobStatusCountData> jobListingStatusCount();
   Future<List< JobApplicants>?> getJobApplicants(
       List<String>? listingStatusforapplicants,String jobId );
-  Future<GetJobApllicantsCountData> getJobApplicantsCount(String jobId);
+  Future<GetJobApllicantsCountData?> getJobApplicantsCount(String jobId);
 
 }

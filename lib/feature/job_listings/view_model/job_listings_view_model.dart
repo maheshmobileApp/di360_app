@@ -6,10 +6,8 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
-
 class JobListingsViewModel extends ChangeNotifier {
   final JobListingRepoImpl repo = JobListingRepoImpl();
-
 
   bool isLoading = false;
   String? errorMessage;
@@ -80,7 +78,6 @@ class JobListingsViewModel extends ChangeNotifier {
   List<JobsListingDetails> myJobListingList = [];
   List<JobApplicants> myApplicantsList = [];
 
-  
   void changeStatusforapplicatnts(String status, BuildContext context) {
     selectedstatusesforapplicatnts = status;
     if (status == 'All') {
@@ -102,7 +99,7 @@ class JobListingsViewModel extends ChangeNotifier {
     } else if (status == 'Accepted') {
       listingStatusforapplicants = ['ACCEPTED'];
     }
-     getMyJobApplicantsgData();
+    getMyJobApplicantsgData(context, jobId ?? '');
     notifyListeners();
   }
 
@@ -158,24 +155,27 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getMyJobApplicantsgData() async {
-    if (jobId == null) return;
-    final res = await repo.getJobApplicants(listingStatus, jobId!);
-    fetchJobApplicantsCount(jobId!);
+  Future<void> getMyJobApplicantsgData(
+      BuildContext context, String jobId) async {
+    await fetchJobApplicantsCount(jobId);
+    Loaders.circularShowLoader(context);
+    final res = await repo.getJobApplicants(listingStatusforapplicants, jobId);
     if (res != null) {
       myApplicantsList = res;
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularShowLoader(context);
     }
     notifyListeners();
   }
 
-  
   Future<void> fetchJobStatusCounts() async {
     final res = await repo.jobListingStatusCount();
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
-    inActiveCount =
-        (res.inactive?.aggregate?.count ?? 0) + (res.approved?.aggregate?.count ?? 0);
+    inActiveCount = (res.inactive?.aggregate?.count ?? 0) +
+        (res.approved?.aggregate?.count ?? 0);
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     notifyListeners();
@@ -187,14 +187,14 @@ class JobListingsViewModel extends ChangeNotifier {
       errorMessage = null;
       notifyListeners();
 
-      final GetJobApllicantsCountData result =
+      final result =
           await repo.getJobApplicantsCount(jobId);
 
-      final applied = result.applied?.aggregate?.count ?? 0;
-      final accepted = result.accepted?.aggregate?.count ?? 0;
-      final shortlisted = result.shortlisted?.aggregate?.count ?? 0;
-      final interviews = result.interviews?.aggregate?.count ?? 0;
-      final rejected = result.rejected?.aggregate?.count ?? 0;
+      final applied = result?.applied?.aggregate?.count ?? 0;
+      final accepted = result?.accepted?.aggregate?.count ?? 0;
+      final shortlisted = result?.shortlisted?.aggregate?.count ?? 0;
+      final interviews = result?.interviews?.aggregate?.count ?? 0;
+      final rejected = result?.rejected?.aggregate?.count ?? 0;
       allJobapplicantCount =
           applied + accepted + shortlisted + interviews + rejected;
       appliedjobapplicnatsCount = applied;
@@ -210,7 +210,6 @@ class JobListingsViewModel extends ChangeNotifier {
     }
   }
 
-  
   Future<void> removeJobsListingData(BuildContext context, String? id) async {
     Loaders.circularShowLoader(context);
     final res = await repo.removeJobListing(id);
@@ -225,7 +224,6 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  
   Future<void> updateJobListingStatus(
       BuildContext context, String? id, String status) async {
     Loaders.circularShowLoader(context);
