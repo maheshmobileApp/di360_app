@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repo_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -7,12 +8,13 @@ import 'package:flutter/material.dart';
 class JobListingsViewModel extends ChangeNotifier {
   final JobListingRepoImpl repo = JobListingRepoImpl();
 
-  JobListingsViewModel() {
-    fetchJobStatusCounts();
-  }
+  bool isLoading = false;
+  String? errorMessage;
+
   final Map<String, bool> _jobActiveStatus = {};
   String selectedStatus = 'All';
-   String selectedstatusesforapplicatnts = 'All';
+  String selectedstatusesforapplicatnts = 'All';
+  String? jobId;
 
   final List<String> statuses = [
     'All',
@@ -23,12 +25,14 @@ class JobListingsViewModel extends ChangeNotifier {
     'Expired',
     'Reject',
   ];
+
   final List<String> statusesforapplicatnts = [
     'All',
     'Applied',
+    'Accepted',
     'Shortlisted',
     'Interviews',
-    
+    'Reject',
   ];
 
   int? allJobTalentCount = 0;
@@ -39,6 +43,14 @@ class JobListingsViewModel extends ChangeNotifier {
   int? expiredStatusCount = 0;
   int? rejectStatusCount = 0;
 
+  // Job Applicants Counts
+  int? allJobapplicantCount = 0;
+  int? appliedjobapplicnatsCount = 0;
+  int? acceptedjobapplicnatsCount = 0;
+  int? shortlistedjobapplicnatsCount = 0;
+  int? interviewsjobapplicnatsCount = 0;
+  int? rejectjobapplicnatsCount = 0;
+
   Map<String, int?> get statusCountMap => {
         'All': allJobTalentCount,
         'Draft': draftTalentCount,
@@ -48,24 +60,46 @@ class JobListingsViewModel extends ChangeNotifier {
         'Expired': expiredStatusCount,
         'Reject': rejectStatusCount,
       };
-  final Map<String,int> statusCountMapforapplicatnts =
-  {
-   'All':10,
-    'Applied':2,
-    'Shortlisted':2,
-    'Interviews':5,
-  };
+
+  Map<String, int?> get statusCountMapforapplicatnts => {
+        'All': allJobapplicantCount,
+        'Applied': appliedjobapplicnatsCount,
+        'Shortlisted': shortlistedjobapplicnatsCount,
+        'Interviews': interviewsjobapplicnatsCount,
+        'Reject': rejectjobapplicnatsCount,
+        'Accepted': acceptedjobapplicnatsCount,
+      };
 
   List<String>? listingStatus = [];
+  List<String> listingStatusforapplicants = [];
   String? suppliersId;
   String? practiceId;
   List<JobsListingDetails> myJobListingList = [];
+  List<JobApplicants> myApplicantsList = [];
 
-  void  changeStatusforapplicatnts(String status,
-  BuildContext context)
-  {
-  selectedstatusesforapplicatnts=status;
-  notifyListeners();
+  void changeStatusforapplicatnts(String status, BuildContext context) {
+    selectedstatusesforapplicatnts = status;
+    if (status == 'All') {
+      listingStatusforapplicants = [
+        "APPLIED",
+        "INTERVIEWS",
+        "ACCEPTED",
+        "REJECT",
+        "SHORTLISTED",
+      ];
+    } else if (status == 'Applied') {
+      listingStatusforapplicants = ['APPLIED'];
+    } else if (status == 'Shortlisted') {
+      listingStatusforapplicants = ['SHORTLISTED'];
+    } else if (status == 'Interviews') {
+      listingStatusforapplicants = ["INTERVIEWS"];
+    } else if (status == 'Reject') {
+      listingStatusforapplicants = ['REJECT'];
+    } else if (status == 'Accepted') {
+      listingStatusforapplicants = ['ACCEPTED'];
+    }
+    getMyJobApplicantsgData(context, jobId ?? '');
+    notifyListeners();
   }
 
   void changeStatus(String status, BuildContext context) {
@@ -88,9 +122,7 @@ class JobListingsViewModel extends ChangeNotifier {
     } else if (status == 'InActive') {
       listingStatus = ['INACTIVE'];
     } else if (status == 'Expired') {
-      listingStatus = ['EXPIRED'];
-    } else if (status == 'Reject') {
-      listingStatus = ['REJECTED'];
+      listingStatus = ['ACCEPTED'];
     }
     getMyJobListingData();
     notifyListeners();
@@ -116,26 +148,65 @@ class JobListingsViewModel extends ChangeNotifier {
   Future<void> getMyJobListingData() async {
     final res = await repo.getMyJobListing(listingStatus);
     fetchJobStatusCounts();
-    // print(res);
     if (res != null) {
       myJobListingList = res;
-      // Loaders.circularHideLoader(navigatorKey.currentContext!);
+    }
+    notifyListeners();
+  }
+
+  Future<void> getMyJobApplicantsgData(
+      BuildContext context, String jobId) async {
+    await fetchJobApplicantsCount(jobId);
+    Loaders.circularShowLoader(context);
+    final res = await repo.getJobApplicants(listingStatusforapplicants, jobId);
+    if (res != null) {
+      myApplicantsList = res;
+      Loaders.circularHideLoader(context);
     } else {
-      // Loaders.circularHideLoader(navigatorKey.currentContext!);
+      Loaders.circularShowLoader(context);
     }
     notifyListeners();
   }
 
   Future<void> fetchJobStatusCounts() async {
     final res = await repo.jobListingStatusCount();
-    allJobTalentCount = ((res.all?.aggregate?.count ?? 0));
-    pendingApprovalCount = res.pending?.aggregate?.count;
-    draftTalentCount = res.draft?.aggregate?.count;
-    inActiveCount = ((res.inactive?.aggregate?.count ?? 0) +
-        (res.approved?.aggregate?.count ?? 0));
-    expiredStatusCount = res.expired?.aggregate?.count;
-    rejectStatusCount = res.rejected?.aggregate?.count;
+    allJobTalentCount = res.all?.aggregate?.count ?? 0;
+    pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
+    draftTalentCount = res.draft?.aggregate?.count ?? 0;
+    inActiveCount = (res.inactive?.aggregate?.count ?? 0) +
+        (res.approved?.aggregate?.count ?? 0);
+    expiredStatusCount = res.expired?.aggregate?.count ?? 0;
+    rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     notifyListeners();
+  }
+
+  Future<void> fetchJobApplicantsCount(String jobId) async {
+    try {
+      isLoading = true;
+      errorMessage = null;
+      notifyListeners();
+
+      final result =
+          await repo.getJobApplicantsCount(jobId);
+
+      final applied = result?.applied?.aggregate?.count ?? 0;
+      final accepted = result?.accepted?.aggregate?.count ?? 0;
+      final shortlisted = result?.shortlisted?.aggregate?.count ?? 0;
+      final interviews = result?.interviews?.aggregate?.count ?? 0;
+      final rejected = result?.rejected?.aggregate?.count ?? 0;
+      allJobapplicantCount =
+          applied + accepted + shortlisted + interviews + rejected;
+      appliedjobapplicnatsCount = applied;
+      acceptedjobapplicnatsCount = accepted;
+      shortlistedjobapplicnatsCount = shortlisted;
+      interviewsjobapplicnatsCount = interviews;
+      rejectjobapplicnatsCount = rejected;
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> removeJobsListingData(BuildContext context, String? id) async {

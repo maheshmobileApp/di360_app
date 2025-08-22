@@ -32,10 +32,7 @@ class HttpService {
 
   Future<dynamic> uploadImage(filePath) async {
     MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
-    var _data = {
-      "file": _uploadImage,
-      "directory": 'project'
-    };
+    var _data = {"file": _uploadImage, "directory": 'project'};
     return await post('api/v1/file-upload/upload-s3', FormData.fromMap(_data));
   }
 
@@ -87,19 +84,19 @@ class HttpService {
     }
   }
 
-  Future subscription(document,
-      {variables, showLoading = true}) async {
+  Future subscription(document, {variables, showLoading = true}) async {
     var responses;
     try {
       final response = await _hasuraConnect.subscription(document,
           variables: variables ?? {});
-          responses = response;
-          print(responses);
+      responses = response;
+      print(responses);
     } catch (e, s) {
       print("$e , $s");
     }
     return responses;
-  }    
+  }
+
   _showError(DioError e) {
     if (e.message!.contains('SocketException') &&
         e.message!.contains('Network is unreachable')) {
