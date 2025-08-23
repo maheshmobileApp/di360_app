@@ -7,9 +7,6 @@ import 'package:flutter/material.dart';
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
 
-  TalentListingViewModel() {
-    fetchTalentStatusCounts();
-  }
   final List<String> roleOptions = [
     "Surgen",
     "Dentist",
@@ -58,7 +55,6 @@ class TalentListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Status filter
   String selectedStatus = 'All';
   final List<String> statuses = [
     'All',
@@ -86,10 +82,7 @@ class TalentListingViewModel extends ChangeNotifier {
       };
 
   List<String>? listingStatus = [];
-  String? suppliersId;
-  String? practiceId;
-
- List<TalentListingsProfile> myTalentListingList = [];
+ List<TalentListingProfiles> myTalentListingList = [];
 
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
@@ -118,34 +111,28 @@ class TalentListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchTalentStatusCounts() async {
+Future<void>  fetchTalentStatusCounts() async {
   final res = await repo.talentCounts();
-
-  final pending   = res?.data?.pending?.aggregate?.count ?? 0;
-  final approved  = res?.data?.approved?.aggregate?.count ?? 0;
-  final rejected  = res?.data?.rejected?.aggregate?.count ?? 0;
-  final cancelled = res?.data?.cancelled?.aggregate?.count ?? 0;
-  final enquiry   = res?.data?.enquiry?.aggregate?.count ?? 0;
-
-  AllTalentCount = pending + approved + rejected + cancelled + enquiry;
-  PendingCount    = pending;
-  ApprovalCount   = approved;
-  RejectedCount   = rejected;
-  CancelledStatusCount = cancelled;
-  EnquiryStatusCount  = enquiry;
+  AllTalentCount = res.data?.all?.aggregate?.count ?? 0;
+  PendingCount = res.data?.pending?.aggregate?.count ?? 0;
+  ApprovalCount = res.data?.approved?.aggregate?.count ?? 0;
+  RejectedCount = res.data?.rejected?.aggregate?.count ?? 0; 
+  CancelledStatusCount = res.data?.cancelled?.aggregate?.count ?? 0;
+  EnquiryStatusCount = res.data?.enquiry?.aggregate?.count ?? 0;
 
   notifyListeners();
 }
 
 
-    Future<void> getMyTalentListingData() async {
-   final res = await repo.getMyTalentlistingStatic();
-  fetchTalentStatusCounts();
-  if (res.isNotEmpty) {
-    myTalentListingList = res;
+
+  Future<void> getMyTalentListingData() async {
+    final res = await repo.getMyTalentListing(listingStatus);
+   fetchTalentStatusCounts();
+    if (res != null) {
+      myTalentListingList = res;
+    }
+    notifyListeners();
   }
-  notifyListeners();
-}
 
   void printSelectedItems() {
     debugPrint("Selected Role: $selectedRole");
