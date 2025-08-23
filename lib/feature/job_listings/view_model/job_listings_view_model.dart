@@ -122,8 +122,11 @@ class JobListingsViewModel extends ChangeNotifier {
     } else if (status == 'InActive') {
       listingStatus = ['INACTIVE'];
     } else if (status == 'Expired') {
-      listingStatus = ['ACCEPTED'];
+      listingStatus = ['EXPIRED'];
+    } else if (status == 'Reject') {
+      listingStatus = ['REJECT'];
     }
+
     getMyJobListingData();
     notifyListeners();
   }
@@ -173,7 +176,7 @@ class JobListingsViewModel extends ChangeNotifier {
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
-    inActiveCount =res.inactive?.aggregate?.count ?? 0;   
+    inActiveCount = res.inactive?.aggregate?.count ?? 0;
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     notifyListeners();
@@ -185,8 +188,7 @@ class JobListingsViewModel extends ChangeNotifier {
       errorMessage = null;
       notifyListeners();
 
-      final result =
-          await repo.getJobApplicantsCount(jobId);
+      final result = await repo.getJobApplicantsCount(jobId);
 
       final applied = result?.applied?.aggregate?.count ?? 0;
       final accepted = result?.accepted?.aggregate?.count ?? 0;
@@ -236,4 +238,30 @@ class JobListingsViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+ Future<void> updateJobApplicantStatus(
+      BuildContext context, String? id, String status) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.updateJobAggrateStatus({
+       "id":id,
+      "status":status
+ });
+  if (id == null || id.isEmpty) {
+    scaffoldMessenger("Invalid id: $id");
+    Loaders.circularHideLoader(context);
+    return;
+  }
+    print(res);
+    if (res != null) {
+      scaffoldMessenger('JobAggrateData update successfully');
+      Loaders.circularHideLoader(context);
+      //getMyJobApplicantsgData();
+    } else {
+      scaffoldMessenger(res);
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
 }
+
+

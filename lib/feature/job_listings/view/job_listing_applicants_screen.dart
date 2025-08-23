@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_card.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,8 @@ import 'package:provider/provider.dart';
 
 
 class JobListingApplicantsScreen extends StatefulWidget {
-  const  JobListingApplicantsScreen({super.key});
+  final JobsListingDetails? jobsListingData;
+  const  JobListingApplicantsScreen({super.key, this.jobsListingData,});
 
   @override
   State< JobListingApplicantsScreen> createState() => _JobListingApplicantsScreenState();
@@ -35,12 +37,12 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-             "Job Title Name",
+            widget.jobsListingData?.companyName??'',
               style: TextStyles.semiBold(color: AppColors.black, fontSize: 16),
             ),
             addVertical(2),
             Text(
-              "Company Name",
+             widget.jobsListingData?.jRole??"",
               style: TextStyles.regular1(
                   color: AppColors.bottomNavUnSelectedColor, fontSize: 13),
             ),
@@ -118,7 +120,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
             ),
             Divider(),
             Expanded(
-              child: jobListingVM.myJobListingList.isEmpty
+              child: jobListingVM.myApplicantsList.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

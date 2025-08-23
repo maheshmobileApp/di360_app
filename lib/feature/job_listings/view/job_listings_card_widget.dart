@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 class JobListingCard extends StatelessWidget with BaseContextHelpers {
   final JobsListingDetails? jobsListingData;
   final JobListingsViewModel vm;
+  final dynamic parmas;
   final int? index;
 
   const JobListingCard({
@@ -20,6 +21,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     required this.jobsListingData,
     required this.vm,
     this.index,
+    this.parmas,
   });
 
   @override
@@ -117,8 +119,12 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 viewModel.jobId = jobsListingData?.id ?? '';
                 await viewModel.getMyJobApplicantsgData(
                     context, jobsListingData?.id ?? '');
-                navigationService
-                    .navigateTo(RouteList.JobListingApplicantscreen);
+                navigationService.navigateToWithParams(
+                  RouteList.JobListingApplicantscreen,
+                  params: jobsListingData
+                );
+                // navigationService
+                //     .navigateTo(RouteList.JobListingApplicantscreen);
               },
               child: Center(
                 child: Text(
@@ -337,7 +343,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
   //     ],
   //   );
   // }
-Widget menuWidget(
+  Widget menuWidget(
     JobListingsViewModel vm,
     BuildContext context,
     int index,
