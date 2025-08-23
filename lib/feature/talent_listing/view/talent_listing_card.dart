@@ -2,17 +2,17 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/talent_listing/model/talent_listings_response.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_listings_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 class TalentListingCard extends StatelessWidget with BaseContextHelpers {
-  final TalentsListingDetails? jobProfiles;
+  final TalentListingDetails? jobProfiles;
   final TalentListingViewModel vm;
   final int? index;
-  
+
   const TalentListingCard({
     super.key,
     required this.jobProfiles,
@@ -22,11 +22,12 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(jobProfiles?.createdAt ?? '') ?? '';
+    final String time = _getShortTime(jobProfiles?.created_at ?? '') ?? '';
 
-    final ImageProvider image = (jobProfiles?.profileImage.isNotEmpty ?? false)
-        ? NetworkImage(jobProfiles!.profileImage.first.url)
-        : const AssetImage("assets/pngs/avatar_placeholder.png");
+    final ImageProvider image =
+        (jobProfiles?.profile_image?.isNotEmpty ?? false)
+            ? NetworkImage(jobProfiles!.profile_image!)
+            : const AssetImage("assets/pngs/avatar_placeholder.png");
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -55,8 +56,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   child: _logoWithTitle(
                     context,
                     image,
-                    jobProfiles?.fullName ?? '',
-                    jobProfiles?.jobDesignation ?? '',
+                    jobProfiles?.full_name ?? '',
+                    jobProfiles?.job_designation ?? '',
                   ),
                 ),
                 Column(
@@ -64,7 +65,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     Row(
                       children: [
-                        _statusChip(jobProfiles?.adminStatus ?? ''),
+                        _statusChip(jobProfiles?.admin_status ?? ''),
                         addHorizontal(4),
                         _TalentMenu(),
                       ],
@@ -77,14 +78,13 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                    child: _WorkTypes(jobProfiles?.workType.join(', ') ?? '')),
+                Expanded(child: _WorkTypes(jobProfiles?.work_type ?? '')),
                 _TalentTimeChip(time),
               ],
             ),
             addVertical(6),
             _descriptionWidget(
-                jobProfiles?.aboutYourself ?? "No description available."),
+                jobProfiles?.about_yourself ?? "No description available."),
             addVertical(10),
             const Divider(),
             Row(

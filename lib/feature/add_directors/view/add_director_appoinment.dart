@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_appoinment_foam.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:flutter/material.dart';
 
 class AddDirectorAppoinment extends StatelessWidget with BaseContextHelpers {
@@ -19,8 +20,7 @@ class AddDirectorAppoinment extends StatelessWidget with BaseContextHelpers {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _sectionHeader('Appointments'),
-               _addButton(
-                  context,
+              CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
                     print("Appoinment foam");
@@ -40,27 +40,6 @@ class AddDirectorAppoinment extends StatelessWidget with BaseContextHelpers {
     return Text(
       title,
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
-  Widget _addButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.primaryColor,
-        backgroundColor: AppColors.timeBgColor,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      child: Text(
-        label,
-        style: TextStyles.semiBold(fontSize: 14, color: AppColors.primaryColor),
-      ),
     );
   }
 

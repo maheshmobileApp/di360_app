@@ -74,8 +74,8 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                         backgroundColor: AppColors.primaryColor,
                         child: Text(
                           '${notificationVM.notificationCount}',
-                          style: TextStyles.medium1(
-                              color: AppColors.whiteColor),
+                          style:
+                              TextStyles.medium1(color: AppColors.whiteColor),
                         ),
                       ),
                     ),
@@ -173,11 +173,17 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                 : ListView.builder(
                     itemCount: vm.myTalentListingList.length,
                     itemBuilder: (context, index) {
-                      final talentData = vm.myTalentListingList[index];
-                      return TalentListingCard(
-                        jobProfiles: talentData,
-                        vm: vm,
-                        index: index,
+                      final profile = vm.myTalentListingList[index];
+                      return Column(
+                        children: profile.jobProfiles?.map((jobProfile) {
+                              return TalentListingCard(
+                                jobProfiles:
+                                    jobProfile,
+                                vm: vm,
+                                index: index,
+                              );
+                            }).toList() ??
+                            [],
                       );
                     },
                   ),

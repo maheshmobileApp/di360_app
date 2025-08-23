@@ -1,10 +1,10 @@
 class GetMyTalentListingResp {
-  TalentListing? data;
+  TalentListingsProfile? data;
 
   GetMyTalentListingResp({this.data});
 
   GetMyTalentListingResp.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? TalentListing.fromJson(json['data']) : null;
+    data = json['data'] != null ? TalentListingsProfile.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -16,12 +16,12 @@ class GetMyTalentListingResp {
   }
 }
 
-class TalentListing {
+class TalentListingsProfile {
   List<TalentListingDetails>? jobProfiles;
 
-  TalentListing({this.jobProfiles});
+  TalentListingsProfile({this.jobProfiles});
 
-  TalentListing.fromJson(Map<String, dynamic> json) {
+TalentListingsProfile.fromJson(Map<String, dynamic> json) {
     if (json['job_profiles'] != null) {
       jobProfiles = <TalentListingDetails>[];
       json['job_profiles'].forEach((v) {
