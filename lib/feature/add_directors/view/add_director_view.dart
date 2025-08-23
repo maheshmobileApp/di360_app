@@ -93,7 +93,7 @@ Widget _getStepWidget(AddDirectoryStep stepIndex) {
     case AddDirectoryStep.Certificates:
       return AddDirectorCertificate();
     case AddDirectoryStep.Achievements:
-      return AddDirectorArchiement();
+      return  AddDirectorAchievement();
        case AddDirectoryStep.Documents:
       return  AddDirectorDocument();
     case AddDirectoryStep.OurTeam:

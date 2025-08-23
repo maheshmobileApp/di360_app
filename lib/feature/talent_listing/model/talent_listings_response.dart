@@ -16,14 +16,14 @@ TalentListing? data;
   }
 }
 class TalentListing {
-  List<TalentsListingDetails>? jobProfiles;
+  List<TalentsListingDetail>? jobProfiles;
 
   TalentListing({this.jobProfiles});
 
   factory TalentListing.fromJson(Map<String, dynamic> json) {
     return TalentListing(
       jobProfiles: (json['job_profiles'] as List<dynamic>?)
-          ?.map((v) => TalentsListingDetails.fromJson(
+          ?.map((v) => TalentsListingDetail.fromJson(
               v as Map<String, dynamic>)) // Strong type casting
           .toList(),
     );
@@ -37,7 +37,7 @@ class TalentListing {
   }
 }
 
-class TalentsListingDetails {
+class TalentsListingDetail {
   final String id;
   final String createdAt;
   final String updatedAt;
@@ -85,7 +85,7 @@ class TalentsListingDetails {
   final DentalProfessional dentalProfessional;
   final List<dynamic> jobhirings;
 
-  TalentsListingDetails({
+  TalentsListingDetail({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
@@ -134,8 +134,8 @@ class TalentsListingDetails {
     required this.jobhirings,
   });
 
-  factory TalentsListingDetails.fromJson(Map<String, dynamic> json) {
-    return TalentsListingDetails(
+  factory TalentsListingDetail.fromJson(Map<String, dynamic> json) {
+    return TalentsListingDetail(
       id: json['id'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
