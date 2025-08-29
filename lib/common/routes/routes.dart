@@ -58,7 +58,13 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
-      RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
+       RouteList.JobListingApplicantscreen: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return JobListingApplicantsScreen(
+          jobsListingData: args as JobsListingDetails,
+        );
+      },
+     // RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;

@@ -88,6 +88,8 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             _buildExperience(jobCreateVM),
             addVertical(8),
             _buildEducation(jobCreateVM),
+            addVertical(8),
+            _buildBenefits(jobCreateVM)
           ],
         ),
       ),
@@ -181,6 +183,21 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Select level",
+    );
+  }
+
+  Widget _buildBenefits(JobCreateViewModel jobCreateVM) {
+    return CustomDropDown(
+      value: jobCreateVM.selecteBenefits,
+      title: "Do you offer any of the following benefits",
+      onChanged: (v) => jobCreateVM.setSelectedBenefits(v as String),
+      items: jobCreateVM.Benefits.map((value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select Benefits",
     
     );
   }
