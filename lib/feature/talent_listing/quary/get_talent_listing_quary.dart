@@ -62,7 +62,8 @@ const String getTalentListingQuery = r'''
 
       jobhirings {
         id
-      }
-    }
-  }
+ 
+ }
+ }
+ }
 ''';

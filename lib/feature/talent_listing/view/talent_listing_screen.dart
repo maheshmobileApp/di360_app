@@ -21,13 +21,6 @@ class TalentListingScreen extends StatefulWidget {
 class _TalentListingScreenState extends State<TalentListingScreen>
     with BaseContextHelpers {
   @override
-  void initState() {
-    super.initState();
-    // Optional: Trigger initial data fetch if not already in ViewModel
-    // Provider.of<TalentListingViewModel>(context, listen: false).fetchTalentListings();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
     final vm = Provider.of<TalentListingViewModel>(context);
@@ -173,18 +166,17 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                 : ListView.builder(
                     itemCount: vm.myTalentListingList.length,
                     itemBuilder: (context, index) {
-                      final profile = vm.myTalentListingList[index];
-                      return Column(
-                        children: profile.jobProfiles?.map((jobProfile) {
-                              return TalentListingCard(
-                                jobProfiles:
-                                    jobProfile,
-                                vm: vm,
-                                index: index,
-                              );
-                            }).toList() ??
-                            [],
-                      );
+                      final jobData = vm.myTalentListingList[index];
+                      try {
+                        return TalentListingCard(
+                          jobProfiles: jobData,
+                          vm: vm,
+                          index: index,
+                        );
+                      } catch (e, st) {
+                        debugPrint("🔥 Error in card #$index: $e\n$st");
+                        return const Text("Error rendering card");
+                      }
                     },
                   ),
           ),
