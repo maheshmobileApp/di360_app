@@ -39,13 +39,28 @@ class _JobCreateViewState extends State<JobCreateView> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0), 
             child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 5, 
+                horizontal: 8, 
+              ),
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(
+                    255, 241, 229, 1), 
+                borderRadius: BorderRadius.circular(200),
+              ),
               child: Text(
                 "Preview",
-                style: TextStyles.regular2(),
+                style: const TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12, 
+                  height: 1.0,
+                  letterSpacing: 0,
+                  color: Color.fromRGBO(255, 112, 0, 1), 
+                ),
               ),
-              decoration: BoxDecoration(color: AppColors.timeBgColor),
             ),
           )
         ],
