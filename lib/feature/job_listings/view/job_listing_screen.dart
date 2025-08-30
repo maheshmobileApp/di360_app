@@ -161,7 +161,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "No Jobs Found",
+                            "No Jobs matched your search.",
                             style: TextStyles.medium2(color: AppColors.black),
                           ),
                         ],

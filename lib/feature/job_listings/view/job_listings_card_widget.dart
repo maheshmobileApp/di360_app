@@ -253,32 +253,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _roundedButton(String label) {
-    return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.timeBgColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            label == "Message" ? Icons.message_outlined : Icons.help_outline,
-            size: 16,
-            color: AppColors.primaryColor,
-          ),
-          addHorizontal(4),
-          Text(
-            label,
-            style:
-                TextStyles.medium1(color: AppColors.primaryColor, fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
+
  Widget menuWidget(
   JobListingsViewModel vm,
   BuildContext context,
@@ -335,12 +310,12 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
       if (status == "APPROVE" )
         PopupMenuItem(
           value: "Inactive",
-          child: _buildRow(Icons.block, AppColors.primaryColor, "Inactive"),
+          child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
         ),
       if (status == "REJECT")
         PopupMenuItem(
           value: "Active",
-          child: _buildRow(Icons.check_circle, AppColors.primaryColor, "Active"),
+          child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
         ),
     ],
   );

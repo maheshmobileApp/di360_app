@@ -1,11 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
+import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
   final JobApplicants? jobsListingData;
@@ -42,7 +43,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ---- Top Section: Avatar + Name + Role + Menu ----
             Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
@@ -87,8 +87,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                 ],
               ),
             ),
-
-            // ---- City + Experience ----
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
@@ -100,8 +98,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       addHorizontal(6),
                       Expanded(
                         child: Text(
-                          applicant?.cityName ??
-                              "",
+                          applicant?.cityName ?? "",
                           style: TextStyles.regular1(
                               color: AppColors.bottomNavUnSelectedColor),
                           overflow: TextOverflow.ellipsis,
@@ -110,67 +107,49 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                     ],
                   ),
                   addVertical(6),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        ImageConst.briefcaseSvg,
-                        height: 16,
-                        width: 16,
-                      ),
-                      addHorizontal(6),
-                      // Text(
-                      //   "${applicant?.status ?? '0',
-                      //   style: TextStyles.regular1(
-                      //     color: AppColors.bottomNavUnSelectedColor,
-                      //   ),
-                      // ),
-                    ],
-                  )
+                  Row(children: [_statusChip(applicant?.status ?? "")]),
                 ],
               ),
             ),
-
-            // ---- Profile Summary ----
             addVertical(8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              // child: Text(
-              //   applicant?.jobApplicantMessages != null &&
-              //           applicant!.jobApplicantMessages!.isNotEmpty
-              //       ? applicant.jobApplicantMessages!.first.toString()
-              //       : "",
-              //   maxLines: 2,
-              //   overflow: TextOverflow.ellipsis,
-              //   style: TextStyles.regular1(
-              //       color: AppColors.bottomNavUnSelectedColor),
-              // ),
             ),
-
-            // ---- Bottom Buttons ----
             addVertical(8),
             const Divider(height: 1),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  _roundedButton("Message"),
+                  _roundedButton("Resume"),
+                  addHorizontal(10),
+                  InkWell(onTap: () {
+                     navigationService
+                                .navigateTo(RouteList.JobListingApplicantsMessege); 
+                  }, child: _roundedButton("Message")),
                   addHorizontal(10),
                   InkWell(
                       onTap: () {
+                        if (applicant == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Applicant data not available")),
+                          );
+                          return;
+                        }
+
                         showModalBottomSheet(
                           context: context,
-                         
                           shape: const RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.vertical(top: Radius.circular(20)),
                           ),
-                          builder: (context) => const EnquiryBottomSheet(),
+                          builder: (context) => JobListingApplicantsEnquiry(
+                            applicant: applicant, // safe now
+                          ),
                         );
                       },
                       child: _roundedButton("Enquiry")),
-                  const Spacer(),
-                  const Icon(Icons.arrow_forward_ios,
-                      size: 12, color: AppColors.primaryColor),
                 ],
               ),
             ),
@@ -180,8 +159,17 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  // ---- Helper Buttons ----
   Widget _roundedButton(String label) {
+    IconData icon;
+
+    if (label == "Resume") {
+      icon = Icons.picture_as_pdf;
+    } else if (label == "Message") {
+      icon = Icons.message_outlined;
+    } else {
+      icon = Icons.help_outline;
+    }
+
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -192,11 +180,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            label == "Message" ? Icons.message_outlined : Icons.help_outline,
-            size: 16,
-            color: AppColors.primaryColor,
-          ),
+          Icon(icon, size: 16, color: AppColors.primaryColor),
           addHorizontal(4),
           Text(
             label,
@@ -210,7 +194,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  // ---- Popup Menu ----
   Widget menuWidget(
     JobListingsViewModel vm,
     BuildContext context,
@@ -245,20 +228,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
         if (newStatus.isNotEmpty) {
           vm.updateJobApplicantStatus(context, id, newStatus);
         }
-        //   "APPLIED",
-        // "INTERVIEWS",
-        // "ACCEPTED",
-        // "REJECT",
-        // "SHORTLISTED",
-        // if (value == "Shortlist") {
-        //     vm.updateJobApplicantStatus(context, id,"SHORTLISTED");
-        // } else if (value == "Organize Interview") {
-        //     vm.updateJobApplicantStatus(context, id, "INTERVIEWS");
-        // } else if (value == "Accept") {
-        //   vm.updateJobApplicantStatus(context, id,"ACCEPTED");
-        // } else if (value == "Decline") {
-        //   //  vm.updateJobApplicantStatus(context, id, vm.selectedstatusesforapplicatnts);
-        // }
       },
       itemBuilder: (context) => [
         if (status == 'APPLIED' ||
@@ -294,144 +263,20 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
     ]);
   }
-}
 
-class EnquiryBottomSheet extends StatelessWidget {
-  const EnquiryBottomSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+  Widget _statusChip(String status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(253, 245, 229, 1),
+        borderRadius: BorderRadius.circular(30),
       ),
-      child: DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        maxChildSize: 0.9,
-        minChildSize: 0.4,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        "Enquiry",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    )
-                  ],
-                ),
-
-                // Card Content
-                Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(radius: 24),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text("User name",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16)),
-                                Text("Dental Hygienist",
-                                    style: TextStyle(color: Colors.grey)),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        const Row(
-                          children: [
-                            Icon(Icons.location_on, size: 16),
-                            SizedBox(width: 4),
-                            Expanded(
-                              child:
-                                  Text("138 Marsh Street, Armidale, NSW 2350"),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        const Row(
-                          children: [
-                            Icon(Icons.work, size: 16),
-                            SizedBox(width: 4),
-                            Text("5 Yrs Experience"),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          "About me / Profile Summary, The entire course was re-recorded from scratch and was therefore com...",
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-              // Spacer(),
-
-                // Input field
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "Type your enquiry message",
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      CircleAvatar(
-                        backgroundColor: Colors.blue,
-                        child: IconButton(
-                          icon: const Icon(Icons.send, color: Colors.white),
-                          onPressed: () {
-                            // send enquiry
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          );
-        },
+      child: Text(
+        status,
+        style: TextStyles.semiBold(
+          fontSize: 12,
+          color: const Color.fromRGBO(225, 146, 0, 1),
+        ),
       ),
     );
   }
