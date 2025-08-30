@@ -118,7 +118,7 @@ class JobListingsViewModel extends ChangeNotifier {
     } else if (status == 'Pending Approval') {
       listingStatus = ['PENDING'];
     } else if (status == 'Active') {
-      listingStatus = ["ACTIVE"];
+      listingStatus = ["APPROVE"];
     } else if (status == 'InActive') {
       listingStatus = ['INACTIVE'];
     } else if (status == 'Expired') {
@@ -177,6 +177,7 @@ class JobListingsViewModel extends ChangeNotifier {
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     inActiveCount = res.inactive?.aggregate?.count ?? 0;
+    activeCount = res.approved?.aggregate?.count ?? 0;
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     notifyListeners();

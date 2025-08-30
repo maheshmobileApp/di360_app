@@ -59,7 +59,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                       child: _logoWithTitle(
                         context,
                         jobsListingData?.logo ?? '',
-                        jobsListingData?.companyName ?? '',
+                        jobsListingData?.title ?? '',
                         jobsListingData?.jRole ?? '',
                         jobsListingData?.status ?? '',
 
