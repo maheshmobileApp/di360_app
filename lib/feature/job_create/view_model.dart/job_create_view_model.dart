@@ -36,6 +36,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final cityPostCodeController = TextEditingController();
   final minSalaryController = TextEditingController();
   final maxSalaryController = TextEditingController();
+  final countryController = TextEditingController();
 
   // NEW: Locum date controller
   final locumDateController = TextEditingController();
