@@ -60,7 +60,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                         context,
                         jobsListingData?.logo ?? '',
                         jobsListingData?.title ?? '',
-                        jobsListingData?.jRole ?? '',
+                        jobsListingData?.companyName ?? '',
                         jobsListingData?.status ?? '',
 
                       ),
@@ -85,16 +85,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 addVertical(10),
                 _descriptionWidget(jobsListingData?.description ?? ''),
                 const Divider(),
-                Row(
-                  children: [
-                    _roundedButton("Message"),
-                    addHorizontal(10),
-                    _roundedButton("Enquiry"),
-                    const Spacer(),
-                    const Icon(Icons.arrow_forward_ios,
-                        color: AppColors.primaryColor, size: 10),
-                  ],
-                ),
+
               ],
             ),
           ),

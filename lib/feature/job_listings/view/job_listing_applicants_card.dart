@@ -101,7 +101,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       Expanded(
                         child: Text(
                           applicant?.cityName ??
-                              "123 Marsh Street, Armidale, NSW",
+                              "",
                           style: TextStyles.regular1(
                               color: AppColors.bottomNavUnSelectedColor),
                           overflow: TextOverflow.ellipsis,
@@ -118,12 +118,12 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                         width: 16,
                       ),
                       addHorizontal(6),
-                      Text(
-                        "${applicant?.status ?? '0'} Yrs Experience",
-                        style: TextStyles.regular1(
-                          color: AppColors.bottomNavUnSelectedColor,
-                        ),
-                      ),
+                      // Text(
+                      //   "${applicant?.status ?? '0',
+                      //   style: TextStyles.regular1(
+                      //     color: AppColors.bottomNavUnSelectedColor,
+                      //   ),
+                      // ),
                     ],
                   )
                 ],
@@ -134,16 +134,16 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
             addVertical(8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                applicant?.jobApplicantMessages != null &&
-                        applicant!.jobApplicantMessages!.isNotEmpty
-                    ? applicant.jobApplicantMessages!.first.toString()
-                    : "About me / Profile Summary, short description here...",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyles.regular1(
-                    color: AppColors.bottomNavUnSelectedColor),
-              ),
+              // child: Text(
+              //   applicant?.jobApplicantMessages != null &&
+              //           applicant!.jobApplicantMessages!.isNotEmpty
+              //       ? applicant.jobApplicantMessages!.first.toString()
+              //       : "",
+              //   maxLines: 2,
+              //   overflow: TextOverflow.ellipsis,
+              //   style: TextStyles.regular1(
+              //       color: AppColors.bottomNavUnSelectedColor),
+              // ),
             ),
 
             // ---- Bottom Buttons ----
