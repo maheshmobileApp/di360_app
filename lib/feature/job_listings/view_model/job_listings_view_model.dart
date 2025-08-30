@@ -10,7 +10,8 @@ class JobListingsViewModel extends ChangeNotifier {
 
   bool isLoading = false;
   String? errorMessage;
-
+   final TextEditingController messageController = TextEditingController();
+    final TextEditingController enquiryController = TextEditingController();
   final Map<String, bool> _jobActiveStatus = {};
   String selectedStatus = 'All';
   String selectedstatusesforapplicatnts = 'All';
@@ -29,12 +30,32 @@ class JobListingsViewModel extends ChangeNotifier {
   final List<String> statusesforapplicatnts = [
     'All',
     'Applied',
-    'Accepted',
     'Shortlisted',
     'Interviews',
+    'Accepted',
     'Reject',
   ];
-
+    final List<ChatMessage> messages = [
+    ChatMessage(
+        text: "Hi team ",
+        time: "11:31 AM",
+        isMe: true,
+        username: "Me",
+        status: "sent"),
+    ChatMessage(
+        text: "Anyone on for lunch today",
+        time: "11:31 AM",
+        isMe: true,
+        username: "Me",
+        status: "read"),
+    ChatMessage(
+        text: "I’m down! Any ideas??",
+        time: "11:35 AM",
+        isMe: false,
+        username: "User name",
+        avatarUrl:
+            "https://i.pravatar.cc/150?img=3"), 
+  ];
   int? allJobTalentCount = 0;
   int? draftTalentCount = 0;
   int? pendingApprovalCount = 0;
@@ -64,10 +85,10 @@ class JobListingsViewModel extends ChangeNotifier {
   Map<String, int?> get statusCountMapforapplicatnts => {
         'All': allJobapplicantCount,
         'Applied': appliedjobapplicnatsCount,
-        'Shortlisted': shortlistedjobapplicnatsCount,
+         'Shortlisted': shortlistedjobapplicnatsCount,
         'Interviews': interviewsjobapplicnatsCount,
+         'Accepted': acceptedjobapplicnatsCount,
         'Reject': rejectjobapplicnatsCount,
-        'Accepted': acceptedjobapplicnatsCount,
       };
 
   List<String>? listingStatus = [];
@@ -263,6 +284,29 @@ class JobListingsViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-}
+  @override
+void dispose() {
+  messageController.dispose();
+  enquiryController.dispose();
 
+  super.dispose();
+}
+}
+class ChatMessage {
+  final String text;
+  final String time;
+  final bool isMe;
+  final String? username;
+  final String? avatarUrl;
+  final String status; 
+
+  ChatMessage({
+    required this.text,
+    required this.time,
+    required this.isMe,
+    this.username,
+    this.avatarUrl,
+    this.status = "sent",
+  });
+}
 

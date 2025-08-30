@@ -49,10 +49,11 @@ class ImageConst {
   static const String copy = "assets/pngs/copy.png";
   static const String upload = "assets/pngs/upload.png";
   static const String dentalgallery = "assets/pngs/dentalgallery.png";
-   static const String teamcard = "assets/pngs/teamcard.png";
-    static const String cerificatecard = "assets/pngs/certificate.png";
+  static const String teamcard = "assets/pngs/teamcard.png";
+  static const String cerificatecard = "assets/pngs/certificate.png";
   static const String calender = "assets/pngs/CalendarBlank.png";
   static const String catalogueBg = "assets/pngs/catalogueBG.png";
+  static const String Inactive = "assets/pngs/inactive.png";
   static const String _svgBasePath = 'assets/svgs/';
 
   // Job related SVG icons
@@ -66,6 +67,7 @@ class ImageConst {
   static const String hummanresourse = '${_svgBasePath}human-resources 1.svg';
   static const String locationsvg = '${_svgBasePath}locationsvg.svg';
   static const String copySvg = '${_svgBasePath}copy.svg';
+
   //static const String
 
   // Social Mediaassets/svgs/locationsvg.svg

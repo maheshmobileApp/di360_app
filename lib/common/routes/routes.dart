@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
+import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
 
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
@@ -58,6 +59,9 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
+       RouteList.JobListingApplicantsMessege: (context) => 
+       JobListingApplicantsMessege( ),
+
        RouteList.JobListingApplicantscreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingApplicantsScreen(

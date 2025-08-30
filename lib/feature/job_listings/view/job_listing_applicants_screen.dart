@@ -29,7 +29,6 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
   @override
   Widget build(BuildContext context) {
     final jobListingVM = Provider.of<JobListingsViewModel>(context);
-    
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -40,17 +39,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
           widget.jobsListingData?.logo ?? '',
           widget.jobsListingData?.companyName ?? '',
           widget.jobsListingData?.jRole ?? '',
-          widget.jobsListingData?.status ?? '',
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: AppColors.bottomNavUnSelectedColor,
-            ),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -120,7 +109,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
             child: jobListingVM.myApplicantsList.isEmpty
                 ? Center(
                     child: Text(
-                      "No Jobs Found",
+                      " No Applicants found",
                       style: TextStyles.medium2(color: AppColors.black),
                     ),
                   )
@@ -142,60 +131,43 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
   }
 
   Widget _logoWithTitle(
-    BuildContext context,
-    String logo,
-    String company,
-    String title,
-    String status,
-  ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.center,
+  BuildContext context,
+  String logo,
+  String company,
+  String title,
+) {
+  return Row(
+    children: [
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          CircleAvatar(
+            backgroundColor: AppColors.geryColor,
+            backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
+            radius: 30,
+            child: logo.isEmpty
+                ? const Icon(Icons.business,
+                    size: 20, color: AppColors.lightGeryColor)
+                : null,
+          ),
+        ],
+      ),
+      addHorizontal(12),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              backgroundColor: AppColors.geryColor,
-              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
-              radius: 30,
-              child: logo.isEmpty
-                  ? const Icon(Icons.business,
-                      size: 20, color: AppColors.lightGeryColor)
-                  : null,
-            ),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(229, 244, 237, 1),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: AppColors.whiteColor, width: 1),
-                ),
-                child: Text(
-                  status,
-                  style: TextStyles.medium1(
-                    color: AppColors.greenColor,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ),
+            Text(company,
+                style: TextStyles.medium2(color: AppColors.black)),
+            addVertical(2),
+            Text(title,
+                style: TextStyles.regular2(color: AppColors.black)),
           ],
         ),
-        addHorizontal(12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(company, style: TextStyles.medium2(color: AppColors.black)),
-              addVertical(2),
-              Text(title, style: TextStyles.regular2(color: AppColors.black)),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 }
 
