@@ -142,9 +142,25 @@ class JobApplicants {
 }
 
 class Attachments {
-  Attachments();
-  Attachments.fromJson(Map<String, dynamic> json);
-  Map<String, dynamic> toJson() => {};
+  String? url;
+  String? name;
+  String? type;
+
+  Attachments({this.url, this.name, this.type});
+
+  Attachments.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    return data;
+  }
 }
 
 class DentalProfessional {

@@ -96,7 +96,14 @@ class JobListingsViewModel extends ChangeNotifier {
       };
 
   List<String>? listingStatus = [];
-  List<String> listingStatusforapplicants = [];
+  List<String> listingStatusforapplicants = [
+    "APPLIED",
+    "INTERVIEWS",
+    "ACCEPTED",
+    "REJECT",
+    "SHORTLISTED",
+    "DECLINED"
+  ];
   String? suppliersId;
   String? practiceId;
   List<JobsListingDetails> myJobListingList = [];
@@ -288,7 +295,9 @@ class JobListingsViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger('JobAggrateData update successfully');
       Loaders.circularHideLoader(context);
-      //getMyJobApplicantsgData();
+
+      getMyJobApplicantsgData(context, jobId ?? '');
+
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);

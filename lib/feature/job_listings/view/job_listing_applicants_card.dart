@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
@@ -24,6 +25,12 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final applicant = jobsListingData;
     final professional = applicant?.dentalProfessional;
+    // final pdf = applicant?.dentalProfessional?.attachment;
+    var resume = '';
+    final attachment = applicant?.attachments ?? [];
+    if (attachment.length > 0) {
+      resume = attachment.first.url ?? '';
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -121,7 +128,18 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  _roundedButton("Resume"),
+                  InkWell(
+                      onTap: () {
+                        navigationService.push(HorizantalPdf(
+                          // key: ValueKey(
+                          //   pdf?.url ?? '',
+                          // ),
+                          fileUrl: resume,
+                          fileName: '',
+                          isfullScreen: true,
+                        ));
+                      },
+                      child: _roundedButton("Resume")),
                   addHorizontal(10),
                   InkWell(onTap: () {
                      navigationService
