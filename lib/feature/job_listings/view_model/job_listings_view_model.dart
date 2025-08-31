@@ -34,6 +34,7 @@ class JobListingsViewModel extends ChangeNotifier {
     'Interviews',
     'Accepted',
     'Reject',
+    'Declined'
   ];
     final List<ChatMessage> messages = [
     ChatMessage(
@@ -71,6 +72,8 @@ class JobListingsViewModel extends ChangeNotifier {
   int? shortlistedjobapplicnatsCount = 0;
   int? interviewsjobapplicnatsCount = 0;
   int? rejectjobapplicnatsCount = 0;
+  int? declinedjobapplicnatsCount = 0;
+
 
   Map<String, int?> get statusCountMap => {
         'All': allJobTalentCount,
@@ -89,6 +92,7 @@ class JobListingsViewModel extends ChangeNotifier {
         'Interviews': interviewsjobapplicnatsCount,
          'Accepted': acceptedjobapplicnatsCount,
         'Reject': rejectjobapplicnatsCount,
+        'Declined': declinedjobapplicnatsCount
       };
 
   List<String>? listingStatus = [];
@@ -107,6 +111,7 @@ class JobListingsViewModel extends ChangeNotifier {
         "ACCEPTED",
         "REJECT",
         "SHORTLISTED",
+        "DECLINED"
       ];
     } else if (status == 'Applied') {
       listingStatusforapplicants = ['APPLIED'];
@@ -118,6 +123,8 @@ class JobListingsViewModel extends ChangeNotifier {
       listingStatusforapplicants = ['REJECT'];
     } else if (status == 'Accepted') {
       listingStatusforapplicants = ['ACCEPTED'];
+    } else if (status == 'Declined') {
+      listingStatusforapplicants = ['DECLINED'];
     }
     getMyJobApplicantsgData(context, jobId ?? '');
     notifyListeners();
@@ -150,6 +157,7 @@ class JobListingsViewModel extends ChangeNotifier {
 
     getMyJobListingData();
     notifyListeners();
+    //INACTIVE
   }
 
   void updateSelectedStatus(String status) {
@@ -217,13 +225,16 @@ class JobListingsViewModel extends ChangeNotifier {
       final shortlisted = result?.shortlisted?.aggregate?.count ?? 0;
       final interviews = result?.interviews?.aggregate?.count ?? 0;
       final rejected = result?.rejected?.aggregate?.count ?? 0;
+      final declined = result?.declined?.aggregate?.count ?? 0;
+
       allJobapplicantCount =
-          applied + accepted + shortlisted + interviews + rejected;
+          applied + accepted + shortlisted + interviews + rejected + declined;
       appliedjobapplicnatsCount = applied;
       acceptedjobapplicnatsCount = accepted;
       shortlistedjobapplicnatsCount = shortlisted;
       interviewsjobapplicnatsCount = interviews;
       rejectjobapplicnatsCount = rejected;
+      declinedjobapplicnatsCount = declined;
     } catch (e) {
       errorMessage = e.toString();
     } finally {

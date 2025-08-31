@@ -232,6 +232,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       itemBuilder: (context) => [
         if (status == 'APPLIED' ||
             status == 'ACCEPTED' ||
+            status == 'DECLINED' ||
             status == "INTERVIEWS")
           PopupMenuItem(
             value: "Shortlist",
@@ -239,6 +240,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
           ),
         if (status == 'APPLIED' ||
             status == 'ACCEPTED' ||
+            status == 'DECLINED' ||
             status == 'SHORTLISTED')
           PopupMenuItem(
               value: "Organize Interview",
@@ -254,6 +256,11 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
             status == 'SHORTLISTED')
           PopupMenuItem(
               value: "Decline", child: _buildRow(AppColors.black, "Decline")),
+        if (
+            status == 'DECLINED' 
+            )
+          PopupMenuItem(
+              value: "Accept", child: _buildRow(AppColors.black, "Accept")),
       ],
     );
   }

@@ -90,7 +90,7 @@ class JobListingRepoImpl extends JobListingRepository {
       {
         "status": {
           "_in": listingStatusforapplicants?.isEmpty == true
-              ? ["APPLIED", "INTERVIEWS", "ACCEPTED", "REJECT", "SHORTLISTED"]
+              ? ["APPLIED", "INTERVIEWS", "ACCEPTED", "REJECT", "SHORTLISTED","DECLINED"]
               : listingStatusforapplicants
         }
       },

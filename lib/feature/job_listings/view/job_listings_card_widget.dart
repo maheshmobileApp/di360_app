@@ -188,11 +188,11 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
 
   Widget _descriptionWidget(String description) {
     return SizedBox(
-      height: 36,
+      // height: 36,
       width: double.infinity,
       child: Text(
         description,
-        maxLines: 3,
+        maxLines: 4,
         overflow: TextOverflow.ellipsis,
         style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
       ),
@@ -272,7 +272,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
         showAlertMessage(context, 'Do you really want to activate this job?',
             onBack: () {
           navigationService.goBack();
-          vm.updateJobListingStatus(context, id, "APPROVED");
+            vm.updateJobListingStatus(context, id, "INACTIVE");
         });
       } else if (value == "Preview") {
         navigationService.navigateToWithParams(

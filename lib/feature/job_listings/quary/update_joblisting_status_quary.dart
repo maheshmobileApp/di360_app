@@ -6,3 +6,4 @@ mutation UpdateJobStatus($id: uuid!, $status: String!) {
     __typename
   }
 }''';
+

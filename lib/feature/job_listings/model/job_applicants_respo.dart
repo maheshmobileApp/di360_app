@@ -52,7 +52,7 @@ class JobApplicants {
   String? cityName;
   String? dentalProfessionalId;
   DentalProfessional? dentalProfessional;
-  List<dynamic>? jobApplicantMessages;
+  List<ApplicantsMessage>? jobApplicantMessages;
   List<JobEnquiries>? jobEnquiries;
 
   JobApplicants({
@@ -94,13 +94,16 @@ class JobApplicants {
         : null;
     final msgs = json['job_applicant_messages'];
     if (msgs is List) {
-      jobApplicantMessages = msgs;
-    } else if (msgs == null) {
-      jobApplicantMessages = <dynamic>[];
+      jobApplicantMessages = msgs
+          .whereType<Map<String, dynamic>>()
+          .map(ApplicantsMessage.fromJson)
+          .toList();
+    } else if (msgs is Map<String, dynamic>) {
+      jobApplicantMessages = [ApplicantsMessage.fromJson(msgs)];
     } else {
-      
-      jobApplicantMessages = [msgs];
+      jobApplicantMessages = <ApplicantsMessage>[];
     }
+ 
     final enqu = json['job_enquiries'];
     if (enqu is List) {
       jobEnquiries = enqu
@@ -259,6 +262,39 @@ class JobEnquiries {
     data['enquiry_userid'] = enquiryUserid;
     data['enquiry_description'] = enquiryDescription;
     data['job_id'] = jobId;
+    return data;
+  }
+}
+
+class ApplicantsMessage {
+  String? id;
+  String? message;
+  String? messageFrom;
+  String? jobApplicantId;
+  dynamic jobEnquiryId;
+
+  ApplicantsMessage(
+      {this.id,
+      this.message,
+      this.messageFrom,
+      this.jobApplicantId,
+      this.jobEnquiryId});
+
+  ApplicantsMessage.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    message = json['message'];
+    messageFrom = json['message_from'];
+    jobApplicantId = json['job_applicant_id'];
+    jobEnquiryId = json['job_enquiry_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['message'] = this.message;
+    data['message_from'] = this.messageFrom;
+    data['job_applicant_id'] = this.jobApplicantId;
+    data['job_enquiry_id'] = this.jobEnquiryId;
     return data;
   }
 }
