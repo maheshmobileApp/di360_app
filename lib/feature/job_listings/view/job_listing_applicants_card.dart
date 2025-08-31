@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
@@ -142,19 +144,22 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       child: _roundedButton("Resume")),
                   addHorizontal(10),
                InkWell(
-  onTap: () {
+                    onTap: () async {
     if (applicant == null || applicant.id == null || applicant.jobId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Applicant or Job ID not available")),
       );
       return;
     }
+                      final userId = await LocalStorage.getStringVal(
+                          LocalStorageConst.userId);
 
   navigationService.navigateToWithParams(
   RouteList.JobListingApplicantsMessege,
   params: {
-    "jobId": applicant?.jobId ?? "",
-    "applicantId": applicant?.id ?? "",
+                          "jobId": applicant.jobId ?? "",
+                          "applicantId": applicant.id ?? "",
+                          "userId": userId,
   },
 );
 

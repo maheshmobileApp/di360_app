@@ -1,3 +1,4 @@
+
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,11 +7,13 @@ import 'package:intl/intl.dart';
 class JobListingApplicantsMessege extends StatefulWidget {
   final String jobId;
   final String applicantId;
+  final String userId;
 
   const JobListingApplicantsMessege({
     super.key,
     required this.jobId,
     required this.applicantId,
+    required this.userId,
   });
 
   @override
@@ -26,8 +29,12 @@ class _JobListingApplicantsMessegeState
   void initState() {
     super.initState();
     final vm = Provider.of<JobListingsViewModel>(context, listen: false);
-    vm.fetchApplicantMessages(widget.jobId);
+    vm.fetchApplicantMessages(widget.applicantId);
+  
+
   }
+
+
 
   String formatTime(String? time) {
     if (time == null) return "";
@@ -38,6 +45,7 @@ class _JobListingApplicantsMessegeState
 
   @override
   Widget build(BuildContext context) {
+
     return Consumer<JobListingsViewModel>(
       builder: (context, vm, child) {
         return Scaffold(
@@ -45,10 +53,10 @@ class _JobListingApplicantsMessegeState
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Text("Job Title Name",
+                Text("",
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text("Company Name", style: TextStyle(fontSize: 12)),
+                Text("", style: TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -62,8 +70,9 @@ class _JobListingApplicantsMessegeState
                         padding: const EdgeInsets.all(12),
                         itemCount: vm.messages.length,
                         itemBuilder: (context, index) {
+
                           final msg = vm.messages[index];
-                          final isMe = msg.messageFrom == "me";
+                          final isMe = msg.messageFrom == widget.userId;
                           return Align(
                             alignment: isMe
                                 ? Alignment.centerRight

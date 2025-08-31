@@ -65,6 +65,7 @@ class Routes {
         return JobListingApplicantsMessege(
           jobId: args['jobId'],
           applicantId: args['applicantId'],
+          userId: args['userId'],
         );
       },
 

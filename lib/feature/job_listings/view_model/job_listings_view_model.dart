@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
@@ -312,10 +314,12 @@ class JobListingsViewModel extends ChangeNotifier {
 
     try {
       Loaders.circularShowLoader(context);
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
       final res = await repo.sendApplicantMessage({
-        "applicantId": applicantId,
+        "job_applicant_id": applicantId,
         "message": message,
+        "message_from": userId
       });
 
       if (res != null) {

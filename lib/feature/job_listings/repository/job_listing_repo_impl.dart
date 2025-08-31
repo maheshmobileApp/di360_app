@@ -138,7 +138,8 @@ class JobListingRepoImpl extends JobListingRepository {
   Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(
       String jobId) async {
     final data =
-        await http.query(jobListingApplicantMessge, variables: {"job_id": jobId});
+        await http.query(jobListingApplicantMessge,
+        variables: {"job_applicant_id": jobId});
 
     final result = JobListingApplicantsMessageResponse.fromJson(data);
     return result;
