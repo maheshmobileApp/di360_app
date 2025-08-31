@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repo_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -10,8 +11,8 @@ class JobListingsViewModel extends ChangeNotifier {
 
   bool isLoading = false;
   String? errorMessage;
-   final TextEditingController messageController = TextEditingController();
-    final TextEditingController enquiryController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
+  final TextEditingController enquiryController = TextEditingController();
   final Map<String, bool> _jobActiveStatus = {};
   String selectedStatus = 'All';
   String selectedstatusesforapplicatnts = 'All';
@@ -36,27 +37,7 @@ class JobListingsViewModel extends ChangeNotifier {
     'Reject',
     'Declined'
   ];
-    final List<ChatMessage> messages = [
-    ChatMessage(
-        text: "Hi team ",
-        time: "11:31 AM",
-        isMe: true,
-        username: "Me",
-        status: "sent"),
-    ChatMessage(
-        text: "Anyone on for lunch today",
-        time: "11:31 AM",
-        isMe: true,
-        username: "Me",
-        status: "read"),
-    ChatMessage(
-        text: "I’m down! Any ideas??",
-        time: "11:35 AM",
-        isMe: false,
-        username: "User name",
-        avatarUrl:
-            "https://i.pravatar.cc/150?img=3"), 
-  ];
+    
   int? allJobTalentCount = 0;
   int? draftTalentCount = 0;
   int? pendingApprovalCount = 0;
@@ -97,6 +78,7 @@ class JobListingsViewModel extends ChangeNotifier {
 
   List<String>? listingStatus = [];
   List<String> listingStatusforapplicants = [];
+  List<JobApplicantMessage> messages = [];
   String? suppliersId;
   String? practiceId;
   List<JobsListingDetails> myJobListingList = [];
@@ -295,6 +277,61 @@ class JobListingsViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+   Future<void> fetchApplicantMessages(String jobId) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final res = await repo.fetchApplicantMessages(jobId);
+      if (res.messages != null) {
+        messages = res.messages!;
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+  Future<void> sendApplicantMessage(
+      BuildContext context, String applicantId, String message) async {
+    if (message.isEmpty) {
+      scaffoldMessenger("Message cannot be empty");
+      return;
+    }
+
+    try {
+      Loaders.circularShowLoader(context);
+
+      final res = await repo.sendApplicantMessage({
+        "applicantId": applicantId,
+        "message": message,
+      });
+
+      if (res != null) {
+        scaffoldMessenger("Message sent successfully");
+        messageController.clear();
+        messages.add(
+          JobApplicantMessage(
+            id: res, // backend ID
+            jobApplicantId: applicantId,
+            message: message,
+            messageFrom: "me", // mark current user
+            createdAt: DateTime.now().toIso8601String(),
+          ),
+        );
+      } else {
+        scaffoldMessenger("Failed to send message");
+      }
+    } catch (e) {
+      scaffoldMessenger("Error: $e");
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
+  }
+
   @override
 void dispose() {
   messageController.dispose();
@@ -303,21 +340,5 @@ void dispose() {
   super.dispose();
 }
 }
-class ChatMessage {
-  final String text;
-  final String time;
-  final bool isMe;
-  final String? username;
-  final String? avatarUrl;
-  final String status; 
 
-  ChatMessage({
-    required this.text,
-    required this.time,
-    required this.isMe,
-    this.username,
-    this.avatarUrl,
-    this.status = "sent",
-  });
-}
 

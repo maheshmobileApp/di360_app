@@ -1,5 +1,6 @@
 import 'package:di360_flutter/feature/job_listings/model/get_job_applicants_count_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_status_count_model.dart';
 
@@ -13,4 +14,6 @@ abstract class JobListingRepository {
       List<String>? listingStatusforapplicants,String jobId );
   Future<GetJobApllicantsCountData?> getJobApplicantsCount(String jobId);
  Future<void> updateJobAggrateStatus(dynamic variables);
+Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(String jobId);
+Future<String?> sendApplicantMessage(Map<String, dynamic> variables);
 }
