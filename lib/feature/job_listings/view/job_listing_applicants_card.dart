@@ -141,10 +141,27 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       },
                       child: _roundedButton("Resume")),
                   addHorizontal(10),
-                  InkWell(onTap: () {
-                     navigationService
-                                .navigateTo(RouteList.JobListingApplicantsMessege); 
-                  }, child: _roundedButton("Message")),
+               InkWell(
+  onTap: () {
+    if (applicant == null || applicant.id == null || applicant.jobId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Applicant or Job ID not available")),
+      );
+      return;
+    }
+
+  navigationService.navigateToWithParams(
+  RouteList.JobListingApplicantsMessege,
+  params: {
+    "jobId": applicant?.jobId ?? "",
+    "applicantId": applicant?.id ?? "",
+  },
+);
+
+  },
+  child: _roundedButton("Message"),
+),
+
                   addHorizontal(10),
                   InkWell(
                       onTap: () {

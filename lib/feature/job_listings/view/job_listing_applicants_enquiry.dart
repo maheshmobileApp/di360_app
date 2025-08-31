@@ -25,7 +25,6 @@ class JobListingApplicantsEnquiry extends StatelessWidget with BaseContextHelper
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // --- Header Row ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

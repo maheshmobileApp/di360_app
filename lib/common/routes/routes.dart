@@ -59,16 +59,22 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
-       RouteList.JobListingApplicantsMessege: (context) => 
-       JobListingApplicantsMessege( ),
+      RouteList.JobListingApplicantsMessege: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return JobListingApplicantsMessege(
+          jobId: args['jobId'],
+          applicantId: args['applicantId'],
+        );
+      },
 
-       RouteList.JobListingApplicantscreen: (context) {
+      RouteList.JobListingApplicantscreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingApplicantsScreen(
           jobsListingData: args as JobsListingDetails,
         );
       },
-     // RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
+      // RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -76,7 +82,7 @@ class Routes {
           job: args as Jobs,
         );
       },
-     
+
       RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;

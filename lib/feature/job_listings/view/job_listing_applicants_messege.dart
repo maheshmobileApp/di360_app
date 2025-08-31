@@ -1,234 +1,145 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
+class JobListingApplicantsMessege extends StatefulWidget {
+  final String jobId;
+  final String applicantId;
 
-
-
-class JobListingApplicantsMessege extends StatefulWidget with BaseContextHelpers {
-  final  JobsListingDetails? jobsListingData;
-  const JobListingApplicantsMessege({super.key, this.jobsListingData});
+  const JobListingApplicantsMessege({
+    super.key,
+    required this.jobId,
+    required this.applicantId,
+  });
 
   @override
   State<JobListingApplicantsMessege> createState() =>
       _JobListingApplicantsMessegeState();
 }
 
-class _JobListingApplicantsMessegeState extends State<JobListingApplicantsMessege> {
+class _JobListingApplicantsMessegeState
+    extends State<JobListingApplicantsMessege> {
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    final vm = Provider.of<JobListingsViewModel>(context, listen: false);
+    vm.fetchApplicantMessages(widget.jobId);
+  }
+
+  String formatTime(String? time) {
+    if (time == null) return "";
+    final dateTime = DateTime.tryParse(time);
+    if (dateTime == null) return "";
+    return DateFormat("hh:mm a").format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final jobListingVM = Provider.of<JobListingsViewModel>(context);
-
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        title: _logoWithTitle(
-          context,
-          widget.jobsListingData?.logo ?? '',
-          widget.jobsListingData?.companyName ?? '',
-          widget.jobsListingData?.jRole ?? '',
-        ),
-      
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              "8/20/2024",
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+    return Consumer<JobListingsViewModel>(
+      builder: (context, vm, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text("Job Title Name",
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text("Company Name", style: TextStyle(fontSize: 12)),
+              ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: jobListingVM.messages.length,
-              itemBuilder: (context, index) {
-                final message = jobListingVM.messages[index];
-                return _buildMessage(message);
-              },
-            ),
-          ),
-
-          _buildInput(jobListingVM),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessage(ChatMessage message) {
-    if (message.isMe) {
-      return Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFE0B2),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          body: Column(
             children: [
-              Text(message.text, style: TextStyles.regular2(color: Colors.black)),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(message.time,
-                      style: const TextStyle(fontSize: 10, color: Colors.grey)),
-                  const SizedBox(width: 4),
-                  Icon(
-                    message.status == "read" ? Icons.done_all : Icons.check,
-                    size: 14,
-                    color: message.status == "read" ? Colors.blue : Colors.grey,
+              Expanded(
+                child: vm.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.all(12),
+                        itemCount: vm.messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = vm.messages[index];
+                          final isMe = msg.messageFrom == "me";
+                          return Align(
+                            alignment: isMe
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: isMe
+                                    ? Colors.orange[100]
+                                    : Colors.grey[200],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    msg.message ?? "",
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    formatTime(msg.createdAt),
+                                    style: TextStyle(
+                                        fontSize: 10, color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              SafeArea(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    border:
+                        Border(top: BorderSide(color: Colors.grey.shade300)),
                   ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundImage: message.avatarUrl != null
-                ? NetworkImage(message.avatarUrl!)
-                : null,
-            child: message.avatarUrl == null
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(message.username ?? "User",
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54)),
-                  const SizedBox(height: 2),
-                  Text(message.text,
-                      style: TextStyles.regular2(color: Colors.black)),
-                  const SizedBox(height: 4),
-                  Text(message.time,
-                      style: const TextStyle(fontSize: 10, color: Colors.grey)),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-  }
-
-Widget _buildInput(JobListingsViewModel jobListingVM) {
-  return SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.grey.shade300, width: 1),
-              ),
-              child: TextField(
-                controller: jobListingVM.messageController,
-                textInputAction: TextInputAction.send,
-                decoration: const InputDecoration(
-                  hintText: "Start typing...",
-                  border: InputBorder.none,
-                  isDense: true, 
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: vm.messageController,
+                          decoration: const InputDecoration(
+                            hintText: "Start typing...",
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          vm.sendApplicantMessage(
+                              context,
+                              widget.applicantId,
+                              vm.messageController.text.trim());
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            scrollController.animateTo(
+                              scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.blue,
-            child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white, size: 20),
-              onPressed: () {
-                final text = jobListingVM.messageController.text.trim();
-                if (text.isNotEmpty) {
-                  jobListingVM.messages.add(
-                    ChatMessage(
-                      text: text,
-                      time: "Now",
-                      isMe: true,
-                      username: "Me",
-                      status: "sent",
-                    ),
-                  );
-                  jobListingVM.messageController.clear();
-                  setState(() {}); 
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-  Widget _logoWithTitle(
-    BuildContext context,
-    String logo,
-    String company,
-    String title,
-   
-  ) {
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            CircleAvatar(
-              backgroundColor: AppColors.geryColor,
-              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
-              radius: 30,
-              child: logo.isEmpty
-                  ? const Icon(Icons.business,
-                      size: 20, color: AppColors.lightGeryColor)
-                  : null,
-            ),
-          
-          ],
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(company, style: TextStyles.medium2(color: AppColors.black)),
-              Text(title, style: TextStyles.regular2(color: AppColors.black)),
             ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }
