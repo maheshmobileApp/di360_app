@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_wi
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
+import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
@@ -14,7 +15,6 @@ import 'package:di360_flutter/feature/directors/view/directories_filter_screen.d
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
-
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
@@ -68,6 +68,16 @@ class Routes {
           userId: args['userId'],
         );
       },
+   RouteList.AppliedJobScreen: (context) {
+  // Get dentalProfessionalId safely from arguments
+  final dentalProfessionalId =
+      ModalRoute.of(context)!.settings.arguments as String? ??
+      "1d0f1ca1-2658-4869-85d0-6f098bc600a1"; // fallback ID
+
+  return AppliedJobScreen(dentalProfessionalId: dentalProfessionalId);
+},
+
+
 
       RouteList.JobListingApplicantscreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;

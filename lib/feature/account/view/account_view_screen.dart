@@ -207,7 +207,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           item.title,
                           style: TextStyles.medium2(color: AppColors.black),
                         ),
-                        onTap: () {
+                        onTap: () async {
                           if (item.title == 'Catalogues') {
                             context
                                 .read<AddCatalogueViewModel>()
@@ -223,15 +223,19 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'Job Profile') {
                             navigationService
                                 .navigateTo(RouteList.JobProfileView);
-                          }
-                          else if (item.title == 'Talent Request') {
-                              context
+                          } else if (item.title == 'Applied Jobs') {
+                            Navigator.pushNamed(
+                              context,
+                              RouteList.AppliedJobScreen,
+                              arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+                            );
+                          } else if (item.title == 'Talent Request') {
+                            context
                                 .read<TalentListingViewModel>()
                                 .getMyTalentListingData();
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
-                          }
-                           else if (item.title == 'My Directory') {
+                          } else if (item.title == 'My Directory') {
                             navigationService
                                 .navigateTo(RouteList.adddirectorview);
                           }
@@ -250,7 +254,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-   Widget _buildLogoutTile(BuildContext context) {
+  Widget _buildLogoutTile(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
