@@ -1,12 +1,11 @@
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
-import 'package:di360_flutter/feature/applied_job.dart/quary/applied_job_quary.dart';
+import 'package:di360_flutter/feature/enquiries/model/enquiries_respo.dart';
+import 'package:di360_flutter/feature/enquiries/quary/enquiries_quary.dart';
 
-
-class AppliedJobRepositoryImpl {
+class EnquiriesRespoImpo{
   final HttpService http = HttpService();
 
-  Future<AppliedJobRespo?> fetchAppliedJobs({
+  Future<EnquiriesRespo?> fetchEnquiries({
     required String dentalProfessionalId,
   }) async {
     try {
@@ -14,9 +13,9 @@ class AppliedJobRepositoryImpl {
         "dental_professional_id": dentalProfessionalId,
       };
 
-      final raw = await http.query(appliedJobQuery, variables: variables);
+      final raw = await http.query(enquiriesJobQuery, variables: variables);
 
-      return AppliedJobRespo.fromJson(raw);
+      return EnquiriesRespo.fromJson(raw);
     } catch (e, stack) {
       print("Error fetching applied jobs: $e");
       print(stack);

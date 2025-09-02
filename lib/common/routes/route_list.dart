@@ -37,4 +37,9 @@ class RouteList {
   static const String  adddirectorview = 'adddirectorview';
   static const String  JobListingApplicantsMessege= '/JobListingApplicantsMessege';
   static const String  AppliedJobScreen='/AppliedJobScreen';
+  static const String  AppliedJobDetailsScreen= '/AppliedJobDetailsScreen';
+  static const String EnquiriesScreen='/EnquiriesScreen';
+  static const String  EnquiriesDetailsScreen= '/EnquiriesDetailsScreen';
+  static const String  AppliedJobMessege= '/AppliedJobMessege';
+  static const String  EnquiriesMessege= '/EnquiriesMessege';
 }

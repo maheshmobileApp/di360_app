@@ -2,16 +2,16 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
+import 'package:di360_flutter/feature/enquiries/model/enquiries_respo.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
-class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
-  final AppliedJob appliedJob;
+class  EnquiriesCard extends StatelessWidget with BaseContextHelpers {
+  final EnquiriesJob appliedJob;
   final int? index;
 
-  const AppliedJobCard({
+  const EnquiriesCard({
     super.key,
     required this.appliedJob,
     this.index,
@@ -19,7 +19,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final Job? job = appliedJob.job;
+    final EnquiryJob? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
     final String logoUrl = (job?.clinicLogo != null &&
             job!.clinicLogo!.isNotEmpty &&
@@ -55,9 +55,9 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     Row(
                       children: [
-                       _statusChip(appliedJob.status ?? ''),
-                        addHorizontal(4),
-                         _appliedJobMenu(),
+                          _EnquiriesTimeChip(time),
+                          addHorizontal(4),
+                         _EnquiriesMenu(),
                       ],
                     ),
                   ],
@@ -71,8 +71,6 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _chipWidget(job?.typeofEmployment ?? []),
                 ),
-                const SizedBox(width: 8),
-                _appliedJobTimeChip(time),
               ],
             ),
             addVertical(10),
@@ -80,7 +78,9 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
             const Divider(),
             Row(
               children: [
-                _roundedButton('Message'),
+                _roundedButton("Message"),
+                addHorizontal(15),
+                _roundedButton("Enquiry"),
               ],
             ),
           ],
@@ -132,61 +132,32 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _appliedJobTimeChip(String time) {
+  Widget _EnquiriesTimeChip(String time) {
     return Container(
       height: 19,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            Color.fromRGBO(116, 130, 148, 0.0),
-            Color.fromRGBO(116, 130, 148, 0.2)
+            Color.fromRGBO(255, 241, 229, 0),
+            Color.fromRGBO(255, 241, 229, 1),
           ],
         ),
         borderRadius: BorderRadius.circular(5),
       ),
+      alignment: Alignment.centerRight,
       child: Text(
-        time.isNotEmpty ? time : "",
-        style: TextStyles.semiBold(fontSize: 10, color: const Color(0xFF1E1E1E)),
+        time,
+        textAlign: TextAlign.right,
+        style: TextStyles.semiBold(
+            fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),
       ),
     );
   }
 
-  Widget _statusChip(String status) {
-    Color bgColor;
-    Color textColor;
-    switch (status.toLowerCase()) {
-      case "applied":
-        bgColor = const Color.fromRGBO(4, 113, 222, 0.1);
-        textColor = const Color.fromRGBO(4, 113, 222, 1);
-        break;
-      case "shortlisted":
-        bgColor = const Color.fromRGBO(225, 146, 0, 0.1);
-        textColor = const Color.fromRGBO(225, 146, 0, 1);
-        break;
-      case "accepted":
-        bgColor = const Color.fromRGBO(0, 147, 79, 0.1);
-        textColor = const Color.fromRGBO(0, 147, 79, 1);
-        break;
-      case "declined":
-        bgColor = const Color.fromRGBO(215, 19, 19, 0.1);
-        textColor = const Color.fromRGBO(215, 19, 19, 1);
-        break;
-      default:
-        bgColor = const Color.fromRGBO(253, 245, 229, 1);
-        textColor = const Color.fromRGBO(225, 146, 0, 1);
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration:
-          BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(30)),
-      child: Text(status,
-          style: TextStyles.semiBold(fontSize: 12, color: textColor)),
-    );
-  }
-
+  
   Widget _chipWidget(List<String> types) {
     if (types.isEmpty) return const SizedBox();
     return Wrap(
@@ -229,7 +200,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-    Widget _appliedJobMenu() {
+    Widget _EnquiriesMenu() {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -238,7 +209,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       onSelected: (value) {
         if (value == "Preview") {
         navigationService.navigateToWithParams(
-  RouteList.AppliedJobDetailsScreen,
+  RouteList. EnquiriesDetailsScreen,
   params: appliedJob, 
 );
 

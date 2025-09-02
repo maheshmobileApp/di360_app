@@ -1,29 +1,28 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_card.dart';
-import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
+import 'package:di360_flutter/feature/enquiries/view/enquiries_card.dart';
+import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-class AppliedJobScreen extends StatelessWidget {
+class  EnquiriesScreen extends StatelessWidget {
   final String dentalProfessionalId;
 
-  const AppliedJobScreen({
+  const  EnquiriesScreen({
     super.key,
     required this.dentalProfessionalId,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AppliedJobViewModel>(
-      create: (_) => AppliedJobViewModel()..fetchAppliedJobs(dentalProfessionalId: dentalProfessionalId),
+    return ChangeNotifierProvider<EnquiriesViewModel>(
+      create: (_) => EnquiriesViewModel()..fetchAppliedJobs(dentalProfessionalId: dentalProfessionalId),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
           elevation: 0,
           title: const Text(
-            'Applied Jobs',
+            'Enquiries',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -32,7 +31,7 @@ class AppliedJobScreen extends StatelessWidget {
           ),
           iconTheme: const IconThemeData(color: Colors.black),
         ),
-        body: Consumer<AppliedJobViewModel>(
+        body: Consumer<EnquiriesViewModel>(
           builder: (context, vm, _) {
             if (vm.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -50,7 +49,7 @@ class AppliedJobScreen extends StatelessWidget {
             if (vm.appliedJobs.isEmpty) {
               return const Center(
                 child: Text(
-                  'No applied jobs found',
+                  'No Enquiries found',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               );
@@ -61,7 +60,7 @@ class AppliedJobScreen extends StatelessWidget {
               itemCount: vm.appliedJobs.length,
               itemBuilder: (_, index) {
                 final job = vm.appliedJobs[index];
-                return AppliedJobCard(
+                return  EnquiriesCard(
                   appliedJob: job,
                   index: index,
                 );

@@ -229,6 +229,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               RouteList.AppliedJobScreen,
                               arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
                             );
+                          } else if (item.title == 'Enquiries') {
+                            Navigator.pushNamed(
+                              context,
+                              RouteList.EnquiriesScreen,
+                              arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+                            );
                           } else if (item.title == 'Talent Request') {
                             context
                                 .read<TalentListingViewModel>()

@@ -1,40 +1,42 @@
-class AppliedJobRespo {
-  AppliedJobData? data;
 
-  AppliedJobRespo({this.data});
+class EnquiriesRespo {
+   EnquiriesData? data;
 
-  factory AppliedJobRespo.fromJson(Map<String, dynamic> json) {
+  EnquiriesRespo({required this.data});
+
+ factory EnquiriesRespo.fromJson(Map<String, dynamic> json) {
     if (json.containsKey('data')) {
-      return AppliedJobRespo(
+      return EnquiriesRespo(
         data: json['data'] != null
-            ? AppliedJobData.fromJson(json['data'])
+            ?  EnquiriesData.fromJson(json['data'])
             : null,
       );
     } else if (json.containsKey('job_applicants')) {
-      return AppliedJobRespo(
-        data: AppliedJobData.fromJson(json),
+      return EnquiriesRespo(
+        data: EnquiriesData.fromJson(json),
       );
     } else {
-      return AppliedJobRespo(data: AppliedJobData(jobApplicants: []));
+      return EnquiriesRespo(data: EnquiriesData(jobApplicants: []));
     }
   }
-
-  Map<String, dynamic> toJson() {
+     Map<String, dynamic> toJson() {
     return {
       'data': data?.toJson(),
     };
   }
 }
-class AppliedJobData {
-  List<AppliedJob>? jobApplicants;
 
-  AppliedJobData({this.jobApplicants});
 
-  factory AppliedJobData.fromJson(Map<String, dynamic> json) {
-    return AppliedJobData(
+class EnquiriesData {
+  List<EnquiriesJob>? jobApplicants;
+
+  EnquiriesData({this.jobApplicants});
+
+  factory EnquiriesData.fromJson(Map<String, dynamic> json) {
+    return EnquiriesData(
       jobApplicants: json['job_applicants'] != null
-          ? List<AppliedJob>.from(
-              json['job_applicants'].map((x) => AppliedJob.fromJson(x)))
+          ? List<EnquiriesJob>.from(
+              json['job_applicants'].map((x) =>EnquiriesJob.fromJson(x)))
           : [],
     );
   }
@@ -45,16 +47,18 @@ class AppliedJobData {
     };
   }
 }
-class AppliedJob {
+
+
+class EnquiriesJob {
   String? id;
   String? jobId;
   Attachments? attachments;
   String? status;
   String? message;
   String? dentalProfessionalId;
-  Job? job;
+  EnquiryJob? job;
 
-  AppliedJob({
+  EnquiriesJob({
     this.id,
     this.jobId,
     this.attachments,
@@ -64,8 +68,8 @@ class AppliedJob {
     this.job,
   });
 
-  factory AppliedJob.fromJson(Map<String, dynamic> json) {
-    return AppliedJob(
+  factory EnquiriesJob.fromJson(Map<String, dynamic> json) {
+    return EnquiriesJob(
       id: json['id'],
       jobId: json['job_id'],
       attachments: json['attachments'] != null
@@ -74,7 +78,7 @@ class AppliedJob {
       status: json['status'],
       message: json['message'],
       dentalProfessionalId: json['dental_professional_id'],
-      job: json['job'] != null ? Job.fromJson(json['job']) : null,
+      job: json['job'] != null ? EnquiryJob.fromJson(json['job']) : null,
     );
   }
 
@@ -115,7 +119,7 @@ class Attachments {
   }
 }
 
-class Job {
+class EnquiryJob {
   String? country;
   String? companyName;
   String? experience;
@@ -129,7 +133,7 @@ class Job {
   String? description;
   List<JobEnquiry>? jobEnquiries;
 
-  Job({
+  EnquiryJob({
     this.country,
     this.companyName,
     this.experience,
@@ -144,8 +148,8 @@ class Job {
     this.jobEnquiries,
   });
 
-  factory Job.fromJson(Map<String, dynamic> json) {
-    return Job(
+  factory EnquiryJob.fromJson(Map<String, dynamic> json) {
+    return EnquiryJob(
       country: json['country'],
       companyName: json['company_name'],
       experience: json['experience'],

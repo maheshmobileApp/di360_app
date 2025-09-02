@@ -1,4 +1,4 @@
-const String appliedJobQuery = r'''
+const String enquiriesJobQuery = r'''
 query getajobswithallprofiles($dental_professional_id:uuid) {  
   job_applicants( where: {_and: [{ dental_professional_id: {_eq: $dental_professional_id}}]}){
   id
