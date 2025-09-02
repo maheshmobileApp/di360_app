@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+
 class AppliedJobRespo {
   AppliedJobData? data;
 
@@ -52,7 +54,7 @@ class AppliedJob {
   String? status;
   String? message;
   String? dentalProfessionalId;
-  Job? job;
+  Jobs? job;
 
   AppliedJob({
     this.id,
@@ -74,7 +76,7 @@ class AppliedJob {
       status: json['status'],
       message: json['message'],
       dentalProfessionalId: json['dental_professional_id'],
-      job: json['job'] != null ? Job.fromJson(json['job']) : null,
+      job: json['job'] != null ? Jobs.fromJson(json['job']) : null,
     );
   }
 
@@ -115,77 +117,6 @@ class Attachments {
   }
 }
 
-class Job {
-  String? country;
-  String? companyName;
-  String? experience;
-  String? salary;
-  String? status;
-  String? bannerImage;
-  List<String>? typeofEmployment;
-  String? activeStatus;
-  String? createdAt;
-  List<ClinicLogo>? clinicLogo;
-  String? description;
-  List<JobEnquiry>? jobEnquiries;
-
-  Job({
-    this.country,
-    this.companyName,
-    this.experience,
-    this.salary,
-    this.status,
-    this.bannerImage,
-    this.typeofEmployment,
-    this.activeStatus,
-    this.createdAt,
-    this.clinicLogo,
-    this.description,
-    this.jobEnquiries,
-  });
-
-  factory Job.fromJson(Map<String, dynamic> json) {
-    return Job(
-      country: json['country'],
-      companyName: json['company_name'],
-      experience: json['experience'],
-      salary: json['salary'],
-      status: json['status'],
-      bannerImage: json['banner_image'],
-      typeofEmployment: json['TypeofEmployment'] != null
-          ? List<String>.from(json['TypeofEmployment'])
-          : null,
-      activeStatus: json['active_status'],
-      createdAt: json['created_at'],
-      clinicLogo: json['clinic_logo'] != null
-          ? List<ClinicLogo>.from(
-              json['clinic_logo'].map((x) => ClinicLogo.fromJson(x)))
-          : [],
-      description: json['description'],
-      jobEnquiries: json['job_enquiries'] != null
-          ? List<JobEnquiry>.from(
-              json['job_enquiries'].map((x) => JobEnquiry.fromJson(x)))
-          : null,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'country': country,
-      'company_name': companyName,
-      'experience': experience,
-      'salary': salary,
-      'status': status,
-      'banner_image': bannerImage,
-      'TypeofEmployment': typeofEmployment,
-      'active_status': activeStatus,
-      'created_at': createdAt,
-      'clinic_logo': clinicLogo?.map((x) => x.toJson()).toList(),
-      'description': description,
-      'job_enquiries': jobEnquiries?.map((x) => x.toJson()).toList(),
-    };
-  }
-}
 
 class ClinicLogo {
   String? url;

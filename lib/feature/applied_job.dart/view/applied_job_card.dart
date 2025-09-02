@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -19,7 +20,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final Job? job = appliedJob.job;
+    final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
     final String logoUrl = (job?.clinicLogo != null &&
             job!.clinicLogo!.isNotEmpty &&

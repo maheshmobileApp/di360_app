@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -17,7 +18,7 @@ class AppliedJobDetailsScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final Job? job = appliedJob.job;
+    final Jobs? job = appliedJob.job;
 
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
     final String logoUrl = (job?.clinicLogo != null &&
@@ -72,7 +73,7 @@ class AppliedJobDetailsScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-Widget _buildBodyContent(BuildContext context, Job? job, String time, String logoUrl) {
+Widget _buildBodyContent(BuildContext context, Jobs? job, String time, String logoUrl) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -145,7 +146,7 @@ Widget _buildBodyContent(BuildContext context, Job? job, String time, String log
   );
 }
 
-Widget _infoCard(Job? job) {
+Widget _infoCard(Jobs? job) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(12),
@@ -181,7 +182,7 @@ Widget _infoCard(Job? job) {
     );
   }
 
-  Widget locationView(BuildContext context, Job? job) {
+  Widget locationView(BuildContext context, Jobs? job) {
     return GestureDetector(
       onTap: () => _openLocationInMaps(context, job),
       child: Container(
@@ -201,7 +202,7 @@ Widget _infoCard(Job? job) {
     );
   }
 
-  Future<void> _openLocationInMaps(BuildContext context, Job? job) async {
+  Future<void> _openLocationInMaps(BuildContext context, Jobs? job) async {
     if (job?.country == null || job!.country!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
