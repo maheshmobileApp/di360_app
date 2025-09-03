@@ -41,15 +41,11 @@
               "asset": "assets/profile/jobseek/#000000ff.svg"
             },
             {
-              "title": "Job Listings",
-              "asset": "assets/profile/jobseek/#000000ff.svg"
-            },
-            {
               "title": "Applied Jobs",
               "asset": "assets/profile/jobseek/my jobs.svg"
             },
             {
-              "title": "Saved Jobs",
+              "title": "Enquiries",
               "asset": "assets/profile/jobseek/bookmark (1) 1.svg"
             }
           ]

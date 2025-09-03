@@ -143,30 +143,32 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       },
                       child: _roundedButton("Resume")),
                   addHorizontal(10),
-               InkWell(
+                  InkWell(
                     onTap: () async {
-    if (applicant == null || applicant.id == null || applicant.jobId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Applicant or Job ID not available")),
-      );
-      return;
-    }
+                      if (applicant == null ||
+                          applicant.id == null ||
+                          applicant.jobId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text("Applicant or Job ID not available")),
+                        );
+                        return;
+                      }
                       final userId = await LocalStorage.getStringVal(
                           LocalStorageConst.userId);
 
-  navigationService.navigateToWithParams(
-  RouteList.JobListingApplicantsMessege,
-  params: {
+                      navigationService.navigateToWithParams(
+                        RouteList.JobListingApplicantsMessege,
+                        params: {
                           "jobId": applicant.jobId ?? "",
                           "applicantId": applicant.id ?? "",
                           "userId": userId,
-  },
-);
-
-  },
-  child: _roundedButton("Message"),
-),
-
+                        },
+                      );
+                    },
+                    child: _roundedButton("Message"),
+                  ),
                   addHorizontal(10),
                   InkWell(
                       onTap: () {
@@ -296,9 +298,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
             status == 'SHORTLISTED')
           PopupMenuItem(
               value: "Decline", child: _buildRow(AppColors.black, "Decline")),
-        if (
-            status == 'DECLINED' 
-            )
+        if (status == 'DECLINED')
           PopupMenuItem(
               value: "Accept", child: _buildRow(AppColors.black, "Accept")),
       ],
