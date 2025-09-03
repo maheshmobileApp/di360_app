@@ -14,38 +14,41 @@ class DirectorDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final directionalVM = Provider.of<DirectorViewModel>(context);
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      floatingActionButton: FloatingActionButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          onPressed: () {
-            navigationService.navigateTo(RouteList.directorQuickLinks);
-          },
-          backgroundColor: AppColors.primaryColor,
-          child:
-              SvgPicture.asset(ImageConst.filter, color: AppColors.whiteColor)),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: UserData(
-              imageUrl: directionalVM.directorDetails?.logo?.url ??
-                  directionalVM.directorDetails?.profileImage?.url ??
-                  '',
-              userName: directionalVM.directorDetails?.professionType,
-              followerCount:
-                  '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
-              followingCount:
-                  '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        floatingActionButton: FloatingActionButton(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            onPressed: () {
+              navigationService.navigateTo(RouteList.directorQuickLinks);
+            },
+            backgroundColor: AppColors.primaryColor,
+            child:
+                SvgPicture.asset(ImageConst.filter, color: AppColors.whiteColor)),
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: UserData(
+                imageUrl: directionalVM.directorDetails?.logo?.url ??
+                    directionalVM.directorDetails?.profileImage?.url ??
+                    '',
+                userName: directionalVM.directorDetails?.professionType,
+                followerCount:
+                    '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
+                followingCount:
+                    '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
+                bannerImg: directionalVM.directorDetails?.bannerImage?.url ?? '',
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DirectorBasicInfo(),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: DirectorBasicInfo(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

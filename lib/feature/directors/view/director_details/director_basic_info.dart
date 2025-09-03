@@ -22,17 +22,6 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          directionalVM.directorDetails?.bannerImage == null
-              ? SizedBox()
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImageWidget(
-                      imageUrl:
-                          directionalVM.directorDetails?.bannerImage?.url ?? '',
-                      width: double.infinity,
-                      height: 150,
-                      fit: BoxFit.fill)),
-          addVertical(5),
           if (directionalVM.directorDetails?.description != null)
             _sectionTitle('BASIC INFO',
                 _description(directionalVM.directorDetails?.description ?? ''),
