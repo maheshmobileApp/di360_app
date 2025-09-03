@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -22,11 +23,6 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
-    final String logoUrl = (job?.clinicLogo != null &&
-            job!.clinicLogo!.isNotEmpty &&
-            job.clinicLogo!.first.url != null)
-        ? job.clinicLogo!.first.url!
-        : '';
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -46,19 +42,21 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     context,
-                    logoUrl,
+                    job?.logo ?? '',
+                    job?.title ?? '',
+                    job?.jRole ?? '',
                     job?.companyName ?? '',
-                   
                   ),
                 ),
-                  Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                       _statusChip(appliedJob.status ?? ''),
+                        _statusChip(appliedJob.status ?? ''),
                         addHorizontal(4),
-                         _appliedJobMenu(),
+                        _appliedJobMenu(),
                       ],
                     ),
                   ],
@@ -67,12 +65,11 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
             ),
             addVertical(8),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
+                Flexible(
                   child: _chipWidget(job?.typeofEmployment ?? []),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 _appliedJobTimeChip(time),
               ],
             ),
@@ -90,28 +87,59 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _logoWithTitle(
-      BuildContext context, String logo,  String company) {
+  Widget _logoWithTitle(BuildContext context, String imageUrl, String title,
+      String role, String companyName) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
-          backgroundColor: AppColors.geryColor,
-          backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
-          radius: 22,
-          child: logo.isEmpty
-              ? const Icon(Icons.business,
-                  size: 20, color: AppColors.lightGeryColor)
-              : null,
+          backgroundColor: Colors.grey,
+          radius: 24,
+          child: CircleAvatar(
+            radius: 24,
+            backgroundColor: AppColors.whiteColor,
+            child: (imageUrl.isNotEmpty)
+                ? ClipOval(
+                    child: CachedNetworkImageWidget(
+                      width: 48,
+                      height: 48,
+                      imageUrl: imageUrl,
+                      errorWidget: const CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.error),
+                      ),
+                    ),
+                  )
+                : const CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Colors.grey,
+                  ),
+          ),
         ),
-        addHorizontal(12),
+        addHorizontal(6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              addVertical(2),
-              Text(company,
-                  style: TextStyles.regular3(
-                      color: AppColors.black)),
+            children: 
+              Text(
+                title,
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                role,
+                style: TextStyles.regular2(color: AppColors.geryColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                companyName,
+                style: TextStyles.regular2(color: AppColors.lightGeryColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
@@ -150,7 +178,8 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       ),
       child: Text(
         time.isNotEmpty ? time : "",
-        style: TextStyles.semiBold(fontSize: 10, color: const Color(0xFF1E1E1E)),
+        style:
+            TextStyles.semiBold(fontSize: 10, color: const Color(0xFF1E1E1E)),
       ),
     );
   }
@@ -181,10 +210,14 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration:
-          BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(30)),
-      child: Text(status,
-          style: TextStyles.semiBold(fontSize: 12, color: textColor)),
+      decoration: BoxDecoration(
+          color: bgColor, borderRadius: BorderRadius.circular(30)),
+      child: Text(
+        status,
+        style: TextStyles.semiBold(fontSize: 12, color: textColor),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 
@@ -201,9 +234,15 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
             color: AppColors.secondaryBlueColor,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Text(label,
-              style: TextStyles.regular1(
-                  fontSize: 12, color: AppColors.primaryBlueColor)),
+          child: Text(
+            label,
+            style: TextStyles.regular1(
+              fontSize: 12,
+              color: AppColors.primaryBlueColor,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       }).toList(),
     );
@@ -223,14 +262,19 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
           Icon(label == "Message" ? Icons.chat : Icons.live_help_outlined,
               size: 18, color: AppColors.primaryColor),
           const SizedBox(width: 6),
-          Text(label,
-              style: TextStyles.medium1(
-                  fontSize: 13, color: AppColors.primaryColor)),
+          Text(
+            label,
+            style:
+                TextStyles.medium1(fontSize: 13, color: AppColors.primaryColor),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
   }
-    Widget _appliedJobMenu() {
+
+  Widget _appliedJobMenu() {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -238,11 +282,10 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Preview") {
-        navigationService.navigateToWithParams(
-  RouteList.AppliedJobDetailsScreen,
-  params: appliedJob, 
-);
-
+          navigationService.navigateToWithParams(
+            RouteList.jobdetailsScreen,
+            params: appliedJob.job,
+          );
         }
       },
       itemBuilder: (context) => [
@@ -250,7 +293,6 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
           value: "Preview",
           child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
         ),
-      
       ],
     );
   }
@@ -260,7 +302,14 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       children: [
         Icon(icon, color: color, size: 18),
         addHorizontal(8),
-        Text(title, style: TextStyles.semiBold(fontSize: 14, color: color)),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyles.semiBold(fontSize: 14, color: color),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }

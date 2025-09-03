@@ -2,16 +2,18 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/enquiries/model/enquiries_respo.dart';
+import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
-class  EnquiriesCard extends StatelessWidget with BaseContextHelpers {
-  final EnquiriesJob appliedJob;
+class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
+  final AppliedJob appliedJob;
   final int? index;
 
-  const EnquiriesCard({
+  const EnquiriesCard ({
     super.key,
     required this.appliedJob,
     this.index,
@@ -19,13 +21,8 @@ class  EnquiriesCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final EnquiryJob? job = appliedJob.job;
+    final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
-    final String logoUrl = (job?.clinicLogo != null &&
-            job!.clinicLogo!.isNotEmpty &&
-            job.clinicLogo!.first.url != null)
-        ? job.clinicLogo!.first.url!
-        : '';
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -39,15 +36,16 @@ class  EnquiriesCard extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+           Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: _logoWithTitle(
                     context,
-                    logoUrl,
+                    job?.logo ?? '',
+                    job?.title ?? '',
+                    job?.jRole ?? '',
                     job?.companyName ?? '',
-                   
                   ),
                 ),
                   Column(
@@ -89,28 +87,60 @@ class  EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _logoWithTitle(
-      BuildContext context, String logo,  String company) {
+  Widget _logoWithTitle(BuildContext context, String imageUrl, String title,
+      String role, String companyName) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
-          backgroundColor: AppColors.geryColor,
-          backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
-          radius: 22,
-          child: logo.isEmpty
-              ? const Icon(Icons.business,
-                  size: 20, color: AppColors.lightGeryColor)
-              : null,
+          backgroundColor: Colors.grey,
+          radius: 24,
+          child: CircleAvatar(
+            radius: 24,
+            backgroundColor: AppColors.whiteColor,
+            child: (imageUrl.isNotEmpty)
+                ? ClipOval(
+                    child: CachedNetworkImageWidget(
+                      width: 48,
+                      height: 48,
+                      imageUrl: imageUrl,
+                      errorWidget: const CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.error),
+                      ),
+                    ),
+                  )
+                : const CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Colors.grey,
+                  ),
+          ),
         ),
-        addHorizontal(12),
+        addHorizontal(6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              addVertical(2),
-              Text(company,
-                  style: TextStyles.regular3(
-                      color: AppColors.black)),
+              Text(
+                title,
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              addVertical(4),
+              Text(
+                role,
+                style: TextStyles.regular2(color: AppColors.geryColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                companyName,
+                style: TextStyles.regular2(color: AppColors.lightGeryColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
@@ -209,12 +239,11 @@ class  EnquiriesCard extends StatelessWidget with BaseContextHelpers {
       onSelected: (value) {
         if (value == "Preview") {
         navigationService.navigateToWithParams(
-  RouteList. EnquiriesDetailsScreen,
-  params: appliedJob, 
-);
-
-        }
-      },
+          RouteList.jobdetailsScreen,
+          params: appliedJob.job, 
+        );
+      }
+    },
       itemBuilder: (context) => [
         PopupMenuItem(
           value: "Preview",

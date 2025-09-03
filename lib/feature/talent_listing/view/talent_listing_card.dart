@@ -49,7 +49,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

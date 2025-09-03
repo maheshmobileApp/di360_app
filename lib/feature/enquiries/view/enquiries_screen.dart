@@ -1,21 +1,21 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_card.dart';
-import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class  EnquiriesScreen extends StatelessWidget {
+class EnquiriesScreen extends StatelessWidget {
   final String dentalProfessionalId;
 
-  const  EnquiriesScreen({
+  const EnquiriesScreen({
     super.key,
     required this.dentalProfessionalId,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<EnquiriesViewModel>(
-      create: (_) => EnquiriesViewModel()..fetchAppliedJobs(dentalProfessionalId: dentalProfessionalId),
+    return ChangeNotifierProvider<AppliedJobViewModel>(
+      create: (_) => AppliedJobViewModel()..fetchAppliedJobs(dentalProfessionalId: dentalProfessionalId),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(
@@ -31,7 +31,7 @@ class  EnquiriesScreen extends StatelessWidget {
           ),
           iconTheme: const IconThemeData(color: Colors.black),
         ),
-        body: Consumer<EnquiriesViewModel>(
+        body: Consumer<AppliedJobViewModel>(
           builder: (context, vm, _) {
             if (vm.isLoading) {
               return const Center(child: CircularProgressIndicator());
