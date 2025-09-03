@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart'
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -206,7 +207,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           item.title,
                           style: TextStyles.medium2(color: AppColors.black),
                         ),
-                        onTap: () {
+                        onTap: () async {
                           if (item.title == 'Catalogues') {
                             context
                                 .read<AddCatalogueViewModel>()
@@ -222,12 +223,25 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'Job Profile') {
                             navigationService
                                 .navigateTo(RouteList.JobProfileView);
-                          }
-                          else if (item.title == 'Talent Request') {
+                          } else if (item.title == 'Applied Jobs') {
+                            Navigator.pushNamed(
+                              context,
+                              RouteList.AppliedJobScreen,
+                              arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+                            );
+                          } else if (item.title == 'Enquiries') {
+                            Navigator.pushNamed(
+                              context,
+                              RouteList.EnquiriesScreen,
+                              arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+                            );
+                          } else if (item.title == 'Talent Request') {
+                            context
+                                .read<TalentListingViewModel>()
+                                .getMyTalentListingData();
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
-                          }
-                           else if (item.title == 'My Directory') {
+                          } else if (item.title == 'My Directory') {
                             navigationService
                                 .navigateTo(RouteList.adddirectorview);
                           }
@@ -246,7 +260,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-   Widget _buildLogoutTile(BuildContext context) {
+  Widget _buildLogoutTile(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(

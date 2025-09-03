@@ -1,13 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
+import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
   final JobApplicants? jobsListingData;
@@ -25,6 +27,12 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final applicant = jobsListingData;
     final professional = applicant?.dentalProfessional;
+    // final pdf = applicant?.dentalProfessional?.attachment;
+    var resume = '';
+    final attachment = applicant?.attachments ?? [];
+    if (attachment.length > 0) {
+      resume = attachment.first.url ?? '';
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -44,7 +52,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ---- Top Section: Avatar + Name + Role + Menu ----
             Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
@@ -57,8 +64,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                         ? NetworkImage(professional!.profileImage!.url!)
                         : null,
                     child: professional?.profileImage?.url == null
-                        ? const Icon(Icons.person,
-                            color: AppColors.whiteColor)
+                        ? const Icon(Icons.person, color: AppColors.whiteColor)
                         : null,
                   ),
                   addHorizontal(12),
@@ -68,8 +74,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         Text(
                           "${professional?.firstName ?? applicant?.firstName ?? "User"} ${professional?.lastName ?? ""}",
-                          style:
-                              TextStyles.semiBold(color: AppColors.black),
+                          style: TextStyles.semiBold(color: AppColors.black),
                         ),
                         addVertical(2),
                         Text(
@@ -84,15 +89,13 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                   menuWidget(
                     vm,
                     context,
-                    index ?? 0,
+                    index!,
                     applicant?.id ?? '',
                     applicant?.status ?? '',
                   ),
                 ],
               ),
             ),
-
-            // ---- City + Experience ----
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
@@ -100,13 +103,11 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                   Row(
                     children: [
                       const Icon(Icons.location_on_outlined,
-                          size: 16,
-                          color: AppColors.bottomNavUnSelectedColor),
+                          size: 16, color: AppColors.bottomNavUnSelectedColor),
                       addHorizontal(6),
                       Expanded(
                         child: Text(
-                          applicant?.cityName ??
-                              "123 Marsh Street, Armidale, NSW",
+                          applicant?.cityName ?? "",
                           style: TextStyles.regular1(
                               color: AppColors.bottomNavUnSelectedColor),
                           overflow: TextOverflow.ellipsis,
@@ -115,55 +116,82 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                     ],
                   ),
                   addVertical(6),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        ImageConst.briefcaseSvg,
-                        height: 16,
-                        width: 16,
-                      ),
-                      addHorizontal(6),
-                      Text(
-                        "${applicant?.status ?? '0'} Yrs Experience",
-                        style: TextStyles.regular1(
-                          color: AppColors.bottomNavUnSelectedColor,
-                        ),
-                      ),
-                    ],
-                  )
+                  Row(children: [_statusChip(applicant?.status ?? "")]),
                 ],
               ),
             ),
-
-            // ---- Profile Summary ----
             addVertical(8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                applicant?.jobApplicantMessages != null &&
-                        applicant!.jobApplicantMessages!.isNotEmpty
-                    ? applicant.jobApplicantMessages!.first.toString()
-                    : "About me / Profile Summary, short description here...",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyles.regular1(
-                    color: AppColors.bottomNavUnSelectedColor),
-              ),
             ),
-
-            // ---- Bottom Buttons ----
             addVertical(8),
             const Divider(height: 1),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  _roundedButton("Message"),
+                  InkWell(
+                      onTap: () {
+                        navigationService.push(HorizantalPdf(
+                          // key: ValueKey(
+                          //   pdf?.url ?? '',
+                          // ),
+                          fileUrl: resume,
+                          fileName: '',
+                          isfullScreen: true,
+                        ));
+                      },
+                      child: _roundedButton("Resume")),
                   addHorizontal(10),
-                  _roundedButton("Enquiry"),
-                  const Spacer(),
-                  const Icon(Icons.arrow_forward_ios,
-                      size: 12, color: AppColors.primaryColor),
+                  InkWell(
+                    onTap: () async {
+                      if (applicant == null ||
+                          applicant.id == null ||
+                          applicant.jobId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text("Applicant or Job ID not available")),
+                        );
+                        return;
+                      }
+                      final userId = await LocalStorage.getStringVal(
+                          LocalStorageConst.userId);
+
+                      navigationService.navigateToWithParams(
+                        RouteList.JobListingApplicantsMessege,
+                        params: {
+                          "jobId": applicant.jobId ?? "",
+                          "applicantId": applicant.id ?? "",
+                          "userId": userId,
+                        },
+                      );
+                    },
+                    child: _roundedButton("Message"),
+                  ),
+                  addHorizontal(10),
+                  InkWell(
+                      onTap: () {
+                        if (applicant == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Applicant data not available")),
+                          );
+                          return;
+                        }
+
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (context) => JobListingApplicantsEnquiry(
+                            applicant: applicant, // safe now
+                          ),
+                        );
+                      },
+                      child: _roundedButton("Enquiry")),
                 ],
               ),
             ),
@@ -173,8 +201,17 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  // ---- Helper Buttons ----
   Widget _roundedButton(String label) {
+    IconData icon;
+
+    if (label == "Resume") {
+      icon = Icons.picture_as_pdf;
+    } else if (label == "Message") {
+      icon = Icons.message_outlined;
+    } else {
+      icon = Icons.help_outline;
+    }
+
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -185,11 +222,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            label == "Message" ? Icons.message_outlined : Icons.help_outline,
-            size: 16,
-            color: AppColors.primaryColor,
-          ),
+          Icon(icon, size: 16, color: AppColors.primaryColor),
           addHorizontal(4),
           Text(
             label,
@@ -203,7 +236,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  // ---- Popup Menu ----
   Widget menuWidget(
     JobListingsViewModel vm,
     BuildContext context,
@@ -220,36 +252,78 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       icon: const Icon(Icons.more_vert,
           color: AppColors.bottomNavUnSelectedColor),
       onSelected: (value) {
+        String newStatus = "";
         switch (value) {
-          case "Decline":
-            showAlertMessage(
-                context, 'Are you sure you want to delete this listing?',
-                onBack: () {
-              navigationService.goBack();
-              vm.removeJobsListingData(context, id);
-            });
+          case "Shortlist":
+            newStatus = "SHORTLISTED";
             break;
+          case "Organize Interview":
+            newStatus = "INTERVIEWS";
+            break;
+          case "Accept":
+            newStatus = "ACCEPTED";
+            break;
+          case "Decline":
+            newStatus = "DECLINED";
+            break;
+        }
+        if (newStatus.isNotEmpty) {
+          vm.updateJobApplicantStatus(context, id, newStatus);
         }
       },
       itemBuilder: (context) => [
-        _popupItem("View", Icons.remove_red_eye, AppColors.black),
-        _popupItem("Accept", Icons.check_circle_outline, AppColors.greenColor),
-        _popupItem("Shortlist", Icons.person_add_alt, AppColors.primaryBlueColor),
-        _popupItem("Decline", Icons.block, AppColors.primaryBlueColor),
+        if (status == 'APPLIED' ||
+            status == 'ACCEPTED' ||
+            status == 'DECLINED' ||
+            status == "INTERVIEWS")
+          PopupMenuItem(
+            value: "Shortlist",
+            child: _buildRow(AppColors.black, "Shortlist"),
+          ),
+        if (status == 'APPLIED' ||
+            status == 'ACCEPTED' ||
+            status == 'DECLINED' ||
+            status == 'SHORTLISTED')
+          PopupMenuItem(
+              value: "Organize Interview",
+              child: _buildRow(AppColors.black, "Organize Interview")),
+        if (status == 'APPLIED' ||
+            status == 'INTERVIEWS' ||
+            status == 'SHORTLISTED')
+          PopupMenuItem(
+              value: "Accept", child: _buildRow(AppColors.black, "Accept")),
+        if (status == 'APPLIED' ||
+            status == 'ACCEPTED' ||
+            status == "INTERVIEWS" ||
+            status == 'SHORTLISTED')
+          PopupMenuItem(
+              value: "Decline", child: _buildRow(AppColors.black, "Decline")),
+        if (status == 'DECLINED')
+          PopupMenuItem(
+              value: "Accept", child: _buildRow(AppColors.black, "Accept")),
       ],
     );
   }
 
-  PopupMenuItem<String> _popupItem(String label, IconData icon, Color color) {
-    return PopupMenuItem(
-      value: label,
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 18),
-          addHorizontal(8),
-          Text(label,
-              style: TextStyles.semiBold(color: color, fontSize: 14)),
-        ],
+  Widget _buildRow(Color? color, String? title) {
+    return Row(children: [
+      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
+    ]);
+  }
+
+  Widget _statusChip(String status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(253, 245, 229, 1),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Text(
+        status,
+        style: TextStyles.semiBold(
+          fontSize: 12,
+          color: const Color.fromRGBO(225, 146, 0, 1),
+        ),
       ),
     );
   }

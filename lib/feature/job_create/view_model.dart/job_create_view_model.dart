@@ -36,6 +36,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final cityPostCodeController = TextEditingController();
   final minSalaryController = TextEditingController();
   final maxSalaryController = TextEditingController();
+  final countryController = TextEditingController();
 
   // NEW: Locum date controller
   final locumDateController = TextEditingController();
@@ -48,6 +49,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectRate;
   String? selectCountry;
   String? selectEducation;
+  String? selecteBenefits;
   String? selectHire;
   String? selectPositions;
   String? selectExperience;
@@ -66,6 +68,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   // Files
   File? logoFile;
   File? bannerFile;
+  File? ClinicPhotofile;
 
   // Form & PageView
   final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
@@ -114,6 +117,25 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Graduate",
     "Postgraduate",
     "PhD"
+  ];
+  final List<String> Benefits = [
+    "Performance bonus",
+    "Commission",
+    "Relocation fees",
+    "Tips",
+    "Overtime pay",
+    "Signing Bonus",
+    "Bonus",
+    "Annual Bonus",
+    "Quarterly bonus",
+    "Employee Discount",
+    "Visa sponsorship",
+    "Employee Mentoring program",
+    "Professional Development assistance",
+    "Company car",
+    "Travel reimbursement",
+    "Housingallowance",
+    "Other",
   ];
   final List<String> payRanges = ["Range"];
   final List<String> rateTypes = [
@@ -239,11 +261,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setSelectedExperience(String? value) {
-    selectExperience = value;
+    selecteBenefits = value;
     notifyListeners();
   }
 
   void setSelectedEducation(String? value) {
+    selectEducation = value;
+    notifyListeners();
+  }
+
+  void setSelectedBenefits(String? value) {
     selectEducation = value;
     notifyListeners();
   }
@@ -318,6 +345,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
       bannerFile = File(pickedFile.path);
+      NavigationService().goBack();
+      notifyListeners();
+    }
+  }
+
+  Future<void> pickClinicPhoto(ImageSource source) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (pickedFile != null) {
+      ClinicPhotofile = File(pickedFile.path);
       NavigationService().goBack();
       notifyListeners();
     }

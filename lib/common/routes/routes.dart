@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_wi
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
+import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
@@ -11,14 +12,15 @@ import 'package:di360_flutter/feature/directors/view/director_details/director_d
 import 'package:di360_flutter/feature/directors/view/director_details/director_quicklincks.dart';
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
+import 'package:di360_flutter/feature/enquiries/view/enquiries_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
-
+import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
@@ -58,7 +60,36 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
-      RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
+      RouteList.JobListingApplicantsMessege: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return JobListingApplicantsMessege(
+          jobId: args['jobId'],
+          applicantId: args['applicantId'],
+          userId: args['userId'],
+        );
+      },
+      
+      RouteList.AppliedJobScreen: (context) {
+        final dentalProfessionalId =
+            ModalRoute.of(context)!.settings.arguments as String? ??
+                "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
+        return AppliedJobScreen(dentalProfessionalId: dentalProfessionalId);
+      },
+      RouteList. EnquiriesScreen: (context) {
+        final dentalProfessionalId =
+            ModalRoute.of(context)!.settings.arguments as String? ??
+                "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
+        return  EnquiriesScreen(dentalProfessionalId: dentalProfessionalId);
+      },
+
+      RouteList.JobListingApplicantscreen: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return JobListingApplicantsScreen(
+          jobsListingData: args as JobsListingDetails,
+        );
+      },
+      // RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -66,7 +97,7 @@ class Routes {
           job: args as Jobs,
         );
       },
-     
+
       RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -84,9 +115,12 @@ class Routes {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingDetailsScreen(
           job: args as JobsListingDetails,
-          // Replace JobModel with your actual job model type
+          
         );
       },
+     
+      
+
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
     };
   }

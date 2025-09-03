@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 class JobListingCard extends StatelessWidget with BaseContextHelpers {
   final JobsListingDetails? jobsListingData;
   final JobListingsViewModel vm;
+  final dynamic parmas;
   final int? index;
 
   const JobListingCard({
@@ -20,6 +21,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     required this.jobsListingData,
     required this.vm,
     this.index,
+    this.parmas,
   });
 
   @override
@@ -50,7 +52,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 👉 all your existing card content goes here
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -58,8 +59,10 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                       child: _logoWithTitle(
                         context,
                         jobsListingData?.logo ?? '',
+                        jobsListingData?.title ?? '',
                         jobsListingData?.companyName ?? '',
-                        jobsListingData?.jRole ?? '',
+                        jobsListingData?.status ?? '',
+
                       ),
                     ),
                     Row(
@@ -82,16 +85,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 addVertical(10),
                 _descriptionWidget(jobsListingData?.description ?? ''),
                 const Divider(),
-                Row(
-                  children: [
-                    _roundedButton("Message"),
-                    addHorizontal(10),
-                    _roundedButton("Enquiry"),
-                    const Spacer(),
-                    const Icon(Icons.arrow_forward_ios,
-                        color: AppColors.primaryColor, size: 10),
-                  ],
-                ),
+
               ],
             ),
           ),
@@ -117,8 +111,10 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 viewModel.jobId = jobsListingData?.id ?? '';
                 await viewModel.getMyJobApplicantsgData(
                     context, jobsListingData?.id ?? '');
-                navigationService
-                    .navigateTo(RouteList.JobListingApplicantscreen);
+                navigationService.navigateToWithParams(
+                  RouteList.JobListingApplicantscreen,
+                  params: jobsListingData
+                );
               },
               child: Center(
                 child: Text(
@@ -138,6 +134,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     String logo,
     String company,
     String title,
+    String status,
+
   ) {
     return Row(
       children: [
@@ -163,7 +161,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
                 child: Text(
-                  'Active',
+                   status,
                   style: TextStyles.medium1(
                     color: AppColors.greenColor,
                     fontSize: 10,
@@ -190,11 +188,11 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
 
   Widget _descriptionWidget(String description) {
     return SizedBox(
-      height: 36,
+      // height: 36,
       width: double.infinity,
       child: Text(
         description,
-        maxLines: 3,
+        maxLines: 4,
         overflow: TextOverflow.ellipsis,
         style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
       ),
@@ -255,87 +253,81 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _roundedButton(String label) {
-    return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.timeBgColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            label == "Message" ? Icons.message_outlined : Icons.help_outline,
-            size: 16,
-            color: AppColors.primaryColor,
-          ),
-          addHorizontal(4),
-          Text(
-            label,
-            style:
-                TextStyles.medium1(color: AppColors.primaryColor, fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget menuWidget(
-    JobListingsViewModel vm,
-    BuildContext context,
-    int index,
-    String id,
-    String status,
-  ) {
-    return PopupMenuButton<String>(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      offset: const Offset(0, 40),
-      color: AppColors.whiteColor,
-      padding: EdgeInsets.zero,
-      icon: const Icon(Icons.more_vert,
-          color: AppColors.bottomNavUnSelectedColor),
-      onSelected: (value) {
-        switch (value) {
-          case "Edit":
-            // vm.getCatalogueView(context, id);
-            break;
-          case "Preview":
-            navigationService.navigateToWithParams(
-              RouteList.JobListingDetailsScreen,
-              params: vm.myJobListingList[index],
-            );
-            break;
-          case "Inactive":
-            showAlertMessage(context, 'Do you really want to change status?',
-                onBack: () {
-              navigationService.goBack();
-              vm.updateJobListingStatus(context, id, status);
-            });
-            break;
-          case "Delete":
-            showAlertMessage(
-                context, 'Are you sure you want to delete this listing?',
-                onBack: () {
-              navigationService.goBack();
-              vm.removeJobsListingData(context, id);
-            });
-            break;
-        }
-      },
-      itemBuilder: (context) => [
-        _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        _popupItem("Pending", Icons.loop, AppColors.primaryBlueColor),
-        _popupItem("Edit", Icons.edit_outlined, AppColors.primaryBlueColor),
-        if (vm.selectedStatus != "InActive")
-          _popupItem("Inactive", Icons.bolt_outlined, AppColors.primaryColor),
-        if (vm.selectedStatus == "InActive")
-          _popupItem("Active", Icons.bolt_outlined, AppColors.greenColor),
-        _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
-      ],
-    );
+ Widget menuWidget(
+  JobListingsViewModel vm,
+  BuildContext context,
+  int index,
+  String id,
+  String status,
+) {
+  return PopupMenuButton<String>(
+    iconColor: AppColors.bottomNavUnSelectedColor,
+    color: AppColors.whiteColor,
+    padding: EdgeInsets.all(0),
+    onSelected: (value) {
+      if (value == "Edit") {
+        // vm.getCatalogueView(context, id);
+      } else if (value == "Active") {
+        showAlertMessage(context, 'Do you really want to activate this job?',
+            onBack: () {
+          navigationService.goBack();
+            vm.updateJobListingStatus(context, id, "INACTIVE");
+        });
+      } else if (value == "Preview") {
+        navigationService.navigateToWithParams(
+          RouteList.JobListingDetailsScreen,
+          params: vm.myJobListingList[index],
+        );
+      } else if (value == "Inactive") {
+        showAlertMessage(context, 'Do you really want to deactivate this job?',
+            onBack: () {
+          navigationService.goBack();
+          vm.updateJobListingStatus(context, id, "REJECTED");
+        });
+      } else if (value == "Delete") {
+        showAlertMessage(context, 'Are you sure you want to delete this job?',
+            onBack: () {
+          navigationService.goBack();
+          vm.removeJobsListingData(context, id);
+        });
+      }
+    },
+    itemBuilder: (context) => [
+      PopupMenuItem(
+        value: "Preview",
+        child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
+      ),
+      PopupMenuItem(
+        value: "Edit",
+        child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
+      ),
+      PopupMenuItem(
+        value: "Delete",
+        child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+      ),
+
+      if (status == "APPROVE" )
+        PopupMenuItem(
+          value: "Inactive",
+          child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+        ),
+      if (status == "REJECT")
+        PopupMenuItem(
+          value: "Active",
+          child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
+        ),
+    ],
+  );
+}
+
+
+  Widget _buildRow(IconData? icon, Color? color, String? title) {
+    return Row(children: [
+      Icon(icon, color: color),
+      addHorizontal(8),
+      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
+    ]);
   }
 
   PopupMenuItem<String> _popupItem(String label, IconData icon, Color color) {

@@ -160,7 +160,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
           builder: (context, scrollController) {
             return Container(
               decoration: const BoxDecoration(
-                color: AppColors.buttomBarColor,
+                color: AppColors.backgroundColor,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: SafeArea(
@@ -220,7 +220,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
         builder: (context, scrollController) {
           return Container(
             decoration: const BoxDecoration(
-              color: AppColors.buttomBarColor,
+              color: AppColors.backgroundColor,
               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: SafeArea(

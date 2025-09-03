@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/job_create/view/other_links_view.dart';
 import 'package:di360_flutter/feature/job_create/view/pay_details.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
+import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_create_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -39,13 +40,28 @@ class _JobCreateViewState extends State<JobCreateView> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0), 
             child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 5, 
+                horizontal: 8, 
+              ),
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(
+                    255, 241, 229, 1), 
+                borderRadius: BorderRadius.circular(200),
+              ),
               child: Text(
                 "Preview",
-                style: TextStyles.regular2(),
+                style: const TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12, 
+                  height: 1.0,
+                  letterSpacing: 0,
+                  color: Color.fromRGBO(255, 112, 0, 1), 
+                ),
               ),
-              decoration: BoxDecoration(color: AppColors.timeBgColor),
             ),
           )
         ],
@@ -152,6 +168,9 @@ class _JobCreateViewState extends State<JobCreateView> {
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
                     await jobCreateVM.createdJobListing(context, true);
+                    await context
+                        .read<JobListingsViewModel>()
+                        .getMyJobListingData();
                     navigationService.goBack();
                   } else {
                     jobCreateVM.goToNextStep();

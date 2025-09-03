@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
@@ -63,6 +64,17 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
               () => jobCreateVM.pickBannerImage(ImageSource.camera),
             ),
           ),
+        addVertical(8),
+         ImagePickerInputField(
+          title: 'Clinic Photo',
+          imageFile:jobCreateVM.ClinicPhotofile,
+          onTap: () => _imagePickerSelection(
+            context,
+            () =>jobCreateVM. pickClinicPhoto(ImageSource.gallery),
+            () => jobCreateVM. pickClinicPhoto(ImageSource.camera),
+          ),
+        ),
+
         ],
       ),
     );

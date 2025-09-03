@@ -25,6 +25,8 @@ class GetJobApllicantsCountData {
   Accepted? accepted;
   Rejected? rejected;
   Shortlisted? shortlisted;
+  All? declined;
+
 
   GetJobApllicantsCountData(
       {this.all,
@@ -47,6 +49,7 @@ class GetJobApllicantsCountData {
     shortlisted = json['shortlisted'] != null
         ? Shortlisted.fromJson(json['shortlisted'])
         : null;
+    declined = json['declined'] != null ? All.fromJson(json['declined']) : null;
   }
 
   Map<String, dynamic> toJson() {

@@ -130,10 +130,14 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedAccount;
   String? selectedBusineestype;
   ServiceModel? selectedService;
-  TeamMembersModel?selectedteamember;
-  AppoinmentsModel ?selectedAppoinment;
-  TimingsModel ?selectedTimigs;
-  SocialLinksModel ?selectedSocialLinks;
+  CertificateModel? selectedCertificate;
+  AchievementModel? selectedAchievement;
+  DocumentModel? selectedDocument;
+  GalleryModel? selectedGallery;
+  TeamMembersModel? selectedteamember;
+  AppoinmentsModel? selectedAppoinment;
+  TimingsModel? selectedTimigs;
+  SocialLinksModel? selectedSocialLinks;
 
   //
   // Other fields
@@ -154,14 +158,17 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     Service = value;
     notifyListeners();
   }
+
   void toggleAppointments(bool value) {
     Appointments = value;
     notifyListeners();
   }
+
   void toggleAllDay(bool value) {
     AllDay = value;
     notifyListeners();
   }
+
   void toggleOurTeam(bool value) {
     OurTeam = value;
     notifyListeners();
@@ -200,6 +207,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
   //
   void setSelectedBusineestype(String emp) {
     selectedBusineestype = emp;
@@ -235,6 +243,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     SelectTime = date;
     notifyListeners();
   }
+
   //
   // Add methods
   void addService() {
@@ -250,6 +259,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     ServiceDescriptionController.clear();
     notifyListeners();
   }
+
   void addCertificates() {
     Certificates.add(CertificateModel(
       name: CertificateNameController.text,
@@ -259,15 +269,17 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     certificateFile = null;
     notifyListeners();
   }
+
   void addDocument() {
     Documents.add(DocumentModel(
       name: DocumentNameController.text,
       imageFile: documentFile,
     ));
-    ServiceNameController.clear();
+    DocumentNameController.clear();
     documentFile = null;
     notifyListeners();
   }
+
   void addAchievement() {
     Achievements.add(AchievementModel(
       name: AchievementNameController.text,
@@ -277,6 +289,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     achievementFile = null;
     notifyListeners();
   }
+
   void addTeamMember() {
     TeamMembers.add(TeamMembersModel(
       name: TeamMemberNameController.text,
@@ -296,6 +309,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     userFile = null;
     notifyListeners();
   }
+
   void addGallery() {
     Gallerys.add(GalleryModel(
       imageFile: galleryFile,
@@ -303,37 +317,41 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     galleryFile = null;
     notifyListeners();
   }
+
   void addAppointments() {
-  Appoinments.add(
-    AppoinmentsModel(
-      teamMemberName: selectedTeamMember,
-      services: selectedTeamService,
-      selectADay: selectedDays,
-      serviceTime: ServiceTimeDate,
-      serviceStartTime: ServiceStartTimeDate,
-      serviceEndTime: ServiceEndTimeDate,
-      breakStartTime: BreakStartTimeDate,
-      breakEndTime: BreakEndTimeDate,
-    ),
-  );
-  notifyListeners();
-}
-void addTimings() {
-  Timings.add(TimingsModel(
-       SelectadTime: SelectTime,
-       ServiceStarTime: ServiceStartTimeDate,
+    Appoinments.add(
+      AppoinmentsModel(
+        teamMemberName: selectedTeamMember,
+        services: selectedTeamService,
+        selectADay: selectedDays,
+        serviceTime: ServiceTimeDate,
+        serviceStartTime: ServiceStartTimeDate,
+        serviceEndTime: ServiceEndTimeDate,
+        breakStartTime: BreakStartTimeDate,
+        breakEndTime: BreakEndTimeDate,
+      ),
+    );
+    notifyListeners();
+  }
+
+  void addTimings() {
+    Timings.add(TimingsModel(
+      SelectadTime: SelectTime,
+      ServiceStarTime: ServiceStartTimeDate,
       ServiceEndTime: ServiceEndTimeDate,
       AllDay: true,
     ));
     notifyListeners();
   }
+
   void addSocialLinks() {
     SocialLinks.add(SocialLinksModel(
-     AccountName: SocialAccountsController.text,
+      AccountName: SocialAccountsController.text,
     ));
     SocialAccountsController.clear();
     notifyListeners();
   }
+
   //
   // Load & update methods
   void loadServiceData(ServiceModel service) {
@@ -342,6 +360,7 @@ void addTimings() {
     Service = service.appointment;
     serviefile = service.imageFile;
   }
+
   void updateService(int index) {
     Services[index] = ServiceModel(
       name: ServiceNameController.text,
@@ -351,6 +370,57 @@ void addTimings() {
     );
     notifyListeners();
   }
+
+  //certificated..
+  void loadCertificatesData(CertificateModel certificates) {
+    CertificateNameController.text = certificates.name;
+    certificateFile = certificates.imageFile;
+  }
+
+  void updateCertificates(int index) {
+    Certificates[index] = CertificateModel(
+      name: CertificateNameController.text,
+      imageFile: certificateFile,
+    );
+    notifyListeners();
+  }
+
+  //achievement
+  void loadAchievementData(AchievementModel achievement) {
+    AchievementNameController.text = achievement.name;
+    achievementFile = achievement.imageFile;
+  }
+
+  void updateAchievement(int index) {
+    Achievements[index] = AchievementModel(
+      name: AchievementNameController.text,
+      imageFile: achievementFile,
+    );
+    notifyListeners();
+  }
+
+  //documetn
+  void loadDocumentData(DocumentModel document) {
+    DocumentNameController.text = document.name;
+    documentFile = document.imageFile;
+  }
+
+  void updateDocument(int index) {
+    Documents[index] = DocumentModel(
+        name: DocumentNameController.text, imageFile: documentFile);
+    notifyListeners();
+  }
+
+  //gallerys
+  void loadGalleryData(GalleryModel gallerys) {
+    galleryFile = gallerys.imageFile;
+  }
+
+  void updateGallery(int index) {
+    Gallerys[index] = GalleryModel(imageFile: galleryFile);
+    notifyListeners();
+  }
+
   void loadTeamData(TeamMembersModel TeamMembers) {
     TeamMemberNameController.text = TeamMembers.name;
     TeamMemberDesignationController.text = TeamMembers.Designation;
@@ -360,6 +430,7 @@ void addTimings() {
     OurTeam = TeamMembers.ourTeam;
     userFile = TeamMembers.imageFile;
   }
+
   void updateTeam(int index) {
     TeamMembers[index] = TeamMembersModel(
       name: TeamMemberNameController.text,
@@ -372,58 +443,60 @@ void addTimings() {
     );
     notifyListeners();
   }
-void loadAppointmentData(AppoinmentsModel appointment) {
-  selectedTeamMember = appointment.teamMemberName;
-  selectedTeamService = appointment.services;
-  selectedDays = appointment.selectADay;
-  ServiceTimeDate = appointment.serviceTime;
-  ServiceStartTimeDate = appointment.serviceStartTime;
-  ServiceEndTimeDate = appointment.serviceEndTime;
-  BreakStartTimeDate = appointment.breakStartTime;
-  BreakEndTimeDate = appointment.breakEndTime;
-}
 
-void updateAppointment(int index) {
-  Appoinments[index] = AppoinmentsModel(
-    teamMemberName: selectedTeamMember ?? '',
-    services: selectedTeamService ?? '',
-    selectADay: selectedDays ?? '',
-    serviceTime: ServiceTimeDate,
-    serviceStartTime: ServiceStartTimeDate,
-    serviceEndTime: ServiceEndTimeDate,
-    breakStartTime: BreakStartTimeDate,
-    breakEndTime: BreakEndTimeDate,
-  );
+  void loadAppointmentData(AppoinmentsModel appointment) {
+    selectedTeamMember = appointment.teamMemberName;
+    selectedTeamService = appointment.services;
+    selectedDays = appointment.selectADay;
+    ServiceTimeDate = appointment.serviceTime;
+    ServiceStartTimeDate = appointment.serviceStartTime;
+    ServiceEndTimeDate = appointment.serviceEndTime;
+    BreakStartTimeDate = appointment.breakStartTime;
+    BreakEndTimeDate = appointment.breakEndTime;
+  }
 
-  notifyListeners();
-}
+  void updateAppointment(int index) {
+    Appoinments[index] = AppoinmentsModel(
+      teamMemberName: selectedTeamMember ?? '',
+      services: selectedTeamService ?? '',
+      selectADay: selectedDays ?? '',
+      serviceTime: ServiceTimeDate,
+      serviceStartTime: ServiceStartTimeDate,
+      serviceEndTime: ServiceEndTimeDate,
+      breakStartTime: BreakStartTimeDate,
+      breakEndTime: BreakEndTimeDate,
+    );
 
-void loadTimingsData(TimingsModel timing) {
-  ServiceTimeDate = timing.SelectadTime;
-  ServiceStartTimeDate = timing.ServiceStarTime;
-  ServiceEndTimeDate = timing.ServiceEndTime;
- AllDay = timing.AllDay;
-}
+    notifyListeners();
+  }
 
-void updateTimings(int index) {
-  Timings[index] = TimingsModel(
-    SelectadTime: ServiceTimeDate,
-    ServiceStarTime: ServiceStartTimeDate,
-    ServiceEndTime: ServiceEndTimeDate,
-    AllDay: AllDay,
-   
-  );
-  notifyListeners();
-}
-void loadSocialLinksData(SocialLinksModel socialLink) {
-  SocialAccountsController.text = socialLink.AccountName;
-}
-void updateSocialLinks(int index) {
-  SocialLinks[index] = SocialLinksModel(
-    AccountName: SocialAccountsController.text,
-  );
-  notifyListeners();
-}
+  void loadTimingsData(TimingsModel timing) {
+    ServiceTimeDate = timing.SelectadTime;
+    ServiceStartTimeDate = timing.ServiceStarTime;
+    ServiceEndTimeDate = timing.ServiceEndTime;
+    AllDay = timing.AllDay;
+  }
+
+  void updateTimings(int index) {
+    Timings[index] = TimingsModel(
+      SelectadTime: ServiceTimeDate,
+      ServiceStarTime: ServiceStartTimeDate,
+      ServiceEndTime: ServiceEndTimeDate,
+      AllDay: AllDay,
+    );
+    notifyListeners();
+  }
+
+  void loadSocialLinksData(SocialLinksModel socialLink) {
+    SocialAccountsController.text = socialLink.AccountName;
+  }
+
+  void updateSocialLinks(int index) {
+    SocialLinks[index] = SocialLinksModel(
+      AccountName: SocialAccountsController.text,
+    );
+    notifyListeners();
+  }
 
   //imagepickers...
   Future<void> pickLogoImage(ImageSource source) async {
@@ -505,6 +578,7 @@ void updateSocialLinks(int index) {
       notifyListeners();
     }
   }
+
   @override
   void dispose() {
     MobileNumberController.dispose();

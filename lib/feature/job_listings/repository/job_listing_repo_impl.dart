@@ -3,13 +3,18 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_listings/model/get_job_applicants_count_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_status_count_model.dart';
+import 'package:di360_flutter/feature/job_listings/model/update_job_aggrate_status.dart';
+import 'package:di360_flutter/feature/job_listings/quary/applicant_messege_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/delete_job_listing_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_count_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_listing_quary.dart';
+import 'package:di360_flutter/feature/job_listings/quary/job_applicants_messge_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/job_status_count_quary.dart';
+import 'package:di360_flutter/feature/job_listings/quary/update_job_aggrate_query.dart';
 import 'package:di360_flutter/feature/job_listings/quary/update_joblisting_status_quary.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repository.dart';
 
@@ -55,8 +60,8 @@ class JobListingRepoImpl extends JobListingRepository {
 
   @override
   Future<dynamic> updateJobListing(String? id, String status) async {
-    final jobListingStatusData = await http
-        .mutation(updateJobListingStatus, {"id": id, "status": status});
+    final jobListingStatusData =
+        await http.mutation(updateJobListingStatus, {"id": id, "status": status});
     return jobListingStatusData;
   }
 
@@ -88,7 +93,14 @@ class JobListingRepoImpl extends JobListingRepository {
       {
         "status": {
           "_in": listingStatusforapplicants?.isEmpty == true
-              ? ["APPLIED", "INTERVIEWS", "ACCEPTED", "REJECT", "SHORTLISTED"]
+              ? [
+                  "APPLIED",
+                  "INTERVIEWS",
+                  "ACCEPTED",
+                  "REJECT",
+                  "SHORTLISTED",
+                  "DECLINED"
+                ]
               : listingStatusforapplicants
         }
       },
@@ -111,4 +123,39 @@ class JobListingRepoImpl extends JobListingRepository {
     final result = GetJobApllicantsCountData.fromJson(data);
     return result;
   }
+
+  @override
+  Future<dynamic> updateJobAggrateStatus(dynamic variables) async {
+    final jobAggrateStatusData =
+        await http.mutation(updateJobApplicantStatusData, variables);
+    final result = UpadateJobAggrateStatusResp.fromJson(jobAggrateStatusData);
+    print(result);
+    return result;
+  }
+
+  
+  @override
+  Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(
+      String jobId) async {
+    final data =
+        await http.query(jobListingApplicantMessge,
+        variables: {"job_applicant_id": jobId});
+
+    final result = JobListingApplicantsMessageResponse.fromJson(data);
+    return result;
+  }
+  @override
+Future<String?> sendApplicantMessage(Map<String, dynamic> variables) async {
+  try {
+    final data = await http.mutation( applicantMessge, {
+      "object": variables,
+    });
+
+    // Return the ID of the new message
+    return data['insert_job_applicant_messages_one']?['id'] as String?;
+  } catch (e) {
+    throw Exception("Failed to send message: $e");
+  }
+}
+
 }

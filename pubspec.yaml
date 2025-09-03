@@ -59,6 +59,7 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   flutter_inappwebview: ^6.0.0
   flutter_widget_from_html: ^0.16.0
+  google_places_flutter: ^2.1.0
 
 
 dev_dependencies:

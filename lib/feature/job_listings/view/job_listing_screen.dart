@@ -107,8 +107,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                       jobListingVM.changeStatus(status, context);
                     },
                     child: Container(
-                      margin:  EdgeInsets.symmetric(
-                          horizontal: 3, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
@@ -139,7 +138,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                               "${jobListingVM. statusCountMap[status]}",
+                              "${jobListingVM.statusCountMap[status]}",
                               style: TextStyles.regular2(
                                 color: isSelected
                                     ? AppColors.black
@@ -162,7 +161,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "No Jobs Found",
+                            "No Jobs matched your search.",
                             style: TextStyles.medium2(color: AppColors.black),
                           ),
                         ],
@@ -172,11 +171,12 @@ class _JobListingScreenState extends State<JobListingScreen>
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
-                        print( jobListingVM.myJobListingList.length);
+                        print(jobListingVM.myJobListingList.length);
                         return JobListingCard(
                           jobsListingData: jobData,
                           vm: jobListingVM,
                           index: index,
+                       
                         );
                       },
                     ),

@@ -1,14 +1,16 @@
 class GetMyTalentListingResp {
-  TalentListing? data;
+  GetMyTalentListingData? data;
 
   GetMyTalentListingResp({this.data});
 
   GetMyTalentListingResp.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? TalentListing.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? GetMyTalentListingData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -16,22 +18,22 @@ class GetMyTalentListingResp {
   }
 }
 
-class TalentListing {
-  List<TalentListingDetails>? jobProfiles;
+class GetMyTalentListingData {
+  List<TalentListingProfiles>? jobProfiles;
 
-  TalentListing({this.jobProfiles});
+  GetMyTalentListingData({this.jobProfiles});
 
-  TalentListing.fromJson(Map<String, dynamic> json) {
+  GetMyTalentListingData.fromJson(Map<String, dynamic> json) {
     if (json['job_profiles'] != null) {
-      jobProfiles = <TalentListingDetails>[];
+      jobProfiles = <TalentListingProfiles>[];
       json['job_profiles'].forEach((v) {
-        jobProfiles!.add(TalentListingDetails.fromJson(v));
+        jobProfiles!.add(TalentListingProfiles.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     if (jobProfiles != null) {
       data['job_profiles'] = jobProfiles!.map((v) => v.toJson()).toList();
     }
@@ -39,169 +41,204 @@ class TalentListing {
   }
 }
 
-class TalentListingDetails {
+class TalentListingProfiles {
   String? id;
-  String? created_at;
-  String? updated_at;
-  String? skills;
-  String? jobexperiences;
-  String? educations;
-  String? upload_resume;
-  String? job_designation;
-  String? current_company;
-  String? current_ctc;
-  String? dental_professional_id;
-  String? post_anonymously;
-  String? admin_status;
-  String? profile_image;
-  String? full_name;
-  String? mobile_number;
-  String? email_address;
-  String? work_type;
-  String? profession_type;
-  String? location;
-  String? country;
-  String? city;
-  String? state;
-  String? cover_letter;
-  String? certificate;
-  String? radius;
-  String? abn_number;
+  String? createdAt;
+  String? updatedAt;
+  dynamic skills;
+  List<dynamic>? jobexperiences;
+  List<dynamic>? educations;
+  List<dynamic>? uploadResume;
+  dynamic jobDesignation;
+  dynamic currentCompany;
+  String? currentCtc;
+  String? dentalProfessionalId;
+  bool? postAnonymously;
+  String? adminStatus;
+  List<dynamic>? profileImage;
+  String? fullName;
+  String? mobileNumber;
+  String? emailAddress;
+  dynamic workType;
+  dynamic professionType;
+  dynamic location;
+  dynamic country;
+  dynamic city;
+  dynamic state;
+  List<dynamic>? coverLetter;
+  List<dynamic>? certificate;
+  dynamic radius;
+  dynamic abnNumber;
   String? availabilityOption;
-  String? availabilityDate;
-  String? fromDate;
-  String? availabilityDay;
-  String? work_rights;
-  String? Year_of_experiance;
-  String? languages_spoken;
-  String? areas_expertise;
-  String? percentage;
-  String? salary_amount;
-  String? salary_type;
-  String? aphra_number;
-  String? willing_to_travel;
-  String? travel_distance;
-  String? about_yourself;
+  List<dynamic>? availabilityDate;
+  List<dynamic>? fromDate;
+  List<dynamic>? availabilityDay;
+  dynamic workRights;
+  dynamic yearOfExperiance;
+  dynamic languagesSpoken;
+  dynamic areasExpertise;
+  dynamic percentage;
+  dynamic salaryAmount;
+  dynamic salaryType;
+  dynamic aphraNumber;
+  bool? willingToTravel;
+  dynamic travelDistance;
+  dynamic aboutYourself;
   String? availabilityType;
-  String? unavailabilityDate;
-
+  List<dynamic>? unavailabilityDate;
   DentalProfessional? dentalProfessional;
-  List<JobHiring>? jobhirings;
+  List<dynamic>? jobhirings;
 
-  TalentListingDetails();
+  TalentListingProfiles({
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.skills,
+    this.jobexperiences,
+    this.educations,
+    this.uploadResume,
+    this.jobDesignation,
+    this.currentCompany,
+    this.currentCtc,
+    this.dentalProfessionalId,
+    this.postAnonymously,
+    this.adminStatus,
+    this.profileImage,
+    this.fullName,
+    this.mobileNumber,
+    this.emailAddress,
+    this.workType,
+    this.professionType,
+    this.location,
+    this.country,
+    this.city,
+    this.state,
+    this.coverLetter,
+    this.certificate,
+    this.radius,
+    this.abnNumber,
+    this.availabilityOption,
+    this.availabilityDate,
+    this.fromDate,
+    this.availabilityDay,
+    this.workRights,
+    this.yearOfExperiance,
+    this.languagesSpoken,
+    this.areasExpertise,
+    this.percentage,
+    this.salaryAmount,
+    this.salaryType,
+    this.aphraNumber,
+    this.willingToTravel,
+    this.travelDistance,
+    this.aboutYourself,
+    this.availabilityType,
+    this.unavailabilityDate,
+    this.dentalProfessional,
+    this.jobhirings,
+  });
 
-  TalentListingDetails.fromJson(Map<String, dynamic> json) {
+  TalentListingProfiles.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    created_at = json['created_at'];
-    updated_at = json['updated_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
     skills = json['skills'];
-    jobexperiences = json['jobexperiences'];
-    educations = json['educations'];
-    upload_resume = json['upload_resume'];
-    job_designation = json['job_designation'];
-    current_company = json['current_company'];
-    current_ctc = json['current_ctc'];
-    dental_professional_id = json['dental_professional_id'];
-    post_anonymously = json['post_anonymously'];
-    admin_status = json['admin_status'];
-    profile_image = json['profile_image'];
-    full_name = json['full_name'];
-    mobile_number = json['mobile_number'];
-    email_address = json['email_address'];
-    work_type = json['work_type'];
-    profession_type = json['profession_type'];
+    jobexperiences = json['jobexperiences'] ?? [];
+    educations = json['educations'] ?? [];
+    uploadResume = json['upload_resume'] ?? [];
+    jobDesignation = json['job_designation'];
+    currentCompany = json['current_company'];
+    currentCtc = json['current_ctc'];
+    dentalProfessionalId = json['dental_professional_id'];
+    postAnonymously = json['post_anonymously'];
+    adminStatus = json['admin_status'];
+    profileImage = json['profile_image'] ?? [];
+    fullName = json['full_name'];
+    mobileNumber = json['mobile_number'];
+    emailAddress = json['email_address'];
+    workType = json['work_type'];
+    professionType = json['profession_type'];
     location = json['location'];
     country = json['country'];
     city = json['city'];
     state = json['state'];
-    cover_letter = json['cover_letter'];
-    certificate = json['certificate'];
+    coverLetter = json['cover_letter'] ?? [];
+    certificate = json['certificate'] ?? [];
     radius = json['radius'];
-    abn_number = json['abn_number'];
+    abnNumber = json['abn_number'];
     availabilityOption = json['availabilityOption'];
-    availabilityDate = json['availabilityDate'];
-    fromDate = json['fromDate'];
-    availabilityDay = json['availabilityDay'];
-    work_rights = json['work_rights'];
-    Year_of_experiance = json['Year_of_experiance'];
-    languages_spoken = json['languages_spoken'];
-    areas_expertise = json['areas_expertise'];
+    availabilityDate = json['availabilityDate'] ?? [];
+    fromDate = json['fromDate'] ?? [];
+    availabilityDay = json['availabilityDay'] ?? [];
+    workRights = json['work_rights'];
+    yearOfExperiance = json['Year_of_experiance'];
+    languagesSpoken = json['languages_spoken'];
+    areasExpertise = json['areas_expertise'];
     percentage = json['percentage'];
-    salary_amount = json['salary_amount'];
-    salary_type = json['salary_type'];
-    aphra_number = json['aphra_number'];
-    willing_to_travel = json['willing_to_travel'];
-    travel_distance = json['travel_distance'];
-    about_yourself = json['about_yourself'];
+    salaryAmount = json['salary_amount'];
+    salaryType = json['salary_type'];
+    aphraNumber = json['aphra_number'];
+    willingToTravel = json['willing_to_travel'];
+    travelDistance = json['travel_distance'];
+    aboutYourself = json['about_yourself'];
     availabilityType = json['availabilityType'];
-    unavailabilityDate = json['unavailabilityDate'];
-
+    unavailabilityDate = json['unavailabilityDate'] ?? [];
     dentalProfessional = json['dental_professional'] != null
         ? DentalProfessional.fromJson(json['dental_professional'])
         : null;
-
-    if (json['jobhirings'] != null) {
-      jobhirings = <JobHiring>[];
-      json['jobhirings'].forEach((v) {
-        jobhirings!.add(JobHiring.fromJson(v));
-      });
-    }
+    jobhirings = json['jobhirings'] ?? [];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     data['id'] = id;
-    data['created_at'] = created_at;
-    data['updated_at'] = updated_at;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     data['skills'] = skills;
     data['jobexperiences'] = jobexperiences;
     data['educations'] = educations;
-    data['upload_resume'] = upload_resume;
-    data['job_designation'] = job_designation;
-    data['current_company'] = current_company;
-    data['current_ctc'] = current_ctc;
-    data['dental_professional_id'] = dental_professional_id;
-    data['post_anonymously'] = post_anonymously;
-    data['admin_status'] = admin_status;
-    data['profile_image'] = profile_image;
-    data['full_name'] = full_name;
-    data['mobile_number'] = mobile_number;
-    data['email_address'] = email_address;
-    data['work_type'] = work_type;
-    data['profession_type'] = profession_type;
+    data['upload_resume'] = uploadResume;
+    data['job_designation'] = jobDesignation;
+    data['current_company'] = currentCompany;
+    data['current_ctc'] = currentCtc;
+    data['dental_professional_id'] = dentalProfessionalId;
+    data['post_anonymously'] = postAnonymously;
+    data['admin_status'] = adminStatus;
+    data['profile_image'] = profileImage;
+    data['full_name'] = fullName;
+    data['mobile_number'] = mobileNumber;
+    data['email_address'] = emailAddress;
+    data['work_type'] = workType;
+    data['profession_type'] = professionType;
     data['location'] = location;
     data['country'] = country;
     data['city'] = city;
     data['state'] = state;
-    data['cover_letter'] = cover_letter;
+    data['cover_letter'] = coverLetter;
     data['certificate'] = certificate;
     data['radius'] = radius;
-    data['abn_number'] = abn_number;
+    data['abn_number'] = abnNumber;
     data['availabilityOption'] = availabilityOption;
     data['availabilityDate'] = availabilityDate;
     data['fromDate'] = fromDate;
     data['availabilityDay'] = availabilityDay;
-    data['work_rights'] = work_rights;
-    data['Year_of_experiance'] = Year_of_experiance;
-    data['languages_spoken'] = languages_spoken;
-    data['areas_expertise'] = areas_expertise;
+    data['work_rights'] = workRights;
+    data['Year_of_experiance'] = yearOfExperiance;
+    data['languages_spoken'] = languagesSpoken;
+    data['areas_expertise'] = areasExpertise;
     data['percentage'] = percentage;
-    data['salary_amount'] = salary_amount;
-    data['salary_type'] = salary_type;
-    data['aphra_number'] = aphra_number;
-    data['willing_to_travel'] = willing_to_travel;
-    data['travel_distance'] = travel_distance;
-    data['about_yourself'] = about_yourself;
+    data['salary_amount'] = salaryAmount;
+    data['salary_type'] = salaryType;
+    data['aphra_number'] = aphraNumber;
+    data['willing_to_travel'] = willingToTravel;
+    data['travel_distance'] = travelDistance;
+    data['about_yourself'] = aboutYourself;
     data['availabilityType'] = availabilityType;
     data['unavailabilityDate'] = unavailabilityDate;
-
+    data['jobhirings'] = jobhirings;
     if (dentalProfessional != null) {
       data['dental_professional'] = dentalProfessional!.toJson();
     }
-    if (jobhirings != null) {
-      data['jobhirings'] = jobhirings!.map((v) => v.toJson()).toList();
-    }
-
     return data;
   }
 }
@@ -218,25 +255,9 @@ class DentalProfessional {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     data['id'] = id;
     data['gender'] = gender;
-    return data;
-  }
-}
-
-class JobHiring {
-  String? id;
-
-  JobHiring({this.id});
-
-  JobHiring.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
     return data;
   }
 }

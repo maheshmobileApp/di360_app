@@ -57,6 +57,16 @@ query getApplicantsStatusCounts($job_id: uuid!) {
       count
     }
   }  
+   declined: job_applicants_aggregate(
+    where: {
+      status: { _eq: "DECLINED" }
+      job_id: { _eq: $job_id }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }  
 }
 
 ''';

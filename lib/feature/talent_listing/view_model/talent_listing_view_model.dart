@@ -1,4 +1,4 @@
-import 'package:di360_flutter/feature/talent_listing/model/talent_listings_response.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_listings_model.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +7,6 @@ import 'package:flutter/material.dart';
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
 
-  TalentListingViewModel() {
-    fetchTalentStatusCounts();
-  }
   final List<String> roleOptions = [
     "Surgen",
     "Dentist",
@@ -58,7 +55,6 @@ class TalentListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Status filter
   String selectedStatus = 'All';
   final List<String> statuses = [
     'All',
@@ -86,10 +82,7 @@ class TalentListingViewModel extends ChangeNotifier {
       };
 
   List<String>? listingStatus = [];
-  String? suppliersId;
-  String? practiceId;
-
- List<TalentsListingDetails> myTalentListingList = [];
+ List<TalentListingProfiles> myTalentListingList = [];
 
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
@@ -118,27 +111,26 @@ class TalentListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchTalentStatusCounts() async {
-    final res = await repo.talentCounts();
+Future<void>  fetchTalentStatusCounts() async {
+  final res = await repo.talentCounts();
+  AllTalentCount = res.data?.all?.aggregate?.count ?? 0;
+  PendingCount = res.data?.pending?.aggregate?.count ?? 0;
+  ApprovalCount = res.data?.approved?.aggregate?.count ?? 0;
+  RejectedCount = res.data?.rejected?.aggregate?.count ?? 0; 
+  CancelledStatusCount = res.data?.cancelled?.aggregate?.count ?? 0;
+  EnquiryStatusCount = res.data?.enquiry?.aggregate?.count ?? 0;
 
-    AllTalentCount = (res.all?.aggregate?.count ?? 0);
-    PendingCount = res.pending?.aggregate?.count;
-    ApprovalCount = res.approved?.aggregate?.count;
-    RejectedCount = res.rejected?.aggregate?.count;
-    CancelledStatusCount = res.cancelled?.aggregate?.count;
-    EnquiryStatusCount = res.enquiry?.aggregate?.count;
+  notifyListeners();
+}
 
-    notifyListeners();
-  }
+
 
   Future<void> getMyTalentListingData() async {
     final res = await repo.getMyTalentListing(listingStatus);
-    fetchTalentStatusCounts();
-    
+   fetchTalentStatusCounts();
     if (res != null) {
-      myTalentListingList = res; 
+      myTalentListingList = res;
     }
-
     notifyListeners();
   }
 
