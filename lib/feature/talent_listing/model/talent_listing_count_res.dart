@@ -1,107 +1,69 @@
 class TalentListingCountRes {
- TalentListingCountData? data;
-
-  TalentListingCountRes({this.data});
-
-  TalentListingCountRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new TalentListingCountData.fromJson(json['data']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
-  }
-}
-
-class TalentListingCountData {
   All? all;
-  All? approved;
   All? pending;
+  All? approve;
   All? rejected;
-  All? enquiry;
-  All? cancelled;
 
-TalentListingCountData(
-      {this.all,
-      this.approved,
-      this.pending,
-      this.rejected,
-      this.enquiry,
-      this.cancelled});
+  TalentListingCountRes({this.all, this.pending, this.approve, this.rejected});
 
-TalentListingCountData.fromJson(Map<String, dynamic> json) {
-    all = json['all'] != null ? new All.fromJson(json['all']) : null;
-    approved =
-        json['approved'] != null ? new All.fromJson(json['approved']) : null;
-    pending =
-        json['pending'] != null ? new All.fromJson(json['pending']) : null;
-    rejected =
-        json['rejected'] != null ? new All.fromJson(json['rejected']) : null;
-    enquiry =
-        json['enquiry'] != null ? new All.fromJson(json['enquiry']) : null;
-    cancelled =
-        json['cancelled'] != null ? new All.fromJson(json['cancelled']) : null;
+  factory TalentListingCountRes.fromJson(Map<String, dynamic> json) {
+    return TalentListingCountRes(
+      all: json['all'] != null ? All.fromJson(json['all']) : null,
+      pending: json['pending'] != null ? All.fromJson(json['pending']) : null,
+      approve: json['approve'] != null ? All.fromJson(json['approve']) : null,
+      rejected: json['rejected'] != null ? All.fromJson(json['rejected']) : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.all != null) {
-      data['all'] = this.all!.toJson();
-    }
-    if (this.approved != null) {
-      data['approved'] = this.approved!.toJson();
-    }
-    if (this.pending != null) {
-      data['pending'] = this.pending!.toJson();
-    }
-    if (this.rejected != null) {
-      data['rejected'] = this.rejected!.toJson();
-    }
-    if (this.enquiry != null) {
-      data['enquiry'] = this.enquiry!.toJson();
-    }
-    if (this.cancelled != null) {
-      data['cancelled'] = this.cancelled!.toJson();
-    }
-    return data;
+    return {
+      'all': all?.toJson(),
+      'pending': pending?.toJson(),
+      'approve': approve?.toJson(),
+      'rejected': rejected?.toJson(),
+    };
   }
 }
 
 class All {
   Aggregate? aggregate;
+  String? sTypename;
 
-  All({this.aggregate});
+  All({this.aggregate, this.sTypename});
 
-  All.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new Aggregate.fromJson(json['aggregate'])
-        : null;
+  factory All.fromJson(Map<String, dynamic> json) {
+    return All(
+      aggregate:
+          json['aggregate'] != null ? Aggregate.fromJson(json['aggregate']) : null,
+      sTypename: json['__typename'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
+    return {
+      'aggregate': aggregate?.toJson(),
+      '__typename': sTypename,
+    };
   }
 }
 
 class Aggregate {
   int? count;
+  String? sTypename;
 
-  Aggregate({this.count});
+  Aggregate({this.count, this.sTypename});
 
-  Aggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
+  factory Aggregate.fromJson(Map<String, dynamic> json) {
+    return Aggregate(
+      count: json['count'],
+      sTypename: json['__typename'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    return data;
+    return {
+      'count': count,
+      '__typename': sTypename,
+    };
   }
 }

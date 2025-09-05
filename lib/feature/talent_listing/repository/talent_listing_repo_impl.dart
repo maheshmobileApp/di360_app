@@ -8,37 +8,54 @@ import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_r
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
 
-  @override
-  Future<List<TalentListingProfiles>?> getMyTalentListing(
-      List<String>? listingStatus) async {
-    final adminStatusList = listingStatus?.isEmpty == true
-        ? ["PENDING", "APPROVAL", "REJECTED", "CANCELLED", "ENQUIRY"]
-        : listingStatus;
+@override
+@override
+Future<List<JobProfiles>> getMyTalentListing(List<String>? listingStatus) async {
+  final adminStatusList = (listingStatus == null || listingStatus.isEmpty)
+      ? ["PENDING", "APPROVE", "REJECT"]
+      : listingStatus;
 
-    const int limit = 50;
-    const int offset = 0;
+  const int limit = 10;
+  const int offset = 0;
 
+  try {
     final listingData = await _http.query(
       getTalentListingQuery,
       variables: {
-        "admin_status": adminStatusList,
+        "where": {
+          "_and": [
+            {
+              "admin_status": {"_in": adminStatusList}
+            },
+            {
+              "admin_status": {"_neq": "DRAFT"}
+            }
+          ]
+        },
         "limit": limit,
         "offset": offset,
       },
     );
 
     print("Raw listingData: $listingData");
-    
-    final Map<String, dynamic> json = listingData['data'] ?? listingData;
-    final parsed = GetMyTalentListingData.fromJson(json);
+    final parsed = GetMyTalentListingData.fromJson(listingData);
     return parsed.jobProfiles ?? [];
+  } catch (e, stack) {
+    print("Error in getMyTalentListing: $e");
+    print(stack);
+    return [];
   }
+}
+
+
 
   @override
-  Future<TalentListingCountRes> talentCounts() async {
-    final data = await _http.query(GetTalentStatusCountsQuery);
-    final result = TalentListingCountRes.fromJson({"data": data});
-    print("Talent counts: ${result.toJson()}");
-    return result;
-  }
+Future<TalentListingCountRes> talentCounts() async {
+  final raw = await _http.query(GetTalentStatusCountsQuery);
+  final result = TalentListingCountRes.fromJson(raw); 
+  print("Talent counts: ${result.toJson()}");
+  return result;
+}
+
+
 }

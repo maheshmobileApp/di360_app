@@ -1,45 +1,40 @@
 const String GetTalentStatusCountsQuery = r'''
-query GetTalentStatusCounts {
-  all: job_profiles_aggregate {
+query getTalentAdminCountByStatus($whereAll: job_profiles_bool_exp = {}, $where: job_profiles_bool_exp = {}) {
+  all: job_profiles_aggregate(where: $whereAll) {
     aggregate {
       count
+      __typename
     }
-  }
-  approved: job_profiles_aggregate(
-    where: { admin_status: { _eq: "APPROVED" } }
-  ) {
-    aggregate {
-      count
-    }
+    __typename
   }
   pending: job_profiles_aggregate(
-    where: { admin_status: { _eq: "PENDING" } }
+    where: {_and: [$where, {admin_status: {_eq: "PENDING"}}]}
   ) {
     aggregate {
       count
+      __typename
     }
+    __typename
+  }
+  approve: job_profiles_aggregate(
+    where: {_and: [$where, {admin_status: {_eq: "APPROVE"}}]}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
   }
   rejected: job_profiles_aggregate(
-    where: { admin_status: { _eq: "REJECTED" } }
+    where: {_and: [$where, {admin_status: {_eq: "REJECT"}}]}
   ) {
     aggregate {
       count
+      __typename
     }
+    __typename
   }
-  enquiry: job_profiles_aggregate(
-    where: { admin_status: { _eq: "ENQUIRY" } }
-  ) {
-    aggregate {
-      count
-    }
-  }
-  cancelled: job_profiles_aggregate(
-    where: { admin_status: { _eq: "CANCELLED" } }
-  ) {
-    aggregate {
-      count
-  }
-   }
 }
+
   ''';
 

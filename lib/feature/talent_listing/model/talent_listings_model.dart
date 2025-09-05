@@ -1,35 +1,15 @@
-class GetMyTalentListingResp {
-  GetMyTalentListingData? data;
-
-  GetMyTalentListingResp({this.data});
-
-  GetMyTalentListingResp.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null
-        ? GetMyTalentListingData.fromJson(json['data'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
-  }
-}
-
 class GetMyTalentListingData {
-  List<TalentListingProfiles>? jobProfiles;
+  List<JobProfiles>? jobProfiles;
 
   GetMyTalentListingData({this.jobProfiles});
 
-  GetMyTalentListingData.fromJson(Map<String, dynamic> json) {
-    if (json['job_profiles'] != null) {
-      jobProfiles = <TalentListingProfiles>[];
-      json['job_profiles'].forEach((v) {
-        jobProfiles!.add(TalentListingProfiles.fromJson(v));
-      });
-    }
+  factory GetMyTalentListingData.fromJson(Map<String, dynamic> json) {
+    return GetMyTalentListingData(
+      jobProfiles: (json['job_profiles'] as List?)
+          ?.whereType<Map<String, dynamic>>() // safety filter
+          .map((v) => JobProfiles.fromJson(v))
+          .toList(),
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -41,223 +21,249 @@ class GetMyTalentListingData {
   }
 }
 
-class TalentListingProfiles {
+
+class JobProfiles {
   String? id;
+  String? adminStatus;
+  String? activeStatus;
+  String? currentCompany;
   String? createdAt;
   String? updatedAt;
-  dynamic skills;
-  List<dynamic>? jobexperiences;
-  List<dynamic>? educations;
-  List<dynamic>? uploadResume;
-  dynamic jobDesignation;
-  dynamic currentCompany;
-  String? currentCtc;
+  List<String>? skills;
+  List<JobExperiences>? jobExperiences;
+  String? jobDesignation;
   String? dentalProfessionalId;
-  bool? postAnonymously;
-  String? adminStatus;
-  List<dynamic>? profileImage;
+  List<ProfileImage>? profileImage;
   String? fullName;
-  String? mobileNumber;
-  String? emailAddress;
-  dynamic workType;
-  dynamic professionType;
-  dynamic location;
-  dynamic country;
-  dynamic city;
-  dynamic state;
-  List<dynamic>? coverLetter;
-  List<dynamic>? certificate;
-  dynamic radius;
-  dynamic abnNumber;
-  String? availabilityOption;
-  List<dynamic>? availabilityDate;
-  List<dynamic>? fromDate;
-  List<dynamic>? availabilityDay;
-  dynamic workRights;
-  dynamic yearOfExperiance;
-  dynamic languagesSpoken;
-  dynamic areasExpertise;
-  dynamic percentage;
-  dynamic salaryAmount;
-  dynamic salaryType;
-  dynamic aphraNumber;
-  bool? willingToTravel;
-  dynamic travelDistance;
-  dynamic aboutYourself;
-  String? availabilityType;
-  List<dynamic>? unavailabilityDate;
+  List<String>? workType;
+  String? professionType;
+  String? location;
+  String? country;
+  String? city;
+  String? state;
+  List<dynamic>? fromDate; // keep dynamic to avoid Null.fromJson issue
   DentalProfessional? dentalProfessional;
-  List<dynamic>? jobhirings;
+  List<JobHirings>? jobHirings;
+  String? sTypename;
 
-  TalentListingProfiles({
+  JobProfiles({
     this.id,
+    this.adminStatus,
+    this.activeStatus,
+    this.currentCompany,
     this.createdAt,
     this.updatedAt,
     this.skills,
-    this.jobexperiences,
-    this.educations,
-    this.uploadResume,
+    this.jobExperiences,
     this.jobDesignation,
-    this.currentCompany,
-    this.currentCtc,
     this.dentalProfessionalId,
-    this.postAnonymously,
-    this.adminStatus,
     this.profileImage,
     this.fullName,
-    this.mobileNumber,
-    this.emailAddress,
     this.workType,
     this.professionType,
     this.location,
     this.country,
     this.city,
     this.state,
-    this.coverLetter,
-    this.certificate,
-    this.radius,
-    this.abnNumber,
-    this.availabilityOption,
-    this.availabilityDate,
     this.fromDate,
-    this.availabilityDay,
-    this.workRights,
-    this.yearOfExperiance,
-    this.languagesSpoken,
-    this.areasExpertise,
-    this.percentage,
-    this.salaryAmount,
-    this.salaryType,
-    this.aphraNumber,
-    this.willingToTravel,
-    this.travelDistance,
-    this.aboutYourself,
-    this.availabilityType,
-    this.unavailabilityDate,
     this.dentalProfessional,
-    this.jobhirings,
+    this.jobHirings,
+    this.sTypename,
   });
 
-  TalentListingProfiles.fromJson(Map<String, dynamic> json) {
+  JobProfiles.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    adminStatus = json['admin_status'];
+    activeStatus = json['active_status'];
+    currentCompany = json['current_company'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    skills = json['skills'];
-    jobexperiences = json['jobexperiences'] ?? [];
-    educations = json['educations'] ?? [];
-    uploadResume = json['upload_resume'] ?? [];
+    skills = (json['skills'] as List?)?.whereType<String>().toList();
+
+    jobExperiences = (json['jobexperiences'] as List?)
+        ?.whereType<Map<String, dynamic>>()
+        .map((v) => JobExperiences.fromJson(v))
+        .toList();
+
     jobDesignation = json['job_designation'];
-    currentCompany = json['current_company'];
-    currentCtc = json['current_ctc'];
     dentalProfessionalId = json['dental_professional_id'];
-    postAnonymously = json['post_anonymously'];
-    adminStatus = json['admin_status'];
-    profileImage = json['profile_image'] ?? [];
+
+    profileImage = (json['profile_image'] as List?)
+        ?.whereType<Map<String, dynamic>>()
+        .map((v) => ProfileImage.fromJson(v))
+        .toList();
+
     fullName = json['full_name'];
-    mobileNumber = json['mobile_number'];
-    emailAddress = json['email_address'];
-    workType = json['work_type'];
+    workType = (json['work_type'] as List?)?.whereType<String>().toList();
     professionType = json['profession_type'];
     location = json['location'];
     country = json['country'];
     city = json['city'];
     state = json['state'];
-    coverLetter = json['cover_letter'] ?? [];
-    certificate = json['certificate'] ?? [];
-    radius = json['radius'];
-    abnNumber = json['abn_number'];
-    availabilityOption = json['availabilityOption'];
-    availabilityDate = json['availabilityDate'] ?? [];
-    fromDate = json['fromDate'] ?? [];
-    availabilityDay = json['availabilityDay'] ?? [];
-    workRights = json['work_rights'];
-    yearOfExperiance = json['Year_of_experiance'];
-    languagesSpoken = json['languages_spoken'];
-    areasExpertise = json['areas_expertise'];
-    percentage = json['percentage'];
-    salaryAmount = json['salary_amount'];
-    salaryType = json['salary_type'];
-    aphraNumber = json['aphra_number'];
-    willingToTravel = json['willing_to_travel'];
-    travelDistance = json['travel_distance'];
-    aboutYourself = json['about_yourself'];
-    availabilityType = json['availabilityType'];
-    unavailabilityDate = json['unavailabilityDate'] ?? [];
+
+    fromDate = (json['fromDate'] as List?) ?? [];
+
     dentalProfessional = json['dental_professional'] != null
-        ? DentalProfessional.fromJson(json['dental_professional'])
+        ? DentalProfessional.fromJson(
+            json['dental_professional'] as Map<String, dynamic>)
         : null;
-    jobhirings = json['jobhirings'] ?? [];
+
+    jobHirings = (json['jobhirings'] as List?)
+        ?.whereType<Map<String, dynamic>>()
+        .map((v) => JobHirings.fromJson(v))
+        .toList();
+
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['id'] = id;
+    data['admin_status'] = adminStatus;
+    data['active_status'] = activeStatus;
+    data['current_company'] = currentCompany;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['skills'] = skills;
-    data['jobexperiences'] = jobexperiences;
-    data['educations'] = educations;
-    data['upload_resume'] = uploadResume;
+
+    if (jobExperiences != null) {
+      data['jobexperiences'] = jobExperiences!.map((v) => v.toJson()).toList();
+    }
+
     data['job_designation'] = jobDesignation;
-    data['current_company'] = currentCompany;
-    data['current_ctc'] = currentCtc;
     data['dental_professional_id'] = dentalProfessionalId;
-    data['post_anonymously'] = postAnonymously;
-    data['admin_status'] = adminStatus;
-    data['profile_image'] = profileImage;
+
+    if (profileImage != null) {
+      data['profile_image'] = profileImage!.map((v) => v.toJson()).toList();
+    }
+
     data['full_name'] = fullName;
-    data['mobile_number'] = mobileNumber;
-    data['email_address'] = emailAddress;
     data['work_type'] = workType;
     data['profession_type'] = professionType;
     data['location'] = location;
     data['country'] = country;
     data['city'] = city;
     data['state'] = state;
-    data['cover_letter'] = coverLetter;
-    data['certificate'] = certificate;
-    data['radius'] = radius;
-    data['abn_number'] = abnNumber;
-    data['availabilityOption'] = availabilityOption;
-    data['availabilityDate'] = availabilityDate;
     data['fromDate'] = fromDate;
-    data['availabilityDay'] = availabilityDay;
-    data['work_rights'] = workRights;
-    data['Year_of_experiance'] = yearOfExperiance;
-    data['languages_spoken'] = languagesSpoken;
-    data['areas_expertise'] = areasExpertise;
-    data['percentage'] = percentage;
-    data['salary_amount'] = salaryAmount;
-    data['salary_type'] = salaryType;
-    data['aphra_number'] = aphraNumber;
-    data['willing_to_travel'] = willingToTravel;
-    data['travel_distance'] = travelDistance;
-    data['about_yourself'] = aboutYourself;
-    data['availabilityType'] = availabilityType;
-    data['unavailabilityDate'] = unavailabilityDate;
-    data['jobhirings'] = jobhirings;
+
     if (dentalProfessional != null) {
       data['dental_professional'] = dentalProfessional!.toJson();
     }
+
+    if (jobHirings != null) {
+      data['jobhirings'] = jobHirings!.map((v) => v.toJson()).toList();
+    }
+
+    data['__typename'] = sTypename;
+    return data;
+  }
+}
+
+class JobExperiences {
+  String? ejobdesp;
+  String? jobTitle;
+  int? startYear;
+  String? startMonth;
+  bool? stillInRole;
+  String? companyName;
+  String? endYear;
+  String? endMonth;
+
+  JobExperiences({
+    this.ejobdesp,
+    this.jobTitle,
+    this.startYear,
+    this.startMonth,
+    this.stillInRole,
+    this.companyName,
+    this.endYear,
+    this.endMonth,
+  });
+
+  JobExperiences.fromJson(Map<String, dynamic> json) {
+    ejobdesp = json['ejobdesp'];
+    jobTitle = json['job_title'];
+    startYear = json['startYear'];
+    startMonth = json['startMonth'];
+    stillInRole = json['stillInRole'];
+    companyName = json['company_name'];
+    endYear = json['endYear'];
+    endMonth = json['endMonth'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['ejobdesp'] = ejobdesp;
+    data['job_title'] = jobTitle;
+    data['startYear'] = startYear;
+    data['startMonth'] = startMonth;
+    data['stillInRole'] = stillInRole;
+    data['company_name'] = companyName;
+    data['endYear'] = endYear;
+    data['endMonth'] = endMonth;
+    return data;
+  }
+}
+
+class ProfileImage {
+  String? url;
+  String? name;
+  String? type;
+  String? extension;
+
+  ProfileImage({this.url, this.name, this.type, this.extension});
+
+  ProfileImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    type = json['type'];
+    extension = json['extension'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['name'] = name;
+    data['type'] = type;
+    data['extension'] = extension;
     return data;
   }
 }
 
 class DentalProfessional {
   String? id;
-  String? gender;
+  String? sTypename;
 
-  DentalProfessional({this.id, this.gender});
+  DentalProfessional({this.id, this.sTypename});
 
   DentalProfessional.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    gender = json['gender'];
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['id'] = id;
-    data['gender'] = gender;
+    data['__typename'] = sTypename;
+    return data;
+  }
+}
+
+class JobHirings {
+  String? id;
+  String? sTypename;
+
+  JobHirings({this.id, this.sTypename});
+
+  JobHirings.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['__typename'] = sTypename;
     return data;
   }
 }

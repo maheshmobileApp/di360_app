@@ -80,6 +80,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                 ),
               ],
             ),
+
             addVertical(16),
             _buildHireData(jobCreateVM),
             addVertical(8),
@@ -89,13 +90,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             addVertical(8),
             _buildEducation(jobCreateVM),
             addVertical(8),
-            _buildBenefits(jobCreateVM)
+            _buildBenefits(jobCreateVM),
           ],
         ),
       ),
     );
   }
-
   Widget _checkBox(bool value, Function(bool?)? onChanged, String text) {
     return Row(
       children: [
@@ -120,10 +120,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
   Widget _buildHireData(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectHire,
+      value: jobCreateVM.HireList.contains(jobCreateVM.selectHire)
+          ? jobCreateVM.selectHire
+          : null,
       title: "How quickly to Hire",
       onChanged: (v) => jobCreateVM.setSelectedHireRange(v as String),
-      items: jobCreateVM.HireList.map((value) {
+      items: jobCreateVM.HireList.toSet().map((value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -138,10 +140,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
   Widget _buildPositions(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectPositions,
+      value: jobCreateVM.positionsOptions.contains(jobCreateVM.selectPositions)
+          ? jobCreateVM.selectPositions
+          : null,
       title: "No. of Positions",
       onChanged: (v) => jobCreateVM.setSelectedPositions(v as String),
-      items: jobCreateVM.positionsOptions.map((value) {
+      items: jobCreateVM.positionsOptions.toSet().map((value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -156,10 +160,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
   Widget _buildExperience(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectExperience,
+      value: jobCreateVM.experienceOptions.contains(jobCreateVM.selectExperience)
+          ? jobCreateVM.selectExperience
+          : null,
       title: "Experience",
       onChanged: (v) => jobCreateVM.setSelectedExperience(v as String),
-      items: jobCreateVM.experienceOptions.map((value) {
+      items: jobCreateVM.experienceOptions.toSet().map((value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -173,10 +179,12 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildEducation(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-      value: jobCreateVM.selectEducation,
+      value: jobCreateVM.educationLevels.contains(jobCreateVM.selectEducation)
+          ? jobCreateVM.selectEducation
+          : null,
       title: "Education level",
       onChanged: (v) => jobCreateVM.setSelectedEducation(v as String),
-      items: jobCreateVM.educationLevels.map((value) {
+      items: jobCreateVM.educationLevels.toSet().map((value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -188,20 +196,20 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildBenefits(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
-      value: jobCreateVM.selecteBenefits,
+      value: jobCreateVM.Benefits.contains(jobCreateVM.selecteBenefits)
+          ? jobCreateVM.selecteBenefits
+          : null,
       title: "Do you offer any of the following benefits",
       onChanged: (v) => jobCreateVM.setSelectedBenefits(v as String),
-      items: jobCreateVM.Benefits.map((value) {
+      items: jobCreateVM.Benefits.toSet().map((value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
         );
       }).toList(),
       hintText: "Select Benefits",
-    
     );
   }
-
   Future<void> pickAndSetDate(
     BuildContext context,
     void Function(DateTime) setDate,
