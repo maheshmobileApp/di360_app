@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -23,6 +25,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
+     final applicant = appliedJob;
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -78,7 +81,32 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
             const Divider(),
             Row(
               children: [
-                _roundedButton('Message'),
+                InkWell(
+                    onTap: () async {
+                      if (applicant == null ||
+                          applicant.id == null ||
+                          applicant.jobId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text("Applicant or Job ID not available")),
+                        );
+                        return;
+                      }
+                      final userId = await LocalStorage.getStringVal(
+                          LocalStorageConst.userId);
+                          
+                      navigationService.navigateToWithParams(
+                        RouteList.JobListingApplicantsMessege,
+                        params: {
+                          "jobId": applicant.jobId ?? "",
+                          "applicantId": applicant.id ?? "",
+                          "userId": userId,
+                        },
+                      );
+                    },
+                    child: _roundedButton("Message"),
+                ),
               ],
             ),
           ],
