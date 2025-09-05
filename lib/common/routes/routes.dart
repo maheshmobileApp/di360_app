@@ -60,15 +60,18 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
-      RouteList.JobListingApplicantsMessege: (context) {
-        final args =
-            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return JobListingApplicantsMessege(
-          jobId: args['jobId'],
-          applicantId: args['applicantId'],
-          userId: args['userId'],
-        );
-      },
+     RouteList.JobListingApplicantsMessege: (context) {
+  final args =
+      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  return JobListingApplicantsMessege(
+    jobId: args['jobId'],
+    applicantId: args['applicantId'],
+    userId: args['userId'],
+    profilePic: args['profilePic'] ?? "", 
+    applicant: args['applicant'], 
+  );
+},
+
       
       RouteList.AppliedJobScreen: (context) {
         final dentalProfessionalId =
