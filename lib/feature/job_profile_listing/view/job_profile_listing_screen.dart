@@ -104,9 +104,9 @@ class _JobProfileListingScreenState extends State<JobProfileListingScreen>
                 final status = vm.statuses[index];
                 final isSelected = vm.selectedStatus == status.toUpperCase();
                 return GestureDetector(
-                  onTap: () {
-                    vm.changeStatus(status);
-                  },
+                  // onTap: () {
+                  //   vm.changeStatus(status);
+                  // },
                   child: Container(
                     margin: const EdgeInsets.symmetric(
                         horizontal: 6, vertical: 10),
