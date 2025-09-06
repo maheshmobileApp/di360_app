@@ -1,10 +1,10 @@
-class JobProfileListingResponse {
+class JobProfileResponse {
   final List<JobProfileListing>? jobProfiles;
 
-  JobProfileListingResponse({this.jobProfiles});
+  JobProfileResponse({this.jobProfiles});
 
-  factory JobProfileListingResponse.fromJson(Map<String, dynamic> json) {
-    return JobProfileListingResponse(
+  factory JobProfileResponse.fromJson(Map<String, dynamic> json) {
+    return JobProfileResponse(
       jobProfiles: (json['job_profiles'] as List<dynamic>?)
           ?.map((e) => JobProfileListing.fromJson(e))
           .toList(),

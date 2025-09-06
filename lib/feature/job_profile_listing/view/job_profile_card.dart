@@ -1,19 +1,19 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_listing_respo.dart';
-import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_listing_view_model.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_respo.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
-class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfileListing jobsListingData; // ✅ Non-nullable
-  final JobProfileListingViewModel vm;
+class JobProfileCard extends StatelessWidget with BaseContextHelpers {
+  final JobProfileListing jobsListingData;
+  final JobProfileViewModel vm;
   final dynamic parmas;
   final int? index;
 
-  const JobProfileListingCard({
+  const JobProfileCard({
     super.key,
     required this.jobsListingData,
     required this.vm,
@@ -28,69 +28,52 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
             jobsListingData.profileImage!.isNotEmpty)
         ? (jobsListingData.profileImage!.first.url ?? "")
         : "";
-
     final dentalProfessional = jobsListingData.dentalProfessional;
 
     return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
-              border: Border(
-                left: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-                right: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-                top: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-              ),
-            ),
-            child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: AppColors.greysecond, width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _logoWithTitle(
-                        context,
-                        profileImageUrl, 
-                        dentalProfessional?.name ?? '',
-                        dentalProfessional?.professionType ?? '',
-                        jobsListingData.jobDesignation ?? '',
-                        jobsListingData.currentCompany ?? '',
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        _jobProfileTimeChip(time),
-                        addHorizontal(4),
-                        menuWidget(jobsListingData.adminStatus ?? ''),
-                      ],
-                    ),
-                  ],
+                Expanded(
+                  child: _logoWithTitle(
+                    context,
+                    profileImageUrl,
+                    dentalProfessional?.name ?? '',
+                    jobsListingData.jobDesignation ?? '',
+                    jobsListingData.currentCompany ?? '',
+                  ),
                 ),
-                addVertical(12),
                 Row(
                   children: [
-                    _chipWidget(jobsListingData.workType ?? []),
-                    addHorizontal(8),
-                    _statusChip(jobsListingData.adminStatus ?? ''),
+                    _jobProfileTimeChip(time),
+                    addHorizontal(4),
+                    menuWidget(jobsListingData.adminStatus ?? ''),
                   ],
                 ),
-                 addVertical(12),
-                _descriptionWidget("about your self"),
               ],
             ),
-          ),
-        ],
+            addVertical(12),
+            Row(
+              children: [
+                 _chipWidget(jobsListingData.workType ?? []),
+              addHorizontal(8),
+                _statusChip(jobsListingData.adminStatus ?? ''),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -99,7 +82,6 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
     BuildContext context,
     String imageUrl,
     String name,
-    String professionType,
     String designation,
     String companyName,
   ) {
@@ -107,7 +89,7 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
-          backgroundColor: Colors.grey,
+          backgroundColor: AppColors.geryColor,
           radius: 24,
           child: CircleAvatar(
             radius: 24,
@@ -119,14 +101,14 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
                       height: 48,
                       imageUrl: imageUrl,
                       errorWidget: const CircleAvatar(
-                        backgroundColor: Colors.grey,
+                        backgroundColor: AppColors.geryColor,
                         child: Icon(Icons.error),
                       ),
                     ),
                   )
                 : const CircleAvatar(
                     radius: 24,
-                    backgroundColor: Colors.grey,
+                    backgroundColor: AppColors.geryColor,
                   ),
           ),
         ),
@@ -143,20 +125,14 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                professionType,
+                designation,
                 style: TextStyles.regular2(color: AppColors.geryColor),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                designation,
-                style: TextStyles.regular2(color: AppColors.lightGeryColor),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
                 companyName,
-                style: TextStyles.regular2(color: AppColors.lightGeryColor),
+                style: TextStyles.regular1(color: AppColors.lightGeryColor),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -167,39 +143,29 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _descriptionWidget(String description) {
-    return SizedBox(
-      width: double.infinity,
-      child: Text(
-        description,
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
-      ),
-    );
-  }
-
-  Widget _chipWidget(List<String> types) {
-    if (types.isEmpty) return const SizedBox();
+  Widget _chipWidget(List<dynamic> types) {
     return Wrap(
-      spacing: 6,
-      runSpacing: 6,
+      spacing: 10,
+      runSpacing: 10,
       children: types.map((type) {
-        final label = type.trim().isEmpty ? '' : type;
+        final label = type?.toString() == 'null' ? 'N/A' : type.toString();
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          height: 21,
+          width: 71,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
             color: AppColors.secondaryBlueColor,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Text(
-            label,
-            style: TextStyles.regular1(
-              fontSize: 12,
-              color: AppColors.primaryBlueColor,
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyles.regular1(
+                color: AppColors.primaryBlueColor,
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         );
       }).toList(),
@@ -215,8 +181,8 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            Color.fromRGBO(255, 241, 229, 0),
-            Color.fromRGBO(255, 241, 229, 1),
+            AppColors.timeblack,
+            AppColors.timewhite,
           ],
         ),
         borderRadius: BorderRadius.circular(5),
@@ -227,7 +193,7 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
         textAlign: TextAlign.right,
         style: TextStyles.semiBold(
           fontSize: 10,
-          color: Color.fromRGBO(255, 112, 0, 1),
+          color: AppColors.primaryColor,
         ),
       ),
     );
@@ -238,9 +204,7 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
-      onSelected: (value) {
-        // Handle actions
-      },
+      onSelected: (value) {},
       itemBuilder: (context) => [
         PopupMenuItem(
           value: "Preview",
@@ -288,33 +252,35 @@ class JobProfileListingCard extends StatelessWidget with BaseContextHelpers {
     Color textColor;
     switch (status.toUpperCase()) {
       case "DRAFT":
-        bgColor = const Color.fromRGBO(4, 113, 222, 0.1);
-        textColor = const Color.fromRGBO(4, 113, 222, 1);
+        bgColor = AppColors.secondaryBlueColor;
+        textColor = AppColors.primaryBlueColor;
         break;
       case "PENDING":
-        bgColor = const Color.fromRGBO(225, 146, 0, 0.1);
-        textColor = const Color.fromRGBO(225, 146, 0, 1);
+        bgColor = AppColors.pendingprimary;
+        textColor = AppColors.pendingsendary;
         break;
       case "ACTIVE":
-        bgColor = const Color.fromRGBO(0, 147, 79, 0.1);
-        textColor = const Color.fromRGBO(0, 147, 79, 1);
+        bgColor = AppColors.activeprimary;
+        textColor = AppColors.activesendary;
         break;
       case "INACTIVE":
-        bgColor = const Color.fromRGBO(215, 19, 19, 0.1);
-        textColor = const Color.fromRGBO(215, 19, 19, 1);
+        bgColor = AppColors.inactiveprimary;
+        textColor = AppColors.inactivesendary;
         break;
       case "REJECTED":
-        bgColor = const Color.fromRGBO(215, 19, 19, 0.1);
-        textColor = const Color.fromRGBO(215, 19, 19, 1);
+        bgColor = AppColors.inactiveprimary;
+        textColor = AppColors.inactivesendary;
         break;
       default:
-        bgColor = const Color.fromRGBO(253, 245, 229, 1);
-        textColor = const Color.fromRGBO(225, 146, 0, 1);
+        bgColor = AppColors.whiteColor;
+        textColor = AppColors.pendingsendary;
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-          color: bgColor, borderRadius: BorderRadius.circular(30)),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(30),
+      ),
       child: Text(
         status,
         style: TextStyles.semiBold(fontSize: 12, color: textColor),

@@ -1,11 +1,11 @@
-import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_listing_respo.dart';
-import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_listing_respo_impl.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_respo.dart';
+import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 
-class JobProfileListingViewModel extends ChangeNotifier {
-  final JobProfileListingRepoImpl repo = JobProfileListingRepoImpl();
+class JobProfileViewModel extends ChangeNotifier {
+  final JobProfileRepoImpl repo = JobProfileRepoImpl();
 
   final List<String> statuses = [
     'DRAFT',

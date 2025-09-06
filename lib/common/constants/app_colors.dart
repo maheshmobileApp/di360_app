@@ -19,7 +19,7 @@ class AppColors {
   static const Color bottomBarSelectIconColor = Color(0xFFBBBFD2);
   static const Color inputBorderColor = Color(0xFFDEDEDE);
   static const Color inputHintColor = Color(0xFF5B5772);
-  static const Color backgroundColor= Color(0xFFEDEFF1);
+  static const Color backgroundColor = Color(0xFFEDEFF1);
   static const Color timeBgColor = Color(0xffFFF1E5);
   static const Color borderColor = Color(0xFFDCE0E4);
   static const Color clipBg = Color(0xff0471DE26);
@@ -31,4 +31,13 @@ class AppColors {
   static const Color greenColor = Color(0xff00934F);
   static const Color redColor = Color(0xffD71313);
   static const Color cardcolor = Color.fromRGBO(246, 247, 249, 1);
+  static const Color greysecond = Color.fromRGBO(220, 224, 228, 1);
+  static const Color pendingprimary = Color.fromRGBO(225, 146, 0, 0.1);
+  static const Color pendingsendary = Color.fromRGBO(225, 146, 0, 1);
+  static const Color activeprimary = Color.fromRGBO(0, 147, 79, 0.1);
+  static const Color activesendary = Color.fromRGBO(0, 147, 79, 1);
+  static const Color inactiveprimary = Color.fromRGBO(215, 19, 19, 0.1);
+  static const Color inactivesendary = Color.fromRGBO(215, 19, 19, 1);
+  static const Color timeblack = Color.fromRGBO(255, 241, 229, 0);
+  static const Color timewhite = Color.fromRGBO(255, 241, 229, 1);
 }

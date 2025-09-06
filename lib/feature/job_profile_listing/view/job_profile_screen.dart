@@ -1,41 +1,44 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_listing_card.dart';
-import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_listing_view_model.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_card.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class JobProfileListingScreen extends StatefulWidget {
-  const JobProfileListingScreen({super.key});
+class JobProfileScreen extends StatefulWidget {
+  const JobProfileScreen({super.key});
 
   @override
-  State<JobProfileListingScreen> createState() =>
+  State<JobProfileScreen> createState() =>
       _JobProfileListingScreenState();
 }
 
-class _JobProfileListingScreenState extends State<JobProfileListingScreen>
+class _JobProfileListingScreenState extends State<JobProfileScreen>
     with BaseContextHelpers {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final vm =
-          Provider.of<JobProfileListingViewModel>(context, listen: false);
-      vm.fetchJobProfiles("1d0f1ca1-2658-4869-85d0-6f098bc600a1");
+          Provider.of<JobProfileViewModel>(context, listen: false);
+      final userId =
+          await LocalStorage.getStringVal(LocalStorageConst.userId);
+        vm.fetchJobProfiles(userId);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
-    final vm = Provider.of<JobProfileListingViewModel>(context);
+    final vm = Provider.of<JobProfileViewModel>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -103,11 +106,7 @@ class _JobProfileListingScreenState extends State<JobProfileListingScreen>
               itemBuilder: (context, index) {
                 final status = vm.statuses[index];
                 final isSelected = vm.selectedStatus == status.toUpperCase();
-                return GestureDetector(
-                  // onTap: () {
-                  //   vm.changeStatus(status);
-                  // },
-                  child: Container(
+                return Container(
                     margin: const EdgeInsets.symmetric(
                         horizontal: 6, vertical: 10),
                     padding: const EdgeInsets.symmetric(
@@ -115,7 +114,7 @@ class _JobProfileListingScreenState extends State<JobProfileListingScreen>
                     decoration: BoxDecoration(
                       gradient: isSelected
                           ? const LinearGradient(
-                              colors: [Colors.pink, Colors.orange],
+                              colors: [Colors.pink, AppColors.primaryColor],
                             )
                           : null,
                       color: isSelected ? null : AppColors.whiteColor,
@@ -130,8 +129,7 @@ class _JobProfileListingScreenState extends State<JobProfileListingScreen>
                             : AppColors.primaryColor,
                       ),
                     ),
-                  ),
-                );
+                  );
               },
             ),
           ),
@@ -150,7 +148,7 @@ class _JobProfileListingScreenState extends State<JobProfileListingScreen>
                         itemCount: vm.filteredProfiles.length,
                         itemBuilder: (context, index) {
                           final jobData = vm.filteredProfiles[index];
-                          return JobProfileListingCard(
+                          return JobProfileCard(
                             jobsListingData: jobData,
                             vm: vm,
                             index: index,

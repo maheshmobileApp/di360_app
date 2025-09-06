@@ -20,7 +20,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_s
 import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
-import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_listing_screen.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -58,7 +58,7 @@ class Routes {
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) => JobProfileView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
-      RouteList. JobProfileListingScreen: (context) => JobProfileListingScreen(),
+      RouteList. JobProfileListingScreen: (context) => JobProfileScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
