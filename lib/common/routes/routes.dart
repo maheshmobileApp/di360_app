@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_s
 import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_listing_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -57,33 +58,33 @@ class Routes {
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) => JobProfileView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
+      RouteList. JobProfileListingScreen: (context) => JobProfileListingScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
-     RouteList.JobListingApplicantsMessege: (context) {
-  final args =
-      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-  return JobListingApplicantsMessege(
-    jobId: args['jobId'],
-    applicantId: args['applicantId'],
-    userId: args['userId'],
-    profilePic: args['profilePic'] ?? "", 
-    applicant: args['applicant'], 
-  );
-},
+      RouteList.JobListingApplicantsMessege: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return JobListingApplicantsMessege(
+          jobId: args['jobId'],
+          applicantId: args['applicantId'],
+          userId: args['userId'],
+          profilePic: args['profilePic'] ?? "",
+          applicant: args['applicant'],
+        );
+      },
 
-      
       RouteList.AppliedJobScreen: (context) {
         final dentalProfessionalId =
             ModalRoute.of(context)!.settings.arguments as String? ??
                 "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
         return AppliedJobScreen(dentalProfessionalId: dentalProfessionalId);
       },
-      RouteList. EnquiriesScreen: (context) {
+      RouteList.EnquiriesScreen: (context) {
         final dentalProfessionalId =
             ModalRoute.of(context)!.settings.arguments as String? ??
                 "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
-        return  EnquiriesScreen(dentalProfessionalId: dentalProfessionalId);
+        return EnquiriesScreen(dentalProfessionalId: dentalProfessionalId);
       },
 
       RouteList.JobListingApplicantscreen: (context) {
@@ -118,11 +119,8 @@ class Routes {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingDetailsScreen(
           job: args as JobsListingDetails,
-          
         );
       },
-     
-      
 
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
     };
