@@ -1,10 +1,8 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_card.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
@@ -28,17 +26,15 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final vm =
-          Provider.of<JobProfileViewModel>(context, listen: false);
-      final userId =
-          await LocalStorage.getStringVal(LocalStorageConst.userId);
-        vm.fetchJobProfiles(userId);
+          Provider.of<JobProfileListingViewModel>(context, listen: false);
+        vm.fetchJobProfiles();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
-    final vm = Provider.of<JobProfileViewModel>(context);
+    final vm = Provider.of<JobProfileListingViewModel>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_respo.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_quary.dart';
+import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_updated.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profle_repository.dart';
 
 
@@ -19,4 +20,13 @@ class JobProfileRepoImpl implements JobProfileRepository {
       return result.jobProfiles ?? []; 
     
   }
+@override
+Future<dynamic> updateJobProfile(String? id, String status) async {
+  final jobProfileStatusData = await http.mutation(
+    updateJobProfileStatus,
+    {"id": id, "status": status},
+  );
+  return jobProfileStatusData;
+}
+
 }
