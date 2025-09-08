@@ -38,6 +38,6 @@ class RouteList {
   static const String  JobListingApplicantsMessege= '/JobListingApplicantsMessege';
   static const String  AppliedJobScreen='/AppliedJobScreen';
   static const String EnquiriesScreen='/EnquiriesScreen';
-  
+  static const String  JobProfileScreen='/ JobProfileScreen';
 
 }

@@ -3,7 +3,7 @@ import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_
 
 abstract class TalentListingRepository {
   
-  Future<List<TalentListingProfiles>?> getMyTalentListing(List<String>? listingStatus);
+  Future<List<JobProfiles>?> getMyTalentListing(List<String>? listingStatus);
   Future<TalentListingCountRes> talentCounts();
 
 }
