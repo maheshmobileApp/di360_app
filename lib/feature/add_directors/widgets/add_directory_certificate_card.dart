@@ -1,4 +1,3 @@
-
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/add_directors/model/certificate_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
-
 
 class AddDirectoryCertificateCard extends StatelessWidget {
   final String title;
@@ -57,13 +55,13 @@ class AddDirectoryCertificateCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: () {
-              showCertificatesOptionsBottomSheet(context, certificate, index);
-            },
-            child: const Icon(Icons.more_vert, size: 20),
-          ),
+          // const SizedBox(width: 10),
+          // GestureDetector(
+          //   onTap: () {
+          //     showCertificatesOptionsBottomSheet(context, certificate, index);
+          //   },
+          //   child: const Icon(Icons.more_vert, size: 20),
+          // ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: onDelete,
@@ -141,7 +139,7 @@ class AddDirectoryCertificateCard extends StatelessWidget {
                     const Spacer(),
                     CustomBottomButton(
                       onFirst: () {
-                        addDirectorVM.Certificates.remove(certificate);
+                        addDirectorVM.certificateList.remove(certificate);
                         addDirectorVM;
                         Navigator.pop(context);
                       },
@@ -207,7 +205,8 @@ class AddDirectoryCertificateCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextField(
-                              controller: addDirectorVM.CertificateNameController,
+                              controller:
+                                  addDirectorVM.certificateNameController,
                               decoration: const InputDecoration(
                                 labelText: "Certificate Name",
                               ),
@@ -225,7 +224,7 @@ class AddDirectoryCertificateCard extends StatelessWidget {
                     ),
                     CustomBottomButton(
                       onFirst: () {
-                        addDirectorVM.Certificates.remove(certificate);
+                        addDirectorVM.certificateList.remove(certificate);
                         addDirectorVM;
                         Navigator.pop(context);
                       },

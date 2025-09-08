@@ -1,8 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -10,15 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
+class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers,ValidationMixins {
   AddDirectorBasicInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
     final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
-    final homeViewModel = Provider.of<HomeViewModel>(context);
     return SingleChildScrollView(
-      child: Padding(
+        child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,20 +31,24 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             hintText: "Enter Company Name",
             title: "Company Name",
             isRequired: true,
-           controller:AddDirectorVM.CompanyNameController,
-           validator: (value) => value == null || value.isEmpty
+            controller: AddDirectorVM.CompanyNameController,
+            validator: (value) => value == null || value.isEmpty
                 ? 'Please enter company name'
                 : null,
           ),
           addVertical(20),
           InputTextField(
             title: "Name",
-            initialValue: homeViewModel.userName ?? '',
+            hintText: 'Enter name',
+            controller: AddDirectorVM.nameController,
+            validator: validateFirstName,
           ),
           addVertical(20),
           InputTextField(
             title: "Email ID",
-            initialValue: homeViewModel.userID?? '',
+            validator: validateEmail,
+            hintText: 'Enter emailId',
+            controller: AddDirectorVM.emailController,
           ),
           addVertical(20),
           InputTextField(
@@ -64,7 +68,7 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             controller: AddDirectorVM.MobileNumberController,
             isRequired: true,
             keyboardType: TextInputType.number,
-             validator: (value) => value == null || value.isEmpty
+            validator: (value) => value == null || value.isEmpty
                 ? 'Please enter Phone Number'
                 : null,
           ),
@@ -73,6 +77,7 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
             keyboardType: TextInputType.number,
+            controller: AddDirectorVM.alternateNumberController,
           ),
           addVertical(20),
           InputTextField(
@@ -80,7 +85,7 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             title: " Address ",
             controller: AddDirectorVM.AdreessController,
             isRequired: true,
-           validator: (value) =>
+            validator: (value) =>
                 value == null || value.isEmpty ? 'Please enter  address' : null,
           ),
           Divider(thickness: 4),
@@ -90,6 +95,7 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           LogoContainer(
             title: "Logo",
             imageFile: AddDirectorVM.logoFile,
+            serverImg: AddDirectorVM.getBasicInfoData.first.logo?.url,
             onTap: () => _imagePickerSelection(
               context,
               () => AddDirectorVM.pickLogoImage(ImageSource.gallery),
@@ -100,6 +106,7 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           LogoContainer(
             title: "Banner",
             imageFile: AddDirectorVM.bannerFile,
+            serverImg: AddDirectorVM.getBasicInfoData.first.bannerImage?.url,
             onTap: () => _imagePickerSelection(
               context,
               () => AddDirectorVM.pickBannerImage(ImageSource.gallery),
@@ -112,17 +119,20 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             maxLength: 500,
             maxLines: 5,
             title: "Description",
+            controller: AddDirectorVM.descController,
           ),
         ],
       ),
     ));
   }
+
   Widget _sectionHeader(String title) {
     return Text(
       title,
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
+
   void _imagePickerSelection(
     BuildContext context,
     VoidCallback? galleryOnTap,
@@ -148,18 +158,25 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
       },
     );
   }
+
   Widget _buildBusineestype(AddDirectorViewModel AddDirectorVM) {
+    final allCategories = AddDirectorVM.directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+
     return CustomDropDown(
       value: AddDirectorVM.selectedBusineestype,
       title: "Business Type",
-      onChanged: (v) => AddDirectorVM.setSelectedBusineestype(v as String),
-      items: AddDirectorVM.BusineestypeList.map((value) {
+      onChanged: (v) =>
+          AddDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
+      items: allCategories.map((cat) {
         return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
+          value: cat,
+          child: Text(cat.name ?? "",
+              style: TextStyles.medium3(color: AppColors.black)),
         );
       }).toList(),
-      hintText: "Select business type ",
+      hintText: "Select category",
     );
   }
 }

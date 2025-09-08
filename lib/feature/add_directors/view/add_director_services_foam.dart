@@ -16,53 +16,51 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
     final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start, 
-      children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _sectionHeader("New Service"),
         addVertical(6),
         InputTextField(
           hintText: "Enter Service Name",
           title: "Service Name",
-          controller: AddDirectorVM.ServiceNameController,
+          controller: AddDirectorVM.serviceNameController,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter service name'
               : null,
-         ),
+        ),
         addVertical(16),
         Text("Service show in appointments", style: TextStyles.regular2()),
         addVertical(6),
         Row(
           children: [
-            _radioButton("Yes", true, AddDirectorVM.Service,
+            _radioButton("Yes", true, AddDirectorVM.serviceShowApmt,
                 (_) => AddDirectorVM.toggleService(true)),
-            _radioButton("No", false, AddDirectorVM.Service,
+            _radioButton("No", false, AddDirectorVM.serviceShowApmt,
                 (_) => AddDirectorVM.toggleService(false)),
           ],
         ),
-        if (AddDirectorVM.Service) ...[
-        addVertical(12),
-        ImagePickerInputField(
-          title: 'Service Image/Icon',
-          isRequired: true,
-          imageFile: AddDirectorVM.serviefile,
-          onTap: () => _imagePickerSelection(
-            context,
-            () => AddDirectorVM. pickServicerImage(picker.ImageSource.gallery),
-            () => AddDirectorVM. pickServicerImage(picker.ImageSource.camera),
+        if (AddDirectorVM.serviceShowApmt) ...[
+          addVertical(12),
+          ImagePickerInputField(
+            title: 'Service Image/Icon',
+            isRequired: true,
+            imageFile: AddDirectorVM.serviefile,
+            onTap: () => _imagePickerSelection(
+              context,
+              () => AddDirectorVM.pickServicerImage(picker.ImageSource.gallery),
+              () => AddDirectorVM.pickServicerImage(picker.ImageSource.camera),
+            ),
+            hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
-          hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
-        ),
         ],
-         addVertical(20),
-           InputTextField(
+        addVertical(20),
+        InputTextField(
           hintText: "Enter your text here",
-           controller: AddDirectorVM.ServiceDescriptionController,
-           maxLength: 500,
-           maxLines: 5,
+          controller: AddDirectorVM.serviceDescController,
+          maxLength: 500,
+          maxLines: 5,
           title: "Short Description",
-        ), 
+        ),
       ]),
     );
   }
@@ -75,26 +73,26 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _radioButton(
-  String label,
-  bool value,
-  bool groupValue,
-  ValueChanged<bool?> onChanged,
-) {
-  return Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Radio<bool>(
-        visualDensity: VisualDensity.compact,
-        value: value,
-        groupValue: groupValue,
-        activeColor: AppColors.buttonColor, 
-        onChanged: onChanged,
-      ),
-      Text(label, style: TextStyles.regular2()),
-      SizedBox(width: 20),
-    ],
-  );
-}
+    String label,
+    bool value,
+    bool groupValue,
+    ValueChanged<bool?> onChanged,
+  ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio<bool>(
+          visualDensity: VisualDensity.compact,
+          value: value,
+          groupValue: groupValue,
+          activeColor: AppColors.buttonColor,
+          onChanged: onChanged,
+        ),
+        Text(label, style: TextStyles.regular2()),
+        SizedBox(width: 20),
+      ],
+    );
+  }
 
   void _imagePickerSelection(
     BuildContext context,
@@ -103,20 +101,20 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
   ) {
     showModalBottomSheet(
       context: context,
-      shape:  RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) {
         return Wrap(
           children: [
             ListTile(
-              leading:  Icon(Icons.photo_library),
-              title:Text('Gallery'),
+              leading: Icon(Icons.photo_library),
+              title: Text('Gallery'),
               onTap: galleryOnTap,
             ),
             ListTile(
-              leading:  Icon(Icons.camera_alt),
-              title:  Text('Camera'),
+              leading: Icon(Icons.camera_alt),
+              title: Text('Camera'),
               onTap: cameraOnTap,
             ),
           ],

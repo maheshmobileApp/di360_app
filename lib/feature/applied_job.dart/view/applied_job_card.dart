@@ -120,7 +120,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: 
+            children: [
               Text(
                 title,
                 style:

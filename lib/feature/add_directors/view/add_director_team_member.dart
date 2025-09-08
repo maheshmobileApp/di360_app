@@ -136,13 +136,13 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: () {
-              showTeamMemberOptionsBottomSheet(context, member, index);
-            },
-            child: const Icon(Icons.more_vert, size: 20),
-          ),
+          // const SizedBox(width: 10),
+          // GestureDetector(
+          //   onTap: () {
+          //     showTeamMemberOptionsBottomSheet(context, member, index);
+          //   },
+          //   child: const Icon(Icons.more_vert, size: 20),
+          // ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
@@ -200,7 +200,7 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
                     CustomBottomButton(
                       onFirst: () => Navigator.pop(context),
                       onSecond: () {
-                        addDirectorVM.addTeamMember();
+                        addDirectorVM.addTeamMember(context);
                         Navigator.pop(context);
                       },
                       firstLabel: "Close",

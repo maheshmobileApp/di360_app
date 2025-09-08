@@ -30,5 +30,5 @@ class AppColors {
   static const Color dropDownHint = Color(0xffBAC1C8);
   static const Color greenColor = Color(0xff00934F);
   static const Color redColor = Color(0xffD71313);
-  static const Color cardcolor = Color.fromRGBO(246, 247, 249, 1);
+  static const Color cardcolor = Color(0xffF6F7F9);
 }

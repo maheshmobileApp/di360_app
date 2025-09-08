@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class AddDirectoryDocumentCard extends StatelessWidget {
   final String title;
   final File? imageFile;
@@ -36,11 +35,8 @@ class AddDirectoryDocumentCard extends StatelessWidget {
           if (imageFile != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: Image.file(
-                imageFile!,
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
+              child: Icon(
+                Icons.picture_as_pdf
               ),
             ),
             const SizedBox(width: 10),
@@ -55,13 +51,13 @@ class AddDirectoryDocumentCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: () {
-              showDocumentOptionsBottomSheet(context, document, index);
-            },
-            child: const Icon(Icons.more_vert, size: 20),
-          ),
+          // const SizedBox(width: 10),
+          // GestureDetector(
+          //   onTap: () {
+          //     showDocumentOptionsBottomSheet(context, document, index);
+          //   },
+          //   child: const Icon(Icons.more_vert, size: 20),
+          // ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: onDelete,
@@ -134,7 +130,7 @@ class AddDirectoryDocumentCard extends StatelessWidget {
                     const Spacer(),
                     CustomBottomButton(
                       onFirst: () {
-                        addDirectorVM.Documents.remove(document);
+                        addDirectorVM.documentsList.remove(document);
                         Navigator.pop(context);
                       },
                       onSecond: () {
@@ -198,8 +194,7 @@ class AddDirectoryDocumentCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextField(
-                              controller:
-                                  addDirectorVM.DocumentNameController,
+                              controller: addDirectorVM.documentNameController,
                               decoration: const InputDecoration(
                                 labelText: "Document Name",
                               ),
@@ -216,7 +211,7 @@ class AddDirectoryDocumentCard extends StatelessWidget {
                     ),
                     CustomBottomButton(
                       onFirst: () {
-                        addDirectorVM.Documents.remove(document);
+                        addDirectorVM.documentsList.remove(document);
                         Navigator.pop(context);
                       },
                       onSecond: () {

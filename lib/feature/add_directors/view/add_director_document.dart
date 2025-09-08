@@ -9,10 +9,6 @@ import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart' as picker;
-
-
-
 
 class AddDirectorDocument extends StatefulWidget {
   const AddDirectorDocument({super.key});
@@ -58,9 +54,9 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM.Documents.length,
+              itemCount: addDirectorVM.documentsList.length,
               itemBuilder: (context, index) {
-                final doc = addDirectorVM.Documents[index];
+                final doc = addDirectorVM.documentsList[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryDocumentCard(
@@ -70,7 +66,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                     index: index,
                     onDelete: () {
                       setState(() {
-                        addDirectorVM.Documents.removeAt(index);
+                        addDirectorVM.documentsList.removeAt(index);
                       });
                     },
                   ),
@@ -103,7 +99,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
           InputTextField(
             hintText: "Enter Document Name",
             title: "Document Name",
-            controller: addDirectorVM.DocumentNameController,
+            controller: addDirectorVM.documentNameController,
             isRequired: true,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter document name'
@@ -117,9 +113,8 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             onTap: () => _imagePickerSelection(
               context,
               () =>
-                  addDirectorVM. pickDocumentsImage(picker.ImageSource.gallery),
-              () =>
-                  addDirectorVM. pickDocumentsImage(picker.ImageSource.camera),
+                  addDirectorVM.pickDocumentsImage(),
+              () => addDirectorVM.pickDocumentsImage()
             ),
             hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
@@ -131,7 +126,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
               });
             },
             onSecond: () {
-              addDirectorVM.addDocument();
+              addDirectorVM.addDocument(context);
               setState(() {
                 showForm = false;
               });

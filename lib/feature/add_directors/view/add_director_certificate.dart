@@ -45,17 +45,14 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
                 ),
               ],
             ),
-
             if (showForm) _buildCertificateForm(addDirectorVM),
-
             const Divider(thickness: 2),
-
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM.Certificates.length,
+              itemCount: addDirectorVM.certificateList.length,
               itemBuilder: (context, index) {
-                final cert = addDirectorVM.Certificates[index];
+                final cert = addDirectorVM.certificateList[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryCertificateCard(
@@ -65,7 +62,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
                     index: index,
                     onDelete: () {
                       setState(() {
-                        addDirectorVM.Certificates.removeAt(index);
+                        addDirectorVM.certificateList.removeAt(index);
                       });
                     },
                   ),
@@ -98,7 +95,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
           InputTextField(
             hintText: "Enter Certificate Name",
             title: "Certificate Name",
-            controller: addDirectorVM.CertificateNameController,
+            controller: addDirectorVM.certificateNameController,
             isRequired: true,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter certificate name'
@@ -126,7 +123,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
               });
             },
             onSecond: () {
-              addDirectorVM.addCertificates();
+              addDirectorVM.addCertificates(context);
               setState(() {
                 showForm = false;
               });

@@ -46,17 +46,14 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                 ),
               ],
             ),
-
             if (showForm) _buildAchievementForm(addDirectorVM),
-
             const Divider(thickness: 2),
-
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM.Achievements.length,
+              itemCount: addDirectorVM.achievementsList.length,
               itemBuilder: (context, index) {
-                final achievement = addDirectorVM.Achievements[index];
+                final achievement = addDirectorVM.achievementsList[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryAchievementCard(
@@ -66,7 +63,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                     index: index,
                     onDelete: () {
                       setState(() {
-                        addDirectorVM.Achievements.removeAt(index);
+                        addDirectorVM.achievementsList.removeAt(index);
                       });
                     },
                   ),
@@ -99,7 +96,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
           InputTextField(
             hintText: "Enter Achievement Name",
             title: "Achievement Name",
-            controller: addDirectorVM.AchievementNameController,
+            controller: addDirectorVM.achievementNameController,
             isRequired: true,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter achievement name'
@@ -112,8 +109,10 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
             imageFile: addDirectorVM.achievementFile,
             onTap: () => _imagePickerSelection(
               context,
-              () => addDirectorVM.pickAchievementImage(picker.ImageSource.gallery),
-              () => addDirectorVM.pickAchievementImage(picker.ImageSource.camera),
+              () => addDirectorVM
+                  .pickAchievementImage(picker.ImageSource.gallery),
+              () =>
+                  addDirectorVM.pickAchievementImage(picker.ImageSource.camera),
             ),
             hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
@@ -125,7 +124,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
               });
             },
             onSecond: () {
-              addDirectorVM.addAchievement();
+              addDirectorVM.addAchievement(context);
               setState(() {
                 showForm = false;
               });

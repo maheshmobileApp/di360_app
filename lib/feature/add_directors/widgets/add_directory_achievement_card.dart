@@ -140,7 +140,7 @@ class AddDirectoryAchievementCard extends StatelessWidget {
                     const Spacer(),
                     CustomBottomButton(
                       onFirst: () {
-                        addDirectorVM.Achievements.remove(achievement); 
+                        addDirectorVM.achievementsList.remove(achievement);
                         Navigator.pop(context);
                       },
                       onSecond: () {
@@ -207,9 +207,9 @@ class AddDirectoryAchievementCard extends StatelessWidget {
                           children: [
                             TextField(
                               controller:
-                                  addDirectorVM.AchievementNameController,
+                                  addDirectorVM.achievementNameController,
                               decoration: const InputDecoration(
-                                labelText: "Achievement Name", 
+                                labelText: "Achievement Name",
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -224,11 +224,11 @@ class AddDirectoryAchievementCard extends StatelessWidget {
                     ),
                     CustomBottomButton(
                       onFirst: () {
-                        addDirectorVM.Achievements.remove(achievement); 
+                        addDirectorVM.achievementsList.remove(achievement);
                         Navigator.pop(context);
                       },
                       onSecond: () {
-                        addDirectorVM.updateAchievement(index); 
+                        addDirectorVM.updateAchievement(index);
                         Navigator.pop(context);
                       },
                       firstLabel: "Delete",
