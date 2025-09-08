@@ -58,7 +58,7 @@ class Routes {
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) => JobProfileView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
-      RouteList. JobProfileListingScreen: (context) => JobProfileScreen(),
+      RouteList. JobProfileScreen: (context) => JobProfileScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),

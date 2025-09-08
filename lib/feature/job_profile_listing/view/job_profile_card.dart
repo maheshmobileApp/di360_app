@@ -3,13 +3,15 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_respo.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 class JobProfileCard extends StatelessWidget with BaseContextHelpers {
   final JobProfileListing jobsListingData;
-  final JobProfileViewModel vm;
+  final JobProfileListingViewModel vm;
   final dynamic parmas;
   final int? index;
 
@@ -59,7 +61,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     _jobProfileTimeChip(time),
                     addHorizontal(4),
-                    menuWidget(jobsListingData.adminStatus ?? ''),
+                    menuWidget(vm, context, index!, jobsListingData.id ?? '',
+                        jobsListingData.adminStatus ?? ''),
                   ],
                 ),
               ],
@@ -67,8 +70,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             addVertical(12),
             Row(
               children: [
-                 _chipWidget(jobsListingData.workType ?? []),
-              addHorizontal(8),
+                _chipWidget(jobsListingData.workType ?? []),
+                addHorizontal(8),
                 _statusChip(jobsListingData.adminStatus ?? ''),
               ],
             ),
@@ -199,13 +202,53 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget(String status) {
-    return PopupMenuButton<String>(
-      iconColor: AppColors.bottomNavUnSelectedColor,
-      color: AppColors.whiteColor,
-      padding: EdgeInsets.zero,
-      onSelected: (value) {},
-      itemBuilder: (context) => [
+  Widget menuWidget(
+  JobProfileListingViewModel vm,
+  BuildContext context,
+  int index,
+  String id,
+  String activeStatus,
+) {
+  return PopupMenuButton<String>(
+    iconColor: AppColors.bottomNavUnSelectedColor,
+    color: AppColors.whiteColor,
+    padding: EdgeInsets.zero,
+    onSelected: (value) {
+      if (value == "Edit") {
+      
+      } else if (value == "Preview") {
+      
+      } else if (value == "Delete") {
+        showAlertMessage(
+          context,
+          'Are you sure you want to delete this job?',
+          onBack: () {
+            navigationService.goBack();
+           
+          },
+        );
+      } else if (value == "Active") {
+        showAlertMessage(
+          context,
+          'Do you really want to activate this job?',
+          onBack: () {
+            navigationService.goBack();
+            vm.updateJobProfileStatus(context, id, "ACTIVE");
+          },
+        );
+      } else if (value == "Inactive") {
+        showAlertMessage(
+          context,
+          'Do you really want to deactivate this job?',
+          onBack: () {
+            navigationService.goBack();
+            vm.updateJobProfileStatus(context, id, "INACTIVE");
+          },
+        );
+      }
+    },
+    itemBuilder: (context) {
+      final items = <PopupMenuEntry<String>>[
         PopupMenuItem(
           value: "Preview",
           child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
@@ -218,34 +261,43 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
           value: "Delete",
           child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
         ),
-        if (status == "APPROVE" || status == "PendingApproval")
+      ];
+
+      if (activeStatus.toUpperCase() == "ACTIVE") {
+        items.add(
           PopupMenuItem(
             value: "Inactive",
-            child: _buildRow(
-                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+            child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
           ),
-        if (status == "REJECT")
+        );
+      } else if (activeStatus.toUpperCase() == "INACTIVE") {
+        items.add(
           PopupMenuItem(
             value: "Active",
-            child: _buildRow(
-                Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
+            child: _buildRow(Icons.wb_sunny_outlined, AppColors.primaryColor, "Active"),
           ),
-      ],
-    );
-  }
+        );
+      }
 
-  Widget _buildRow(IconData? icon, Color? color, String? title) {
-    return Row(
-      children: [
-        Icon(icon, color: color),
-        addHorizontal(8),
-        Text(
-          title ?? '',
-          style: TextStyles.semiBold(fontSize: 14, color: color),
-        ),
-      ],
-    );
-  }
+      return items;
+    },
+  );
+}
+
+Widget _buildRow(IconData? icon, Color? color, String? title) {
+  return Row(
+    children: [
+      Icon(icon, color: color),
+      addHorizontal(8),
+      Text(
+        title ?? '',
+        style: TextStyles.semiBold(fontSize: 14, color: color),
+      ),
+    ],
+  );
+}
+
+
 
   Widget _statusChip(String status) {
     Color bgColor;

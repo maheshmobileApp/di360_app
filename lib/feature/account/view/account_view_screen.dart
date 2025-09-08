@@ -220,10 +220,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .getMyJobListingData();
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);
-                          } else if (item.title == 'Job Profile') {
+                          } 
+                            else if (item.title == 'JobProfile') {
                             navigationService
-                                .navigateTo(RouteList.JobProfileListingScreen);
-                          } else if (item.title == 'Applied Jobs') {
+                                .navigateTo(RouteList.JobProfileScreen);
+                          }
+                          else if (item.title == 'Applied Jobs') {
                             Navigator.pushNamed(
                               context,
                               RouteList.AppliedJobScreen,
