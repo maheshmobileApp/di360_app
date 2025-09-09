@@ -24,7 +24,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   AddDirectorView({super.key});
   @override
   Widget build(BuildContext context) {
-    final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -38,40 +38,60 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(16.0),
-            child: InkWell(
-              onTap: () => AddDirectorVM.goToNextStep(),
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    "Skip",
-                    style: TextStyles.regular2(),
-                  ),
-                ),
-                decoration: BoxDecoration(color: AppColors.timeBgColor,
-                borderRadius: BorderRadius.circular(18)),
-              ),
-            ),
-          )
+              padding: EdgeInsets.all(16.0),
+              child: InkWell(
+                onTap: () async {
+                  int currentStep = addDirectorVM.currentStep;
+                  bool isLastStep = currentStep == addDirectorVM.totalSteps - 1;
+                  final currentFormKey =
+                      addDirectorVM.formKeys[addDirectorVM.currentStep];
+                  if ((currentFormKey.currentState?.validate() ?? false) &&
+                      addDirectorVM.selectedBusineestype != null) {
+                    if (isLastStep) {
+                    } else {
+                      if (currentStep == 0) {
+                        addDirectorVM.getBasicInfoData.isEmpty
+                            ? await addDirectorVM.addBasicInfo(context)
+                            : await addDirectorVM.updateBasicInfo(context);
+                        addDirectorVM.goToNextStep();
+                      } else {
+                        addDirectorVM.goToNextStep();
+                      }
+                    }
+                  } else {
+                    scaffoldMessenger('Please select business type');
+                  }
+                },
+                child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        "Skip",
+                        style: TextStyles.regular2(),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                        color: AppColors.timeBgColor,
+                        borderRadius: BorderRadius.circular(18))),
+              ))
         ],
       ),
       body: Column(
         children: [
-          _buildStepProgressBar(AddDirectorVM.currentStep,
-              AddDirectorVM.totalSteps, AddDirectorVM),
+          _buildStepProgressBar(addDirectorVM.currentStep,
+              addDirectorVM.totalSteps, addDirectorVM),
           Expanded(
             child: PageView(
-              controller: AddDirectorVM.pageController,
+              controller: addDirectorVM.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-                AddDirectorVM.totalSteps,
+                addDirectorVM.totalSteps,
                 (index) => _buildStep(AddDirectoryStep.values[index],
-                    AddDirectorVM.formKeys[index]),
+                    addDirectorVM.formKeys[index]),
               ),
             ),
           ),
-          _bottomButtons(context, AddDirectorVM),
+          _bottomButtons(context, addDirectorVM),
         ],
       ),
     );
@@ -120,9 +140,9 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _bottomButtons(
-      BuildContext context, AddDirectorViewModel AddDirectorVM) {
-    int currentStep = AddDirectorVM.currentStep;
-    bool isLastStep = currentStep == AddDirectorVM.totalSteps - 1;
+      BuildContext context, AddDirectorViewModel addDirectorVM) {
+    int currentStep = addDirectorVM.currentStep;
+    bool isLastStep = currentStep == addDirectorVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;
     return Container(
       height: 80,
@@ -145,7 +165,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                 text: 'Previous',
                 height: 42,
                 onPressed: () {
-                  AddDirectorVM.goToPreviousStep();
+                  addDirectorVM.goToPreviousStep();
                 },
                 backgroundColor: AppColors.geryColor,
                 textColor: Colors.black,
@@ -170,13 +190,21 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                 text: isLastStep ? 'Submit' : 'Next',
                 height: 42,
                 fontSize: 12,
-                onPressed: () {
+                onPressed: () async {
                   final currentFormKey =
-                      AddDirectorVM.formKeys[AddDirectorVM.currentStep];
-                  if ((currentFormKey.currentState?.validate() ?? false) && AddDirectorVM.selectedBusineestype != null) {
+                      addDirectorVM.formKeys[addDirectorVM.currentStep];
+                  if ((currentFormKey.currentState?.validate() ?? false) &&
+                      addDirectorVM.selectedBusineestype != null) {
                     if (isLastStep) {
                     } else {
-                      AddDirectorVM.goToNextStep();
+                      if (currentStep == 0) {
+                        addDirectorVM.getBasicInfoData.isEmpty
+                            ? await addDirectorVM.addBasicInfo(context)
+                            : await addDirectorVM.updateBasicInfo(context);
+                        addDirectorVM.goToNextStep();
+                      } else {
+                        addDirectorVM.goToNextStep();
+                      }
                     }
                   } else {
                     scaffoldMessenger('Please select business type');

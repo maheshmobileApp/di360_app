@@ -123,7 +123,7 @@ class SignupViewModel extends ChangeNotifier {
           "postal_code": postalCodeController.text,
           "type": selectedSubscriptionType,
           "state": stateController.text,
-          "status": "UNBLOCKED",
+          "status": "PENDING",
           "subscription_plan_id": selectedPlanId,
           "professionType": selectedCategory?.name
         }

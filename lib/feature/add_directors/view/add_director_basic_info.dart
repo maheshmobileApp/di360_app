@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers,ValidationMixins {
+class AddDirectorBasicInfo extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   AddDirectorBasicInfo({super.key});
 
   @override
@@ -95,7 +96,9 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers,Valid
           LogoContainer(
             title: "Logo",
             imageFile: AddDirectorVM.logoFile,
-            serverImg: AddDirectorVM.getBasicInfoData.first.logo?.url,
+            serverImg: AddDirectorVM.getBasicInfoData.isNotEmpty
+                ? AddDirectorVM.getBasicInfoData.first.logo?.url ?? ''
+                : '',
             onTap: () => _imagePickerSelection(
               context,
               () => AddDirectorVM.pickLogoImage(ImageSource.gallery),
@@ -106,7 +109,9 @@ class AddDirectorBasicInfo extends StatelessWidget with BaseContextHelpers,Valid
           LogoContainer(
             title: "Banner",
             imageFile: AddDirectorVM.bannerFile,
-            serverImg: AddDirectorVM.getBasicInfoData.first.bannerImage?.url,
+            serverImg: AddDirectorVM.getBasicInfoData.isNotEmpty
+                ? AddDirectorVM.getBasicInfoData.first.bannerImage?.url ?? ''
+                : '',
             onTap: () => _imagePickerSelection(
               context,
               () => AddDirectorVM.pickBannerImage(ImageSource.gallery),

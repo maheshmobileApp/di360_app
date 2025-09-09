@@ -3,6 +3,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
+import 'package:di360_flutter/feature/add_directors/querys/add_basic_info_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_certificate_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_services_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_team_member_query.dart';
@@ -57,6 +58,24 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
   @override
   Future<dynamic> addTeamMembers(dynamic variables) async {
     final res = await http.mutation(TeamMemberQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> addBasicInfo(dynamic variables) async {
+    final res = await http.mutation(addBasicInfoQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateBasicInfo(dynamic variables) async {
+    final res = await http.mutation(updateBasicInfoQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> addGallery(dynamic variables) async {
+    final res = await http.mutation(addGalleryQuery, variables);
     return res;
   }
 }

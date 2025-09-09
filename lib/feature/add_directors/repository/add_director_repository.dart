@@ -9,4 +9,7 @@ abstract class AddDirectorRepository {
   Future<dynamic> addAchieve(dynamic variables);
   Future<dynamic> addDocu(dynamic variables);
   Future<dynamic> addTeamMembers(dynamic variables);
+  Future<dynamic> addBasicInfo(dynamic variables);
+  Future<dynamic> updateBasicInfo(dynamic variables);
+  Future<dynamic> addGallery(dynamic variables);
 }

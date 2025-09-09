@@ -108,7 +108,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
               });
             },
             onSecond: () {
-              addDirectorVM.addGallery();
+              addDirectorVM.addGallery(context);
               setState(() {
                 showForm = false;
               });

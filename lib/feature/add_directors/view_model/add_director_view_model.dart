@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/achievement_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/certificate_model.dart';
@@ -233,6 +235,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       navigationService.navigateTo(RouteList.adddirectorview);
     } else {
       Loaders.circularHideLoader(context);
+      navigationService.navigateTo(RouteList.adddirectorview);
     }
     notifyListeners();
   }
@@ -287,13 +290,92 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> addBasicInfo(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    Loaders.circularShowLoader(context);
+    var logo = await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    var banner =
+        await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
+    final res = await addDirectorRepositoryImpl.addBasicInfo({
+      "dirObj": {
+        "company_name": CompanyNameController.text,
+        "description": descController.text,
+        "directory_category_id": selectedBusineestype?.id,
+        "dental_practice_id": type == 'PRACTICE' ? userId : null,
+        "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
+        "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
+        "type": type,
+        "banner_image": banner,
+        "logo": logo,
+        "email": emailController.text,
+        "phone": MobileNumberController.text,
+        "address": AdreessController.text,
+        "alt_phone": alternateNumberController.text,
+        "emergency_phone": null,
+        "latitude": '',
+        "longitude": '',
+        "pincode": '',
+        "name": nameController.text,
+        "profession_type": selectedBusineestype?.name
+      }
+    });
+    if (res != null) {
+      getDirectories(context);
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('BasicInfo added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateBasicInfo(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    var logo = logoFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    var banner = bannerFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
+    final res = await addDirectorRepositoryImpl.updateBasicInfo({
+      "id": getBasicInfoData.first.id,
+      "updateInfo": {
+        "company_name": CompanyNameController.text,
+        "description": descController.text,
+        "banner_image":
+            banner == null ? getBasicInfoData.first.bannerImage : banner,
+        "profession_type": selectedBusineestype?.name,
+        "directory_category_id": selectedBusineestype?.id,
+        "logo": logo == null ? getBasicInfoData.first.logo : logo,
+        "alt_phone": alternateNumberController.text,
+        "name": nameController.text,
+        "abn_acn": ABNNumberController.text,
+        "address": AdreessController.text,
+        "latitude": getBasicInfoData.first.latitude,
+        "longitude": getBasicInfoData.first.longitude,
+        "pincode": '',
+        "phone": MobileNumberController.text,
+        "email": emailController.text
+      }
+    });
+    if (res != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Update BasicInfo added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
   Future<void> addService(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final result = await addDirectorRepositoryImpl.addServices({
       "servicesObj": {
         "name": serviceNameController.text,
         "description": serviceDescController.text,
-        "show_in_appointments": serviceShowApmt,
+        "show_in_appointments": serviceShowApmt == true ? 'Yes' : 'No',
         "directory_id": getBasicInfoData.first.id
       }
     });
@@ -434,10 +516,23 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void addGallery() {
-    Gallerys.add(GalleryModel(
-      imageFile: galleryFile,
-    ));
+  void addGallery(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var attachments =
+        await addDirectorRepositoryImpl.http.uploadImage(galleryFile?.path);
+    final result = await addDirectorRepositoryImpl.addGallery({
+      "galleryObj": {
+        "image": [attachments],
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (result != null) {
+      Gallerys.add(GalleryModel(imageFile: galleryFile));
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Gallery added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
     galleryFile = null;
     notifyListeners();
   }
