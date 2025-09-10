@@ -3,7 +3,9 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -17,22 +19,22 @@ class AddDirectorBasicInfo extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionHeader("Basic Info"),
+          sectionHeader("Basic Info"),
           addVertical(20),
-          _buildBusineestype(AddDirectorVM),
+          _buildBusineestype(addDirectorVM),
           addVertical(20),
           InputTextField(
             hintText: "Enter Company Name",
             title: "Company Name",
             isRequired: true,
-            controller: AddDirectorVM.CompanyNameController,
+            controller: addDirectorVM.CompanyNameController,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter company name'
                 : null,
@@ -41,7 +43,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           InputTextField(
             title: "Name",
             hintText: 'Enter name',
-            controller: AddDirectorVM.nameController,
+            controller: addDirectorVM.nameController,
             validator: validateFirstName,
           ),
           addVertical(20),
@@ -49,14 +51,14 @@ class AddDirectorBasicInfo extends StatelessWidget
             title: "Email ID",
             validator: validateEmail,
             hintText: 'Enter emailId',
-            controller: AddDirectorVM.emailController,
+            controller: addDirectorVM.emailController,
           ),
           addVertical(20),
           InputTextField(
             hintText: "Enter ABN/ACN Number ",
             title: " ABN/ACN Number ",
             isRequired: true,
-            controller: AddDirectorVM.ABNNumberController,
+            controller: addDirectorVM.ABNNumberController,
             keyboardType: TextInputType.number,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter  ABN/ACN Number'
@@ -66,7 +68,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           InputTextField(
             hintText: "Enter Phone Number",
             title: " Phone Number ",
-            controller: AddDirectorVM.MobileNumberController,
+            controller: addDirectorVM.MobileNumberController,
             isRequired: true,
             keyboardType: TextInputType.number,
             validator: (value) => value == null || value.isEmpty
@@ -78,44 +80,44 @@ class AddDirectorBasicInfo extends StatelessWidget
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
             keyboardType: TextInputType.number,
-            controller: AddDirectorVM.alternateNumberController,
+            controller: addDirectorVM.alternateNumberController,
           ),
           addVertical(20),
           InputTextField(
             hintText: "Enter Address",
             title: " Address ",
-            controller: AddDirectorVM.AdreessController,
+            controller: addDirectorVM.AdreessController,
             isRequired: true,
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please enter  address' : null,
           ),
           Divider(thickness: 4),
           addVertical(20),
-          _sectionHeader("Logo & Banner"),
+          sectionHeader("Logo & Banner"),
           addVertical(20),
           LogoContainer(
             title: "Logo",
-            imageFile: AddDirectorVM.logoFile,
-            serverImg: AddDirectorVM.getBasicInfoData.isNotEmpty
-                ? AddDirectorVM.getBasicInfoData.first.logo?.url ?? ''
+            imageFile: addDirectorVM.logoFile,
+            serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
+                ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
                 : '',
-            onTap: () => _imagePickerSelection(
+            onTap: () => imagePickerSelection(
               context,
-              () => AddDirectorVM.pickLogoImage(ImageSource.gallery),
-              () => AddDirectorVM.pickLogoImage(ImageSource.camera),
+              () => addDirectorVM.pickLogoImage(ImageSource.gallery),
+              () => addDirectorVM.pickLogoImage(ImageSource.camera),
             ),
           ),
           addVertical(20),
           LogoContainer(
             title: "Banner",
-            imageFile: AddDirectorVM.bannerFile,
-            serverImg: AddDirectorVM.getBasicInfoData.isNotEmpty
-                ? AddDirectorVM.getBasicInfoData.first.bannerImage?.url ?? ''
+            imageFile: addDirectorVM.bannerFile,
+            serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
+                ? addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? ''
                 : '',
-            onTap: () => _imagePickerSelection(
+            onTap: () => imagePickerSelection(
               context,
-              () => AddDirectorVM.pickBannerImage(ImageSource.gallery),
-              () => AddDirectorVM.pickBannerImage(ImageSource.camera),
+              () => addDirectorVM.pickBannerImage(ImageSource.gallery),
+              () => addDirectorVM.pickBannerImage(ImageSource.camera),
             ),
           ),
           addVertical(20),
@@ -124,56 +126,23 @@ class AddDirectorBasicInfo extends StatelessWidget
             maxLength: 500,
             maxLines: 5,
             title: "Description",
-            controller: AddDirectorVM.descController,
+            controller: addDirectorVM.descController,
           ),
         ],
       ),
     ));
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
-  void _imagePickerSelection(
-    BuildContext context,
-    VoidCallback? galleryOnTap,
-    VoidCallback? cameraOnTap,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildBusineestype(AddDirectorViewModel AddDirectorVM) {
-    final allCategories = AddDirectorVM.directoryBusinessTypes
+  Widget _buildBusineestype(AddDirectorViewModel addDirectorVM) {
+    final allCategories = addDirectorVM.directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
 
     return CustomDropDown(
-      value: AddDirectorVM.selectedBusineestype,
+      value: addDirectorVM.selectedBusineestype,
       title: "Business Type",
       onChanged: (v) =>
-          AddDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
+          addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
       items: allCategories.map((cat) {
         return DropdownMenuItem<Object>(
           value: cat,

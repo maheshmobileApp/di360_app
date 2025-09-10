@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_gallery.da
 import 'package:di360_flutter/feature/add_directors/view/add_director_services.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_team_member.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_testmonal.dart';
+import 'package:di360_flutter/feature/add_directors/view/other_information_screen.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -41,26 +42,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
               padding: EdgeInsets.all(16.0),
               child: InkWell(
                 onTap: () async {
-                  int currentStep = addDirectorVM.currentStep;
-                  bool isLastStep = currentStep == addDirectorVM.totalSteps - 1;
-                  final currentFormKey =
-                      addDirectorVM.formKeys[addDirectorVM.currentStep];
-                  if ((currentFormKey.currentState?.validate() ?? false) &&
-                      addDirectorVM.selectedBusineestype != null) {
-                    if (isLastStep) {
-                    } else {
-                      if (currentStep == 0) {
-                        addDirectorVM.getBasicInfoData.isEmpty
-                            ? await addDirectorVM.addBasicInfo(context)
-                            : await addDirectorVM.updateBasicInfo(context);
-                        addDirectorVM.goToNextStep();
-                      } else {
-                        addDirectorVM.goToNextStep();
-                      }
-                    }
-                  } else {
-                    scaffoldMessenger('Please select business type');
-                  }
+                  addDirectorVM.goToNextStep();
                 },
                 child: Container(
                     child: Padding(
@@ -134,6 +116,8 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         return AddDirectorFqs();
       case AddDirectoryStep.Testimonials:
         return AddDirectorTestmonal();
+      case AddDirectoryStep.OtherInformation:
+        return OtherInformationScreen();
       default:
         return Center(child: Text("Step ${stepIndex.value + 1}"));
     }
@@ -218,3 +202,11 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
     );
   }
 }
+
+
+  Widget sectionHeader(String title) {
+    return Text(
+      title,
+      style: TextStyles.clashMedium(color: AppColors.buttonColor),
+    );
+  }

@@ -8,7 +8,8 @@ enum AddDirectoryStep {
   Gallery(6),
   Appointments(7),
   Faqs(8),
-  Testimonials(9);
+  Testimonials(9),
+  OtherInformation(10);
   final int value;
   const AddDirectoryStep(this.value);
 }

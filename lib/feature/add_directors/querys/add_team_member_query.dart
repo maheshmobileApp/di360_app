@@ -15,3 +15,30 @@ mutation addGalleryImages($galleryObj: directory_gallery_posts_insert_input!) {
   }
 }
 ''';
+
+const String addFAQsQuery = r'''
+mutation addFaqs($faqsObj: directory_faqs_insert_input!) {
+  insert_directory_faqs_one(object: $faqsObj) {
+    id
+    __typename
+  }
+}
+''';
+
+const String addTestimonialsQuery = r'''
+mutation addTeastmonials($testiObj: directory_testimonials_insert_input!) {
+  insert_directory_testimonials_one(object: $testiObj) {
+    id
+    __typename
+  }
+}
+''';
+
+const String addLocationQuery = r'''
+mutation addLocation($locationObj: directory_locations_insert_input!) {
+  insert_directory_locations_one(object: $locationObj) {
+    id
+    __typename
+  }
+}
+''';

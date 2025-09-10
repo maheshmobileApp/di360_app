@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/service_model.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_services_foam.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
@@ -25,7 +26,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionHeader('Add Service'),
+                sectionHeader('Add Service'),
                 CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
@@ -43,13 +44,6 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
 

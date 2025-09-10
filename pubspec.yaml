@@ -61,6 +61,7 @@ dependencies:
   flutter_widget_from_html: ^0.16.0
   google_places_flutter: ^2.1.0
   html: ^0.15.6
+  another_flushbar: ^1.12.32
 
 
 dev_dependencies:
@@ -99,7 +100,6 @@ flutter:
     - assets/profile/payments&others/
     - assets/profile/pre owned/
     - assets/account.json
-    - assets/svgs/accountprofile.svg
     - assets/svgs/logout 1.svg
     - assets/getprofession.json
     - assets/getworktype.json

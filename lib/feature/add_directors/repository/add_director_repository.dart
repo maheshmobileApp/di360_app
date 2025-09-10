@@ -12,4 +12,7 @@ abstract class AddDirectorRepository {
   Future<dynamic> addBasicInfo(dynamic variables);
   Future<dynamic> updateBasicInfo(dynamic variables);
   Future<dynamic> addGallery(dynamic variables);
+  Future<dynamic> addFaqs(dynamic variables);
+  Future<dynamic> addTestimonials(dynamic variables);
+  Future<dynamic> addLocation(dynamic variables);
 }

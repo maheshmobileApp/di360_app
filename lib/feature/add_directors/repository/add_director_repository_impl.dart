@@ -78,4 +78,22 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
     final res = await http.mutation(addGalleryQuery, variables);
     return res;
   }
+  
+  @override
+  Future<dynamic> addFaqs(dynamic variables) async {
+    final res = await http.mutation(addFAQsQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> addTestimonials(dynamic variables) async {
+    final res = await http.mutation(addTestimonialsQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> addLocation(dynamic variables) async {
+    final res = await http.mutation(addLocationQuery, variables);
+    return res;
+  }
 }

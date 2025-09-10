@@ -1,6 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/add_directory_document_card.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
@@ -35,7 +35,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionHeader('Documents'),
+                sectionHeader('Documents'),
                 CustomAddButton(
                   label: showForm ? 'Cancel' : 'Add +',
                   onPressed: () {
@@ -79,13 +79,6 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
   Widget _buildDocumentForm(AddDirectorViewModel addDirectorVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -110,7 +103,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.documentFile,
-            onTap: () => _imagePickerSelection(
+            onTap: () => imagePickerSelection(
               context,
               () =>
                   addDirectorVM.pickDocumentsImage(),
@@ -140,35 +133,6 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
           ),
         ],
       ),
-    );
-  }
-
-  void _imagePickerSelection(
-    BuildContext context,
-    VoidCallback? galleryOnTap,
-    VoidCallback? cameraOnTap,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
-            ),
-          ],
-        );
-      },
     );
   }
 }

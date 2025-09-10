@@ -1,14 +1,19 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/add_directors/view/add_director_timings_foam.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/close_add_button_widget.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
   const AddDirectorFqs({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -18,168 +23,144 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionHeader('Add Business Timings'),
-               CustomAddButton(
+                sectionHeader("Add FAQ's"),
+                CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
-                    showTimingsBottomSheet(context);
+                    showFAQSBottomSheet(context, addDirectorVM);
                   },
                 ),
               ],
             ),
             addVertical(16),
-           _TimmingCard(),
+            ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: addDirectorVM.faqsList.length,
+                          itemBuilder: (context, index) {
+            final data = addDirectorVM.faqsList[index];
+            return _faqItem(data.question, data.answer);
+                          },
+                        )
           ],
         ),
       ),
     );
   }
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
 
-  
-  Widget _TimmingCard() {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      color: const Color(0xFFF6F7F9), // light grey background
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Main Content
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Monday',
-                style: TextStyles.semiBold(fontSize: 14),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '10:00 am - 07:00 pm',
-                style: TextStyles.regular1(
-                  fontSize: 12,
-                  color: AppColors.bottomBarSelectIconColor,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Mon–Thu',
-                style: TextStyles.regular1(
-                  fontSize: 12,
-                  color: AppColors.bottomBarSelectIconColor,
-                ),
-              ),
-            ],
-          ),
+  Widget _faqItem(String question, String answer) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.grey.shade100,
         ),
-        const Icon(Icons.more_vert, size: 16, color: Colors.grey),
-      ],
-    ),
-  );
-}
-
-  void showTimingsBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (context) {
-      return DraggableScrollableSheet(
-        initialChildSize: 0.85,
-        maxChildSize: 0.95,
-        minChildSize: 0.6,
-        expand: false,
-        builder: (context, scrollController) {
-          return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        child: Theme(
+          data: ThemeData().copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+            childrenPadding: const EdgeInsets.fromLTRB(20, 0, 16, 12),
+            title: Text(
+              question,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
-            child: SafeArea(
-              top: false, 
-              child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text("• ", style: TextStyle(fontSize: 16)),
                   Expanded(
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 20),
-                      child: AddDirectorTimingsFoam(),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: const BoxDecoration(
-                      border: Border(top: BorderSide(color: Color(0xFFEFEFEF))),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 48,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFFF1E5),
-                                foregroundColor: AppColors.primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                textStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                elevation: 0,
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("Close"),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: SizedBox(
-                            height: 48,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryColor,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                textStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                elevation: 0,
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("Add"),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      answer,
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                 ],
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showFAQSBottomSheet(
+      BuildContext context, AddDirectorViewModel addDirectorVM) {
+    final _formKey = GlobalKey<FormState>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          maxChildSize: 0.55,
+          minChildSize: 0.4,
+          expand: false,
+          builder: (context, scrollController) {
+            return Form(
+              key: _formKey,
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24))),
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 20),
+                          child: addfaqsWidget(addDirectorVM),
+                        ),
+                      ),
+                      CloseAddButtonWidget(
+                        addBtn: () {
+                          if (_formKey.currentState!.validate()) {
+                            addDirectorVM.addFAQs(context);
+                            navigationService.goBack();
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget addfaqsWidget(AddDirectorViewModel addDirectorVM) {
+    return Column(
+      children: [
+        InputTextField(
+            hintText: "Enter question",
+            title: " Question ",
+            controller: addDirectorVM.questionCntr,
+            isRequired: true,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please enter  question'
+                : null),
+        addVertical(20),
+        InputTextField(
+            hintText: "Enter answer",
+            maxLength: 500,
+            maxLines: 5,
+            title: "Answer",
+            controller: addDirectorVM.answerCntr,
+            validator: (value) =>
+                value == null || value.isEmpty ? 'Please enter  answer' : null),
+      ],
+    );
+  }
 }

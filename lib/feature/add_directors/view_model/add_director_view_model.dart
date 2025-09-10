@@ -36,34 +36,33 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController descController = TextEditingController();
-  final TextEditingController alternateNumberController =
-      TextEditingController();
+  TextEditingController alternateNumberController = TextEditingController();
   final TextEditingController ABNNumberController = TextEditingController();
   final TextEditingController AdreessController = TextEditingController();
-  final TextEditingController certificateNameController =
-      TextEditingController();
+  TextEditingController certificateNameController = TextEditingController();
   final TextEditingController serviceNameController = TextEditingController();
   final TextEditingController serviceDescController = TextEditingController();
-  final TextEditingController achievementNameController =
-      TextEditingController();
+  TextEditingController achievementNameController = TextEditingController();
   final TextEditingController documentNameController = TextEditingController();
   final TextEditingController teamNameCntr = TextEditingController();
   final TextEditingController teamDesignationCntr = TextEditingController();
   final TextEditingController teamNumberCntr = TextEditingController();
   final TextEditingController teamEmailIDCntr = TextEditingController();
   final TextEditingController teamLocationCntr = TextEditingController();
-  final TextEditingController SocialAccountsController =
-      TextEditingController();
+  TextEditingController questionCntr = TextEditingController();
+  TextEditingController answerCntr = TextEditingController();
+  TextEditingController messageCntr = TextEditingController();
+  TextEditingController testiNameCntr = TextEditingController();
+  TextEditingController socialAccountsurlCntr = TextEditingController();
   final TextEditingController SelectTimeController = TextEditingController();
-  final TextEditingController SelectServiceStartTimeController =
+  TextEditingController roleCntr = TextEditingController();
+  TextEditingController selectWeekCntr = TextEditingController();
+  TextEditingController serviceStartTimeCntr = TextEditingController();
+  TextEditingController serviceEndTimeCntr = TextEditingController();
+  TextEditingController SelecteBreakStartTimeController =
       TextEditingController();
-  final TextEditingController SelectServiceEndTimeController =
-      TextEditingController();
-  final TextEditingController SelecteBreakStartTimeController =
-      TextEditingController();
-  final TextEditingController SelectBreakEndTimeController =
-      TextEditingController();
-  final TextEditingController SelectServiceTimeminController =
+  TextEditingController SelectBreakEndTimeController = TextEditingController();
+  TextEditingController SelectServiceTimeminController =
       TextEditingController();
 
   //
@@ -85,10 +84,16 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     "Saturday",
     "Sunday"
   ];
-  final List<String> AccountList = ['Facebook', 'Instagram', 'LinkedIn'];
+  final List<String> AccountList = [
+    'Facebook',
+    'Twitter',
+    'Instagram',
+    'LinkedIn',
+    'Web url'
+  ];
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(10, (_) => GlobalKey<FormState>());
+      List.generate(11, (_) => GlobalKey<FormState>());
   final List<int> stepsWithValidation = [0];
   final List<String> steps = [
     'Basic',
@@ -101,8 +106,9 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     'Appointments',
     'Faqs',
     'Testimonials',
+    'OtherInformation',
   ];
-  //
+
   // Models
   final List<ServiceModel> servicesList = [];
   final List<CertificateModel> certificateList = [];
@@ -113,6 +119,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   final List<AppoinmentsModel> Appoinments = [];
   final List<TimingsModel> Timings = [];
   final List<SocialLinksModel> SocialLinks = [];
+  final List<FAQsModel> faqsList = [];
   List<DirectoryBusinessTypes> directoryBusinessTypes = [];
 
   // Navigation
@@ -129,6 +136,8 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   File? achievementFile;
   File? documentFile;
   File? teamMemberFile;
+  File? testimonialsFile;
+  File? testimonialsPicFile;
   File? galleryFile;
   //
   // Selected dropdowns
@@ -537,6 +546,51 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void addLocations(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final result = await addDirectorRepositoryImpl.addLocation({
+      "locationObj": {
+        "directory_id": getBasicInfoData.first.id,
+        "week_name": selectWeekCntr.text,
+        "clinic_time":
+            "${serviceStartTimeCntr.text} - ${serviceEndTimeCntr.text}",
+        "status": "TIME"
+      }
+    });
+    if (result != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Business time added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    selectWeekCntr.clear();
+    selectedDays = null;
+    serviceStartTimeCntr.clear();
+    serviceEndTimeCntr.clear();
+    notifyListeners();
+  }
+
+  void addSocialUrls(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final result = await addDirectorRepositoryImpl.addLocation({
+      "locationObj": {
+        "media_name": selectedAccount,
+        "media_link": socialAccountsurlCntr.text,
+        "directory_id": getBasicInfoData.first.id,
+        "status": "SOCIAL"
+      }
+    });
+    if (result != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Social urls added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    selectedAccount = null;
+    socialAccountsurlCntr.clear();
+    notifyListeners();
+  }
+
   void addAppointments() {
     Appoinments.add(
       AppoinmentsModel(
@@ -553,6 +607,59 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> addFAQs(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.addFaqs({
+      "faqsObj": {
+        "question": questionCntr.text,
+        "answer": answerCntr.text,
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (res != null) {
+      faqsList
+          .add(FAQsModel(question: questionCntr.text, answer: answerCntr.text));
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Faqs added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    questionCntr.clear();
+    answerCntr.clear();
+    notifyListeners();
+  }
+
+  Future<void> addTestimonials(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var prfImg = await addDirectorRepositoryImpl.http
+        .uploadImage(testimonialsFile?.path);
+    dynamic msgPic;
+    if (testimonialsPicFile != null) {
+      msgPic = await addDirectorRepositoryImpl.http
+          .uploadImage(testimonialsPicFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.addTestimonials({
+      "testiObj": {
+        "name": testiNameCntr.text,
+        "role": roleCntr.text,
+        "message": messageCntr.text,
+        "profile_image": prfImg,
+        "msg_pic": msgPic,
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (res != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Testimonial added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    testiNameCntr.clear();
+    roleCntr.clear();
+    messageCntr.clear();
+    notifyListeners();
+  }
+
   void addTimings() {
     Timings.add(TimingsModel(
       SelectadTime: SelectTime,
@@ -565,9 +672,9 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
 
   void addSocialLinks() {
     SocialLinks.add(SocialLinksModel(
-      AccountName: SocialAccountsController.text,
+      AccountName: socialAccountsurlCntr.text,
     ));
-    SocialAccountsController.clear();
+    socialAccountsurlCntr.clear();
     notifyListeners();
   }
 
@@ -707,12 +814,12 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void loadSocialLinksData(SocialLinksModel socialLink) {
-    SocialAccountsController.text = socialLink.AccountName;
+    socialAccountsurlCntr.text = socialLink.AccountName;
   }
 
   void updateSocialLinks(int index) {
     SocialLinks[index] = SocialLinksModel(
-      AccountName: SocialAccountsController.text,
+      AccountName: socialAccountsurlCntr.text,
     );
     notifyListeners();
   }
@@ -798,6 +905,26 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
+  Future<void> pickTestimonialImage(ImageSource source) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (pickedFile != null) {
+      testimonialsFile = File(pickedFile.path);
+      NavigationService().goBack();
+      notifyListeners();
+    }
+  }
+
+  Future<void> pickTestimonialPicture(ImageSource source) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (pickedFile != null) {
+      testimonialsPicFile = File(pickedFile.path);
+      NavigationService().goBack();
+      notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
     MobileNumberController.dispose();
@@ -812,10 +939,10 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     teamDesignationCntr.dispose();
     teamNumberCntr.dispose();
     teamEmailIDCntr.dispose();
-    SocialAccountsController.dispose();
+    socialAccountsurlCntr.dispose();
     SelectTimeController.dispose();
-    SelectServiceStartTimeController.dispose();
-    SelectServiceEndTimeController.dispose();
+    serviceStartTimeCntr.dispose();
+    serviceEndTimeCntr.dispose();
     SelecteBreakStartTimeController.dispose();
     SelectBreakEndTimeController.dispose();
     SelectServiceTimeminController.dispose();

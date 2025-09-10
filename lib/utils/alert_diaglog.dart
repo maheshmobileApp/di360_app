@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/main.dart';
@@ -116,4 +117,13 @@ void showSignupSuccessDialog(
       );
     },
   );
+}
+
+void showTopMessage(BuildContext context, String message) {
+  Flushbar(
+    message: message,
+    duration: const Duration(seconds: 3),
+    margin: const EdgeInsets.all(8),
+    borderRadius: BorderRadius.circular(8),
+  ).show(context);
 }

@@ -107,7 +107,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.achievementFile,
-            onTap: () => _imagePickerSelection(
+            onTap: () => imagePickerSelection(
               context,
               () => addDirectorVM
                   .pickAchievementImage(picker.ImageSource.gallery),
@@ -138,35 +138,6 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
           ),
         ],
       ),
-    );
-  }
-
-  void _imagePickerSelection(
-    BuildContext context,
-    VoidCallback? galleryOnTap,
-    VoidCallback? cameraOnTap,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
-            ),
-          ],
-        );
-      },
     );
   }
 }
