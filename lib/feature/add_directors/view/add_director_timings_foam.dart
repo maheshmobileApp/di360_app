@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -32,7 +33,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget addTimings(AddDirectorViewModel addDirectorVM, BuildContext context) {
-    final daysList = addDirectorVM.DaysList.toSet().toList();
+    final daysList = ConstantData.DaysList.toSet().toList();
     final _formKey = GlobalKey<FormState>();
     return Form(
       key: _formKey,
@@ -175,7 +176,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
         hintText: 'Select Account',
         isRequired: true,
         value: addDirectorVM.selectedAccount,
-        items: addDirectorVM.AccountList.map((e) => DropdownMenuItem<String>(
+        items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
               value: e,
               child: Text(e),
             )).toList(),

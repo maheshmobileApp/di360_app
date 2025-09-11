@@ -1,13 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/add_directors/model/service_model.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_services_foam.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +19,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final editDeleteVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -30,24 +33,29 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                 CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
-                    showNewServiceBottomSheet(context);
+                    showNewServiceBottomSheet(context, editDeleteVM, '');
                   },
                 ),
               ],
             ),
             addVertical(16),
-            ...addDirectorVM.servicesList.asMap().entries.map((entry) {
-              final index = entry.key;
-              final service = entry.value;
-              return _ServiceCard(context, service, index);
-            }).toList(),
+            ...addDirectorVM.getBasicInfoData.first.directoryServices
+                    ?.asMap()
+                    .entries
+                    .map((entry) {
+                  final service = entry.value;
+                  return _ServiceCard(
+                      context, service, addDirectorVM, editDeleteVM);
+                }).toList() ??
+                [],
           ],
         ),
       ),
     );
   }
 
-  Widget _ServiceCard(BuildContext context, ServiceModel service, int index) {
+  Widget _ServiceCard(BuildContext context, DirectoryServices service,
+      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel vm) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -59,41 +67,22 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-            radius: 24,
-            backgroundColor: AppColors.buttomBarColor,
-            backgroundImage: service.imageFile != null
-                ? FileImage(service.imageFile!)
-                : null,
-          ),
-          const SizedBox(width: 12),
+              radius: 24,
+              backgroundColor: AppColors.buttomBarColor,
+              child:
+                  CachedNetworkImageWidget(imageUrl: service.image?.url ?? '')),
+          addHorizontal(12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text.rich(
-                  TextSpan(
-                    text: 'Appointment : ',
-                    style: TextStyles.medium2(color: AppColors.lightGeryColor),
-                    children: [
-                      TextSpan(
-                        text: service.appointment ? 'Yes' : 'No',
-                        style: TextStyles.medium2(color: AppColors.black),
-                      ),
-                    ],
-                  ),
+                  service.name ?? '',
+                  style: TextStyles.bold3(color: AppColors.black),
                 ),
                 addVertical(8),
                 Text(
-                  service.description,
+                  service.description ?? '',
                   style: TextStyles.medium2(color: Colors.grey.shade800),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -101,25 +90,32 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          // const SizedBox(width: 8),
-          // GestureDetector(
-          //   onTap: () {
-          //     Provider.of<AddDirectorViewModel>(context, listen: false)
-          //         .Services
-          //         .remove(service);
-          //   },
-          //   child: const Icon(
-          //     Icons.delete_outline,
-          //     color: AppColors.redColor,
-          //     size: 18
-          //   ),
-          // ),
+          GestureDetector(
+            onTap: () {
+              addDirectorVM.serviceNameController.text = service.name ?? '';
+              addDirectorVM.toggleService(service.showInAppointments ?? false);
+              addDirectorVM.updateIsEditService(true);
+              addDirectorVM.serviceDescController.text =
+                  service.description ?? '';
+              showNewServiceBottomSheet(context, vm, service.id ?? '');
+            },
+            child: const Icon(Icons.edit, color: AppColors.blueColor, size: 25),
+          ),
+          addHorizontal(20),
+          GestureDetector(
+            onTap: () {
+              vm.deleteTheServices(context, service.id ?? '');
+            },
+            child: const Icon(Icons.delete_outline,
+                color: AppColors.redColor, size: 25),
+          ),
         ],
       ),
     );
   }
 
-  void showNewServiceBottomSheet(BuildContext context) {
+  void showNewServiceBottomSheet(
+      BuildContext context, EditDeleteDirectorViewModel vm, String editId) {
     final addDirectorVM =
         Provider.of<AddDirectorViewModel>(context, listen: false);
     showModalBottomSheet(
@@ -156,18 +152,25 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                       ),
                     ),
                     CustomBottomButton(
-                      onFirst: () => navigationService.goBack(),
-                      onSecond: () {
-                        addDirectorVM.addService(context);
-                        navigationService.goBack();
-                      },
-                      firstLabel: "Close",
-                      secondLabel: "Add",
-                      firstBgColor: AppColors.timeBgColor,
-                      firstTextColor: AppColors.primaryColor,
-                      secondBgColor: AppColors.primaryColor,
-                      secondTextColor: AppColors.whiteColor,
-                    )
+                        onFirst: () {
+                          addDirectorVM.serviceNameController.clear();
+                          addDirectorVM.toggleService(false);
+                          addDirectorVM.serviceDescController.clear();
+                          navigationService.goBack();
+                        },
+                        onSecond: () {
+                          addDirectorVM.isEditService
+                              ? vm.updateTheServices(context, editId)
+                              : addDirectorVM.addService(context);
+                          navigationService.goBack();
+                        },
+                        firstLabel: "Close",
+                        secondLabel:
+                            addDirectorVM.isEditService ? 'Update' : "Add",
+                        firstBgColor: AppColors.timeBgColor,
+                        firstTextColor: AppColors.primaryColor,
+                        secondBgColor: AppColors.primaryColor,
+                        secondTextColor: AppColors.whiteColor)
                   ],
                 ),
               ),

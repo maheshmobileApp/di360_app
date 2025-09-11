@@ -36,27 +36,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         title: Text(
           "Add New Directory",
           style: TextStyles.medium2(),
-        ),
-        actions: [
-          Padding(
-              padding: EdgeInsets.all(16.0),
-              child: InkWell(
-                onTap: () async {
-                  addDirectorVM.goToNextStep();
-                },
-                child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        "Skip",
-                        style: TextStyles.regular2(),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                        color: AppColors.timeBgColor,
-                        borderRadius: BorderRadius.circular(18))),
-              ))
-        ],
+        )
       ),
       body: Column(
         children: [
@@ -83,8 +63,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
       currentStep, totalSteps, AddDirectorViewModel AddDirectorVM) {
     return StepsView(
         currentStep: AddDirectorVM.currentStep,
-        totalSteps: AddDirectorVM.totalSteps,
-        stepTitles: AddDirectorVM.steps);
+        totalSteps: AddDirectorVM.totalSteps);
   }
 
   Widget _buildStep(AddDirectoryStep stepIndex, GlobalKey<FormState> key) {
@@ -155,20 +134,20 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                 textColor: Colors.black,
               ),
             ),
-          // if (!isFirstStep) const SizedBox(width: 16),
-          // Expanded(
-          //   child: CustomRoundedButton(
-          //     fontSize: 12,
-          //     text: 'Save Draft',
-          //     height: 42,
-          //     onPressed: () {
-          //       print("Save Draft Clicked");
-          //     },
-          //     backgroundColor: AppColors.timeBgColor,
-          //     textColor: AppColors.primaryColor,
-          //   ),
-          // ),
-          SizedBox(width: 16),
+          if (!isFirstStep) const SizedBox(width: 16),
+          Expanded(
+            child: CustomRoundedButton(
+              fontSize: 12,
+              text: 'Skip',
+              height: 42,
+              onPressed: () {
+                addDirectorVM.goToNextStep();
+              },
+              backgroundColor: AppColors.timeBgColor,
+              textColor: AppColors.primaryColor
+            ),
+          ),
+          addHorizontal(16),
           Expanded(
             child: CustomRoundedButton(
                 text: isLastStep ? 'Submit' : 'Next',
@@ -203,10 +182,9 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   }
 }
 
-
-  Widget sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
+Widget sectionHeader(String title) {
+  return Text(
+    title,
+    style: TextStyles.clashMedium(color: AppColors.buttonColor),
+  );
+}

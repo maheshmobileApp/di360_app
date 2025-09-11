@@ -1,7 +1,8 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/add_directory_achievement_card.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
@@ -21,11 +22,14 @@ class AddDirectorAchievement extends StatefulWidget {
 class _AddDirectorAchievementState extends State<AddDirectorAchievement>
     with BaseContextHelpers {
   bool showForm = false;
+  String? fileName = '';
+  String? editId = '';
+  dynamic img;
 
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-
+    final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -35,35 +39,44 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionHeader('Achievements'),
+                sectionHeader('Achievements'),
                 CustomAddButton(
                   label: showForm ? 'Cancel' : 'Add +',
                   onPressed: () {
                     setState(() {
+                      fileName = null;
+                      addDirectorVM.achievementNameController.clear();
                       showForm = !showForm;
                     });
                   },
                 ),
               ],
             ),
-            if (showForm) _buildAchievementForm(addDirectorVM),
+            if (showForm) _buildAchievementForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM.achievementsList.length,
+              itemCount: addDirectorVM
+                  .getBasicInfoData.first.directoryAchievements?.length,
               itemBuilder: (context, index) {
-                final achievement = addDirectorVM.achievementsList[index];
+                final achievement = addDirectorVM
+                    .getBasicInfoData.first.directoryAchievements?[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryAchievementCard(
-                    title: achievement.name,
-                    imageFile: achievement.imageFile,
-                    achievement: achievement,
-                    index: index,
-                    onDelete: () {
+                    title: achievement?.title ?? '',
+                    imageFile: achievement?.attachments?.name,
+                    onDelete: () {},
+                    onEdit: () {
+                      addDirectorVM.achievementNameController.text =
+                          achievement?.title ?? '';
+                      editVM.updateIsEditAchieve(true);
                       setState(() {
-                        addDirectorVM.achievementsList.removeAt(index);
+                        fileName = achievement?.attachments?.name;
+                        editId = achievement?.id;
+                        img = achievement?.attachments;
+                        showForm = true;
                       });
                     },
                   ),
@@ -76,14 +89,8 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
-  Widget _buildAchievementForm(AddDirectorViewModel addDirectorVM) {
+  Widget _buildAchievementForm(
+      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16),
@@ -114,7 +121,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
               () =>
                   addDirectorVM.pickAchievementImage(picker.ImageSource.camera),
             ),
-            hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
+            hintText: fileName ?? 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
           addVertical(20),
           CustomBottomButton(
@@ -122,15 +129,19 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
               setState(() {
                 showForm = false;
               });
+              editVM.updateIsEditAchieve(false);
             },
             onSecond: () {
-              addDirectorVM.addAchievement(context);
+              editVM.isEditAchieve
+                  ? editVM.updateTheAchieve(context, editId ?? '', img)
+                  : addDirectorVM.addAchievement(context);
               setState(() {
                 showForm = false;
               });
+              editVM.updateIsEditAchieve(false);
             },
             firstLabel: "Close",
-            secondLabel: "Add",
+            secondLabel: editVM.isEditAchieve ? 'Update' : "Add",
             firstBgColor: AppColors.timeBgColor,
             firstTextColor: AppColors.primaryColor,
             secondBgColor: AppColors.primaryColor,

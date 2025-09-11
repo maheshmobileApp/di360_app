@@ -11,7 +11,6 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -222,19 +221,16 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .getMyJobListingData();
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);
-                          } 
-                            else if (item.title == 'JobProfile') {
+                          } else if (item.title == 'JobProfile') {
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);
-                          }
-                          else if (item.title == 'Applied Jobs') {
+                          } else if (item.title == 'Applied Jobs') {
                             Navigator.pushNamed(
                               context,
                               RouteList.AppliedJobScreen,
                               arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
                             );
-                          }
-                           else if (item.title == 'Enquiries') {
+                          } else if (item.title == 'Enquiries') {
                             Navigator.pushNamed(
                               context,
                               RouteList.EnquiriesScreen,
@@ -249,7 +245,9 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'My Directory') {
                             context
                                 .read<AddDirectorViewModel>()
-                                .getDirectories(navigatorKey.currentContext!);
+                                .getDirectories();
+                            navigationService
+                                .navigateTo(RouteList.adddirectorview);
                           }
                         },
                       ),

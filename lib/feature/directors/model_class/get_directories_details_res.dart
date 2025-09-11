@@ -461,10 +461,11 @@ class DirectoryServices {
   String? name;
   ServicesImage? image;
   String? description;
+  dynamic showInAppointments;
   String? sTypename;
 
   DirectoryServices(
-      {this.id, this.name, this.image, this.description, this.sTypename});
+      {this.id, this.name, this.image, this.description,this.showInAppointments, this.sTypename});
 
   DirectoryServices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -473,6 +474,7 @@ class DirectoryServices {
         ? new ServicesImage.fromJson(json['image'])
         : null;
     description = json['description'];
+    showInAppointments = json['show_in_appointments'];
     sTypename = json['__typename'];
   }
 
@@ -482,6 +484,7 @@ class DirectoryServices {
     data['name'] = this.name;
     data['image'] = this.image;
     data['description'] = this.description;
+    data['show_in_appointments'] = this.showInAppointments;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -817,7 +820,7 @@ class DirectoryTestimonials {
   TestimonialsImage? profileImage;
   String? name;
   String? message;
-  dynamic msgPic;
+  MsgPicImage? msgPic;
   String? role;
   String? sTypename;
 
@@ -837,7 +840,9 @@ class DirectoryTestimonials {
         : null;
     name = json['name'];
     message = json['message'];
-    msgPic = json['msg_pic'];
+    msgPic = json['msg_pic'] != null
+        ? new MsgPicImage.fromJson(json['msg_pic'])
+        : null;
     role = json['role'];
     sTypename = json['__typename'];
   }
@@ -878,6 +883,41 @@ class TestimonialsImage {
       this.mimeType});
 
   TestimonialsImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    status = json['status'];
+    fileId = json['file_id'];
+    isPublic = json['isPublic'];
+    directory = json['directory'];
+    extension = json['extension'];
+    mimeType = json['mime_type'];
+  }
+}
+
+class MsgPicImage {
+  String? url;
+  String? name;
+  int? size;
+  String? status;
+  String? fileId;
+  bool? isPublic;
+  String? directory;
+  String? extension;
+  String? mimeType;
+
+  MsgPicImage(
+      {this.url,
+      this.name,
+      this.size,
+      this.status,
+      this.fileId,
+      this.isPublic,
+      this.directory,
+      this.extension,
+      this.mimeType});
+
+  MsgPicImage.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     size = json['size'];

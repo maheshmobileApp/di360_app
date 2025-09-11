@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AddDirectorViewModel()),
         ChangeNotifierProvider(create: (_) => AppliedJobViewModel()),
         ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
+        ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
 
       ],
       child: MaterialApp(

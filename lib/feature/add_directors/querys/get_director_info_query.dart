@@ -36,6 +36,7 @@ query getUeserPracDirectory($id: uuid!) {
       name
       image
       description
+      show_in_appointments
       __typename
     }
     directory_certifications {

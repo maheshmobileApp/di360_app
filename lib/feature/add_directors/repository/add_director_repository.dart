@@ -15,4 +15,9 @@ abstract class AddDirectorRepository {
   Future<dynamic> addFaqs(dynamic variables);
   Future<dynamic> addTestimonials(dynamic variables);
   Future<dynamic> addLocation(dynamic variables);
+  Future<dynamic> updateService(dynamic variables);
+  Future<dynamic> deleteService(dynamic variables);
+  Future<dynamic> updateCertificate(dynamic variables);
+  Future<dynamic> deleteCertificate(dynamic variables);
+  Future<dynamic> updateAchieve(dynamic variables);
 }

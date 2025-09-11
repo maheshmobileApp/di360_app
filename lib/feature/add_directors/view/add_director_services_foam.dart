@@ -3,27 +3,24 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart' as picker;
 
 class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
+  Widget build(BuildContext context) {
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        sectionHeader("New Service"),
-        addVertical(6),
+        sectionHeader(
+            addDirectorVM.isEditService ? 'Update Service' : "New Service"),
+        addVertical(20),
         InputTextField(
           hintText: "Enter Service Name",
           title: "Service Name",
-          controller: AddDirectorVM.serviceNameController,
+          controller: addDirectorVM.serviceNameController,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter service name'
@@ -34,31 +31,31 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
         addVertical(6),
         Row(
           children: [
-            _radioButton("Yes", true, AddDirectorVM.serviceShowApmt,
-                (_) => AddDirectorVM.toggleService(true)),
-            _radioButton("No", false, AddDirectorVM.serviceShowApmt,
-                (_) => AddDirectorVM.toggleService(false)),
+            _radioButton("Yes", true, addDirectorVM.serviceShowApmt,
+                (_) => addDirectorVM.toggleService(true)),
+            _radioButton("No", false, addDirectorVM.serviceShowApmt,
+                (_) => addDirectorVM.toggleService(false)),
           ],
         ),
-        if (AddDirectorVM.serviceShowApmt) ...[
-          addVertical(12),
-          ImagePickerInputField(
-            title: 'Service Image/Icon',
-            isRequired: true,
-            imageFile: AddDirectorVM.serviefile,
-            onTap: () => imagePickerSelection(
-                context,
-                () =>
-                    AddDirectorVM.pickServicerImage(picker.ImageSource.gallery),
-                () =>
-                    AddDirectorVM.pickServicerImage(picker.ImageSource.camera)),
-            hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
-          ),
-        ],
+        // if (addDirectorVM.serviceShowApmt) ...[
+        //   addVertical(12),
+        //   ImagePickerInputField(
+        //     title: 'Service Image/Icon',
+        //     isRequired: true,
+        //     imageFile: addDirectorVM.serviefile,
+        //     onTap: () => imagePickerSelection(
+        //         context,
+        //         () =>
+        //             addDirectorVM.pickServicerImage(picker.ImageSource.gallery),
+        //         () =>
+        //             addDirectorVM.pickServicerImage(picker.ImageSource.camera)),
+        //     hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
+        //   ),
+        // ],
         addVertical(20),
         InputTextField(
           hintText: "Enter your text here",
-          controller: AddDirectorVM.serviceDescController,
+          controller: addDirectorVM.serviceDescController,
           maxLength: 500,
           maxLines: 5,
           title: "Short Description",
@@ -67,12 +64,8 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _radioButton(
-    String label,
-    bool value,
-    bool groupValue,
-    ValueChanged<bool?> onChanged,
-  ) {
+  Widget _radioButton(String label, bool value, bool groupValue,
+      ValueChanged<bool?> onChanged) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

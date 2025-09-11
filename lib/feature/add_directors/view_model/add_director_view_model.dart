@@ -1,16 +1,14 @@
 import 'dart:io';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/add_directors/model/achievement_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/certificate_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/document_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/gallery_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
-import 'package:di360_flutter/feature/add_directors/model/service_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/social_links_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/team_members_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/timings_model.dart';
@@ -65,55 +63,12 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   TextEditingController SelectServiceTimeminController =
       TextEditingController();
 
-  //
-  // Static lists
-  final List<String> teamMemberList = ['All Team Member', 'George'];
-  final List<String> serviceList = [
-    '1',
-    '2',
-    '4',
-    '5',
-    '6',
-  ];
-  final List<String> DaysList = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-  ];
-  final List<String> AccountList = [
-    'Facebook',
-    'Twitter',
-    'Instagram',
-    'LinkedIn',
-    'Web url'
-  ];
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
       List.generate(11, (_) => GlobalKey<FormState>());
-  final List<int> stepsWithValidation = [0];
-  final List<String> steps = [
-    'Basic',
-    'Services',
-    'Certificates',
-    'Achievements',
-    'Documents',
-    'OurTeam',
-    'Gallery',
-    'Appointments',
-    'Faqs',
-    'Testimonials',
-    'OtherInformation',
-  ];
 
-  // Models
-  final List<ServiceModel> servicesList = [];
-  final List<CertificateModel> certificateList = [];
+  final List<int> stepsWithValidation = [0];
   final List<DocumentModel> documentsList = [];
-  final List<AchievementModel> achievementsList = [];
   final List<TeamMembersModel> TeamMembers = [];
   final List<GalleryModel> Gallerys = [];
   final List<AppoinmentsModel> Appoinments = [];
@@ -126,7 +81,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   final PageController pageController = PageController();
   int _currentStep = 0;
   int get currentStep => _currentStep;
-  int get totalSteps => steps.length;
+  int get totalSteps => ConstantData.steps.length;
 
 // Files
   File? logoFile;
@@ -147,9 +102,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedAccount;
   DirectoryCategories? selectedBusineestype;
   List<GetDirectories> getBasicInfoData = [];
-  ServiceModel? selectedService;
-  CertificateModel? selectedCertificate;
-  AchievementModel? selectedAchievement;
   DocumentModel? selectedDocument;
   GalleryModel? selectedGallery;
   TeamMembersModel? selectedteamember;
@@ -168,12 +120,18 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   //
   // Toggles
   bool serviceShowApmt = false;
+  bool isEditService = false;
   bool appointmentShowVal = false;
   bool AllDay = false;
   bool ourTeamShowVal = false;
 
   void toggleService(bool value) {
     serviceShowApmt = value;
+    notifyListeners();
+  }
+
+  void updateIsEditService(bool value) {
+    isEditService = value;
     notifyListeners();
   }
 
@@ -234,16 +192,15 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getDirectories(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  Future<void> getDirectories() async {
+  //  Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.getDirectoriesData();
     if (res.isNotEmpty) {
+    //  Loaders.circularHideLoader(context);
       getBasicInfoData = res;
       assignBasicInfoData();
-      Loaders.circularHideLoader(context);
-      navigationService.navigateTo(RouteList.adddirectorview);
     } else {
-      Loaders.circularHideLoader(context);
+    //  Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.adddirectorview);
     }
     notifyListeners();
@@ -251,6 +208,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
 
   void assignBasicInfoData() {
     final basic = getBasicInfoData.first;
+
     CompanyNameController.text = basic.companyName ?? '';
     nameController.text = basic.name ?? '';
     emailController.text = basic.email ?? '';
@@ -258,6 +216,16 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     MobileNumberController.text = basic.phone ?? '';
     alternateNumberController.text = basic.altPhone ?? '';
     AdreessController.text = basic.address ?? '';
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.id == basic.directoryCategoryId,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      setSelectedBusineestype(businessType);
+    }
     final document = parse(basic.description ?? '');
     final String parsedString = document.body?.text ?? "";
     descController.text = parsedString;
@@ -330,7 +298,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
-      getDirectories(context);
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('BasicInfo added successfully');
     } else {
@@ -389,11 +357,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result['insert_directory_services_one'] != null) {
-      servicesList.add(ServiceModel(
-          name: serviceNameController.text,
-          appointment: serviceShowApmt,
-          description: serviceDescController.text,
-          imageFile: serviefile));
+      getDirectories();
       scaffoldMessenger('Service added successfully');
       Loaders.circularHideLoader(context);
     } else {
@@ -418,10 +382,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result['insert_directory_certifications_one'] != null) {
-      certificateList.add(CertificateModel(
-        name: certificateNameController.text,
-        imageFile: certificateFile,
-      ));
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Certificates added successfully');
     } else {
@@ -468,10 +429,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result['insert_directory_achievements_one'] != null) {
-      achievementsList.add(AchievementModel(
-        name: achievementNameController.text,
-        imageFile: achievementFile,
-      ));
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Achievements added successfully');
     } else {
@@ -678,53 +636,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  //
-  // Load & update methods
-  void loadServiceData(ServiceModel service) {
-    serviceNameController.text = service.name;
-    serviceDescController.text = service.description;
-    serviceShowApmt = service.appointment;
-    serviefile = service.imageFile;
-  }
-
-  void updateService(int index) {
-    servicesList[index] = ServiceModel(
-      name: serviceNameController.text,
-      description: serviceDescController.text,
-      appointment: serviceShowApmt,
-      imageFile: serviefile,
-    );
-    notifyListeners();
-  }
-
-  //certificated..
-  void loadCertificatesData(CertificateModel certificates) {
-    certificateNameController.text = certificates.name;
-    certificateFile = certificates.imageFile;
-  }
-
-  void updateCertificates(int index) {
-    certificateList[index] = CertificateModel(
-      name: certificateNameController.text,
-      imageFile: certificateFile,
-    );
-    notifyListeners();
-  }
-
-  //achievement
-  void loadAchievementData(AchievementModel achievement) {
-    achievementNameController.text = achievement.name;
-    achievementFile = achievement.imageFile;
-  }
-
-  void updateAchievement(int index) {
-    achievementsList[index] = AchievementModel(
-      name: achievementNameController.text,
-      imageFile: achievementFile,
-    );
-    notifyListeners();
-  }
-
   //documetn
   void loadDocumentData(DocumentModel document) {
     documentNameController.text = document.name;
@@ -923,30 +834,5 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       NavigationService().goBack();
       notifyListeners();
     }
-  }
-
-  @override
-  void dispose() {
-    MobileNumberController.dispose();
-    CompanyNameController.dispose();
-    ABNNumberController.dispose();
-    certificateNameController.dispose();
-    serviceNameController.dispose();
-    serviceDescController.dispose();
-    achievementNameController.dispose();
-    documentNameController.dispose();
-    teamNameCntr.dispose();
-    teamDesignationCntr.dispose();
-    teamNumberCntr.dispose();
-    teamEmailIDCntr.dispose();
-    socialAccountsurlCntr.dispose();
-    SelectTimeController.dispose();
-    serviceStartTimeCntr.dispose();
-    serviceEndTimeCntr.dispose();
-    SelecteBreakStartTimeController.dispose();
-    SelectBreakEndTimeController.dispose();
-    SelectServiceTimeminController.dispose();
-    pageController.dispose();
-    super.dispose();
   }
 }

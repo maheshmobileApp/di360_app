@@ -4,13 +4,13 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 class StepsView extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
-  final List<String> stepTitles;
+  final List<String>? stepTitles;
 
   const StepsView({
     super.key,
     required this.currentStep,
     required this.totalSteps,
-    required this.stepTitles,
+     this.stepTitles,
   });
 
   @override
@@ -62,10 +62,11 @@ class StepsView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
+                  if(stepTitles?.isNotEmpty ?? false)
                   SizedBox(
                     width: 60,
                     child: Text(
-                      stepTitles[stepIndex],
+                      stepTitles?[stepIndex] ?? '',
                       style: TextStyle(
                         fontSize: 12,
                         color: isActive ? Colors.black : Colors.grey,

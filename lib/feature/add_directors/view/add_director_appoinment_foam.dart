@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -12,9 +13,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-    final teamMemberList = addDirectorVM.teamMemberList.toSet().toList();
-    final serviceList = addDirectorVM.serviceList.toSet().toList();
-    final daysList = addDirectorVM.DaysList.toSet().toList();
+    final teamMemberList = ConstantData.teamMemberList.toSet().toList();
+    final serviceList = ConstantData.serviceList.toSet().toList();
+    final daysList = ConstantData.DaysList.toSet().toList();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
