@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 class CloseAddButtonWidget extends StatelessWidget with BaseContextHelpers {
   final Function()? closeBtn;
   final Function()? addBtn;
-  const CloseAddButtonWidget({super.key, this.closeBtn,this.addBtn});
+  final String? btnText;
+  const CloseAddButtonWidget({super.key, this.closeBtn,this.addBtn,this.btnText});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class CloseAddButtonWidget extends StatelessWidget with BaseContextHelpers {
                   elevation: 0,
                 ),
                 onPressed: addBtn ?? () => Navigator.pop(context),
-                child: const Text("Add"),
+                child:  Text(btnText ??"Add"),
               ),
             ),
           ),

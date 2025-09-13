@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -11,9 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
+  final String? id;
+  AddDirectorTimingsFoam({super.key,this.id});
+  
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -24,15 +29,16 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          addTimings(addDirectorVM, context),
+          addTimings(addDirectorVM, context, editVM),
           addVertical(20),
-          socialUrlsWidget(addDirectorVM,context)
+          socialUrlsWidget(addDirectorVM, context, editVM)
         ],
       ),
     );
   }
 
-  Widget addTimings(AddDirectorViewModel addDirectorVM, BuildContext context) {
+  Widget addTimings(AddDirectorViewModel addDirectorVM, BuildContext context,
+      EditDeleteDirectorViewModel editVM) {
     final daysList = ConstantData.DaysList.toSet().toList();
     final _formKey = GlobalKey<FormState>();
     return Form(
@@ -58,29 +64,6 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please Select a Day' : null,
           ),
-          // InputTextField(
-          //   title: "Select Time",
-          //   hintText: "Select Date",
-          //   controller: AddDirectorVM.SelectTimeController,
-          //   readOnly: true,
-          //   prefixIcon: GestureDetector(
-          //     onTap: () async {
-          //       final picked = await showDatePicker(
-          //         context: context,
-          //         initialDate: DateTime.now(),
-          //         firstDate: DateTime(2000),
-          //         lastDate: DateTime(2100),
-          //       );
-          //       if (picked != null) {
-          //         AddDirectorVM.setSelectedTime(picked);
-          //         AddDirectorVM.SelectTimeController.text =
-          //             "${picked.day}/${picked.month}/${picked.year}";
-          //       }
-          //     },
-          //     child: Icon(Icons.calendar_today_outlined, size: 20),
-          //   ),
-          //   suffixIcon: Icon(Icons.keyboard_arrow_down, color: AppColors.black),
-          // ),
           addVertical(12),
           Row(
             children: [
@@ -153,10 +136,12 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
           ),
           addVertical(12),
           AppButton(
-            text: 'Add',
+            text: editVM.isEditTimings ? 'Update' : 'Add',
             onTap: () {
               if (_formKey.currentState!.validate()) {
-                addDirectorVM.addLocations(context);
+                editVM.isEditTimings
+                    ? editVM.updateTheTimings(context, id ?? '')
+                    : addDirectorVM.addLocations(context);
                 navigationService.goBack();
               }
             },
@@ -166,8 +151,8 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget socialUrlsWidget(
-      AddDirectorViewModel addDirectorVM, BuildContext context) {
+  Widget socialUrlsWidget(AddDirectorViewModel addDirectorVM,
+      BuildContext context, EditDeleteDirectorViewModel editVM) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       sectionHeader("Add social links"),
       addVertical(12),
@@ -197,11 +182,14 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
       ),
       addVertical(20),
       AppButton(
-        text: 'Add',
+        text: editVM.isEditSocialMed ? 'Update' : 'Add',
         onTap: () {
-          if (addDirectorVM.selectedAccount == null && addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
+          if (addDirectorVM.selectedAccount == null &&
+              addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
             showTopMessage(context, 'select socail account & account url');
           } else {
+            editVM.isEditSocialMed ?
+            editVM.updateTheSocialurl(context, id ?? '') :
             addDirectorVM.addSocialUrls(context);
             navigationService.goBack();
           }

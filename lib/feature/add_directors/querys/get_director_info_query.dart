@@ -82,6 +82,7 @@ query getUeserPracDirectory($id: uuid!) {
     directory_testimonials {
       id
       profile_image
+      role
       name
       message
       msg_pic

@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_directors/querys/add_basic_info_query.
 import 'package:di360_flutter/feature/add_directors/querys/add_certificate_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_services_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_team_member_query.dart';
+import 'package:di360_flutter/feature/add_directors/querys/appoinment_timings_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/get_business_type_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/get_director_info_query.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository.dart';
@@ -142,6 +143,66 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
   @override
   Future<dynamic> deleteDocu(dynamic variables) async {
     final res = await http.mutation(deleteDocumentQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateOurTeam(dynamic variables) async {
+    final res = await http.mutation(updateOurTeamQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> deleteOurTeam(dynamic variables) async {
+    final res = await http.mutation(deleteOurTeamQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> updateGallery(dynamic variables) async {
+    final res = await http.mutation(updateGalleryQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateFAQ(dynamic variables) async {
+    final res = await http.mutation(updateFAQQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> deleteFaq(dynamic variables) async {
+    final res = await http.mutation(deleteFAQQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateTestimonial(dynamic variables) async {
+    final res = await http.mutation(updateTestimonialQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> deleteTestimonial(dynamic variables) async {
+    final res = await http.mutation(deleteTestimonialQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateTimings(dynamic variables) async {
+    final res = await http.mutation(updateTimingsQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> deleteTimings(dynamic variables) async {
+    final res = await http.mutation(deleteTimingsQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateSocailUrl(dynamic variables) async {
+    final res = await http.mutation(updateSocialQuery, variables);
     return res;
   }
 }

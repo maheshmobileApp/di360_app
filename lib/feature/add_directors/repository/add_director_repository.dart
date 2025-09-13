@@ -23,4 +23,14 @@ abstract class AddDirectorRepository {
   Future<dynamic> deleteAchieve(dynamic variables);
   Future<dynamic> updateDocu(dynamic variables);
   Future<dynamic> deleteDocu(dynamic variables);
+  Future<dynamic> updateOurTeam(dynamic variables);
+  Future<dynamic> deleteOurTeam(dynamic variables);
+  Future<dynamic> updateGallery(dynamic variables);
+  Future<dynamic> updateFAQ(dynamic variables);
+  Future<dynamic> deleteFaq(dynamic variables);
+  Future<dynamic> updateTestimonial(dynamic variables);
+  Future<dynamic> deleteTestimonial(dynamic variables);
+  Future<dynamic> updateTimings(dynamic variables);
+  Future<dynamic> deleteTimings(dynamic variables);
+  Future<dynamic> updateSocailUrl(dynamic variables);
 }

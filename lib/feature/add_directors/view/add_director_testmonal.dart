@@ -3,11 +3,14 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/close_add_button_widget.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' as picker;
@@ -18,6 +21,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -31,60 +35,130 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                 CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
-                    showTestimonialBottomSheet(context, addDirectorVM);
+                    addDirectorVM.testiNameCntr.clear();
+                    addDirectorVM.roleCntr.clear();
+                    addDirectorVM.messageCntr.clear();
+                    showTestimonialBottomSheet(context, addDirectorVM, editVM);
                   },
                 ),
               ],
             ),
             addVertical(16),
-            _SocialLinkCard(),
+            _testimonialCard(addDirectorVM, context, editVM),
           ],
         ),
       ),
     );
   }
 
-  Widget _SocialLinkCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF6F7F9),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Facebook',
-                  style: TextStyles.semiBold(fontSize: 14),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'facebook.com/dentalinterface360',
-                  style: TextStyles.regular1(
-                    fontSize: 12,
-                    color: AppColors.bottomBarSelectIconColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(
-            Icons.more_vert,
-            size: 16,
-            color: Colors.grey,
-          ),
-        ],
-      ),
-    );
+  Widget _testimonialCard(AddDirectorViewModel addDirectorVM,
+      BuildContext context, EditDeleteDirectorViewModel editVM) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+            children: addDirectorVM.getBasicInfoData.first.directoryTestimonials
+                    ?.map((data) => Card(
+                        color: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      (data.message == '' ||
+                                              data.message == null)
+                                          ? CachedNetworkImageWidget(
+                                              imageUrl: data.msgPic?.url ?? '',
+                                              height: 100,
+                                              width: 150,
+                                              fit: BoxFit.fill)
+                                          : Expanded(
+                                              child: Text(
+                                                data.message ?? '',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyles.medium3(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                      Spacer(),
+                                      InkWell(
+                                        onTap: () {
+                                          addDirectorVM.testiNameCntr.text =
+                                              data.name ?? '';
+                                          addDirectorVM.roleCntr.text =
+                                              data.role ?? '';
+                                          addDirectorVM.messageCntr.text =
+                                              data.message ?? '';
+                                          editVM.updateIsEditTestimonials(true);
+                                          showTestimonialBottomSheet(
+                                              context, addDirectorVM, editVM,
+                                              data: data);
+                                        },
+                                        child: Icon(Icons.edit,
+                                            color: AppColors.blueColor,
+                                            size: 25),
+                                      ),
+                                      addHorizontal(20),
+                                      InkWell(
+                                          onTap: () =>
+                                              editVM.deleteTheTestimonial(
+                                                  context, data.id ?? ''),
+                                          child: Icon(Icons.delete,
+                                              color: AppColors.redColor,
+                                              size: 25))
+                                    ],
+                                  ),
+                                  addVertical(16),
+                                  Row(children: [
+                                    CircleAvatar(
+                                      backgroundColor: Colors.orange,
+                                      radius: 23,
+                                      child: CircleAvatar(
+                                        radius: 22,
+                                        child: ClipOval(
+                                          child: SizedBox(
+                                            height: 40,
+                                            width: 40,
+                                            child: CachedNetworkImageWidget(
+                                                imageUrl:
+                                                    data.profileImage?.url ??
+                                                        '',
+                                                fit: BoxFit.fill),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    addHorizontal(8),
+                                    Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            data.name ?? '',
+                                            style: TextStyles.bold1(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                          addVertical(8),
+                                          Text(
+                                            data.role ?? '',
+                                            style: TextStyles.bold1(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          )
+                                        ])
+                                  ])
+                                ]))))
+                    .toList() ??
+                []));
   }
 
-  void showTestimonialBottomSheet(
-      BuildContext context, AddDirectorViewModel addDirectorVM) {
+  void showTestimonialBottomSheet(BuildContext context,
+      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM,
+      {DirectoryTestimonials? data}) {
     final _formKey = GlobalKey<FormState>();
     showModalBottomSheet(
       context: context,
@@ -116,18 +190,31 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                           controller: scrollController,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
-                          child: testimonialsWidget(addDirectorVM, context),
+                          child: testimonialsWidget(addDirectorVM, context,
+                              imgUrl: data?.profileImage?.url,
+                              picUrl: data?.msgPic?.url),
                         ),
                       ),
                       CloseAddButtonWidget(
+                        closeBtn: () {
+                          editVM.updateIsEditTestimonials(false);
+                          navigationService.goBack();
+                        },
                         addBtn: () {
                           if (_formKey.currentState!.validate() &&
-                              validationImageAndPicture(
-                                  addDirectorVM, context)) {
-                            addDirectorVM.addTestimonials(context);
+                              validationImageAndPicture(addDirectorVM, context,
+                                  data?.profileImage?.url, data?.msgPic?.url)) {
+                            editVM.isEditTestimonal
+                                ? editVM.updateTheTestimonial(
+                                    context,
+                                    data?.id ?? '',
+                                    data?.profileImage?.toJson(),
+                                    data?.msgPic?.toJson())
+                                : addDirectorVM.addTestimonials(context);
                             navigationService.goBack();
                           }
                         },
+                        btnText: editVM.isEditTestimonal ? 'Update' : 'Add',
                       )
                     ],
                   ),
@@ -141,7 +228,8 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget testimonialsWidget(
-      AddDirectorViewModel addDirectorVM, BuildContext context) {
+      AddDirectorViewModel addDirectorVM, BuildContext context,
+      {String? imgUrl, String? picUrl}) {
     return Column(
       children: [
         InputTextField(
@@ -172,7 +260,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                   .pickTestimonialImage(picker.ImageSource.gallery),
               () => addDirectorVM
                   .pickTestimonialImage(picker.ImageSource.camera)),
-          hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
+          hintText: imgUrl ?? 'JPEG, PNG, PDF formats, up to 5 MB',
         ),
         addVertical(20),
         InputTextField(
@@ -195,23 +283,23 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                   .pickTestimonialPicture(picker.ImageSource.gallery),
               () => addDirectorVM
                   .pickTestimonialPicture(picker.ImageSource.camera)),
-          hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
+          hintText: picUrl ?? 'JPEG, PNG, PDF formats, up to 5 MB',
         ),
       ],
     );
   }
 
-  bool validationImageAndPicture(
-      AddDirectorViewModel addDirectorVM, BuildContext context) {
-    if (addDirectorVM.testimonialsFile == null) {
+  bool validationImageAndPicture(AddDirectorViewModel addDirectorVM,
+      BuildContext context, dynamic img, dynamic msgPic) {
+    if (addDirectorVM.testimonialsFile?.path.isEmpty ?? false || img == null) {
       showTopMessage(context, 'Select image');
       return false;
     }
-    if (addDirectorVM.testimonialsPicFile != null &&
+    if ((addDirectorVM.testimonialsPicFile?.path.isEmpty ??
+            false || msgPic == null) &&
         addDirectorVM.messageCntr.text.isNotEmpty) {
       showTopMessage(
           context, 'Please add either a message or a picture, not both');
-
       return false;
     }
     if (addDirectorVM.testimonialsPicFile == null &&
