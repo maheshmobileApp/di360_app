@@ -5,11 +5,8 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/gallery_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
-import 'package:di360_flutter/feature/add_directors/model/social_links_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/timings_model.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -66,11 +63,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       List.generate(11, (_) => GlobalKey<FormState>());
 
   final List<int> stepsWithValidation = [0];
-  final List<GalleryModel> Gallerys = [];
   final List<AppoinmentsModel> Appoinments = [];
-  final List<TimingsModel> Timings = [];
-  final List<SocialLinksModel> SocialLinks = [];
-  final List<FAQsModel> faqsList = [];
   List<DirectoryBusinessTypes> directoryBusinessTypes = [];
 
   // Navigation
@@ -98,10 +91,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedAccount;
   DirectoryCategories? selectedBusineestype;
   List<GetDirectories> getBasicInfoData = [];
-  GalleryModel? selectedGallery;
   AppoinmentsModel? selectedAppoinment;
-  TimingsModel? selectedTimigs;
-  SocialLinksModel? selectedSocialLinks;
 
   //
   // Other fields
@@ -446,8 +436,8 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
         "email": teamEmailIDCntr.text,
         "phone": teamNumberCntr.text,
         "location": teamLocationCntr.text,
-        "show_in_our_team": appointmentShowVal == true ? "yes" : 'No',
-        "show_in_appointments": ourTeamShowVal == true ? "yes" : 'No'
+        "show_in_our_team": ourTeamShowVal == true ? "yes" : 'No',
+        "show_in_appointments": appointmentShowVal == true ? "yes" : 'No'
       }
     });
     if (result['insert_directory_team_members_one'] != null) {
@@ -479,7 +469,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
-      Gallerys.add(GalleryModel(imageFile: galleryFile));
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Gallery added successfully');
     } else {
@@ -560,8 +550,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
-      faqsList
-          .add(FAQsModel(question: questionCntr.text, answer: answerCntr.text));
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Faqs added successfully');
     } else {
@@ -603,34 +592,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void addTimings() {
-    Timings.add(TimingsModel(
-      SelectadTime: SelectTime,
-      ServiceStarTime: ServiceStartTimeDate,
-      ServiceEndTime: ServiceEndTimeDate,
-      AllDay: true,
-    ));
-    notifyListeners();
-  }
-
-  void addSocialLinks() {
-    SocialLinks.add(SocialLinksModel(
-      AccountName: socialAccountsurlCntr.text,
-    ));
-    socialAccountsurlCntr.clear();
-    notifyListeners();
-  }
-
-  //gallerys
-  void loadGalleryData(GalleryModel gallerys) {
-    galleryFile = gallerys.imageFile;
-  }
-
-  void updateGallery(int index) {
-    Gallerys[index] = GalleryModel(imageFile: galleryFile);
-    notifyListeners();
-  }
-
   void loadAppointmentData(AppoinmentsModel appointment) {
     selectedTeamMember = appointment.teamMemberName;
     selectedTeamService = appointment.services;
@@ -652,35 +613,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       serviceEndTime: ServiceEndTimeDate,
       breakStartTime: BreakStartTimeDate,
       breakEndTime: BreakEndTimeDate,
-    );
-
-    notifyListeners();
-  }
-
-  void loadTimingsData(TimingsModel timing) {
-    ServiceTimeDate = timing.SelectadTime;
-    ServiceStartTimeDate = timing.ServiceStarTime;
-    ServiceEndTimeDate = timing.ServiceEndTime;
-    AllDay = timing.AllDay;
-  }
-
-  void updateTimings(int index) {
-    Timings[index] = TimingsModel(
-      SelectadTime: ServiceTimeDate,
-      ServiceStarTime: ServiceStartTimeDate,
-      ServiceEndTime: ServiceEndTimeDate,
-      AllDay: AllDay,
-    );
-    notifyListeners();
-  }
-
-  void loadSocialLinksData(SocialLinksModel socialLink) {
-    socialAccountsurlCntr.text = socialLink.AccountName;
-  }
-
-  void updateSocialLinks(int index) {
-    SocialLinks[index] = SocialLinksModel(
-      AccountName: socialAccountsurlCntr.text,
     );
     notifyListeners();
   }

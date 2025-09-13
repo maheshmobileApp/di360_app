@@ -9,11 +9,15 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   final AddDirectorRepositoryImpl addDirectorRepositoryImpl =
       AddDirectorRepositoryImpl();
 
-//context.read<HomeViewModel>().getAllNewsfeeds(context);
-
   bool showCertifiForm = false;
   bool isEditAchieve = false;
   bool isEditDocu = false;
+  bool isEditOurTeam = false;
+  bool isEditGallery = false;
+  bool isEditFAQ = false;
+  bool isEditTestimonal = false;
+  bool isEditTimings = false;
+  bool isEditSocialMed = false;
 
   void updateShowCertifiForm(bool val) {
     showCertifiForm = val;
@@ -27,6 +31,36 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   void updateIsEditDocu(bool val) {
     isEditDocu = val;
+    notifyListeners();
+  }
+
+  void updateIsEditOurTeam(bool val) {
+    isEditOurTeam = val;
+    notifyListeners();
+  }
+
+  void updateIsEditGallery(bool val) {
+    isEditGallery = val;
+    notifyListeners();
+  }
+
+  void updateIsEditFAQ(bool val) {
+    isEditFAQ = val;
+    notifyListeners();
+  }
+
+  void updateIsEditTestimonials(bool val) {
+    isEditTestimonal = val;
+    notifyListeners();
+  }
+
+  void updateIsEditTimings(bool val) {
+    isEditTimings = val;
+    notifyListeners();
+  }
+
+  void updateIsEditSocialMed(bool val) {
+    isEditSocialMed = val;
     notifyListeners();
   }
 
@@ -144,7 +178,6 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  
   Future<void> deleteTheAchieve(BuildContext context, String id) async {
     final addDirectorVM = context.read<AddDirectorViewModel>();
     Loaders.circularShowLoader(context);
@@ -188,7 +221,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   Future<void> deleteTheDocument(BuildContext context, String id) async {
     final addDirectorVM = context.read<AddDirectorViewModel>();
     Loaders.circularShowLoader(context);
@@ -197,6 +230,249 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       addDirectorVM.getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Delete document successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheOurTeam(
+      BuildContext context, String id, dynamic img) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    dynamic attachments;
+    if (addDirectorVM.teamMemberFile != null) {
+      attachments = await addDirectorRepositoryImpl.http
+          .uploadImage(addDirectorVM.teamMemberFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.updateOurTeam({
+      "ourTeamObj": {
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "name": addDirectorVM.teamNameCntr.text,
+        "specialization": addDirectorVM.teamDesignationCntr.text,
+        "image": attachments ?? img,
+        "email": addDirectorVM.teamEmailIDCntr.text,
+        "phone": addDirectorVM.teamNumberCntr.text,
+        "location": addDirectorVM.teamLocationCntr.text,
+        "show_in_our_team": addDirectorVM.ourTeamShowVal ? "yes" : 'No',
+        "show_in_appointments": addDirectorVM.appointmentShowVal ? "yes" : 'No'
+      },
+      "id": id
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated our team successfully');
+      updateIsEditOurTeam(false);
+      addDirectorVM.teamDesignationCntr.clear();
+      addDirectorVM.teamEmailIDCntr.clear();
+      addDirectorVM.teamLocationCntr.clear();
+      addDirectorVM.teamNameCntr.clear();
+      addDirectorVM.teamNumberCntr.clear();
+      addDirectorVM.teamMemberFile = null;
+      addDirectorVM.ourTeamShowVal = false;
+      addDirectorVM.appointmentShowVal = false;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteTheOurTeam(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteOurTeam({"id": id});
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Delete our team successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheGallery(
+      BuildContext context, String id, dynamic img) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    dynamic attachments;
+    if (addDirectorVM.galleryFile != null) {
+      attachments = await addDirectorRepositoryImpl.http
+          .uploadImage(addDirectorVM.galleryFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.updateGallery({
+      "id": id,
+      "updateImagesObj": {
+        "image": [attachments ?? img]
+      }
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated gallery successfully');
+      updateIsEditGallery(false);
+      addDirectorVM.galleryFile = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheFAQ(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.updateFAQ({
+      "faqsObj": {
+        "question": addDirectorVM.questionCntr.text,
+        "answer": addDirectorVM.answerCntr.text,
+        "directory_id": addDirectorVM.getBasicInfoData.first.id
+      },
+      "id": id
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated FAQ successfully');
+      updateIsEditFAQ(false);
+      addDirectorVM.questionCntr.clear();
+      addDirectorVM.answerCntr.clear();
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteTheFAQ(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteFaq({"id": id});
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Delete faq successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheTestimonial(
+      BuildContext context, String id, dynamic img, dynamic msgImg) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    dynamic imageAttach;
+    if (addDirectorVM.testimonialsFile != null) {
+      imageAttach = await addDirectorRepositoryImpl.http
+          .uploadImage(addDirectorVM.testimonialsFile?.path);
+    }
+    dynamic msgPicAttach;
+    if (addDirectorVM.testimonialsPicFile != null) {
+      msgPicAttach = await addDirectorRepositoryImpl.http
+          .uploadImage(addDirectorVM.testimonialsPicFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.updateTestimonial({
+      "id": id,
+      "updateTestimonials": {
+        "name": addDirectorVM.testiNameCntr.text,
+        "role": addDirectorVM.roleCntr.text,
+        "message": addDirectorVM.messageCntr.text,
+        "profile_image": imageAttach ?? img,
+        "msg_pic": msgPicAttach ?? msgImg,
+        "directory_id": addDirectorVM.getBasicInfoData.first.id
+      }
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated testimonial successfully');
+      updateIsEditTestimonials(false);
+      addDirectorVM.testiNameCntr.clear();
+      addDirectorVM.roleCntr.clear();
+      addDirectorVM.messageCntr.clear();
+      addDirectorVM.testimonialsFile = null;
+      addDirectorVM.testimonialsPicFile = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteTheTestimonial(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteTestimonial({"id": id});
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Delete testimonial successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheTimings(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.updateTimings({
+      "locationObj": {
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "week_name": addDirectorVM.selectWeekCntr.text,
+        "clinic_time":
+            "${addDirectorVM.serviceStartTimeCntr.text} - ${addDirectorVM.serviceEndTimeCntr.text}",
+        "status": "TIME"
+      },
+      "id": id
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated Timings successfully');
+      updateIsEditTimings(false);
+      addDirectorVM.selectWeekCntr.clear();
+      addDirectorVM.serviceStartTimeCntr.clear();
+      addDirectorVM.serviceEndTimeCntr.clear();
+      addDirectorVM.selectedDays = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteTheTimimngs(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteTimings({"id": id});
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Delete timings successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheSocialurl(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.updateSocailUrl({
+      "locationObj": {
+        "media_name": addDirectorVM.selectedAccount,
+        "media_link": addDirectorVM.socialAccountsurlCntr.text,
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "status": "SOCIAL"
+      },
+      "id": id
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated social successfully');
+      updateIsEditTimings(false);
+      addDirectorVM.socialAccountsurlCntr.clear();
+      addDirectorVM.selectedAccount = null;
     } else {
       Loaders.circularHideLoader(context);
     }

@@ -585,7 +585,7 @@ class AttachmentImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
-  
+
   Map<String, dynamic> toJson() {
     return {
       'url': url,
@@ -761,6 +761,20 @@ class TeamMemberImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['status'] = this.status;
+    data['file_id'] = this.fileId;
+    data['isPublic'] = this.isPublic;
+    data['directory'] = this.directory;
+    data['extension'] = this.extension;
+    data['mime_type'] = this.mimeType;
+    return data;
+  }
 }
 
 class DirectoryGalleryPosts {
@@ -929,6 +943,20 @@ class TestimonialsImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['status'] = this.status;
+    data['file_id'] = this.fileId;
+    data['isPublic'] = this.isPublic;
+    data['directory'] = this.directory;
+    data['extension'] = this.extension;
+    data['mime_type'] = this.mimeType;
+    return data;
+  }
 }
 
 class MsgPicImage {
@@ -963,6 +991,20 @@ class MsgPicImage {
     directory = json['directory'];
     extension = json['extension'];
     mimeType = json['mime_type'];
+  }
+  
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['status'] = this.status;
+    data['file_id'] = this.fileId;
+    data['isPublic'] = this.isPublic;
+    data['directory'] = this.directory;
+    data['extension'] = this.extension;
+    data['mime_type'] = this.mimeType;
+    return data;
   }
 }
 
