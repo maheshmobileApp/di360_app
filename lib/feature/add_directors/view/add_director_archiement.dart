@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_directors/widgets/add_directory_achiev
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -66,8 +67,10 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryAchievementCard(
                     title: achievement?.title ?? '',
-                    imageFile: achievement?.attachments?.name,
-                    onDelete: () {},
+                    imageFile: achievement?.attachments?.url,
+                    onDelete: () {
+                      editVM.deleteTheAchieve(context, achievement?.id ?? '');
+                    },
                     onEdit: () {
                       addDirectorVM.achievementNameController.text =
                           achievement?.title ?? '';
@@ -75,7 +78,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                       setState(() {
                         fileName = achievement?.attachments?.name;
                         editId = achievement?.id;
-                        img = achievement?.attachments;
+                        img = achievement?.attachments?.toJson();
                         showForm = true;
                       });
                     },
@@ -132,13 +135,20 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
               editVM.updateIsEditAchieve(false);
             },
             onSecond: () {
-              editVM.isEditAchieve
-                  ? editVM.updateTheAchieve(context, editId ?? '', img)
-                  : addDirectorVM.addAchievement(context);
-              setState(() {
-                showForm = false;
-              });
-              editVM.updateIsEditAchieve(false);
+              if (addDirectorVM.achievementNameController.text.isEmpty) {
+                scaffoldMessenger('Enter achievement name');
+              } else if (addDirectorVM.achievementFile?.path.isEmpty ??
+                  false || img == null) {
+                scaffoldMessenger('Enter attachement');
+              } else {
+                editVM.isEditAchieve
+                    ? editVM.updateTheAchieve(context, editId ?? '', img)
+                    : addDirectorVM.addAchievement(context);
+                setState(() {
+                  showForm = false;
+                });
+                editVM.updateIsEditAchieve(false);
+              }
             },
             firstLabel: "Close",
             secondLabel: editVM.isEditAchieve ? 'Update' : "Add",

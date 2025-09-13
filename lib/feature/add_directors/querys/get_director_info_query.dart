@@ -18,6 +18,7 @@ query getUeserPracDirectory($id: uuid!) {
     logo
     banner_image
     directory_documents {
+      id
       name
       attachment
       __typename
@@ -62,8 +63,9 @@ query getUeserPracDirectory($id: uuid!) {
       image
       phone
       email
-      subrub
-      state
+      location
+      show_in_our_team
+      show_in_appointments
       __typename
     }
     directory_gallery_posts {

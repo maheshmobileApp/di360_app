@@ -126,4 +126,22 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
     final res = await http.mutation(updateAchievementQuery, variables);
     return res;
   }
+  
+  @override
+  Future<dynamic> deleteAchieve(dynamic variables) async {
+    final res = await http.mutation(deleteAchieveQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> updateDocu(dynamic variables) async {
+    final res = await http.mutation(updateDocumentQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> deleteDocu(dynamic variables) async {
+    final res = await http.mutation(deleteDocumentQuery, variables);
+    return res;
+  }
 }

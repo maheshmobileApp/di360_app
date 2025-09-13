@@ -5,12 +5,10 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/document_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/gallery_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/social_links_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/team_members_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/timings_model.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -68,8 +66,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       List.generate(11, (_) => GlobalKey<FormState>());
 
   final List<int> stepsWithValidation = [0];
-  final List<DocumentModel> documentsList = [];
-  final List<TeamMembersModel> TeamMembers = [];
   final List<GalleryModel> Gallerys = [];
   final List<AppoinmentsModel> Appoinments = [];
   final List<TimingsModel> Timings = [];
@@ -102,9 +98,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedAccount;
   DirectoryCategories? selectedBusineestype;
   List<GetDirectories> getBasicInfoData = [];
-  DocumentModel? selectedDocument;
   GalleryModel? selectedGallery;
-  TeamMembersModel? selectedteamember;
   AppoinmentsModel? selectedAppoinment;
   TimingsModel? selectedTimigs;
   SocialLinksModel? selectedSocialLinks;
@@ -405,8 +399,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result['insert_directory_documents_one'] != null) {
-      documentsList.add(DocumentModel(
-          name: documentNameController.text, imageFile: documentFile));
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Document added successfully');
     } else {
@@ -458,15 +451,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result['insert_directory_team_members_one'] != null) {
-      TeamMembers.add(TeamMembersModel(
-        name: teamNameCntr.text,
-        Designation: teamDesignationCntr.text,
-        PhoneNumber: teamNumberCntr.text,
-        EmailID: teamEmailIDCntr.text,
-        appointment: appointmentShowVal,
-        ourTeam: ourTeamShowVal,
-        imageFile: teamMemberFile,
-      ));
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('TeamMember added successfully');
     } else {
@@ -636,18 +621,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  //documetn
-  void loadDocumentData(DocumentModel document) {
-    documentNameController.text = document.name;
-    documentFile = document.imageFile;
-  }
-
-  void updateDocument(int index) {
-    documentsList[index] = DocumentModel(
-        name: documentNameController.text, imageFile: documentFile);
-    notifyListeners();
-  }
-
   //gallerys
   void loadGalleryData(GalleryModel gallerys) {
     galleryFile = gallerys.imageFile;
@@ -655,29 +628,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
 
   void updateGallery(int index) {
     Gallerys[index] = GalleryModel(imageFile: galleryFile);
-    notifyListeners();
-  }
-
-  void loadTeamData(TeamMembersModel TeamMembers) {
-    teamNameCntr.text = TeamMembers.name;
-    teamDesignationCntr.text = TeamMembers.Designation;
-    teamNumberCntr.text = TeamMembers.PhoneNumber;
-    teamEmailIDCntr.text = TeamMembers.EmailID;
-    appointmentShowVal = TeamMembers.appointment;
-    ourTeamShowVal = TeamMembers.ourTeam;
-    teamMemberFile = TeamMembers.imageFile;
-  }
-
-  void updateTeam(int index) {
-    TeamMembers[index] = TeamMembersModel(
-      name: teamNameCntr.text,
-      Designation: teamDesignationCntr.text,
-      PhoneNumber: teamNumberCntr.text,
-      EmailID: teamEmailIDCntr.text,
-      appointment: appointmentShowVal,
-      ourTeam: ourTeamShowVal,
-      imageFile: teamMemberFile,
-    );
     notifyListeners();
   }
 

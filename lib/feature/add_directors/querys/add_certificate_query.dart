@@ -51,3 +51,30 @@ mutation updateAchive($id: uuid!, $updateAch: directory_achievements_set_input!)
   }
 }
 ''';
+
+const String deleteAchieveQuery = r'''
+mutation removeAchivements($id: uuid!) {
+  delete_directory_achievements(where: {id: {_eq: $id}}) {
+    affected_rows
+    __typename
+  }
+}
+''';
+
+const String updateDocumentQuery = r'''
+mutation updateBasicInfo($id: uuid!, $updateDocs: directory_documents_set_input!) {
+  update_directory_documents(where: {id: {_eq: $id}}, _set: $updateDocs) {
+    affected_rows
+    __typename
+  }
+}
+''';
+
+const String deleteDocumentQuery = r'''
+mutation removeDocument($id: uuid!) {
+  delete_directory_documents(where: {id: {_eq: $id}}) {
+    affected_rows
+    __typename
+  }
+}
+''';

@@ -2,10 +2,12 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/add_directory_document_card.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,11 +22,13 @@ class AddDirectorDocument extends StatefulWidget {
 class _AddDirectorDocumentState extends State<AddDirectorDocument>
     with BaseContextHelpers {
   bool showForm = false;
-
+  String? docName = '';
+  String docEditId = '';
+  dynamic img;
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-
+    final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -40,34 +44,42 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                   label: showForm ? 'Cancel' : 'Add +',
                   onPressed: () {
                     setState(() {
+                      addDirectorVM.documentNameController.clear();
+                      docName = null;
                       showForm = !showForm;
                     });
                   },
                 ),
               ],
             ),
-
-            if (showForm) _buildDocumentForm(addDirectorVM),
-
-            const Divider(thickness: 2),
-
+            if (showForm) _buildDocumentForm(addDirectorVM, editVM),
+            Divider(thickness: 2),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM.documentsList.length,
+              itemCount: addDirectorVM
+                  .getBasicInfoData.first.directoryDocuments?.length,
               itemBuilder: (context, index) {
-                final doc = addDirectorVM.documentsList[index];
+                final doc = addDirectorVM
+                    .getBasicInfoData.first.directoryDocuments?[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryDocumentCard(
-                    title: doc.name,
-                    imageFile: doc.imageFile,
-                    document: doc,
-                    index: index,
+                    title: doc?.name ?? '',
+                    imageFile: doc?.attachment?.url,
                     onDelete: () {
+                      editVM.deleteTheDocument(context, doc?.id ?? '');
+                    },
+                    onEdit: () {
+                      addDirectorVM.documentNameController.text =
+                          doc?.name ?? '';
                       setState(() {
-                        addDirectorVM.documentsList.removeAt(index);
+                        showForm = true;
+                        docEditId = doc?.id ?? '';
+                        docName = doc?.attachment?.name;
+                        img = doc?.attachment?.toJson();
                       });
+                      editVM.updateIsEditDocu(true);
                     },
                   ),
                 );
@@ -79,7 +91,8 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
     );
   }
 
-  Widget _buildDocumentForm(AddDirectorViewModel addDirectorVM) {
+  Widget _buildDocumentForm(
+      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16),
@@ -104,28 +117,36 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             isRequired: true,
             imageFile: addDirectorVM.documentFile,
             onTap: () => imagePickerSelection(
-              context,
-              () =>
-                  addDirectorVM.pickDocumentsImage(),
-              () => addDirectorVM.pickDocumentsImage()
-            ),
-            hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
+                context,
+                () => addDirectorVM.pickDocumentsImage(),
+                () => addDirectorVM.pickDocumentsImage()),
+            hintText: docName ?? 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
           const SizedBox(height: 20),
           CustomBottomButton(
             onFirst: () {
+              editVM.updateIsEditDocu(false);
               setState(() {
                 showForm = false;
               });
             },
             onSecond: () {
-              addDirectorVM.addDocument(context);
-              setState(() {
-                showForm = false;
-              });
+              if (addDirectorVM.documentNameController.text.isEmpty) {
+                scaffoldMessenger('Enter document name');
+              } else if (addDirectorVM.documentFile?.path.isEmpty ??
+                  false || img == null) {
+                scaffoldMessenger('Enter attachement');
+              } else {
+                editVM.isEditDocu
+                    ? editVM.updateTheDocu(context, docEditId, img)
+                    : addDirectorVM.addDocument(context);
+                setState(() {
+                  showForm = false;
+                });
+              }
             },
             firstLabel: "Close",
-            secondLabel: "Add",
+            secondLabel: editVM.isEditDocu ? 'Update' : "Add",
             firstBgColor: AppColors.timeBgColor,
             firstTextColor: AppColors.primaryColor,
             secondBgColor: AppColors.primaryColor,

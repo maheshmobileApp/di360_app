@@ -13,6 +13,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   bool showCertifiForm = false;
   bool isEditAchieve = false;
+  bool isEditDocu = false;
 
   void updateShowCertifiForm(bool val) {
     showCertifiForm = val;
@@ -21,6 +22,11 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   void updateIsEditAchieve(bool val) {
     isEditAchieve = val;
+    notifyListeners();
+  }
+
+  void updateIsEditDocu(bool val) {
+    isEditDocu = val;
     notifyListeners();
   }
 
@@ -132,6 +138,65 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       updateShowCertifiForm(false);
       addDirectorVM.achievementNameController.clear();
       addDirectorVM.achievementFile = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  
+  Future<void> deleteTheAchieve(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteAchieve({"id": id});
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Delete achievement successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateTheDocu(
+      BuildContext context, String id, dynamic img) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    dynamic attachments;
+    if (addDirectorVM.documentFile != null) {
+      attachments = await addDirectorRepositoryImpl.http
+          .uploadImage(addDirectorVM.documentFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.updateDocu({
+      "id": id,
+      "updateDocs": {
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "attachment": attachments ?? img,
+        "name": addDirectorVM.documentNameController.text
+      }
+    });
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Update document successfully');
+      updateIsEditDocu(false);
+      addDirectorVM.documentNameController.clear();
+      addDirectorVM.documentFile = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+  
+  Future<void> deleteTheDocument(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteDocu({"id": id});
+    if (res != null) {
+      addDirectorVM.getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Delete document successfully');
     } else {
       Loaders.circularHideLoader(context);
     }

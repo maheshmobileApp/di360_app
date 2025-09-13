@@ -390,13 +390,15 @@ class DocumentsBannerImage {
 }
 
 class DirectoryDocuments {
+  String? id;
   String? name;
   DocumentsBannerImage? attachment;
   String? sTypename;
 
-  DirectoryDocuments({this.name, this.attachment, this.sTypename});
+  DirectoryDocuments({this.id, this.name, this.attachment, this.sTypename});
 
   DirectoryDocuments.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     attachment = json['attachment'] != null
         ? new DocumentsBannerImage.fromJson(json['attachment'])
@@ -406,6 +408,7 @@ class DirectoryDocuments {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     if (this.attachment != null) {
       data['attachment'] = this.attachment!.toJson();
@@ -465,7 +468,12 @@ class DirectoryServices {
   String? sTypename;
 
   DirectoryServices(
-      {this.id, this.name, this.image, this.description,this.showInAppointments, this.sTypename});
+      {this.id,
+      this.name,
+      this.image,
+      this.description,
+      this.showInAppointments,
+      this.sTypename});
 
   DirectoryServices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -577,6 +585,20 @@ class AttachmentImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'name': name,
+      'size': size,
+      'status': status,
+      'file_id': fileId,
+      'isPublic': isPublic,
+      'directory': directory,
+      'extension': extension,
+      'mime_type': mimeType,
+    };
+  }
 }
 
 class DirectoryCertification {
@@ -631,6 +653,20 @@ class CertificationImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'name': name,
+      'size': size,
+      'status': status,
+      'file_id': fileId,
+      'isPublic': isPublic,
+      'directory': directory,
+      'extension': extension,
+      'mime_type': mimeType,
+    };
+  }
 }
 
 class DirectoryAppointmentSlots {
@@ -659,8 +695,8 @@ class DirectoryTeamMembers {
   TeamMemberImage? image;
   String? phone;
   String? email;
-  dynamic subrub;
-  String? state;
+  bool? showInOurTeam;
+  bool? showInAppointments;
   String? location;
   String? sTypename;
 
@@ -671,8 +707,8 @@ class DirectoryTeamMembers {
       this.image,
       this.phone,
       this.email,
-      this.subrub,
-      this.state,
+      this.showInOurTeam,
+      this.showInAppointments,
       this.location,
       this.sTypename});
 
@@ -685,8 +721,8 @@ class DirectoryTeamMembers {
         : null;
     phone = json['phone'];
     email = json['email'];
-    subrub = json['subrub'];
-    state = json['state'];
+    showInOurTeam = json['show_in_our_team'];
+    showInAppointments = json['show_in_appointments'];
     location = json['location'];
     sTypename = json['__typename'];
   }
