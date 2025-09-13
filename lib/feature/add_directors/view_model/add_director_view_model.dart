@@ -1,117 +1,83 @@
 import 'dart:io';
+import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
-import 'package:di360_flutter/feature/add_directors/model/achievement_model.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/certificate_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/document_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/gallery_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/service_model.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/social_links_model.dart';
-import 'package:di360_flutter/feature/add_directors/model/team_members_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/timings_model.dart';
+import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
+  final AddDirectorRepositoryImpl addDirectorRepositoryImpl =
+      AddDirectorRepositoryImpl();
+
+  AddDirectorViewModel() {
+    getBusinessTypes();
+  }
 //controller....
   final TextEditingController MobileNumberController = TextEditingController();
   final TextEditingController CompanyNameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
+  TextEditingController alternateNumberController = TextEditingController();
   final TextEditingController ABNNumberController = TextEditingController();
   final TextEditingController AdreessController = TextEditingController();
-  final TextEditingController CertificateNameController =
-      TextEditingController();
-  final TextEditingController ServiceNameController = TextEditingController();
-  final TextEditingController ServiceDescriptionController =
-      TextEditingController();
-  final TextEditingController AchievementNameController =
-      TextEditingController();
-  final TextEditingController DocumentNameController = TextEditingController();
-  final TextEditingController TeamMemberNameController =
-      TextEditingController();
-  final TextEditingController TeamMemberDesignationController =
-      TextEditingController();
-  final TextEditingController TeamMemberPhoneNumberController =
-      TextEditingController();
-  final TextEditingController TeamMemberEmailIDController =
-      TextEditingController();
-  final TextEditingController SocialAccountsController =
-      TextEditingController();
+  TextEditingController certificateNameController = TextEditingController();
+  final TextEditingController serviceNameController = TextEditingController();
+  final TextEditingController serviceDescController = TextEditingController();
+  TextEditingController achievementNameController = TextEditingController();
+  final TextEditingController documentNameController = TextEditingController();
+  final TextEditingController teamNameCntr = TextEditingController();
+  final TextEditingController teamDesignationCntr = TextEditingController();
+  final TextEditingController teamNumberCntr = TextEditingController();
+  final TextEditingController teamEmailIDCntr = TextEditingController();
+  final TextEditingController teamLocationCntr = TextEditingController();
+  TextEditingController questionCntr = TextEditingController();
+  TextEditingController answerCntr = TextEditingController();
+  TextEditingController messageCntr = TextEditingController();
+  TextEditingController testiNameCntr = TextEditingController();
+  TextEditingController socialAccountsurlCntr = TextEditingController();
   final TextEditingController SelectTimeController = TextEditingController();
-  final TextEditingController SelectServiceStartTimeController =
+  TextEditingController roleCntr = TextEditingController();
+  TextEditingController selectWeekCntr = TextEditingController();
+  TextEditingController serviceStartTimeCntr = TextEditingController();
+  TextEditingController serviceEndTimeCntr = TextEditingController();
+  TextEditingController SelecteBreakStartTimeController =
       TextEditingController();
-  final TextEditingController SelectServiceEndTimeController =
-      TextEditingController();
-  final TextEditingController SelecteBreakStartTimeController =
-      TextEditingController();
-  final TextEditingController SelectBreakEndTimeController =
-      TextEditingController();
-  final TextEditingController SelectServiceTimeminController =
+  TextEditingController SelectBreakEndTimeController = TextEditingController();
+  TextEditingController SelectServiceTimeminController =
       TextEditingController();
 
-  //
-  // Static lists
-  final List<String> teamMemberList = ['All Team Member', 'George'];
-  final List<String> serviceList = [
-    '1',
-    '2',
-    '4',
-    '5',
-    '6',
-  ];
-  final List<String> DaysList = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-  ];
-  final List<String> AccountList = ['Facebook', 'Instagram', 'LinkedIn'];
-  final List<String> BusineestypeList = [
-    "Contractor",
-    "Temporary Contractor",
-    "Locum",
-    "Full Time",
-    "Part Time",
-    "Casual"
-  ];
-  //
-  //Foam valodation
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(10, (_) => GlobalKey<FormState>());
+      List.generate(11, (_) => GlobalKey<FormState>());
+
   final List<int> stepsWithValidation = [0];
-  final List<String> steps = [
-    'Basic',
-    'Services',
-    'Certificates',
-    'Achievements',
-    'Documents',
-    'OurTeam',
-    'Gallery',
-    'Appointments',
-    'Faqs',
-    'Testimonials',
-  ];
-  //
-  // Models
-  final List<ServiceModel> Services = [];
-  final List<CertificateModel> Certificates = [];
-  final List<DocumentModel> Documents = [];
-  final List<AchievementModel> Achievements = [];
-  final List<TeamMembersModel> TeamMembers = [];
   final List<GalleryModel> Gallerys = [];
   final List<AppoinmentsModel> Appoinments = [];
   final List<TimingsModel> Timings = [];
   final List<SocialLinksModel> SocialLinks = [];
-  //
+  final List<FAQsModel> faqsList = [];
+  List<DirectoryBusinessTypes> directoryBusinessTypes = [];
+
   // Navigation
   final PageController pageController = PageController();
   int _currentStep = 0;
   int get currentStep => _currentStep;
-  int get totalSteps => steps.length;
+  int get totalSteps => ConstantData.steps.length;
 
 // Files
   File? logoFile;
@@ -120,7 +86,9 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   File? certificateFile;
   File? achievementFile;
   File? documentFile;
-  File? userFile;
+  File? teamMemberFile;
+  File? testimonialsFile;
+  File? testimonialsPicFile;
   File? galleryFile;
   //
   // Selected dropdowns
@@ -128,13 +96,9 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedTeamService;
   String? selectedDays;
   String? selectedAccount;
-  String? selectedBusineestype;
-  ServiceModel? selectedService;
-  CertificateModel? selectedCertificate;
-  AchievementModel? selectedAchievement;
-  DocumentModel? selectedDocument;
+  DirectoryCategories? selectedBusineestype;
+  List<GetDirectories> getBasicInfoData = [];
   GalleryModel? selectedGallery;
-  TeamMembersModel? selectedteamember;
   AppoinmentsModel? selectedAppoinment;
   TimingsModel? selectedTimigs;
   SocialLinksModel? selectedSocialLinks;
@@ -149,18 +113,24 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   DateTime? SelectTime;
   //
   // Toggles
-  bool Service = false;
-  bool Appointments = false;
+  bool serviceShowApmt = false;
+  bool isEditService = false;
+  bool appointmentShowVal = false;
   bool AllDay = false;
-  bool OurTeam = false;
+  bool ourTeamShowVal = false;
 
   void toggleService(bool value) {
-    Service = value;
+    serviceShowApmt = value;
+    notifyListeners();
+  }
+
+  void updateIsEditService(bool value) {
+    isEditService = value;
     notifyListeners();
   }
 
   void toggleAppointments(bool value) {
-    Appointments = value;
+    appointmentShowVal = value;
     notifyListeners();
   }
 
@@ -170,7 +140,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void toggleOurTeam(bool value) {
-    OurTeam = value;
+    ourTeamShowVal = value;
     notifyListeners();
   }
 
@@ -208,8 +178,55 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  //
-  void setSelectedBusineestype(String emp) {
+  Future<void> getBusinessTypes() async {
+    final result = await addDirectorRepositoryImpl.getBusinessTypes();
+    if (result?.directoryBusinessTypes != null) {
+      directoryBusinessTypes = result?.directoryBusinessTypes ?? [];
+    }
+    notifyListeners();
+  }
+
+  Future<void> getDirectories() async {
+  //  Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.getDirectoriesData();
+    if (res.isNotEmpty) {
+    //  Loaders.circularHideLoader(context);
+      getBasicInfoData = res;
+      assignBasicInfoData();
+    } else {
+    //  Loaders.circularHideLoader(context);
+      navigationService.navigateTo(RouteList.adddirectorview);
+    }
+    notifyListeners();
+  }
+
+  void assignBasicInfoData() {
+    final basic = getBasicInfoData.first;
+
+    CompanyNameController.text = basic.companyName ?? '';
+    nameController.text = basic.name ?? '';
+    emailController.text = basic.email ?? '';
+    ABNNumberController.text = basic.abnAcn ?? '';
+    MobileNumberController.text = basic.phone ?? '';
+    alternateNumberController.text = basic.altPhone ?? '';
+    AdreessController.text = basic.address ?? '';
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.id == basic.directoryCategoryId,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      setSelectedBusineestype(businessType);
+    }
+    final document = parse(basic.description ?? '');
+    final String parsedString = document.body?.text ?? "";
+    descController.text = parsedString;
+    notifyListeners();
+  }
+
+  void setSelectedBusineestype(DirectoryCategories emp) {
     selectedBusineestype = emp;
     notifyListeners();
   }
@@ -244,77 +261,276 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  //
-  // Add methods
-  void addService() {
-    Services.add(ServiceModel(
-      name: ServiceNameController.text,
-      appointment: Service,
-      description: ServiceDescriptionController.text,
-      imageFile: serviefile,
-    ));
-    ServiceNameController.clear();
-    Service = true;
-    serviefile = null;
-    ServiceDescriptionController.clear();
+  Future<void> addBasicInfo(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    Loaders.circularShowLoader(context);
+    var logo = await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    var banner =
+        await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
+    final res = await addDirectorRepositoryImpl.addBasicInfo({
+      "dirObj": {
+        "company_name": CompanyNameController.text,
+        "description": descController.text,
+        "directory_category_id": selectedBusineestype?.id,
+        "dental_practice_id": type == 'PRACTICE' ? userId : null,
+        "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
+        "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
+        "type": type,
+        "banner_image": banner,
+        "logo": logo,
+        "email": emailController.text,
+        "phone": MobileNumberController.text,
+        "address": AdreessController.text,
+        "alt_phone": alternateNumberController.text,
+        "emergency_phone": null,
+        "latitude": '',
+        "longitude": '',
+        "pincode": '',
+        "name": nameController.text,
+        "profession_type": selectedBusineestype?.name
+      }
+    });
+    if (res != null) {
+      getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('BasicInfo added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
     notifyListeners();
   }
 
-  void addCertificates() {
-    Certificates.add(CertificateModel(
-      name: CertificateNameController.text,
-      imageFile: certificateFile,
-    ));
-    CertificateNameController.clear();
+  Future<void> updateBasicInfo(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    var logo = logoFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+    var banner = bannerFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
+    final res = await addDirectorRepositoryImpl.updateBasicInfo({
+      "id": getBasicInfoData.first.id,
+      "updateInfo": {
+        "company_name": CompanyNameController.text,
+        "description": descController.text,
+        "banner_image":
+            banner == null ? getBasicInfoData.first.bannerImage : banner,
+        "profession_type": selectedBusineestype?.name,
+        "directory_category_id": selectedBusineestype?.id,
+        "logo": logo == null ? getBasicInfoData.first.logo : logo,
+        "alt_phone": alternateNumberController.text,
+        "name": nameController.text,
+        "abn_acn": ABNNumberController.text,
+        "address": AdreessController.text,
+        "latitude": getBasicInfoData.first.latitude,
+        "longitude": getBasicInfoData.first.longitude,
+        "pincode": '',
+        "phone": MobileNumberController.text,
+        "email": emailController.text
+      }
+    });
+    if (res != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Update BasicInfo added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addService(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final result = await addDirectorRepositoryImpl.addServices({
+      "servicesObj": {
+        "name": serviceNameController.text,
+        "description": serviceDescController.text,
+        "show_in_appointments": serviceShowApmt == true ? 'Yes' : 'No',
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (result['insert_directory_services_one'] != null) {
+      getDirectories();
+      scaffoldMessenger('Service added successfully');
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    serviceNameController.clear();
+    serviceShowApmt = serviceShowApmt;
+    serviefile = null;
+    serviceDescController.clear();
+    notifyListeners();
+  }
+
+  void addCertificates(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var attachments =
+        await addDirectorRepositoryImpl.http.uploadImage(certificateFile?.path);
+    final result = await addDirectorRepositoryImpl.addCertificates({
+      "certiObj": {
+        "directory_id": getBasicInfoData.first.id,
+        "attachments": attachments,
+        "title": certificateNameController.text
+      }
+    });
+    if (result['insert_directory_certifications_one'] != null) {
+      getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Certificates added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    certificateNameController.clear();
     certificateFile = null;
     notifyListeners();
   }
 
-  void addDocument() {
-    Documents.add(DocumentModel(
-      name: DocumentNameController.text,
-      imageFile: documentFile,
-    ));
-    DocumentNameController.clear();
+  Future<void> addDocument(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var attachments =
+        await addDirectorRepositoryImpl.http.uploadImage(documentFile?.path);
+    final result = await addDirectorRepositoryImpl.addDocu({
+      "docsObj": {
+        "directory_id": getBasicInfoData.first.id,
+        "attachment": attachments,
+        "name": documentNameController.text
+      }
+    });
+    if (result['insert_directory_documents_one'] != null) {
+      getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Document added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    documentNameController.clear();
     documentFile = null;
     notifyListeners();
   }
 
-  void addAchievement() {
-    Achievements.add(AchievementModel(
-      name: AchievementNameController.text,
-      imageFile: achievementFile,
-    ));
-    AchievementNameController.clear();
+  void addAchievement(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var attachments =
+        await addDirectorRepositoryImpl.http.uploadImage(achievementFile?.path);
+    final result = await addDirectorRepositoryImpl.addAchieve({
+      "achObj": {
+        "directory_id": getBasicInfoData.first.id,
+        "attachments": attachments,
+        "title": achievementNameController.text
+      }
+    });
+    if (result['insert_directory_achievements_one'] != null) {
+      getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Achievements added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    achievementNameController.clear();
     achievementFile = null;
     notifyListeners();
   }
 
-  void addTeamMember() {
-    TeamMembers.add(TeamMembersModel(
-      name: TeamMemberNameController.text,
-      Designation: TeamMemberDesignationController.text,
-      PhoneNumber: TeamMemberDesignationController.text,
-      EmailID: TeamMemberEmailIDController.text,
-      appointment: Appointments,
-      ourTeam: OurTeam,
-      imageFile: userFile,
-    ));
-    TeamMemberNameController.clear();
-    TeamMemberDesignationController.clear();
-    TeamMemberDesignationController.clear();
-    TeamMemberEmailIDController.clear();
-    Appointments = true;
-    OurTeam = true;
-    userFile = null;
+  Future<void> addTeamMember(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var attachments =
+        await addDirectorRepositoryImpl.http.uploadImage(teamMemberFile?.path);
+    final result = await addDirectorRepositoryImpl.addTeamMembers({
+      "ourTeamObj": {
+        "directory_id": getBasicInfoData.first.id,
+        "name": teamNameCntr.text,
+        "specialization": teamDesignationCntr.text,
+        "image": attachments,
+        "email": teamEmailIDCntr.text,
+        "phone": teamNumberCntr.text,
+        "location": teamLocationCntr.text,
+        "show_in_our_team": appointmentShowVal == true ? "yes" : 'No',
+        "show_in_appointments": ourTeamShowVal == true ? "yes" : 'No'
+      }
+    });
+    if (result['insert_directory_team_members_one'] != null) {
+      getDirectories();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('TeamMember added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    teamNameCntr.clear();
+    teamDesignationCntr.clear();
+    teamNumberCntr.clear();
+    teamEmailIDCntr.clear();
+    appointmentShowVal = appointmentShowVal;
+    ourTeamShowVal = appointmentShowVal;
+    teamMemberFile = null;
+    teamLocationCntr.clear();
     notifyListeners();
   }
 
-  void addGallery() {
-    Gallerys.add(GalleryModel(
-      imageFile: galleryFile,
-    ));
+  void addGallery(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var attachments =
+        await addDirectorRepositoryImpl.http.uploadImage(galleryFile?.path);
+    final result = await addDirectorRepositoryImpl.addGallery({
+      "galleryObj": {
+        "image": [attachments],
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (result != null) {
+      Gallerys.add(GalleryModel(imageFile: galleryFile));
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Gallery added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
     galleryFile = null;
+    notifyListeners();
+  }
+
+  void addLocations(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final result = await addDirectorRepositoryImpl.addLocation({
+      "locationObj": {
+        "directory_id": getBasicInfoData.first.id,
+        "week_name": selectWeekCntr.text,
+        "clinic_time":
+            "${serviceStartTimeCntr.text} - ${serviceEndTimeCntr.text}",
+        "status": "TIME"
+      }
+    });
+    if (result != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Business time added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    selectWeekCntr.clear();
+    selectedDays = null;
+    serviceStartTimeCntr.clear();
+    serviceEndTimeCntr.clear();
+    notifyListeners();
+  }
+
+  void addSocialUrls(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final result = await addDirectorRepositoryImpl.addLocation({
+      "locationObj": {
+        "media_name": selectedAccount,
+        "media_link": socialAccountsurlCntr.text,
+        "directory_id": getBasicInfoData.first.id,
+        "status": "SOCIAL"
+      }
+    });
+    if (result != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Social urls added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    selectedAccount = null;
+    socialAccountsurlCntr.clear();
     notifyListeners();
   }
 
@@ -334,6 +550,59 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> addFAQs(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.addFaqs({
+      "faqsObj": {
+        "question": questionCntr.text,
+        "answer": answerCntr.text,
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (res != null) {
+      faqsList
+          .add(FAQsModel(question: questionCntr.text, answer: answerCntr.text));
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Faqs added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    questionCntr.clear();
+    answerCntr.clear();
+    notifyListeners();
+  }
+
+  Future<void> addTestimonials(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    var prfImg = await addDirectorRepositoryImpl.http
+        .uploadImage(testimonialsFile?.path);
+    dynamic msgPic;
+    if (testimonialsPicFile != null) {
+      msgPic = await addDirectorRepositoryImpl.http
+          .uploadImage(testimonialsPicFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.addTestimonials({
+      "testiObj": {
+        "name": testiNameCntr.text,
+        "role": roleCntr.text,
+        "message": messageCntr.text,
+        "profile_image": prfImg,
+        "msg_pic": msgPic,
+        "directory_id": getBasicInfoData.first.id
+      }
+    });
+    if (res != null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Testimonial added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    testiNameCntr.clear();
+    roleCntr.clear();
+    messageCntr.clear();
+    notifyListeners();
+  }
+
   void addTimings() {
     Timings.add(TimingsModel(
       SelectadTime: SelectTime,
@@ -346,68 +615,9 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
 
   void addSocialLinks() {
     SocialLinks.add(SocialLinksModel(
-      AccountName: SocialAccountsController.text,
+      AccountName: socialAccountsurlCntr.text,
     ));
-    SocialAccountsController.clear();
-    notifyListeners();
-  }
-
-  //
-  // Load & update methods
-  void loadServiceData(ServiceModel service) {
-    ServiceNameController.text = service.name;
-    ServiceDescriptionController.text = service.description;
-    Service = service.appointment;
-    serviefile = service.imageFile;
-  }
-
-  void updateService(int index) {
-    Services[index] = ServiceModel(
-      name: ServiceNameController.text,
-      description: ServiceDescriptionController.text,
-      appointment: Service,
-      imageFile: serviefile,
-    );
-    notifyListeners();
-  }
-
-  //certificated..
-  void loadCertificatesData(CertificateModel certificates) {
-    CertificateNameController.text = certificates.name;
-    certificateFile = certificates.imageFile;
-  }
-
-  void updateCertificates(int index) {
-    Certificates[index] = CertificateModel(
-      name: CertificateNameController.text,
-      imageFile: certificateFile,
-    );
-    notifyListeners();
-  }
-
-  //achievement
-  void loadAchievementData(AchievementModel achievement) {
-    AchievementNameController.text = achievement.name;
-    achievementFile = achievement.imageFile;
-  }
-
-  void updateAchievement(int index) {
-    Achievements[index] = AchievementModel(
-      name: AchievementNameController.text,
-      imageFile: achievementFile,
-    );
-    notifyListeners();
-  }
-
-  //documetn
-  void loadDocumentData(DocumentModel document) {
-    DocumentNameController.text = document.name;
-    documentFile = document.imageFile;
-  }
-
-  void updateDocument(int index) {
-    Documents[index] = DocumentModel(
-        name: DocumentNameController.text, imageFile: documentFile);
+    socialAccountsurlCntr.clear();
     notifyListeners();
   }
 
@@ -418,29 +628,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
 
   void updateGallery(int index) {
     Gallerys[index] = GalleryModel(imageFile: galleryFile);
-    notifyListeners();
-  }
-
-  void loadTeamData(TeamMembersModel TeamMembers) {
-    TeamMemberNameController.text = TeamMembers.name;
-    TeamMemberDesignationController.text = TeamMembers.Designation;
-    TeamMemberPhoneNumberController.text = TeamMembers.PhoneNumber;
-    TeamMemberEmailIDController.text = TeamMembers.EmailID;
-    Appointments = TeamMembers.appointment;
-    OurTeam = TeamMembers.ourTeam;
-    userFile = TeamMembers.imageFile;
-  }
-
-  void updateTeam(int index) {
-    TeamMembers[index] = TeamMembersModel(
-      name: TeamMemberNameController.text,
-      Designation: TeamMemberDesignationController.text,
-      PhoneNumber: TeamMemberPhoneNumberController.text,
-      EmailID: TeamMemberEmailIDController.text,
-      appointment: Appointments,
-      ourTeam: OurTeam,
-      imageFile: userFile,
-    );
     notifyListeners();
   }
 
@@ -488,12 +675,12 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void loadSocialLinksData(SocialLinksModel socialLink) {
-    SocialAccountsController.text = socialLink.AccountName;
+    socialAccountsurlCntr.text = socialLink.AccountName;
   }
 
   void updateSocialLinks(int index) {
     SocialLinks[index] = SocialLinksModel(
-      AccountName: SocialAccountsController.text,
+      AccountName: socialAccountsurlCntr.text,
     );
     notifyListeners();
   }
@@ -549,11 +736,11 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  Future<void> pickDocumentsImage(ImageSource source) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: source, imageQuality: 85);
-    if (pickedFile != null) {
-      documentFile = File(pickedFile.path);
+  Future<void> pickDocumentsImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true, type: FileType.custom, allowedExtensions: ['pdf']);
+    if (result != null) {
+      documentFile = File(result.files.first.path ?? '');
       NavigationService().goBack();
       notifyListeners();
     }
@@ -563,7 +750,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
-      documentFile = File(pickedFile.path);
+      teamMemberFile = File(pickedFile.path);
       NavigationService().goBack();
       notifyListeners();
     }
@@ -579,28 +766,23 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  @override
-  void dispose() {
-    MobileNumberController.dispose();
-    CompanyNameController.dispose();
-    ABNNumberController.dispose();
-    CertificateNameController.dispose();
-    ServiceNameController.dispose();
-    ServiceDescriptionController.dispose();
-    AchievementNameController.dispose();
-    DocumentNameController.dispose();
-    TeamMemberNameController.dispose();
-    TeamMemberDesignationController.dispose();
-    TeamMemberPhoneNumberController.dispose();
-    TeamMemberEmailIDController.dispose();
-    SocialAccountsController.dispose();
-    SelectTimeController.dispose();
-    SelectServiceStartTimeController.dispose();
-    SelectServiceEndTimeController.dispose();
-    SelecteBreakStartTimeController.dispose();
-    SelectBreakEndTimeController.dispose();
-    SelectServiceTimeminController.dispose();
-    pageController.dispose();
-    super.dispose();
+  Future<void> pickTestimonialImage(ImageSource source) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (pickedFile != null) {
+      testimonialsFile = File(pickedFile.path);
+      NavigationService().goBack();
+      notifyListeners();
+    }
+  }
+
+  Future<void> pickTestimonialPicture(ImageSource source) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (pickedFile != null) {
+      testimonialsPicFile = File(pickedFile.path);
+      NavigationService().goBack();
+      notifyListeners();
+    }
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
@@ -15,188 +18,196 @@ class DirectorAppointmentform extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final directionalVM = Provider.of<DirectorViewModel>(context);
-    return Form(
-      key: directionalVM.formKey,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          children: [
-            InputTextField(
-                title: 'First Name',
-                isRequired: true,
-                hintText: 'Enter First Name',
-                controller: directionalVM.firstNameController,
-                validator: validateFirstName),
-            InputTextField(
-                title: 'Last Name',
-                isRequired: true,
-                hintText: 'Enter Last Name',
-                controller: directionalVM.lastNameController,
-                validator: validateLastName),
-            InputTextField(
-                title: 'Phone Number',
-                isRequired: true,
-                hintText: 'Enter Phone Number',
-                controller: directionalVM.phoneController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$')),
-                ],
-                maxLength: 12,
-                validator: validatePhoneNumber),
-            InputTextField(
-                title: 'Email',
-                isRequired: true,
-                hintText: 'Enter Email',
-                controller: directionalVM.emailController,
-                validator: validateEmail),
-            addVertical(16),
-            InputTextField(
-              title: 'Appointment Date',
-              isRequired: true,
-              hintText: 'Select Date',
-              controller: directionalVM.appointmentDateController,
-              readOnly: true,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) {
-                      return Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(16)),
+    return Consumer<DirectorViewModel>(builder: (context, directionalVM, _) {
+      return Form(
+          key: directionalVM.formKey,
+          child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    addVertical(8),
+                    InputTextField(
+                        title: 'First Name',
+                        isRequired: true,
+                        hintText: 'Enter First Name',
+                        controller: directionalVM.firstNameController,
+                        validator: validateFirstName),
+                    addVertical(12),
+                    InputTextField(
+                        title: 'Last Name',
+                        isRequired: true,
+                        hintText: 'Enter Last Name',
+                        controller: directionalVM.lastNameController,
+                        validator: validateLastName),
+                    addVertical(12),
+                    InputTextField(
+                        title: 'Phone Number',
+                        isRequired: true,
+                        hintText: 'Enter Phone Number',
+                        controller: directionalVM.phoneController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\+?[0-9]*$')),
+                        ],
+                        maxLength: 12,
+                        validator: validatePhoneNumber),
+                    addVertical(12),
+                    InputTextField(
+                        title: 'Email',
+                        isRequired: true,
+                        hintText: 'Enter Email',
+                        controller: directionalVM.emailController,
+                        validator: validateEmail),
+                    addVertical(12),
+                    InputTextField(
+                      title: 'Appointment Date',
+                      isRequired: true,
+                      hintText: 'Select Date',
+                      controller: directionalVM.appointmentDateController,
+                      readOnly: true,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              return Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(16)),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      'Select Appointment Date',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    addVertical(16),
+                                    CalendarDatePicker(
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime(2100),
+                                      onDateChanged: (pickedDate) {
+                                        directionalVM.appointmentDateController
+                                                .text =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(pickedDate);
+                                        Navigator.pop(context);
+                                        final day = DateFormat('EEEE')
+                                            .format(pickedDate);
+                                        directionalVM.timeSlots(day);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please select appointment date'
+                          : null,
+                    ),
+                    if (directionalVM
+                            .appointmentDateController.text.isNotEmpty &&
+                        directionalVM.dayWiseTimeslots?.dayWiseTimeslots != [])
+                      availabileSlots(directionalVM),
+                    addVertical(12),
+                    CustomDropDown<String>(
+                      title: 'Team Member',
+                      hintText: 'Select Team Member',
+                      isRequired: true,
+                      value: directionalVM.selectedTeamMember,
+                      items: directionalVM.teamMembers!
+                          .map((e) => DropdownMenuItem<String>(
+                                value: e.name ?? '',
+                                child: Text(e.name ?? ''),
+                              ))
+                          .toList(),
+                      onChanged: (val) {
+                        directionalVM.selectedTeamMember = val;
+                      },
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please Select Team Member'
+                          : null,
+                    ),
+                    addVertical(12),
+                    CustomDropDown<String>(
+                      title: 'Service Required',
+                      hintText: 'Select Service',
+                      isRequired: true,
+                      value: directionalVM.selectedService,
+                      items: directionalVM.serviceList
+                          .map((e) => DropdownMenuItem<String>(
+                                value: e,
+                                child: Text(e),
+                              ))
+                          .toList(),
+                      onChanged: (val) {
+                        directionalVM.selectedService = val;
+                      },
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please Select Service'
+                          : null,
+                    ),
+                    addVertical(12),
+                    InputTextField(
+                      title: 'Description',
+                      isRequired: true,
+                      hintText: 'Enter description',
+                      controller: directionalVM.descController,
+                      validator: validateDesc,
+                    ),
+                    addVertical(12),
+                    _buildUploadField(context, directionalVM),
+                    addVertical(12),
+                    ElevatedButton(
+                        onPressed: () {
+                          if (directionalVM.validateForm()) {
+                            directionalVM.bookAppointment(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          minimumSize: const Size(297, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          elevation: 0,
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Select Appointment Date',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            addVertical(16),
-                            CalendarDatePicker(
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2100),
-                              onDateChanged: (pickedDate) {
-                                directionalVM.appointmentDateController.text =
-                                    DateFormat('dd-MM-yyyy').format(pickedDate);
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please select appointment date'
-                  : null,
-            ),
-            addVertical(12),
-            CustomDropDown<String>(
-              title: 'Team Member',
-              hintText: 'Select Team Member',
-              isRequired: true,
-              value: directionalVM.selectedTeamMember,
-              items: directionalVM.teamMemberList
-                  .map((e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(e),
-                      ))
-                  .toList(),
-              onChanged: (val) {
-                directionalVM.selectedTeamMember = val;
-              },
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please Select Team Member'
-                  : null,
-            ),
-            addVertical(12),
-            CustomDropDown<String>(
-              title: 'Service Required',
-              hintText: 'Select Service',
-              isRequired: true,
-              value: directionalVM.selectedService,
-              items: directionalVM.serviceList
-                  .map((e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(e),
-                      ))
-                  .toList(),
-              onChanged: (val) {
-                directionalVM.selectedService = val;
-              },
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please Select Service'
-                  : null,
-            ),
-            addVertical(10),
-            InputTextField(
-              title: 'Description',
-              isRequired: true,
-              hintText: 'Enter description',
-              controller: directionalVM.descController,
-              validator: validateDesc,
-            ),
-            addVertical(10),
-            _buildUploadField(context, directionalVM),
-            addVertical(10),
-            ElevatedButton(
-              onPressed: () {
-                if (directionalVM.validateForm()) {}
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                minimumSize: const Size(297, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'SUBMIT DETAILS',
-                    style: TextStyle(
-                      letterSpacing: 2,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.orange,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'SUBMIT DETAILS',
+                                style: TextStyle(
+                                    letterSpacing: 2,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white),
+                              ),
+                              Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.orange),
+                                  child: const Icon(Icons.arrow_forward_ios,
+                                      color: Colors.white, size: 20))
+                            ]))
+                  ])));
+    });
   }
 
   static Widget _buildUploadField(
@@ -222,31 +233,50 @@ class DirectorAppointmentform extends StatelessWidget
         ),
       ),
       const SizedBox(height: 12),
-      Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: List.generate(viewModel.selectedFiles.length, (index) {
-            final file = viewModel.selectedFiles[index];
-            return Stack(children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  file,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: -8,
-                right: -8,
-                child: IconButton(
-                  icon: const Icon(Icons.close, size: 20),
-                  onPressed: () => viewModel.removeFile(index),
-                ),
-              )
-            ]);
-          }))
+      if (viewModel.supportingImg != null)
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.file(File(viewModel.supportingImg ?? ''),
+              width: 100, height: 100, fit: BoxFit.cover),
+        )
     ]);
+  }
+
+  Widget availabileSlots(DirectorViewModel vm) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        addVertical(16),
+        Text('Available Slots',
+            style: TextStyles.bold6(color: AppColors.black)),
+        addVertical(10),
+        Text(
+            '${vm.dayWiseTimeslots?.serviceMember?.first} [${vm.dayWiseTimeslots?.serviceName?.first}]',
+            style: TextStyles.bold5(color: AppColors.primaryColor)),
+        addVertical(15),
+        Wrap(
+          spacing: 8,
+          children: vm.dayWiseTimeslots?.dayWiseTimeslots?.map((option) {
+                final isSelected = vm.timeSlotSelected == option;
+                return ChoiceChip(
+                  backgroundColor: AppColors.whiteColor,
+                  side: BorderSide(color: AppColors.primaryColor),
+                  label: Text(option,
+                      style: TextStyles.medium3(
+                          color: isSelected
+                              ? AppColors.whiteColor
+                              : AppColors.black)),
+                  selected: isSelected,
+                  showCheckmark: false,
+                  onSelected: (_) {
+                    vm.updateTimeSlotSelect(option);
+                  },
+                  selectedColor: AppColors.primaryColor,
+                );
+              }).toList() ??
+              [],
+        ),
+      ],
+    );
   }
 }

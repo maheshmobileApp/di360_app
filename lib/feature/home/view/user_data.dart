@@ -13,12 +13,14 @@ class UserData extends StatelessWidget with BaseContextHelpers {
   final String? userName;
   final String? followerCount;
   final String? followingCount;
+  final String? bannerImg;
   const UserData(
       {super.key,
       this.imageUrl,
       this.userName,
       this.followerCount,
-      this.followingCount});
+      this.followingCount,
+      this.bannerImg});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,15 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-          SvgPicture.asset(ImageConst.homeBG),
+          bannerImg == null || bannerImg?.isEmpty == true
+              ? SvgPicture.asset(ImageConst.homeBG)
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImageWidget(
+                      imageUrl: bannerImg ?? '',
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.fill)),
           Positioned(
               left: 20,
               top: 44,
@@ -54,7 +64,8 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   radius: 60,
                   child: ClipOval(
                     child: SizedBox(
-                      height: 120,width: 120,
+                      height: 120,
+                      width: 120,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
                           fit: BoxFit.fill,

@@ -26,4 +26,44 @@ class ConstantData {
     'Catalogue',
     'Support'
   ];
+
+  static List<String> teamMemberList = ['All Team Member', 'George'];
+
+  static List<String> serviceList = [
+    '1',
+    '2',
+    '4',
+    '5',
+    '6',
+  ];
+  static List<String> DaysList = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+  static List<String> AccountList = [
+    'Facebook',
+    'Twitter',
+    'Instagram',
+    'LinkedIn',
+    'Web url'
+  ];
+
+  static List<String> steps = [
+    'Basic',
+    'Services',
+    'Certificates',
+    'Achievements',
+    'Documents',
+    'OurTeam',
+    'Gallery',
+    'Appointments',
+    'Faqs',
+    'Testimonials',
+    'OtherInformation',
+  ];
 }

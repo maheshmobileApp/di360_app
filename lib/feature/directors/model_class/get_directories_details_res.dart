@@ -390,13 +390,15 @@ class DocumentsBannerImage {
 }
 
 class DirectoryDocuments {
+  String? id;
   String? name;
   DocumentsBannerImage? attachment;
   String? sTypename;
 
-  DirectoryDocuments({this.name, this.attachment, this.sTypename});
+  DirectoryDocuments({this.id, this.name, this.attachment, this.sTypename});
 
   DirectoryDocuments.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     attachment = json['attachment'] != null
         ? new DocumentsBannerImage.fromJson(json['attachment'])
@@ -406,6 +408,7 @@ class DirectoryDocuments {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     if (this.attachment != null) {
       data['attachment'] = this.attachment!.toJson();
@@ -461,10 +464,16 @@ class DirectoryServices {
   String? name;
   ServicesImage? image;
   String? description;
+  dynamic showInAppointments;
   String? sTypename;
 
   DirectoryServices(
-      {this.id, this.name, this.image, this.description, this.sTypename});
+      {this.id,
+      this.name,
+      this.image,
+      this.description,
+      this.showInAppointments,
+      this.sTypename});
 
   DirectoryServices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -473,6 +482,7 @@ class DirectoryServices {
         ? new ServicesImage.fromJson(json['image'])
         : null;
     description = json['description'];
+    showInAppointments = json['show_in_appointments'];
     sTypename = json['__typename'];
   }
 
@@ -482,6 +492,7 @@ class DirectoryServices {
     data['name'] = this.name;
     data['image'] = this.image;
     data['description'] = this.description;
+    data['show_in_appointments'] = this.showInAppointments;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -574,6 +585,20 @@ class AttachmentImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'name': name,
+      'size': size,
+      'status': status,
+      'file_id': fileId,
+      'isPublic': isPublic,
+      'directory': directory,
+      'extension': extension,
+      'mime_type': mimeType,
+    };
+  }
 }
 
 class DirectoryCertification {
@@ -628,6 +653,20 @@ class CertificationImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'name': name,
+      'size': size,
+      'status': status,
+      'file_id': fileId,
+      'isPublic': isPublic,
+      'directory': directory,
+      'extension': extension,
+      'mime_type': mimeType,
+    };
+  }
 }
 
 class DirectoryAppointmentSlots {
@@ -656,8 +695,8 @@ class DirectoryTeamMembers {
   TeamMemberImage? image;
   String? phone;
   String? email;
-  dynamic subrub;
-  String? state;
+  bool? showInOurTeam;
+  bool? showInAppointments;
   String? location;
   String? sTypename;
 
@@ -668,8 +707,8 @@ class DirectoryTeamMembers {
       this.image,
       this.phone,
       this.email,
-      this.subrub,
-      this.state,
+      this.showInOurTeam,
+      this.showInAppointments,
       this.location,
       this.sTypename});
 
@@ -682,8 +721,8 @@ class DirectoryTeamMembers {
         : null;
     phone = json['phone'];
     email = json['email'];
-    subrub = json['subrub'];
-    state = json['state'];
+    showInOurTeam = json['show_in_our_team'];
+    showInAppointments = json['show_in_appointments'];
     location = json['location'];
     sTypename = json['__typename'];
   }
@@ -817,7 +856,7 @@ class DirectoryTestimonials {
   TestimonialsImage? profileImage;
   String? name;
   String? message;
-  dynamic msgPic;
+  MsgPicImage? msgPic;
   String? role;
   String? sTypename;
 
@@ -837,7 +876,9 @@ class DirectoryTestimonials {
         : null;
     name = json['name'];
     message = json['message'];
-    msgPic = json['msg_pic'];
+    msgPic = json['msg_pic'] != null
+        ? new MsgPicImage.fromJson(json['msg_pic'])
+        : null;
     role = json['role'];
     sTypename = json['__typename'];
   }
@@ -878,6 +919,41 @@ class TestimonialsImage {
       this.mimeType});
 
   TestimonialsImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    status = json['status'];
+    fileId = json['file_id'];
+    isPublic = json['isPublic'];
+    directory = json['directory'];
+    extension = json['extension'];
+    mimeType = json['mime_type'];
+  }
+}
+
+class MsgPicImage {
+  String? url;
+  String? name;
+  int? size;
+  String? status;
+  String? fileId;
+  bool? isPublic;
+  String? directory;
+  String? extension;
+  String? mimeType;
+
+  MsgPicImage(
+      {this.url,
+      this.name,
+      this.size,
+      this.status,
+      this.fileId,
+      this.isPublic,
+      this.directory,
+      this.extension,
+      this.mimeType});
+
+  MsgPicImage.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     size = json['size'];

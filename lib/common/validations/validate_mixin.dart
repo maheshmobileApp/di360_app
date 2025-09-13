@@ -50,7 +50,7 @@ mixin ValidationMixins {
 
   String? validatePostalCode(String? value) {
     if (value == null || value.isEmpty) return "Please enter postal code";
-    if (!checkPostalCode(value)) return 'Enter valid postal code';
+   // if (!checkPostalCode(value)) return 'Enter valid postal code';
     return null;
   }
 

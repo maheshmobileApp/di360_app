@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -8,65 +9,61 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 
-class AddDirectorTeamMemberFoam extends StatelessWidget with BaseContextHelpers {
+class AddDirectorTeamMemberFoam extends StatelessWidget
+    with BaseContextHelpers {
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start, 
-      children: [
-        _sectionHeader("Add Team Member"),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        sectionHeader("Add Team Member"),
         addVertical(6),
         InputTextField(
           hintText: "Enter Name",
           title: " Name",
-          controller: AddDirectorVM.TeamMemberNameController,
+          controller: AddDirectorVM.teamNameCntr,
           isRequired: true,
-          validator: (value) => value == null || value.isEmpty
-              ? 'Please enter your name'
-              : null,
+          validator: (value) =>
+              value == null || value.isEmpty ? 'Please enter your name' : null,
         ),
         addVertical(12),
-         InputTextField(
+        InputTextField(
           hintText: "Enter  Designation",
           title: "Designation",
-          controller: AddDirectorVM.TeamMemberDesignationController,
+          controller: AddDirectorVM.teamDesignationCntr,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter your designation'
               : null,
         ),
-         addVertical(12),
+        addVertical(12),
         InputTextField(
-            hintText: "Enter Phone Number",
-            title: " Phone Number ",
-            controller: AddDirectorVM.TeamMemberPhoneNumberController,
-            isRequired: true,
-            keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter Phone Number'
-                : null,
-          ),
-         addVertical(12),
-         InputTextField(
+          hintText: "Enter Phone Number",
+          title: " Phone Number ",
+          controller: AddDirectorVM.teamNumberCntr,
+          isRequired: true,
+          keyboardType: TextInputType.number,
+          validator: (value) => value == null || value.isEmpty
+              ? 'Please enter Phone Number'
+              : null,
+        ),
+        addVertical(12),
+        InputTextField(
           hintText: "Enter  Email ID ",
           title: "Email ID",
-          controller: AddDirectorVM.TeamMemberEmailIDController,
+          controller: AddDirectorVM.teamEmailIDCntr,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter your email id '
               : null,
         ),
-         addVertical(12),
-         ImagePickerInputField(
+        addVertical(12),
+        ImagePickerInputField(
           title: 'User picture ',
           isRequired: true,
-          imageFile: AddDirectorVM.userFile,
-          onTap: () => _imagePickerSelection(
+          imageFile: AddDirectorVM.teamMemberFile,
+          onTap: () => imagePickerSelection(
             context,
             () => AddDirectorVM.pickUserImage(picker.ImageSource.gallery),
             () => AddDirectorVM.pickUserImage(picker.ImageSource.camera),
@@ -74,23 +71,33 @@ class AddDirectorTeamMemberFoam extends StatelessWidget with BaseContextHelpers 
           hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
         ),
         addVertical(12),
+        InputTextField(
+          hintText: "Enter  location",
+          title: "Location",
+          controller: AddDirectorVM.teamLocationCntr,
+          isRequired: true,
+          validator: (value) => value == null || value.isEmpty
+              ? 'Please enter your location '
+              : null,
+        ),
+        addVertical(12),
         Text("Show in Appointments", style: TextStyles.regular2()),
         addVertical(6),
         Row(
           children: [
-            _radioButton("Yes", true, AddDirectorVM.Appointments,
+            _radioButton("Yes", true, AddDirectorVM.appointmentShowVal,
                 (_) => AddDirectorVM.toggleAppointments(true)),
-            _radioButton("No", false, AddDirectorVM.Appointments,
+            _radioButton("No", false, AddDirectorVM.appointmentShowVal,
                 (_) => AddDirectorVM.toggleAppointments(false)),
           ],
         ),
-         Text("Show in our team", style: TextStyles.regular2()),
+        Text("Show in our team", style: TextStyles.regular2()),
         addVertical(6),
         Row(
           children: [
-            _radioButton("Yes", true, AddDirectorVM.OurTeam,
+            _radioButton("Yes", true, AddDirectorVM.ourTeamShowVal,
                 (_) => AddDirectorVM.toggleOurTeam(true)),
-            _radioButton("No", false, AddDirectorVM.OurTeam,
+            _radioButton("No", false, AddDirectorVM.ourTeamShowVal,
                 (_) => AddDirectorVM.toggleOurTeam(false)),
           ],
         ),
@@ -98,61 +105,27 @@ class AddDirectorTeamMemberFoam extends StatelessWidget with BaseContextHelpers 
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
- Widget _radioButton(
-  String label,
-  bool value,
-  bool groupValue,
-  ValueChanged<bool?> onChanged,
-) {
-  return Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Radio<bool>(
-        visualDensity: VisualDensity.compact,
-        value: value,
-        groupValue: groupValue,
-        activeColor: AppColors.buttonColor, 
-        onChanged: onChanged,
-      ),
-      Text(label, style: TextStyles.regular2()),
-      const SizedBox(width: 20),
-    ],
-  );
-}
-
-  void _imagePickerSelection(
-    BuildContext context,
-    VoidCallback? galleryOnTap,
-    VoidCallback? cameraOnTap,
+  Widget _radioButton(
+    String label,
+    bool value,
+    bool groupValue,
+    ValueChanged<bool?> onChanged,
   ) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
-            ),
-          ],
-        );
-      },
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio<bool>(
+          visualDensity: VisualDensity.compact,
+          value: value,
+          groupValue: groupValue,
+          activeColor: AppColors.buttonColor,
+          onChanged: onChanged,
+        ),
+        Text(label, style: TextStyles.regular2()),
+        const SizedBox(width: 20),
+      ],
     );
   }
+
+  
 }

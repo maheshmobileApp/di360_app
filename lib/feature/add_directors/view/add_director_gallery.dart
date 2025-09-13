@@ -1,10 +1,11 @@
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/add_directory_gallery_card.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,7 +34,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _sectionHeader('Gallery'),
+              sectionHeader('Gallery'),
               CustomAddButton(
                 label: showForm ? 'Cancel' : 'Add +',
                 onPressed: () {
@@ -74,13 +75,6 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
   Widget _buildGalleryForm(AddDirectorViewModel addDirectorVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -94,7 +88,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
           LogoContainer(
             title: "Logo",
             imageFile: addDirectorVM.logoFile,
-            onTap: () => _imagePickerSelection(
+            onTap: () => imagePickerSelection(
               context,
               () => addDirectorVM.pickLogoImage(ImageSource.gallery),
               () => addDirectorVM.pickLogoImage(ImageSource.camera),
@@ -108,7 +102,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
               });
             },
             onSecond: () {
-              addDirectorVM.addGallery();
+              addDirectorVM.addGallery(context);
               setState(() {
                 showForm = false;
               });
@@ -125,29 +119,4 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
     );
   }
 
-  void _imagePickerSelection(
-    BuildContext context,
-    VoidCallback? galleryOnTap,
-    VoidCallback? cameraOnTap,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
-            ),
-          ],
-        );
-      },
-    );
-  }
 }

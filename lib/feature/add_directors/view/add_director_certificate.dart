@@ -1,11 +1,13 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/add_directors/widgets/add_directory_certificate_card.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +23,14 @@ class AddDirectorCertificate extends StatefulWidget {
 class _AddDirectorCertificateState extends State<AddDirectorCertificate>
     with BaseContextHelpers {
   bool showForm = false;
+  String? fileName = '';
+  String? editId = '';
+  dynamic img;
 
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -34,38 +40,47 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionHeader('Certificates'),
+                sectionHeader('Certificates'),
                 CustomAddButton(
-                  label: showForm ? 'Cancel' : 'Add +',
+                  label: 'Add +',
                   onPressed: () {
+                    editVM.updateShowCertifiForm(false);
                     setState(() {
-                      showForm = !showForm;
+                      showForm = true;
+                      addDirectorVM.certificateNameController.clear();
+                      fileName = null;
                     });
                   },
                 ),
               ],
             ),
-
-            if (showForm) _buildCertificateForm(addDirectorVM),
-
+            if (showForm) _buildCertificateForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM.Certificates.length,
+              itemCount: addDirectorVM
+                  .getBasicInfoData.first.directoryCertifications?.length,
               itemBuilder: (context, index) {
-                final cert = addDirectorVM.Certificates[index];
+                final cert = addDirectorVM
+                    .getBasicInfoData.first.directoryCertifications?[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryCertificateCard(
-                    title: cert.name,
-                    imageFile: cert.imageFile,
-                    certificate: cert,
-                    index: index,
+                    title: cert?.title ?? '',
+                    imageFile: cert?.attachments?.url,
                     onDelete: () {
+                      editVM.deleteTheCertifi(context, cert?.id ?? '');
+                    },
+                    onEdit: () {
+                      addDirectorVM.certificateNameController.text =
+                          cert?.title ?? '';
                       setState(() {
-                        addDirectorVM.Certificates.removeAt(index);
+                        fileName = cert?.attachments?.name ?? '';
+                        editId = cert?.id;
+                        img = cert?.attachments?.toJson();
+                        editVM.updateShowCertifiForm(true);
+                        showForm = true;
                       });
                     },
                   ),
@@ -78,14 +93,8 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
-
-  Widget _buildCertificateForm(AddDirectorViewModel addDirectorVM) {
+  Widget _buildCertificateForm(
+      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16),
@@ -98,7 +107,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
           InputTextField(
             hintText: "Enter Certificate Name",
             title: "Certificate Name",
-            controller: addDirectorVM.CertificateNameController,
+            controller: addDirectorVM.certificateNameController,
             isRequired: true,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter certificate name'
@@ -109,30 +118,41 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.certificateFile,
-            onTap: () => _imagePickerSelection(
+            onTap: () => imagePickerSelection(
               context,
               () => addDirectorVM
                   .pickCertificateImage(picker.ImageSource.gallery),
               () =>
                   addDirectorVM.pickCertificateImage(picker.ImageSource.camera),
             ),
-            hintText: 'JPEG, PNG, PDF formats, up to 5 MB',
+            hintText: fileName ?? 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
           addVertical(20),
           CustomBottomButton(
             onFirst: () {
+              editVM.updateShowCertifiForm(false);
               setState(() {
                 showForm = false;
               });
             },
             onSecond: () {
-              addDirectorVM.addCertificates();
-              setState(() {
-                showForm = false;
-              });
+              if (addDirectorVM.certificateNameController.text.isEmpty) {
+                scaffoldMessenger('Enter certificate name');
+              } else if (addDirectorVM.certificateFile?.path.isEmpty ?? false ||
+                  img == null) {
+                scaffoldMessenger('Enter attachement');
+              } else {
+                editVM.showCertifiForm
+                    ? editVM.updateTheCertifi(context, editId ?? '', img)
+                    : addDirectorVM.addCertificates(context);
+                editVM.updateShowCertifiForm(false);
+                setState(() {
+                  showForm = false;
+                });
+              }
             },
             firstLabel: "Close",
-            secondLabel: "Add",
+            secondLabel: editVM.showCertifiForm ? 'Update' : "Add",
             firstBgColor: AppColors.timeBgColor,
             firstTextColor: AppColors.primaryColor,
             secondBgColor: AppColors.primaryColor,
@@ -142,33 +162,61 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
       ),
     );
   }
+}
 
-  void _imagePickerSelection(
-    BuildContext context,
-    VoidCallback? galleryOnTap,
-    VoidCallback? cameraOnTap,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+class AddDirectoryCertificateCard extends StatelessWidget {
+  final String title;
+  final String? imageFile;
+  final Function()? onDelete;
+  final Function()? onEdit;
+
+  const AddDirectoryCertificateCard(
+      {super.key,
+      required this.title,
+      this.imageFile,
+      this.onDelete,
+      this.onEdit});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.cardcolor,
+        borderRadius: BorderRadius.circular(10),
       ),
-      builder: (_) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
-            ),
+      child: Row(
+        children: [
+          if (imageFile != null) ...[
+            ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: CachedNetworkImageWidget(
+                    imageUrl: imageFile ?? '', width: 50, height: 50)),
+            const SizedBox(width: 10),
           ],
-        );
-      },
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: onEdit,
+            child: Icon(Icons.edit, color: AppColors.blueColor, size: 25),
+          ),
+          SizedBox(width: 20),
+          GestureDetector(
+            onTap: onDelete,
+            child:
+                Icon(Icons.delete_outline, color: AppColors.redColor, size: 25),
+          ),
+        ],
+      ),
     );
   }
 }

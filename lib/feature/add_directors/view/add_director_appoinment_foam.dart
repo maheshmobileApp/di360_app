@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -7,13 +8,14 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers {
+class AddDirectorAppoinmentFoam extends StatelessWidget
+    with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-    final teamMemberList = addDirectorVM.teamMemberList.toSet().toList();
-    final serviceList = addDirectorVM.serviceList.toSet().toList();
-    final daysList = addDirectorVM.DaysList.toSet().toList();
+    final teamMemberList = ConstantData.teamMemberList.toSet().toList();
+    final serviceList = ConstantData.serviceList.toSet().toList();
+    final daysList = ConstantData.DaysList.toSet().toList();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
@@ -32,8 +34,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
             onChanged: (val) => addDirectorVM.selectedTeamMember = val,
-            validator: (value) =>
-                value == null || value.isEmpty ? 'Please Select Team Member' : null,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please Select Team Member'
+                : null,
           ),
           addVertical(12),
           CustomDropDown<String>(
@@ -66,8 +69,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
                   onChanged: (val) => addDirectorVM.selectedDays = val,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please Select a Day' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please Select a Day'
+                      : null,
                 ),
               ),
               addHorizontal(12),
@@ -112,7 +116,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
                 child: InputTextField(
                   title: "Service Start Time",
                   hintText: "00:00",
-                  controller: addDirectorVM.SelectServiceStartTimeController,
+                  controller: addDirectorVM.serviceStartTimeCntr,
                   readOnly: true,
                   prefixIcon: GestureDetector(
                     onTap: () async {
@@ -129,7 +133,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
                           picked.hour,
                         );
                         addDirectorVM.setServiceStartTimeDate(dateTime);
-                        addDirectorVM.SelectServiceStartTimeController.text =
+                        addDirectorVM.serviceStartTimeCntr.text =
                             picked.format(context);
                       }
                     },
@@ -143,7 +147,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
                 child: InputTextField(
                   title: "Service End Time",
                   hintText: "00:00",
-                  controller: addDirectorVM.SelectServiceEndTimeController,
+                  controller: addDirectorVM.serviceEndTimeCntr,
                   readOnly: true,
                   prefixIcon: GestureDetector(
                     onTap: () async {
@@ -160,7 +164,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
                           picked.hour,
                         );
                         addDirectorVM.setServiceEndTimeDate(dateTime);
-                        addDirectorVM.SelectServiceEndTimeController.text =
+                        addDirectorVM.serviceEndTimeCntr.text =
                             picked.format(context);
                       }
                     },
@@ -170,7 +174,6 @@ class AddDirectorAppoinmentFoam extends StatelessWidget with BaseContextHelpers 
               ),
             ],
           ),
-
           addVertical(12),
           Row(
             children: [

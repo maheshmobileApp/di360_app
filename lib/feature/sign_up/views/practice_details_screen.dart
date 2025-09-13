@@ -61,7 +61,7 @@ class PracticeDetailsScreen extends StatelessWidget
                               title: 'Phone No',
                               controller: viewModel.numberController,
                               hintText: "Enter Phone number",
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.phone,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'^\+?[0-9]*$')),
