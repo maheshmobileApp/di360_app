@@ -32,6 +32,7 @@ class CustomDatePicker extends StatelessWidget {
         return null;
       },
       decoration: InputDecoration(
+        
         labelText: text,
         prefixIcon: Padding(
           padding: const EdgeInsets.all(12.0),

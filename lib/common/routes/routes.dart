@@ -25,6 +25,12 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
+import 'package:di360_flutter/feature/learningHub/view/add_course.dart';
+import 'package:di360_flutter/feature/learningHub/view/contacts.dart';
+import 'package:di360_flutter/feature/learningHub/view/course_info.dart';
+import 'package:di360_flutter/feature/learningHub/view/learning_hub_screen.dart';
+import 'package:di360_flutter/feature/learningHub/view/new_course_screen.dart';
+import 'package:di360_flutter/feature/learningHub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
@@ -123,6 +129,12 @@ class Routes {
       },
 
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
+      RouteList.learningHubScreen: (context) => LearningHubScreen(),
+      RouteList.newCourseScreen: (context) => NewCourseScreen(),
+      RouteList.addCourse: (context) => AddCourse(),
+       RouteList.courseInfo: (context) => CourseInfo(),
+        RouteList.termsAndConditions: (context) => TermsAndConditions(),
+         RouteList.contacts: (context) => Contacts()
     };
   }
 }

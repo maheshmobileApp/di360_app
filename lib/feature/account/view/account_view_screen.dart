@@ -248,6 +248,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .getDirectories();
                             navigationService
                                 .navigateTo(RouteList.adddirectorview);
+                          }else if (item.title == 'Learning Hub') {
+                            
+                            navigationService
+                                .navigateTo(RouteList.learningHubScreen);
                           }
                         },
                       ),
