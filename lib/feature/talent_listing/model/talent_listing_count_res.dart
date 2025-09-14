@@ -1,69 +1,125 @@
-class TalentListingCountRes {
-  All? all;
-  All? pending;
-  All? approve;
-  All? rejected;
+import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 
-  TalentListingCountRes({this.all, this.pending, this.approve, this.rejected});
+class TalentListingtCountResponse {
+  TalentListingtCountData? data;
 
-  factory TalentListingCountRes.fromJson(Map<String, dynamic> json) {
-    return TalentListingCountRes(
-      all: json['all'] != null ? All.fromJson(json['all']) : null,
-      pending: json['pending'] != null ? All.fromJson(json['pending']) : null,
-      approve: json['approve'] != null ? All.fromJson(json['approve']) : null,
-      rejected: json['rejected'] != null ? All.fromJson(json['rejected']) : null,
+  TalentListingtCountResponse({this.data});
+
+  factory TalentListingtCountResponse.fromJson(Map<String, dynamic> json) {
+    return TalentListingtCountResponse(
+      data: TalentListingtCountData.fromJson(json['data'] ?? json),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'all': all?.toJson(),
-      'pending': pending?.toJson(),
-      'approve': approve?.toJson(),
-      'rejected': rejected?.toJson(),
-    };
-  }
+  Map<String, dynamic> toJson() => {'data': data?.toJson()};
 }
 
-class All {
-  Aggregate? aggregate;
-  String? sTypename;
+class TalentListingtCountData {
+  List<TalentEnquiries>? talentEnquiries;
+  Total? total;
+  Total? pending;
+  Total? approved;
+  Total? expired;
+  Total? draft;
+  Total? rejected;
 
-  All({this.aggregate, this.sTypename});
+  TalentListingtCountData({
+    this.talentEnquiries,
+    this.total,
+    this.pending,
+    this.approved,
+    this.expired,
+    this.draft,
+    this.rejected,
+  });
 
-  factory All.fromJson(Map<String, dynamic> json) {
-    return All(
-      aggregate:
-          json['aggregate'] != null ? Aggregate.fromJson(json['aggregate']) : null,
-      sTypename: json['__typename'],
+  factory TalentListingtCountData.fromJson(Map<String, dynamic> json) {
+    return TalentListingtCountData(
+      talentEnquiries: (json['talent_enquiries'] as List?)
+          ?.map((e) => TalentEnquiries.fromJson(e))
+          .toList(),
+      total: json['total'] != null ? Total.fromJson(json['total']) : null,
+      pending: json['pending'] != null ? Total.fromJson(json['pending']) : null,
+      approved:
+          json['approved'] != null ? Total.fromJson(json['approved']) : null,
+      expired:
+          json['expired'] != null ? Total.fromJson(json['expired']) : null,
+      draft: json['draft'] != null ? Total.fromJson(json['draft']) : null,
+      rejected:
+          json['rejected'] != null ? Total.fromJson(json['rejected']) : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'aggregate': aggregate?.toJson(),
-      '__typename': sTypename,
-    };
+  Map<String, dynamic> toJson() => {
+        'talent_enquiries':
+            talentEnquiries?.map((e) => e.toJson()).toList() ?? [],
+        'total': total?.toJson(),
+        'pending': pending?.toJson(),
+        'approved': approved?.toJson(),
+        'expired': expired?.toJson(),
+        'draft': draft?.toJson(),
+        'rejected': rejected?.toJson(),
+      };
+}
+
+class TalentEnquiries {
+  String? id;
+  String? createdAt;
+  String? updatedAt;
+  String? enquiryDescription;
+  String? enquiryFrom;
+  JobProfile? jobProfiles;
+
+  TalentEnquiries({
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.enquiryDescription,
+    this.enquiryFrom,
+    this.jobProfiles,
+  });
+
+  factory TalentEnquiries.fromJson(Map<String, dynamic> json) {
+    return TalentEnquiries(
+      id: json['id'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
+      enquiryDescription: json['enquiry_description'],
+      enquiryFrom: json['enquiry_from'],
+      jobProfiles: json['job_profiles'] != null
+          ? JobProfile.fromJson(json['job_profiles'])
+          : null,
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
+        'enquiry_description': enquiryDescription,
+        'enquiry_from': enquiryFrom,
+        'job_profiles': jobProfiles?.toJson(),
+      };
+}
+
+
+class Total {
+  Aggregate? aggregate;
+
+  Total({this.aggregate});
+
+  factory Total.fromJson(Map<String, dynamic> json) =>
+      Total(aggregate: json['aggregate'] != null ? Aggregate.fromJson(json['aggregate']) : null);
+
+  Map<String, dynamic> toJson() => {'aggregate': aggregate?.toJson()};
 }
 
 class Aggregate {
   int? count;
-  String? sTypename;
 
-  Aggregate({this.count, this.sTypename});
+  Aggregate({this.count});
 
-  factory Aggregate.fromJson(Map<String, dynamic> json) {
-    return Aggregate(
-      count: json['count'],
-      sTypename: json['__typename'],
-    );
-  }
+  factory Aggregate.fromJson(Map<String, dynamic> json) => Aggregate(count: json['count']);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'count': count,
-      '__typename': sTypename,
-    };
-  }
+  Map<String, dynamic> toJson() => {'count': count};
 }

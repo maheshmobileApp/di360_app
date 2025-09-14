@@ -1,5 +1,7 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/feature/talent_listing/model/talent_listings_model.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_enquiry_listing_response.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
@@ -8,54 +10,67 @@ import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_r
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
 
-@override
-@override
-Future<List<JobProfiles>> getMyTalentListing(List<String>? listingStatus) async {
-  final adminStatusList = (listingStatus == null || listingStatus.isEmpty)
-      ? ["PENDING", "APPROVE", "REJECT"]
-      : listingStatus;
-
-  const int limit = 10;
-  const int offset = 0;
-
-  try {
-    final listingData = await _http.query(
-      getTalentListingQuery,
-      variables: {
-        "where": {
-          "_and": [
-            {
-              "admin_status": {"_in": adminStatusList}
-            },
-            {
-              "admin_status": {"_neq": "DRAFT"}
-            }
-          ]
+  @override
+  Future<List<JobProfile>> getMyTalentListing(
+      List<String>? listingStatus) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final adminStatusList = (listingStatus == null || listingStatus.isEmpty)
+        ? ["REJECT", "APPROVE", "PENDING", "DRAFT", "EXPIRE"]
+        : listingStatus;
+    try {
+      final response = await _http.query(
+        getTalentListingQuery,
+        variables: {
+          "where": {
+            "_and": [
+              {
+                "enquiry_from": {"_eq": userId}
+              },
+              {
+                "job_profiles": {
+                  "admin_status": {"_in": adminStatusList}
+                }
+              }
+            ]
+          }
         },
-        "limit": limit,
-        "offset": offset,
-      },
-    );
-
-    print("Raw listingData: $listingData");
-    final parsed = GetMyTalentListingData.fromJson(listingData);
-    return parsed.jobProfiles ?? [];
-  } catch (e, stack) {
-    print("Error in getMyTalentListing: $e");
-    print(stack);
-    return [];
+      );
+      final data = response['data'];
+      if (data == null || data['talent_enquiries'] == null) {
+        print("No talent enquiries found");
+        return [];
+      }
+      final enquiries = data['talent_enquiries'] as List<dynamic>;
+      final profiles = enquiries
+          .map((e) => TalentEnquiry.fromJson(e))
+          .map((enquiry) => enquiry.jobProfile)
+          .whereType<JobProfile>()
+          .toList();
+      return profiles;
+    } catch (e, st) {
+      print("Error in getMyTalentListing: $e\n$st");
+      return [];
+    }
   }
-}
-
-
 
   @override
-Future<TalentListingCountRes> talentCounts() async {
-  final raw = await _http.query(GetTalentStatusCountsQuery);
-  final result = TalentListingCountRes.fromJson(raw); 
-  print("Talent counts: ${result.toJson()}");
-  return result;
-}
-
-
+  Future<TalentListingtCountResponse> getTalentEnquiryCounts(
+      Map<String, dynamic> variables) async {
+    try {
+      final raw = await _http.query(
+        getTalentHiringCountByStatusQuery,
+        variables: variables,
+      );
+      print("Raw talent enquiry counts: $raw");
+      if (raw == null || raw.isEmpty) {
+        throw Exception('Invalid response for talent counts');
+      }
+      final response = TalentListingtCountResponse.fromJson(raw);
+      print("Talent enquiry counts parsed: ${response.toJson()}");
+      return response;
+    } catch (e, st) {
+      print("Error fetching talent enquiry counts: $e\n$st");
+      rethrow;
+    }
+  }
 }
