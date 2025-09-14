@@ -1,9 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_enquiry_listing_response.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -21,42 +25,47 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(jobProfiles?.createdAt ?? '') ?? '';
-    final String? profileImageUrl = (jobProfiles?.profileImage.isNotEmpty == true)
-        ? jobProfiles!.profileImage.first.url
-        : null;
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: AppColors.borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 10,
-              spreadRadius: 1,
-              offset: const Offset(0, 2),
-            ),
-          ],
+  final String time = _getShortTime(jobProfiles?.createdAt ?? '') ?? '';
+  final String? profileImageUrl = (jobProfiles?.profileImage.isNotEmpty == true)
+      ? jobProfiles!.profileImage.first.url
+      : null;
+  return Padding(
+  padding: const EdgeInsets.all(8),
+  child: Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: AppColors.whiteColor,
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(color: AppColors.borderColor),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.2),
+          blurRadius: 10,
+          spreadRadius: 1,
+          offset: const Offset(0, 2),
         ),
-        child: Column(
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// Top section: Logo and status
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: _logoWithTitle(
+                context,
+                profileImageUrl,
+                jobProfiles?.jobDesignation ?? '',
+                jobProfiles?.professionType ?? '',
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Expanded(
-                  child: _logoWithTitle(
-                    context,
-                    profileImageUrl,
-                    jobProfiles?.jobDesignation ?? '',
-                    jobProfiles?.professionType ?? '',
-                  ),
-                ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _statusChip(jobProfiles?.adminStatus ?? ''),
                     addHorizontal(4),
@@ -65,30 +74,57 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                 ),
               ],
             ),
-            addVertical(8),
-            Row(
-              children: [
-                Expanded(child: _chipWidget(jobProfiles?.workType ?? [])),
-                _TalentTimeChip(time),
-              ],
-            ),
-            addVertical(10),
-            const Divider(),
-            Row(
-              children: [
-                _roundedButton("Message"),
-                addHorizontal(15),
-                _roundedButton("Enquiry"),
-                const Spacer(),
-                const Icon(Icons.arrow_forward_ios,
-                    color: AppColors.primaryColor, size: 10),
-              ],
-            ),
           ],
         ),
-      ),
-    );
-  }
+        addVertical(8),
+
+        /// Work type and time
+        Row(
+          children: [
+            Flexible(child: _chipWidget(jobProfiles?.workType ?? [])),
+            const SizedBox(width: 200),
+            _TalentTimeChip(time),
+          ],
+        ),
+        addVertical(10),
+        const Divider(),
+        Row(
+          children: [
+            InkWell(
+              onTap: () async {
+                final profileId = jobProfiles?.id;
+                final jobId = jobProfiles?.jobDesignation;
+                if (profileId == null || jobId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Applicant or Job ID not available"),
+                    ),
+                  );
+                  return;
+                }
+                final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+                navigationService.navigateToWithParams(
+                  RouteList.JobListingApplicantsMessege,
+                  params: {
+                    "jobId": jobId,
+                    "applicantId": profileId,
+                    "userId": userId,
+                  },
+                );
+              },
+              child: _roundedButton("Message"),
+            ),
+            addHorizontal(10),
+            _roundedButton("Enquiry"),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+
+}
+
 
   Widget _logoWithTitle(
       BuildContext context, String? imageUrl, String title, String role) {
@@ -164,7 +200,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
     final status = adminStatus.toLowerCase();
     Color bgColor;
     Color textColor;
-
     switch (status) {
       case "pending":
         bgColor = const Color.fromRGBO(225, 146, 0, 0.1);
@@ -183,15 +218,16 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         bgColor = const Color.fromRGBO(253, 245, 229, 1);
         textColor = const Color.fromRGBO(225, 146, 0, 1);
     }
-
-    return Container(
+     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration:
-          BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(30)),
-      child: Text(adminStatus,
-          style: TextStyles.semiBold(fontSize: 12, color: textColor),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis),
+      decoration: BoxDecoration(
+          color: bgColor, borderRadius: BorderRadius.circular(30)),
+      child: Text(
+        status,
+        style: TextStyles.semiBold(fontSize: 12, color: textColor),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 
@@ -235,38 +271,25 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
       );
 
   Widget _TalentMenu(String adminStatus) {
-    final status = adminStatus.toLowerCase();
-    return PopupMenuButton<String>(
-      iconColor: AppColors.bottomNavUnSelectedColor,
+   return PopupMenuButton<String>(
+      iconColor: Colors.grey,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
-      onSelected: (value) {},
-      itemBuilder: (context) {
-        final items = <PopupMenuEntry<String>>[
-          PopupMenuItem(
-              value: "Preview",
-              child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview")),
-        ];
-        if (status == "pending") {
-          items.addAll([
-            PopupMenuItem(
-                value: "Approve",
-                child: _buildRow(Icons.check_circle, AppColors.greenColor, "Approve")),
-            PopupMenuItem(
-                value: "Rejected",
-                child: _buildRow(Icons.cancel, AppColors.redColor, "Rejected")),
-          ]);
-        } else if (status == "approve") {
-          items.add(PopupMenuItem(
-              value: "Rejected",
-              child: _buildRow(Icons.cancel, AppColors.redColor, "Rejected")));
-        } else if (status == "rejected") {
-          items.add(PopupMenuItem(
-              value: "Approve",
-              child: _buildRow(Icons.check_circle, AppColors.greenColor, "Approve")));
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      onSelected: (value) {
+        if (value == "Preview") {
+          navigationService.navigateToWithParams(
+            RouteList.talentdetailsScreen,
+            params: jobProfiles,
+          );
         }
-        return items;
       },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: "Preview",
+          child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
+        ),
+      ],
     );
   }
 

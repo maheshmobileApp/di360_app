@@ -4,6 +4,7 @@ class TalentEnquiryListResponse {
   TalentEnquiryListResponse({required this.talentEnquiries});
 
   factory TalentEnquiryListResponse.fromJson(Map<String, dynamic> json) {
+
     final list = json['data']?['talent_enquiries'] as List<dynamic>? ?? [];
     return TalentEnquiryListResponse(
       talentEnquiries: list.map((e) => TalentEnquiry.fromJson(e)).toList(),
