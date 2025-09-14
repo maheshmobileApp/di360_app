@@ -35,12 +35,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
           }
         },
       );
-      final data = response['data'];
-      if (data == null || data['talent_enquiries'] == null) {
-        print("No talent enquiries found");
-        return [];
-      }
-      final enquiries = data['talent_enquiries'] as List<dynamic>;
+      final enquiries = response['talent_enquiries'] as List<dynamic>;
       final profiles = enquiries
           .map((e) => TalentEnquiry.fromJson(e))
           .map((enquiry) => enquiry.jobProfile)

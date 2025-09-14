@@ -130,8 +130,8 @@ class TalentListingViewModel extends ChangeNotifier {
 
   Future<void> getMyTalentListingData() async {
     try {
+       await fetchTalentStatusCounts(); 
       final res = await repo.getMyTalentListing(listingStatus);
-      await fetchTalentStatusCounts(); 
       myTalentListingList = res ?? [];
       notifyListeners();
     } catch (e, st) {
