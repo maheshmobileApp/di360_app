@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_create/repository/job_create_repo_impl.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/post_course_request.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_day.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
@@ -438,36 +440,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
-      PostCourseObj(
-        courseName: "Advanced Dentistry",
-        category: "Medical",
-        courseFormat: "Online",
-        rsvpDate: "2025-10-01",
-        presentedByName: "Dr. Smith",
-        presentedByImage: "profile.png",
-        courseHeaderBanner: "header.png",
-        gallery: "gallery.png",
-        courseBannerImage: "banner.png",
-        courseDescription: "Detailed course on dentistry",
-        cpdPoints: "5",
-        numberOfSeats: "100",
-        totalPrice: "200",
-        earlyBirdPrice: "150",
-        earlyBirdEndDate: "2025-09-30",
-        topicsIncluded: "Oral Surgery, Implants",
-        learningObjectives: "Learn practical dentistry",
-        courseInfo: "8 sessions over 2 months",
-        sessionName: "Session 1",
-        sessionInfo: "Basics of surgery",
-        eventImg: "event.png",
-        sponsoredBy: "Dental Corp",
-        termsConditions: "Standard T&C",
-        cancellationRefundPolicy: "Refund before start",
-        name: "John Doe",
-        phone: "9876543210",
-        email: "john@example.com",
-        websiteUrl: "www.dentalcourse.com",
-        registerLink: "www.dentalcourse.com/register",
+      CourseObject(
+        
       )
     });
     if (result != null) {

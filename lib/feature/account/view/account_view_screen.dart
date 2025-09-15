@@ -249,10 +249,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .getDirectories();
                             navigationService
                                 .navigateTo(RouteList.adddirectorview);
-                          } else if (item.title == 'Learning Hub') {
+                          } else if (item.title == 'Learning Hub') {  
                             context
                                 .read<CourseListingViewModel>()
-                                .getMyJobListingData();
+                                .getCoursesListingData(); 
+
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
                           } else if (item.title == 'My Learning Hub') {

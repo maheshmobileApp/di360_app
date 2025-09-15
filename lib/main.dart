@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
         ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
         ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
+        
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,

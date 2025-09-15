@@ -165,7 +165,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
-                    await jobCreateVM.createdCourseListing(context, true);
+                    //await jobCreateVM.createdCourseListing(context, true);
                     await context
                         .read<JobListingsViewModel>()
                         .getMyJobListingData();
@@ -191,7 +191,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
-                    await jobCreateVM.createdCourseListing(context, false);
+                    //await jobCreateVM.createdCourseListing(context, false);
                     navigationService.goBack();
                   } else {
                     jobCreateVM.goToNextStep();

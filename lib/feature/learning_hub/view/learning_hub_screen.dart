@@ -5,6 +5,8 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
-    final jobListingVM = Provider.of<JobListingsViewModel>(context);
+    final jobListingVM = Provider.of<CourseListingViewModel>(context);
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -155,7 +157,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
             ),
             Divider(),
             Expanded(
-              child: jobListingVM.myJobListingList.isEmpty
+              child: jobListingVM.coursesListingList.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -168,12 +170,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       ),
                     )
                   : ListView.builder(
-                      itemCount: jobListingVM.myJobListingList.length,
+                      itemCount: jobListingVM.coursesListingList.length,
                       itemBuilder: (context, index) {
-                        final jobData = jobListingVM.myJobListingList[index];
-                        print(jobListingVM.myJobListingList.length);
-                        return JobListingCard(
-                          jobsListingData: jobData,
+                        final jobData = jobListingVM.coursesListingList[index];
+                        print(jobListingVM.coursesListingList.length);
+                        return CoursesListingCard(
+                          coursesListingData: jobData,
                           vm: jobListingVM,
                           index: index,
                        
