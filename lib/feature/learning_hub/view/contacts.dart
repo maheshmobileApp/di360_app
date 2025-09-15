@@ -2,22 +2,19 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
-import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
-  TermsAndConditions({super.key});
+class Contacts extends StatelessWidget with BaseContextHelpers {
+  Contacts({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+    final jobCreateVM = Provider.of<NewCourseViewModel>(context);
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
 
     return SingleChildScrollView(
@@ -26,80 +23,59 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionHeader("Terms And Conditions"),
+            _sectionHeader("Contacts"),
             SizedBox(height: 16),
-            LogoContainer(
-              title: "Sponsored By",
-              imageFile: null,
-              serverImg: null,
-              onTap: () => imagePickerSelection(
-                context,
-                () => addDirectorVM.pickLogoImage(ImageSource.gallery),
-                () => addDirectorVM.pickLogoImage(ImageSource.camera),
-              ),
-            ),
-            SizedBox(height: 8),
             InputTextField(
-              hintText: "Enter Terms & Conditions",
-              maxLength: 500,
-              maxLines: 5,
-              title: "Terms & Conditions",
-              controller: addDirectorVM.descController,
+              controller: jobCreateVM.nameController,
+              hintText: "Enter Name",
+              title: "Name",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Name'
+                  : null,
             ),
             SizedBox(height: 8),
-            InputTextField(
-              hintText: "Enter Cancellation & Refund Policy",
-              maxLength: 500,
-              maxLines: 5,
-              title: "Cancellation & Refund Policy",
-              controller: addDirectorVM.descController,
+             InputTextField(
+              controller: jobCreateVM.phoneController,
+              hintText: "Enter Phone",
+              title: "Phone",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Phone'
+                  : null,
             ),
             SizedBox(height: 8),
-
-            /* if (jobCreateVM.showLocumDate) ...[
-              SizedBox(
-                height: 8,
-              ),
-              CustomDatePicker(
-                controller: jobCreateVM.locumDateController,
-                text: null,
-                hintText: "Date",
-                onTap: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    jobCreateVM.locumDateController.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
-                  }
-                },
-                validator: (value) {
-                  if (jobCreateVM.showLocumDate &&
-                      (value == null || value.isEmpty)) {
-                    return "Please select locum date";
-                  }
-                  return null;
-                },
-              ),
-              Divider(thickness: 4),
-              SizedBox(height: 16),
-              _sectionHeader("Job Description"),
-              SizedBox(height: 16),
-              InputTextField(
-                controller: jobCreateVM.jobDescController,
-                hintText: "Enter job description here",
-                maxLength: 500,
-                maxLines: 5,
-                title: "Description",
-                isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter job description'
-                    : null,
-              ),
-            ],*/
+             InputTextField(
+              controller: jobCreateVM.emailController,
+              hintText: "Enter Email",
+              title: "Email",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Email'
+                  : null,
+            ),
+            SizedBox(height: 8),
+             InputTextField(
+              controller: jobCreateVM.websiteUrlController,
+              hintText: "Enter Website Url",
+              title: "Website Url",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Website url'
+                  : null,
+            ),
+            SizedBox(height: 8),
+             InputTextField(
+              controller: jobCreateVM.registerLinkController,
+              hintText: "Enter Register Link",
+              title: "Register Link",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Register link'
+                  : null,
+            ),
+            SizedBox(height: 8),
+            
           ],
         ),
       ),

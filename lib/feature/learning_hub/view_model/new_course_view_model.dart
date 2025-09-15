@@ -2,18 +2,21 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/post_course_request.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/session_day.dart';
+import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
+import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
-import 'package:di360_flutter/feature/job_create/repository/job_create_repo_impl.dart';
 import 'package:di360_flutter/feature/job_create/repository/job_create_repository.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 
 class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
-  final JobCreateRepository repo = JobCreateRepoImpl();
+  final LearningHubRepository repo = LearningHubRepoImpl();
   final HttpService _http = HttpService();
 
   NewCourseViewModel() {
@@ -58,6 +61,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   // NEW: Locum date controller
   final locumDateController = TextEditingController();
+  final rsvpDateController = TextEditingController();
+  final earlyBirdDateController = TextEditingController();
   bool showLocumDate = false;
 
   // Selected dropdown values
@@ -76,6 +81,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   String? userID;
   String? logoPath;
   dynamic banner_image;
+  String? selectedEvent;
 
   // Date settings
   bool isStartDateEnabled = false;
@@ -87,6 +93,32 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   File? logoFile;
   File? bannerFile;
   File? ClinicPhotofile;
+
+  // For multiple days
+  final List<SessionDay> _days = [];
+
+  List<SessionDay> get days => _days;
+
+  void setSelectedEvent(String value) {
+    selectedEvent = value;
+    if (value == "Multiple Day" && _days.isEmpty) {
+      addNewDay(); // Add Day 1 by default
+    }
+    notifyListeners();
+  }
+
+  void addNewDay() {
+    _days.add(SessionDay(
+      sessionNameController: TextEditingController(),
+      sessionInfoController: TextEditingController(),
+    ));
+    notifyListeners();
+  }
+
+  void removeDay(int index) {
+    _days.removeAt(index);
+    notifyListeners();
+  }
 
   // Form & PageView
   final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
@@ -403,58 +435,40 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> createdJobListing(BuildContext context, bool isDraft) async {
+  Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
-    final result = await repo.createJobListing({
-      "postjobObj": {
-        "title": jobTitleController.text,
-        "j_type": "",
-        "j_role": selectedRole,
-        "description": jobDescController.text,
-        "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [locumDateController.text],
-        "years_of_experience": selectExperience,
-        "dental_supplier_id": supplierId,
-        "dental_practice_id": practiceId,
-        "location": locationSearchController.text,
-        "logo": logoPath,
-        "state": stateController.text,
-        "city": cityPostCodeController.text,
-        "salary": "Range",
-        "pay_min": minSalaryController.text,
-        "pay_max": maxSalaryController.text,
-        "company_name": companyNameController.text,
-        "pay_range": selectedPayRange,
-        "education": selectEducation,
-        "video": videoLinkController.text,
-        "banner_image": banner_image,
-        "clinic_logo": [
-          // {
-          //   "url":
-          //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
-          //   "type": "image",
-          //   "extension": "jpeg"
-          // }
-        ],
-        "closed_at": endDate?.toUtc().toIso8601String(),
-        "status": isDraft ? "DRAFT" : "PENDING",
-        "active_status": "ACTIVE",
-        "website_url": websiteController.text,
-        "country": selectCountry,
-        "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
-        "offered_benefits": [],
-        "hiring_period": selectHire,
-        "no_of_people": selectPositions,
-        "rate_billing": selectRate,
-        "facebook_url": facebookController.text,
-        "instagram_url": instgramController.text,
-        "linkedin_url": linkedInController.text,
-        "timings": startDate?.toUtc().toIso8601String(),
-        "timingtoggle": isStartDateEnabled == true ? "YES" : "NO",
-        //"auto_expiry_date": null,
-        "active_status_feed": isDraft ? null : "PENDING",
-        "feed_type": "JOBS"
-      }
+    final result = await repo.createCourseListing({
+      PostCourseObj(
+        courseName: "Advanced Dentistry",
+        category: "Medical",
+        courseFormat: "Online",
+        rsvpDate: "2025-10-01",
+        presentedByName: "Dr. Smith",
+        presentedByImage: "profile.png",
+        courseHeaderBanner: "header.png",
+        gallery: "gallery.png",
+        courseBannerImage: "banner.png",
+        courseDescription: "Detailed course on dentistry",
+        cpdPoints: "5",
+        numberOfSeats: "100",
+        totalPrice: "200",
+        earlyBirdPrice: "150",
+        earlyBirdEndDate: "2025-09-30",
+        topicsIncluded: "Oral Surgery, Implants",
+        learningObjectives: "Learn practical dentistry",
+        courseInfo: "8 sessions over 2 months",
+        sessionName: "Session 1",
+        sessionInfo: "Basics of surgery",
+        eventImg: "event.png",
+        sponsoredBy: "Dental Corp",
+        termsConditions: "Standard T&C",
+        cancellationRefundPolicy: "Refund before start",
+        name: "John Doe",
+        phone: "9876543210",
+        email: "john@example.com",
+        websiteUrl: "www.dentalcourse.com",
+        registerLink: "www.dentalcourse.com/register",
+      )
     });
     if (result != null) {
       Loaders.circularHideLoader(context);

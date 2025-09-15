@@ -22,6 +22,7 @@ class ImageConst {
   static const String chat = "assets/svgs/chat.svg";
   static const String cart = "assets/svgs/cart.svg";
   static const String filter = "assets/svgs/filter.svg";
+  static const String nextArrow = "assets/svgs/nextArrow.svg";
   static const String addFeed = "assets/svgs/addFeed.svg";
   static const String noCatalogue = "assets/svgs/no_catalogues.svg";
   static const String logout = 'assets/svgs/logout 1.svg';

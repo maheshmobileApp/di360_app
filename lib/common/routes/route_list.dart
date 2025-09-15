@@ -46,4 +46,5 @@ class RouteList {
   static const String courseInfo = '/courseInfo';
   static const String termsAndConditions = '/termsAndCondition';
   static const String contacts = '/contacts';
+  static const String myLearningHubScreen = '/myLearningHubScreen';
 }

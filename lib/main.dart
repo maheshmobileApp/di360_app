@@ -14,7 +14,8 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
-import 'package:di360_flutter/feature/learningHub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
@@ -67,7 +68,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
         ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
         ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
-
+        ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,

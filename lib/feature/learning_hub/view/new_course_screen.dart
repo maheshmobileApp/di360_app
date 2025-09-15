@@ -7,11 +7,11 @@ import 'package:di360_flutter/feature/job_create/view/other_info_view.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
-import 'package:di360_flutter/feature/learningHub/view/add_course.dart';
-import 'package:di360_flutter/feature/learningHub/view/contacts.dart';
-import 'package:di360_flutter/feature/learningHub/view/course_info.dart';
-import 'package:di360_flutter/feature/learningHub/view/terms_and_conditions.dart';
-import 'package:di360_flutter/feature/learningHub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
+import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/create_course_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -165,7 +165,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
-                    await jobCreateVM.createdJobListing(context, true);
+                    await jobCreateVM.createdCourseListing(context, true);
                     await context
                         .read<JobListingsViewModel>()
                         .getMyJobListingData();
@@ -191,7 +191,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
-                    await jobCreateVM.createdJobListing(context, false);
+                    await jobCreateVM.createdCourseListing(context, false);
                     navigationService.goBack();
                   } else {
                     jobCreateVM.goToNextStep();

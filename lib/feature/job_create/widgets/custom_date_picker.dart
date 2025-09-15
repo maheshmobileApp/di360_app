@@ -9,6 +9,8 @@ class CustomDatePicker extends StatelessWidget {
   final String? text;
   final String? hintText;
   final String? Function(String?)? validator;
+  final bool? isRequired;
+  final String? title;
 
   const CustomDatePicker({
     Key? key,
@@ -17,63 +19,82 @@ class CustomDatePicker extends StatelessWidget {
     this.text,
     this.hintText,
     this.validator,
+    this.isRequired,
+    this.title,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      readOnly: true,
-      onTap: onTap,
-      validator: (value) {
-        if (validator != null) {
-          return validator!(value);
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        
-        labelText: text,
-        prefixIcon: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Image.asset(
-            ImageConst.calender,
-            width: 20,
-            height: 20,
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (title != "")
+        Row(
+          children: [
+            Text(
+              title ?? "",
+              style: TextStyles.regular3(color: AppColors.black),
+            ),
+            if (isRequired ?? false)
+              const Text(
+                ' *',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+          ],
+        ),
+      const SizedBox(height: 8),
+      TextFormField(
+        controller: controller,
+        readOnly: true,
+        onTap: onTap,
+        validator: (value) {
+          if (validator != null) {
+            return validator!(value);
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Image.asset(
+              ImageConst.calender,
+              width: 20,
+              height: 20,
+            ),
+          ),
+          suffixIcon: const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
+          contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
+          hintText: hintText ?? "Date",
+          hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              width: 1.0,
+              color: AppColors.HINT_COLOR,
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              width: 1.0,
+              color: AppColors.inputBorderColor,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              width: 1.0,
+              color: Colors.red,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+              width: 1.0,
+              color: Colors.red,
+            ),
           ),
         ),
-        contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
-        hintText: hintText ?? "Date",
-        hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            width: 1.5,
-            color: AppColors.HINT_COLOR,
-          ),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            width: 1.5,
-            color: AppColors.inputBorderColor,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            width: 1.5,
-            color: Colors.red,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            width: 1.5,
-            color: Colors.red,
-          ),
-        ),
-      ),
-    );
+      )
+    ]);
   }
 }

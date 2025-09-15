@@ -4,20 +4,21 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
-import 'package:di360_flutter/feature/learningHub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class CourseInfo extends StatelessWidget with BaseContextHelpers {
-  CourseInfo({super.key});
+class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
+  TermsAndConditions({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final jobCreateVM = Provider.of<NewCourseViewModel>(context);
+    final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
 
     return SingleChildScrollView(
@@ -26,38 +27,75 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionHeader("Course Info"),
+            _sectionHeader("Terms And Conditions"),
             SizedBox(height: 16),
-            InputTextField(
-              controller: jobCreateVM.day1SessionNameController,
-              hintText: "Enter Session Name",
-              title: "Day 1 Session Name",
+             ImagePickerField(
+              title: "Sponsored By",
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Session name'
-                  : null,
-            ),
-            InputTextField(
-              controller: jobCreateVM.sessioInfoController,
-              hintText: "Enter Information",
-              title: "Session Info",
-              isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Session Info'
-                  : null,
+              showPreview: true, // show full image
             ),
             SizedBox(height: 8),
-            LogoContainer(
-              title: "Event Image",
-              imageFile: null,
-              serverImg: null,
-              onTap: () => imagePickerSelection(
-                context,
-                () => addDirectorVM.pickLogoImage(ImageSource.gallery),
-                () => addDirectorVM.pickLogoImage(ImageSource.camera),
+            InputTextField(
+              hintText: "Enter Terms & Conditions",
+              maxLength: 500,
+              maxLines: 5,
+              title: "Terms & Conditions",
+              controller: addDirectorVM.descController,
+            ),
+            SizedBox(height: 8),
+            InputTextField(
+              hintText: "Enter Cancellation & Refund Policy",
+              maxLength: 500,
+              maxLines: 5,
+              title: "Cancellation & Refund Policy",
+              controller: addDirectorVM.descController,
+            ),
+            SizedBox(height: 8),
+
+            /* if (jobCreateVM.showLocumDate) ...[
+              SizedBox(
+                height: 8,
               ),
-            ),
-            SizedBox(height: 8),
+              CustomDatePicker(
+                controller: jobCreateVM.locumDateController,
+                text: null,
+                hintText: "Date",
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    jobCreateVM.locumDateController.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                validator: (value) {
+                  if (jobCreateVM.showLocumDate &&
+                      (value == null || value.isEmpty)) {
+                    return "Please select locum date";
+                  }
+                  return null;
+                },
+              ),
+              Divider(thickness: 4),
+              SizedBox(height: 16),
+              _sectionHeader("Job Description"),
+              SizedBox(height: 16),
+              InputTextField(
+                controller: jobCreateVM.jobDescController,
+                hintText: "Enter job description here",
+                maxLength: 500,
+                maxLines: 5,
+                title: "Description",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter job description'
+                    : null,
+              ),
+            ],*/
           ],
         ),
       ),
