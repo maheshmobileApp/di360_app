@@ -1,4 +1,6 @@
-import 'package:di360_flutter/feature/talents/model/talents_model.dart';
+//import 'package:di360_flutter/feature/talents/model/talents_model.dart';
+
+import '../../talents/model/job_profile.dart';
 
 class TalentListingtCountResponse {
   TalentListingtCountData? data;

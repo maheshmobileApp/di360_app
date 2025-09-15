@@ -5,7 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
-
+import '../../talents/model/job_profile.dart';
 class TalentsCard extends StatelessWidget with BaseContextHelpers {
      final JobProfile? talentList;
   TalentsCard({super.key,  this.talentList});

@@ -5,7 +5,7 @@ import 'package:di360_flutter/feature/talent_listing/model/talent_enquiry_listin
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:flutter/material.dart';
-
+import '../../talents/model/job_profile.dart';
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
   final List<String> roleOptions = [

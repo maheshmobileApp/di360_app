@@ -10,7 +10,7 @@ import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_v
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-
+import '../../talents/model/job_profile.dart';
 class TalentListingCard extends StatelessWidget with BaseContextHelpers {
   final JobProfile? jobProfiles;
   final TalentListingViewModel vm;
@@ -57,7 +57,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
               child: _logoWithTitle(
                 context,
                 profileImageUrl,
-                jobProfiles?.jobDesignation ?? '',
+                jobProfiles?.fullName ?? '',
                 jobProfiles?.professionType ?? '',
               ),
             ),

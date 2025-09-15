@@ -6,7 +6,7 @@ import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
-
+import '../../talents/model/job_profile.dart';
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
 
