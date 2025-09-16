@@ -1,7 +1,6 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -13,27 +12,35 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-    final teamMemberList = ConstantData.teamMemberList.toSet().toList();
-    final serviceList = ConstantData.serviceList.toSet().toList();
+    final teamMemberList =
+        addDirectorVM.getBasicInfoData.first.directoryTeamMembers;
+    final serviceList = addDirectorVM.getBasicInfoData.first.directoryServices;
     final daysList = ConstantData.DaysList.toSet().toList();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionHeader("Add Appointments"),
+          sectionHeader("Add Appointments"),
           addVertical(12),
           CustomDropDown<String>(
             title: 'Select Team Member',
             hintText: 'Select',
             isRequired: true,
-            value: teamMemberList.contains(addDirectorVM.selectedTeamMember)
-                ? addDirectorVM.selectedTeamMember
-                : null,
+            value: addDirectorVM.selectedTeamMember?.id,
             items: teamMemberList
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-            onChanged: (val) => addDirectorVM.selectedTeamMember = val,
+                    ?.map((e) => DropdownMenuItem<String>(
+                          value: e.id,
+                          child: Text(e.name ?? ''),
+                        ))
+                    .toList() ??
+                [],
+            onChanged: (val) {
+              if (val != null) {
+                final member = teamMemberList?.firstWhere((m) => m.id == val);
+                addDirectorVM.selectedTeamMember = member;
+              }
+            },
             validator: (value) => value == null || value.isEmpty
                 ? 'Please Select Team Member'
                 : null,
@@ -43,13 +50,20 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
             title: 'Services',
             hintText: 'Select',
             isRequired: true,
-            value: serviceList.contains(addDirectorVM.selectedTeamService)
-                ? addDirectorVM.selectedTeamService
-                : null,
+            value: addDirectorVM.selectdService?.id,
             items: serviceList
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-            onChanged: (val) => addDirectorVM.selectedTeamService = val,
+                    ?.map((e) => DropdownMenuItem<String>(
+                          value: e.id,
+                          child: Text(e.name ?? ''),
+                        ))
+                    .toList() ??
+                [],
+            onChanged: (val) {
+              if (val != null) {
+                final member = serviceList?.firstWhere((m) => m.id == val);
+                addDirectorVM.selectdService = member;
+              }
+            },
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please Select Service' : null,
           ),
@@ -78,33 +92,10 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
               Flexible(
                 flex: 1,
                 child: InputTextField(
-                  title: "Service Time In Min",
-                  hintText: "00:00",
-                  readOnly: true,
-                  controller: addDirectorVM.SelectServiceTimeminController,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                          picked.minute,
-                        );
-                        addDirectorVM.setServiceTimeDate(dateTime);
-                        addDirectorVM.SelectServiceTimeminController.text =
-                            picked.format(context);
-                      }
-                    },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
-                ),
+                    title: "Service Time In Min",
+                    hintText: "100",
+                    readOnly: true,
+                    controller: addDirectorVM.serviceTimemInCntr),
               ),
             ],
           ),
@@ -125,16 +116,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                         initialTime: TimeOfDay.now(),
                       );
                       if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                        );
-                        addDirectorVM.setServiceStartTimeDate(dateTime);
                         addDirectorVM.serviceStartTimeCntr.text =
                             picked.format(context);
+                        addDirectorVM.generateTimeSlots(context);
                       }
                     },
                     child: Icon(Icons.access_time, size: 20),
@@ -156,16 +140,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                         initialTime: TimeOfDay.now(),
                       );
                       if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                        );
-                        addDirectorVM.setServiceEndTimeDate(dateTime);
                         addDirectorVM.serviceEndTimeCntr.text =
                             picked.format(context);
+                        addDirectorVM.generateTimeSlots(context);
                       }
                     },
                     child: Icon(Icons.access_time, size: 20),
@@ -182,7 +159,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                 child: InputTextField(
                   title: "Break Start Time",
                   hintText: "00:00",
-                  controller: addDirectorVM.SelecteBreakStartTimeController,
+                  controller: addDirectorVM.breakStartTimeCntr,
                   readOnly: true,
                   prefixIcon: GestureDetector(
                     onTap: () async {
@@ -191,16 +168,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                         initialTime: TimeOfDay.now(),
                       );
                       if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                        );
-                        addDirectorVM.setBreakStartTimeDate(dateTime);
-                        addDirectorVM.SelecteBreakStartTimeController.text =
+                        addDirectorVM.breakStartTimeCntr.text =
                             picked.format(context);
+                        addDirectorVM.generateTimeSlots(context);
                       }
                     },
                     child: Icon(Icons.access_time, size: 20),
@@ -213,7 +183,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                 child: InputTextField(
                   title: "Break End Time",
                   hintText: "00:00",
-                  controller: addDirectorVM.SelectBreakEndTimeController,
+                  controller: addDirectorVM.breakEndTimeCntr,
                   readOnly: true,
                   prefixIcon: GestureDetector(
                     onTap: () async {
@@ -222,16 +192,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                         initialTime: TimeOfDay.now(),
                       );
                       if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                        );
-                        addDirectorVM.setBreakEndTimeDate(dateTime);
-                        addDirectorVM.SelectBreakEndTimeController.text =
+                        addDirectorVM.breakEndTimeCntr.text =
                             picked.format(context);
+                        addDirectorVM.generateTimeSlots(context);
                       }
                     },
                     child: Icon(Icons.access_time, size: 20),
@@ -242,13 +205,6 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
           ),
         ],
       ),
-    );
-  }
-
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
 }

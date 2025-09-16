@@ -4,10 +4,11 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -16,6 +17,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
@@ -54,19 +56,17 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   TextEditingController selectWeekCntr = TextEditingController();
   TextEditingController serviceStartTimeCntr = TextEditingController();
   TextEditingController serviceEndTimeCntr = TextEditingController();
-  TextEditingController SelecteBreakStartTimeController =
-      TextEditingController();
-  TextEditingController SelectBreakEndTimeController = TextEditingController();
-  TextEditingController SelectServiceTimeminController =
-      TextEditingController();
+  TextEditingController breakStartTimeCntr = TextEditingController();
+  TextEditingController breakEndTimeCntr = TextEditingController();
+  TextEditingController serviceTimemInCntr = TextEditingController();
 
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
       List.generate(11, (_) => GlobalKey<FormState>());
 
   final List<int> stepsWithValidation = [0];
-  final List<AppoinmentsModel> Appoinments = [];
   List<DirectoryBusinessTypes> directoryBusinessTypes = [];
+  List<String> dayWiseTimeSlots = [];
 
   // Navigation
   final PageController pageController = PageController();
@@ -87,29 +87,29 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   File? galleryFile;
   //
   // Selected dropdowns
-  String? selectedTeamMember;
-  String? selectedTeamService;
   String? selectedDays;
   String? selectedAccount;
   DirectoryCategories? selectedBusineestype;
   List<GetDirectories> getBasicInfoData = [];
-  AppoinmentsModel? selectedAppoinment;
 
-  //
-  // Other fields
-  DateTime? ServiceTimeDate;
-  DateTime? ServiceStartTimeDate;
-  DateTime? ServiceEndTimeDate;
-  DateTime? BreakStartTimeDate;
-  DateTime? BreakEndTimeDate;
-  DateTime? SelectTime;
-  //
   // Toggles
   bool serviceShowApmt = false;
   bool isEditService = false;
   bool appointmentShowVal = false;
-  bool AllDay = false;
   bool ourTeamShowVal = false;
+
+  DirectoryTeamMembers? selectedTeamMember;
+  DirectoryServices? selectdService;
+
+  void setSelectedTeamMember(DirectoryTeamMembers? members) {
+    selectedTeamMember = members;
+    notifyListeners();
+  }
+
+  void setSelectedServices(DirectoryServices? ser) {
+    selectdService = ser;
+    notifyListeners();
+  }
 
   void toggleService(bool value) {
     serviceShowApmt = value;
@@ -126,11 +126,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void toggleAllDay(bool value) {
-    AllDay = value;
-    notifyListeners();
-  }
-
   void toggleOurTeam(bool value) {
     ourTeamShowVal = value;
     notifyListeners();
@@ -141,8 +136,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     return formKeys[0].currentState?.validate() ?? false;
   }
 
-  //
-  // Step navigation
   void goToNextStep() {
     if (!validateCurrentStep()) return;
     if (_currentStep < totalSteps - 1) {
@@ -179,19 +172,22 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> fetchTheDirectorData(BuildContext context) async {
+    final editVM = context.read<EditDeleteDirectorViewModel>();
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  //  Loaders.circularShowLoader(context);
+    //  Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.getDirectoriesData();
     if (res.isNotEmpty) {
+      _currentStep = 0;
       getBasicInfoData = res;
       await context.read<DirectorViewModel>().getFollowersCount(userId);
+      await editVM.getAppointments(context);
       getBasicInfoData.isNotEmpty
           ? navigationService.navigateTo(RouteList.myDirectorScreen)
           : navigationService.navigateTo(RouteList.adddirectorview);
-    //  Loaders.circularHideLoader(context);
+      //  Loaders.circularHideLoader(context);
       assignBasicInfoData();
     } else {
-    //  Loaders.circularHideLoader(context);
+      clearBasicInfoData();
       navigationService.navigateTo(RouteList.adddirectorview);
     }
     notifyListeners();
@@ -232,38 +228,72 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void clearBasicInfoData() {
+    CompanyNameController.clear();
+    nameController.clear();
+    emailController.clear();
+    ABNNumberController.clear();
+    MobileNumberController.clear();
+    alternateNumberController.clear();
+    AdreessController.clear();
+    selectedBusineestype = null;
+    descController.clear();
+    notifyListeners();
+  }
+
   void setSelectedBusineestype(DirectoryCategories emp) {
     selectedBusineestype = emp;
     notifyListeners();
   }
 
-  void setServiceTimeDate(DateTime date) {
-    ServiceTimeDate = date;
-    notifyListeners();
+  DateTime? _parseTimeString(BuildContext context, String timeStr) {
+    if (timeStr.trim().isEmpty) return null;
+    try {
+      final locale = Localizations.localeOf(context).toString();
+      final parsed = DateFormat.jm(locale).parse(timeStr);
+      final now = DateTime.now();
+      return DateTime(now.year, now.month, now.day, parsed.hour, parsed.minute);
+    } catch (_) {
+      try {
+        final parsed = DateFormat('HH:mm').parse(timeStr);
+        final now = DateTime.now();
+        return DateTime(
+            now.year, now.month, now.day, parsed.hour, parsed.minute);
+      } catch (_) {
+        return null;
+      }
+    }
   }
 
-  void setServiceStartTimeDate(DateTime date) {
-    ServiceStartTimeDate = date;
-    notifyListeners();
-  }
+  void generateTimeSlots(BuildContext context, {int interval = 30}) {
+    final start = _parseTimeString(context, serviceStartTimeCntr.text);
+    final end = _parseTimeString(context, serviceEndTimeCntr.text);
 
-  void setServiceEndTimeDate(DateTime date) {
-    ServiceEndTimeDate = date;
-    notifyListeners();
-  }
+    if (start == null || end == null) {
+      dayWiseTimeSlots = [];
+      notifyListeners();
+      return;
+    }
 
-  void setBreakStartTimeDate(DateTime date) {
-    BreakStartTimeDate = date;
-    notifyListeners();
-  }
+    DateTime actualEnd = end;
+    if (!actualEnd.isAfter(start)) {
+      actualEnd = actualEnd.add(const Duration(days: 1));
+    }
 
-  void setBreakEndTimeDate(DateTime date) {
-    BreakEndTimeDate = date;
-    notifyListeners();
-  }
+    final formatter = DateFormat('HH:mm');
+    final slots = <String>[];
 
-  void setSelectedTime(DateTime date) {
-    SelectTime = date;
+    DateTime current = start;
+    while (current.isBefore(actualEnd)) {
+      final next = current.add(Duration(minutes: interval));
+      if (next.isAfter(actualEnd)) break;
+      slots.add("${formatter.format(current)}-${formatter.format(next)}");
+      current = next;
+    }
+
+    dayWiseTimeSlots = slots;
+    serviceTimemInCntr.text =
+        (actualEnd.difference(start).inMinutes).toString();
     notifyListeners();
   }
 
@@ -540,22 +570,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void addAppointments() {
-    Appoinments.add(
-      AppoinmentsModel(
-        teamMemberName: selectedTeamMember,
-        services: selectedTeamService,
-        selectADay: selectedDays,
-        serviceTime: ServiceTimeDate,
-        serviceStartTime: ServiceStartTimeDate,
-        serviceEndTime: ServiceEndTimeDate,
-        breakStartTime: BreakStartTimeDate,
-        breakEndTime: BreakEndTimeDate,
-      ),
-    );
-    notifyListeners();
-  }
-
   Future<void> addFAQs(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.addFaqs({
@@ -605,31 +619,6 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     testiNameCntr.clear();
     roleCntr.clear();
     messageCntr.clear();
-    notifyListeners();
-  }
-
-  void loadAppointmentData(AppoinmentsModel appointment) {
-    selectedTeamMember = appointment.teamMemberName;
-    selectedTeamService = appointment.services;
-    selectedDays = appointment.selectADay;
-    ServiceTimeDate = appointment.serviceTime;
-    ServiceStartTimeDate = appointment.serviceStartTime;
-    ServiceEndTimeDate = appointment.serviceEndTime;
-    BreakStartTimeDate = appointment.breakStartTime;
-    BreakEndTimeDate = appointment.breakEndTime;
-  }
-
-  void updateAppointment(int index) {
-    Appoinments[index] = AppoinmentsModel(
-      teamMemberName: selectedTeamMember ?? '',
-      services: selectedTeamService ?? '',
-      selectADay: selectedDays ?? '',
-      serviceTime: ServiceTimeDate,
-      serviceStartTime: ServiceStartTimeDate,
-      serviceEndTime: ServiceEndTimeDate,
-      breakStartTime: BreakStartTimeDate,
-      breakEndTime: BreakEndTimeDate,
-    );
     notifyListeners();
   }
 

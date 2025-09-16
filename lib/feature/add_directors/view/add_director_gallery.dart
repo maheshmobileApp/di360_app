@@ -55,6 +55,10 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
             ),
             if (showForm) _buildGalleryForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
+            addDirectorVM
+                  .getBasicInfoData.first.directoryGalleryPosts?.first.image == [] ? Center(
+                    child: Text('No gallery')
+                  ) :
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -66,7 +70,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryGalleryCard(
-                    imageUrl: galleryItem?.image?.first.url,
+                    imageUrl: galleryItem?.image == [] ? '' :  galleryItem?.image?.first.url,
                     onEdit: () {
                       editVM.updateIsEditGallery(true);
                       setState(() {

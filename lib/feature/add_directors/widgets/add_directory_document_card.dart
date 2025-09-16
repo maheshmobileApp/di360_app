@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddDirectoryDocumentCard extends StatelessWidget {
   final String title;
@@ -40,6 +41,16 @@ class AddDirectoryDocumentCard extends StatelessWidget {
           ),
           SizedBox(width: 10),
           GestureDetector(
+              onTap: () async {
+                if (await canLaunchUrl(Uri.parse(imageFile ?? ''))) {
+                  await launchUrl(Uri.parse(imageFile ?? ''),
+                      mode: LaunchMode.externalApplication);
+                }
+              },
+              child:
+                  Icon(Icons.download, size: 25, color: AppColors.greenColor)),
+          SizedBox(width: 10),
+          GestureDetector(
               onTap: onEdit,
               child: Icon(Icons.edit, color: AppColors.blueColor, size: 25)),
           SizedBox(width: 20),
@@ -55,167 +66,4 @@ class AddDirectoryDocumentCard extends StatelessWidget {
       ),
     );
   }
-
-  // void showDocumentOptionsBottomSheet(
-  //     BuildContext context, DocumentModel document, int index) {
-  //   final addDirectorVM =
-  //       Provider.of<AddDirectorViewModel>(context, listen: false);
-
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: AppColors.black,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-  //     ),
-  //     builder: (context) {
-  //       return DraggableScrollableSheet(
-  //         initialChildSize: 0.5,
-  //         maxChildSize: 0.8,
-  //         minChildSize: 0.4,
-  //         expand: false,
-  //         builder: (context, scrollController) {
-  //           return Container(
-  //             decoration: const BoxDecoration(
-  //               color: AppColors.buttomBarColor,
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-  //             ),
-  //             child: SafeArea(
-  //               top: false,
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Padding(
-  //                     padding: const EdgeInsets.all(16),
-  //                     child: Row(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         CircleAvatar(
-  //                           radius: 24,
-  //                           backgroundColor: AppColors.buttomBarColor,
-  //                           backgroundImage: document.imageFile != null
-  //                               ? FileImage(document.imageFile!)
-  //                               : null,
-  //                         ),
-  //                         const SizedBox(width: 12),
-  //                         Expanded(
-  //                           child: Text(
-  //                             document.name,
-  //                             style: const TextStyle(
-  //                               fontWeight: FontWeight.w600,
-  //                               fontSize: 16,
-  //                               color: Colors.black,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   const Spacer(),
-  //                   CustomBottomButton(
-  //                     onFirst: () {
-  //                       addDirectorVM.documentsList.remove(document);
-  //                       Navigator.pop(context);
-  //                     },
-  //                     onSecond: () {
-  //                       Navigator.pop(context);
-  //                       showEditDocumentBottomSheet(context, document, index);
-  //                     },
-  //                     firstLabel: "Delete",
-  //                     secondLabel: "Edit",
-  //                     firstBgColor: AppColors.timeBgColor,
-  //                     firstTextColor: AppColors.primaryColor,
-  //                     secondBgColor: AppColors.primaryColor,
-  //                     secondTextColor: AppColors.whiteColor,
-  //                   )
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void showEditDocumentBottomSheet(
-  //     BuildContext context, DocumentModel document, int index) {
-  //   final addDirectorVM =
-  //       Provider.of<AddDirectorViewModel>(context, listen: false);
-
-  //   addDirectorVM.selectedDocument = document;
-  //   addDirectorVM.loadDocumentData(document);
-
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: AppColors.black,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-  //     ),
-  //     builder: (context) {
-  //       return DraggableScrollableSheet(
-  //         initialChildSize: 0.85,
-  //         maxChildSize: 0.95,
-  //         minChildSize: 0.6,
-  //         expand: false,
-  //         builder: (context, scrollController) {
-  //           return Container(
-  //             decoration: const BoxDecoration(
-  //               color: AppColors.buttomBarColor,
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-  //             ),
-  //             child: SafeArea(
-  //               top: false,
-  //               child: Column(
-  //                 children: [
-  //                   Expanded(
-  //                     child: SingleChildScrollView(
-  //                       controller: scrollController,
-  //                       padding: const EdgeInsets.symmetric(
-  //                           horizontal: 16, vertical: 20),
-  //                       child: Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           TextField(
-  //                             controller: addDirectorVM.documentNameController,
-  //                             decoration: const InputDecoration(
-  //                               labelText: "Document Name",
-  //                             ),
-  //                           ),
-  //                           const SizedBox(height: 20),
-  //                           if (addDirectorVM.documentFile != null)
-  //                             Image.file(
-  //                               addDirectorVM.documentFile!,
-  //                               height: 100,
-  //                             ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   CustomBottomButton(
-  //                     onFirst: () {
-  //                       addDirectorVM.documentsList.remove(document);
-  //                       Navigator.pop(context);
-  //                     },
-  //                     onSecond: () {
-  //                       addDirectorVM.updateDocument(index);
-  //                       Navigator.pop(context);
-  //                     },
-  //                     firstLabel: "Delete",
-  //                     secondLabel: "Save",
-  //                     firstBgColor: AppColors.timeBgColor,
-  //                     firstTextColor: AppColors.primaryColor,
-  //                     secondBgColor: AppColors.primaryColor,
-  //                     secondTextColor: AppColors.whiteColor,
-  //                   )
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }
