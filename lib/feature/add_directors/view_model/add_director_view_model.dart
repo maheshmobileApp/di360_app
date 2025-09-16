@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_directors/model/appoinments_model.dart
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -15,6 +16,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   final AddDirectorRepositoryImpl addDirectorRepositoryImpl =
@@ -176,16 +178,30 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getDirectories() async {
+  Future<void> fetchTheDirectorData(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
   //  Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.getDirectoriesData();
     if (res.isNotEmpty) {
-    //  Loaders.circularHideLoader(context);
       getBasicInfoData = res;
+      await context.read<DirectorViewModel>().getFollowersCount(userId);
+      getBasicInfoData.isNotEmpty
+          ? navigationService.navigateTo(RouteList.myDirectorScreen)
+          : navigationService.navigateTo(RouteList.adddirectorview);
+    //  Loaders.circularHideLoader(context);
       assignBasicInfoData();
     } else {
     //  Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.adddirectorview);
+    }
+    notifyListeners();
+  }
+
+  Future<void> getDirectories() async {
+    final res = await addDirectorRepositoryImpl.getDirectoriesData();
+    if (res.isNotEmpty) {
+      getBasicInfoData = res;
+      assignBasicInfoData();
     }
     notifyListeners();
   }

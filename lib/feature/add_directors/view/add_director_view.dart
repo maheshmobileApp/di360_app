@@ -159,6 +159,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                   if ((currentFormKey.currentState?.validate() ?? false) &&
                       addDirectorVM.selectedBusineestype != null) {
                     if (isLastStep) {
+                      navigationService.goBack();
                     } else {
                       if (currentStep == 0) {
                         addDirectorVM.getBasicInfoData.isEmpty
