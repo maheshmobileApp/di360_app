@@ -13,10 +13,8 @@ import 'package:provider/provider.dart';
 
 class JobProfileScreen extends StatefulWidget {
   const JobProfileScreen({super.key});
-
   @override
-  State<JobProfileScreen> createState() =>
-      _JobProfileListingScreenState();
+  State<JobProfileScreen> createState() => _JobProfileListingScreenState();
 }
 
 class _JobProfileListingScreenState extends State<JobProfileScreen>
@@ -24,20 +22,44 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final vm =
-          Provider.of<JobProfileListingViewModel>(context, listen: false);
-        vm.fetchJobProfiles();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchProfile();
     });
+  }
+
+  void fetchProfile() {
+    final vm = Provider.of<JobProfileListingViewModel>(context, listen: false);
+    vm.fetchJobProfiles();
   }
 
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
     final vm = Provider.of<JobProfileListingViewModel>(context);
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryColor,
+        icon: Icon(
+          vm.filteredProfiles.isEmpty ? Icons.add : Icons.edit,
+          color: Colors.white,
+        ),
+        label: Text(
+          vm.filteredProfiles.isEmpty ? "Create Profile" : "Edit Profile",
+          style: const TextStyle(color: Colors.white),
+        ),
+        onPressed: () async {
+          await vm.fetchJobProfiles();
+          if (vm.filteredProfiles.isEmpty) {
+            await navigationService.navigateTo(RouteList.JobProfileView);
+            await vm.fetchJobProfiles();
+          } else {
+            await navigationService.navigateTo(
+              RouteList.JobProfileView,
+            );
+          }
+        },
+      ),
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         title: Stack(
@@ -55,9 +77,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
         actions: [
           Builder(
             builder: (context) => GestureDetector(
-              onTap: () {
-                Scaffold.of(context).openEndDrawer();
-              },
+              onTap: () => Scaffold.of(context).openEndDrawer(),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -85,8 +105,8 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           SvgPicture.asset(ImageConst.search, color: AppColors.black),
           addHorizontal(15),
           GestureDetector(
-            onTap: () => navigationService
-                .navigateTo(RouteList.TalentListingFilter),
+            onTap: () =>
+                navigationService.navigateTo(RouteList.TalentListingFilter),
             child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
           ),
           addHorizontal(15),
@@ -103,29 +123,29 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                 final status = vm.statuses[index];
                 final isSelected = vm.selectedStatus == status.toUpperCase();
                 return Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 10),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 10),
-                    decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? const LinearGradient(
-                              colors: [Colors.pink, AppColors.primaryColor],
-                            )
-                          : null,
-                      color: isSelected ? null : AppColors.whiteColor,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: AppColors.primaryColor),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  decoration: BoxDecoration(
+                    gradient: isSelected
+                        ? const LinearGradient(
+                            colors: [Colors.pink, AppColors.primaryColor],
+                          )
+                        : null,
+                    color: isSelected ? null : AppColors.whiteColor,
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: AppColors.primaryColor),
+                  ),
+                  child: Text(
+                    vm.displayName(status),
+                    style: TextStyles.regular2(
+                      color: isSelected
+                          ? AppColors.whiteColor
+                          : AppColors.primaryColor,
                     ),
-                    child: Text(
-                      vm.displayName(status),
-                      style: TextStyles.regular2(
-                        color: isSelected
-                            ? AppColors.whiteColor
-                            : AppColors.primaryColor,
-                      ),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
           ),
@@ -157,4 +177,4 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
       ),
     );
   }
-    }
+}

@@ -123,9 +123,9 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                     [],
                 selectedIndices: model.selectedIndices['employment'] ?? {},
                 onToggle: (index) => model.selectItem('employment', index),
-                child: model.showLocumDate
-                    ? _locumDateSection(context, model)
-                    : null,
+               // child: model.showLocumDate
+                //    ? _locumDateSection(context, model)
+                //    : null,
               ),
               _filterSectionWithDropdown(
                 title: 'Filter by Experience',
@@ -297,7 +297,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _locumDateSection(BuildContext context, JobSeekViewModel model) {
+ /* Widget _locumDateSection(BuildContext context, JobSeekViewModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,5 +326,5 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
           ),
       ],
     );
-  }
+  }*/
 }

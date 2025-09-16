@@ -14,8 +14,27 @@ import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobProfileView extends StatelessWidget with BaseContextHelpers {
+class JobProfileView extends StatefulWidget with BaseContextHelpers {
   JobProfileView({super.key});
+
+  @override
+  State<JobProfileView> createState() => _JobProfileViewState();
+}
+
+class _JobProfileViewState extends State<JobProfileView> {
+  @override
+  void initState() {
+    initilizeTheProfileData();
+    super.initState();
+  }
+
+  initilizeTheProfileData() async {
+    final jobProfileVM =
+        Provider.of<JobProfileViewModel>(context, listen: false);
+    await jobProfileVM.initializeTheData();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileViewModel>(context);
@@ -79,10 +98,11 @@ class JobProfileView extends StatelessWidget with BaseContextHelpers {
     child: _getStepWidget(stepIndex),
   );
 }
+
 Widget _getStepWidget(JobProfileStep stepIndex) {
   switch (stepIndex) {
     case JobProfileStep.PERSONAL:
-      return JobProfilePersInfo();
+      return  JobProfilePersInfo();
     case JobProfileStep.PROFESSIONAL:
       return JobProfileProfeInfo();
     case JobProfileStep.SKILLS:
@@ -137,6 +157,7 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
               height:42,
               onPressed: () {
                 print("Save Draft Clicked");
+                jobProfileVM.createJobProfile(context, true);
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -152,8 +173,11 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
               onPressed: () {
                 final currentFormKey =
                     jobProfileVM.formKeys[jobProfileVM.currentStep];
-                if (currentFormKey.currentState?.validate() ?? false) {
+                final isValid = currentFormKey.currentState!.validate();
+                if (isValid) {
                   if (isLastStep) {
+                    print("Submit Clicked");
+                    jobProfileVM.createJobProfile(context, false);
                   } else {
                    jobProfileVM.goToNextStep();
                   }
@@ -167,4 +191,4 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
       ),
     );
   }
-  }
+}

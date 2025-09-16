@@ -21,25 +21,23 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionHeader("Professional Info"),
-        const SizedBox(height: 16),
+          addVertical(16),
 
         InputTextField(
+              controller: jobProfileVM.jobDesignationController,
           hintText: "Enter Job Designation",
           title: "Job Designation",
         ),
-        const SizedBox(height: 8),
-
+         addVertical(16),
         InputTextField(
+              controller: jobProfileVM.currentCompanyController,
           hintText: "Enter Current Company",
           title: "Current Company",
         ),
-        const SizedBox(height: 8),
-
+        addVertical(16),
         _buildWorkRight(jobProfileVM),
-        const SizedBox(height: 8),
-
+        addVertical(16),
         _buildExperience(jobProfileVM),
-        const SizedBox(height: 8),
       ],
     ),
   ),
