@@ -34,7 +34,7 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
               Expanded(
                 child: ListView(
                   children: [
-                    buildFilters(context, model),
+                    //buildFilters(context, model),
                   ],
                 ),
               ),
@@ -76,7 +76,7 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget buildFilters(BuildContext context, TalentListingViewModel model) {
+/*Widget buildFilters(BuildContext context, TalentListingViewModel model) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Container(
@@ -160,7 +160,7 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
         ),
       ),
     );
-  }
+  }*/
   Widget _filterSectionWithDropdown({
     required String title,
     required Widget child,
@@ -190,3 +190,4 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
     );
   }
 }
+
