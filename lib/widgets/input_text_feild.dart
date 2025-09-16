@@ -105,6 +105,7 @@ class InputTextField extends StatelessWidget {
         ),
         SizedBox(height: 10),
         TextFormField(
+
           obscuringCharacter: obscuringCharacter ?? '*',
           focusNode:
               focusNode ?? FocusNode(canRequestFocus: canRequestFocus ?? true),
