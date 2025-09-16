@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/post_course_reque
 import 'package:di360_flutter/feature/learning_hub/model_class/session_day.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +24,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   NewCourseViewModel() {
     getUserId();
-    fetchJobRoles();
+    fetchCategory();
     fetchEmpTypes();
   }
 
@@ -44,6 +45,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final emailController = TextEditingController();
   final websiteUrlController = TextEditingController();
   final registerLinkController = TextEditingController();
+  final termsAndConditionsController = TextEditingController();
+  final cancellationController = TextEditingController();
 
   // Controllers
   final TextEditingController jobTitleController = TextEditingController();
@@ -62,13 +65,61 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final countryController = TextEditingController();
 
   // NEW: Locum date controller
-  final locumDateController = TextEditingController();
+  //final locumDateController = TextEditingController();
   final rsvpDateController = TextEditingController();
   final earlyBirdDateController = TextEditingController();
   bool showLocumDate = false;
 
+  //imageFields
+  File? selectedPresentedImg;
+  List<File>? selectedCourseHeaderBanner;
+  List<File>? selectedGallery;
+  List<File>? selectedCourseBannerImg;
+  List<File>? selectedEventImg;
+  List<File>? selectedEventImgs;
+  List<File>? selectedsponsoredByImg;
+  dynamic presenter_image;
+
+  List<CourseBannerImage> courseBannerImageHeaderList = [];
+  List<CourseGallery> selectedGalleryList = [];
+  List<CourseBannerVideo> courseBannerImgList = [];
+  List<Images> eventImgList = [];
+  List<SponsorByImage> sponsoredByImgList = [];
+
+  List<CourseEventInfo> courseInfoList = [];
+
+  void setCourseHeaderBaner(List<File>? value) {
+    selectedCourseHeaderBanner = value;
+    notifyListeners();
+  }
+
+  void setPresentedImg(File? value) {
+    selectedPresentedImg = value;
+    notifyListeners();
+  }
+
+  void setGallery(List<File>? value) {
+    selectedGallery = value;
+    notifyListeners();
+  }
+
+  void setCourseBannerImg(List<File>? value) {
+    selectedCourseBannerImg = value;
+    notifyListeners();
+  }
+
+  void setEventImg(List<File>? value) {
+    selectedEventImg = value;
+    notifyListeners();
+  }
+
+  void setSponsoredBy(List<File>? value) {
+    selectedsponsoredByImg = value;
+    notifyListeners();
+  }
+
   // Selected dropdown values
-  String? selectedRole;
+  String? selectedCategory;
   String? selectedEmploymentType;
   String? selectedPayRange;
   String? selectRate;
@@ -93,32 +144,35 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   // Files
   File? logoFile;
-  File? bannerFile;
+  //File? bannerFile;
   File? ClinicPhotofile;
 
-  // For multiple days
-  final List<SessionDay> _days = [];
-
-  List<SessionDay> get days => _days;
-
-  void setSelectedEvent(String value) {
-    selectedEvent = value;
-    if (value == "Multiple Day" && _days.isEmpty) {
-      addNewDay(); // Add Day 1 by default
-    }
-    notifyListeners();
-  }
+  List<SessionDay> days = [SessionDay()];
 
   void addNewDay() {
-    _days.add(SessionDay(
-      sessionNameController: TextEditingController(),
-      sessionInfoController: TextEditingController(),
-    ));
+    days.add(SessionDay());
     notifyListeners();
   }
 
   void removeDay(int index) {
-    _days.removeAt(index);
+    days[index].dispose();
+    days.removeAt(index);
+    notifyListeners();
+  }
+
+  void setEventImgs(int dayIndex, List<File> files) {
+    selectedEventImgs = files;
+    notifyListeners();
+  }
+
+  void disposeControllers() {
+    for (var day in days) {
+      day.dispose();
+    }
+  }
+
+  void setSelectedEvent(String value) {
+    selectedEvent = value;
     notifyListeners();
   }
 
@@ -209,8 +263,16 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   // ───── Navigation Methods ─────
   void goToNextStep() {
     if (!validateCurrentStep()) return;
-    if (_currentStep == 1 && bannerFile != null) {
-      validateLogoAndBanner();
+    if (_currentStep == 0 && selectedPresentedImg != null) {
+      validatePresenterImg();
+    } else if (_currentStep == 0 && selectedCourseHeaderBanner != null) {
+      validateCourseHeaderBanner();
+    } else if (_currentStep == 0 && selectedGallery != null) {
+      validateGallery();
+    } else if (_currentStep == 0 && selectedCourseBannerImg != null) {
+      validateCourseBanner();
+    } else if (_currentStep == 1 && selectedEventImg != null) {
+      validateEventImgList();
     }
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
@@ -244,175 +306,200 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
 
-  void validateLogoAndBanner() async {
-    var value = await _http.uploadImage(bannerFile?.path);
-    banner_image = value['url'];
-    print(banner_image);
+  void validatePresenterImg() async {
+    var value = await _http.uploadImage(selectedPresentedImg?.path);
+    presenter_image = value['url'];
+    print(presenter_image);
     notifyListeners();
+  }
+
+  Future<void> validateCourseHeaderBanner() async {
+    if (selectedCourseHeaderBanner == null ||
+        selectedCourseHeaderBanner!.isEmpty) return;
+
+    courseBannerImageHeaderList.clear(); // reset before uploading new ones
+
+    for (var file in selectedCourseHeaderBanner!) {
+      // Upload image
+      var response = await _http.uploadImage(file.path);
+
+      // Assuming API response: { "url": "...", "type": "...", "size": ... }
+      String url = response['url'];
+      String type = response['type'] ?? "image/jpeg";
+      int size = response['size'] ?? file.lengthSync();
+
+      // Add to list
+      courseBannerImageHeaderList.add(
+        CourseBannerImage(
+          name: file.path.split('/').last, // file name
+          url: url,
+          type: type,
+          size: size,
+        ),
+      );
+    }
+
+    print(courseBannerImageHeaderList.map((e) => e.toJson()).toList());
+    notifyListeners();
+  }
+
+  Future<void> validateGallery() async {
+    if (selectedGallery == null || selectedGallery!.isEmpty) return;
+
+    selectedGalleryList.clear(); // reset before uploading new ones
+
+    for (var file in selectedGallery!) {
+      // Upload image
+      var response = await _http.uploadImage(file.path);
+
+      // Assuming API response: { "url": "...", "type": "...", "size": ... }
+      String url = response['url'];
+      String type = response['type'] ?? "image/jpeg";
+      int size = response['size'] ?? file.lengthSync();
+
+      // Add to list
+      selectedGalleryList.add(
+        CourseGallery(
+          name: file.path.split('/').last, // file name
+          url: url,
+          type: type,
+          size: size,
+        ),
+      );
+    }
+
+    print(selectedGalleryList.map((e) => e.toJson()).toList());
+    notifyListeners();
+  }
+
+  Future<void> validateCourseBanner() async {
+    if (selectedCourseBannerImg == null || selectedCourseBannerImg!.isEmpty)
+      return;
+
+    courseBannerImgList.clear(); // reset before uploading new ones
+
+    for (var file in selectedCourseBannerImg!) {
+      // Upload image
+      var response = await _http.uploadImage(file.path);
+
+      // Assuming API response: { "url": "...", "type": "...", "size": ... }
+      String url = response['url'];
+      String type = response['type'] ?? "image/jpeg";
+      int size = response['size'] ?? file.lengthSync();
+
+      // Add to list
+      courseBannerImgList.add(
+        CourseBannerVideo(
+          name: file.path.split('/').last, // file name
+          url: url,
+          type: type,
+          size: size,
+        ),
+      );
+    }
+
+    print(courseBannerImgList.map((e) => e.toJson()).toList());
+    notifyListeners();
+  }
+
+  Future<void> validateEventImgList() async {
+    if (selectedEventImg == null || selectedEventImg!.isEmpty) return;
+
+    eventImgList.clear(); // reset before uploading new ones
+
+    for (var file in selectedEventImg!) {
+      // Upload image
+      var response = await _http.uploadImage(file.path);
+
+      // Assuming API response: { "url": "...", "type": "...", "size": ... }
+      String url = response['url'];
+      String type = response['type'] ?? "image/jpeg";
+      int size = response['size'] ?? file.lengthSync();
+
+      // Add to list
+      eventImgList.add(
+        Images(
+          name: file.path.split('/').last, // file name
+          url: url,
+          type: type,
+          size: size,
+        ),
+      );
+    }
+
+    print(eventImgList.map((e) => e.toJson()).toList());
+    notifyListeners();
+  }
+
+  Future<void> validateSponsoredByImg() async {
+    if (selectedsponsoredByImg == null || selectedsponsoredByImg!.isEmpty)
+      return;
+
+    sponsoredByImgList.clear(); // reset before uploading new ones
+
+    for (var file in selectedsponsoredByImg!) {
+      // Upload image
+      var response = await _http.uploadImage(file.path);
+
+      // Assuming API response: { "url": "...", "type": "...", "size": ... }
+      String url = response['url'];
+      String type = response['type'] ?? "image/jpeg";
+      int size = response['size'] ?? file.lengthSync();
+
+      // Add to list
+      sponsoredByImgList.add(
+        SponsorByImage(
+          name: file.path.split('/').last, // file name
+          url: url,
+          type: type,
+          size: size,
+        ),
+      );
+    }
+
+    print(sponsoredByImgList.map((e) => e.toJson()).toList());
+    notifyListeners();
+  }
+
+  void buildCourseInfoList() {
+    courseInfoList.clear();
+
+    if (selectedEvent == "Single Day") {
+      courseInfoList.add(
+        CourseEventInfo(
+          date: "",
+          name: day1SessionNameController.text,
+          info: sessioInfoController.text,
+          images: eventImgList,
+        ),
+      );
+    } else if (selectedEvent == "Multiple Day") {
+      for (var day in days) {
+        courseInfoList.add(
+          CourseEventInfo(
+            date: "",
+            name: day.sessionNameController.text,
+            info: day.sessionInfoController.text,
+            images: eventImgList,
+          ),
+        );
+      }
+    }
   }
 
   bool validateOtherLinksStep() {
     return otherLinksFormKey.currentState?.validate() ?? false;
   }
 
-  String? validateMinSalary() =>
-      validateSalaryField(minSalaryController.text, field: 'minimum');
-  String? validateMaxSalary() =>
-      validateSalaryField(maxSalaryController.text, field: 'maximum');
-  String? validateVideoLink(String? _) =>
-      validateOptionalUrl(videoLinkController.text);
-  String? validateWebsite(String? _) =>
-      validateOptionalUrl(websiteController.text);
-  String? validateFacebook(String? _) =>
-      validateOptionalUrl(facebookController.text);
-  String? validateInstagram(String? _) =>
-      validateOptionalUrl(instgramController.text);
-  String? validateLinkedIn(String? _) =>
-      validateOptionalUrl(linkedInController.text);
-  String? validateStartDateField(String? _) =>
-      validateStartDate(isStartDateEnabled, startDate);
-  String? validateEndDateField(String? _) =>
-      validateEndDate(isEndDateEnabled, endDate);
-
   // ───── Dropdown setters ─────
-  void setSelectedRole(String? value) {
-    selectedRole = value;
+  void setSelectedCategory(String? value) {
+    selectedCategory = value;
     notifyListeners();
-  }
-
-  void setSelectedCountry(String value) {
-    selectCountry = value;
-    notifyListeners();
-  }
-
-  void setSelectedEmpType(String emp) {
-    selectedEmploymentType = emp;
-    notifyListeners();
-  }
-
-  void setSelectedPayRange(String? value) {
-    selectedPayRange = value;
-    notifyListeners();
-  }
-
-  void setSelectedRateRange(String? value) {
-    selectRate = value;
-    notifyListeners();
-  }
-
-  void setSelectedHireRange(String? value) {
-    selectHire = value;
-    notifyListeners();
-  }
-
-  void setSelectedPositions(String? value) {
-    selectPositions = value;
-    notifyListeners();
-  }
-
-  void setSelectedExperience(String? value) {
-    selecteBenefits = value;
-    notifyListeners();
-  }
-
-  void setSelectedEducation(String? value) {
-    selectEducation = value;
-    notifyListeners();
-  }
-
-  void setSelectedBenefits(String? value) {
-    selectEducation = value;
-    notifyListeners();
-  }
-
-  // ───── Date togglers ─────
-  void toggleStartDate(bool value) {
-    isStartDateEnabled = value;
-    notifyListeners();
-  }
-
-  void toggleEndDate(bool value) {
-    isEndDateEnabled = value;
-    notifyListeners();
-  }
-
-  void setStartDate(DateTime date) {
-    startDate = date;
-    notifyListeners();
-  }
-
-  void setEndDate(DateTime date) {
-    endDate = date;
-    notifyListeners();
-  }
-
-  // ───── Locum Toggle ─────
-  void toggleLocumDateVisibility(bool value) {
-    showLocumDate = value;
-    if (!value) locumDateController.clear();
-    notifyListeners();
-  }
-
-  // ───── Employment Chips ─────
-  void addEmploymentTypeChip(String empType) {
-    if (!_selectedEmploymentChips.contains(empType)) {
-      _selectedEmploymentChips.add(empType);
-      toggleLocumDateVisibility(empType == "Locum");
-      notifyListeners();
-    }
-  }
-
-  void removeEmploymentTypeChip(String empType) {
-    _selectedEmploymentChips.remove(empType);
-    if (empType == "Locum") toggleLocumDateVisibility(false);
-    notifyListeners();
-  }
-
-  void clearEmploymentTypeChips() {
-    _selectedEmploymentChips.clear();
-    toggleLocumDateVisibility(false);
-    notifyListeners();
-  }
-
-  List<String> getSelectedEmploymentTypes() =>
-      List.from(_selectedEmploymentChips);
-
-  // ───── File Pickers ─────
-  // Future<void> pickLogoImage(ImageSource source) async {
-  //   final pickedFile =
-  //       await ImagePicker().pickImage(source: source, imageQuality: 85);
-  //   if (pickedFile != null) {
-  //     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
-
-  //     logoFile = File(pickedFile.path);
-  //     NavigationService().goBack();
-  //     notifyListeners();
-  //   }
-  // }
-
-  Future<void> pickBannerImage(ImageSource source) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: source, imageQuality: 85);
-    if (pickedFile != null) {
-      bannerFile = File(pickedFile.path);
-      NavigationService().goBack();
-      notifyListeners();
-    }
-  }
-
-  Future<void> pickClinicPhoto(ImageSource source) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: source, imageQuality: 85);
-    if (pickedFile != null) {
-      ClinicPhotofile = File(pickedFile.path);
-      NavigationService().goBack();
-      notifyListeners();
-    }
   }
 
   // ───── Data Fetching ─────
-  Future<void> fetchJobRoles() async {
-    jobRoles = await repo.getJobRoles();
+  Future<void> fetchCategory() async {
+    jobRoles = await repo.getCategory();
     roleOptions = jobRoles.map((role) => role.roleName ?? "").toList();
     notifyListeners();
   }
@@ -438,37 +525,116 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
-      CourseObject(
-        
-      )
+      "object": CourseObject(
+        courseName: courseNameController.text,
+        courseCategoryId: "93de7602-d5ca-4f94-b4ca-eaeb003479c7",
+        rsvpDate: rsvpDateController.text,
+        presentedByName: presenterNameController.text,
+        presentedByImage: PresentedByImage(url: presenter_image),
+        courseBannerImage: courseBannerImageHeaderList,
+        courseGallery: selectedGalleryList,
+        courseBannerVideo: courseBannerImgList,
+        description: courseDescController.text,
+        cpdPoints: double.parse(cpdPointsController.text),
+        numberOfSeats: int.parse(numberOfSeatsController.text),
+        priceInAud: int.parse(totalPriceController.text),
+        priceInUsd: int.parse(birdPriceController.text),
+        earlyBirdPrice: int.parse(birdPriceController.text),
+        earlyBirdEndDate: earlyBirdDateController.text,
+        topicsIncluded: topicsIncludedDescController.text,
+        learningObjectives: learningObjectivesDescController.text,
+        eventType: selectedEvent,
+        courseEventInfo: courseInfoList,
+        sponsorByImage: sponsoredByImgList,
+        terms: termsAndConditionsController.text,
+        refundPolicy: cancellationController.text,
+        contactName: nameController.text,
+        contactEmail: emailController.text,
+        contactPhone: phoneController.text,
+        contactWebsite: websiteController.text,
+        afterwardsPrice: 0,
+        registerLink: registerLinkController.text,
+        activeStatusFeed: "",
+        userRole: "SUPPLIER",
+        startDate: "2025-09-12",
+        endDate: "2025-09-26",
+        image:
+            "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/course/sample-image.jpg",
+        video:
+            "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/course/sample-video.mp4",
+        completeDetails: "Full details about the course...",
+        attachments: Attachments(name: "foo"),
+        isFeatured: false,
+        activeStatus: "PENDING",
+        address: "42 Marine Parade, Southport QLD 4215, Australia",
+        scheduledAt: "2025-09-15T02:31:20.225Z",
+        maxSubscribers: 1000,
+        seoMetadata: SeoMetadata(keywords: ["dental", "medicine"]),
+        webinarLink: "https://zoom.us/j/123456789",
+        createdById: userId,
+        companyName: "Texting ",
+        status: isDraft ? "DRAFT" : "PENDING",
+        type: "Event",
+        feedType: "LEARNHUB",
+        startTime: "02:31:20Z",
+        shortId: "CSE-1001",
+        shortInfo: "Basics of Dental Medicine",
+      ).toJson(),
     });
+
     if (result != null) {
+      scaffoldMessenger("Course is successfully added");
+      navigationService.goBack();
+
       Loaders.circularHideLoader(context);
+      resetForm();
     } else {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    jobTitleController.dispose();
-    companyNameController.dispose();
-    jobDescController.dispose();
-    videoLinkController.dispose();
-    websiteController.dispose();
-    facebookController.dispose();
-    instgramController.dispose();
-    linkedInController.dispose();
-    locationSearchController.dispose();
-    stateController.dispose();
-    cityPostCodeController.dispose();
-    minSalaryController.dispose();
-    maxSalaryController.dispose();
-    locumDateController.dispose();
-    pageController.dispose();
-    super.dispose();
+  void resetForm() {
+    // Reset dropdowns & selections
+
+    selectedPresentedImg = null;
+    selectedCourseHeaderBanner = null;
+    selectedGallery = null;
+    selectedCourseBannerImg = null;
+    selectedEventImg = null;
+    selectedsponsoredByImg = null;
+
+    // Clear all controllers (set to empty string)
+    courseNameController.text = "";
+    presenterNameController.text = "";
+    cpdPointsController.text = "";
+    numberOfSeatsController.text = "";
+    totalPriceController.text = "";
+    birdPriceController.text = "";
+    courseDescController.text = "";
+    topicsIncludedDescController.text = "";
+    learningObjectivesDescController.text = "";
+    day1SessionNameController.text = "";
+    sessioInfoController.text = "";
+    nameController.text = "";
+    phoneController.text = "";
+    emailController.text = "";
+    websiteUrlController.text = "";
+    registerLinkController.text = "";
+    termsAndConditionsController.text = "";
+    cancellationController.text = "";
+    rsvpDateController.text = "";
+    _currentStep = 0;
+    earlyBirdDateController.text = "";
+    sessioInfoController.text = "";
+    day1SessionNameController.text = "";
+    courseInfoList = [];
+
+    // Page controller reset
+    pageController.jumpToPage(
+        0); // or pageController.animateToPage(...) if you want animation
   }
 }

@@ -57,7 +57,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       listingStatus = ['REJECT'];
     }
 
-    getCoursesListingData();
+    getCoursesListingData(context);
     notifyListeners();
     //INACTIVE
   }
@@ -80,8 +80,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Reject': rejectStatusCount,
       };
 
-
-  Future<void> getCoursesListingData() async {
+  Future<void> getCoursesListingData(BuildContext context) async {
     final res = await repo.getCoursesListing(listingStatus);
     if (res != null) {
       coursesListingList = res;

@@ -116,7 +116,7 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
               },
               child: Center(
                 child: Text(
-                  "${coursesListingData?.courseRegisteredUsersAggregate?.aggregate?.count ?? 0} Applicants applied for this role",
+                  "${coursesListingData?.numberOfSeats ?? 0} Applicants applied for this role",
                   style: TextStyles.medium1(color: AppColors.black),
                 ),
               ),

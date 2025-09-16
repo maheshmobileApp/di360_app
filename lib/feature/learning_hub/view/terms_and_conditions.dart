@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,8 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final jobCreateVM = Provider.of<JobCreateViewModel>(context);
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final jobCreateVM = Provider.of<NewCourseViewModel>(context);
+    //final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
 
     return SingleChildScrollView(
       child: Padding(
@@ -32,7 +33,10 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
              ImagePickerField(
               title: "Sponsored By",
               isRequired: true,
-              showPreview: true, // show full image
+              showPreview: true,
+              allowMultiple: true,
+              selectedFiles: jobCreateVM.selectedsponsoredByImg, 
+              onFilesPicked: (file) => jobCreateVM.setSponsoredBy(file), 
             ),
             SizedBox(height: 8),
             InputTextField(
@@ -40,7 +44,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
               maxLength: 500,
               maxLines: 5,
               title: "Terms & Conditions",
-              controller: addDirectorVM.descController,
+              controller: jobCreateVM.termsAndConditionsController,
             ),
             SizedBox(height: 8),
             InputTextField(
@@ -48,7 +52,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
               maxLength: 500,
               maxLines: 5,
               title: "Cancellation & Refund Policy",
-              controller: addDirectorVM.descController,
+              controller: jobCreateVM.cancellationController,
             ),
             SizedBox(height: 8),
 

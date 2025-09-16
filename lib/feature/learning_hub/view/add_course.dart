@@ -20,7 +20,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    
 
     return SingleChildScrollView(
       child: Padding(
@@ -43,7 +43,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
             _buildCategoryTypes(jobCreateVM),
             SizedBox(height: 8),
             _buildCourseTypes(jobCreateVM),
-             SizedBox(height: 8),
+            SizedBox(height: 8),
             CustomDatePicker(
               isRequired: true,
               title: "RSVP Date",
@@ -80,29 +80,40 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                   ? 'Please enter Presenter name'
                   : null,
             ),
-             SizedBox(height: 8),
+            SizedBox(height: 8),
             ImagePickerField(
               title: "Presented By (Image)",
               isRequired: true,
-              showPreview: true, // show full image
+              showPreview: true,
+              selectedFile: jobCreateVM.selectedPresentedImg, // ✅ comes from ViewModel
+              onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
             ),
             SizedBox(height: 8),
             ImagePickerField(
               title: "Course Header Banner / Video",
               isRequired: true,
-              showPreview: true, // show full image
+              allowMultiple: true,
+              showPreview: true,
+              selectedFiles: jobCreateVM.selectedCourseHeaderBanner, 
+              onFilesPicked: (file) => jobCreateVM.setCourseHeaderBaner(file), 
             ),
             SizedBox(height: 8),
             ImagePickerField(
               title: "Gallery",
               isRequired: true,
-              showPreview: true, // show full image
+              allowMultiple: true,
+              showPreview: true,
+              selectedFiles: jobCreateVM.selectedGallery, 
+              onFilesPicked: (file) => jobCreateVM.setGallery(file), 
             ),
             SizedBox(height: 8),
             ImagePickerField(
               title: "Course Banner Image",
               isRequired: true,
-              showPreview: true, // show full image
+              allowMultiple: true,
+              showPreview: true,
+              selectedFiles: jobCreateVM.selectedCourseBannerImg, 
+              onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file), 
             ),
             SizedBox(height: 8),
             InputTextField(
@@ -200,50 +211,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               controller: jobCreateVM.learningObjectivesDescController,
             ),
 
-            /* if (jobCreateVM.showLocumDate) ...[
-              SizedBox(
-                height: 8,
-              ),
-              CustomDatePicker(
-                controller: jobCreateVM.locumDateController,
-                text: null,
-                hintText: "Date",
-                onTap: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    jobCreateVM.locumDateController.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
-                  }
-                },
-                validator: (value) {
-                  if (jobCreateVM.showLocumDate &&
-                      (value == null || value.isEmpty)) {
-                    return "Please select locum date";
-                  }
-                  return null;
-                },
-              ),
-              Divider(thickness: 4),
-              SizedBox(height: 16),
-              _sectionHeader("Job Description"),
-              SizedBox(height: 16),
-              InputTextField(
-                controller: jobCreateVM.jobDescController,
-                hintText: "Enter job description here",
-                maxLength: 500,
-                maxLines: 5,
-                title: "Description",
-                isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter job description'
-                    : null,
-              ),
-            ],*/
+           
           ],
         ),
       ),
@@ -260,10 +228,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   Widget _buildCategoryTypes(NewCourseViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectedRole,
+      value: jobCreateVM.selectedCategory,
       title: "Category",
       onChanged: (v) {
-        jobCreateVM.setSelectedRole(v as String);
+        jobCreateVM.setSelectedCategory(v as String);
       },
       items:
           jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {
@@ -282,10 +250,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   Widget _buildCourseTypes(NewCourseViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectedRole,
+      value: jobCreateVM.selectedCategory,
       title: "Course Format (Type)",
       onChanged: (v) {
-        jobCreateVM.setSelectedRole(v as String);
+        jobCreateVM.setSelectedCategory(v as String);
       },
       items:
           jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {

@@ -87,10 +87,11 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
         InputTextField(
           controller: jobCreateVM.day1SessionNameController,
           hintText: "Enter Session Name",
-          title: "Day 1 Session Name",
+          title: "Session Name",
           isRequired: true,
-          validator: (value) =>
-              value == null || value.isEmpty ? 'Please enter Session name' : null,
+          validator: (value) => value == null || value.isEmpty
+              ? 'Please enter Session name'
+              : null,
         ),
         SizedBox(height: 8),
         InputTextField(
@@ -98,21 +99,26 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           hintText: "Enter Information",
           title: "Session Info",
           isRequired: true,
-          validator: (value) =>
-              value == null || value.isEmpty ? 'Please enter Session Info' : null,
+          validator: (value) => value == null || value.isEmpty
+              ? 'Please enter Session Info'
+              : null,
         ),
         SizedBox(height: 8),
         ImagePickerField(
           title: "Event Image",
           isRequired: true,
           showPreview: true,
+          allowMultiple: true,
+          selectedFiles: jobCreateVM.selectedEventImg,
+          onFilesPicked: (file) => jobCreateVM.setEventImg(file),
         ),
       ],
     );
   }
 
   /// Multiple Day Layout
-  Widget _buildMultipleDayUI(NewCourseViewModel jobCreateVM, BuildContext context) {
+  Widget _buildMultipleDayUI(
+      NewCourseViewModel jobCreateVM, BuildContext context) {
     return Column(
       children: [
         ...jobCreateVM.days.asMap().entries.map((entry) {
@@ -122,13 +128,17 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Day ${index + 1}", style: TextStyles.clashMedium(color: AppColors.buttonColor)),
+              Text("Day ${index + 1}",
+                  style: TextStyles.clashMedium(color: AppColors.buttonColor)),
               SizedBox(height: 8),
               InputTextField(
                 controller: day.sessionNameController,
                 hintText: "Enter Session Name",
                 title: "Session Name",
                 isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+              ? 'Please enter Session name'
+              : null,
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -136,12 +146,18 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter Information",
                 title: "Session Info",
                 isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+              ? 'Please enter Session info'
+              : null,
               ),
               SizedBox(height: 8),
               ImagePickerField(
                 title: "Event Image",
                 isRequired: true,
+                allowMultiple: true,
                 showPreview: true,
+                selectedFiles: jobCreateVM.selectedEventImgs,
+                onFilesPicked: (files) => jobCreateVM.setEventImgs(index, files),
               ),
               SizedBox(height: 16),
               if (index > 0) // prevent removing first day
@@ -149,14 +165,14 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => jobCreateVM.removeDay(index),
-                    child: Text("Remove Day", style: TextStyle(color: Colors.red)),
+                    child:
+                        Text("Remove Day", style: TextStyle(color: Colors.red)),
                   ),
                 ),
               Divider(thickness: 1),
             ],
           );
         }).toList(),
-
         SizedBox(height: 12),
         Align(
           alignment: Alignment.center,

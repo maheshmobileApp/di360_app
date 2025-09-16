@@ -4,7 +4,9 @@ class CoursesResponse {
   CoursesResponse({this.data});
 
   CoursesResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new CoursesListingData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new CoursesListingData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -40,81 +42,312 @@ class CoursesListingData {
 class CoursesListingDetails {
   String? id;
   String? createdAt;
+  String? updatedAt;
+  String? courseCategoryId;
+  Null? shortId;
   String? courseName;
+  Null? shortInfo;
+  Null? image;
+  Null? video;
+  Null? completeDetails;
+  Attachments? attachments;
+  bool? isFeatured;
+  String? activeStatus;
   String? type;
-  String? startDate;
-  String? endDate;
+  String? address;
+  String? scheduledAt;
+  int? maxSubscribers;
+  Null? priceInAud;
+  Null? priceInUsd;
+  Attachments? seoMetadata;
+  Null? webinarLink;
   PresentedByImage? presentedByImage;
   String? presentedByName;
   String? description;
+  List<CourseEventInfo>? courseEventInfo;
+  Null? earlyBirdEndDate;
+  String? topicsIncluded;
+  String? learningObjectives;
+  String? eventType;
+  String? createdById;
   String? companyName;
   String? status;
-  String? activeStatus;
-  String? createdById;
-  CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
+  List<SponsorByImage>? sponsorByImage;
+  String? terms;
+  String? refundPolicy;
+  String? contactName;
+  String? contactEmail;
+  String? contactPhone;
+  String? contactWebsite;
+  double? cpdPoints;
+  int? numberOfSeats;
+  Null? earlyBirdPrice;
+  int? afterwardsPrice;
+  List<CourseGallery>? courseGallery;
+  List<CourseBannerVideo>? courseBannerVideo;
+  List<CourseBannerImage>? courseBannerImage;
+  String? registerLink;
+  String? feedType;
+  String? activeStatusFeed;
+  String? userRole;
+  String? rsvpDate;
+  String? startDate;
+  String? endDate;
+  Null? startTime;
 
   CoursesListingDetails(
       {this.id,
       this.createdAt,
+      this.updatedAt,
+      this.courseCategoryId,
+      this.shortId,
       this.courseName,
+      this.shortInfo,
+      this.image,
+      this.video,
+      this.completeDetails,
+      this.attachments,
+      this.isFeatured,
+      this.activeStatus,
       this.type,
-      this.startDate,
-      this.endDate,
+      this.address,
+      this.scheduledAt,
+      this.maxSubscribers,
+      this.priceInAud,
+      this.priceInUsd,
+      this.seoMetadata,
+      this.webinarLink,
       this.presentedByImage,
       this.presentedByName,
       this.description,
+      this.courseEventInfo,
+      this.earlyBirdEndDate,
+      this.topicsIncluded,
+      this.learningObjectives,
+      this.eventType,
+      this.createdById,
       this.companyName,
       this.status,
-      this.activeStatus,
-      this.createdById,
-      this.courseRegisteredUsersAggregate});
+      this.sponsorByImage,
+      this.terms,
+      this.refundPolicy,
+      this.contactName,
+      this.contactEmail,
+      this.contactPhone,
+      this.contactWebsite,
+      this.cpdPoints,
+      this.numberOfSeats,
+      this.earlyBirdPrice,
+      this.afterwardsPrice,
+      this.courseGallery,
+      this.courseBannerVideo,
+      this.courseBannerImage,
+      this.registerLink,
+      this.feedType,
+      this.activeStatusFeed,
+      this.userRole,
+      this.rsvpDate,
+      this.startDate,
+      this.endDate,
+      this.startTime});
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    courseCategoryId = json['course_category_id'];
+    shortId = json['short_id'];
     courseName = json['course_name'];
+    shortInfo = json['short_info'];
+    image = json['image'];
+    video = json['video'];
+    completeDetails = json['complete_details'];
+    attachments = json['attachments'] != null
+        ? new Attachments.fromJson(json['attachments'])
+        : null;
+    isFeatured = json['is_featured'];
+    activeStatus = json['active_status'];
     type = json['type'];
-    startDate = json['startDate'];
-    endDate = json['endDate'];
+    address = json['address'];
+    scheduledAt = json['scheduled_at'];
+    maxSubscribers = json['max_subscribers'];
+    priceInAud = json['price_in_aud'];
+    priceInUsd = json['price_in_usd'];
+    seoMetadata = json['seo_metadata'] != null
+        ? new Attachments.fromJson(json['seo_metadata'])
+        : null;
+    webinarLink = json['webinar_link'];
     presentedByImage = json['presented_by_image'] != null
         ? new PresentedByImage.fromJson(json['presented_by_image'])
         : null;
     presentedByName = json['presented_by_name'];
     description = json['description'];
+    if (json['course_event_info'] != null) {
+      courseEventInfo = <CourseEventInfo>[];
+      json['course_event_info'].forEach((v) {
+        courseEventInfo!.add(new CourseEventInfo.fromJson(v));
+      });
+    }
+    earlyBirdEndDate = json['early_bird_end_date'];
+    topicsIncluded = json['topics_included'];
+    learningObjectives = json['learning_objectives'];
+    eventType = json['event_type'];
+    createdById = json['created_by_id'];
     companyName = json['company_name'];
     status = json['status'];
-    activeStatus = json['active_status'];
-    createdById = json['created_by_id'];
-    courseRegisteredUsersAggregate =
-        json['course_registered_users_aggregate'] != null
-            ? new CourseRegisteredUsersAggregate.fromJson(
-                json['course_registered_users_aggregate'])
-            : null;
+    if (json['sponsor_by_image'] != null) {
+      sponsorByImage = <SponsorByImage>[];
+      json['sponsor_by_image'].forEach((v) {
+        sponsorByImage!.add(new SponsorByImage.fromJson(v));
+      });
+    }
+    terms = json['terms'];
+    refundPolicy = json['refund_policy'];
+    contactName = json['contact_name'];
+    contactEmail = json['contact_email'];
+    contactPhone = json['contact_phone'];
+    contactWebsite = json['contact_website'];
+    cpdPoints = json['cpd_points'];
+    numberOfSeats = json['number_of_seats'];
+    earlyBirdPrice = json['early_bird_price'];
+    afterwardsPrice = json['afterwards_price'];
+    if (json['course_gallery'] != null) {
+      courseGallery = <CourseGallery>[];
+      json['course_gallery'].forEach((v) {
+        courseGallery!.add(new CourseGallery.fromJson(v));
+      });
+    }
+    if (json['course_banner_video'] != null) {
+      courseBannerVideo = <CourseBannerVideo>[];
+      json['course_banner_video'].forEach((v) {
+        courseBannerVideo!.add(new CourseBannerVideo.fromJson(v));
+      });
+    }
+    if (json['course_banner_image'] != null) {
+      courseBannerImage = <CourseBannerImage>[];
+      json['course_banner_image'].forEach((v) {
+        courseBannerImage!.add(new CourseBannerImage.fromJson(v));
+      });
+    }
+    registerLink = json['register_link'];
+    feedType = json['feed_type'];
+    activeStatusFeed = json['active_status_feed'];
+    userRole = json['user_role'];
+    rsvpDate = json['rsvp_date'];
+    startDate = json['startDate'];
+    endDate = json['endDate'];
+    startTime = json['startTime'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['course_category_id'] = this.courseCategoryId;
+    data['short_id'] = this.shortId;
     data['course_name'] = this.courseName;
+    data['short_info'] = this.shortInfo;
+    data['image'] = this.image;
+    data['video'] = this.video;
+    data['complete_details'] = this.completeDetails;
+    if (this.attachments != null) {
+      data['attachments'] = this.attachments!.toJson();
+    }
+    data['is_featured'] = this.isFeatured;
+    data['active_status'] = this.activeStatus;
     data['type'] = this.type;
-    data['startDate'] = this.startDate;
-    data['endDate'] = this.endDate;
+    data['address'] = this.address;
+    data['scheduled_at'] = this.scheduledAt;
+    data['max_subscribers'] = this.maxSubscribers;
+    data['price_in_aud'] = this.priceInAud;
+    data['price_in_usd'] = this.priceInUsd;
+    if (this.seoMetadata != null) {
+      data['seo_metadata'] = this.seoMetadata!.toJson();
+    }
+    data['webinar_link'] = this.webinarLink;
     if (this.presentedByImage != null) {
       data['presented_by_image'] = this.presentedByImage!.toJson();
     }
     data['presented_by_name'] = this.presentedByName;
     data['description'] = this.description;
+    if (this.courseEventInfo != null) {
+      data['course_event_info'] =
+          this.courseEventInfo!.map((v) => v.toJson()).toList();
+    }
+    data['early_bird_end_date'] = this.earlyBirdEndDate;
+    data['topics_included'] = this.topicsIncluded;
+    data['learning_objectives'] = this.learningObjectives;
+    data['event_type'] = this.eventType;
+    data['created_by_id'] = this.createdById;
     data['company_name'] = this.companyName;
     data['status'] = this.status;
-    data['active_status'] = this.activeStatus;
-    data['created_by_id'] = this.createdById;
-    if (this.courseRegisteredUsersAggregate != null) {
-      data['course_registered_users_aggregate'] =
-          this.courseRegisteredUsersAggregate!.toJson();
+    if (this.sponsorByImage != null) {
+      data['sponsor_by_image'] =
+          this.sponsorByImage!.map((v) => v.toJson()).toList();
     }
+    data['terms'] = this.terms;
+    data['refund_policy'] = this.refundPolicy;
+    data['contact_name'] = this.contactName;
+    data['contact_email'] = this.contactEmail;
+    data['contact_phone'] = this.contactPhone;
+    data['contact_website'] = this.contactWebsite;
+    data['cpd_points'] = this.cpdPoints;
+    data['number_of_seats'] = this.numberOfSeats;
+    data['early_bird_price'] = this.earlyBirdPrice;
+    data['afterwards_price'] = this.afterwardsPrice;
+    if (this.courseGallery != null) {
+      data['course_gallery'] =
+          this.courseGallery!.map((v) => v.toJson()).toList();
+    }
+    if (this.courseBannerVideo != null) {
+      data['course_banner_video'] =
+          this.courseBannerVideo!.map((v) => v.toJson()).toList();
+    }
+    if (this.courseBannerImage != null) {
+      data['course_banner_image'] =
+          this.courseBannerImage!.map((v) => v.toJson()).toList();
+    }
+    data['register_link'] = this.registerLink;
+    data['feed_type'] = this.feedType;
+    data['active_status_feed'] = this.activeStatusFeed;
+    data['user_role'] = this.userRole;
+    data['rsvp_date'] = this.rsvpDate;
+    data['startDate'] = this.startDate;
+    data['endDate'] = this.endDate;
+    data['startTime'] = this.startTime;
     return data;
   }
+}
+
+class Attachments {
+  String? name;
+
+  Attachments({this.name});
+
+  Attachments.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    return data;
+  }
+}
+
+class SponsorByImage {
+  String? url;
+  String? name;
+
+  SponsorByImage({this.url, this.name});
+
+  SponsorByImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() => {'url': url, 'name': name};
 }
 
 class PresentedByImage {
@@ -133,38 +366,116 @@ class PresentedByImage {
   }
 }
 
-class CourseRegisteredUsersAggregate {
-  Aggregate? aggregate;
+class CourseBannerImage {
+  String? url;
+  String? name;
+  int? size;
+  String? type;
 
-  CourseRegisteredUsersAggregate({this.aggregate});
+  CourseBannerImage({this.url, this.name, this.size, this.type});
 
-  CourseRegisteredUsersAggregate.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new Aggregate.fromJson(json['aggregate'])
-        : null;
+  CourseBannerImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
+}
+
+class CourseGallery {
+  String? url;
+  String? name;
+  int? size;
+  String? type;
+
+  CourseGallery({this.url, this.name, this.size, this.type});
+
+  CourseGallery.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
+}
+
+class CourseBannerVideo {
+  String? url;
+  String? name;
+  int? size;
+  String? type;
+
+  CourseBannerVideo({this.url, this.name, this.size, this.type});
+
+  CourseBannerVideo.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
+}
+
+class CourseEventInfo {
+  String? date;
+  String? info;
+  String? name;
+  List<Images>? images;
+
+  CourseEventInfo({this.date, this.info, this.name, this.images});
+
+  CourseEventInfo.fromJson(Map<String, dynamic> json) {
+    date = json['date'];
+    info = json['info'];
+    name = json['name'];
+    if (json['images'] != null) {
+      images = <Images>[];
+      json['images'].forEach((v) {
+        images!.add(new Images.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
+    data['date'] = this.date;
+    data['info'] = this.info;
+    data['name'] = this.name;
+    if (this.images != null) {
+      data['images'] = this.images!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Aggregate {
-  int? count;
+class Images {
+  String? url;
+  String? name;
+  int? size;
+  String? type;
 
-  Aggregate({this.count});
+  Images({this.url, this.name, this.size, this.type});
 
-  Aggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
+  Images.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    type = json['type'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['type'] = this.type;
     return data;
   }
 }

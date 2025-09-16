@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -252,7 +253,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'Learning Hub') {  
                             context
                                 .read<CourseListingViewModel>()
-                                .getCoursesListingData(); 
+                                .getCoursesListingData(context); 
+                            context
+                                .read<NewCourseViewModel>()
+                                .fetchCategory();
 
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
