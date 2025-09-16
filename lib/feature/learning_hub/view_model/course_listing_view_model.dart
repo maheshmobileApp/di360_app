@@ -1,8 +1,6 @@
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
-import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
@@ -88,32 +86,5 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  /*Future<void> updateJobListingStatus(
-      BuildContext context, String? id, String status) async {
-    Loaders.circularShowLoader(context);
-    final res = await repo.updateJobListing(id, status);
-    if (res != null) {
-      scaffoldMessenger('CourseListingData update successfully');
-      Loaders.circularHideLoader(context);
-      getCoursesListingData();
-    } else {
-      scaffoldMessenger(res);
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
-  }
-
-   Future<void> removeJobsListingData(BuildContext context, String? id) async {
-    Loaders.circularShowLoader(context);
-    final res = await repo.removeJobListing(id);
-    if (res != null) {
-      scaffoldMessenger('JobListingData removed successfully');
-      Loaders.circularHideLoader(context);
-      getCoursesListingData();
-    } else {
-      scaffoldMessenger(res);
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
-  }*/
+  
 }

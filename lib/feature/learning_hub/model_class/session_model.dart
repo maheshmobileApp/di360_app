@@ -1,19 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-class SessionDay {
+class SessionModel {
   final TextEditingController sessionNameController;
   final TextEditingController sessionInfoController;
-  //List<File> selectedEventImgs; // images per day
+  List<File>? images;
 
-  SessionDay({
+  SessionModel({
     String? sessionName,
     String? sessionInfo,
+    this.images,
   })  : sessionNameController = TextEditingController(text: sessionName),
         sessionInfoController = TextEditingController(text: sessionInfo);
-
-  void dispose() {
-    sessionNameController.dispose();
-    sessionInfoController.dispose();
-  }
 }

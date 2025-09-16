@@ -81,11 +81,14 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
   }
 
   /// Single Day Layout
+  /// Single Day
   Widget _buildSingleDayUI(NewCourseViewModel jobCreateVM) {
+    final day =
+        jobCreateVM.sessions.first; // Always first session for Single Day
     return Column(
       children: [
         InputTextField(
-          controller: jobCreateVM.day1SessionNameController,
+          controller: day.sessionNameController,
           hintText: "Enter Session Name",
           title: "Session Name",
           isRequired: true,
@@ -95,7 +98,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
         ),
         SizedBox(height: 8),
         InputTextField(
-          controller: jobCreateVM.sessioInfoController,
+          controller: day.sessionInfoController,
           hintText: "Enter Information",
           title: "Session Info",
           isRequired: true,
@@ -109,19 +112,19 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           isRequired: true,
           showPreview: true,
           allowMultiple: true,
-          selectedFiles: jobCreateVM.selectedEventImg,
-          onFilesPicked: (file) => jobCreateVM.setEventImg(file),
+          selectedFiles: day.images,
+          onFilesPicked: (files) => jobCreateVM.setEventImgs(0, files),
         ),
       ],
     );
   }
 
-  /// Multiple Day Layout
+  /// Multiple Day
   Widget _buildMultipleDayUI(
       NewCourseViewModel jobCreateVM, BuildContext context) {
     return Column(
       children: [
-        ...jobCreateVM.days.asMap().entries.map((entry) {
+        ...jobCreateVM.sessions.asMap().entries.map((entry) {
           final index = entry.key;
           final day = entry.value;
 
@@ -137,8 +140,8 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 title: "Session Name",
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty
-              ? 'Please enter Session name'
-              : null,
+                    ? 'Please enter Session name'
+                    : null,
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -147,8 +150,8 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 title: "Session Info",
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty
-              ? 'Please enter Session info'
-              : null,
+                    ? 'Please enter Session info'
+                    : null,
               ),
               SizedBox(height: 8),
               ImagePickerField(
@@ -156,11 +159,12 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 isRequired: true,
                 allowMultiple: true,
                 showPreview: true,
-                selectedFiles: jobCreateVM.selectedEventImgs,
-                onFilesPicked: (files) => jobCreateVM.setEventImgs(index, files),
+                selectedFiles: day.images,
+                onFilesPicked: (files) =>
+                    jobCreateVM.setEventImgs(index, files),
               ),
               SizedBox(height: 16),
-              if (index > 0) // prevent removing first day
+              if (index > 0)
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(

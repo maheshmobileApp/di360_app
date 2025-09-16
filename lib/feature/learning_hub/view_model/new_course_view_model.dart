@@ -2,16 +2,13 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/job_create/repository/job_create_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/post_course_request.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/session_day.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
@@ -25,7 +22,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   NewCourseViewModel() {
     getUserId();
     fetchCategory();
-    fetchEmpTypes();
   }
 
   //newly added
@@ -47,25 +43,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final registerLinkController = TextEditingController();
   final termsAndConditionsController = TextEditingController();
   final cancellationController = TextEditingController();
-
-  // Controllers
-  final TextEditingController jobTitleController = TextEditingController();
-  final companyNameController = TextEditingController();
-  final jobDescController = TextEditingController();
-  final videoLinkController = TextEditingController();
   final websiteController = TextEditingController();
-  final facebookController = TextEditingController();
-  final instgramController = TextEditingController();
-  final linkedInController = TextEditingController();
-  final locationSearchController = TextEditingController();
-  final stateController = TextEditingController();
-  final cityPostCodeController = TextEditingController();
-  final minSalaryController = TextEditingController();
-  final maxSalaryController = TextEditingController();
-  final countryController = TextEditingController();
-
-  // NEW: Locum date controller
-  //final locumDateController = TextEditingController();
   final rsvpDateController = TextEditingController();
   final earlyBirdDateController = TextEditingController();
   bool showLocumDate = false;
@@ -78,15 +56,22 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   List<File>? selectedEventImg;
   List<File>? selectedEventImgs;
   List<File>? selectedsponsoredByImg;
+  List<File>? selectedSessionImg;
   dynamic presenter_image;
-
   List<CourseBannerImage> courseBannerImageHeaderList = [];
   List<CourseGallery> selectedGalleryList = [];
   List<CourseBannerVideo> courseBannerImgList = [];
   List<Images> eventImgList = [];
   List<SponsorByImage> sponsoredByImgList = [];
-
+  List<Images>? sessionImgList;
   List<CourseEventInfo> courseInfoList = [];
+
+  String? selectedCategory;
+  String? supplierId;
+  String? practiceId;
+  String? userID;
+  String? logoPath;
+  String? selectedEvent = "Single Day";
 
   void setCourseHeaderBaner(List<File>? value) {
     selectedCourseHeaderBanner = value;
@@ -118,64 +103,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  // Selected dropdown values
-  String? selectedCategory;
-  String? selectedEmploymentType;
-  String? selectedPayRange;
-  String? selectRate;
-  String? selectCountry;
-  String? selectEducation;
-  String? selecteBenefits;
-  String? selectHire;
-  String? selectPositions;
-  String? selectExperience;
-  String? supplierId;
-  String? practiceId;
-  String? userID;
-  String? logoPath;
-  dynamic banner_image;
-  String? selectedEvent;
-
-  // Date settings
-  bool isStartDateEnabled = false;
-  bool isEndDateEnabled = false;
-  DateTime? startDate;
-  DateTime? endDate;
-
-  // Files
-  File? logoFile;
-  //File? bannerFile;
-  File? ClinicPhotofile;
-
-  List<SessionDay> days = [SessionDay()];
-
-  void addNewDay() {
-    days.add(SessionDay());
-    notifyListeners();
-  }
-
-  void removeDay(int index) {
-    days[index].dispose();
-    days.removeAt(index);
-    notifyListeners();
-  }
-
-  void setEventImgs(int dayIndex, List<File> files) {
-    selectedEventImgs = files;
-    notifyListeners();
-  }
-
-  void disposeControllers() {
-    for (var day in days) {
-      day.dispose();
-    }
-  }
-
-  void setSelectedEvent(String value) {
-    selectedEvent = value;
-    notifyListeners();
-  }
-
   // Form & PageView
   final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
@@ -193,68 +120,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
 
-  // Static data
-  final List<String> countryList = ["India", "us", "pk"];
-  final List<String> HireList = [
-    "urgently",
-    "1-2 weeks",
-    "2-4 weeks",
-    "More than 4 weeks"
-  ];
-  final List<String> positionsOptions = ["1", "2", "3", "4", "5", "6+"];
-  final List<String> experienceOptions = [
-    "0",
-    "1-2",
-    "3-5",
-    "5-10",
-    "10-15",
-    "15-20",
-    "20-25",
-    "25-30",
-    "30-35",
-    "35-40",
-    "40+"
-  ];
-  final List<String> educationLevels = [
-    "High School",
-    "Diploma",
-    "Graduate",
-    "Postgraduate",
-    "PhD"
-  ];
-  final List<String> Benefits = [
-    "Performance bonus",
-    "Commission",
-    "Relocation fees",
-    "Tips",
-    "Overtime pay",
-    "Signing Bonus",
-    "Bonus",
-    "Annual Bonus",
-    "Quarterly bonus",
-    "Employee Discount",
-    "Visa sponsorship",
-    "Employee Mentoring program",
-    "Professional Development assistance",
-    "Company car",
-    "Travel reimbursement",
-    "Housingallowance",
-    "Other",
-  ];
-  final List<String> payRanges = ["Range"];
-  final List<String> rateTypes = [
-    "Per year",
-    "Per month",
-    "Per week",
-    "Per hour",
-    "Commission"
-  ];
-
-  // Employment types
-  final List<String> _selectedEmploymentChips = [];
-  List<String> get selectedEmploymentChips => _selectedEmploymentChips;
-
-  List<JobsRoleList> jobRoles = [];
+  List<JobsRoleList> category = [];
   List<String> roleOptions = [];
 
   List<JobTypes> EmpTypes = [];
@@ -263,21 +129,26 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   // ───── Navigation Methods ─────
   void goToNextStep() {
     if (!validateCurrentStep()) return;
-    if (_currentStep == 0 && selectedPresentedImg != null) {
+
+    // Step-specific validations
+    if (_currentStep == 0) {
       validatePresenterImg();
-    } else if (_currentStep == 0 && selectedCourseHeaderBanner != null) {
       validateCourseHeaderBanner();
-    } else if (_currentStep == 0 && selectedGallery != null) {
       validateGallery();
-    } else if (_currentStep == 0 && selectedCourseBannerImg != null) {
       validateCourseBanner();
-    } else if (_currentStep == 1 && selectedEventImg != null) {
-      validateEventImgList();
+    } else if (_currentStep == 1) {
+      buildCourseInfoList();
+    } else if (_currentStep == 2) {
+      validateSponsoredByImg();
     }
+
+    // Move to next step if validations pass
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
       pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.ease);
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
       notifyListeners();
     }
   }
@@ -461,30 +332,92 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void buildCourseInfoList() {
-    courseInfoList.clear();
+  List<SessionModel> sessions = [
+    SessionModel(), // Always start with one session
+  ];
 
-    if (selectedEvent == "Single Day") {
+  /// Change event type
+  void setSelectedEvent(String? value) {
+    if (value == null) return;
+    selectedEvent = value;
+
+    // Reset sessions
+    sessions = [SessionModel()];
+    notifyListeners();
+  }
+
+  /// Add new day/session
+  void addNewDay() {
+    sessions.add(SessionModel());
+    notifyListeners();
+  }
+
+  /// Remove a day/session
+  void removeDay(int index) {
+    if (sessions.length > 1) {
+      sessions.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  /// Set images for a session
+  void setEventImgs(int index, List<File>? files) {
+    if (index < sessions.length) {
+      sessions[index].images = files;
+      selectedEventImg = files;
+      notifyListeners();
+    }
+  }
+
+  /// Get session details as plain data (ready for API)
+  List<Map<String, dynamic>> getSessionDetails() {
+    return sessions.map((session) {
+      return {
+        "session_name": session.sessionNameController.text,
+        "session_info": session.sessionInfoController.text,
+        "images": session.images?.map((f) => f.path).toList() ?? [],
+      };
+    }).toList();
+  }
+
+  Future<List<CourseEventInfo>> buildCourseInfoList() async {
+    for (var session in sessions) {
+      // upload all images for this session
+      final uploadedImgs = await uploadSessionImages(session.images);
+
       courseInfoList.add(
         CourseEventInfo(
-          date: "",
-          name: day1SessionNameController.text,
-          info: sessioInfoController.text,
-          images: eventImgList,
+          date: DateTime.now().toIso8601String(), // or session-specific date
+          name: session.sessionNameController.text,
+          info: session.sessionInfoController.text,
+          images: uploadedImgs,
         ),
       );
-    } else if (selectedEvent == "Multiple Day") {
-      for (var day in days) {
-        courseInfoList.add(
-          CourseEventInfo(
-            date: "",
-            name: day.sessionNameController.text,
-            info: day.sessionInfoController.text,
-            images: eventImgList,
-          ),
-        );
-      }
     }
+
+    return courseInfoList;
+  }
+
+  /// Upload images for a specific session and return uploaded list
+  Future<List<Images>> uploadSessionImages(List<File>? files) async {
+    if (files == null || files.isEmpty) return [];
+
+    List<Images> uploaded = [];
+
+    for (var file in files) {
+      var response = await _http.uploadImage(file.path);
+
+      uploaded.add(
+        Images(
+          name: file.path.split('/').last,
+          url: response['url'],
+          type: response['type'] ?? "image/jpeg",
+          size: response['size'] ?? file.lengthSync(),
+        ),
+      );
+    }
+
+    return uploaded;
   }
 
   bool validateOtherLinksStep() {
@@ -499,14 +432,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Data Fetching ─────
   Future<void> fetchCategory() async {
-    jobRoles = await repo.getCategory();
-    roleOptions = jobRoles.map((role) => role.roleName ?? "").toList();
-    notifyListeners();
-  }
-
-  Future<void> fetchEmpTypes() async {
-    EmpTypes = await repo.getEmpTypes();
-    empOptions = EmpTypes.map((emp) => emp.employeeTypeName ?? "").toList();
+    category = await repo.getCategory();
+    roleOptions = category.map((role) => role.roleName ?? "").toList();
     notifyListeners();
   }
 
