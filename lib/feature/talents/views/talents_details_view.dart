@@ -21,7 +21,7 @@ import 'package:di360_flutter/widgets/header_image.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../talents/model/job_profile.dart';
 class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
   final JobProfile? talentList;
 

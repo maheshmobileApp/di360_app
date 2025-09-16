@@ -99,7 +99,7 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                 bool isSelected = vm.selectedStatus == status;
                 return GestureDetector(
                   onTap: () {
-                    vm.changeStatus(status, context);
+                    vm.changeStatus(status);
                   },
                   child: Container(
                     margin:

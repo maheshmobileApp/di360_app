@@ -38,6 +38,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
               addVertical(10),
               InputTextField(
                 hintText: "Enter distance in Km",
+                controller: jobProfileVM.DistanceController,
                 title: "Distance to Travel (Km)",
                 keyboardType: TextInputType.number,
               ),
@@ -57,27 +58,6 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
                 ),
               ],
             ),
-            if (!jobProfileVM.isJoiningImmediate) ...[
-              addVertical(10),
-              MultiDateCalendarPicker(
-                selectedDates: jobProfileVM.joiningDates,
-                onToggleDate: (date) {
-                  jobProfileVM.toggleJoiningDate(date);
-                },
-              ),
-              addVertical(12),
-              if (jobProfileVM.joiningDates.isNotEmpty)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: jobProfileVM.joiningDates.map((date) {
-                    return Chip(
-                      label: Text(DateFormat('MMM d, yyyy').format(date)),
-                      onDeleted: () => jobProfileVM.removeJoiningDate(date),
-                    );
-                  }).toList(),
-                ),
-            ],
             addVertical(20),
             Text("Availability Type", style: TextStyles.regular2()),
             addVertical(6),
@@ -95,11 +75,13 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
             addVertical(16),
             if (jobProfileVM.selectedAvailabilityType == 'Select Date') ...[
               Text("Select Availability Date", style: TextStyles.regular2()),
-              addVertical(6),
+                addVertical(6),
               MultiDateCalendarPicker(
                 selectedDates: jobProfileVM.availabilityDates,
-                onToggleDate: (date) {
-                  jobProfileVM.toggleAvailabilityDate(date);
+                controller: jobProfileVM.availabilityDateController,
+                onDatesChanged: (dates) {
+                  jobProfileVM.availabilityDates = dates;
+                  jobProfileVM.updateAvailabilityDateControllerText();
                 },
               ),
               addVertical(12),
@@ -110,31 +92,44 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
                   children: jobProfileVM.availabilityDates.map((date) {
                     return Chip(
                       label: Text(DateFormat('MMM d, yyyy').format(date)),
-                      onDeleted: () =>
-                          jobProfileVM.removeAvailabilityDate(date),
+                      onDeleted: () {
+                        jobProfileVM.removeAvailabilityDate(date);
+
+                        if (jobProfileVM.availabilityDates.isEmpty) {
+                          jobProfileVM.availabilityDateController.clear();
+                        } else {
+                          jobProfileVM.updateAvailabilityDateControllerText();
+                        }
+                      },
                     );
                   }).toList(),
                 ),
             ],
             if (jobProfileVM.selectedAvailabilityType == 'Select Day') ...[
-              Text("Available Days", style: TextStyles.regular2()),
-              addVertical(6),
+              Text("Available Days *", style: TextStyles.regular2()),
+               addVertical(6),
               Wrap(
-                spacing: 10,
+                spacing: 16,
                 runSpacing: 6,
                 children: jobProfileVM.weekDays.map((day) {
                   final isSelected = jobProfileVM.selectedDays.contains(day);
-                  return FilterChip(
-                    label: Text(day),
-                    selected: isSelected,
-                    onSelected: (_) => jobProfileVM.toggleDay(day),
-                    selectedColor: AppColors.buttonColor,
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Checkbox(
+                        value: isSelected,
+                        activeColor: Colors.orange,
+                        onChanged: (checked) {
+                          jobProfileVM.toggleDay(day);
+                        },
+                      ),
+                      Text(
+                        day,
+                        style: TextStyles.regular3(
+                          color: isSelected ? Colors.orange : Colors.black,
+                        ),
+                      ),
+                    ],
                   );
                 }).toList(),
               ),
@@ -157,7 +152,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
           onChanged: onChanged,
         ),
         Text(label, style: TextStyles.regular2()),
-        const SizedBox(width: 20),
+         addHorizontal(20),
       ],
     );
   }

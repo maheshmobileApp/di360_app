@@ -38,6 +38,7 @@ import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 
+import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
 
