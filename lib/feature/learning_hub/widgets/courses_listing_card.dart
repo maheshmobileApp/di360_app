@@ -1,125 +1,102 @@
+import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
-import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:provider/provider.dart';
 
-class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
-  final CoursesListingDetails? coursesListingData;
-  final CourseListingViewModel vm;
-  final dynamic parmas;
-  final int? index;
+class CouresListingCard extends StatelessWidget {
+  final String id;
+  final String logoUrl;
+  final String companyName;
+  final String courseTitle;
+  final String status;
+  final String description;
+  final List<String> types;
+  final String createdAt;
+  final int registeredCount;
 
-  const CoursesListingCard({
+  final VoidCallback? onTapRegistered;
+  final Function(String action, String id)? onMenuAction;
+  final VoidCallback? onCardTap;
+
+  const CouresListingCard({
     super.key,
-    required this.coursesListingData,
-    required this.vm,
-    this.index,
-    this.parmas,
+    required this.id,
+    required this.logoUrl,
+    required this.companyName,
+    required this.courseTitle,
+    required this.status,
+    required this.description,
+    required this.types,
+    required this.createdAt,
+    required this.registeredCount,
+    this.onTapRegistered,
+    this.onMenuAction,
+    this.onCardTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<JobListingsViewModel>(context);
-    final String time =
-        _getShortTime(coursesListingData?.createdAt ?? '') ?? '';
+    final String time = _getShortTime(createdAt) ?? '';
+
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
+          // 🔹 Top Card
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
-              border: Border(
-                left: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-                right: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-                top: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-              ),
-            ),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.borderColor)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Logo + Title + Menu
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _logoWithTitle(
-                        context,
-                        coursesListingData?.presentedByImage?.url ?? '',
-                        coursesListingData?.presentedByName ?? '',
-                        coursesListingData?.companyName ?? '',
-                        coursesListingData?.status ?? '',
+                        logoUrl,
+                        companyName,
+                        courseTitle,
+                        status,
                       ),
                     ),
                     Row(
                       children: [
                         _jobTimeChip(time),
-                        menuWidget(
-                          vm,
-                          context,
-                          index!,
-                          coursesListingData?.id ?? '',
-                          coursesListingData?.status ?? '',
-                        ),
+                        _menuWidget(context),
                       ],
                     ),
                   ],
                 ),
-                addVertical(12),
-                _chipWidget([coursesListingData?.type] ?? []),
-                addVertical(10),
-                _descriptionWidget(coursesListingData?.description ?? ''),
+
+                const SizedBox(height: 8),
+
+                _chipWidget(types),
+                const SizedBox(height: 8),
+
+                _descriptionWidget(description),
                 const Divider(),
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromRGBO(116, 130, 148, 0.15),
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _registeredChip(registeredCount),
+                    GestureDetector(
+                      onTap: onCardTap,
+                      child: SvgPicture.asset(
+                        ImageConst.nextArrow,
+                        width: 26,
+                        height: 26,
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-            child: InkWell(
-              onTap: () async {
-                viewModel.jobId = coursesListingData?.id ?? '';
-                await viewModel.getMyJobApplicantsgData(
-                    context, coursesListingData?.id ?? '');
-                navigationService.navigateToWithParams(
-                    RouteList.JobListingApplicantscreen,
-                    params: coursesListingData);
-              },
-              child: Center(
-                child: Text(
-                  "${coursesListingData?.numberOfSeats ?? 0} Applicants applied for this role",
-                  style: TextStyles.medium1(color: AppColors.black),
-                ),
-              ),
             ),
           ),
         ],
@@ -128,7 +105,6 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _logoWithTitle(
-    BuildContext context,
     String logo,
     String company,
     String title,
@@ -153,7 +129,7 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(229, 244, 237, 1),
+                  color: const Color.fromRGBO(229, 244, 237, 1),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
@@ -168,13 +144,13 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
             ),
           ],
         ),
-        addHorizontal(12),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(company, style: TextStyles.medium2(color: AppColors.black)),
-              addVertical(2),
+              const SizedBox(height: 2),
               Text(title, style: TextStyles.regular2(color: AppColors.black)),
             ],
           ),
@@ -185,7 +161,6 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
 
   Widget _descriptionWidget(String description) {
     return SizedBox(
-      // height: 36,
       width: double.infinity,
       child: Text(
         description,
@@ -196,25 +171,24 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _chipWidget(List<dynamic> types) {
+  Widget _chipWidget(List<String> types) {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
       children: types.map((type) {
-        final label = type?.toString() == 'null' ? 'N/A' : type.toString();
+        final label = type.isEmpty ? 'N/A' : type;
         return Container(
-          height: 21,
-          width: 71,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
             color: AppColors.secondaryBlueColor,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             child: Text(
               label,
               style: TextStyles.regular1(
-                color: AppColors.primaryBlueColor,
+                color: AppColors.typeTextColor,
                 fontSize: 12,
               ),
               overflow: TextOverflow.ellipsis,
@@ -227,7 +201,6 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
 
   Widget _jobTimeChip(String time) {
     return Container(
-      height: 19,
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -240,92 +213,62 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
         ),
         borderRadius: BorderRadius.circular(5),
       ),
-      alignment: Alignment.centerRight,
       child: Text(
         time,
-        textAlign: TextAlign.right,
         style: TextStyles.semiBold(
-            fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),
+            fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
       ),
     );
   }
 
-  Widget menuWidget(
-    CourseListingViewModel vm,
-    BuildContext context,
-    int index,
-    String id,
-    String status,
-  ) {
-    return PopupMenuButton<String>(
-      offset: Offset.zero,
-      iconColor: AppColors.bottomNavUnSelectedColor,
-      color: AppColors.whiteColor,
-      padding: EdgeInsets.zero,
-      onSelected: (value) {
-        if (value == "Edit") {
-          // vm.getCatalogueView(context, id);
-        } else if (value == "Active") {
-          showAlertMessage(context, 'Do you really want to activate this job?',
-              onBack: () {
-            navigationService.goBack();
-            //vm.updateJobListingStatus(context, id, "INACTIVE");
-          });
-        } else if (value == "Preview") {
-          navigationService.navigateToWithParams(
-            RouteList.JobListingDetailsScreen,
-            //params: vm.myJobListingList[index],
-          );
-        } else if (value == "Inactive") {
-          showAlertMessage(
-              context, 'Do you really want to deactivate this job?',
-              onBack: () {
-            navigationService.goBack();
-            //vm.updateJobListingStatus(context, id, "REJECTED");
-          });
-        } else if (value == "Delete") {
-          showAlertMessage(context, 'Are you sure you want to delete this job?',
-              onBack: () {
-            navigationService.goBack();
-            //vm.removeJobsListingData(context, id);
-          });
-        }
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: "Preview",
-          child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
+  Widget _registeredChip(int registeredCount) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color.fromRGBO(255, 241, 229, 0),
+            Color.fromRGBO(255, 241, 229, 1),
+          ],
         ),
-        PopupMenuItem(
-          value: "Edit",
-          child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
-        ),
-        PopupMenuItem(
-          value: "Delete",
-          child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-        ),
-        if (status == "APPROVE")
-          PopupMenuItem(
-            value: "Inactive",
-            child: _buildRow(
-                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
-          ),
-        if (status == "REJECT")
-          PopupMenuItem(
-            value: "Active",
-            child: _buildRow(
-                Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
-          ),
-      ],
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        "$registeredCount Registered",
+        style: TextStyles.semiBold(
+            fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
+      ),
     );
   }
 
-  Widget _buildRow(IconData? icon, Color? color, String? title) {
-    return Row(children: [
-      Icon(icon, color: color),
-      addHorizontal(8),
-      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
-    ]);
+  Widget _menuWidget(BuildContext context) {
+    return PopupMenuButton<String>(
+      color: AppColors.whiteColor,
+      padding: EdgeInsets.zero, // removes inside padding
+      constraints: const BoxConstraints(
+        minWidth: 0,
+        minHeight: 0,
+      ), // remove default 48x48
+      icon: Icon(
+        Icons.more_vert,
+        size: 20,
+        color: AppColors.bottomNavUnSelectedColor,
+      ),
+      onSelected: (value) => onMenuAction?.call(value, id),
+      itemBuilder: (context) => [
+        _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
+        _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
+        _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
+        if (status == "APPROVE")
+          _popupItem(
+              "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
+        if (status == "REJECT")
+          _popupItem(
+              "Active", Icons.nightlight_outlined, AppColors.primaryColor),
+      ],
+    );
   }
 
   PopupMenuItem<String> _popupItem(String label, IconData icon, Color color) {
@@ -334,7 +277,7 @@ class CoursesListingCard extends StatelessWidget with BaseContextHelpers {
       child: Row(
         children: [
           Icon(icon, color: color, size: 18),
-          addHorizontal(8),
+          const SizedBox(width: 8),
           Text(label, style: TextStyles.semiBold(color: color, fontSize: 14)),
         ],
       ),

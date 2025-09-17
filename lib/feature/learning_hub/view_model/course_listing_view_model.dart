@@ -7,7 +7,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
 
   List<CoursesListingDetails> coursesListingList = [];
-  String selectedStatus = 'All';
+  String selectedStatus = "Pending Approval";
 
   final List<String> statuses = [
     'All',
@@ -17,16 +17,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     'InActive',
     'Expired',
     'Reject',
-  ];
-
-  final List<String> statusesforapplicatnts = [
-    'All',
-    'Applied',
-    'Shortlisted',
-    'Interviews',
-    'Accepted',
-    'Reject',
-    'Declined'
   ];
   List<String>? listingStatus = [];
 
@@ -60,7 +50,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     //INACTIVE
   }
 
-   int? allJobTalentCount = 0;
+  int? allJobTalentCount = 0;
   int? draftTalentCount = 0;
   int? pendingApprovalCount = 0;
   int? activeCount = 0;
@@ -80,11 +70,19 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> getCoursesListingData(BuildContext context) async {
     final res = await repo.getCoursesListing(listingStatus);
+    fetchCourseStatusCounts();
     if (res != null) {
       coursesListingList = res;
     }
     notifyListeners();
   }
 
-  
+  Future<void> fetchCourseStatusCounts() async {
+    final res = await repo.courseListingStatusCount();
+    allJobTalentCount = res.all?.aggregate?.count ?? 0;
+    pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
+    draftTalentCount = res.draft?.aggregate?.count ?? 0;
+    rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
+    notifyListeners();
+  }
 }

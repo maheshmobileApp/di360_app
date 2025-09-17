@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
@@ -12,17 +14,11 @@ import 'package:flutter/material.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
-import 'package:di360_flutter/feature/job_create/repository/job_create_repository.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 
 class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepository repo = LearningHubRepoImpl();
   final HttpService _http = HttpService();
-
-  NewCourseViewModel() {
-    getUserId();
-    fetchCategory();
-  }
 
   //newly added
   final courseNameController = TextEditingController();
@@ -65,13 +61,17 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   List<SponsorByImage> sponsoredByImgList = [];
   List<Images>? sessionImgList;
   List<CourseEventInfo> courseInfoList = [];
+  List<String> courseTypeNames = [];
+  List<String> courseCategory = [];
 
   String? selectedCategory;
+  String? selectedCategoryId;
   String? supplierId;
   String? practiceId;
   String? userID;
   String? logoPath;
   String? selectedEvent = "Single Day";
+  String? selectedCourseType;
 
   void setCourseHeaderBaner(List<File>? value) {
     selectedCourseHeaderBanner = value;
@@ -416,7 +416,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         ),
       );
     }
-
     return uploaded;
   }
 
@@ -424,30 +423,42 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return otherLinksFormKey.currentState?.validate() ?? false;
   }
 
-  // ───── Dropdown setters ─────
-  void setSelectedCategory(String? value) {
-    selectedCategory = value;
+  void setSelectedCourseType(String? value) {
+    selectedCourseType = value;
     notifyListeners();
   }
 
-  // ───── Data Fetching ─────
-  Future<void> fetchCategory() async {
-    category = await repo.getCategory();
-    roleOptions = category.map((role) => role.roleName ?? "").toList();
-    notifyListeners();
-  }
+  void setSelectedCourseCategory(String? name) {
+    selectedCategory = name;
 
-  getUserId() async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final logo = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
-    userID = userId;
-    logoPath = logo;
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == 'SUPPLIER') {
-      supplierId = userId;
-    } else if (type == 'PRACTICE') {
-      practiceId = userId;
+    if (name != null) {
+      final match = courseCategoryList.firstWhere(
+        (course) => course.name == name,
+        orElse: () => CourseCategories(),
+      );
+      selectedCategoryId = match.id;
+    } else {
+      selectedCategoryId = null;
     }
+
+    notifyListeners();
+  }
+
+  List<CourseCategories> courseCategoryList = [];
+
+  Future<void> fetchCourseCategory() async {
+    final result = await repo.getCourseCategory();
+    courseCategoryList = result.courseCategories ?? [];
+    courseCategory = courseCategoryList.map((e) => e.name ?? "").toList();
+
+    notifyListeners();
+  }
+
+  Future<void> fetchCourseType() async {
+    final result = await repo.getCourseType();
+    // returns GetCourseTypes
+    courseTypeNames =
+        result.courseType?.map((e) => e.name ?? "").toList() ?? [];
     notifyListeners();
   }
 
@@ -457,7 +468,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final result = await repo.createCourseListing({
       "object": CourseObject(
         courseName: courseNameController.text,
-        courseCategoryId: "93de7602-d5ca-4f94-b4ca-eaeb003479c7",
+        courseCategoryId: selectedCategoryId,
         rsvpDate: rsvpDateController.text,
         presentedByName: presenterNameController.text,
         presentedByImage: PresentedByImage(url: presenter_image),

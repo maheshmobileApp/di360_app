@@ -44,12 +44,12 @@ class CoursesListingDetails {
   String? createdAt;
   String? updatedAt;
   String? courseCategoryId;
-  Null? shortId;
+  String? shortId;
   String? courseName;
-  Null? shortInfo;
-  Null? image;
-  Null? video;
-  Null? completeDetails;
+  String? shortInfo;
+  String? image;
+  String? video;
+  String? completeDetails;
   Attachments? attachments;
   bool? isFeatured;
   String? activeStatus;
@@ -57,15 +57,15 @@ class CoursesListingDetails {
   String? address;
   String? scheduledAt;
   int? maxSubscribers;
-  Null? priceInAud;
-  Null? priceInUsd;
-  Attachments? seoMetadata;
-  Null? webinarLink;
+  int? priceInAud;
+  int? priceInUsd;
+  SeoMetadata? seoMetadata;
+  String? webinarLink;
   PresentedByImage? presentedByImage;
   String? presentedByName;
   String? description;
   List<CourseEventInfo>? courseEventInfo;
-  Null? earlyBirdEndDate;
+  String? earlyBirdEndDate;
   String? topicsIncluded;
   String? learningObjectives;
   String? eventType;
@@ -81,7 +81,7 @@ class CoursesListingDetails {
   String? contactWebsite;
   double? cpdPoints;
   int? numberOfSeats;
-  Null? earlyBirdPrice;
+  int? earlyBirdPrice;
   int? afterwardsPrice;
   List<CourseGallery>? courseGallery;
   List<CourseBannerVideo>? courseBannerVideo;
@@ -93,7 +93,11 @@ class CoursesListingDetails {
   String? rsvpDate;
   String? startDate;
   String? endDate;
-  Null? startTime;
+  String? startTime;
+ 
+
+  
+
 
   CoursesListingDetails(
       {this.id,
@@ -149,7 +153,9 @@ class CoursesListingDetails {
       this.rsvpDate,
       this.startDate,
       this.endDate,
-      this.startTime});
+      this.startTime,
+      
+      });
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -174,7 +180,7 @@ class CoursesListingDetails {
     priceInAud = json['price_in_aud'];
     priceInUsd = json['price_in_usd'];
     seoMetadata = json['seo_metadata'] != null
-        ? new Attachments.fromJson(json['seo_metadata'])
+        ? new SeoMetadata.fromJson(json['seo_metadata'])
         : null;
     webinarLink = json['webinar_link'];
     presentedByImage = json['presented_by_image'] != null
@@ -339,15 +345,20 @@ class Attachments {
 class SponsorByImage {
   String? url;
   String? name;
+  int? size;
+  String? type;
 
-  SponsorByImage({this.url, this.name});
+  SponsorByImage({this.url, this.name, this.size, this.type});
 
   SponsorByImage.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
+    size = json['size'];
+    type = json['type'];
   }
 
-  Map<String, dynamic> toJson() => {'url': url, 'name': name};
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
 }
 
 class PresentedByImage {
@@ -362,6 +373,22 @@ class PresentedByImage {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
+    return data;
+  }
+}
+
+class SeoMetadata {
+  List<String>? keywords;
+
+  SeoMetadata({this.keywords});
+
+  SeoMetadata.fromJson(Map<String, dynamic> json) {
+    keywords = json['keywords'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['keywords'] = this.keywords;
     return data;
   }
 }

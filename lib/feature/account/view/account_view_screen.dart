@@ -254,9 +254,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             context
                                 .read<CourseListingViewModel>()
                                 .getCoursesListingData(context); 
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCategory();
+                            
 
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);

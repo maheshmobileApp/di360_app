@@ -1,14 +1,19 @@
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
+import 'package:di360_flutter/feature/job_listings/model/job_status_count_model.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 
 abstract class LearningHubRepository {
   Future<List<JobsRoleList>> getCategory();
   Future<List<JobTypes>> getEmpTypes();
   Future<dynamic> createCourseListing(dynamic variables);
   Future<List<CoursesListingDetails>?> getCoursesListing(List<String>? listingStatus);
-  //Future<void> removeJobListing(String? id);
-  //Future<void> updateJobListing(String? id, String status);
+  Future<CourseStatusCountData> courseListingStatusCount();
+  Future<GetCourseTypes> getCourseType();
+  Future<GetCourseCategories> getCourseCategory();
   
  
 }

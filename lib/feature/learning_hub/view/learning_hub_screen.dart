@@ -6,6 +6,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -34,6 +35,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
     final jobListingVM = Provider.of<CourseListingViewModel>(context);
+    final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -86,8 +88,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
             SvgPicture.asset(ImageConst.search, color: AppColors.black),
             addHorizontal(15),
             GestureDetector(
-              onTap: () =>{},
-                  //navigationService.navigateTo(RouteList.JobSeekFilterScreen),
+              onTap: () => {},
+              //navigationService.navigateTo(RouteList.JobSeekFilterScreen),
               child:
                   SvgPicture.asset(ImageConst.filter, color: AppColors.black),
             ),
@@ -173,12 +175,28 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       itemCount: jobListingVM.coursesListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.coursesListingList[index];
+                        final course = jobData;
                         print(jobListingVM.coursesListingList.length);
-                        return CoursesListingCard(
+                        return /*CoursesListingCard(
                           coursesListingData: jobData,
-                          vm: jobListingVM,
                           index: index,
-                       
+                        );*/
+                            CouresListingCard(
+                          id: course.id ?? "",
+                          logoUrl: course.presentedByImage?.url ?? '',
+                          companyName: course.presentedByName ?? '',
+                          courseTitle: course.companyName ?? '',
+                          status: course.status ?? '',
+                          description: course.description ?? '',
+                          types: [course.type ?? ''],
+                          createdAt: course.createdAt ?? '',
+                          registeredCount: course.numberOfSeats ?? 0,
+                          onTapRegistered: () {
+                            // Handle navigation or API call
+                          },
+                          onMenuAction: (action, id) {
+                            // Handle menu actions (Edit, Delete, Preview, etc.)
+                          },
                         );
                       },
                     ),
@@ -189,6 +207,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
             navigationService.navigateTo(RouteList.newCourseScreen);
+            newCourseVM.fetchCourseType();
+            newCourseVM.fetchCourseCategory();
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));

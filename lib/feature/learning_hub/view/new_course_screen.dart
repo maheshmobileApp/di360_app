@@ -1,12 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/feature/job_create/view/job_info.dart';
-import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
-import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
-import 'package:di360_flutter/feature/job_create/view/other_info_view.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
-import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
-import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
@@ -39,9 +33,9 @@ class _JobCreateViewState extends State<NewCourseScreen> {
             icon: Icon(Icons.arrow_back_ios)),
         title: Text(
           "Create New Course",
-          style: TextStyles.medium2(),
+          style: TextStyles.medium3(),
         ),
-        actions: [
+        /*actions: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
@@ -66,12 +60,12 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               ),
             ),
           )
-        ],
+        ],*/
       ),
       body: Column(
         children: [
-          _buildStepProgressBar(
-              jobCreateVM.currentStep, jobCreateVM.totalSteps, jobCreateVM),
+          /*_buildStepProgressBar(
+              jobCreateVM.currentStep, jobCreateVM.totalSteps, jobCreateVM),*/
           Expanded(
             child: PageView(
               controller: jobCreateVM.pageController,
@@ -164,15 +158,9 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                 final currentFormKey =
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
-                  if (isLastStep) {
-                    await jobCreateVM.createdCourseListing(context, true);
-                    await context
-                        .read<JobListingsViewModel>()
-                        .getMyJobListingData();
-                    navigationService.goBack();
-                  } else {
-                    jobCreateVM.goToNextStep();
-                  }
+                  await jobCreateVM.createdCourseListing(context, true);
+
+                  navigationService.goBack();
                 }
               },
               backgroundColor: AppColors.timeBgColor,

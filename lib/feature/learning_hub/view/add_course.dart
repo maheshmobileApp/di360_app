@@ -20,7 +20,6 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
-    
 
     return SingleChildScrollView(
       child: Padding(
@@ -62,13 +61,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                       "${picked.day}/${picked.month}/${picked.year}";
                 }
               },
-              validator: (value) {
-                if (jobCreateVM.showLocumDate &&
-                    (value == null || value.isEmpty)) {
-                  return "Please select locum date";
-                }
-                return null;
-              },
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please Select Date' : null,
             ),
             SizedBox(height: 8),
             InputTextField(
@@ -85,7 +79,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               title: "Presented By (Image)",
               isRequired: true,
               showPreview: true,
-              selectedFile: jobCreateVM.selectedPresentedImg, // ✅ comes from ViewModel
+              selectedFile:
+                  jobCreateVM.selectedPresentedImg, // ✅ comes from ViewModel
               onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
             ),
             SizedBox(height: 8),
@@ -94,8 +89,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               isRequired: true,
               allowMultiple: true,
               showPreview: true,
-              selectedFiles: jobCreateVM.selectedCourseHeaderBanner, 
-              onFilesPicked: (file) => jobCreateVM.setCourseHeaderBaner(file), 
+              selectedFiles: jobCreateVM.selectedCourseHeaderBanner,
+              onFilesPicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
             ),
             SizedBox(height: 8),
             ImagePickerField(
@@ -103,8 +98,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               isRequired: true,
               allowMultiple: true,
               showPreview: true,
-              selectedFiles: jobCreateVM.selectedGallery, 
-              onFilesPicked: (file) => jobCreateVM.setGallery(file), 
+              selectedFiles: jobCreateVM.selectedGallery,
+              onFilesPicked: (file) => jobCreateVM.setGallery(file),
             ),
             SizedBox(height: 8),
             ImagePickerField(
@@ -112,8 +107,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               isRequired: true,
               allowMultiple: true,
               showPreview: true,
-              selectedFiles: jobCreateVM.selectedCourseBannerImg, 
-              onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file), 
+              selectedFiles: jobCreateVM.selectedCourseBannerImg,
+              onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),
             ),
             SizedBox(height: 8),
             InputTextField(
@@ -186,13 +181,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                       "${picked.day}/${picked.month}/${picked.year}";
                 }
               },
-              validator: (value) {
-                if (jobCreateVM.showLocumDate &&
-                    (value == null || value.isEmpty)) {
-                  return "Please select locum date";
-                }
-                return null;
-              },
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please Select Date' : null,
             ),
             SizedBox(height: 8),
             InputTextField(
@@ -210,8 +200,6 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               title: "Learning Objectives",
               controller: jobCreateVM.learningObjectivesDescController,
             ),
-
-           
           ],
         ),
       ),
@@ -231,10 +219,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
       value: jobCreateVM.selectedCategory,
       title: "Category",
       onChanged: (v) {
-        jobCreateVM.setSelectedCategory(v as String);
+        jobCreateVM.setSelectedCourseCategory(v as String);
       },
       items:
-          jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {
+          jobCreateVM.courseCategory.map<DropdownMenuItem<Object>>((String value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -250,13 +238,13 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   Widget _buildCourseTypes(NewCourseViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectedCategory,
+      value: jobCreateVM.selectedCourseType,
       title: "Course Format (Type)",
       onChanged: (v) {
-        jobCreateVM.setSelectedCategory(v as String);
+        jobCreateVM.setSelectedCourseType(v as String);
       },
-      items:
-          jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {
+      items: jobCreateVM.courseTypeNames
+          .map<DropdownMenuItem<Object>>((String value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -269,63 +257,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildEmpTypes(JobCreateViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: null,
-      title: "Type of employment",
-      onChanged: (v) {
-        final value = v as String;
-        jobCreateVM.addEmploymentTypeChip(value);
-        jobCreateVM.toggleLocumDateVisibility(value == "Locum");
-      },
-      items:
-          jobCreateVM.empOptions.map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select employment type",
-      validator: (_) => jobCreateVM.selectedEmploymentChips.isEmpty
-          ? 'Please select employment type'
-          : null,
-    );
-  }
+  
 
-  Widget _showEmpTypes(JobCreateViewModel jobCreateVM) {
-    return Wrap(
-      spacing: 6,
-      children: jobCreateVM.selectedEmploymentChips.map((e) {
-        return Chip(
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-          backgroundColor: AppColors.secondaryBlueColor,
-          label: Text(e),
-          deleteIcon: const Icon(Icons.close, size: 18),
-          onDeleted: () {
-            jobCreateVM.removeEmploymentTypeChip(e);
-            if (e == "Locum") {
-              jobCreateVM.toggleLocumDateVisibility(false);
-              jobCreateVM.locumDateController.clear();
-            }
-          },
-        );
-      }).toList(),
-    );
-  }
+  
 }
 
-/*LogoContainer(
-              title: "Course Banner Image",
-              imageFile: addDirectorVM.logoFile,
-              serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
-                  ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
-                  : '',
-              onTap: () => imagePickerSelection(
-                context,
-                () => addDirectorVM.pickLogoImage(ImageSource.gallery),
-                () => addDirectorVM.pickLogoImage(ImageSource.camera),
-              ),
-            ),
- */
