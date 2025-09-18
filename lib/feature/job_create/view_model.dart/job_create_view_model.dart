@@ -86,7 +86,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     'Pay',
     'Links'
   ];
- late final PageController pageController;
+  late final PageController pageController;
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
@@ -161,38 +161,41 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Navigation Methods ─────
   void goToNextStep() {
-  if (!validateCurrentStep()) return;
-  if (_currentStep == 1 && bannerFile != null) {
-    validateLogoAndBanner();
+    if (!validateCurrentStep()) return;
+    if (_currentStep == 1 && bannerFile != null) {
+      validateLogoAndBanner();
+    }
+    if (_currentStep < totalSteps - 1) {
+      _currentStep++;
+      pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+      notifyListeners();
+    }
   }
-  if (_currentStep < totalSteps - 1) {
-    _currentStep++;
-    pageController.animateToPage(
-      _currentStep,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-    notifyListeners();
+
+  void goToPreviousStep() {
+    if (_currentStep > 0) {
+      _currentStep--;
+      pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+      notifyListeners();
+    }
   }
-}
-void goToPreviousStep() {
-  if (_currentStep > 0) {
-    _currentStep--;
-    pageController.animateToPage(
-      _currentStep,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-    notifyListeners();
+
+  void goToStep(int step) {
+    if (step >= 0 && step < totalSteps) {
+      _currentStep = step;
+      pageController.jumpToPage(step);
+      notifyListeners();
+    }
   }
-}
-void goToStep(int step) {
-  if (step >= 0 && step < totalSteps) {
-    _currentStep = step;
-    pageController.jumpToPage(step);
-    notifyListeners();
-  }
-}
+
   initializeTheData() {
     getCompanyName();
   }
@@ -433,12 +436,26 @@ void goToStep(int step) {
     Loaders.circularShowLoader(context);
     final result = await repo.createJobListing({
       "postjobObj": {
-        "title": jobTitleController.text,
-        "j_type": "",
+        "title": jobTitleController.text, // String
+        "j_type": "", //
         "j_role": selectedRole,
+        "roles_and_responsibilities": "",
+        "address": {}, //As per Api this is empty object
+        "days_of_week": {}, //As per Api this is empty object
+        "is_featured": false, // Default is false -> for now we are not using it
+        "number_of_positions": 1, //TODO: Need to change it to dynamic
         "description": jobDescController.text,
+        "closing_message": "",
+        "experience": "",
+        "skills": [],
+        "jobexperiences": [],
+        "upload_resume": [],
+        "current_company": "",
+        "job_location": "", //Need to discuss with backend
+        "job_designation": "", //Need to discuss with backend
+        "offered_supplement": "", //Need to discuss with backend
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [locumDateController.text],
+        "availability_date": [locumDateController.text],//TODO: Need to send Start and End data in Array of strings
         "years_of_experience": selectExperience,
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,
@@ -446,14 +463,20 @@ void goToStep(int step) {
         "logo": logoPath,
         "state": stateController.text,
         "city": cityPostCodeController.text,
-        "salary": "Range",
+        "salary": "Range", //Need to discuss with backend
         "pay_min": minSalaryController.text,
         "pay_max": maxSalaryController.text,
         "company_name": companyNameController.text,
-        "pay_range": selectedPayRange,
-        "education": selectEducation,
+        "pay_range":
+            selectedPayRange, //Getting fron Dropdown, this is static data for now
+        "education":
+            selectEducation, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-        "banner_image": banner_image,
+        "banner_image":
+            banner_image, // TODO: Need to change the type of this variable
+        /*
+        [{"url":"","name":"coverletter.pdf","type":"document","extension":"pdf"}]
+         */
         "clinic_logo": [
           // {
           //   "url":
@@ -461,20 +484,26 @@ void goToStep(int step) {
           //   "type": "image",
           //   "extension": "jpeg"
           // }
-        ],
+        ], //TODO: need to send array of object
+
         "closed_at": endDate?.toUtc().toIso8601String(),
-        "status": isDraft ? "DRAFT" : "PENDING",
-        "active_status": "ACTIVE",
+        "status": isDraft
+            ? "DRAFT"
+            : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
+        "active_status":
+            "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
         "website_url": websiteController.text,
         "country": selectCountry,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
-        "offered_benefits": [],
+        "offered_benefits":
+            [], //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
         "hiring_period": selectHire,
         "no_of_people": selectPositions,
         "rate_billing": selectRate,
         "facebook_url": facebookController.text,
         "instagram_url": instgramController.text,
         "linkedin_url": linkedInController.text,
+        "twitter_url": "", // No option from the UI for now this field is empty
         "timings": startDate?.toUtc().toIso8601String(),
         "timingtoggle": isStartDateEnabled == true ? "YES" : "NO",
         //"auto_expiry_date": null,

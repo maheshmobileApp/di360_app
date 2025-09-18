@@ -97,9 +97,10 @@ class _JobCreateViewState extends State<JobCreateView> {
   Widget _buildStepProgressBar(
       currentStep, totalSteps, JobCreateViewModel jobcreateVm) {
     return StepsView(
+
         currentStep: jobcreateVm.currentStep,
         totalSteps: jobcreateVm.totalSteps,
-        stepTitles: jobcreateVm.steps);
+       );
   }
 
   Widget _buildStep(JobCreateSteps stepIndex, GlobalKey<FormState> key) {
