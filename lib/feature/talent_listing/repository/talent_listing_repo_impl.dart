@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_r
 import '../../talents/model/job_profile.dart';
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
-
   @override
   Future<List<JobProfile>> getMyTalentListing(
       List<String>? listingStatus) async {

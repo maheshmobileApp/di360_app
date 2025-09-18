@@ -1,11 +1,11 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/talent_listing/model/talent_enquiry_listing_response.dart';
-//import 'package:di360_flutter/feature/talent_listing/model/talent_listing_response.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:flutter/material.dart';
-import '../../talents/model/job_profile.dart';
+
+
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
   final List<String> roleOptions = [
@@ -22,16 +22,24 @@ class TalentListingViewModel extends ChangeNotifier {
     "Full Time",
     "Part time",
   ];
+  final List<String> StatusOptions = ["APPROVE", "CANCELLED", "PENDING"];
   String? selectedRole;
   String? selectedEmploymentType;
+  String? selectedState;
   void setRole(String val) {
     selectedRole = val;
     notifyListeners();
   }
+
   void setEmploymentType(String val) {
     selectedEmploymentType = val;
     notifyListeners();
   }
+  void setState(String val) {
+    selectedState = val;
+    notifyListeners();
+  }
+
   void clearSelections() {
     selectedRole = null;
     selectedEmploymentType = null;
@@ -94,13 +102,16 @@ class TalentListingViewModel extends ChangeNotifier {
     }
     getMyTalentListingData();
   }
+
   Future<void> fetchTalentStatusCounts() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     try {
       final variables = {
         "where": {
           "_and": [
-            {"enquiry_from": {"_eq": userId}},
+            {
+              "enquiry_from": {"_eq": userId}
+            },
             {
               "job_profiles": {
                 "admin_status": {
@@ -122,17 +133,17 @@ class TalentListingViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e, st) {
       print('Error in fetchTalentStatusCounts: $e\n$st');
-      AllTalentCount = PendingCount = ApprovalCount =
-          RejectedCount = DraftCount = ExpireCount = 0;
+      AllTalentCount = PendingCount =
+          ApprovalCount = RejectedCount = DraftCount = ExpireCount = 0;
       notifyListeners();
     }
   }
 
   Future<void> getMyTalentListingData() async {
     try {
-       await fetchTalentStatusCounts(); 
+      await fetchTalentStatusCounts();
       final res = await repo.getMyTalentListing(listingStatus);
-      myTalentListingList = res ?? [];
+      myTalentListingList = res;
       notifyListeners();
     } catch (e, st) {
       print("Error fetching talent listing: $e\n$st");
@@ -140,9 +151,10 @@ class TalentListingViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   void printSelectedItems() {
     debugPrint("Selected Role: $selectedRole");
     debugPrint("Selected Employment Type: $selectedEmploymentType");
-    debugPrint("Selected Status: $selectedStatus"); 
+    debugPrint("Selected Status: $selectedStatus");
   }
 }
