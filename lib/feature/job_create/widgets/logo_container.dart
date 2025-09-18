@@ -15,14 +15,18 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
   final Function()? onTap;
   final File? imageFile;
   final String? serverImg;
-  const LogoContainer(
-      {super.key,
-      this.title,
-      this.isRequired = false,
-      this.titleColor,
-      this.onTap,
-      this.imageFile,
-      this.serverImg});
+  final VoidCallback? onRemove; 
+
+  const LogoContainer({
+    super.key,
+    this.title,
+    this.isRequired = false,
+    this.titleColor,
+    this.onTap,
+    this.imageFile,
+    this.serverImg,
+    this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +40,13 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
               style: TextStyles.regular3(color: titleColor ?? AppColors.black),
             ),
             if (isRequired)
-              Text(
+              const Text(
                 ' *',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         InkWell(
           onTap: onTap,
           child: DottedBorder(
@@ -51,42 +54,68 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
             strokeWidth: 2,
             dashPattern: [6, 4],
             borderType: BorderType.RRect,
-            radius: Radius.circular(8),
+            radius: const Radius.circular(8),
             child: Container(
               width: double.infinity,
               height: getSize(context).height * 0.2,
-              child: serverImg != null
-                  ? CachedNetworkImageWidget(
-                      imageUrl: serverImg ?? '', fit: BoxFit.cover)
-                  : imageFile != null
-                      ? Image.file(
-                          imageFile!,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Image.asset(ImageConst.upload),
+              child: (serverImg != null || imageFile != null)
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        serverImg != null
+                            ? CachedNetworkImageWidget(
+                                imageUrl: serverImg ?? '',
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                imageFile!,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: GestureDetector(
+                            onTap: onRemove, // 🔹 Call remove callback
+                            child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: AppColors.timeBgColor,
+                                color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 18,
                               ),
                             ),
-                            SizedBox(height: 20),
-                            Text(
-                              "Click here to Choose a file.",
-                              style: TextStyles.medium2(color: AppColors.black),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "JPEG, PNG formats, up to 5 MB",
-                              style: TextStyles.regular2(
-                                  color: AppColors.dropDownHint),
-                            ),
-                          ],
+                          ),
                         ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.timeBgColor,
+                          ),
+                          child: Image.asset(ImageConst.upload),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Click here to Choose a file.",
+                          style: TextStyles.medium2(color: AppColors.black),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "JPEG, PNG formats, up to 5 MB",
+                          style: TextStyles.regular2(
+                              color: AppColors.dropDownHint),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ),

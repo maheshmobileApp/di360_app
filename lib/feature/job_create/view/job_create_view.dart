@@ -17,13 +17,20 @@ import 'package:provider/provider.dart';
 
 class JobCreateView extends StatefulWidget {
   JobCreateView({super.key});
-
   @override
   State<JobCreateView> createState() => _JobCreateViewState();
 }
-
 class _JobCreateViewState extends State<JobCreateView> {
   @override
+    void initState() {
+    initilizeTheProfileData();
+    super.initState();
+  }
+  initilizeTheProfileData() async {
+    final jobCreateVM =
+        Provider.of<JobCreateViewModel>(context, listen: false);
+    await jobCreateVM.initializeTheData();
+  }
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     return Scaffold(
@@ -140,7 +147,6 @@ class _JobCreateViewState extends State<JobCreateView> {
       ),
       child: Row(
         children: [
-          /// Previous Button
           if (!isFirstStep)
             Expanded(
               child: CustomRoundedButton(
@@ -155,8 +161,6 @@ class _JobCreateViewState extends State<JobCreateView> {
               ),
             ),
           if (!isFirstStep) const SizedBox(width: 16),
-
-          /// Save Draft Button
           Expanded(
             child: CustomRoundedButton(
               fontSize: 12,

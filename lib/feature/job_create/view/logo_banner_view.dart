@@ -63,18 +63,20 @@ class LogoAndBannerView extends StatelessWidget with BaseContextHelpers {
               () => jobCreateVM.pickBannerImage(ImageSource.gallery),
               () => jobCreateVM.pickBannerImage(ImageSource.camera),
             ),
+            onRemove: () {
+              jobCreateVM.removeBanner();
+            },
           ),
-        addVertical(8),
-         ImagePickerInputField(
-          title: 'Clinic Photo',
-          imageFile:jobCreateVM.ClinicPhotofile,
-          onTap: () => _imagePickerSelection(
-            context,
-            () =>jobCreateVM. pickClinicPhoto(ImageSource.gallery),
-            () => jobCreateVM. pickClinicPhoto(ImageSource.camera),
+          addVertical(8),
+          ImagePickerInputField(
+            title: 'Clinic Photo',
+            imageFile: jobCreateVM.ClinicPhotofile,
+            onTap: () => _imagePickerSelection(
+              context,
+              () => jobCreateVM.pickClinicPhoto(ImageSource.gallery),
+              () => jobCreateVM.pickClinicPhoto(ImageSource.camera),
+            ),
           ),
-        ),
-
         ],
       ),
     );

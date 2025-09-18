@@ -20,9 +20,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     getUserId();
     fetchJobRoles();
     fetchEmpTypes();
+    pageController = PageController(initialPage: _currentStep);
   }
 
   // Controllers
+  String CompanyName = "";
   final TextEditingController jobTitleController = TextEditingController();
   final companyNameController = TextEditingController();
   final jobDescController = TextEditingController();
@@ -84,7 +86,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     'Pay',
     'Links'
   ];
-  final PageController pageController = PageController();
+ late final PageController pageController;
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
@@ -148,43 +150,57 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // Employment types
   final List<String> _selectedEmploymentChips = [];
-  List<String> get selectedEmploymentChips => _selectedEmploymentChips;
-
+  List<String> get selectedEmploymentChips =>
+      List.unmodifiable(_selectedEmploymentChips);
+  final List<String> _selectedBenefits = [];
+  List<String> get selectedBenefits => List.unmodifiable(_selectedBenefits);
   List<JobsRoleList> jobRoles = [];
   List<String> roleOptions = [];
-
-  List<JobTypes> EmpTypes = [];
+  List<JobTypes> empTypes = [];
   List<String> empOptions = [];
 
   // ───── Navigation Methods ─────
   void goToNextStep() {
-    if (!validateCurrentStep()) return;
-    if (_currentStep == 1 && bannerFile != null) {
-      validateLogoAndBanner();
-    }
-    if (_currentStep < totalSteps - 1) {
-      _currentStep++;
-      pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.ease);
-      notifyListeners();
-    }
+  if (!validateCurrentStep()) return;
+  if (_currentStep == 1 && bannerFile != null) {
+    validateLogoAndBanner();
+  }
+  if (_currentStep < totalSteps - 1) {
+    _currentStep++;
+    pageController.animateToPage(
+      _currentStep,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+    notifyListeners();
+  }
+}
+void goToPreviousStep() {
+  if (_currentStep > 0) {
+    _currentStep--;
+    pageController.animateToPage(
+      _currentStep,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+    notifyListeners();
+  }
+}
+void goToStep(int step) {
+  if (step >= 0 && step < totalSteps) {
+    _currentStep = step;
+    pageController.jumpToPage(step);
+    notifyListeners();
+  }
+}
+  initializeTheData() {
+    getCompanyName();
   }
 
-  void goToPreviousStep() {
-    if (_currentStep > 0) {
-      _currentStep--;
-      pageController.previousPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.ease);
-      notifyListeners();
-    }
-  }
-
-  void goToStep(int step) {
-    if (step >= 0 && step < totalSteps) {
-      _currentStep = step;
-      pageController.jumpToPage(step);
-      notifyListeners();
-    }
+  getCompanyName() async {
+    CompanyName = await LocalStorage.getStringVal(LocalStorageConst.name);
+    companyNameController.text = CompanyName;
+    notifyListeners();
   }
 
   // ───── Validation Methods ─────
@@ -270,8 +286,27 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void setSelectedBenefits(String? value) {
-    selectEducation = value;
+  void setSelectedBenefits(List<String> values) {
+    _selectedBenefits
+      ..clear()
+      ..addAll(values);
+    notifyListeners();
+  }
+
+  void removeBanner() {
+    bannerFile = null;
+    notifyListeners();
+  }
+
+  void addBenefit(String benefit) {
+    if (!_selectedBenefits.contains(benefit)) {
+      _selectedBenefits.add(benefit);
+      notifyListeners();
+    }
+  }
+
+  void removeBenefit(String benefit) {
+    _selectedBenefits.remove(benefit);
     notifyListeners();
   }
 
@@ -304,24 +339,31 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   // ───── Employment Chips ─────
+  void _updateLocumVisibility() {
+    final hasLocum = _selectedEmploymentChips.contains("Locum");
+    showLocumDate = hasLocum;
+
+    if (!hasLocum) {
+      locumDateController.clear();
+    }
+    notifyListeners();
+  }
+
   void addEmploymentTypeChip(String empType) {
     if (!_selectedEmploymentChips.contains(empType)) {
       _selectedEmploymentChips.add(empType);
-      toggleLocumDateVisibility(empType == "Locum");
-      notifyListeners();
+      _updateLocumVisibility();
     }
   }
 
   void removeEmploymentTypeChip(String empType) {
     _selectedEmploymentChips.remove(empType);
-    if (empType == "Locum") toggleLocumDateVisibility(false);
-    notifyListeners();
+    _updateLocumVisibility();
   }
 
   void clearEmploymentTypeChips() {
     _selectedEmploymentChips.clear();
-    toggleLocumDateVisibility(false);
-    notifyListeners();
+    _updateLocumVisibility();
   }
 
   List<String> getSelectedEmploymentTypes() =>
@@ -368,8 +410,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> fetchEmpTypes() async {
-    EmpTypes = await repo.getEmpTypes();
-    empOptions = EmpTypes.map((emp) => emp.employeeTypeName ?? "").toList();
+    empTypes = await repo.getEmpTypes();
+    empOptions = empTypes.map((emp) => emp.employeeTypeName ?? "").toList();
     notifyListeners();
   }
 
