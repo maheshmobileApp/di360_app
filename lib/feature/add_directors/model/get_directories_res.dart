@@ -8,14 +8,6 @@ class GetDirectoriesRes {
   GetDirectoriesRes.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new GetDirectoriesData.fromJson(json['data']) : null;
   }
-
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = new Map<String, dynamic>();
-  //   if (this.data != null) {
-  //     data['data'] = this.data!.toJson();
-  //   }
-  //   return data;
-  // }
 }
 
 class GetDirectoriesData {
@@ -31,14 +23,6 @@ class GetDirectoriesData {
       });
     }
   }
-
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = new Map<String, dynamic>();
-  //   if (this.directories != null) {
-  //     data['directories'] = this.directories!.map((v) => v.toJson()).toList();
-  //   }
-  //   return data;
-  // }
 }
 
 class GetDirectories {
@@ -58,6 +42,11 @@ class GetDirectories {
   String? directoryCategoryId;
   Logo? logo;
   BannerLogo? bannerImage;
+  ProfileImage? profileImage;
+  List<WorkingAt>? workingAt;
+  List<Education>? education;
+  List<UniversitySchool>? universitySchool;
+  List<Hobbies>? hobbies;
   List<DirectoryDocuments>? directoryDocuments;
   List<DirectoryLocations>? directoryLocations;
   List<DirectoryServices>? directoryServices;
@@ -85,8 +74,13 @@ class GetDirectories {
       this.companyName,
       this.professionType,
       this.directoryCategoryId,
+      this.workingAt,
+      this.education,
+      this.universitySchool,
+      this.hobbies,
       this.logo,
       this.bannerImage,
+      this.profileImage,
       this.directoryDocuments,
       this.directoryLocations,
       this.directoryServices,
@@ -114,9 +108,36 @@ class GetDirectories {
     companyName = json['company_name'];
     professionType = json['profession_type'];
     directoryCategoryId = json['directory_category_id'];
+    if (json['working_at'] != null) {
+      workingAt = <WorkingAt>[];
+      json['working_at'].forEach((v) {
+        workingAt!.add(new WorkingAt.fromJson(v));
+      });
+    }
+    if (json['education'] != null) {
+      education = <Education>[];
+      json['education'].forEach((v) {
+        education!.add(new Education.fromJson(v));
+      });
+    }
+    if (json['university_school'] != null) {
+      universitySchool = <UniversitySchool>[];
+      json['university_school'].forEach((v) {
+        universitySchool!.add(new UniversitySchool.fromJson(v));
+      });
+    }
+    if (json['hobbies'] != null) {
+      hobbies = <Hobbies>[];
+      json['hobbies'].forEach((v) {
+        hobbies!.add(new Hobbies.fromJson(v));
+      });
+    }
     logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
     bannerImage = json['banner_image'] != null
         ? new BannerLogo.fromJson(json['banner_image'])
+        : null;
+    profileImage = json['profile_image'] != null
+        ? new ProfileImage.fromJson(json['profile_image'])
         : null;
     if (json['directory_documents'] != null) {
       directoryDocuments = <DirectoryDocuments>[];
@@ -180,72 +201,47 @@ class GetDirectories {
     }
     sTypename = json['__typename'];
   }
+}
 
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = new Map<String, dynamic>();
-  //   data['id'] = this.id;
-  //   data['description'] = this.description;
-  //   data['name'] = this.name;
-  //   data['email'] = this.email;
-  //   data['phone'] = this.phone;
-  //   data['address'] = this.address;
-  //   data['latitude'] = this.latitude;
-  //   data['longitude'] = this.longitude;
-  //   data['alt_phone'] = this.altPhone;
-  //   data['type'] = this.type;
-  //   data['abn_acn'] = this.abnAcn;
-  //   data['company_name'] = this.companyName;
-  //   data['profession_type'] = this.professionType;
-  //   data['directory_category_id'] = this.directoryCategoryId;
-  //   if (this.logo != null) {
-  //     data['logo'] = this.logo!.toJson();
-  //   }
-  //   if (this.bannerImage != null) {
-  //     data['banner_image'] = this.bannerImage!.toJson();
-  //   }
-  //   if (this.directoryDocuments != null) {
-  //     data['directory_documents'] =
-  //         this.directoryDocuments!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryLocations != null) {
-  //     data['directory_locations'] =
-  //         this.directoryLocations!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryServices != null) {
-  //     data['directory_services'] =
-  //         this.directoryServices!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryCertifications != null) {
-  //     data['directory_certifications'] =
-  //         this.directoryCertifications!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryAchievements != null) {
-  //     data['directory_achievements'] =
-  //         this.directoryAchievements!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryAppointments != null) {
-  //     data['directory_appointments'] =
-  //         this.directoryAppointments!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryTeamMembers != null) {
-  //     data['directory_team_members'] =
-  //         this.directoryTeamMembers!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryGalleryPosts != null) {
-  //     data['directory_gallery_posts'] =
-  //         this.directoryGalleryPosts!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryTestimonials != null) {
-  //     data['directory_testimonials'] =
-  //         this.directoryTestimonials!.map((v) => v.toJson()).toList();
-  //   }
-  //   if (this.directoryFaqs != null) {
-  //     data['directory_faqs'] =
-  //         this.directoryFaqs!.map((v) => v.toJson()).toList();
-  //   }
-  //   data['__typename'] = this.sTypename;
-  //   return data;
-  // }
+
+class WorkingAt {
+  String? name;
+
+  WorkingAt({this.name});
+
+  WorkingAt.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+  }
+}
+
+class Education {
+  String? name;
+
+  Education({this.name});
+
+  Education.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+  }
+}
+
+class UniversitySchool {
+  String? name;
+
+  UniversitySchool({this.name});
+
+  UniversitySchool.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+  }
+}
+
+class Hobbies {
+  String? name;
+
+  Hobbies({this.name});
+
+  Hobbies.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+  }
 }
 
 class Logo {

@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/add_directors/querys/appoinment_timings_qu
 import 'package:di360_flutter/feature/add_directors/querys/get_business_type_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/get_director_info_query.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository.dart';
+import 'package:di360_flutter/feature/professional_add_director/querys/get_profess_director_query.dart';
 
 class AddDirectorRepositoryImpl extends AddDirectorRepository {
   final HttpService http = HttpService();
@@ -32,7 +33,9 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
     final res = await http.query(
         type == 'SUPPLIER'
             ? getSuppilerDirectorInfoQuery
-            : getDirectorInfoQuery,
+            : type == 'PROFESSIONAL'
+                ? getProfessDirectorQuery
+                : getDirectorInfoQuery,
         variables: {"id": userId});
     final result = GetDirectoriesData.fromJson(res);
     return result.directories ?? [];
