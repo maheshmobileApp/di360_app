@@ -5,7 +5,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/talent_listing/model/talent_enquiry_listing_response.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +48,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// Top section: Logo and status
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -77,8 +75,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
           ],
         ),
         addVertical(8),
-
-        /// Work type and time
         Row(
           children: [
             Flexible(child: _chipWidget(jobProfiles?.workType ?? [])),
@@ -283,12 +279,19 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             params: jobProfiles,
           );
         }
+        else if (value == "Cancel") {
+       
+      }
       },
       itemBuilder: (context) => [
         PopupMenuItem(
           value: "Preview",
           child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
         ),
+         PopupMenuItem(
+        value: "Cancel",
+        child: _buildRow(Icons.cancel, AppColors.redColor, "Delete"),
+      ),
       ],
     );
   }
