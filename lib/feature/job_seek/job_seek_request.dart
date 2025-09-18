@@ -1,5 +1,8 @@
-String job_list_request = '''query getalljobs {
- jobs(order_by: {created_at: desc}){
+String job_list_request = '''query getAllJobs {
+  jobs(
+    order_by: { created_at: desc }
+    where: { active_status: { _eq: "ACTIVE" }, status: { _in: ["APPROVE"] } }
+  ) {
     id
     title
     j_type
@@ -41,10 +44,9 @@ String job_list_request = '''query getalljobs {
     banner_image
     availability_date
     address
-    active_status,
-    pay_min,
-    pay_max,
-   
+    active_status
+    pay_min
+    pay_max
   }
 }
 ''';

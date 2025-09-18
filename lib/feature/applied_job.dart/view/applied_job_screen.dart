@@ -6,17 +6,15 @@ import 'package:provider/provider.dart';
 
 
 class AppliedJobScreen extends StatelessWidget {
-  final String dentalProfessionalId;
 
   const AppliedJobScreen({
     super.key,
-    required this.dentalProfessionalId,
   });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppliedJobViewModel>(
-      create: (_) => AppliedJobViewModel()..fetchAppliedJobs(dentalProfessionalId: dentalProfessionalId),
+      create: (_) => AppliedJobViewModel()..fetchAppliedJobs(),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(

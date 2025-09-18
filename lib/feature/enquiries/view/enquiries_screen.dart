@@ -5,17 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EnquiriesScreen extends StatelessWidget {
-  final String dentalProfessionalId;
 
   const EnquiriesScreen({
     super.key,
-    required this.dentalProfessionalId,
   });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppliedJobViewModel>(
-      create: (_) => AppliedJobViewModel()..fetchAppliedJobs(dentalProfessionalId: dentalProfessionalId),
+      create: (_) => AppliedJobViewModel()..fetchAppliedJobs(),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(

@@ -77,16 +77,10 @@ class Routes {
       },
 
       RouteList.AppliedJobScreen: (context) {
-        final dentalProfessionalId =
-            ModalRoute.of(context)!.settings.arguments as String? ??
-                "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
-        return AppliedJobScreen(dentalProfessionalId: dentalProfessionalId);
+        return AppliedJobScreen();
       },
       RouteList.EnquiriesScreen: (context) {
-        final dentalProfessionalId =
-            ModalRoute.of(context)!.settings.arguments as String? ??
-                "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
-        return EnquiriesScreen(dentalProfessionalId: dentalProfessionalId);
+        return EnquiriesScreen();
       },
 
       RouteList.JobListingApplicantscreen: (context) {
