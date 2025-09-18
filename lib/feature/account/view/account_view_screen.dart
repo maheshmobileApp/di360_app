@@ -11,8 +11,8 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,6 +23,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return ChangeNotifierProvider(
       create: (_) =>
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
@@ -45,7 +46,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                 _buildProfileHeader(),
                 addVertical(16),
                 ...vm.visibleSections
-                    .map((section) => _buildSection(context, section))
+                    .map((section) =>
+                        _buildSection(context, section, addDirectorVM))
                     .toList(),
                 addVertical(12),
                 _buildLogoutTile(context),
@@ -166,7 +168,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSection(BuildContext context, ProfileCategory section) {
+  Widget _buildSection(
+      BuildContext context, ProfileCategory section, AddDirectorViewModel vm) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -261,6 +264,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'My Learning Hub') {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
+                            vm.fetchTheDirectorData(navigatorKey.currentContext!);
                           }
                         },
                       ),

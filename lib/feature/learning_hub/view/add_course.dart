@@ -1,17 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
-import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class AddCourse extends StatelessWidget with BaseContextHelpers {
@@ -115,7 +110,11 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               hintText: "Enter your text here",
               maxLength: 500,
               maxLines: 5,
+              isRequired: true,
               title: "Course Description",
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Course Description'
+                  : null,
               controller: jobCreateVM.courseDescController,
             ),
             SizedBox(height: 8),
@@ -158,9 +157,21 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               hintText: "Enter Early Bird Price",
               title: "Early Bird Price",
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Bird Price'
-                  : null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter Bird Price';
+                }
+
+                final birdPrice = double.tryParse(value) ?? 0;
+                final totalPrice =
+                    double.tryParse(jobCreateVM.totalPriceController.text) ?? 0;
+
+                if (birdPrice > totalPrice) {
+                  return 'Bird Price cannot be more than Total Price';
+                }
+
+                return null;
+              },
             ),
             SizedBox(height: 8),
             CustomDatePicker(
@@ -221,8 +232,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
       onChanged: (v) {
         jobCreateVM.setSelectedCourseCategory(v as String);
       },
-      items:
-          jobCreateVM.courseCategory.map<DropdownMenuItem<Object>>((String value) {
+      items: jobCreateVM.courseCategory
+          .map<DropdownMenuItem<Object>>((String value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
@@ -256,9 +267,4 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
           : null,
     );
   }
-
-  
-
-  
 }
-

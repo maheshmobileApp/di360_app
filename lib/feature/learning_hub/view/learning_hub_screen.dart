@@ -3,8 +3,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget.dart';
-import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
@@ -26,9 +24,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
   @override
   void initState() {
     super.initState();
-    // final jobListingVM =
-    //     Provider.of<JobListingsViewModel>(context, listen: false);
-    // jobListingVM.fetchJobStatusCounts();
   }
 
   @override
@@ -87,13 +82,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
             addHorizontal(15),
             SvgPicture.asset(ImageConst.search, color: AppColors.black),
             addHorizontal(15),
-            GestureDetector(
-              onTap: () => {},
-              //navigationService.navigateTo(RouteList.JobSeekFilterScreen),
-              child:
-                  SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-            ),
-            addHorizontal(15),
+            
           ],
         ),
         body: Column(

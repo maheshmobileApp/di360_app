@@ -6,7 +6,7 @@ import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/talents_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo.dart';
-
+import '../../talents/model/job_profile.dart';
 
 class TalentRepoImpl extends TalentRepository {
   final HttpService _http = HttpService();

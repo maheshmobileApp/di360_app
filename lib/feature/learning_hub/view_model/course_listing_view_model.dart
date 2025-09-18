@@ -70,7 +70,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> getCoursesListingData(BuildContext context) async {
     final res = await repo.getCoursesListing(listingStatus);
-    fetchCourseStatusCounts();
+    //fetchCourseStatusCounts();
     if (res != null) {
       coursesListingList = res;
     }

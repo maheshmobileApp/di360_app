@@ -2,15 +2,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
+
 class MultiDateCalendarPicker extends StatefulWidget {
   final List<DateTime> selectedDates;
-  final Function(DateTime) onToggleDate;
+  final Function(List<DateTime>) onDatesChanged;
+  final TextEditingController controller;
   final String title;
 
   const MultiDateCalendarPicker({
     Key? key,
     required this.selectedDates,
-    required this.onToggleDate,
+    required this.onDatesChanged,
+    required this.controller,
     this.title = "Availability Date",
   }) : super(key: key);
 
@@ -20,154 +24,214 @@ class MultiDateCalendarPicker extends StatefulWidget {
 }
 
 class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
-  DateTime currentMonth = DateTime.now();
-  bool showCalendar = false;
-  late TextEditingController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = TextEditingController();
-    _updateTextFromDates();
-  }
-
-  void _updateTextFromDates() {
-    controller.text = widget.selectedDates
-        .map((d) => DateFormat('d/M/yyyy').format(d))
-        .join(" | ");
-  }
-
-  bool isSameDay(DateTime a, DateTime b) =>
+  bool _isSameDate(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
 
-  @override
-  void didUpdateWidget(covariant MultiDateCalendarPicker oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedDates != widget.selectedDates) {
-      _updateTextFromDates();
-    }
+  int _daysInMonth(DateTime m) =>
+      DateUtils.getDaysInMonth(m.year, m.month);
+
+  int _startOffset(DateTime m) {
+    final wd = DateTime(m.year, m.month, 1).weekday % 7;
+    return wd; // Sunday start
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: controller,
-          readOnly: true,
-          onTap: () {
-            setState(() {
-              showCalendar = !showCalendar;
-            });
-          },
-          decoration: InputDecoration(
-            labelText: widget.title,
-            prefixIcon: const Icon(
-              Icons.calendar_today_outlined,
-              size: 20,
-              color: Colors.grey,
-            ),
-            contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
-            hintText: "Select dates",
-            hintStyle: const TextStyle(color: Colors.grey),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(width: 1.5, color: Colors.grey),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  const BorderSide(width: 1.5, color: Colors.black12),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(width: 1.5, color: Colors.red),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(width: 1.5, color: Colors.red),
-            ),
-          ),
-        ),
-        if (showCalendar) ...[
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_left),
-                onPressed: () {
-                  setState(() {
-                    currentMonth = DateTime(
-                      currentMonth.year,
-                      currentMonth.month - 1,
-                    );
-                  });
-                },
-              ),
-              Text(
-                DateFormat('MMMM yyyy').format(currentMonth),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              IconButton(
-                icon: const Icon(Icons.arrow_right),
-                onPressed: () {
-                  setState(() {
-                    currentMonth = DateTime(
-                      currentMonth.year,
-                      currentMonth.month + 1,
-                    );
-                  });
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: DateUtils.getDaysInMonth(
-              currentMonth.year,
-              currentMonth.month,
-            ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              childAspectRatio: 1,
-            ),
-            itemBuilder: (context, index) {
-              final date = DateTime(currentMonth.year, currentMonth.month, index + 1);
-              final isSelected =
-                  widget.selectedDates.any((d) => isSameDay(d, date));
+  Future<void> _openMultiSelectDialog(BuildContext context) async {
+    List<DateTime> tempSelected = List.from(widget.selectedDates);
+    DateTime focusedMonth = widget.selectedDates.isNotEmpty
+        ? DateTime(widget.selectedDates.last.year, widget.selectedDates.last.month)
+        : DateTime(DateTime.now().year, DateTime.now().month);
 
-              return GestureDetector(
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            final accent = Colors.orange;
+
+            Widget dayCell(DateTime date) {
+              final isSelected =
+                  tempSelected.any((d) => _isSameDate(d, date));
+              return InkWell(
+                borderRadius: BorderRadius.circular(20),
                 onTap: () {
-                  widget.onToggleDate(date);
-                  _updateTextFromDates(); 
+                  setDialogState(() {
+                    if (isSelected) {
+                      tempSelected.removeWhere((d) => _isSameDate(d, date));
+                    } else {
+                      tempSelected.add(date);
+                    }
+                  });
                 },
                 child: Container(
-                  margin: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color:
-                        isSelected ? Colors.deepOrange : Colors.transparent,
+                    color: isSelected ? accent : Colors.transparent,
                     border: Border.all(
-                      color: isSelected ? Colors.deepOrange : Colors.black26,
+                      color: isSelected ? accent : Colors.black26,
                     ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    '${index + 1}',
+                    '${date.day}',
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               );
-            },
+            }
+
+            final totalDays = _daysInMonth(focusedMonth);
+            final offset = _startOffset(focusedMonth);
+            final itemCount = offset + totalDays;
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text(
+                "Select Availability Dates",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              content: SizedBox(
+                width: 330,
+                height: 420,
+                child: Column(
+                  children: [
+                    // Month header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: () {
+                            setDialogState(() {
+                              focusedMonth = DateTime(
+                                  focusedMonth.year, focusedMonth.month - 1);
+                            });
+                          },
+                        ),
+                        Text(
+                          DateFormat('MMMM yyyy').format(focusedMonth),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.chevron_right),
+                          onPressed: () {
+                            setDialogState(() {
+                              focusedMonth = DateTime(
+                                  focusedMonth.year, focusedMonth.month + 1);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Weekdays row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        _Dow('S'), _Dow('M'), _Dow('T'), _Dow('W'),
+                        _Dow('T'), _Dow('F'), _Dow('S'),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Expanded(
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                        ),
+                        itemCount: itemCount,
+                        itemBuilder: (_, i) {
+                          if (i < offset) {
+                            return const SizedBox.shrink();
+                          }
+                          final day = i - offset + 1;
+                          final date = DateTime(
+                              focusedMonth.year, focusedMonth.month, day);
+                          return dayCell(date);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    tempSelected.sort((a, b) => a.compareTo(b));
+                    widget.onDatesChanged(tempSelected);
+
+                    if (tempSelected.isEmpty) {
+                      widget.controller.clear();
+                    } else {
+                      widget.controller.text = tempSelected
+                          .map((d) => DateFormat('MMM d, yyyy').format(d))
+                          .join(", ");
+                    }
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: widget.controller,
+      readOnly: true,
+      onTap: () => _openMultiSelectDialog(context),
+      decoration: InputDecoration(
+        labelText: widget.title,
+        prefixIcon: const Icon(Icons.calendar_today_outlined, size: 20),
+        suffixIcon: const Icon(Icons.arrow_drop_down),
+        contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
+        hintText: "Select dates",
+        hintStyle: const TextStyle(color: Colors.grey),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(width: 1.5, color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
+class _Dow extends StatelessWidget {
+  final String t;
+  const _Dow(this.t);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 36,
+      child: Center(
+        child: Text(
+          t,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.black54,
+            fontWeight: FontWeight.w600,
           ),
-        ]
-      ],
+        ),
+      ),
     );
   }
 }

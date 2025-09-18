@@ -46,12 +46,8 @@ class CustomDatePicker extends StatelessWidget {
         controller: controller,
         readOnly: true,
         onTap: onTap,
-        validator: (value) {
-          if (validator != null) {
-            return validator!(value);
-          }
-          return null;
-        },
+        validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           prefixIcon: Padding(
             padding: const EdgeInsets.all(12.0),

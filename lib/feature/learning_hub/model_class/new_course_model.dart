@@ -47,7 +47,7 @@ class CourseObject {
   String? createdById;
   String? companyName;
   String? status;
-  List<SponsorByImage>? sponsorByImage;
+  List<CourseBannerImage>? sponsorByImage;
   String? terms;
   String? refundPolicy;
   String? contactName;
@@ -58,8 +58,8 @@ class CourseObject {
   int? numberOfSeats;
   int? earlyBirdPrice;
   int? afterwardsPrice;
-  List<CourseGallery>? courseGallery;
-  List<CourseBannerVideo>? courseBannerVideo;
+  List<CourseBannerImage>? courseGallery;
+  List<CourseBannerImage>? courseBannerVideo;
   List<CourseBannerImage>? courseBannerImage;
   String? registerLink;
   String? feedType;
@@ -165,9 +165,9 @@ class CourseObject {
     companyName = json['company_name'];
     status = json['status'];
     if (json['sponsor_by_image'] != null) {
-      sponsorByImage = <SponsorByImage>[];
+      sponsorByImage = <CourseBannerImage>[];
       json['sponsor_by_image'].forEach((v) {
-        sponsorByImage!.add(new SponsorByImage.fromJson(v));
+        sponsorByImage!.add(new CourseBannerImage.fromJson(v));
       });
     }
     terms = json['terms'];
@@ -181,15 +181,15 @@ class CourseObject {
     earlyBirdPrice = json['early_bird_price'];
     afterwardsPrice = json['afterwards_price'];
     if (json['course_gallery'] != null) {
-      courseGallery = <CourseGallery>[];
+      courseGallery = <CourseBannerImage>[];
       json['course_gallery'].forEach((v) {
-        courseGallery!.add(new CourseGallery.fromJson(v));
+        courseGallery!.add(new CourseBannerImage.fromJson(v));
       });
     }
     if (json['course_banner_video'] != null) {
-      courseBannerVideo = <CourseBannerVideo>[];
+      courseBannerVideo = <CourseBannerImage>[];
       json['course_banner_video'].forEach((v) {
-        courseBannerVideo!.add(new CourseBannerVideo.fromJson(v));
+        courseBannerVideo!.add(new CourseBannerImage.fromJson(v));
       });
     }
     if (json['course_banner_image'] != null) {

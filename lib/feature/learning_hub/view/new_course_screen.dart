@@ -159,7 +159,6 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     jobCreateVM.formKeys[jobCreateVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   await jobCreateVM.createdCourseListing(context, true);
-
                   navigationService.goBack();
                 }
               },

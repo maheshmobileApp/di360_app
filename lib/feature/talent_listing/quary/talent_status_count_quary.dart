@@ -1,40 +1,57 @@
-const String GetTalentStatusCountsQuery = r'''
-query getTalentAdminCountByStatus($whereAll: job_profiles_bool_exp = {}, $where: job_profiles_bool_exp = {}) {
-  all: job_profiles_aggregate(where: $whereAll) {
+const String getTalentHiringCountByStatusQuery = r'''
+query getTalentEnquiryCounts($where: talent_enquiries_bool_exp!) {
+  talent_enquiries(where: $where) {
+    id
+    job_profiles {
+      admin_status
+    }
+  }
+
+  total: talent_enquiries_aggregate(where: $where) {
     aggregate {
       count
-      __typename
     }
-    __typename
   }
-  pending: job_profiles_aggregate(
-    where: {_and: [$where, {admin_status: {_eq: "PENDING"}}]}
+
+  pending: talent_enquiries_aggregate(
+    where: { _and: [$where, { job_profiles: { admin_status: { _eq: "PENDING" } } }] }
   ) {
     aggregate {
       count
-      __typename
     }
-    __typename
   }
-  approve: job_profiles_aggregate(
-    where: {_and: [$where, {admin_status: {_eq: "APPROVE"}}]}
+
+  approved: talent_enquiries_aggregate(
+    where: { _and: [$where, { job_profiles: { admin_status: { _eq: "APPROVE" } } }] }
   ) {
     aggregate {
       count
-      __typename
     }
-    __typename
   }
-  rejected: job_profiles_aggregate(
-    where: {_and: [$where, {admin_status: {_eq: "REJECT"}}]}
+
+  expired: talent_enquiries_aggregate(
+    where: { _and: [$where, { job_profiles: { admin_status: { _eq: "EXPIRED" } } }] }
   ) {
     aggregate {
       count
-      __typename
     }
-    __typename
+  }
+
+  draft: talent_enquiries_aggregate(
+    where: { _and: [$where, { job_profiles: { admin_status: { _eq: "DRAFT" } } }] }
+  ) {
+    aggregate {
+      count
+    }
+  }
+
+  rejected: talent_enquiries_aggregate(
+    where: { _and: [$where, { job_profiles: { admin_status: { _eq: "REJECT" } } }] }
+  ) {
+    aggregate {
+      count
+    }
   }
 }
 
-  ''';
-
+''';

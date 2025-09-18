@@ -15,7 +15,6 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
 
     return SingleChildScrollView(
       child: Padding(
@@ -30,32 +29,43 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
               hintText: "Enter Name",
               title: "Name",
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Name'
-                  : null,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter Name' : null,
             ),
             SizedBox(height: 8),
-             InputTextField(
+            InputTextField(
               controller: jobCreateVM.phoneController,
               hintText: "Enter Phone",
               title: "Phone",
+              keyboardType: TextInputType.number,
+              maxLength: 10,
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Phone'
-                  : null,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter Phone' : null,
             ),
             SizedBox(height: 8),
-             InputTextField(
+            InputTextField(
               controller: jobCreateVM.emailController,
               hintText: "Enter Email",
               title: "Email",
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Email'
-                  : null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter Email';
+                }
+
+                // Simple email regex
+                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Please enter a valid Email';
+                }
+
+                return null;
+              },
             ),
             SizedBox(height: 8),
-             InputTextField(
+            InputTextField(
               controller: jobCreateVM.websiteUrlController,
               hintText: "Enter Website Url",
               title: "Website Url",
@@ -65,7 +75,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                   : null,
             ),
             SizedBox(height: 8),
-             InputTextField(
+            InputTextField(
               controller: jobCreateVM.registerLinkController,
               hintText: "Enter Register Link",
               title: "Register Link",
@@ -75,7 +85,6 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                   : null,
             ),
             SizedBox(height: 8),
-            
           ],
         ),
       ),

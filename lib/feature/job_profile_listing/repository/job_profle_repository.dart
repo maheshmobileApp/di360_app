@@ -1,6 +1,6 @@
-import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_respo.dart';
-
+import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 abstract class JobProfileRepository {
-  Future<List<JobProfileListing>> getJobProfiles(String dentalProfessionalId);
+  Future<List<JobProfile>> getJobProfiles();
    Future<void>updateJobProfile(String? id, String status);
+     Future<void> removeJobProfile();
 }

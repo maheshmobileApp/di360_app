@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
@@ -55,10 +56,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   List<File>? selectedSessionImg;
   dynamic presenter_image;
   List<CourseBannerImage> courseBannerImageHeaderList = [];
-  List<CourseGallery> selectedGalleryList = [];
-  List<CourseBannerVideo> courseBannerImgList = [];
+  List<CourseBannerImage> selectedGalleryList = [];
+  List<CourseBannerImage> courseBannerImgList = [];
   List<Images> eventImgList = [];
-  List<SponsorByImage> sponsoredByImgList = [];
+  List<CourseBannerImage> sponsoredByImgList = [];
   List<Images>? sessionImgList;
   List<CourseEventInfo> courseInfoList = [];
   List<String> courseTypeNames = [];
@@ -72,7 +73,31 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   String? logoPath;
   String? selectedEvent = "Single Day";
   String? selectedCourseType;
+  List<CourseCategories> courseCategoryList = [];
 
+  // Form & PageView
+  final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
+  final List<GlobalKey<FormState>> formKeys =
+      List.generate(6, (_) => GlobalKey<FormState>());
+
+  final List<int> stepsWithValidation = [0, 2, 4];
+  final List<String> steps = [
+    'Add Course',
+    'Course Info',
+    'Terms & Conditions',
+    'Contacts'
+  ];
+  final PageController pageController = PageController();
+  int _currentStep = 0;
+  int get currentStep => _currentStep;
+  int get totalSteps => steps.length;
+
+  List<JobsRoleList> category = [];
+  List<String> roleOptions = [];
+
+  List<JobTypes> EmpTypes = [];
+  List<String> empOptions = [];
+//------------------------Set Values-------------------------------
   void setCourseHeaderBaner(List<File>? value) {
     selectedCourseHeaderBanner = value;
     notifyListeners();
@@ -103,30 +128,28 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  // Form & PageView
-  final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
-  final List<GlobalKey<FormState>> formKeys =
-      List.generate(6, (_) => GlobalKey<FormState>());
+  void setSelectedCourseType(String? value) {
+    selectedCourseType = value;
+    notifyListeners();
+  }
 
-  final List<int> stepsWithValidation = [0, 2, 4];
-  final List<String> steps = [
-    'Add Course',
-    'Course Info',
-    'Terms & Conditions',
-    'Contacts'
-  ];
-  final PageController pageController = PageController();
-  int _currentStep = 0;
-  int get currentStep => _currentStep;
-  int get totalSteps => steps.length;
+  void setSelectedCourseCategory(String? name) {
+    selectedCategory = name;
 
-  List<JobsRoleList> category = [];
-  List<String> roleOptions = [];
+    if (name != null) {
+      final match = courseCategoryList.firstWhere(
+        (course) => course.name == name,
+        orElse: () => CourseCategories(),
+      );
+      selectedCategoryId = match.id;
+    } else {
+      selectedCategoryId = null;
+    }
 
-  List<JobTypes> EmpTypes = [];
-  List<String> empOptions = [];
+    notifyListeners();
+  }
 
-  // ───── Navigation Methods ─────
+  // -------------------Navigation-------------------------
   void goToNextStep() {
     if (!validateCurrentStep()) return;
 
@@ -184,151 +207,71 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> validateCourseHeaderBanner() async {
-    if (selectedCourseHeaderBanner == null ||
-        selectedCourseHeaderBanner!.isEmpty) return;
+  Future<List<T>> uploadFiles<T>(
+    List<File>? files,
+    T Function(File, Map<String, dynamic>) builder,
+  ) async {
+    if (files == null || files.isEmpty) return [];
 
-    courseBannerImageHeaderList.clear(); // reset before uploading new ones
+    final List<T> uploaded = [];
 
-    for (var file in selectedCourseHeaderBanner!) {
-      // Upload image
-      var response = await _http.uploadImage(file.path);
+    for (var file in files) {
+      final response = await _http.uploadImage(file.path);
 
-      // Assuming API response: { "url": "...", "type": "...", "size": ... }
-      String url = response['url'];
-      String type = response['type'] ?? "image/jpeg";
-      int size = response['size'] ?? file.lengthSync();
-
-      // Add to list
-      courseBannerImageHeaderList.add(
-        CourseBannerImage(
-          name: file.path.split('/').last, // file name
-          url: url,
-          type: type,
-          size: size,
-        ),
-      );
+      uploaded.add(builder(file, response));
     }
+    return uploaded;
+  }
 
-    print(courseBannerImageHeaderList.map((e) => e.toJson()).toList());
+  Future<void> validateCourseHeaderBanner() async {
+    courseBannerImageHeaderList = await uploadFiles(
+      selectedCourseHeaderBanner,
+      (file, res) => CourseBannerImage(
+        name: file.path.split('/').last,
+        url: res['url'],
+        type: res['type'] ?? "image/jpeg",
+        size: res['size'] ?? file.lengthSync(),
+      ),
+    );
     notifyListeners();
   }
 
   Future<void> validateGallery() async {
-    if (selectedGallery == null || selectedGallery!.isEmpty) return;
-
-    selectedGalleryList.clear(); // reset before uploading new ones
-
-    for (var file in selectedGallery!) {
-      // Upload image
-      var response = await _http.uploadImage(file.path);
-
-      // Assuming API response: { "url": "...", "type": "...", "size": ... }
-      String url = response['url'];
-      String type = response['type'] ?? "image/jpeg";
-      int size = response['size'] ?? file.lengthSync();
-
-      // Add to list
-      selectedGalleryList.add(
-        CourseGallery(
-          name: file.path.split('/').last, // file name
-          url: url,
-          type: type,
-          size: size,
-        ),
-      );
-    }
-
-    print(selectedGalleryList.map((e) => e.toJson()).toList());
+    selectedGalleryList = await uploadFiles(
+      selectedGallery,
+      (file, res) => CourseBannerImage(
+        name: file.path.split('/').last,
+        url: res['url'],
+        type: res['type'] ?? "image/jpeg",
+        size: res['size'] ?? file.lengthSync(),
+      ),
+    );
     notifyListeners();
   }
 
   Future<void> validateCourseBanner() async {
-    if (selectedCourseBannerImg == null || selectedCourseBannerImg!.isEmpty)
-      return;
-
-    courseBannerImgList.clear(); // reset before uploading new ones
-
-    for (var file in selectedCourseBannerImg!) {
-      // Upload image
-      var response = await _http.uploadImage(file.path);
-
-      // Assuming API response: { "url": "...", "type": "...", "size": ... }
-      String url = response['url'];
-      String type = response['type'] ?? "image/jpeg";
-      int size = response['size'] ?? file.lengthSync();
-
-      // Add to list
-      courseBannerImgList.add(
-        CourseBannerVideo(
-          name: file.path.split('/').last, // file name
-          url: url,
-          type: type,
-          size: size,
-        ),
-      );
-    }
-
-    print(courseBannerImgList.map((e) => e.toJson()).toList());
-    notifyListeners();
-  }
-
-  Future<void> validateEventImgList() async {
-    if (selectedEventImg == null || selectedEventImg!.isEmpty) return;
-
-    eventImgList.clear(); // reset before uploading new ones
-
-    for (var file in selectedEventImg!) {
-      // Upload image
-      var response = await _http.uploadImage(file.path);
-
-      // Assuming API response: { "url": "...", "type": "...", "size": ... }
-      String url = response['url'];
-      String type = response['type'] ?? "image/jpeg";
-      int size = response['size'] ?? file.lengthSync();
-
-      // Add to list
-      eventImgList.add(
-        Images(
-          name: file.path.split('/').last, // file name
-          url: url,
-          type: type,
-          size: size,
-        ),
-      );
-    }
-
-    print(eventImgList.map((e) => e.toJson()).toList());
+    courseBannerImgList = await uploadFiles(
+      selectedCourseBannerImg,
+      (file, res) => CourseBannerImage(
+        name: file.path.split('/').last,
+        url: res['url'],
+        type: res['type'] ?? "image/jpeg",
+        size: res['size'] ?? file.lengthSync(),
+      ),
+    );
     notifyListeners();
   }
 
   Future<void> validateSponsoredByImg() async {
-    if (selectedsponsoredByImg == null || selectedsponsoredByImg!.isEmpty)
-      return;
-
-    sponsoredByImgList.clear(); // reset before uploading new ones
-
-    for (var file in selectedsponsoredByImg!) {
-      // Upload image
-      var response = await _http.uploadImage(file.path);
-
-      // Assuming API response: { "url": "...", "type": "...", "size": ... }
-      String url = response['url'];
-      String type = response['type'] ?? "image/jpeg";
-      int size = response['size'] ?? file.lengthSync();
-
-      // Add to list
-      sponsoredByImgList.add(
-        SponsorByImage(
-          name: file.path.split('/').last, // file name
-          url: url,
-          type: type,
-          size: size,
-        ),
-      );
-    }
-
-    print(sponsoredByImgList.map((e) => e.toJson()).toList());
+    sponsoredByImgList = await uploadFiles(
+      selectedsponsoredByImg,
+      (file, res) => CourseBannerImage(
+        name: file.path.split('/').last,
+        url: res['url'],
+        type: res['type'] ?? "image/jpeg",
+        size: res['size'] ?? file.lengthSync(),
+      ),
+    );
     notifyListeners();
   }
 
@@ -423,28 +366,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return otherLinksFormKey.currentState?.validate() ?? false;
   }
 
-  void setSelectedCourseType(String? value) {
-    selectedCourseType = value;
-    notifyListeners();
-  }
-
-  void setSelectedCourseCategory(String? name) {
-    selectedCategory = name;
-
-    if (name != null) {
-      final match = courseCategoryList.firstWhere(
-        (course) => course.name == name,
-        orElse: () => CourseCategories(),
-      );
-      selectedCategoryId = match.id;
-    } else {
-      selectedCategoryId = null;
-    }
-
-    notifyListeners();
-  }
-
-  List<CourseCategories> courseCategoryList = [];
+  //--------------------------API Calls------------------------
 
   Future<void> fetchCourseCategory() async {
     final result = await repo.getCourseCategory();
@@ -456,7 +378,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> fetchCourseType() async {
     final result = await repo.getCourseType();
-    // returns GetCourseTypes
     courseTypeNames =
         result.courseType?.map((e) => e.name ?? "").toList() ?? [];
     notifyListeners();
@@ -464,6 +385,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+   
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
       "object": CourseObject(
@@ -496,7 +419,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         afterwardsPrice: 0,
         registerLink: registerLinkController.text,
         activeStatusFeed: "",
-        userRole: "SUPPLIER",
+        userRole: type,
         startDate: "2025-09-12",
         endDate: "2025-09-26",
         image:
@@ -544,8 +467,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     selectedCourseBannerImg = null;
     selectedEventImg = null;
     selectedsponsoredByImg = null;
-
-    // Clear all controllers (set to empty string)
+    selectedCategory = null;
+    selectedCourseType = null;
     courseNameController.text = "";
     presenterNameController.text = "";
     cpdPointsController.text = "";

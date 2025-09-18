@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.d
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
+import 'package:di360_flutter/feature/add_directors/view/my_director/my_director_screen.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
@@ -41,9 +42,9 @@ import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
-import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 
+import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
 
@@ -136,7 +137,8 @@ class Routes {
       RouteList.courseInfo: (context) => CourseInfo(),
       RouteList.termsAndConditions: (context) => TermsAndConditions(),
       RouteList.contacts: (context) => Contacts(),
-      RouteList.myLearningHubScreen: (context) => MyLearningHubScreen()
+      RouteList.myLearningHubScreen: (context) => MyLearningHubScreen(),
+      RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
     };
   }
 }
