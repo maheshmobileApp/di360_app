@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,6 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -22,76 +22,77 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionHeader("Job Info"),
-             SizedBox(height: 16),
-
+            addVertical(16),
             InputTextField(
               controller: jobCreateVM.jobTitleController,
               hintText: "Enter Job Title",
               title: "Job Title",
               isRequired: true,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter job title' : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter job title'
+                  : null,
             ),
-            const SizedBox(height: 8),
-
+            addVertical(16),
             InputTextField(
               controller: jobCreateVM.companyNameController,
+              readOnly: true,
               hintText: "Enter Company Name",
               title: "Company Name",
-              isRequired: true,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter company name' : null,
             ),
-             SizedBox(height: 8),
+            addVertical(16),
             _buildRoleTypes(jobCreateVM),
-             SizedBox(height: 8),
+            addVertical(16),
+            Text(
+              "Type of employment ",
+              style: TextStyles.regular3(color: AppColors.black),
+            ),
+            addVertical(4),
             _buildEmpTypes(jobCreateVM),
-             SizedBox(height: 8),
-            _showEmpTypes(jobCreateVM),
-             SizedBox(height: 8),
-
+            addVertical(16),
             if (jobCreateVM.showLocumDate) ...[
-         SizedBox(height: 8,),
-       CustomDatePicker(
-       controller: jobCreateVM.locumDateController,
-       text: null,
-       hintText: "Date",
-       onTap: () async {
-       final picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
-      );
-      if (picked != null) {
-        jobCreateVM.locumDateController.text =
-            "${picked.day}/${picked.month}/${picked.year}";
-      }
-    },
-    validator: (value) {
-      if (jobCreateVM.showLocumDate && (value == null || value.isEmpty)) {
-        return "Please select locum date";
-      }
-      return null;
-    },
-  ),
-   Divider(thickness: 4),
-   SizedBox(height: 16),
-  _sectionHeader("Job Description"),
-   SizedBox(height: 16),
-  InputTextField(
-    controller: jobCreateVM.jobDescController,
-    hintText: "Enter job description here",
-    maxLength: 500,
-    maxLines: 5,
-    title: "Description",
-    isRequired: true,
-    validator: (value) =>
-        value == null || value.isEmpty ? 'Please enter job description' : null,
-    ),
-   ],       
-    ],
-    ),
+              addVertical(16),
+              CustomDatePicker(
+                controller: jobCreateVM.locumDateController,
+                text: null,
+                hintText: "Date",
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    jobCreateVM.locumDateController.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                validator: (value) {
+                  if (jobCreateVM.showLocumDate &&
+                      (value == null || value.isEmpty)) {
+                    return "Please select locum date";
+                  }
+                  return null;
+                },
+              ),
+              ],
+              Divider(thickness: 4),
+              addVertical(16),
+              _sectionHeader("Job Description"),
+              addVertical(16),
+              InputTextField(
+                controller: jobCreateVM.jobDescController,
+                hintText: "Enter job description here",
+                maxLength: 500,
+                maxLines: 5,
+                title: "Description",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter job description'
+                    : null,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -111,37 +112,47 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
       onChanged: (v) {
         jobCreateVM.setSelectedRole(v as String);
       },
-      items: jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {
+      items:
+          jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {
         return DropdownMenuItem<Object>(
           value: value,
           child: Text(value),
         );
       }).toList(),
       hintText: "Select role type",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select role type' : null,
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select role type'
+          : null,
     );
   }
 
   Widget _buildEmpTypes(JobCreateViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: null,
-      title: "Type of employment",
-      onChanged: (v) {
-        final value = v as String;
-        jobCreateVM.addEmploymentTypeChip(value);
-        jobCreateVM.toggleLocumDateVisibility(value == "Locum");
-      },
-      items: jobCreateVM.empOptions.map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select employment type",
-      validator: (_) =>
-          jobCreateVM.selectedEmploymentChips.isEmpty ? 'Please select employment type' : null,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomMultiSelectDropDown<String>(
+          items: jobCreateVM.empOptions,
+          selectedItems: jobCreateVM.selectedEmploymentChips,
+          itemLabel: (item) => item,
+          hintText: "Select employment type",
+          onSelectionChanged: (selected) {
+            final current =
+                List<String>.from(jobCreateVM.selectedEmploymentChips);
+            for (final emp in current) {
+              if (!selected.contains(emp)) {
+                jobCreateVM.removeEmploymentTypeChip(emp);
+              }
+            }
+            for (final emp in selected) {
+              if (!current.contains(emp)) {
+                jobCreateVM.addEmploymentTypeChip(emp);
+              }
+            }
+          },
+        ),
+        addVertical(16),
+        _showEmpTypes(jobCreateVM),
+      ],
     );
   }
 
@@ -151,17 +162,13 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
       children: jobCreateVM.selectedEmploymentChips.map((e) {
         return Chip(
           padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
           backgroundColor: AppColors.secondaryBlueColor,
           label: Text(e),
           deleteIcon: const Icon(Icons.close, size: 18),
-          onDeleted: () {
-            jobCreateVM.removeEmploymentTypeChip(e);
-            if (e == "Locum") {
-              jobCreateVM.toggleLocumDateVisibility(false);
-              jobCreateVM.locumDateController.clear();
-            }
-          },
+          onDeleted: () => jobCreateVM.removeEmploymentTypeChip(e),
         );
       }).toList(),
     );
