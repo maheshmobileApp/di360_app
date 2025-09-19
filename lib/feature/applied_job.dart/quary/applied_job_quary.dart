@@ -66,14 +66,10 @@ query getajobswithallprofiles($dental_professional_id:uuid) {
 
 const String enquireJobListQuery = r'''
 query getEnquiryList($dental_professional_id:uuid) {  
-  job_enquiries( where: {_and: [{ enquiry_userid: {_eq: $dental_professional_id}}]}){
+  jobs{
   id
-  job_id
-  attachments
-  status
-  message
-   dental_professional_id
-    job{
+    status
+      
       id
     title
     j_type
@@ -118,7 +114,7 @@ query getEnquiryList($dental_professional_id:uuid) {
     active_status,
     pay_min,
     pay_max,
-      job_enquiries {
+      job_enquiries ( where: {_and: [{ enquiry_userid: {_eq: $dental_professional_id}}]}) {
         id
         enquiry_userid
         enquiry_description
@@ -126,5 +122,4 @@ query getEnquiryList($dental_professional_id:uuid) {
       }
     }
   }
- }
 ''';
