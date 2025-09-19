@@ -1,4 +1,4 @@
-const String getJobApplicantsQuary = r''' 
+const String getJobApplicantsQuary = r'''
 query getajobswithallprofiles($andList: [job_applicants_bool_exp!]) {
   job_applicants(
     where: { _and: $andList }
@@ -19,6 +19,7 @@ query getajobswithallprofiles($andList: [job_applicants_bool_exp!]) {
       first_name
       profile_image
       created_at
+      profession_type
     }
     
     job_applicant_messages {

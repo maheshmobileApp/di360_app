@@ -20,7 +20,8 @@ class JobSeekRepoImpl extends JobSeekRepository {
 
   @override
   Future<JobdList> getPopularJobs() async {
-    final jobsData = await _http.query(job_list_request);
+    final jobsData =
+        await _http.query(job_list_request);
     return JobdList.fromJson(jobsData);
   }
 

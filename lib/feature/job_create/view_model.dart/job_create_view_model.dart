@@ -20,9 +20,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     getUserId();
     fetchJobRoles();
     fetchEmpTypes();
+    pageController = PageController(initialPage: _currentStep);
   }
 
   // Controllers
+  String CompanyName = "";
   final TextEditingController jobTitleController = TextEditingController();
   final companyNameController = TextEditingController();
   final jobDescController = TextEditingController();
@@ -84,7 +86,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     'Pay',
     'Links'
   ];
-  final PageController pageController = PageController();
+  late final PageController pageController;
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
@@ -148,12 +150,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // Employment types
   final List<String> _selectedEmploymentChips = [];
-  List<String> get selectedEmploymentChips => _selectedEmploymentChips;
-
+  List<String> get selectedEmploymentChips =>
+      List.unmodifiable(_selectedEmploymentChips);
+  final List<String> _selectedBenefits = [];
+  List<String> get selectedBenefits => List.unmodifiable(_selectedBenefits);
   List<JobsRoleList> jobRoles = [];
   List<String> roleOptions = [];
-
-  List<JobTypes> EmpTypes = [];
+  List<JobTypes> empTypes = [];
   List<String> empOptions = [];
 
   // ───── Navigation Methods ─────
@@ -164,8 +167,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
-      pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.ease);
+      pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
       notifyListeners();
     }
   }
@@ -173,8 +179,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   void goToPreviousStep() {
     if (_currentStep > 0) {
       _currentStep--;
-      pageController.previousPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.ease);
+      pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
       notifyListeners();
     }
   }
@@ -185,6 +194,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       pageController.jumpToPage(step);
       notifyListeners();
     }
+  }
+
+  initializeTheData() {
+    getCompanyName();
+  }
+
+  getCompanyName() async {
+    CompanyName = await LocalStorage.getStringVal(LocalStorageConst.name);
+    companyNameController.text = CompanyName;
+    notifyListeners();
   }
 
   // ───── Validation Methods ─────
@@ -270,8 +289,27 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void setSelectedBenefits(String? value) {
-    selectEducation = value;
+  void setSelectedBenefits(List<String> values) {
+    _selectedBenefits
+      ..clear()
+      ..addAll(values);
+    notifyListeners();
+  }
+
+  void removeBanner() {
+    bannerFile = null;
+    notifyListeners();
+  }
+
+  void addBenefit(String benefit) {
+    if (!_selectedBenefits.contains(benefit)) {
+      _selectedBenefits.add(benefit);
+      notifyListeners();
+    }
+  }
+
+  void removeBenefit(String benefit) {
+    _selectedBenefits.remove(benefit);
     notifyListeners();
   }
 
@@ -304,24 +342,31 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   // ───── Employment Chips ─────
+  void _updateLocumVisibility() {
+    final hasLocum = _selectedEmploymentChips.contains("Locum");
+    showLocumDate = hasLocum;
+
+    if (!hasLocum) {
+      locumDateController.clear();
+    }
+    notifyListeners();
+  }
+
   void addEmploymentTypeChip(String empType) {
     if (!_selectedEmploymentChips.contains(empType)) {
       _selectedEmploymentChips.add(empType);
-      toggleLocumDateVisibility(empType == "Locum");
-      notifyListeners();
+      _updateLocumVisibility();
     }
   }
 
   void removeEmploymentTypeChip(String empType) {
     _selectedEmploymentChips.remove(empType);
-    if (empType == "Locum") toggleLocumDateVisibility(false);
-    notifyListeners();
+    _updateLocumVisibility();
   }
 
   void clearEmploymentTypeChips() {
     _selectedEmploymentChips.clear();
-    toggleLocumDateVisibility(false);
-    notifyListeners();
+    _updateLocumVisibility();
   }
 
   List<String> getSelectedEmploymentTypes() =>
@@ -368,8 +413,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> fetchEmpTypes() async {
-    EmpTypes = await repo.getEmpTypes();
-    empOptions = EmpTypes.map((emp) => emp.employeeTypeName ?? "").toList();
+    empTypes = await repo.getEmpTypes();
+    empOptions = empTypes.map((emp) => emp.employeeTypeName ?? "").toList();
     notifyListeners();
   }
 
@@ -391,12 +436,26 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final result = await repo.createJobListing({
       "postjobObj": {
-        "title": jobTitleController.text,
-        "j_type": "",
+        "title": jobTitleController.text, // String
+        "j_type": "", //
         "j_role": selectedRole,
+        "roles_and_responsibilities": "",
+        "address": {}, //As per Api this is empty object
+        "days_of_week": {}, //As per Api this is empty object
+        "is_featured": false, // Default is false -> for now we are not using it
+        "number_of_positions": 1, //TODO: Need to change it to dynamic
         "description": jobDescController.text,
+        "closing_message": "",
+        "experience": "",
+        "skills": [],
+        "jobexperiences": [],
+        "upload_resume": [],
+        "current_company": "",
+        "job_location": "", //Need to discuss with backend
+        "job_designation": "", //Need to discuss with backend
+        "offered_supplement": "", //Need to discuss with backend
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [locumDateController.text],
+        "availability_date": [locumDateController.text],//TODO: Need to send Start and End data in Array of strings
         "years_of_experience": selectExperience,
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,
@@ -404,14 +463,20 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "logo": logoPath,
         "state": stateController.text,
         "city": cityPostCodeController.text,
-        "salary": "Range",
+        "salary": "Range", //Need to discuss with backend
         "pay_min": minSalaryController.text,
         "pay_max": maxSalaryController.text,
         "company_name": companyNameController.text,
-        "pay_range": selectedPayRange,
-        "education": selectEducation,
+        "pay_range":
+            selectedPayRange, //Getting fron Dropdown, this is static data for now
+        "education":
+            selectEducation, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-        "banner_image": banner_image,
+        "banner_image":
+            banner_image, // TODO: Need to change the type of this variable
+        /*
+        [{"url":"","name":"coverletter.pdf","type":"document","extension":"pdf"}]
+         */
         "clinic_logo": [
           // {
           //   "url":
@@ -419,20 +484,26 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           //   "type": "image",
           //   "extension": "jpeg"
           // }
-        ],
+        ], //TODO: need to send array of object
+
         "closed_at": endDate?.toUtc().toIso8601String(),
-        "status": isDraft ? "DRAFT" : "PENDING",
-        "active_status": "ACTIVE",
+        "status": isDraft
+            ? "DRAFT"
+            : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
+        "active_status":
+            "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
         "website_url": websiteController.text,
         "country": selectCountry,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
-        "offered_benefits": [],
+        "offered_benefits":
+            [], //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
         "hiring_period": selectHire,
         "no_of_people": selectPositions,
         "rate_billing": selectRate,
         "facebook_url": facebookController.text,
         "instagram_url": instgramController.text,
         "linkedin_url": linkedInController.text,
+        "twitter_url": "", // No option from the UI for now this field is empty
         "timings": startDate?.toUtc().toIso8601String(),
         "timingtoggle": isStartDateEnabled == true ? "YES" : "NO",
         //"auto_expiry_date": null,

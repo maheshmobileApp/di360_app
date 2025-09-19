@@ -7,7 +7,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
-import 'package:di360_flutter/feature/talents/model/talents_model.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/toast.dart';
@@ -16,12 +16,11 @@ import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/education_data_withicon.dart';
 import 'package:di360_flutter/widgets/expended_view.dart';
 import 'package:di360_flutter/widgets/experience_info.dart';
-import 'package:di360_flutter/widgets/gallary_view.dart';
 import 'package:di360_flutter/widgets/header_image.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../talents/model/job_profile.dart';
+
 class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
   final JobProfile? talentList;
 

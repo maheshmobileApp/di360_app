@@ -1,12 +1,13 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
+//import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_response.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_deleted_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_updated.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profle_repository.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 
 class JobProfileRepoImpl implements JobProfileRepository {
   final HttpService http = HttpService();

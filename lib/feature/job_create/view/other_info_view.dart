@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -90,6 +91,10 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             addVertical(8),
             _buildEducation(jobCreateVM),
             addVertical(8),
+                 Text("Do you offer any of the following benefits?" ,
+             style: TextStyles.regular3(color: AppColors.black),
+            ),
+           addVertical(4),
             _buildBenefits(jobCreateVM),
           ],
         ),
@@ -195,21 +200,17 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildBenefits(JobCreateViewModel jobCreateVM) {
-    return CustomDropDown(
-      value: jobCreateVM.Benefits.contains(jobCreateVM.selecteBenefits)
-          ? jobCreateVM.selecteBenefits
-          : null,
-      title: "Do you offer any of the following benefits",
-      onChanged: (v) => jobCreateVM.setSelectedBenefits(v as String),
-      items: jobCreateVM.Benefits.toSet().map((value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select Benefits",
-    );
-  }
+  return CustomMultiSelectDropDown<String>(
+    items: jobCreateVM.Benefits.toSet().toList(),
+    selectedItems: jobCreateVM.selectedBenefits,  
+    itemLabel: (item) => item,
+    hintText: "Select Benefits",
+    onSelectionChanged: (selected) {
+      jobCreateVM.setSelectedBenefits(selected);
+    },
+  );
+}
+
   Future<void> pickAndSetDate(
     BuildContext context,
     void Function(DateTime) setDate,

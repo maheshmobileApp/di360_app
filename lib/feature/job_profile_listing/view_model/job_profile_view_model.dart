@@ -1,5 +1,6 @@
-import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
+//import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
