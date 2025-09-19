@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/widgets/pdf_picker_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +9,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 class AddDocumentsDialog extends StatefulWidget with BaseContextHelpers {
-  final JobProfileViewModel jobProfileVM;
+  final JobProfileCreateViewModel jobProfileVM;
   const AddDocumentsDialog({Key? key, required this.jobProfileVM})
       : super(key: key);
   @override
@@ -38,12 +38,12 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
         width: 400,
         height: MediaQuery.of(context).size.height * 0.7,
         child: SingleChildScrollView(
-          child: ChangeNotifierProvider<JobProfileViewModel>.value(
+          child: ChangeNotifierProvider<JobProfileCreateViewModel>.value(
             value: jobProfileVM,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Consumer<JobProfileViewModel>(
+                Consumer<JobProfileCreateViewModel>(
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Resume",
@@ -54,7 +54,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   },
                 ),
                 addVertical(16),
-                Consumer<JobProfileViewModel>(
+                Consumer<JobProfileCreateViewModel>(
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Cover Letter",
@@ -65,7 +65,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   },
                 ),
                 addVertical(16),
-                Consumer<JobProfileViewModel>(
+                Consumer<JobProfileCreateViewModel>(
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Certificate",

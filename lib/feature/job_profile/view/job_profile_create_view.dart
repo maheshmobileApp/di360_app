@@ -7,21 +7,21 @@ import 'package:di360_flutter/feature/job_profile/view/job_profile_location.dart
 import 'package:di360_flutter/feature/job_profile/view/job_profile_pers_info.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_profe_info.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_skills.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_profile_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobProfileView extends StatefulWidget with BaseContextHelpers {
-  JobProfileView({super.key});
+class JobProfileCreateView extends StatefulWidget with BaseContextHelpers {
+  JobProfileCreateView({super.key});
 
   @override
-  State<JobProfileView> createState() => _JobProfileViewState();
+  State<JobProfileCreateView> createState() => _JobProfileCreateViewState();
 }
 
-class _JobProfileViewState extends State<JobProfileView> {
+class _JobProfileCreateViewState extends State<JobProfileCreateView> {
   @override
   void initState() {
     initilizeTheProfileData();
@@ -30,14 +30,14 @@ class _JobProfileViewState extends State<JobProfileView> {
 
   initilizeTheProfileData() async {
     final jobProfileVM =
-        Provider.of<JobProfileViewModel>(context, listen: false);
+        Provider.of<JobProfileCreateViewModel>(context, listen: false);
     await jobProfileVM.initializeTheData();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    final jobProfileVM = Provider.of<JobProfileViewModel>(context);
+    final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
     return Scaffold(
      appBar: AppBar(
         leading: IconButton(
@@ -85,11 +85,11 @@ class _JobProfileViewState extends State<JobProfileView> {
   }
 
   Widget _buildStepProgressBar(
-      currentStep, totalSteps, JobProfileViewModel jobProfileVM ){
+      currentStep, totalSteps, JobProfileCreateViewModel jobProfileVM ){
     return StepsView(
         currentStep: jobProfileVM.currentStep,
         totalSteps: jobProfileVM.totalSteps,
-        stepTitles: jobProfileVM.steps);
+        );
   }
 
   Widget _buildStep(JobProfileStep stepIndex, GlobalKey<FormState> key) {
@@ -116,7 +116,7 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
   }
 }
 
-  Widget _bottomButtons(BuildContext context, JobProfileViewModel jobProfileVM) {
+  Widget _bottomButtons(BuildContext context, JobProfileCreateViewModel jobProfileVM) {
     int currentStep = jobProfileVM.currentStep;
     bool isLastStep = currentStep == jobProfileVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;

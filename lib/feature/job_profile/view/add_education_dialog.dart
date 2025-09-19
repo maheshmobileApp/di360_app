@@ -4,14 +4,14 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 class AddEducationDialog extends StatefulWidget {
-  final JobProfileViewModel jobProfileVM;
+  final JobProfileCreateViewModel jobProfileVM;
   final Education? education;
   final int? index;
 
@@ -235,14 +235,14 @@ class _AddEducationDialogState extends State<AddEducationDialog>
     return Text(title, style: TextStyles.clashMedium(color: AppColors.buttonColor));
   }
 
-  Widget _buildQualificationTypes(JobProfileViewModel jobProfileVM) {
+  Widget _buildQualificationTypes(JobProfileCreateViewModel jobProfileVM) {
     return CustomDropDown(
       value: jobProfileVM.selectedQualification,
       title: "Qualification Finished",
       onChanged: (v) => setState(() {
         jobProfileVM.selectedQualification = v.toString();
       }),
-      items: jobProfileVM.QualificationTypes
+      items: jobProfileVM.qualificationTypes
           .map<DropdownMenuItem<Object>>((String value) =>
               DropdownMenuItem<Object>(value: value, child: Text(value)))
           .toList(),

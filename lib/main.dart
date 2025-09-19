@@ -11,7 +11,7 @@ import 'package:di360_flutter/feature/directors/view_model/director_view_model.d
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
         ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
         ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
-        ChangeNotifierProvider(create: (_) => JobProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),
         ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
         ChangeNotifierProvider(create: (_) => DirectorViewModel()),
         ChangeNotifierProvider(create: (_) => TalentListingViewModel()),

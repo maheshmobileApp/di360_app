@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_create/view_model.dart/constants.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -120,25 +121,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Postgraduate",
     "PhD"
   ];
-  final List<String> Benefits = [
-    "Performance bonus",
-    "Commission",
-    "Relocation fees",
-    "Tips",
-    "Overtime pay",
-    "Signing Bonus",
-    "Bonus",
-    "Annual Bonus",
-    "Quarterly bonus",
-    "Employee Discount",
-    "Visa sponsorship",
-    "Employee Mentoring program",
-    "Professional Development assistance",
-    "Company car",
-    "Travel reimbursement",
-    "Housingallowance",
-    "Other",
-  ];
+  final List<String> benefitsList = benifits;
   final List<String> payRanges = ["Range"];
   final List<String> rateTypes = [
     "Per year",
