@@ -187,8 +187,30 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           onTapRegistered: () {
                             // Handle navigation or API call
                           },
-                          onMenuAction: (action, id) {
-                            // Handle menu actions (Edit, Delete, Preview, etc.)
+                          onMenuAction: (action, id) async {
+                            switch (action) {
+                              case "Preview":
+                                await courseListingVM.getCourseDetails(
+                                    context, course.id ?? "");
+
+                                navigationService.navigateTo(
+                                  RouteList.courseDetailScreen,
+                                );
+
+                                break;
+                              case "Edit":
+                                print("Edit course $id");
+                                break;
+                              case "Delete":
+                                print("Delete course $id");
+                                break;
+                              case "Inactive":
+                                print("Make course $id inactive");
+                                break;
+                              case "Active":
+                                print("Make course $id active");
+                                break;
+                            }
                           },
                         );
                       },

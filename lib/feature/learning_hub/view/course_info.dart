@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -44,7 +45,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
             ),
             SizedBox(height: 16),
             if (jobCreateVM.selectedEvent == "Single Day") ...[
-              _buildSingleDayUI(jobCreateVM),
+              _buildSingleDayUI(jobCreateVM, context),
             ] else if (jobCreateVM.selectedEvent == "Multiple Day") ...[
               _buildMultipleDayUI(jobCreateVM, context),
             ],
@@ -82,7 +83,8 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
 
   /// Single Day Layout
   /// Single Day
-  Widget _buildSingleDayUI(NewCourseViewModel jobCreateVM) {
+  Widget _buildSingleDayUI(
+      NewCourseViewModel jobCreateVM, BuildContext context) {
     final day =
         jobCreateVM.sessions.first; // Always first session for Single Day
     return Column(
@@ -97,10 +99,34 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               : null,
         ),
         SizedBox(height: 8),
+        CustomDatePicker(
+          isRequired: true,
+          title: "Event Date",
+          controller: day.eventDateController,
+          text: null,
+          hintText: "Date",
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+            );
+            if (picked != null) {
+              day.eventDateController.text =
+                  "${picked.day}/${picked.month}/${picked.year}";
+            }
+          },
+          validator: (value) =>
+              value == null || value.isEmpty ? 'Please Select Date' : null,
+        ),
+        SizedBox(height: 8),
         InputTextField(
           controller: day.sessionInfoController,
           hintText: "Enter Information",
           title: "Session Info",
+          maxLength: 500,
+          maxLines: 5,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter Session Info'
@@ -144,9 +170,34 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                     : null,
               ),
               SizedBox(height: 8),
+              CustomDatePicker(
+                isRequired: true,
+                title: "Event Date",
+                controller: day.eventDateController,
+                text: null,
+                hintText: "Date",
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    day.eventDateController.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please Select Date'
+                    : null,
+              ),
+              SizedBox(height: 8),
               InputTextField(
                 controller: day.sessionInfoController,
                 hintText: "Enter Information",
+                maxLength: 500,
+                maxLines: 5,
                 title: "Session Info",
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty

@@ -43,6 +43,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final websiteController = TextEditingController();
   final rsvpDateController = TextEditingController();
   final earlyBirdDateController = TextEditingController();
+  final eventDateController = TextEditingController();
   bool showLocumDate = false;
 
   //imageFields
@@ -318,6 +319,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       return {
         "session_name": session.sessionNameController.text,
         "session_info": session.sessionInfoController.text,
+        "event_date": session.eventDateController.text,
         "images": session.images?.map((f) => f.path).toList() ?? [],
       };
     }).toList();
@@ -330,7 +332,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
       courseInfoList.add(
         CourseEventInfo(
-          date: DateTime.now().toIso8601String(), // or session-specific date
+          date: session.eventDateController.text, // or session-specific date
           name: session.sessionNameController.text,
           info: session.sessionInfoController.text,
           images: uploadedImgs,
@@ -428,8 +430,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         isFeatured: false,
         activeStatus: "ACTIVE",
         address: null,
-        scheduledAt:
-            null,
+        scheduledAt: null,
         maxSubscribers: 1000,
         seoMetadata: null,
         webinarLink: null,

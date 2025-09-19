@@ -80,7 +80,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
             ),
             SizedBox(height: 8),
             ImagePickerField(
-              title: "Course Header Banner / Video",
+              title: "Course Header Banner",
               isRequired: true,
               allowMultiple: true,
               showPreview: true,
