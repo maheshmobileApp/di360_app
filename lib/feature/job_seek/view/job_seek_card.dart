@@ -178,31 +178,30 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
           ],
         ),
         Spacer(),
-        if (time != null) _jobTimeChip(time),
+        if (time != null) _JobTimeChip(time),
       ],
     );
   }
 
-  Widget _jobTimeChip(String time) {
+ Widget  _JobTimeChip(String time) {
     return Container(
-      padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
       height: 19,
-      width: 61,
-      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 236, 225, 1),
+        gradient: const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color.fromRGBO(116, 130, 148, 0.0),
+            Color.fromRGBO(116, 130, 148, 0.2)
+          ],
+        ),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
-        time,
-        textAlign: TextAlign.right,
-        style: TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          height: 1,
-          color: Color.fromRGBO(255, 112, 0, 1),
-        ),
+        time.isNotEmpty ? time : "",
+        style:
+            TextStyles.semiBold(fontSize: 10, color: const Color(0xFF1E1E1E)),
       ),
     );
   }

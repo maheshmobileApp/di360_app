@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart
 import 'package:di360_flutter/feature/job_create/repository/job_create_repo_impl.dart';
 import 'package:di360_flutter/feature/job_create/repository/job_create_repository.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:intl/intl.dart';
 
 class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final JobCreateRepository repo = JobCreateRepoImpl();
@@ -42,9 +43,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final countryController = TextEditingController();
 
   // NEW: Locum date controller
-  final locumDateController = TextEditingController();
-  bool showLocumDate = false;
+  final TextEditingController locumDateController = TextEditingController();
+  final TextEditingController startLocumDateController = TextEditingController();
+  final TextEditingController endLocumDateController = TextEditingController();
 
+  DateTime? startLocumDate;
+  DateTime? endLocumDate;
+  bool showLocumDate = false;
   // Selected dropdown values
   String? selectedRole;
   String? selectedEmploymentType;
@@ -316,23 +321,58 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     endDate = date;
     notifyListeners();
   }
+  String _formatDate(DateTime date) {
+    return DateFormat("d MMM yyyy").format(date);
+  }
 
-  // ───── Locum Toggle ─────
-  void toggleLocumDateVisibility(bool value) {
-    showLocumDate = value;
-    if (!value) locumDateController.clear();
+ /// Sets start date and updates controller states
+  void setStartLocumDate(DateTime date) {
+    startLocumDate = date;
+    startLocumDateController.text = DateFormat("M/d/yyyy").format(date);
+
+    updateLocumSummary();
     notifyListeners();
   }
 
-  // ───── Employment Chips ─────
-  void _updateLocumVisibility() {
-    final hasLocum = _selectedEmploymentChips.contains("Locum");
-    showLocumDate = hasLocum;
+  /// Sets end date and updates controller states
+  void setEndLocumDate(DateTime date) {
+    endLocumDate = date;
+    endLocumDateController.text = DateFormat("M/d/yyyy").format(date);
 
-    if (!hasLocum) {
+    updateLocumSummary();
+    notifyListeners();
+  }
+  void clearDates() {
+    startLocumDate = null;
+    endLocumDate = null;
+    startLocumDateController.clear();
+    endLocumDateController.clear();
+    locumDateController.clear();
+    notifyListeners();
+  }
+  void updateLocumSummary() {
+    if (startLocumDate != null && endLocumDate != null) {
+      locumDateController.text =
+          "${_formatDate(startLocumDate!)} – ${_formatDate(endLocumDate!)}";
+    } else {
+      // If either start or end is missing, clear the summary
       locumDateController.clear();
     }
+  }
+
+  // ───── Locum Toggle ─────
+   void toggleLocumDateVisibility(bool value) {
+    showLocumDate = value;
+    if (!value) {
+      clearDates();
+    }
     notifyListeners();
+  }
+
+  /// Employment chip management
+  void _updateLocumVisibility() {
+    final hasLocum = _selectedEmploymentChips.contains("Locum");
+    toggleLocumDateVisibility(hasLocum);
   }
 
   void addEmploymentTypeChip(String empType) {
@@ -351,7 +391,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     _selectedEmploymentChips.clear();
     _updateLocumVisibility();
   }
-
   List<String> getSelectedEmploymentTypes() =>
       List.from(_selectedEmploymentChips);
 
@@ -438,8 +477,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "job_designation": "", //Need to discuss with backend
         "offered_supplement": "", //Need to discuss with backend
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [locumDateController.text],//TODO: Need to send Start and End data in Array of strings
+        "availability_date": [startLocumDateController.text,],
         "years_of_experience": selectExperience,
+        
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,
         "location": locationSearchController.text,
@@ -518,6 +558,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     minSalaryController.dispose();
     maxSalaryController.dispose();
     locumDateController.dispose();
+    startLocumDateController.dispose();
+    endLocumDateController.dispose();
     pageController.dispose();
     super.dispose();
   }
