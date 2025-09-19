@@ -10,6 +10,8 @@ import 'package:di360_flutter/feature/add_directors/repository/add_director_repo
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -35,7 +37,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   final TextEditingController descController = TextEditingController();
   TextEditingController alternateNumberController = TextEditingController();
   final TextEditingController ABNNumberController = TextEditingController();
-  final TextEditingController AdreessController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   TextEditingController certificateNameController = TextEditingController();
   final TextEditingController serviceNameController = TextEditingController();
   final TextEditingController serviceDescController = TextEditingController();
@@ -73,6 +75,11 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => ConstantData.steps.length;
+
+  updateCurrentStep() {
+    _currentStep = 0;
+    notifyListeners();
+  }
 
 // Files
   File? logoFile;
@@ -185,12 +192,13 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       type == 'PROFESSIONAL'
           ? getBasicInfoData.isNotEmpty
               ? navigationService.navigateTo(RouteList.professionDirectorScreen)
-              : navigationService.navigateTo(RouteList.professionAddDirectorView)
+              : navigationService
+                  .navigateTo(RouteList.professionAddDirectorView)
           : getBasicInfoData.isNotEmpty
               ? navigationService.navigateTo(RouteList.myDirectorScreen)
               : navigationService.navigateTo(RouteList.adddirectorview);
       //  Loaders.circularHideLoader(context);
-      assignBasicInfoData();
+      assignBasicInfoData(context);
     } else {
       clearBasicInfoData();
       navigationService.navigateTo(RouteList.adddirectorview);
@@ -202,21 +210,22 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     final res = await addDirectorRepositoryImpl.getDirectoriesData();
     if (res.isNotEmpty) {
       getBasicInfoData = res;
-      assignBasicInfoData();
+      assignBasicInfoData(navigatorKey.currentContext!);
     }
     notifyListeners();
   }
 
-  void assignBasicInfoData() {
+  void assignBasicInfoData(BuildContext context) {
+    final professVM = context.read<ProfessionalAddDirectorVm>();
+    professVM.assignTheProfessBasic(context);
     final basic = getBasicInfoData.first;
-
     CompanyNameController.text = basic.companyName ?? '';
     nameController.text = basic.name ?? '';
     emailController.text = basic.email ?? '';
     ABNNumberController.text = basic.abnAcn ?? '';
     MobileNumberController.text = basic.phone ?? '';
     alternateNumberController.text = basic.altPhone ?? '';
-    AdreessController.text = basic.address ?? '';
+    addressController.text = basic.address ?? '';
     final allCategories = directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
@@ -240,7 +249,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     ABNNumberController.clear();
     MobileNumberController.clear();
     alternateNumberController.clear();
-    AdreessController.clear();
+    addressController.clear();
     selectedBusineestype = null;
     descController.clear();
     notifyListeners();
@@ -322,7 +331,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
         "logo": logo,
         "email": emailController.text,
         "phone": MobileNumberController.text,
-        "address": AdreessController.text,
+        "address": addressController.text,
         "alt_phone": alternateNumberController.text,
         "emergency_phone": null,
         "latitude": '',
@@ -364,7 +373,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
         "alt_phone": alternateNumberController.text,
         "name": nameController.text,
         "abn_acn": ABNNumberController.text,
-        "address": AdreessController.text,
+        "address": addressController.text,
         "latitude": getBasicInfoData.first.latitude,
         "longitude": getBasicInfoData.first.longitude,
         "pincode": '',

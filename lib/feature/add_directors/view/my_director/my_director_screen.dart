@@ -24,6 +24,7 @@ class MyDirectorScreen extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             onPressed: () {
+              addDirectorVM.updateCurrentStep();
               navigationService.navigateTo(RouteList.adddirectorview);
             },
             backgroundColor: AppColors.primaryColor,

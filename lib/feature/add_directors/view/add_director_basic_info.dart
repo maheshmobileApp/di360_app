@@ -86,7 +86,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           InputTextField(
             hintText: "Enter Address",
             title: " Address ",
-            controller: addDirectorVM.AdreessController,
+            controller: addDirectorVM.addressController,
             isRequired: true,
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please enter  address' : null,

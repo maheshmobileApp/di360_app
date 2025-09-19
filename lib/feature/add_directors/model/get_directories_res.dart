@@ -6,7 +6,9 @@ class GetDirectoriesRes {
   GetDirectoriesRes({this.data});
 
   GetDirectoriesRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new GetDirectoriesData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new GetDirectoriesData.fromJson(json['data'])
+        : null;
   }
 }
 
@@ -34,6 +36,7 @@ class GetDirectories {
   String? address;
   double? latitude;
   double? longitude;
+  String? designation;
   String? altPhone;
   String? type;
   String? abnAcn;
@@ -68,6 +71,7 @@ class GetDirectories {
       this.address,
       this.latitude,
       this.longitude,
+      this.designation,
       this.altPhone,
       this.type,
       this.abnAcn,
@@ -102,6 +106,7 @@ class GetDirectories {
     address = json['address'];
     latitude = json['latitude'];
     longitude = json['longitude'];
+    designation = json['designation'];
     altPhone = json['alt_phone'];
     type = json['type'];
     abnAcn = json['abn_acn'];
@@ -203,7 +208,6 @@ class GetDirectories {
   }
 }
 
-
 class WorkingAt {
   String? name;
 
@@ -211,6 +215,11 @@ class WorkingAt {
 
   WorkingAt.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
   }
 }
 
@@ -222,6 +231,11 @@ class Education {
   Education.fromJson(Map<String, dynamic> json) {
     name = json['name'];
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
+  }
 }
 
 class UniversitySchool {
@@ -232,6 +246,11 @@ class UniversitySchool {
   UniversitySchool.fromJson(Map<String, dynamic> json) {
     name = json['name'];
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
+  }
 }
 
 class Hobbies {
@@ -241,6 +260,11 @@ class Hobbies {
 
   Hobbies.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
   }
 }
 

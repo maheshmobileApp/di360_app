@@ -2,16 +2,18 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_archiement.dart';
-import 'package:di360_flutter/feature/add_directors/view/add_director_basic_info.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_certificate.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_gallery.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_testmonal.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/edution_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/other_infor_screen.dart';
+import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/profess_basic_info.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/add_directory_enum.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,12 +24,11 @@ class ProfessionalAddDirectorView extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final professAddDirectVM = Provider.of<ProfessionalAddDirectorVm>(context);
+    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     return Scaffold(
       appBar: AppBar(
           leading: IconButton(
-              onPressed: () {
-                NavigationService().goBack();
-              },
+              onPressed: () => NavigationService().goBack(),
               icon: Icon(Icons.arrow_back_ios)),
           title: Text(
             "Add New Directory",
@@ -48,7 +49,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
               ),
             ),
           ),
-          _bottomButtons(context, professAddDirectVM),
+          _bottomButtons(context, professAddDirectVM,addDirectorVM),
         ],
       ),
     );
@@ -72,7 +73,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
   Widget _getStepWidget(ProfessAddDirectoryStep stepIndex) {
     switch (stepIndex) {
       case ProfessAddDirectoryStep.Basic:
-        return AddDirectorBasicInfo();
+        return ProfessBasicInfo();
       case ProfessAddDirectoryStep.Education:
         return EducationScreen();
       case ProfessAddDirectoryStep.Certificates:
@@ -91,7 +92,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
   }
 
   Widget _bottomButtons(
-      BuildContext context, ProfessionalAddDirectorVm professAddDirectVM) {
+      BuildContext context, ProfessionalAddDirectorVm professAddDirectVM,AddDirectorViewModel addDirectorVM) {
     int currentStep = professAddDirectVM.currentStep;
     bool isLastStep = currentStep == professAddDirectVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;
@@ -137,25 +138,27 @@ class ProfessionalAddDirectorView extends StatelessWidget
                 height: 42,
                 fontSize: 12,
                 onPressed: () async {
-                  professAddDirectVM.goToNextStep();
-                  // final currentFormKey = professAddDirectVM
-                  //     .formKeys[professAddDirectVM.currentStep];
-                  // if ((currentFormKey.currentState?.validate() ?? false)) {
-                  //   if (isLastStep) {
-                  //     navigationService.goBack();
-                  //   } else {
-                  //     // if (currentStep == 0) {
-                  //     //   addDirectorVM.getBasicInfoData.isEmpty
-                  //     //       ? await addDirectorVM.addBasicInfo(context)
-                  //     //       : await addDirectorVM.updateBasicInfo(context);
-                  //      //  professAddDirectVM.goToNextStep();
-                  //     // } else {
-                  //     //   addDirectorVM.goToNextStep();
-                  //     // }
-                  //   }
-                  // } else {
-                  //   scaffoldMessenger('Please select business type');
-                  // }
+                  final currentFormKey = professAddDirectVM
+                      .formKeys[professAddDirectVM.currentStep];
+                  if ((currentFormKey.currentState?.validate() ?? false)) {
+                    if (isLastStep) {
+                      navigationService.goBack();
+                    } else {
+                      if (currentStep == 0) {
+                        addDirectorVM.getBasicInfoData.first.id?.isEmpty ?? false
+                            ? await professAddDirectVM.addBasicData(context)
+                            : await professAddDirectVM.updateBasicData(context);
+                        professAddDirectVM.goToNextStep();
+                      } else if (currentStep == 1) {
+                        await professAddDirectVM.updateBasicData(context);
+                        professAddDirectVM.goToNextStep();
+                      } else {
+                        professAddDirectVM.goToNextStep();
+                      }
+                    }
+                  } else {
+                    scaffoldMessenger('Please select business type');
+                  }
                 },
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.whiteColor),

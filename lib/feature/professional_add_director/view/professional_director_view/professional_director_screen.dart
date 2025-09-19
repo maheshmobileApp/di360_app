@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_directors/view/my_director/director_de
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
+import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,6 +18,7 @@ class ProfessionalDirectorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
     final directionalVM = Provider.of<DirectorViewModel>(context);
+    final professVM = Provider.of<ProfessionalAddDirectorVm>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -24,6 +26,7 @@ class ProfessionalDirectorScreen extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             onPressed: () {
+              professVM.updateCurrentStep();
               navigationService.navigateTo(RouteList.professionAddDirectorView);
             },
             backgroundColor: AppColors.primaryColor,
