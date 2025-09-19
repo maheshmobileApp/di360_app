@@ -1,4 +1,4 @@
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 
 class JobProfileInputModel {
   String? dentalProfessionalId;
@@ -85,7 +85,7 @@ class JobProfileInputModel {
   }
 
   // Populate model from text controllers and variables
-  void fromViewModel(JobProfileViewModel vm) {
+  void fromViewModel(JobProfileCreateViewModel vm) {
     dentalProfessionalId = vm.userFullName;
     fullName = vm.fullNameController.text;
     mobileNumber = vm.mobileNumberController.text;
@@ -183,7 +183,7 @@ class JobProfileInputModel {
   }
 
   // Update all text controllers in ViewModel from this model
-  void updateViewModel(JobProfileViewModel vm) {
+  void updateViewModel(JobProfileCreateViewModel vm) {
     vm.fullNameController.text = fullName ?? "";
     vm.mobileNumberController.text = mobileNumber ?? "";
     vm.emailAddressController.text = emailAddress ?? "";

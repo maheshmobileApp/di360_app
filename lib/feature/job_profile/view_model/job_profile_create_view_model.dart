@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile/constants/create_profile_constants.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_experience.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
@@ -16,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class JobProfileViewModel extends ChangeNotifier with ValidationMixins {
+class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   /// Clears all data in the JobProfileViewModel
   void clearAllData() {
     userFullName = "";
@@ -83,7 +84,7 @@ class JobProfileViewModel extends ChangeNotifier with ValidationMixins {
   final CreateJobProfileRepository repo = CreateJobProfileRepoImpl();
   final HttpService _http = HttpService();
 
-  JobProfileViewModel() {
+  JobProfileCreateViewModel() {
     fetchJobRoles();
   }
 
@@ -190,63 +191,17 @@ class JobProfileViewModel extends ChangeNotifier with ValidationMixins {
 // Files
 //
 // Static data
-  final List<String> employmentTypeList = [
-    "Contractor",
-    "Temporary Contractor",
-    "Locum",
-    "Full Time",
-    "Part Time",
-    "Casual"
-  ];
-  final List<String> countryList = ["India", "US", "PK"];
-  final List<String> experienceOptions = [
-    "0",
-    "1-2",
-    "3-5",
-    "5-10",
-    "10-15",
-    "15-20",
-    "20-25",
-    "25-30",
-    "30-35",
-    "35-40",
-    "40+"
-  ];
-  final List<String> skillsList = ["Skill A", "Skill B", "Skill C"];
-  final List<String> workRightList = [
-    "Australian citizen",
-    "Permanent resident",
-    "Temporary resident",
-    "Overseas Student with work permit"
-  ];
-  List<String> weekDays = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-  ];
-  final List<String> months = const [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
+  final List<String> employmentTypeList = employmentTypes;
+  final List<String> experienceOptions = experienceOptionsList;
+  final List<String> skillsList = skills;
+  final List<String> workRightList = workRights;
+  List<String> weekDays = weekDaysList;
+  final List<String> months =monthsList;
   final List<String> years =
       List.generate(30, (index) => (2000 + index).toString());
 
-  List<String> availabilityTypes = ["Select Day", "Select Date"];
-  List<String> QualificationTypes = ["Yes", "No"];
+  List<String> availabilityTypes = availability;
+  List<String> qualificationTypes = qualification;
 
   // Employment types;
   bool get shouldShowABNField => _selectedEmploymentChips.any(
