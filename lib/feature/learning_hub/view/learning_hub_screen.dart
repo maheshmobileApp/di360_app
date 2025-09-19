@@ -166,10 +166,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         final jobData = jobListingVM.coursesListingList[index];
                         final course = jobData;
                         print(jobListingVM.coursesListingList.length);
-                        return /*CoursesListingCard(
-                          coursesListingData: jobData,
-                          index: index,
-                        );*/
+                        return 
                             CouresListingCard(
                           id: course.id ?? "",
                           logoUrl: course.presentedByImage?.url ?? '',
@@ -180,6 +177,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
                           registeredCount: course.numberOfSeats ?? 0,
+                          onDetailView: () {
+                            navigationService.navigateToWithParams(RouteList.courseDetailScreen,params:course );
+                          },
                           onTapRegistered: () {
                             // Handle navigation or API call
                           },

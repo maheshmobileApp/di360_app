@@ -10,7 +10,7 @@ abstract class LearningHubRepository {
   Future<List<JobsRoleList>> getCategory();
   Future<List<JobTypes>> getEmpTypes();
   Future<dynamic> createCourseListing(dynamic variables);
-  Future<List<CoursesListingDetails>?> getCoursesListing(List<String>? listingStatus);
+  Future<List<CoursesListingDetails>?> getCoursesListing(String? listingStatus, String? userId);
   Future<CourseStatusCountData> courseListingStatusCount();
   Future<GetCourseTypes> getCourseType();
   Future<GetCourseCategories> getCourseCategory();

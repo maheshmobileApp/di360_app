@@ -386,7 +386,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-   
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
       "object": CourseObject(
@@ -401,8 +400,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         description: courseDescController.text,
         cpdPoints: double.parse(cpdPointsController.text),
         numberOfSeats: int.parse(numberOfSeatsController.text),
-        priceInAud: int.parse(totalPriceController.text),
-        priceInUsd: int.parse(birdPriceController.text),
+        priceInAud: 0,
+        priceInUsd: 0,
         earlyBirdPrice: int.parse(birdPriceController.text),
         earlyBirdEndDate: earlyBirdDateController.text,
         topicsIncluded: topicsIncludedDescController.text,
@@ -416,33 +415,32 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         contactEmail: emailController.text,
         contactPhone: phoneController.text,
         contactWebsite: websiteController.text,
-        afterwardsPrice: 0,
+        afterwardsPrice: int.parse(totalPriceController.text),
         registerLink: registerLinkController.text,
         activeStatusFeed: "",
         userRole: type,
-        startDate: "2025-09-12",
-        endDate: "2025-09-26",
-        image:
-            "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/course/sample-image.jpg",
-        video:
-            "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/course/sample-video.mp4",
-        completeDetails: "Full details about the course...",
-        attachments: Attachments(name: "foo"),
+        startDate: null,
+        endDate: null,
+        image: "",
+        video: "",
+        completeDetails: "",
+        attachments: null,
         isFeatured: false,
-        activeStatus: "PENDING",
-        address: "42 Marine Parade, Southport QLD 4215, Australia",
-        scheduledAt: "2025-09-15T02:31:20.225Z",
+        activeStatus: "ACTIVE",
+        address: null,
+        scheduledAt:
+            null,
         maxSubscribers: 1000,
-        seoMetadata: SeoMetadata(keywords: ["dental", "medicine"]),
-        webinarLink: "https://zoom.us/j/123456789",
+        seoMetadata: null,
+        webinarLink: null,
         createdById: userId,
-        companyName: "Texting ",
+        companyName: null,
         status: isDraft ? "DRAFT" : "PENDING",
-        type: "Event",
+        type: selectedCourseType,
         feedType: "LEARNHUB",
-        startTime: "02:31:20Z",
-        shortId: "CSE-1001",
-        shortInfo: "Basics of Dental Medicine",
+        startTime: null,
+        shortId: null,
+        shortInfo: null,
       ).toJson(),
     });
 

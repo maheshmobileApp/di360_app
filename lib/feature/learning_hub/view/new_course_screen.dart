@@ -64,8 +64,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
       ),
       body: Column(
         children: [
-          /*_buildStepProgressBar(
-              jobCreateVM.currentStep, jobCreateVM.totalSteps, jobCreateVM),*/
+          _buildStepProgressBar(
+              jobCreateVM.currentStep, jobCreateVM.totalSteps, jobCreateVM),
           Expanded(
             child: PageView(
               controller: jobCreateVM.pageController,

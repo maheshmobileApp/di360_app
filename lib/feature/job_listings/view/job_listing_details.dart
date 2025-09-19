@@ -211,7 +211,6 @@ class JobListingDetailsScreen extends StatelessWidget with BaseContextHelpers {
     final String googleMapsApp = 'google.navigation:q=$location';
     final String googleMapsWeb =
         'https://www.google.com/maps/search/?api=1&query=$location';
-
     try {
       final Uri appUri = Uri.parse(googleMapsApp);
       if (await canLaunchUrl(appUri)) {

@@ -26,8 +26,10 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
@@ -139,6 +141,13 @@ class Routes {
       RouteList.contacts: (context) => Contacts(),
       RouteList.myLearningHubScreen: (context) => MyLearningHubScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
+      RouteList.courseDetailScreen: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return CourseDetailScreen(
+          job: args as CoursesListingDetails,
+        );
+      },
+          
     };
   }
 }

@@ -62,7 +62,7 @@ class StepsView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  if(stepTitles?.isNotEmpty ?? false)
+                  /*if(stepTitles?.isNotEmpty ?? false)
                   SizedBox(
                     width: 60,
                     child: Text(
@@ -75,7 +75,7 @@ class StepsView extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             );

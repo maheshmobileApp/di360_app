@@ -18,7 +18,7 @@ class CouresListingCard extends StatelessWidget {
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
-  final VoidCallback? onCardTap;
+  final VoidCallback? onDetailView;
 
   const CouresListingCard({
     super.key,
@@ -33,7 +33,7 @@ class CouresListingCard extends StatelessWidget {
     required this.registeredCount,
     this.onTapRegistered,
     this.onMenuAction,
-    this.onCardTap,
+    this.onDetailView,
   });
 
   @override
@@ -87,7 +87,7 @@ class CouresListingCard extends StatelessWidget {
                   children: [
                     _registeredChip(registeredCount),
                     GestureDetector(
-                      onTap: onCardTap,
+                      onTap: onDetailView,
                       child: SvgPicture.asset(
                         ImageConst.nextArrow,
                         width: 26,

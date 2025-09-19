@@ -1,4 +1,6 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
 
   List<CoursesListingDetails> coursesListingList = [];
-  String selectedStatus = "Pending Approval";
+  String selectedStatus = "All";
 
   final List<String> statuses = [
     'All',
@@ -18,31 +20,24 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     'Expired',
     'Reject',
   ];
-  List<String>? listingStatus = [];
+  String? listingStatus = "";
 
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {
-      listingStatus = [
-        "APPROVE",
-        "PENDING",
-        "INACTIVE",
-        "EXPIRED",
-        "REJECT",
-        "DRAFT"
-      ];
+      listingStatus = "";
     } else if (status == 'Draft') {
-      listingStatus = ['DRAFT'];
+      listingStatus = 'DRAFT';
     } else if (status == 'Pending Approval') {
-      listingStatus = ['PENDING'];
+      listingStatus = 'PENDING';
     } else if (status == 'Active') {
-      listingStatus = ["APPROVE"];
+      listingStatus = "APPROVE";
     } else if (status == 'InActive') {
-      listingStatus = ['INACTIVE'];
+      listingStatus = 'INACTIVE';
     } else if (status == 'Expired') {
-      listingStatus = ['EXPIRED'];
+      listingStatus = 'EXPIRED';
     } else if (status == 'Reject') {
-      listingStatus = ['REJECT'];
+      listingStatus = 'REJECT';
     }
 
     getCoursesListingData(context);
@@ -69,8 +64,9 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       };
 
   Future<void> getCoursesListingData(BuildContext context) async {
-    final res = await repo.getCoursesListing(listingStatus);
-    //fetchCourseStatusCounts();
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await repo.getCoursesListing(listingStatus, userId);
+    fetchCourseStatusCounts();
     if (res != null) {
       coursesListingList = res;
     }

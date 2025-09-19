@@ -43,12 +43,11 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getCoursesListing(
-      List<String>? listingStatus) async {
+      String? listingStatus, String? userId) async {
     final listingData = await http.query(getCoursesQuery, variables: {
       "where": {
-        "status": {"_eq": "PENDING"},
-        "active_status": {"_eq": "PENDING"},
-        "company_name": {"_ilike": "%%"}
+        "created_by_id": {"_eq": "${userId}"},
+        "status": {"_eq": "${listingStatus}"}
       },
       "limit": 10,
       "offset": 0
