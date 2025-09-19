@@ -2,7 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final jobProfileVM = Provider.of<JobProfileViewModel>(context);
+    final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
 
     return SingleChildScrollView(
   child: Padding(
@@ -51,7 +51,7 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildWorkRight(JobProfileViewModel  jobProfileVM) {
+  Widget _buildWorkRight(JobProfileCreateViewModel jobProfileVM) {
     return CustomDropDown(
       
       value: jobProfileVM.selectworkRight,
@@ -69,7 +69,7 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
- Widget _buildExperience(JobProfileViewModel jobProfileVM) {
+  Widget _buildExperience(JobProfileCreateViewModel jobProfileVM) {
     return CustomDropDown(
       value: jobProfileVM.selectExperience,
       title: "Experience",

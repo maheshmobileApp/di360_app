@@ -147,14 +147,18 @@ Future<void> fetchFilteredJobs(BuildContext context) async {
     final generatedID = GeneratedId.generateId();
     applyJobRequest.id = generatedID;
 
-    final uploadImage = await repo.uploadTheResume(applyJobRequest.attachments.url);
-    final response = UploadResponse.fromJson(uploadImage);
+    if (applyJobRequest.attachments.url.isNotEmpty){
+      final uploadImage =
+          await repo.uploadTheResume(applyJobRequest.attachments.url);
+      final response = UploadResponse.fromJson(uploadImage);
 
-    applyJobRequest.attachments = Attachment(
-      url: response.url,
-      name: response.name,
-      type: response.mimeType,
-    );
+      applyJobRequest.attachments = Attachment(
+        url: response.url,
+        name: response.name,
+        type: response.mimeType,
+      );
+    }
+
 
     try {
       await repo.applyJob(applyJobRequest);

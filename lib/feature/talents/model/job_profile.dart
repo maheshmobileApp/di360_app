@@ -46,6 +46,7 @@ class JobProfile {
   final List<String> unavailabilityDate;
   final DentalProfessional? dentalProfessional;
   final List<JobHiring> jobHirings;
+  final List<TalentEnquiries>? talentEnquiries;
   JobProfile({
     this.id,
     this.createdAt,
@@ -94,6 +95,7 @@ class JobProfile {
     required this.unavailabilityDate,
     this.dentalProfessional,
     required this.jobHirings,
+    this.talentEnquiries
   });
 
   static List<String> _normalizeList(dynamic value) {
@@ -169,6 +171,9 @@ class JobProfile {
         jobHirings: (json['jobhirings'] as List? ?? [])
             .map((e) => JobHiring.fromJson(e))
             .toList(),
+            talentEnquiries: (json['talent_enquiries'] as List?)
+            ?.map((e) => TalentEnquiries.fromJson(e))
+            .toList(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -219,6 +224,8 @@ class JobProfile {
         'unavailabilityDate': unavailabilityDate,
         'dental_professional': dentalProfessional?.toJson(),
         'jobhirings': jobHirings.map((e) => e.toJson()).toList(),
+        'talent_enquiries':
+            talentEnquiries?.map((e) => e.toJson()).toList() ?? [],
       };
 }
 
@@ -365,4 +372,40 @@ class JobHiring {
       );
 
   Map<String, dynamic> toJson() => {'id': id, '__typename': typeName};
+}
+class TalentEnquiries {
+  String? id;
+  String? talentId;
+  String? enquiryDescription;
+  String? enquiryFrom;
+  String? createdAt;
+  String? updatedAt;
+
+  TalentEnquiries(
+      {this.id,
+      this.talentId,
+      this.enquiryDescription,
+      this.enquiryFrom,
+      this.createdAt,
+      this.updatedAt});
+
+  TalentEnquiries.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    talentId = json['talent_id'];
+    enquiryDescription = json['enquiry_description'];
+    enquiryFrom = json['enquiry_from'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['talent_id'] = this.talentId;
+    data['enquiry_description'] = this.enquiryDescription;
+    data['enquiry_from'] = this.enquiryFrom;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    return data;
+  }
 }

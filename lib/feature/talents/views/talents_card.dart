@@ -2,10 +2,10 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/talents/model/talents_model.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
-import '../../talents/model/job_profile.dart';
+
 class TalentsCard extends StatelessWidget with BaseContextHelpers {
      final JobProfile? talentList;
   TalentsCard({super.key,  this.talentList});

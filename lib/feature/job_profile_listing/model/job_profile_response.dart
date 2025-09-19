@@ -1,4 +1,4 @@
-import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 
 class JobProfileResponse {
   JobData? data;

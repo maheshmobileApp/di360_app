@@ -20,7 +20,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_m
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
-import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
+import 'package:di360_flutter/feature/job_profile/view/job_profile_create_view.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
@@ -58,7 +58,7 @@ class Routes {
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
-      RouteList.JobProfileView: (context) => JobProfileView(),
+      RouteList.JobProfileView: (context) => JobProfileCreateView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
       RouteList. JobProfileScreen: (context) => JobProfileScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
@@ -77,16 +77,10 @@ class Routes {
       },
 
       RouteList.AppliedJobScreen: (context) {
-        final dentalProfessionalId =
-            ModalRoute.of(context)!.settings.arguments as String? ??
-                "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
-        return AppliedJobScreen(dentalProfessionalId: dentalProfessionalId);
+        return AppliedJobScreen();
       },
       RouteList.EnquiriesScreen: (context) {
-        final dentalProfessionalId =
-            ModalRoute.of(context)!.settings.arguments as String? ??
-                "1d0f1ca1-2658-4869-85d0-6f098bc600a1";
-        return EnquiriesScreen(dentalProfessionalId: dentalProfessionalId);
+        return EnquiriesScreen();
       },
 
       RouteList.JobListingApplicantscreen: (context) {

@@ -201,7 +201,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildBenefits(JobCreateViewModel jobCreateVM) {
   return CustomMultiSelectDropDown<String>(
-    items: jobCreateVM.Benefits.toSet().toList(),
+      items: jobCreateVM.benefitsList.toSet().toList(),
     selectedItems: jobCreateVM.selectedBenefits,  
     itemLabel: (item) => item,
     hintText: "Select Benefits",

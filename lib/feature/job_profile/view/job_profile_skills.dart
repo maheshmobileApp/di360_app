@@ -5,7 +5,7 @@ import 'package:di360_flutter/feature/job_profile/view/add_documents_dialog.dart
 import 'package:di360_flutter/feature/job_profile/view/add_education_dialog.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_experience_dialog.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/widgets/add_section_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final jobProfileVM = Provider.of<JobProfileViewModel>(context);
+    final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
 
     return SingleChildScrollView(
       child: Padding(
@@ -59,7 +59,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
               ),
             ),
             addVertical(16),
-            Consumer<JobProfileViewModel>(
+            Consumer<JobProfileCreateViewModel>(
               builder: (context, vm, _) => _uploadedExperience(vm, context),
             ),
             addVertical(24),
@@ -77,7 +77,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
               ),
             ),
             addVertical(16),
-            Consumer<JobProfileViewModel>(
+            Consumer<JobProfileCreateViewModel>(
               builder: (context, vm, _) => _uploadedEducation(vm, context),
             ),
             addVertical(24),
@@ -95,7 +95,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
               ),
             ),
             addVertical(16),
-            Consumer<JobProfileViewModel>(
+            Consumer<JobProfileCreateViewModel>(
               builder: (context, vm, _) => _uploadedDocuments(vm),
             ),
           ],
@@ -123,7 +123,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSkills(JobProfileViewModel jobProfileVM) {
+  Widget _buildSkills(JobProfileCreateViewModel jobProfileVM) {
     return CustomMultiSelectDropDown<String>(
       items: jobProfileVM.skillsList,
       selectedItems: jobProfileVM.selectskills,
@@ -135,7 +135,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _uploadedDocuments(JobProfileViewModel vm) {
+  Widget _uploadedDocuments(JobProfileCreateViewModel vm) {
     if (vm.documents.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +184,8 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _uploadedEducation(JobProfileViewModel vm, BuildContext context) {
+  Widget _uploadedEducation(
+      JobProfileCreateViewModel vm, BuildContext context) {
     if (vm.educations.isEmpty) return const SizedBox.shrink();
     return Column(
       children: vm.educations.asMap().entries.map((entry) {
@@ -249,7 +250,8 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _uploadedExperience(JobProfileViewModel vm, BuildContext context) {
+  Widget _uploadedExperience(
+      JobProfileCreateViewModel vm, BuildContext context) {
     if (vm.experiences.isEmpty) return const SizedBox.shrink();
     return Column(
       children: vm.experiences.asMap().entries.map((entry) {
