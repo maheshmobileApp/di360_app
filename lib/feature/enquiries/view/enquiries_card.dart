@@ -5,9 +5,9 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
-import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -57,7 +57,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     Row(
                       children: [
-                        _EnquiriesTimeChip(time),
+                       JobTimeChip(time: time),
                         addHorizontal(4),
                         _EnquiriesMenu(),
                       ],
@@ -207,31 +207,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _EnquiriesTimeChip(String time) {
-    return Container(
-      height: 19,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color.fromRGBO(255, 241, 229, 0),
-            Color.fromRGBO(255, 241, 229, 1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      alignment: Alignment.centerRight,
-      child: Text(
-        time,
-        textAlign: TextAlign.right,
-        style: TextStyles.semiBold(
-            fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),
-      ),
-    );
-  }
-
+  
   Widget _chipWidget(List<String> types) {
     return Wrap(
       spacing: 6,

@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +68,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                     ),
                     Row(
                       children: [
-                        _jobTimeChip(time),
+                       JobTimeChip(time: time),
                         addHorizontal(4),
                         menuWidget(
                           vm,
@@ -228,31 +229,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _jobTimeChip(String time) {
-    return Container(
-      height: 19,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color.fromRGBO(255, 241, 229, 0),
-            Color.fromRGBO(255, 241, 229, 1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      alignment: Alignment.centerRight,
-      child: Text(
-        time,
-        textAlign: TextAlign.right,
-        style: TextStyles.semiBold(
-            fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),
-      ),
-    );
-  }
-
+  
 
  Widget menuWidget(
   JobListingsViewModel vm,
