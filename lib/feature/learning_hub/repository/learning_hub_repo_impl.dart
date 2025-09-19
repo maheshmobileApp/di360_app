@@ -7,12 +7,14 @@ import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_category_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_count.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
 
@@ -44,17 +46,42 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future<List<CoursesListingDetails>?> getCoursesListing(
       String? listingStatus, String? userId) async {
-    final listingData = await http.query(getCoursesQuery, variables: {
-      "where": {
-        "created_by_id": {"_eq": "${userId}"},
-        "status": {"_eq": "${listingStatus}"}
-      },
-      "limit": 10,
-      "offset": 0
-    });
+    final Map<String, dynamic> whereCondition = {};
+
+    if (listingStatus != null &&
+        listingStatus.isNotEmpty &&
+        listingStatus != "All") {
+      whereCondition["status"] = {"_eq": listingStatus};
+    }
+
+    final payload = {
+      "where": whereCondition,
+      "limit": 20,
+      "offset": 0,
+    };
+
+    final listingData = await http.query(
+      getCoursesQuery,
+      variables: payload,
+    );
+
     final result = CoursesListingData.fromJson(listingData);
     return result.courses ?? [];
   }
+
+  /*
+
+  {
+  "where": {
+    "status": { "_eq": "APPROVE" },
+    "active_status": { "_eq": "ACTIVE" },
+    "company_name": { "_ilike": "%smiletech%" }
+  },
+  "limit": 10,
+  "offset": 0
+}
+  
+   */
 
   @override
   Future<CourseStatusCountData> courseListingStatusCount() async {
@@ -77,7 +104,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
   Future<GetCourseCategories> getCourseCategory() async {
     final Map<String, dynamic> variables = {
       "status": "ACTIVE",
-      "search": "%dent%",
+      "search": "%%",
       "limit": 10,
       "offset": 0
     };
@@ -85,6 +112,16 @@ class LearningHubRepoImpl extends LearningHubRepository {
         await http.query(getCourseCategoryQuery, variables: variables);
     final result = GetCourseCategories.fromJson(courseCategoryData);
     return result;
+  }
+
+  @override
+  Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId) async{
+    final Map<String, dynamic> variables = {
+       "id": "${courseId}"
+    };
+    final courseTypeData = await http.query(showCourseById,variables: variables);
+    final result = CoursesListingData.fromJson(courseTypeData);
+    return result.courses;
   }
 
   /*@override

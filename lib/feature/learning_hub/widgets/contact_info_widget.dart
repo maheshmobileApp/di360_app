@@ -18,7 +18,7 @@ class ContactInfoWidget extends StatelessWidget {
 
   Widget _buildRow(String iconPath, String text) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SvgPicture.asset(
           iconPath,
@@ -29,7 +29,7 @@ class ContactInfoWidget extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style:   TextStyles.medium3(color: AppColors.black),
+            style: TextStyles.medium2(color: AppColors.black),
           ),
         ),
       ],
@@ -38,23 +38,22 @@ class ContactInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "CONTACT DETAILS",
-            style:  TextStyles.medium2(color: AppColors.primaryColor),
-          ),
-           const SizedBox(height: 6),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Contact Details",
+          style: TextStyles.bold2(color: AppColors.primaryColor),
+        ),
+        const SizedBox(height: 6),
+        if (location != null && location!.isNotEmpty) ...[
           _buildRow(ImageConst.contactLocation, location),
-          const SizedBox(height: 6),
-          _buildRow(ImageConst.contactMail, email),
-          const SizedBox(height: 6),
-          _buildRow(ImageConst.contactPhone, phoneNumber),
         ],
-      ),
+        const SizedBox(height: 6),
+        _buildRow(ImageConst.contactMail, email),
+        const SizedBox(height: 6),
+        _buildRow(ImageConst.contactPhone, phoneNumber),
+      ],
     );
   }
 }

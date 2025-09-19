@@ -135,13 +135,7 @@ class Routes {
       RouteList.contacts: (context) => Contacts(),
       RouteList.myLearningHubScreen: (context) => MyLearningHubScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
-      RouteList.courseDetailScreen: (context) {
-        final args = ModalRoute.of(context)?.settings.arguments;
-        return CourseDetailScreen(
-          job: args as CoursesListingDetails,
-        );
-      },
-          
+      RouteList.courseDetailScreen: (context) => CourseDetailScreen()
     };
   }
 }

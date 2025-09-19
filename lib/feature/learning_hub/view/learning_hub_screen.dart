@@ -29,7 +29,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
-    final jobListingVM = Provider.of<CourseListingViewModel>(context);
+    final courseListingVM = Provider.of<CourseListingViewModel>(context);
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
     return Scaffold(
@@ -82,7 +82,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
             addHorizontal(15),
             SvgPicture.asset(ImageConst.search, color: AppColors.black),
             addHorizontal(15),
-            
           ],
         ),
         body: Column(
@@ -91,13 +90,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
               height: 60,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: jobListingVM.statuses.length,
+                itemCount: courseListingVM.statuses.length,
                 itemBuilder: (context, index) {
-                  String status = jobListingVM.statuses[index];
-                  bool isSelected = jobListingVM.selectedStatus == status;
+                  String status = courseListingVM.statuses[index];
+                  bool isSelected = courseListingVM.selectedStatus == status;
                   return GestureDetector(
                     onTap: () {
-                      jobListingVM.changeStatus(status, context);
+                      courseListingVM.changeStatus(status, context);
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
@@ -131,7 +130,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              "${jobListingVM.statusCountMap[status]}",
+                              "${courseListingVM.statusCountMap[status]}",
                               style: TextStyles.regular2(
                                 color: isSelected
                                     ? AppColors.black
@@ -148,7 +147,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
             ),
             Divider(),
             Expanded(
-              child: jobListingVM.coursesListingList.isEmpty
+              child: courseListingVM.coursesListingList.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -161,13 +160,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       ),
                     )
                   : ListView.builder(
-                      itemCount: jobListingVM.coursesListingList.length,
+                      itemCount: courseListingVM.coursesListingList.length,
                       itemBuilder: (context, index) {
-                        final jobData = jobListingVM.coursesListingList[index];
+                        final jobData =
+                            courseListingVM.coursesListingList[index];
                         final course = jobData;
-                        print(jobListingVM.coursesListingList.length);
-                        return 
-                            CouresListingCard(
+                        print(courseListingVM.coursesListingList.length);
+                        return CouresListingCard(
                           id: course.id ?? "",
                           logoUrl: course.presentedByImage?.url ?? '',
                           companyName: course.presentedByName ?? '',
@@ -177,8 +176,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
                           registeredCount: course.numberOfSeats ?? 0,
-                          onDetailView: () {
-                            navigationService.navigateToWithParams(RouteList.courseDetailScreen,params:course );
+                          onDetailView: () async {
+                            await courseListingVM.getCourseDetails(
+                                context, course.id ?? "");
+
+                            navigationService.navigateTo(
+                              RouteList.courseDetailScreen,
+                            );
                           },
                           onTapRegistered: () {
                             // Handle navigation or API call

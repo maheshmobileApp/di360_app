@@ -56,9 +56,9 @@ class CoursesListingDetails {
   String? type;
   String? address;
   String? scheduledAt;
-  int? maxSubscribers;
-  int? priceInAud;
-  int? priceInUsd;
+  dynamic? maxSubscribers;
+  dynamic? priceInAud;
+  dynamic? priceInUsd;
   SeoMetadata? seoMetadata;
   String? webinarLink;
   PresentedByImage? presentedByImage;
@@ -80,9 +80,9 @@ class CoursesListingDetails {
   String? contactPhone;
   String? contactWebsite;
   double? cpdPoints;
-  int? numberOfSeats;
-  int? earlyBirdPrice;
-  int? afterwardsPrice;
+  dynamic? numberOfSeats;
+  dynamic? earlyBirdPrice;
+  dynamic? afterwardsPrice;
   List<CourseGallery>? courseGallery;
   List<CourseBannerVideo>? courseBannerVideo;
   List<CourseBannerImage>? courseBannerImage;

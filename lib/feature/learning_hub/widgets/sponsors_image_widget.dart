@@ -3,61 +3,61 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 
 class SponsorsImageWidget extends StatelessWidget {
-  final List<String> imagePaths; // Required list of image paths (Asset or Network)
-  final double imageHeight;
-  final double imageWidth;
+  final List<String> imageUrls;
+  final double borderRadius;
+  final double spacing;
+  final String? title; // optional title
 
   const SponsorsImageWidget({
     Key? key,
-    required this.imagePaths,
-    this.imageHeight = 10,
-    this.imageWidth = 20,
+    required this.imageUrls,
+    this.borderRadius = 12,
+    this.spacing = 10,
+    this.title = "Sponsors", // default title
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
-            "SPONSORS",
-            style:  TextStyles.medium2(color: AppColors.primaryColor),
+        if (title != null && title!.isNotEmpty) ...[
+          Text(
+            title!,
+            style: TextStyles.bold2(color: AppColors.primaryColor),
           ),
+        ],
         GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: imagePaths.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          shrinkWrap: true, // allow inside Column
+          physics: const NeverScrollableScrollPhysics(), // avoid scroll conflict
+          itemCount: imageUrls.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, // 3 columns
-            crossAxisSpacing: 0,
-            mainAxisSpacing: 0,
+            crossAxisSpacing: spacing,
+            mainAxisSpacing: spacing,
           ),
           itemBuilder: (context, index) {
-            final path = imagePaths[index];
-            return ImageWidget(path: path, height: imageHeight, width: imageWidth);
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius),
+              child: Image.network(
+                imageUrls[index],
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    color: Colors.grey.shade300,
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey.shade300,
+                  child: const Icon(Icons.broken_image, color: Colors.red),
+                ),
+              ),
+            );
           },
         ),
       ],
     );
-  }
-}
-
-/// Helper widget to handle both asset and network images
-class ImageWidget extends StatelessWidget {
-  final String path;
-  final double height;
-  final double width;
-
-  const ImageWidget({
-    Key? key,
-    required this.path,
-    required this.height,
-    required this.width,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return path.startsWith("http")
-        ? Image.network(path, height: height, width: width, fit: BoxFit.contain)
-        : Image.asset(path, height: height, width: width, fit: BoxFit.contain);
   }
 }

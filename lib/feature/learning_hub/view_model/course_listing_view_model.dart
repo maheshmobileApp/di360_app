@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
 
   List<CoursesListingDetails> coursesListingList = [];
+  List<CoursesListingDetails> courseDetails = [];
   String selectedStatus = "All";
 
   final List<String> statuses = [
@@ -25,7 +27,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {
-      listingStatus = "";
+      listingStatus = "All";
     } else if (status == 'Draft') {
       listingStatus = 'DRAFT';
     } else if (status == 'Pending Approval') {
@@ -79,6 +81,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
+    notifyListeners();
+  }
+
+  Future<void> getCourseDetails(BuildContext context, String courseId) async {
+    final res = await repo.getCourseDetails(courseId);
+    if (res != null) {
+      courseDetails = res;
+    }
     notifyListeners();
   }
 }

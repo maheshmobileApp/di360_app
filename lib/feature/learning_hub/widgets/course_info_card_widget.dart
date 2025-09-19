@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CourseInfoCardWidget extends StatelessWidget {
@@ -6,6 +7,8 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String cpdHours;
   final String platform;
   final String webinar;
+  final String profilePic;
+  final String totalPrice;
 
   const CourseInfoCardWidget(
       {super.key,
@@ -13,13 +16,14 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.presentByName,
       required this.cpdHours,
       required this.platform,
-      required this.webinar});
+      required this.webinar,
+      required this.profilePic,
+      required this.totalPrice});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
       child: Padding(
@@ -35,10 +39,15 @@ class CourseInfoCardWidget extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                const CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  radius: 20,
-                  child: Icon(Icons.person, color: Colors.white),
+                CircleAvatar(
+                  backgroundColor: AppColors.geryColor,
+                  backgroundImage:
+                      profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+                  radius: 30,
+                  child: profilePic.isEmpty
+                      ? const Icon(Icons.business,
+                          size: 20, color: AppColors.lightGeryColor)
+                      : null,
                 ),
                 const SizedBox(width: 10),
                 Column(
@@ -57,13 +66,15 @@ class CourseInfoCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _InfoTextWidget(
-                    label: "CPD Duration",
-                    value: "${cpdHours}",
-                    color: Colors.red),
+                  label: "CPD Duration",
+                  value: "${cpdHours}",
+                  first: true,
+                ),
                 _InfoTextWidget(
-                    label: "Platform",
-                    value: "${platform}",
-                    color: Colors.orange),
+                  label: "Platform",
+                  first: false,
+                  value: "${platform}",
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -71,19 +82,15 @@ class CourseInfoCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _InfoTextWidget(
-                    label: "Webinar", value: "${webinar}", color: Colors.black),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text("\$399.00",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough)),
-                    Text("AUD \$299.00",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.red)),
-                  ],
-                )
+                  label: "Webinar",
+                  first: true,
+                  value: "${webinar}",
+                ),
+                _InfoTextWidget(
+                  label: "Price",
+                  first: false,
+                  value: "${totalPrice}",
+                ),
               ],
             ),
           ],
@@ -96,24 +103,33 @@ class CourseInfoCardWidget extends StatelessWidget {
 class _InfoTextWidget extends StatelessWidget {
   final String label;
   final String value;
-  final Color color;
+
+  final bool first;
 
   const _InfoTextWidget({
     required this.label,
     required this.value,
-    required this.color,
+    required this.first,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          first ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        Text(label,
+            style: const TextStyle(
+              color: AppColors.lightGeryColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            )),
         const SizedBox(height: 4),
         Text(value,
             style: TextStyle(
-                fontSize: 14, fontWeight: FontWeight.bold, color: color)),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryColor)),
       ],
     );
   }
