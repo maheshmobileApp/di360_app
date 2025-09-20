@@ -25,62 +25,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     fetchEmpTypes();
     pageController = PageController(initialPage: _currentStep);
   }
-  void clearAllData() {
-  jobTitleController.clear();
-  companyNameController.clear();
-  jobDescController.clear();
-  videoLinkController.clear();
-  websiteController.clear();
-  facebookController.clear();
-  instgramController.clear();
-  linkedInController.clear();
-  locationSearchController.clear();
-  stateController.clear();
-  cityPostCodeController.clear();
-  minSalaryController.clear();
-  maxSalaryController.clear();
-  countryController.clear();
-  locumDateController.clear();
-  startLocumDateController.clear();
-  endLocumDateController.clear();
-  CompanyName = "";
-  selectedRole = null;
-  selectedEmploymentType = null;
-  selectedPayRange = null;
-  selectRate = null;
-  selectCountry = null;
-  selectEducation = null;
-  selecteBenefitsType = null;
-  selectHire = null;
-  selectPositions = null;
-  selectExperience = null;
-  supplierId = null;
-  practiceId = null;
-  logoPath = null;
-  banner_image = null;
-  startDate = null;
-  endDate = null;
-  startLocumDate = null;
-  endLocumDate = null;
-  isStartDateEnabled = false;
-  isEndDateEnabled = false;
-  showLocumDate = false;
-  logoFile = null;
-  bannerFile = null;
-  clinicPhotos.clear();
-  _selectedEmploymentChips.clear();
-  _selectedBenefits.clear();
-  jobRoles.clear();
-  roleOptions.clear();
-  empTypes.clear();
-  empOptions.clear();
-  _currentStep = 0;
-  if (pageController.hasClients) {
-    pageController.jumpToPage(0);
-  }
-
-  notifyListeners();
-}
 
   // Controllers
   String CompanyName = "";
@@ -347,12 +291,14 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     updateLocumSummary();
     notifyListeners();
   }
+
   void setEndLocumDate(DateTime date) {
     endLocumDate = date;
     endLocumDateController.text = DateFormat("M/d/yyyy").format(date);
     updateLocumSummary();
     notifyListeners();
   }
+
   void clearDates() {
     startLocumDate = null;
     endLocumDate = null;
@@ -401,9 +347,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     _selectedEmploymentChips.clear();
     _updateLocumVisibility();
   }
+
   List<String> getSelectedEmploymentTypes() =>
       List.from(_selectedEmploymentChips);
-   //Image Pickers...
+  //Image Pickers...
   Future<void> pickBannerImage(ImageSource source) async {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
@@ -413,6 +360,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
   void removeBanner() {
     bannerFile = null;
     notifyListeners();
@@ -502,6 +450,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+// #region ... Create Job
   Future<void> createdJobListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {
@@ -552,36 +501,34 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "education":
             selectEducation, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-      "banner_image":bannerFile != null
-    ? [
-        {
-         "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
-         "name": bannerFile!.path.split("/").last,
-         "type": "image",
-        "extension": "jpeg",
-        }
-      ]
-    : 
-    [],
+        "banner_image": bannerFile != null
+            ? [
+                {
+                  "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
+                  "name": bannerFile!.path.split("/").last,
+                  "type": "image",
+                  "extension": "jpeg",
+                }
+              ]
+            : [],
 
-"clinic_logo": clinicPhotos.isNotEmpty
-    ? clinicPhotos.asMap().entries.map((entry) {
-        final index = entry.key;
-       final file = entry.value;
-        final uploadedList = uploadedFiles['clinic_logo'];
-        return {
-          "url": (uploadedList != null &&
-                  uploadedList.length > index &&
-                  uploadedList[index]?["url"] != null)
-              ? uploadedList[index]["url"]
-              : file.path,
-          "name": file.path.split("/").last,
-          "type": "image",
-         "extension": "jpeg",
-       };
-     }).toList()
-   : 
-   [],
+        "clinic_logo": clinicPhotos.isNotEmpty
+            ? clinicPhotos.asMap().entries.map((entry) {
+                final index = entry.key;
+                final file = entry.value;
+                final uploadedList = uploadedFiles['clinic_logo'];
+                return {
+                  "url": (uploadedList != null &&
+                          uploadedList.length > index &&
+                          uploadedList[index]?["url"] != null)
+                      ? uploadedList[index]["url"]
+                      : file.path,
+                  "name": file.path.split("/").last,
+                  "type": "image",
+                  "extension": "jpeg",
+                };
+              }).toList()
+            : [],
 
         // {
         //   "url":
@@ -617,12 +564,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
-        clearAllData();
-        ToastMessage.show('Job  Created Successfully!');
-        NavigationService().goBack();
-      }
-    } 
-  
+      ToastMessage.show('Job  Created Successfully!');
+      NavigationService().goBack();
+    }
+  }
+  // #endregion
 
   @override
   void dispose() {
@@ -645,4 +591,5 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     pageController.dispose();
     super.dispose();
   }
+
 }

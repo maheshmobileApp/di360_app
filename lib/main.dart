@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
         ChangeNotifierProvider(create: (_) => TalentsViewModel()),
-        ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
+     
         ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
         ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
         ChangeNotifierProvider(create: (_) => JobProfileCreateViewModel()),

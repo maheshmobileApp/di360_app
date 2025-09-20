@@ -133,8 +133,6 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                 ],
               ),
             ],
-            Divider(thickness: 4),
-            addVertical(16),
             _sectionHeader("Job Description"),
             addVertical(16),
             InputTextField(

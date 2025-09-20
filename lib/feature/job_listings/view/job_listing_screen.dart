@@ -185,8 +185,10 @@ class _JobListingScreenState extends State<JobListingScreen>
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
-          onPressed: () {
-            navigationService.navigateTo(RouteList.jobCreate);
+          onPressed: () async {
+            await navigationService.navigateTo(RouteList.jobCreate);
+            jobListingVM.getMyJobListingData();
+            
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));

@@ -113,7 +113,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         )
                       : null,
                   background: CachedNetworkImageWidget(
-                    imageUrl: widget.job.logo ?? '',
+                    imageUrl: widget.job.bannerImage?.url ?? '',
                     width: double.infinity,
                   ),
                 );
@@ -165,13 +165,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[300],
-                  ),
+                ClipOval(
+                  child: widget.job.logo != null && widget.job.logo!.isNotEmpty
+                      ? CachedNetworkImageWidget(
+                          imageUrl: widget.job.logo!,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          width: 50,
+                          height: 50,
+                          color: Colors.grey.shade300,
+                          child:
+                              const Icon(Icons.business, color: Colors.white),
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -240,12 +248,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         InfoItem(
             iconPath: ImageConst.graduationSvg,
             title: 'Education Level',
-            subtitle: '${widget.job.education}'),
+            subtitle: '${widget.job.education ?? ""}'),
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
             subtitle:
-                '${widget.job.jobApplicantsAggregate?.aggregate?.count ?? 0}'),
+                '${widget.job.noOfPeople ?? 0}'),
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
@@ -285,6 +293,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
                   onPressed: () async {
                     final Uri appUri = Uri.parse(widget.job.instagramUrl!);
+                    if (await canLaunchUrl(appUri)) {
+                      await launchUrl(appUri,
+                          mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }),
+            if (widget.job.linkedinUrl!.isNotEmpty)
+              IconButton(
+                  icon: ImageWidget(imageUrl: ImageConst.linkedinSvg),
+                  onPressed: () async {
+                    final Uri appUri = Uri.parse(widget.job.linkedinUrl!);
                     if (await canLaunchUrl(appUri)) {
                       await launchUrl(appUri,
                           mode: LaunchMode.externalApplication);

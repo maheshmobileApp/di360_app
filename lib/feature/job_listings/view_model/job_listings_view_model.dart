@@ -169,8 +169,8 @@ class JobListingsViewModel extends ChangeNotifier {
   }
 
   Future<void> getMyJobListingData() async {
+    await fetchJobStatusCounts();
     final res = await repo.getMyJobListing(listingStatus);
-    fetchJobStatusCounts();
     if (res != null) {
       myJobListingList = res;
     }
@@ -355,3 +355,12 @@ void dispose() {
 }
 
 
+
+/*
+
+Job Status
+
+
+active_status
+status 
+ */

@@ -250,18 +250,18 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
         showAlertMessage(context, 'Do you really want to activate this job?',
             onBack: () {
           navigationService.goBack();
-            vm.updateJobListingStatus(context, id, "INACTIVE");
+            vm.updateJobListingStatus(context, id, "ACTIVE");
         });
       } else if (value == "Preview") {
         navigationService.navigateToWithParams(
-          RouteList.JobListingDetailsScreen,
+          RouteList.jobdetailsScreen,
           params: vm.myJobListingList[index],
         );
       } else if (value == "Inactive") {
         showAlertMessage(context, 'Do you really want to deactivate this job?',
             onBack: () {
           navigationService.goBack();
-          vm.updateJobListingStatus(context, id, "REJECTED");
+          vm.updateJobListingStatus(context, id, "INACTIVE");
         });
       } else if (value == "Delete") {
         showAlertMessage(context, 'Are you sure you want to delete this job?',

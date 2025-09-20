@@ -15,11 +15,12 @@ import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
+import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 //import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
-import 'package:di360_flutter/feature/job_listings/view/job_listing_details.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
+import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_create_view.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
@@ -36,11 +37,12 @@ import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
+import 'package:provider/provider.dart';
 
 import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
-
+//   ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
 class Routes {
   static Map<String, WidgetBuilder> get routes {
     return {
@@ -53,7 +55,9 @@ class Routes {
       RouteList.signup: (context) => SignupScreen(),
       RouteList.roleScreen: (context) => RoleSelectionScreen(),
       RouteList.practiceDetailsScreen: (context) => PracticeDetailsScreen(),
-      RouteList.jobCreate: (context) => JobCreateView(),
+      RouteList.jobCreate: (context) => ChangeNotifierProvider(
+          create: (BuildContext context) => JobCreateViewModel(),
+          child: JobCreateView()),
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
@@ -110,13 +114,6 @@ class Routes {
       RouteList.myCatalogueScreen: (context) => MyCataloguesScreen(),
       RouteList.directory: (context) => DirectorScreen(),
       RouteList.directoryFilter: (context) => DirectoriesFilterScreen(),
-      RouteList.JobListingDetailsScreen: (context) {
-        final args = ModalRoute.of(context)?.settings.arguments;
-        return JobListingDetailsScreen(
-          job: args as Jobs,
-        );
-      },
-
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
     };
