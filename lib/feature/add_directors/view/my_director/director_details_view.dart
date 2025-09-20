@@ -106,27 +106,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
-        children: List.generate(
-          (services.length / 2).ceil(), // Number of rows
-          (rowIndex) {
-            final startIndex = rowIndex * 2;
-            final endIndex = (startIndex + 2 <= services.length)
-                ? startIndex + 2
-                : services.length;
-
-            final rowItems = services.sublist(startIndex, endIndex);
-
-            return Row(
-              children: rowItems
-                  .map((data) => Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: _outlinedButton(context, data.name ?? ''),
-                      )))
-                  .toList(),
-            );
-          },
-        ),
+        children: services.map( (val)=> _outlinedButton(context, val.name ?? '')
+        ).toList()
       ),
     );
   }
@@ -172,9 +153,12 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
             side: BorderSide(color: Colors.grey.shade300),
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
-          child: Text(label,
-              textAlign: TextAlign.center,
-              style: TextStyles.bold6(color: AppColors.black)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(label,
+                textAlign: TextAlign.center,
+                style: TextStyles.bold6(color: AppColors.black)),
+          ),
         ),
       );
 
@@ -254,7 +238,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
 
   Widget _documentCard(AddDirectorViewModel vm) {
     return CustomGrid(
-      childAspectRatio: 0.80,
+      childAspectRatio: 0.75,
       children: List.generate(
           vm.getBasicInfoData.first.directoryDocuments?.length ?? 0, (index) {
         final doc = vm.getBasicInfoData.first.directoryDocuments?[index];

@@ -43,11 +43,6 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // onTypeChange(value) {
-  //   _variables['details']['type'] = value;
-  //   notifyListeners();
-  // }
-
   submit(BuildContext context) async {
     _variables['details']['emailOrPhone'] = emailController.text;
     _variables['details']['password'] = passController.text;
@@ -70,6 +65,8 @@ class LoginViewModel extends ChangeNotifier {
               LocalStorageConst.token, result.loginApi?.accessToken ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.type, result.loginApi?.type ?? '');
+          await LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
+              result.loginApi?.subscriptionId ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.profilePic,
               result.loginApi?.logo?.url ??

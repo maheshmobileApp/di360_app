@@ -37,6 +37,8 @@ import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dar
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
+import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
+import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
@@ -45,7 +47,6 @@ import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
-
 import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,6 @@ class Routes {
           jobsListingData: args as JobsListingDetails,
         );
       },
-      // RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -135,7 +135,9 @@ class Routes {
       RouteList.contacts: (context) => Contacts(),
       RouteList.myLearningHubScreen: (context) => MyLearningHubScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
-      RouteList.courseDetailScreen: (context) => CourseDetailScreen()
+      RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
+      RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
+      RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
     };
   }
 }

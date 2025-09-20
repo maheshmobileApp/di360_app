@@ -7,6 +7,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import '../../talents/model/job_profile.dart';
@@ -82,7 +83,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 Flexible(child: _chipWidget(jobProfiles?.workType ?? [])),
                 const SizedBox(width: 200),
-                _TalentTimeChip(time),
+               JobTimeChip(time: time),
+
               ],
             ),
             addVertical(10),
@@ -233,30 +235,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _TalentTimeChip(String time) => Container(
-        height: 19,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [
-            Color.fromRGBO(116, 130, 148, 0.0),
-            Color.fromRGBO(116, 130, 148, 0.2)
-          ]),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        alignment: Alignment.centerRight,
-        child: Text(time.isEmpty ? '-' : time,
-            style: TextStyles.semiBold(
-                fontSize: 10, color: const Color(0xFF1E1E1E))),
-      );
-
-  String? _getShortTime(String createdAt) {
-    if (createdAt.isEmpty) return null;
-    try {
-      return Jiffy.parse(createdAt).fromNow();
-    } catch (_) {
-      return null;
-    }
-  }
+  
 
   Widget _roundedButton(String label) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -307,4 +286,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         addHorizontal(8),
         Text(title, style: TextStyles.semiBold(fontSize: 14, color: color))
       ]);
+      
+       String? _getShortTime(String createdAt) {
+    return Jiffy.parse(createdAt).fromNow();
+  }
 }
