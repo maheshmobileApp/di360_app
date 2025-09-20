@@ -1,7 +1,8 @@
-const String deleteCourseQuery =
-    r'''mutation deleteRegisteredCourse($id: uuid!) {
-  delete_course_registered_users_by_pk(id: $id) {
+const String deleteCourseQuery =r'''
+mutation DeleteCourse($id: uuid!) {
+  delete_courses_by_pk(id: $id) {
     id
-
-  }
-}''';
+    __typename
+}
+}
+''';
