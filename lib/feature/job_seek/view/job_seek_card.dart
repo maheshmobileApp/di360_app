@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -178,34 +179,12 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
           ],
         ),
         Spacer(),
-        if (time != null) _jobTimeChip(time),
+        if (time != null) JobTimeChip(time: time),
       ],
     );
   }
 
-  Widget _jobTimeChip(String time) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
-      height: 19,
-      width: 61,
-      alignment: Alignment.centerRight,
-      decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 236, 225, 1),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        time,
-        textAlign: TextAlign.right,
-        style: TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          height: 1,
-          color: Color.fromRGBO(255, 112, 0, 1),
-        ),
-      ),
-    );
-  }
+ 
 
   String? _getShortTime(String createdAt) {
     return Jiffy.parse(createdAt).fromNow();

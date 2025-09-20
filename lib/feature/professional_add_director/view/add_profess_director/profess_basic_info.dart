@@ -8,18 +8,20 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
+import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class AddDirectorBasicInfo extends StatelessWidget
+class ProfessBasicInfo extends StatelessWidget
     with BaseContextHelpers, ValidationMixins {
-  AddDirectorBasicInfo({super.key});
+  const ProfessBasicInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final professDirectorVM = Provider.of<ProfessionalAddDirectorVm>(context);
     return SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -31,10 +33,10 @@ class AddDirectorBasicInfo extends StatelessWidget
           _buildBusineestype(addDirectorVM),
           addVertical(20),
           InputTextField(
-            hintText: "Enter Company Name",
-            title: "Company Name",
+            hintText: "Enter designation",
+            title: "Designation",
             isRequired: true,
-            controller: addDirectorVM.CompanyNameController,
+            controller: professDirectorVM.designationCntr,
             validator: (value) => value == null || value.isEmpty
                 ? 'Please enter company name'
                 : null,
@@ -43,7 +45,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           InputTextField(
             title: "Name",
             hintText: 'Enter name',
-            controller: addDirectorVM.nameController,
+            controller: professDirectorVM.nameController,
             validator: validateFirstName,
           ),
           addVertical(20),
@@ -51,24 +53,14 @@ class AddDirectorBasicInfo extends StatelessWidget
             title: "Email ID",
             validator: validateEmail,
             hintText: 'Enter emailId',
-            controller: addDirectorVM.emailController,
+            controller: professDirectorVM.emailController,
           ),
           addVertical(20),
-          InputTextField(
-            hintText: "Enter ABN/ACN Number ",
-            title: " ABN/ACN Number ",
-            isRequired: true,
-            controller: addDirectorVM.ABNNumberController,
-            keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter  ABN/ACN Number'
-                : null,
-          ),
           addVertical(20),
           InputTextField(
             hintText: "Enter Phone Number",
             title: " Phone Number ",
-            controller: addDirectorVM.MobileNumberController,
+            controller: professDirectorVM.mobileNumberCntr,
             isRequired: true,
             keyboardType: TextInputType.number,
             validator: (value) => value == null || value.isEmpty
@@ -80,13 +72,13 @@ class AddDirectorBasicInfo extends StatelessWidget
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
             keyboardType: TextInputType.number,
-            controller: addDirectorVM.alternateNumberController,
+            controller: professDirectorVM.alternateNumberController,
           ),
           addVertical(20),
           InputTextField(
             hintText: "Enter Address",
             title: " Address ",
-            controller: addDirectorVM.addressController,
+            controller: professDirectorVM.addressController,
             isRequired: true,
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please enter  address' : null,
@@ -96,7 +88,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           sectionHeader("Logo & Banner"),
           addVertical(20),
           LogoContainer(
-            title: "Logo",
+            title: "Profile image",
             imageFile: addDirectorVM.logoFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
@@ -120,13 +112,85 @@ class AddDirectorBasicInfo extends StatelessWidget
               () => addDirectorVM.pickBannerImage(ImageSource.camera),
             ),
           ),
+          addVertical(10),
+          sectionHeader('Hobbies'),
+          addVertical(20),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: addDirectorVM.getBasicInfoData.first.hobbies?.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InputTextField(
+                          hintText: "Enter hobbies",
+                          title: "Hobbies",
+                          controller: professDirectorVM.hobbiesCntr[index],
+                          onChange: (value) => professDirectorVM.updateHobby(
+                              context, index, value)),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: AppColors.redColor),
+                      onPressed: () =>
+                          professDirectorVM.removeHobby(context, index),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+          addVertical(10),
+          ElevatedButton.icon(
+            onPressed: () => professDirectorVM.addHobby(context),
+            icon: const Icon(Icons.add),
+            label: const Text("Add hobbies"),
+          ),
+          sectionHeader('Universities'),
+          addVertical(20),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount:
+                addDirectorVM.getBasicInfoData.first.universitySchool?.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InputTextField(
+                          hintText: "Enter universities",
+                          title: "Universities School",
+                          controller: professDirectorVM.universitiesCntr[index],
+                          onChange: (value) => professDirectorVM
+                              .updateUniversities(context, index, value)),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: AppColors.redColor),
+                      onPressed: () =>
+                          professDirectorVM.removeUniversities(context, index),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+          addVertical(10),
+          ElevatedButton.icon(
+            onPressed: () => professDirectorVM.addUniversities(context),
+            icon: const Icon(Icons.add),
+            label: const Text("Add universities"),
+          ),
           addVertical(20),
           InputTextField(
             hintText: "Enter your text here",
             maxLength: 500,
             maxLines: 5,
             title: "Description",
-            controller: addDirectorVM.descController,
+            controller: professDirectorVM.descController,
           ),
         ],
       ),

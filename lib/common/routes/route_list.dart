@@ -49,4 +49,6 @@ class RouteList {
   static const String myLearningHubScreen = '/myLearningHubScreen';
   static const String myDirectorScreen = '/myDirectorScreen';
   static const String courseDetailScreen = '/courseDetailScreen';
+  static const String professionDirectorScreen = '/professionDirectorScreen';
+  static const String professionAddDirectorView = '/professionAddDirectorView';
 }

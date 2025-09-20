@@ -2,11 +2,11 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-//import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -58,7 +58,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                 ),
                 Row(
                   children: [
-                    _jobProfileTimeChip(time),
+                    JobTimeChip(time: time),
                     const SizedBox(width: 4),
                     menuWidget(
                       vm,
@@ -193,26 +193,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _jobProfileTimeChip(String time) {
-    return Container(
-      height: 19,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [AppColors.timeblack, AppColors.timewhite],
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      alignment: Alignment.centerRight,
-      child: Text(
-        time,
-        textAlign: TextAlign.right,
-        style: TextStyles.semiBold(fontSize: 10, color: AppColors.primaryColor),
-      ),
-    );
-  }
+  
 
   Widget menuWidget(
     JobProfileListingViewModel vm,

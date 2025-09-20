@@ -66,4 +66,13 @@ class ConstantData {
     'Testimonials',
     'OtherInformation',
   ];
+  static List<String> profesSteps = [
+    'Basic',
+    'Education',
+    'Certificates',
+    'Achievements',
+    'Gallery',
+    'Testimonials',
+    'OtherInformation',
+  ];
 }
