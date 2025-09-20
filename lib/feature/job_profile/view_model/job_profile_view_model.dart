@@ -625,6 +625,7 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
             "state": stateController.text,
             "location": locationController.text,
             "country": selectCountry,
+            "Year_of_experience": selectExperience ?? "",
             "city": cityPostCodeController.text,
             "radius": "0", //no option in mobile design, default to 0
             "availabilityType": selectedAvailabilityType,

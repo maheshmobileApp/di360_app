@@ -2,8 +2,8 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repo_impl.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +90,7 @@ class JobListingsViewModel extends ChangeNotifier {
   List<JobApplicantMessage> messages = [];
   String? suppliersId;
   String? practiceId;
-  List<JobsListingDetails> myJobListingList = [];
+  List<Jobs> myJobListingList = [];
   List<JobApplicants> myApplicantsList = [];
 
   void changeStatusforapplicatnts(String status, BuildContext context) {
@@ -169,8 +169,8 @@ class JobListingsViewModel extends ChangeNotifier {
   }
 
   Future<void> getMyJobListingData() async {
+    await fetchJobStatusCounts();
     final res = await repo.getMyJobListing(listingStatus);
-    fetchJobStatusCounts();
     if (res != null) {
       myJobListingList = res;
     }
@@ -355,3 +355,12 @@ void dispose() {
 }
 
 
+
+/*
+
+Job Status
+
+
+active_status
+status 
+ */

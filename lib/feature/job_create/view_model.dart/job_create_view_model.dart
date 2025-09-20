@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
@@ -57,7 +58,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectRate;
   String? selectCountry;
   String? selectEducation;
-  String? selecteBenefits;
+  String? selecteBenefitsType;
   String? selectHire;
   String? selectPositions;
   String? selectExperience;
@@ -286,7 +287,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setSelectedExperience(String? value) {
-    selecteBenefits = value;
+    selectExperience = value;
     notifyListeners();
   }
 
@@ -347,12 +348,14 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     updateLocumSummary();
     notifyListeners();
   }
+
   void setEndLocumDate(DateTime date) {
     endLocumDate = date;
     endLocumDateController.text = DateFormat("M/d/yyyy").format(date);
     updateLocumSummary();
     notifyListeners();
   }
+
   void clearDates() {
     startLocumDate = null;
     endLocumDate = null;
@@ -401,9 +404,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     _selectedEmploymentChips.clear();
     _updateLocumVisibility();
   }
+
   List<String> getSelectedEmploymentTypes() =>
       List.from(_selectedEmploymentChips);
-   //Image Pickers...
+  //Image Pickers...
   Future<void> pickBannerImage(ImageSource source) async {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
@@ -413,6 +417,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
   void removeBanner() {
     bannerFile = null;
     notifyListeners();
@@ -502,6 +507,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+// #region ... Create Job
   Future<void> createdJobListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {
@@ -555,30 +561,32 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": bannerFile != null
             ? [
                 {
-                  "url": uploadedFiles['banner'] != null
-                      ? uploadedFiles[' banner']["url"]
-                      : bannerFile!.path,
+                  "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
                   "name": bannerFile!.path.split("/").last,
                   "type": "image",
                   "extension": "jpeg",
                 }
               ]
-            : [], // TODO: Need to change the type of this variable
-        /*
-        [{"url":"","name":"coverletter.pdf","type":"document","extension":"pdf"}]
-         */
-       "clinic_logo": clinicPhotos.isNotEmpty
-      ? clinicPhotos.asMap().entries.map((entry) {
-          final index = entry.key;
-          final file = entry.value;
-          return {
-            "url": uploadedFiles['clinic_logo']?[index]?["url"] ?? file.path,
-            "name": file.path.split("/").last,
-            "type": "image",
-            "extension": "jpeg",
-          };
-        }).toList()
-      : [],
+            : [],
+
+        "clinic_logo": clinicPhotos.isNotEmpty
+            ? clinicPhotos.asMap().entries.map((entry) {
+                final index = entry.key;
+                final file = entry.value;
+                final uploadedList = uploadedFiles['clinic_logo'];
+                return {
+                  "url": (uploadedList != null &&
+                          uploadedList.length > index &&
+                          uploadedList[index]?["url"] != null)
+                      ? uploadedList[index]["url"]
+                      : file.path,
+                  "name": file.path.split("/").last,
+                  "type": "image",
+                  "extension": "jpeg",
+                };
+              }).toList()
+            : [],
+
         // {
         //   "url":
         //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
@@ -596,7 +604,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "website_url": websiteController.text,
         "country": selectCountry,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
-        "offered_benefits": selecteBenefits,
+        "offered_benefits": selectedBenefits,
         //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
         "hiring_period": selectHire,
         "no_of_people": selectPositions,
@@ -613,12 +621,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
+      ToastMessage.show('Job  Created Successfully!');
+      NavigationService().goBack();
     }
-    notifyListeners();
   }
+  // #endregion
 
   @override
   void dispose() {
@@ -641,4 +648,5 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     pageController.dispose();
     super.dispose();
   }
+
 }

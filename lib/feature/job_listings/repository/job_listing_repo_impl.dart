@@ -17,12 +17,13 @@ import 'package:di360_flutter/feature/job_listings/quary/job_status_count_quary.
 import 'package:di360_flutter/feature/job_listings/quary/update_job_aggrate_query.dart';
 import 'package:di360_flutter/feature/job_listings/quary/update_joblisting_status_quary.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repository.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 
 class JobListingRepoImpl extends JobListingRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<JobsListingDetails>?> getMyJobListing(
+  Future<List<Jobs>?> getMyJobListing(
       List<String>? listingStatus) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);

@@ -2,8 +2,9 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
+//import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
@@ -12,7 +13,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
 class JobListingCard extends StatelessWidget with BaseContextHelpers {
-  final JobsListingDetails? jobsListingData;
+  final Jobs? jobsListingData;
   final JobListingsViewModel vm;
   final dynamic parmas;
   final int? index;
@@ -249,18 +250,18 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
         showAlertMessage(context, 'Do you really want to activate this job?',
             onBack: () {
           navigationService.goBack();
-            vm.updateJobListingStatus(context, id, "INACTIVE");
+            vm.updateJobListingStatus(context, id, "ACTIVE");
         });
       } else if (value == "Preview") {
         navigationService.navigateToWithParams(
-          RouteList.JobListingDetailsScreen,
+          RouteList.jobdetailsScreen,
           params: vm.myJobListingList[index],
         );
       } else if (value == "Inactive") {
         showAlertMessage(context, 'Do you really want to deactivate this job?',
             onBack: () {
           navigationService.goBack();
-          vm.updateJobListingStatus(context, id, "REJECTED");
+          vm.updateJobListingStatus(context, id, "INACTIVE");
         });
       } else if (value == "Delete") {
         showAlertMessage(context, 'Are you sure you want to delete this job?',

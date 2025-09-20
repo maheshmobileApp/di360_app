@@ -107,12 +107,13 @@ class JobProfile {
     return [];
   }
 
-  factory JobProfile.fromJson(Map<String, dynamic> json) => JobProfile(
+  factory JobProfile.fromJson(Map<String, dynamic> json) {
+    final value = JobProfile(
         id: json['id'],
         createdAt: json['created_at'],
         updatedAt: json['updated_at'],
         skills: (json['skills'] as List?)?.map((e) => e.toString()).toList(),
-        jobExperiences: (json['job_experiences'] as List? ?? [])
+      jobExperiences: (json['jobexperiences'] as List? ?? [])
             .map((e) => JobExperience.fromJson(e))
             .toList(),
         educations: (json['educations'] as List? ?? [])
@@ -175,6 +176,8 @@ class JobProfile {
             ?.map((e) => TalentEnquiries.fromJson(e))
             .toList(),
       );
+return value;
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
