@@ -22,4 +22,16 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     }
     notifyListeners();
   }
+
+  Future<void> getCoursesWithFilters(BuildContext context,String? type, String? category) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+    final res = await repo.getCoursesWithFilters(userId,type,category);
+
+    if (res != null) {
+      myRegisteredCourses = res;
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
 }

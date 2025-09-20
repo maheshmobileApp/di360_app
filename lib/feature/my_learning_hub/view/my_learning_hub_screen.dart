@@ -76,10 +76,12 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                         title: "Category",
                         options: newCourseVM.courseCategory,
                       ),
-                     
                     ],
-                    onApply: () {
-                       navigationService.goBack();
+                    onApply: (selectedOptions) {
+                      final type = selectedOptions["Filter by Type"];
+                      final category = selectedOptions["Category"];
+                      myLearningHubVM.getCoursesWithFilters(
+                          context, type, category);
                     },
                     onClear: () {
                       navigationService.goBack();
