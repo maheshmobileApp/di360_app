@@ -1,8 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
@@ -213,6 +215,9 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           style: TextStyles.medium2(color: AppColors.black),
                         ),
                         onTap: () async {
+                          final userId = await LocalStorage.getStringVal(
+                              LocalStorageConst.userId);
+
                           if (item.title == 'Catalogues') {
                             context
                                 .read<AddCatalogueViewModel>()
@@ -220,7 +225,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myCatalogueScreen);
                           } else if (item.title == 'Job Listings') {
-                            context
+                            await context
                                 .read<JobListingsViewModel>()
                                 .getMyJobListingData();
                             navigationService
@@ -232,13 +237,13 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Navigator.pushNamed(
                               context,
                               RouteList.AppliedJobScreen,
-                              arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+                              arguments: userId,
                             );
                           } else if (item.title == 'Enquiries') {
                             Navigator.pushNamed(
                               context,
                               RouteList.EnquiriesScreen,
-                              arguments: "1d0f1ca1-2658-4869-85d0-6f098bc600a1",
+                              arguments: userId,
                             );
                           } else if (item.title == 'Talent Request') {
                             context

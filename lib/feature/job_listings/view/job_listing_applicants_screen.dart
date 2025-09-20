@@ -1,15 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_card.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
 class JobListingApplicantsScreen extends StatefulWidget {
-  final JobsListingDetails? jobsListingData;
+  final Jobs? jobsListingData;
   const JobListingApplicantsScreen({super.key, this.jobsListingData});
 
   @override
