@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/job_seek/model/job_info_item.dart';
 
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
@@ -255,19 +256,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         SizedBox(height: 10),
         _sectionHeader('Key Responsibilities'),
         _sectionText('NA'),
-        SizedBox(height: 10),
-        _sectionHeader('About Company'),
-        _sectionText('${widget.job.companyName}'),
-        SizedBox(height: 10),
-        InkWell(
-          onTap: () {},
-          child: Text(
-            '${widget.job.currentCompany ?? ''}',
-            style: TextStyle(
-                color: Colors.blue, decoration: TextDecoration.underline),
-          ),
-        ),
-        SizedBox(height: 20),
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
@@ -443,62 +431,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 }
 
-class InfoItem extends StatelessWidget {
-  final String iconPath;
-  final String title;
-  final String subtitle;
 
-  const InfoItem({
-    super.key,
-    required this.iconPath,
-    required this.title,
-    required this.subtitle,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 28,
-            height: 28,
-            colorFilter:
-                const ColorFilter.mode(Colors.blueGrey, BlendMode.srcIn),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF6E7C90),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 /*

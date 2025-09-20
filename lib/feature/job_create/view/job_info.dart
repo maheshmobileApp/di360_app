@@ -55,12 +55,15 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                 title: "Locum Dates",
                 hintText: "Select Locum Dates",
                 prefixIcon: const Icon(Icons.calendar_today),
-                readOnly: true, 
-                onTap: () {
-                
-                },
+                readOnly: true,
+                onTap: () {},
               ),
-               addVertical(16),
+              addVertical(16),
+              Text(
+                " Start Locum Dates",
+                style: TextStyles.regular3(color: AppColors.black),
+              ),
+              addVertical(4),
               CustomDatePicker(
                 controller: jobCreateVM.startLocumDateController,
                 text: "",
@@ -80,6 +83,11 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                 },
               ),
               addVertical(16),
+              Text(
+                " End Locum Dates ",
+                style: TextStyles.regular3(color: AppColors.black),
+              ),
+              addVertical(4),
               CustomDatePicker(
                 controller: jobCreateVM.endLocumDateController,
                 text: "",

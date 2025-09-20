@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
@@ -24,6 +25,62 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     fetchEmpTypes();
     pageController = PageController(initialPage: _currentStep);
   }
+  void clearAllData() {
+  jobTitleController.clear();
+  companyNameController.clear();
+  jobDescController.clear();
+  videoLinkController.clear();
+  websiteController.clear();
+  facebookController.clear();
+  instgramController.clear();
+  linkedInController.clear();
+  locationSearchController.clear();
+  stateController.clear();
+  cityPostCodeController.clear();
+  minSalaryController.clear();
+  maxSalaryController.clear();
+  countryController.clear();
+  locumDateController.clear();
+  startLocumDateController.clear();
+  endLocumDateController.clear();
+  CompanyName = "";
+  selectedRole = null;
+  selectedEmploymentType = null;
+  selectedPayRange = null;
+  selectRate = null;
+  selectCountry = null;
+  selectEducation = null;
+  selecteBenefitsType = null;
+  selectHire = null;
+  selectPositions = null;
+  selectExperience = null;
+  supplierId = null;
+  practiceId = null;
+  logoPath = null;
+  banner_image = null;
+  startDate = null;
+  endDate = null;
+  startLocumDate = null;
+  endLocumDate = null;
+  isStartDateEnabled = false;
+  isEndDateEnabled = false;
+  showLocumDate = false;
+  logoFile = null;
+  bannerFile = null;
+  clinicPhotos.clear();
+  _selectedEmploymentChips.clear();
+  _selectedBenefits.clear();
+  jobRoles.clear();
+  roleOptions.clear();
+  empTypes.clear();
+  empOptions.clear();
+  _currentStep = 0;
+  if (pageController.hasClients) {
+    pageController.jumpToPage(0);
+  }
+
+  notifyListeners();
+}
 
   // Controllers
   String CompanyName = "";
@@ -57,7 +114,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectRate;
   String? selectCountry;
   String? selectEducation;
-  String? selecteBenefits;
+  String? selecteBenefitsType;
   String? selectHire;
   String? selectPositions;
   String? selectExperience;
@@ -229,7 +286,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setSelectedExperience(String? value) {
-    selecteBenefits = value;
+    selectExperience = value;
     notifyListeners();
   }
 
@@ -495,33 +552,37 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "education":
             selectEducation, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-        "banner_image": bannerFile != null
-            ? [
-                {
-                  "url": uploadedFiles['banner'] != null
-                      ? uploadedFiles[' banner']["url"]
-                      : bannerFile!.path,
-                  "name": bannerFile!.path.split("/").last,
-                  "type": "image",
-                  "extension": "jpeg",
-                }
-              ]
-            : [], // TODO: Need to change the type of this variable
-        /*
-        [{"url":"","name":"coverletter.pdf","type":"document","extension":"pdf"}]
-         */
-       "clinic_logo": clinicPhotos.isNotEmpty
-      ? clinicPhotos.asMap().entries.map((entry) {
-          final index = entry.key;
-          final file = entry.value;
-          return {
-            "url": uploadedFiles['clinic_logo']?[index]?["url"] ?? file.path,
-            "name": file.path.split("/").last,
-            "type": "image",
-            "extension": "jpeg",
-          };
-        }).toList()
-      : [],
+      "banner_image":bannerFile != null
+    ? [
+        {
+         "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
+         "name": bannerFile!.path.split("/").last,
+         "type": "image",
+        "extension": "jpeg",
+        }
+      ]
+    : 
+    [],
+
+"clinic_logo": clinicPhotos.isNotEmpty
+    ? clinicPhotos.asMap().entries.map((entry) {
+        final index = entry.key;
+       final file = entry.value;
+        final uploadedList = uploadedFiles['clinic_logo'];
+        return {
+          "url": (uploadedList != null &&
+                  uploadedList.length > index &&
+                  uploadedList[index]?["url"] != null)
+              ? uploadedList[index]["url"]
+              : file.path,
+          "name": file.path.split("/").last,
+          "type": "image",
+         "extension": "jpeg",
+       };
+     }).toList()
+   : 
+   [],
+
         // {
         //   "url":
         //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
@@ -539,7 +600,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "website_url": websiteController.text,
         "country": selectCountry,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
-        "offered_benefits": selecteBenefits,
+        "offered_benefits": selectedBenefits,
         //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
         "hiring_period": selectHire,
         "no_of_people": selectPositions,
@@ -556,12 +617,12 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
-  }
+        clearAllData();
+        ToastMessage.show('Job  Created Successfully!');
+        NavigationService().goBack();
+      }
+    } 
+  
 
   @override
   void dispose() {

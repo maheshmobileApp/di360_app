@@ -72,7 +72,7 @@ Widget build(BuildContext context) {
                   images: jobCreateVM.clinicPhotos,
                   onChanged: (newList) {
                     jobCreateVM.clinicPhotos = newList;
-                    //jobCreateVM.notifyListeners();
+                    jobCreateVM.notifyListeners();
                   },
                 ),
                 const SizedBox(height: 40),
