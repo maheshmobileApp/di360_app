@@ -18,23 +18,38 @@ class LocationViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _openLocationInMaps(context),
-      child: Container(
-        height: height,
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        color: AppColors.geryColor,
-        alignment: Alignment.center,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.asset(
-            mapImage,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+       crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Map View",
+          style: TextStyles.bold2(color: AppColors.primaryColor),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          location??"",
+          style: TextStyles.medium2(color: AppColors.black),
+        ),
+        GestureDetector(
+          onTap: () => _openLocationInMaps(context),
+          child: Container(
+            height: height,
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            color: AppColors.geryColor,
+            alignment: Alignment.center,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                mapImage,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 

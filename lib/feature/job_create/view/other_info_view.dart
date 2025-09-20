@@ -210,7 +210,6 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
     },
   );
 }
-
   Future<void> pickAndSetDate(
     BuildContext context,
     void Function(DateTime) setDate,

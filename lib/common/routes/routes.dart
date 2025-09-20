@@ -21,14 +21,11 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_m
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
-import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
-import 'package:di360_flutter/feature/job_profile/view/job_profile_create_view.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';

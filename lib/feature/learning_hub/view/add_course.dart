@@ -15,6 +15,16 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
+    final type = jobCreateVM.selectedCourseType;
+    final showStartEndDate = [
+      "Event",
+      "Webinar",
+      "Live Course",
+      "Live Event",
+      "Test"
+    ].contains(type);
+
+    final showAddress = ["Event", "Live Course", "Live Event"].contains(type);
 
     return SingleChildScrollView(
       child: Padding(
@@ -38,6 +48,66 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
             SizedBox(height: 8),
             _buildCourseTypes(jobCreateVM),
             SizedBox(height: 8),
+            if (showStartEndDate) ...[
+              CustomDatePicker(
+                isRequired: true,
+                title: "Start Date",
+                controller: jobCreateVM.startDateController,
+                text: null,
+                hintText: "Date",
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    jobCreateVM.startDateController.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please Select Date'
+                    : null,
+              ),
+              const SizedBox(height: 8),
+              CustomDatePicker(
+                isRequired: true,
+                title: "End Date",
+                controller: jobCreateVM.endDateController,
+                text: null,
+                hintText: "Date",
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    jobCreateVM.endDateController.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please Select Date'
+                    : null,
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (showAddress) ...[
+              InputTextField(
+                controller: jobCreateVM.addressController,
+                hintText: "Enter Address",
+                title: "Address",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Address'
+                    : null,
+              ),
+            ],
+            SizedBox(height: 8),
             CustomDatePicker(
               isRequired: true,
               title: "RSVP Date",
@@ -48,7 +118,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 final picked = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
+                  firstDate: DateTime.now(),
                   lastDate: DateTime(2100),
                 );
                 if (picked != null) {
@@ -184,7 +254,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 final picked = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
+                  firstDate: DateTime.now(),
                   lastDate: DateTime(2100),
                 );
                 if (picked != null) {

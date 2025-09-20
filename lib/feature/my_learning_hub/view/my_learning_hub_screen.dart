@@ -3,12 +3,12 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget.dart';
-import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/register_course_card.dart';
-import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -26,15 +26,13 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
   @override
   void initState() {
     super.initState();
-    // final jobListingVM =
-    //     Provider.of<JobListingsViewModel>(context, listen: false);
-    // jobListingVM.fetchJobStatusCounts();
   }
 
   @override
   Widget build(BuildContext context) {
-    //final notificationVM = Provider.of<NotificationViewModel>(context);
-    //final jobListingVM = Provider.of<JobListingsViewModel>(context);
+    final myLearningHubVM = Provider.of<MyLearningHubViewModel>(context);
+    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -72,32 +70,25 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                     sections: [
                       FilterSectionModel(
                         title: "Filter by Type",
-                        options: ["Online", "Live", "Webinar"],
-                      ),
-                     /* FilterSectionModel(
-                        title: "Category",
-                        options: [
-                          "Restorative",
-                          "Endodontics",
-                          "Prosthodontics",
-                          "Oral surgery",
-                        ],
+                        options: newCourseVM.courseTypeNames,
                       ),
                       FilterSectionModel(
-                        title: "Speaker",
-                        options: ["Speaker 1", "Speaker 2", "Speaker 3"],
-                      ),*/
+                        title: "Category",
+                        options: newCourseVM.courseCategory,
+                      ),
                     ],
-                    onApply: () {
-                      // ✅ handle apply logic
+                    onApply: (selectedOptions) {
+                      final type = selectedOptions["Filter by Type"];
+                      final category = selectedOptions["Category"];
+                      myLearningHubVM.getCoursesWithFilters(
+                          context, type, category);
                     },
                     onClear: () {
-                      // ✅ handle clear logic
+                      navigationService.goBack();
                     },
                   ),
                 )
               },
-              //navigationService.navigateTo(RouteList.JobSeekFilterScreen),
               child:
                   SvgPicture.asset(ImageConst.filter, color: AppColors.black),
             ),
@@ -108,7 +99,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
           children: [
             Divider(),
             Expanded(
-              child: /*jobListingVM.myJobListingList.isEmpty
+              child: myLearningHubVM.myRegisteredCourses.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -120,25 +111,31 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                         ],
                       ),
                     )
-                  : */
-                  ListView.builder(
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  //final jobData = jobListingVM.myJobListingList[index];
-                  //print(jobListingVM.myJobListingList.length);
-                  return RegisterCourseCard(
-                    logo: "",
-                    cpdPoints: "10",
-                    courseName: "Flutter",
-                    name: "Name",
-                    status: "Active",
-                    types: ['webinar'],
-                    link: "https://workspace.google.com/products/meet/",
-                    onCardTap: navigationService.goBack,
-                    createdAt: "2025-09-15 12:30:00",
-                  );
-                },
-              ),
+                  : ListView.builder(
+                      itemCount: myLearningHubVM.myRegisteredCourses.length,
+                      itemBuilder: (context, index) {
+                        final courseData =
+                            myLearningHubVM.myRegisteredCourses[index];
+                        return RegisterCourseCard(
+                          logo: courseData.presentedByImage?.url ?? "",
+                          cpdPoints: courseData.cpdPoints.toString(),
+                          courseName: courseData.courseName ?? "",
+                          name: courseData.presentedByName ?? "",
+                          status: courseData.status ?? "",
+                          types: courseData.type ?? "",
+                          link: courseData.webinarLink ?? "",
+                          onCardTap: () async {
+                            await courseListingVM.getCourseDetails(
+                                context, courseData.id ?? "");
+
+                            navigationService.navigateTo(
+                              RouteList.courseDetailScreen,
+                            );
+                          },
+                          createdAt: courseData.startDate ?? "",
+                        );
+                      },
+                    ),
             ),
           ],
         ));

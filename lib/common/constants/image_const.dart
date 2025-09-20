@@ -57,6 +57,7 @@ class ImageConst {
   static const String catalogueBg = "assets/pngs/catalogueBG.png";
   static const String Inactive = "assets/pngs/inactive.png";
   static const String _svgBasePath = 'assets/svgs/';
+  static const String noImage = 'assets/pngs/noImage.jpg';
 
   // Job related SVG icons
   static const String briefcaseSvg = '${_svgBasePath}briefcase.svg';

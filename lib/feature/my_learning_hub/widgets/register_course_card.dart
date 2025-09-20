@@ -12,7 +12,7 @@ class RegisterCourseCard extends StatelessWidget {
   final String cpdPoints;
   final String name;
   final String status;
-  final List<String> types;
+  final String types;
   final String link;
 
   final String createdAt;
@@ -39,7 +39,8 @@ class RegisterCourseCard extends StatelessWidget {
     this.onEditTap,
     this.onDeleteTap,
     this.onActivateTap,
-    this.onDeactivateTap, required this.cpdPoints,
+    this.onDeactivateTap,
+    required this.cpdPoints,
   });
 
   @override
@@ -54,14 +55,33 @@ class RegisterCourseCard extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
             border: Border.all(color: AppColors.borderColor)),
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // left content
-            _logoWithTitle(logo, courseName, name, status, types, link),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _jobTimeChip(time),
+              ],
+            ),
+            _logoWithTitle(
+                logo, courseName, name, status, types, link),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: onCardTap,
+                  child: SvgPicture.asset(
+                    ImageConst.nextArrow,
+                    width: 26,
+                    height: 26,
+                  ),
+                ),
+              ],
+            ),
 
             // right column
-            SizedBox(
+            /* SizedBox(
               // 👈 ensures column takes available vertical space
               height: 120, // or double.infinity if inside flexible parent
               child: Column(
@@ -71,7 +91,7 @@ class RegisterCourseCard extends StatelessWidget {
                 children: [
                   _jobTimeChip(time),
                   GestureDetector(
-                    onTap:onCardTap,
+                    onTap: onCardTap,
                     child: SvgPicture.asset(
                       ImageConst.nextArrow,
                       width: 26,
@@ -80,7 +100,7 @@ class RegisterCourseCard extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            ),*/
           ],
         ),
       ),
@@ -88,7 +108,7 @@ class RegisterCourseCard extends StatelessWidget {
   }
 
   Widget _logoWithTitle(String profilePic, String company, String title,
-      String status, List<String> types, String link) {
+      String status, String types, String link) {
     return Row(
       children: [
         Column(
@@ -106,11 +126,12 @@ class RegisterCourseCard extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(width: 16),
+        SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(company, style: TextStyles.bold2(color: AppColors.black)),
+            Text(company,
+                maxLines: 2, style: TextStyles.bold2(color: AppColors.black)),
             const SizedBox(height: 2),
             Text(title, style: TextStyles.regular2(color: AppColors.black)),
             const SizedBox(height: 2),
@@ -157,31 +178,24 @@ class RegisterCourseCard extends StatelessWidget {
     );
   }
 
-  Widget _chipWidget(List<String> types) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: types.map((type) {
-        final label = type.isEmpty ? 'N/A' : type;
-        return Container(
-          height: 21,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: AppColors.secondaryBlueColor,
-            borderRadius: BorderRadius.circular(30),
+  Widget _chipWidget(String types) {
+    return Container(
+      height: 21,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.secondaryBlueColor,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Center(
+        child: Text(
+          types,
+          style: TextStyles.regular1(
+            color: AppColors.primaryBlueColor,
+            fontSize: 12,
           ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyles.regular1(
-                color: AppColors.primaryBlueColor,
-                fontSize: 12,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        );
-      }).toList(),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
     );
   }
 

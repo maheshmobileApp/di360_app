@@ -20,16 +20,18 @@ class SponsorsImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, 
       children: [
-        if (title != null && title!.isNotEmpty) ...[
-          Text(
-            title!,
-            style: TextStyles.bold2(color: AppColors.primaryColor),
-          ),
-        ],
+        Text(
+          title!,
+          style: TextStyles.bold2(color: AppColors.primaryColor),
+        ),
+        const SizedBox(height: 8,),
         GridView.builder(
-          shrinkWrap: true, // allow inside Column
-          physics: const NeverScrollableScrollPhysics(), // avoid scroll conflict
+          shrinkWrap: true, 
+          padding: EdgeInsets.zero,// allow inside Column
+          physics:
+              const NeverScrollableScrollPhysics(), // avoid scroll conflict
           itemCount: imageUrls.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, // 3 columns

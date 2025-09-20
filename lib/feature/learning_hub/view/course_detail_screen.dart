@@ -70,7 +70,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       cpdHours: courseDetails.cpdPoints.toString(),
                       platform: courseDetails.feedType ?? "",
                       webinar: courseDetails.type ?? "",
-                      totalPrice: courseDetails.afterwardsPrice.toString(),
+                      totalPrice: courseDetails.afterwardsPrice.toString(), discountPrice: courseDetails.earlyBirdPrice.toString(),
                     ),
                     const SizedBox(height: 12),
                     CourseDescriptionWidget(
@@ -111,22 +111,4 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-
-  /* @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 50),
-            const CourseInfoCardWidget(),
-            const SizedBox(height: 12),
-            const CourseDescriptionWidget(),
-          ],
-        ),
-      ),
-    );
-  }*/
 }

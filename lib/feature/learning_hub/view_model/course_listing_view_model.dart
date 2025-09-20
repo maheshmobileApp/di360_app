@@ -2,8 +2,10 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
@@ -11,7 +13,15 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   List<CoursesListingDetails> coursesListingList = [];
   List<CoursesListingDetails> courseDetails = [];
+  List<CourseRegisteredUsers> registeredUsers = [];
   String selectedStatus = "All";
+  final searchController = TextEditingController();
+  bool searchBarOpen = false;
+
+  void setSearchBar(bool value) {
+    searchBarOpen = value;
+    notifyListeners();
+  }
 
   final List<String> statuses = [
     'All',
@@ -42,7 +52,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       listingStatus = 'REJECT';
     }
 
-    getCoursesListingData(context);
+    getCoursesListingData(context, searchController.text);
     notifyListeners();
     //INACTIVE
   }
@@ -65,29 +75,57 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Reject': rejectStatusCount,
       };
 
-  Future<void> getCoursesListingData(BuildContext context) async {
+  Future<void> getCoursesListingData(
+      BuildContext context, String? searchText) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getCoursesListing(listingStatus, userId);
-    fetchCourseStatusCounts();
+    final res = await repo.getCoursesListing(listingStatus, userId, searchText);
+
+    fetchCourseStatusCounts(context);
     if (res != null) {
       coursesListingList = res;
     }
     notifyListeners();
   }
 
-  Future<void> fetchCourseStatusCounts() async {
+  Future<void> fetchCourseStatusCounts(BuildContext context) async {
     final res = await repo.courseListingStatusCount();
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
+    activeCount = res.approve?.aggregate?.count ?? 0;
+    inActiveCount = res.inactive?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
+    expiredStatusCount = res.expired?.aggregate?.count ?? 0;
+
     notifyListeners();
   }
 
   Future<void> getCourseDetails(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
     final res = await repo.getCourseDetails(courseId);
     if (res != null) {
       courseDetails = res;
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> getCourseRegisteredUsers(
+      BuildContext context, String courseId) async {
+    final res = await repo.getCourseRegisteredUsers(courseId);
+    if (res != null) {
+      registeredUsers = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteCourse(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+
+    final res = await repo.deleteCourse(courseId);
+    if (res != null) {
+      getCoursesListingData(context, searchController.text);
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

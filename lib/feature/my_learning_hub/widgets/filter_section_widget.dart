@@ -3,11 +3,11 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-
-class FilterBottomSheet extends StatelessWidget {
+class FilterBottomSheet extends StatefulWidget {
   final List<FilterSectionModel> sections;
-  final VoidCallback onApply;
+  final Function(Map<String, String?> selectedOptions) onApply;
   final VoidCallback onClear;
 
   const FilterBottomSheet({
@@ -16,6 +16,20 @@ class FilterBottomSheet extends StatelessWidget {
     required this.onApply,
     required this.onClear,
   });
+
+  @override
+  State<FilterBottomSheet> createState() => _FilterBottomSheetState();
+}
+
+class _FilterBottomSheetState extends State<FilterBottomSheet> {
+  // Store selected option for each section
+  final Map<String, String?> selectedOptions = {};
+
+  void _onOptionSelected(String sectionTitle, String? option) {
+    setState(() {
+      selectedOptions[sectionTitle] = option;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +65,12 @@ class FilterBottomSheet extends StatelessWidget {
                   style: TextStyles.bold4(color: AppColors.primaryColor),
                 ),
                 TextButton(
-                  onPressed: onClear,
+                  onPressed: () {
+                    setState(() {
+                      selectedOptions.clear();
+                    });
+                    widget.onClear();
+                  },
                   child: Text("Clear all",
                       style:
                           TextStyles.regular3(color: AppColors.lightGeryColor)),
@@ -62,10 +81,13 @@ class FilterBottomSheet extends StatelessWidget {
             const SizedBox(height: 8),
 
             // Dynamic filter sections
-            ...sections.map(
+            ...widget.sections.map(
               (section) => _FilterSection(
                 title: section.title,
                 options: section.options,
+                selectedOption: selectedOptions[section.title],
+                onOptionSelected: (value) =>
+                    _onOptionSelected(section.title, value),
               ),
             ),
 
@@ -75,22 +97,27 @@ class FilterBottomSheet extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                    child: AppButton(
-                  text: 'Cancel',
-                  height: 40,
-                  onTap: () {
-                    navigationService.goBack();
-                  },
-                )),
+                  child: CustomRoundedButton(
+                    text: 'Cancel',
+                    height: 40,
+                    backgroundColor: AppColors.timeBgColor,
+                    textColor: AppColors.primaryColor,
+                    onPressed: () {
+                      navigationService.goBack();
+                    },
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
-                    child: AppButton(
-                  height: 40,
-                  text: 'Apply',
-                  onTap: () {
-                    navigationService.goBack();
-                  },
-                )),
+                  child: AppButton(
+                    height: 40,
+                    text: 'Apply',
+                    onTap: () {
+                      widget.onApply(selectedOptions);
+                      navigationService.goBack();
+                    },
+                  ),
+                ),
               ],
             ),
           ],
@@ -100,21 +127,18 @@ class FilterBottomSheet extends StatelessWidget {
   }
 }
 
-class _FilterSection extends StatefulWidget {
+class _FilterSection extends StatelessWidget {
   final String title;
   final List<String> options;
+  final String? selectedOption;
+  final ValueChanged<String?> onOptionSelected;
 
   const _FilterSection({
     required this.title,
     required this.options,
+    required this.selectedOption,
+    required this.onOptionSelected,
   });
-
-  @override
-  State<_FilterSection> createState() => _FilterSectionState();
-}
-
-class _FilterSectionState extends State<_FilterSection> {
-  String? selectedOption;
 
   @override
   Widget build(BuildContext context) {
@@ -123,26 +147,30 @@ class _FilterSectionState extends State<_FilterSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.title,
+          Text(title,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               )),
           const SizedBox(height: 8),
-          Column(
-            children: widget.options.map((option) {
-              return RadioListTile<String>(
-                contentPadding: EdgeInsets.zero,
-                title: Text(option),
-                value: option,
-                groupValue: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
-              );
-            }).toList(),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: AppColors.hintColor,
+            ),
+            child: Column(
+              children: options.map((option) {
+                return RadioListTile<String>(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(option, style: TextStyles.medium2()),
+                  value: option,
+                  groupValue: selectedOption,
+                  activeColor: AppColors.primaryColor,
+                  onChanged: onOptionSelected,
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),
