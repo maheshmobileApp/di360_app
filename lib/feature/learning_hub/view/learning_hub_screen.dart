@@ -202,7 +202,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                 print("Edit course $id");
                                 break;
                               case "Delete":
-                                print("Delete course $id");
+                                courseListingVM.deleteCourse(
+                                    context, course.id ?? "");
+
                                 break;
                               case "Inactive":
                                 print("Make course $id inactive");

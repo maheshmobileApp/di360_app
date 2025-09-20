@@ -6,11 +6,14 @@ import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/delete_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_category_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/get_course_registered_users_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_count.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
@@ -115,13 +118,33 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId) async{
-    final Map<String, dynamic> variables = {
-       "id": "${courseId}"
-    };
-    final courseTypeData = await http.query(showCourseById,variables: variables);
+  Future<List<CoursesListingDetails>?> getCourseDetails(
+      String? courseId) async {
+    final Map<String, dynamic> variables = {"id": "${courseId}"};
+    final courseTypeData =
+        await http.query(showCourseById, variables: variables);
     final result = CoursesListingData.fromJson(courseTypeData);
     return result.courses;
+  }
+
+  @override
+  Future deleteCourse(String? courseId) async {
+    final deleteCourse =
+        await http.mutation(deleteCourseQuery, {"id": courseId});
+    return deleteCourse;
+  }
+
+  @override
+  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(String? courseId) async {
+    final Map<String, dynamic> variables = {
+      "course_id": "${courseId}",
+      "limit": 10,
+      "offset": 0
+    };
+    final getUsersData =
+        await http.query(getCourseRegisteredUsersQuery, variables: variables);
+    final result = GetUsers.fromJson(getUsersData);
+    return result.courseRegisteredUsers;
   }
 
   /*@override
