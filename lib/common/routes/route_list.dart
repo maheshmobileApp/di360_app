@@ -41,4 +41,6 @@ class RouteList {
   static const String EnquiriesScreen = '/EnquiriesScreen';
   static const String JobProfileScreen = '/ JobProfileScreen';
   static const String myDirectorScreen = '/myDirectorScreen';
+  static const String professionDirectorScreen = '/professionDirectorScreen';
+  static const String professionAddDirectorView = '/professionAddDirectorView';
 }

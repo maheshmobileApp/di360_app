@@ -55,31 +55,39 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
             ),
             if (showForm) _buildGalleryForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM
-                  .getBasicInfoData.first.directoryGalleryPosts?.length,
-              itemBuilder: (context, index) {
-                final galleryItem = addDirectorVM
-                    .getBasicInfoData.first.directoryGalleryPosts?[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: AddDirectoryGalleryCard(
-                    imageUrl: galleryItem?.image?.first.url,
-                    onEdit: () {
-                      editVM.updateIsEditGallery(true);
-                      setState(() {
-                        id = galleryItem?.id;
-                        serverImg = galleryItem?.image?.first.url;
-                        galleryImg = galleryItem?.image?.first.toJson();
-                        showForm = true;
-                      });
+            addDirectorVM.getBasicInfoData.first.directoryGalleryPosts?.first
+                        .image ==
+                    []
+                ? Center(child: Text('No gallery'))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: addDirectorVM
+                        .getBasicInfoData.first.directoryGalleryPosts?.length,
+                    itemBuilder: (context, index) {
+                      final galleryItem = addDirectorVM
+                          .getBasicInfoData.first.directoryGalleryPosts?[index];
+                      final hasImages = galleryItem?.image != null &&
+                          galleryItem!.image!.isNotEmpty;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: AddDirectoryGalleryCard(
+                          imageUrl:
+                              hasImages ? galleryItem.image?.first.url : '',
+                          onEdit: () {
+                            editVM.updateIsEditGallery(true);
+                            setState(() {
+                              id = galleryItem?.id;
+                              serverImg =
+                                  hasImages ? galleryItem.image?.first.url : '';
+                              galleryImg = galleryItem?.image?.first.toJson();
+                              showForm = true;
+                            });
+                          },
+                        ),
+                      );
                     },
                   ),
-                );
-              },
-            ),
           ],
         ),
       ),
@@ -102,11 +110,11 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
             imageFile: addDirectorVM.galleryFile,
             onTap: () {
               imagePickerSelection(
-              context,
-              () => addDirectorVM.pickGalleryImage(ImageSource.gallery),
-              () => addDirectorVM.pickGalleryImage(ImageSource.camera),
-            );
-            serverImg = null;
+                context,
+                () => addDirectorVM.pickGalleryImage(ImageSource.gallery),
+                () => addDirectorVM.pickGalleryImage(ImageSource.camera),
+              );
+              serverImg = null;
             },
             serverImg: serverImg,
           ),
