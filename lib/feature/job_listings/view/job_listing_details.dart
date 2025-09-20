@@ -26,9 +26,9 @@ class JobListingDetailsScreen extends StatelessWidget with BaseContextHelpers {
             backgroundColor: AppColors.whiteColor,
             iconTheme: const IconThemeData(color: AppColors.black),
             flexibleSpace: FlexibleSpaceBar(
-              background: job.bannerImage != null 
+              background: job.bannerImage?.url != null
                   ? CachedNetworkImageWidget(
-                      imageUrl:job.bannerImage!.url!,
+                      imageUrl: job.bannerImage?.url ?? "",
                       width: double.infinity,
                       fit: BoxFit.cover,
                     )

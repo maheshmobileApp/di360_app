@@ -132,9 +132,9 @@ class Jobs {
   hiringPeriod = json['hiring_period'];
   noOfPeople = json['no_of_people']?.toString();
   rateBilling = json['rate_billing'];
-  linkedinUrl = json['linkedin_url'];
-  instagramUrl = json['instagram_url'];
-  facebookUrl = json['facebook_url'];
+  linkedinUrl = json['linkedin_url'] ?? "";
+  instagramUrl = json['instagram_url'] ?? "";
+  facebookUrl = json['facebook_url'] ?? "";
 
   if (json['clinic_logo'] != null) {
     if (json['clinic_logo'] is List) {
@@ -144,14 +144,20 @@ class Jobs {
     } else if (json['clinic_logo'] is String) {
       clinicLogo = [ClinicLogo(url: json['clinic_logo'])];
     }
+  }else {
+    clinicLogo = null;
   }
 
  if (json['banner_image'] != null) {
     if (json['banner_image'] is Map) {
-      bannerImage = Banner(url: json['banner_image']);
+      bannerImage = Banner.fromJson(json);
     } else if (json['banner_image'] is String) {
       bannerImage = Banner(url: json['banner_image']);
+    }else{
+      bannerImage = null;
     }
+  }else {
+    bannerImage = null;
   }
   timings = json['timings'];
   timingtoggle = json['timingtoggle'];
