@@ -140,10 +140,6 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                   )
                 : SizedBox.shrink(),
             SizedBox(height: 16),
-            _sectionHeader('Gallery'),
-            SizedBox(height: 6),
-            
-            SizedBox(height: 16),
             _sectionHeader("Certifications"),
             SizedBox(height: 6),
             // CustomChipView(typesList: talentList?.certificate ?? []),
