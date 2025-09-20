@@ -9,6 +9,7 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String webinar;
   final String profilePic;
   final String totalPrice;
+  final String discountPrice;
 
   const CourseInfoCardWidget(
       {super.key,
@@ -18,7 +19,8 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.platform,
       required this.webinar,
       required this.profilePic,
-      required this.totalPrice});
+      required this.totalPrice,
+      required this.discountPrice});
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +88,11 @@ class CourseInfoCardWidget extends StatelessWidget {
                   first: true,
                   value: "${webinar}",
                 ),
-                _InfoTextWidget(
+                _PriceTextWidget(
                   label: "Price",
                   first: false,
-                  value: "${totalPrice}",
+                  originalPrice: "${totalPrice}",
+                  discountedPrice: "${discountPrice}",
                 ),
               ],
             ),
@@ -130,6 +133,59 @@ class _InfoTextWidget extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.primaryColor)),
+      ],
+    );
+  }
+}
+
+class _PriceTextWidget extends StatelessWidget {
+  final String label;
+
+  final String originalPrice;
+  final String discountedPrice;
+
+  final bool first;
+
+  const _PriceTextWidget({
+    required this.label,
+    required this.first,
+    required this.originalPrice,
+    required this.discountedPrice,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment:
+          first ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      children: [
+        Text(label,
+            style: const TextStyle(
+              color: AppColors.lightGeryColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            )),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Text(
+              "\$${originalPrice}",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black,
+                decoration: TextDecoration.lineThrough, // strike-through
+              ),
+            ),
+            Text(
+              "AUD \$${discountedPrice}",
+              style: const TextStyle(
+                fontSize: 16,
+                color: AppColors.primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

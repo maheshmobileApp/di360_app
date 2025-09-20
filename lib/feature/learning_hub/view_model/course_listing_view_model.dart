@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
@@ -70,32 +71,37 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getCoursesListingData(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getCoursesListing(listingStatus, userId);
-    fetchCourseStatusCounts();
+
+    fetchCourseStatusCounts(context);
     if (res != null) {
       coursesListingList = res;
     }
     notifyListeners();
   }
 
-  Future<void> fetchCourseStatusCounts() async {
+  Future<void> fetchCourseStatusCounts(BuildContext context) async {
     final res = await repo.courseListingStatusCount();
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     activeCount = res.approve?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
+
     notifyListeners();
   }
 
   Future<void> getCourseDetails(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
     final res = await repo.getCourseDetails(courseId);
     if (res != null) {
       courseDetails = res;
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
 
-  Future<void> getCourseRegisteredUsers(BuildContext context, String courseId) async {
+  Future<void> getCourseRegisteredUsers(
+      BuildContext context, String courseId) async {
     final res = await repo.getCourseRegisteredUsers(courseId);
     if (res != null) {
       registeredUsers = res;
@@ -104,9 +110,12 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> deleteCourse(BuildContext context, String courseId) async {
+    Loaders.circularShowLoader(context);
+
     final res = await repo.deleteCourse(courseId);
     if (res != null) {
       getCoursesListingData(context);
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

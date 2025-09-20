@@ -42,7 +42,7 @@ class GalleryImgWidget extends StatelessWidget {
                 child: Image.network(
                   imageUrls[index],
                   height: height,
-                  width: height * 2.0, // aspect ratio like reference
+                  width: height * 2.18, // aspect ratio like reference
                   fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;

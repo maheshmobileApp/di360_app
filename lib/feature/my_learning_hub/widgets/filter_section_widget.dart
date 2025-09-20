@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
 class FilterBottomSheet extends StatelessWidget {
@@ -75,10 +76,12 @@ class FilterBottomSheet extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                    child: AppButton(
+                    child: CustomRoundedButton(
                   text: 'Cancel',
                   height: 40,
-                  onTap: () {
+                  backgroundColor: AppColors.timeBgColor,
+                  textColor: AppColors.primaryColor,
+                  onPressed: () {
                     navigationService.goBack();
                   },
                 )),
@@ -129,20 +132,30 @@ class _FilterSectionState extends State<_FilterSection> {
                 fontWeight: FontWeight.w600,
               )),
           const SizedBox(height: 8),
-          Column(
-            children: widget.options.map((option) {
-              return RadioListTile<String>(
-                contentPadding: EdgeInsets.zero,
-                title: Text(option),
-                value: option,
-                groupValue: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
-              );
-            }).toList(),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.hintColor),
+            child: Column(
+              children: widget.options.map((option) {
+                return RadioListTile<String>(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    option,
+                    style: TextStyles.medium2(),
+                  ),
+                  value: option,
+                  groupValue: selectedOption,
+                  activeColor: AppColors.primaryColor,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedOption = value;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),
