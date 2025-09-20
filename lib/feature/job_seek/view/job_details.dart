@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/job_seek/model/job_info_item.dart';
 
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
@@ -112,7 +113,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         )
                       : null,
                   background: CachedNetworkImageWidget(
-                    imageUrl: widget.job.logo ?? '',
+                    imageUrl: widget.job.bannerImage?.url ?? '',
                     width: double.infinity,
                   ),
                 );
@@ -164,13 +165,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[300],
-                  ),
+                ClipOval(
+                  child: widget.job.logo != null && widget.job.logo!.isNotEmpty
+                      ? CachedNetworkImageWidget(
+                          imageUrl: widget.job.logo!,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          width: 50,
+                          height: 50,
+                          color: Colors.grey.shade300,
+                          child:
+                              const Icon(Icons.business, color: Colors.white),
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -239,12 +248,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         InfoItem(
             iconPath: ImageConst.graduationSvg,
             title: 'Education Level',
-            subtitle: '${widget.job.education}'),
+            subtitle: '${widget.job.education ?? ""}'),
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
             subtitle:
-                '${widget.job.jobApplicantsAggregate?.aggregate?.count ?? 0}'),
+                '${widget.job.noOfPeople ?? 0}'),
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
@@ -255,19 +264,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         SizedBox(height: 10),
         _sectionHeader('Key Responsibilities'),
         _sectionText('NA'),
-        SizedBox(height: 10),
-        _sectionHeader('About Company'),
-        _sectionText('${widget.job.companyName}'),
-        SizedBox(height: 10),
-        InkWell(
-          onTap: () {},
-          child: Text(
-            '${widget.job.currentCompany ?? ''}',
-            style: TextStyle(
-                color: Colors.blue, decoration: TextDecoration.underline),
-          ),
-        ),
-        SizedBox(height: 20),
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
@@ -297,6 +293,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
                   onPressed: () async {
                     final Uri appUri = Uri.parse(widget.job.instagramUrl!);
+                    if (await canLaunchUrl(appUri)) {
+                      await launchUrl(appUri,
+                          mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }),
+            if (widget.job.linkedinUrl!.isNotEmpty)
+              IconButton(
+                  icon: ImageWidget(imageUrl: ImageConst.linkedinSvg),
+                  onPressed: () async {
+                    final Uri appUri = Uri.parse(widget.job.linkedinUrl!);
                     if (await canLaunchUrl(appUri)) {
                       await launchUrl(appUri,
                           mode: LaunchMode.externalApplication);
@@ -443,62 +450,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 }
 
-class InfoItem extends StatelessWidget {
-  final String iconPath;
-  final String title;
-  final String subtitle;
 
-  const InfoItem({
-    super.key,
-    required this.iconPath,
-    required this.title,
-    required this.subtitle,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 28,
-            height: 28,
-            colorFilter:
-                const ColorFilter.mode(Colors.blueGrey, BlendMode.srcIn),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF6E7C90),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 /*
