@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/add_directors/model/get_appts_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 
@@ -33,4 +34,7 @@ abstract class AddDirectorRepository {
   Future<dynamic> updateTimings(dynamic variables);
   Future<dynamic> deleteTimings(dynamic variables);
   Future<dynamic> updateSocailUrl(dynamic variables);
+  Future<dynamic> addAppointment(dynamic variables);
+  Future<dynamic> deleteAppointment(dynamic variables);
+  Future<List<DirectoryApptsSlots>?> getAppts(String id);
 }

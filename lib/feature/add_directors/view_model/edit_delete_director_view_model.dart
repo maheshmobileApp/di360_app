@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/add_directors/model/get_appts_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -18,6 +19,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   bool isEditTestimonal = false;
   bool isEditTimings = false;
   bool isEditSocialMed = false;
+  List<DirectoryApptsSlots>? appointmentsList = [];
 
   void updateShowCertifiForm(bool val) {
     showCertifiForm = val;
@@ -473,6 +475,68 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       updateIsEditTimings(false);
       addDirectorVM.socialAccountsurlCntr.clear();
       addDirectorVM.selectedAccount = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addAppointment(BuildContext context) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.addAppointment({
+      "apptData": {
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "directory_service_id": [addDirectorVM.selectdService?.id],
+        "day_wise_timeslots": addDirectorVM.dayWiseTimeSlots,
+        "duration_in_minites": addDirectorVM.serviceTimemInCntr.text,
+        "service_name": [addDirectorVM.selectdService?.name],
+        "serviceMember": [addDirectorVM.selectedTeamMember?.name],
+        "weekdays": [addDirectorVM.selectedDays]
+      }
+    });
+    if (res != null) {
+      getAppointments(context);
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Appointment added successfully');
+      clearAppointmentFields(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteAppointment(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deleteAppointment({"id": id});
+    if (res != null) {
+      getAppointments(context);
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Appointment deleted successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  clearAppointmentFields(BuildContext context) {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    addDirectorVM.serviceTimemInCntr.clear();
+    addDirectorVM.selectedAccount = null;
+    addDirectorVM.selectedDays = null;
+    addDirectorVM.selectedTeamMember = null;
+    addDirectorVM.selectdService = null;
+    notifyListeners();
+  }
+
+  Future<void> getAppointments(BuildContext context) async {
+    final addDirectorVM = context.read<AddDirectorViewModel>();
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl
+        .getAppts(addDirectorVM.getBasicInfoData.first.id ?? '');
+    if (res != null) {
+      appointmentsList = res;
+      Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
     }

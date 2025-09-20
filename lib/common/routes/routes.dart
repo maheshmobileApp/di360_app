@@ -29,6 +29,8 @@ import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
+import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
+import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
@@ -92,7 +94,6 @@ class Routes {
           jobsListingData: args as Jobs,
         );
       },
-      // RouteList.JobListingApplicantscreen: (context) => JobListingApplicantsScreen(),
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -116,6 +117,8 @@ class Routes {
       RouteList.directoryFilter: (context) => DirectoriesFilterScreen(),
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
+      RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
+      RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
     };
   }
 }

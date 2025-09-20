@@ -83,14 +83,6 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                         initialTime: TimeOfDay.now(),
                       );
                       if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                        );
-                        addDirectorVM.setServiceStartTimeDate(dateTime);
                         addDirectorVM.serviceStartTimeCntr.text =
                             picked.format(context);
                       }
@@ -116,14 +108,6 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                         initialTime: TimeOfDay.now(),
                       );
                       if (picked != null) {
-                        final now = DateTime.now();
-                        final dateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          picked.hour,
-                        );
-                        addDirectorVM.setServiceEndTimeDate(dateTime);
                         addDirectorVM.serviceEndTimeCntr.text =
                             picked.format(context);
                       }
