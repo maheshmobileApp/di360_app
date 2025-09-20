@@ -91,9 +91,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.courseListingStatusCount();
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     activeCount = res.approve?.aggregate?.count ?? 0;
+    inActiveCount = res.inactive?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
+    expiredStatusCount = res.expired?.aggregate?.count ?? 0;
 
     notifyListeners();
   }

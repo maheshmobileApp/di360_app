@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/delete_course_query.dart';
@@ -113,7 +110,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
     final Map<String, dynamic> variables = {
       "status": "ACTIVE",
       "search": "%%",
-      "limit": 10,
+      "limit": 30,
       "offset": 0
     };
     final courseCategoryData =

@@ -3,19 +3,18 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:intl/intl.dart';
 
 class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepository repo = LearningHubRepoImpl();
@@ -44,6 +43,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final rsvpDateController = TextEditingController();
   final earlyBirdDateController = TextEditingController();
   final eventDateController = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
+  final addressController = TextEditingController();
   bool showLocumDate = false;
 
   //imageFields
@@ -88,6 +90,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     'Terms & Conditions',
     'Contacts'
   ];
+
   final PageController pageController = PageController();
   int _currentStep = 0;
   int get currentStep => _currentStep;
@@ -369,12 +372,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   //--------------------------API Calls------------------------
-
   Future<void> fetchCourseCategory() async {
     final result = await repo.getCourseCategory();
     courseCategoryList = result.courseCategories ?? [];
+    courseCategoryList.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
     courseCategory = courseCategoryList.map((e) => e.name ?? "").toList();
-
     notifyListeners();
   }
 
@@ -388,6 +390,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    String startDate = DateFormat("yyyy-MM-dd")
+        .format(DateFormat("d/M/yyyy").parse("${startDateController.text}"));
+    String endDate = DateFormat("yyyy-MM-dd")
+        .format(DateFormat("d/M/yyyy").parse("${endDateController.text}"));
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
       "object": CourseObject(
@@ -421,15 +427,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         registerLink: registerLinkController.text,
         activeStatusFeed: "",
         userRole: type,
-        startDate: null,
-        endDate: null,
+        startDate: startDate,
+        endDate: endDate,
         image: "",
         video: "",
         completeDetails: "",
         attachments: null,
         isFeatured: false,
         activeStatus: "ACTIVE",
-        address: null,
+        address: addressController.text,
         scheduledAt: null,
         maxSubscribers: 1000,
         seoMetadata: null,
@@ -491,6 +497,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     earlyBirdDateController.text = "";
     sessioInfoController.text = "";
     day1SessionNameController.text = "";
+    startDateController.text = "";
+    endDateController.text = "";
+    addressController.text = "";
     courseInfoList = [];
 
     // Page controller reset

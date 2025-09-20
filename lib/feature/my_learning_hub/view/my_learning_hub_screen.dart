@@ -89,7 +89,6 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                   ),
                 )
               },
-              //navigationService.navigateTo(RouteList.JobSeekFilterScreen),
               child:
                   SvgPicture.asset(ImageConst.filter, color: AppColors.black),
             ),
