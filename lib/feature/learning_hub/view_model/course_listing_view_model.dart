@@ -15,6 +15,13 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   List<CoursesListingDetails> courseDetails = [];
   List<CourseRegisteredUsers> registeredUsers = [];
   String selectedStatus = "All";
+  final searchController = TextEditingController();
+  bool searchBarOpen = false;
+
+  void setSearchBar(bool value) {
+    searchBarOpen = value;
+    notifyListeners();
+  }
 
   final List<String> statuses = [
     'All',
@@ -45,7 +52,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       listingStatus = 'REJECT';
     }
 
-    getCoursesListingData(context);
+    getCoursesListingData(context, searchController.text);
     notifyListeners();
     //INACTIVE
   }
@@ -68,9 +75,10 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Reject': rejectStatusCount,
       };
 
-  Future<void> getCoursesListingData(BuildContext context) async {
+  Future<void> getCoursesListingData(
+      BuildContext context, String? searchText) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getCoursesListing(listingStatus, userId);
+    final res = await repo.getCoursesListing(listingStatus, userId, searchText);
 
     fetchCourseStatusCounts(context);
     if (res != null) {
@@ -114,7 +122,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     final res = await repo.deleteCourse(courseId);
     if (res != null) {
-      getCoursesListingData(context);
+      getCoursesListingData(context, searchController.text);
       Loaders.circularHideLoader(context);
     }
     notifyListeners();

@@ -258,7 +258,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'Learning Hub') {  
                             context
                                 .read<CourseListingViewModel>()
-                                .getCoursesListingData(context); 
+                                .getCoursesListingData(context,""); 
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
                           } else if (item.title == 'My Learning Hub') {

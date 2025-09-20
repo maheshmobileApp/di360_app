@@ -48,13 +48,18 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getCoursesListing(
-      String? listingStatus, String? userId) async {
+      String? listingStatus, String? userId, String? searchText) async {
     final Map<String, dynamic> whereCondition = {};
 
     if (listingStatus != null &&
         listingStatus.isNotEmpty &&
         listingStatus != "All") {
       whereCondition["status"] = {"_eq": listingStatus};
+    }
+
+    if (searchText != null &&
+        searchText.isNotEmpty) {
+      whereCondition["company_name"] = {"_ilike": "%${searchText}%"};
     }
 
     final payload = {

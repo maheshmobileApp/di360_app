@@ -6,6 +6,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -79,13 +80,27 @@ class _JobListingScreenState extends State<LearningHubScreen>
                     ],
                   )),
             ),
-            addHorizontal(15),
-            SvgPicture.asset(ImageConst.search, color: AppColors.black),
-            addHorizontal(15),
+            addHorizontal(30),
+            GestureDetector(
+                onTap: () {
+                  courseListingVM.setSearchBar(!courseListingVM.searchBarOpen);
+                },
+                child: SvgPicture.asset(ImageConst.search,
+                    color: AppColors.black)),
+            addHorizontal(20),
           ],
         ),
         body: Column(
           children: [
+            if (courseListingVM.searchBarOpen)
+              SearchWidget(
+                controller: courseListingVM.searchController,
+                hintText: "Search company...",
+                onClear: () {},
+                onChanged: (value) {
+                  courseListingVM.getCoursesListingData(context, value);
+                },
+              ),
             SizedBox(
               height: 60,
               child: ListView.builder(
