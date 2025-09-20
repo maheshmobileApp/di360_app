@@ -2,10 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-<<<<<<< HEAD
-=======
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
->>>>>>> 0f29ce803dfd0a78710375ae0d882b009589fbe5
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -92,7 +89,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
   // Static data
-<<<<<<< HEAD
+/*<<<<<<< HEAD
   final List<String> countryList = ["India", "us", "pk"];
   final List<String> HireList = [
     "urgently",
@@ -148,7 +145,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Per hour",
     "Commission"
   ];
-=======
+=======*/
   final List<String> countryList = country;
   final List<String> HireList = Hire;
   final List<String> positionsOptions = positionsList;
@@ -157,7 +154,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final List<String> benefitsList = benifits;
   final List<String> payRanges = payList;
   final List<String> rateTypes = rateList;
->>>>>>> 0f29ce803dfd0a78710375ae0d882b009589fbe5
 
   // Chips values..
   final List<String> _selectedEmploymentChips = [];
