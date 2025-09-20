@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/ad
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -252,7 +253,22 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
                           } else if (item.title == 'My Directory') {
-                            vm.fetchTheDirectorData(navigatorKey.currentContext!);
+                            context
+                                .read<AddDirectorViewModel>()
+                                .getDirectories();
+                            navigationService
+                                .navigateTo(RouteList.adddirectorview);
+                          } else if (item.title == 'Learning Hub') {  
+                            context
+                                .read<CourseListingViewModel>()
+                                .getCoursesListingData(context); 
+                            
+
+                            navigationService
+                                .navigateTo(RouteList.learningHubScreen);
+                          } else if (item.title == 'My Learning Hub') {
+                            navigationService
+                                .navigateTo(RouteList.myLearningHubScreen);
                           }
                         },
                       ),

@@ -39,6 +39,7 @@ final TextStyle? txtstyle;
             color: textColor,
             fontSize:fontSize?? 16,
             fontWeight: FontWeight.w600,
+            
           ),
         ),
       ),

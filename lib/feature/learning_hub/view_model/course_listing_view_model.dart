@@ -1,0 +1,94 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
+import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
+import 'package:flutter/material.dart';
+
+class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
+  final LearningHubRepoImpl repo = LearningHubRepoImpl();
+
+  List<CoursesListingDetails> coursesListingList = [];
+  List<CoursesListingDetails> courseDetails = [];
+  String selectedStatus = "All";
+
+  final List<String> statuses = [
+    'All',
+    'Draft',
+    'Pending Approval',
+    'Active',
+    'InActive',
+    'Expired',
+    'Reject',
+  ];
+  String? listingStatus = "";
+
+  void changeStatus(String status, BuildContext context) {
+    selectedStatus = status;
+    if (status == 'All') {
+      listingStatus = "All";
+    } else if (status == 'Draft') {
+      listingStatus = 'DRAFT';
+    } else if (status == 'Pending Approval') {
+      listingStatus = 'PENDING';
+    } else if (status == 'Active') {
+      listingStatus = "APPROVE";
+    } else if (status == 'InActive') {
+      listingStatus = 'INACTIVE';
+    } else if (status == 'Expired') {
+      listingStatus = 'EXPIRED';
+    } else if (status == 'Reject') {
+      listingStatus = 'REJECT';
+    }
+
+    getCoursesListingData(context);
+    notifyListeners();
+    //INACTIVE
+  }
+
+  int? allJobTalentCount = 0;
+  int? draftTalentCount = 0;
+  int? pendingApprovalCount = 0;
+  int? activeCount = 0;
+  int? inActiveCount = 0;
+  int? expiredStatusCount = 0;
+  int? rejectStatusCount = 0;
+
+  Map<String, int?> get statusCountMap => {
+        'All': allJobTalentCount,
+        'Draft': draftTalentCount,
+        'Pending Approval': pendingApprovalCount,
+        'Active': activeCount,
+        'InActive': inActiveCount,
+        'Expired': expiredStatusCount,
+        'Reject': rejectStatusCount,
+      };
+
+  Future<void> getCoursesListingData(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await repo.getCoursesListing(listingStatus, userId);
+    fetchCourseStatusCounts();
+    if (res != null) {
+      coursesListingList = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchCourseStatusCounts() async {
+    final res = await repo.courseListingStatusCount();
+    allJobTalentCount = res.all?.aggregate?.count ?? 0;
+    pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
+    draftTalentCount = res.draft?.aggregate?.count ?? 0;
+    rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
+    notifyListeners();
+  }
+
+  Future<void> getCourseDetails(BuildContext context, String courseId) async {
+    final res = await repo.getCourseDetails(courseId);
+    if (res != null) {
+      courseDetails = res;
+    }
+    notifyListeners();
+  }
+}

@@ -90,6 +90,63 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
   // Static data
+/*<<<<<<< HEAD
+  final List<String> countryList = ["India", "us", "pk"];
+  final List<String> HireList = [
+    "urgently",
+    "1-2 weeks",
+    "2-4 weeks",
+    "More than 4 weeks"
+  ];
+  final List<String> positionsOptions = ["1", "2", "3", "4", "5", "6+"];
+  final List<String> experienceOptions = [
+    "0",
+    "1-2",
+    "3-5",
+    "5-10",
+    "10-15",
+    "15-20",
+    "20-25",
+    "25-30",
+    "30-35",
+    "35-40",
+    "40+"
+  ];
+  final List<String> educationLevels = [
+    "High School",
+    "Diploma",
+    "Graduate",
+    "Postgraduate",
+    "PhD"
+  ];
+  final List<String> Benefits = [
+    "Performance bonus",
+    "Commission",
+    "Relocation fees",
+    "Tips",
+    "Overtime pay",
+    "Signing Bonus",
+    "Bonus",
+    "Annual Bonus",
+    "Quarterly bonus",
+    "Employee Discount",
+    "Visa sponsorship",
+    "Employee Mentoring program",
+    "Professional Development assistance",
+    "Company car",
+    "Travel reimbursement",
+    "Housingallowance",
+    "Other",
+  ];
+  final List<String> payRanges = ["Range"];
+  final List<String> rateTypes = [
+    "Per year",
+    "Per month",
+    "Per week",
+    "Per hour",
+    "Commission"
+  ];
+=======*/
   final List<String> countryList = country;
   final List<String> HireList = Hire;
   final List<String> positionsOptions = positionsList;

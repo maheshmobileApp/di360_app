@@ -170,6 +170,19 @@
           ]
         },
         {
+          "title": "Learning Hub",
+          "subTitle": [
+            {
+              "title": "Learning Hub",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            },
+            {
+              "title": "My Learning Hub",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            }
+          ]
+        },
+        {
           "title": "Banners",
           "subTitle": [
             {

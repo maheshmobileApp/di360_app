@@ -5,7 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +17,7 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
+    final jobProfileVM = Provider.of<JobProfileViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -133,7 +133,7 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildRoleTypes(JobProfileCreateViewModel jobProfileVM) {
+  Widget _buildRoleTypes(JobProfileViewModel jobProfileVM) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -175,7 +175,7 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
   );
 }
 
-Widget _buildEmpTypes(JobProfileCreateViewModel jobProfileVM) {
+Widget _buildEmpTypes(JobProfileViewModel jobProfileVM) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -206,7 +206,7 @@ Widget _buildEmpTypes(JobProfileCreateViewModel jobProfileVM) {
     ],
   );
 }
-Widget _showEmpTypes(JobProfileCreateViewModel jobProfileVM) {
+Widget _showEmpTypes(JobProfileViewModel jobProfileVM) {
   return Wrap(
     spacing: 6,
     children: jobProfileVM.selectedEmploymentChips.map((e) {

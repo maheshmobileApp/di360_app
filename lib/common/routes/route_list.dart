@@ -40,7 +40,15 @@ class RouteList {
   static const String AppliedJobScreen = '/AppliedJobScreen';
   static const String EnquiriesScreen = '/EnquiriesScreen';
   static const String JobProfileScreen = '/ JobProfileScreen';
+  static const String learningHubScreen = '/learningHub';
+  static const String newCourseScreen = '/newCourseScreen';
+  static const String addCourse = '/addCourse';
+  static const String courseInfo = '/courseInfo';
+  static const String termsAndConditions = '/termsAndCondition';
+  static const String contacts = '/contacts';
+  static const String myLearningHubScreen = '/myLearningHubScreen';
   static const String myDirectorScreen = '/myDirectorScreen';
+  static const String courseDetailScreen = '/courseDetailScreen';
   static const String professionDirectorScreen = '/professionDirectorScreen';
   static const String professionAddDirectorView = '/professionAddDirectorView';
 }

@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
+import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_create_view.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
@@ -27,7 +28,16 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
+import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
+import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
+import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
@@ -63,9 +73,9 @@ class Routes {
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
-      RouteList.JobProfileView: (context) => JobProfileCreateView(),
+      RouteList.JobProfileView: (context) => JobProfileView(),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
-      RouteList. JobProfileScreen: (context) => JobProfileScreen(),
+      RouteList.JobProfileScreen: (context) => JobProfileScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
@@ -116,7 +126,15 @@ class Routes {
       RouteList.directory: (context) => DirectorScreen(),
       RouteList.directoryFilter: (context) => DirectoriesFilterScreen(),
       RouteList.directoryDetailsScreen: (context) => DirectorDetailsScreen(),
+      RouteList.learningHubScreen: (context) => LearningHubScreen(),
+      RouteList.newCourseScreen: (context) => NewCourseScreen(),
+      RouteList.addCourse: (context) => AddCourse(),
+      RouteList.courseInfo: (context) => CourseInfo(),
+      RouteList.termsAndConditions: (context) => TermsAndConditions(),
+      RouteList.contacts: (context) => Contacts(),
+      RouteList.myLearningHubScreen: (context) => MyLearningHubScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
+      RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
     };

@@ -22,13 +22,15 @@ class ImageConst {
   static const String chat = "assets/svgs/chat.svg";
   static const String cart = "assets/svgs/cart.svg";
   static const String filter = "assets/svgs/filter.svg";
+  static const String nextArrow = "assets/svgs/nextArrow.svg";
   static const String addFeed = "assets/svgs/addFeed.svg";
   static const String noCatalogue = "assets/svgs/no_catalogues.svg";
   static const String logout = 'assets/svgs/logout 1.svg';
   static const String accountProfile = 'assets/svgs/accountprofile.svg';
   static const String NoDirectory = 'assets/svgs/no_directoy.svg';
   static const String certificate = 'assets/svgs/certificate.svg';
-  static const String service= 'assets/svgs/service.svg';
+  static const String service = 'assets/svgs/service.svg';
+
   /// PNGS
   static const String pre_login = "assets/pngs/pre_login.png";
   static const String menu = "assets/pngs/menu.png";
@@ -67,6 +69,9 @@ class ImageConst {
   static const String hummanresourse = '${_svgBasePath}human-resources 1.svg';
   static const String locationsvg = '${_svgBasePath}locationsvg.svg';
   static const String copySvg = '${_svgBasePath}copy.svg';
+  static const String contactLocation = '${_svgBasePath}contactLocation.svg';
+  static const String contactMail = '${_svgBasePath}contactMail.svg';
+  static const String contactPhone = '${_svgBasePath}contactPhone.svg';
 
   //static const String
 

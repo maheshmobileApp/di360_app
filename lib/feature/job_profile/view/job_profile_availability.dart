@@ -2,7 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
+    final jobProfileVM = Provider.of<JobProfileViewModel>(context);
 
     return SingleChildScrollView(
       child: Padding(

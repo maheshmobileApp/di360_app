@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class JobProfileLocation extends StatelessWidget  with BaseContextHelpers{
 
   @override
   Widget build(BuildContext context) {
-    final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
+    final jobProfileVM = Provider.of<JobProfileViewModel>(context);
      return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -115,7 +115,7 @@ class JobProfileLocation extends StatelessWidget  with BaseContextHelpers{
 
 
 Future<void> getPlaceDetails(
-      String placeId, JobProfileCreateViewModel jobProfileVM) async {
+      String placeId, JobProfileViewModel jobProfileVM ) async {
     final String apiKey = googleApiKey;
     final String url =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
