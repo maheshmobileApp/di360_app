@@ -50,47 +50,96 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
             _buildEmpTypes(jobCreateVM),
             addVertical(16),
             if (jobCreateVM.showLocumDate) ...[
-              addVertical(16),
-              CustomDatePicker(
+              InputTextField(
                 controller: jobCreateVM.locumDateController,
-                text: null,
-                hintText: "Date",
+                title: "Locum Dates",
+                hintText: "Select Locum Dates",
+                prefixIcon: const Icon(Icons.calendar_today),
+                readOnly: true, 
+                onTap: () {
+                
+                },
+              ),
+               addVertical(16),
+              CustomDatePicker(
+                controller: jobCreateVM.startLocumDateController,
+                text: "",
+                hintText: "Select start date",
                 onTap: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
+                    initialDate: jobCreateVM.startLocumDate ?? DateTime.now(),
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
-                    jobCreateVM.locumDateController.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
+                    jobCreateVM.setStartLocumDate(picked);
+                  } else {
+                    jobCreateVM.clearDates();
                   }
                 },
-                validator: (value) {
-                  if (jobCreateVM.showLocumDate &&
-                      (value == null || value.isEmpty)) {
-                    return "Please select locum date";
+              ),
+              addVertical(16),
+              CustomDatePicker(
+                controller: jobCreateVM.endLocumDateController,
+                text: "",
+                hintText: "Select end date",
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: jobCreateVM.endLocumDate ??
+                        jobCreateVM.startLocumDate ??
+                        DateTime.now(),
+                    firstDate: jobCreateVM.startLocumDate ?? DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    jobCreateVM.setEndLocumDate(picked);
+                  } else {
+                    jobCreateVM.clearDates();
                   }
-                  return null;
                 },
               ),
-              ],
-              Divider(thickness: 4),
-              addVertical(16),
-              _sectionHeader("Job Description"),
-              addVertical(16),
-              InputTextField(
-                controller: jobCreateVM.jobDescController,
-                hintText: "Enter job description here",
-                maxLength: 500,
-                maxLines: 5,
-                title: "Description",
-                isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter job description'
-                    : null,
+              addVertical(10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      jobCreateVM.clearDates();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                    ),
+                    child: const Text("Clear"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      jobCreateVM.updateLocumSummary();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.pendingsendary,
+                    ),
+                    child: const Text("Save"),
+                  ),
+                ],
               ),
+            ],
+            Divider(thickness: 4),
+            addVertical(16),
+            _sectionHeader("Job Description"),
+            addVertical(16),
+            InputTextField(
+              controller: jobCreateVM.jobDescController,
+              hintText: "Enter job description here",
+              maxLength: 500,
+              maxLines: 5,
+              title: "Description",
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter job description'
+                  : null,
+            ),
           ],
         ),
       ),

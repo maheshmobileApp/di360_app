@@ -7,6 +7,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -26,7 +27,6 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
      final applicant = appliedJob;
-
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Container(
@@ -73,7 +73,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                   child: _chipWidget(job?.typeofEmployment ?? []),
                 ),
                 const SizedBox(width: 12),
-                _appliedJobTimeChip(time),
+               JobTimeChip(time: time),
               ],
             ),
             addVertical(10),
@@ -83,7 +83,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 InkWell(
                     onTap: () async {
-                      if (applicant == null ||
+                      if (
                           applicant.id == null ||
                           applicant.jobId == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -189,28 +189,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _appliedJobTimeChip(String time) {
-    return Container(
-      height: 19,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color.fromRGBO(116, 130, 148, 0.0),
-            Color.fromRGBO(116, 130, 148, 0.2)
-          ],
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        time.isNotEmpty ? time : "",
-        style:
-            TextStyles.semiBold(fontSize: 10, color: const Color(0xFF1E1E1E)),
-      ),
-    );
-  }
+  
 
   Widget _statusChip(String status) {
     Color bgColor;

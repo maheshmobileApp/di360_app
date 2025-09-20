@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/job_create/view_model.dart/constants.dart';
+import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart
 import 'package:di360_flutter/feature/job_create/repository/job_create_repo_impl.dart';
 import 'package:di360_flutter/feature/job_create/repository/job_create_repository.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:intl/intl.dart';
 
 class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final JobCreateRepository repo = JobCreateRepoImpl();
@@ -42,9 +43,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final countryController = TextEditingController();
 
   // NEW: Locum date controller
-  final locumDateController = TextEditingController();
+  final TextEditingController locumDateController = TextEditingController();
+  final TextEditingController startLocumDateController =
+      TextEditingController();
+  final TextEditingController endLocumDateController = TextEditingController();
+  DateTime? startLocumDate;
+  DateTime? endLocumDate;
   bool showLocumDate = false;
-
   // Selected dropdown values
   String? selectedRole;
   String? selectedEmploymentType;
@@ -71,67 +76,29 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   // Files
   File? logoFile;
   File? bannerFile;
-  File? ClinicPhotofile;
+  List<File> clinicPhotos = [];
 
   // Form & PageView
   final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
       List.generate(6, (_) => GlobalKey<FormState>());
-
-  final List<int> stepsWithValidation = [0, 2, 4];
-  final List<String> steps = [
-    'Job Info',
-    'Logo, etc',
-    'Location',
-    'Other info',
-    'Pay',
-    'Links'
-  ];
+  final List<int> stepsWithValidation = stepsWithValidationList;
+  final List<String> steps = stepsList;
   late final PageController pageController;
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
-
   // Static data
-  final List<String> countryList = ["India", "us", "pk"];
-  final List<String> HireList = [
-    "urgently",
-    "1-2 weeks",
-    "2-4 weeks",
-    "More than 4 weeks"
-  ];
-  final List<String> positionsOptions = ["1", "2", "3", "4", "5", "6+"];
-  final List<String> experienceOptions = [
-    "0",
-    "1-2",
-    "3-5",
-    "5-10",
-    "10-15",
-    "15-20",
-    "20-25",
-    "25-30",
-    "30-35",
-    "35-40",
-    "40+"
-  ];
-  final List<String> educationLevels = [
-    "High School",
-    "Diploma",
-    "Graduate",
-    "Postgraduate",
-    "PhD"
-  ];
+  final List<String> countryList = country;
+  final List<String> HireList = Hire;
+  final List<String> positionsOptions = positionsList;
+  final List<String> experienceOptions = experienceList;
+  final List<String> educationLevels = educationList;
   final List<String> benefitsList = benifits;
-  final List<String> payRanges = ["Range"];
-  final List<String> rateTypes = [
-    "Per year",
-    "Per month",
-    "Per week",
-    "Per hour",
-    "Commission"
-  ];
+  final List<String> payRanges = payList;
+  final List<String> rateTypes = rateList;
 
-  // Employment types
+  // Chips values..
   final List<String> _selectedEmploymentChips = [];
   List<String> get selectedEmploymentChips =>
       List.unmodifiable(_selectedEmploymentChips);
@@ -191,7 +158,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Validation Methods ─────
   bool validateCurrentStep() {
-    //  if (_currentStep == 1) return validateLogoAndBanner();
     if (_currentStep == 5) return validateOtherLinksStep();
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
@@ -272,15 +238,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  // ───── Benefits  ─────
   void setSelectedBenefits(List<String> values) {
     _selectedBenefits
       ..clear()
       ..addAll(values);
-    notifyListeners();
-  }
-
-  void removeBanner() {
-    bannerFile = null;
     notifyListeners();
   }
 
@@ -318,21 +280,52 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   // ───── Locum Toggle ─────
-  void toggleLocumDateVisibility(bool value) {
-    showLocumDate = value;
-    if (!value) locumDateController.clear();
+  String _formatDate(DateTime date) {
+    return DateFormat("d MMM yyyy").format(date);
+  }
+
+  void setStartLocumDate(DateTime date) {
+    startLocumDate = date;
+    startLocumDateController.text = DateFormat("M/d/yyyy").format(date);
+    updateLocumSummary();
+    notifyListeners();
+  }
+  void setEndLocumDate(DateTime date) {
+    endLocumDate = date;
+    endLocumDateController.text = DateFormat("M/d/yyyy").format(date);
+    updateLocumSummary();
+    notifyListeners();
+  }
+  void clearDates() {
+    startLocumDate = null;
+    endLocumDate = null;
+    startLocumDateController.clear();
+    endLocumDateController.clear();
+    locumDateController.clear();
     notifyListeners();
   }
 
-  // ───── Employment Chips ─────
-  void _updateLocumVisibility() {
-    final hasLocum = _selectedEmploymentChips.contains("Locum");
-    showLocumDate = hasLocum;
-
-    if (!hasLocum) {
+  void updateLocumSummary() {
+    if (startLocumDate != null && endLocumDate != null) {
+      locumDateController.text =
+          "${_formatDate(startLocumDate!)} – ${_formatDate(endLocumDate!)}";
+    } else {
       locumDateController.clear();
     }
+  }
+
+  void toggleLocumDateVisibility(bool value) {
+    showLocumDate = value;
+    if (!value) {
+      clearDates();
+    }
     notifyListeners();
+  }
+
+  /// Employment chip management
+  void _updateLocumVisibility() {
+    final hasLocum = _selectedEmploymentChips.contains("Locum");
+    toggleLocumDateVisibility(hasLocum);
   }
 
   void addEmploymentTypeChip(String empType) {
@@ -351,23 +344,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     _selectedEmploymentChips.clear();
     _updateLocumVisibility();
   }
-
   List<String> getSelectedEmploymentTypes() =>
       List.from(_selectedEmploymentChips);
-
-  // ───── File Pickers ─────
-  // Future<void> pickLogoImage(ImageSource source) async {
-  //   final pickedFile =
-  //       await ImagePicker().pickImage(source: source, imageQuality: 85);
-  //   if (pickedFile != null) {
-  //     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
-
-  //     logoFile = File(pickedFile.path);
-  //     NavigationService().goBack();
-  //     notifyListeners();
-  //   }
-  // }
-
+   //Image Pickers...
   Future<void> pickBannerImage(ImageSource source) async {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
@@ -377,15 +356,66 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+  void removeBanner() {
+    bannerFile = null;
+    notifyListeners();
+  }
 
   Future<void> pickClinicPhoto(ImageSource source) async {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
-      ClinicPhotofile = File(pickedFile.path);
-      NavigationService().goBack();
+      clinicPhotos.add(File(pickedFile.path));
       notifyListeners();
     }
+  }
+
+  void removeClinicPhoto(File file) {
+    clinicPhotos.remove(file);
+    notifyListeners();
+  }
+
+  void clearClinicPhotos() {
+    clinicPhotos.clear();
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>> uploadFiles(
+    Map<String, String?> filePaths, {
+    List<File>? clinicPhotos,
+  }) async {
+    final entries = filePaths.entries.where((e) => e.value != null).toList();
+    final responsesList =
+        await Future.wait(entries.map((e) => _http.uploadImage(e.value!)));
+    Map<String, dynamic> responses = {};
+    for (int i = 0; i < entries.length; i++) {
+      responses[entries[i].key] = responsesList[i];
+      print(
+          "Uploaded ${entries[i].key}: ${entries[i].value} → ${responsesList[i]}");
+    }
+    for (var entry in filePaths.entries) {
+      if (entry.value == null) {
+        responses[entry.key] = null;
+      }
+    }
+    if (clinicPhotos != null && clinicPhotos.isNotEmpty) {
+      final clinicResponses = await Future.wait(
+        clinicPhotos.map((file) => _http.uploadImage(file.path)),
+      );
+      responses['clinic_logo'] = clinicResponses.map((res) {
+        final fileName =
+            clinicPhotos[clinicResponses.indexOf(res)].path.split('/').last;
+        return {
+          "url": res["url"],
+          "name": fileName,
+          "type": "image",
+          "extension": "jpeg",
+        };
+      }).toList();
+    } else {
+      responses['clinic_logo'] = [];
+    }
+    return responses;
   }
 
   // ───── Data Fetching ─────
@@ -417,6 +447,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> createdJobListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
+    Map<String, String?> filePaths = {
+      'banner': bannerFile?.path,
+    };
+    final uploadedFiles = await uploadFiles(
+      filePaths,
+      clinicPhotos: clinicPhotos,
+    );
     final result = await repo.createJobListing({
       "postjobObj": {
         "title": jobTitleController.text, // String
@@ -438,7 +475,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "job_designation": "", //Need to discuss with backend
         "offered_supplement": "", //Need to discuss with backend
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [locumDateController.text],//TODO: Need to send Start and End data in Array of strings
+        "availability_date": [
+          startLocumDateController.text,
+          endLocumDateController.text
+        ],
         "years_of_experience": selectExperience,
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,
@@ -455,19 +495,40 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "education":
             selectEducation, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-        "banner_image":
-            banner_image, // TODO: Need to change the type of this variable
+        "banner_image": bannerFile != null
+            ? [
+                {
+                  "url": uploadedFiles['banner'] != null
+                      ? uploadedFiles[' banner']["url"]
+                      : bannerFile!.path,
+                  "name": bannerFile!.path.split("/").last,
+                  "type": "image",
+                  "extension": "jpeg",
+                }
+              ]
+            : [], // TODO: Need to change the type of this variable
         /*
         [{"url":"","name":"coverletter.pdf","type":"document","extension":"pdf"}]
          */
-        "clinic_logo": [
-          // {
-          //   "url":
-          //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
-          //   "type": "image",
-          //   "extension": "jpeg"
-          // }
-        ], //TODO: need to send array of object
+       "clinic_logo": clinicPhotos.isNotEmpty
+      ? clinicPhotos.asMap().entries.map((entry) {
+          final index = entry.key;
+          final file = entry.value;
+          return {
+            "url": uploadedFiles['clinic_logo']?[index]?["url"] ?? file.path,
+            "name": file.path.split("/").last,
+            "type": "image",
+            "extension": "jpeg",
+          };
+        }).toList()
+      : [],
+        // {
+        //   "url":
+        //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
+        //   "type": "image",
+        //   "extension": "jpeg"
+        // }
+        //TODO: need to send array of object
 
         "closed_at": endDate?.toUtc().toIso8601String(),
         "status": isDraft
@@ -478,8 +539,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "website_url": websiteController.text,
         "country": selectCountry,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
-        "offered_benefits":
-            [], //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
+        "offered_benefits": selecteBenefits,
+        //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
         "hiring_period": selectHire,
         "no_of_people": selectPositions,
         "rate_billing": selectRate,
@@ -518,6 +579,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     minSalaryController.dispose();
     maxSalaryController.dispose();
     locumDateController.dispose();
+    startLocumDateController.dispose();
+    endLocumDateController.dispose();
     pageController.dispose();
     super.dispose();
   }
