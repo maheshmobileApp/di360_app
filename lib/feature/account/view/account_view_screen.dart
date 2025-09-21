@@ -17,6 +17,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -227,11 +228,15 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myCatalogueScreen);
                           } else if (item.title == 'Job Listings') {
+                            Loaders.circularShowLoader(context);
                             await context
                                 .read<JobListingsViewModel>()
                                 .getMyJobListingData();
+                            Loaders.circularHideLoader(context);
+
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);
+
                           } else if (item.title == 'JobProfile') {
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);
@@ -248,9 +253,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               arguments: userId,
                             );
                           } else if (item.title == 'Talent Request') {
-                            context
+                            Loaders.circularShowLoader(context);
+                            await context
                                 .read<TalentListingViewModel>()
                                 .getMyTalentListingData();
+                            Loaders.circularHideLoader(context);
+
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
                           } else if (item.title == 'My Directory') {

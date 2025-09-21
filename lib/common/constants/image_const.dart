@@ -30,6 +30,7 @@ class ImageConst {
   static const String NoDirectory = 'assets/svgs/no_directoy.svg';
   static const String certificate = 'assets/svgs/certificate.svg';
   static const String service = 'assets/svgs/service.svg';
+  static const String certificate_img = 'assets/svgs/certificate-svgrepo-com.svg';
 
   /// PNGS
   static const String pre_login = "assets/pngs/pre_login.png";

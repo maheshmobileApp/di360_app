@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.d
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_details_screen.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_quicklincks.dart';
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
@@ -21,6 +22,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_m
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
@@ -34,6 +36,7 @@ import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart
 import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
+import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
@@ -52,13 +55,18 @@ import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
 //   ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
+//LoginViewModel
 class Routes {
   static Map<String, WidgetBuilder> get routes {
     return {
       RouteList.splash: (context) => SplashScreen(),
       RouteList.preLogin: (context) => PreLoginScreen(),
-      RouteList.login: (context) => LoginScreen(),
-      RouteList.dashBoard: (context) => DashBoard(),
+      RouteList.login: (context) => ChangeNotifierProvider(
+          create: (_) => LoginViewModel(), child: LoginScreen()),
+      RouteList.dashBoard: (context) => ChangeNotifierProvider(
+            create: (context) => DashBoardViewModel(),
+            child: DashBoard(),
+          ),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
       RouteList.subscribePlan: (context) => SubscriptionPlanScreen(),
       RouteList.signup: (context) => SignupScreen(),
@@ -70,7 +78,10 @@ class Routes {
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
-      RouteList.JobProfileView: (context) => JobProfileView(),
+      RouteList.JobProfileView: (context) => ChangeNotifierProvider(
+            create: (BuildContext context) => JobProfileViewModel(),
+            child: JobProfileView(),
+          ),
       RouteList.JobListingScreen: (context) => JobListingScreen(),
       RouteList.JobProfileScreen: (context) => JobProfileScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
@@ -137,3 +148,5 @@ class Routes {
     };
   }
 }
+
+//        ChangeNotifierProvider(create: (_) => JobProfileViewModel()),

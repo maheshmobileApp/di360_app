@@ -390,10 +390,18 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    String startDate = DateFormat("yyyy-MM-dd")
-        .format(DateFormat("d/M/yyyy").parse("${startDateController.text}"));
-    String endDate = DateFormat("yyyy-MM-dd")
-        .format(DateFormat("d/M/yyyy").parse("${endDateController.text}"));
+    String? startDate = startDateController.text.isEmpty
+        ? null
+        : DateFormat("yyyy-MM-dd").format(
+            DateFormat("d/M/yyyy").parse(startDateController.text),
+          );
+
+    String? endDate = endDateController.text.isEmpty
+        ? null
+        : DateFormat("yyyy-MM-dd").format(
+            DateFormat("d/M/yyyy").parse(endDateController.text),
+          );
+
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
       "object": CourseObject(

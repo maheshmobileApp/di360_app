@@ -65,12 +65,12 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
                         serverImg != null
                             ? CachedNetworkImageWidget(
                                 imageUrl: serverImg ?? '',
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fitHeight,
                               )
                             : Image.file(
                                 imageFile!,
                                 width: double.infinity,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fitHeight,
                               ),
                         Positioned(
                           top: 8,
