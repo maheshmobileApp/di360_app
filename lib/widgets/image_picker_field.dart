@@ -124,8 +124,6 @@ class ImagePickerField extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // ✅ Title
               Text(
                 "Choose Option",
                 style: TextStyle(
@@ -135,8 +133,6 @@ class ImagePickerField extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // ✅ Options as grid
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -161,8 +157,6 @@ class ImagePickerField extends StatelessWidget {
       },
     );
   }
-
-// ✅ Reusable option button
   Widget _buildOption({
     required IconData icon,
     required String label,
@@ -245,7 +239,7 @@ class ImagePickerField extends StatelessWidget {
                               ? const Icon(Icons.videocam,
                                   size: 50, color: Colors.grey)
                               : Image.file(file,
-                                  fit: BoxFit.cover, width: 120, height: 120),
+                                  fit: BoxFit.contain),
                         );
                       },
                     )
@@ -255,7 +249,7 @@ class ImagePickerField extends StatelessWidget {
                               size: 50, color: Colors.grey)
                           : Image.file(
                               selectedFile!,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               width: double.infinity,
                             ))
                       : Column(
