@@ -56,7 +56,6 @@ class ProfessBasicInfo extends StatelessWidget
             controller: professDirectorVM.emailController,
           ),
           addVertical(20),
-          addVertical(20),
           InputTextField(
             hintText: "Enter Phone Number",
             title: " Phone Number ",

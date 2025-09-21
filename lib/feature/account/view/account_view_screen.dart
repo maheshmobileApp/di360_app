@@ -16,7 +16,6 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -257,9 +256,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'My Directory') {
                             context
                                 .read<AddDirectorViewModel>()
-                                .getDirectories();
-                            navigationService
-                                .navigateTo(RouteList.adddirectorview);
+                                .fetchTheDirectorData(context);
                           } else if (item.title == 'Learning Hub') {  
                             context
                                 .read<CourseListingViewModel>()

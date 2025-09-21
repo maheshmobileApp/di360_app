@@ -201,7 +201,9 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
       assignBasicInfoData(context);
     } else {
       clearBasicInfoData();
-      navigationService.navigateTo(RouteList.adddirectorview);
+      type == 'PROFESSIONAL'
+          ? navigationService.navigateTo(RouteList.professionAddDirectorView)
+          : navigationService.navigateTo(RouteList.adddirectorview);
     }
     notifyListeners();
   }

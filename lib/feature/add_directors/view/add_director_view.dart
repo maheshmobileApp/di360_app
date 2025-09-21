@@ -150,7 +150,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
           addHorizontal(16),
           Expanded(
             child: CustomRoundedButton(
-                text: isLastStep ? 'Submit' : 'Next',
+                text: isLastStep ? 'Submit' : 'Save & Next',
                 height: 42,
                 fontSize: 12,
                 onPressed: () async {

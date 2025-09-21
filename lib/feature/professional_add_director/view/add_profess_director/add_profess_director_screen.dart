@@ -131,12 +131,12 @@ class ProfessionalAddDirectorView extends StatelessWidget
                 backgroundColor: AppColors.timeBgColor,
                 textColor: AppColors.primaryColor),
           ),
-          addHorizontal(16),
+          addHorizontal(14),
           Expanded(
             child: CustomRoundedButton(
-                text: isLastStep ? 'Submit' : 'Next',
+                text: isLastStep ? 'Submit' : 'Save&Next',
                 height: 42,
-                fontSize: 12,
+                fontSize: 11,
                 onPressed: () async {
                   final currentFormKey = professAddDirectVM
                       .formKeys[professAddDirectVM.currentStep];

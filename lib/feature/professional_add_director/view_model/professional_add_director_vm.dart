@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/professional_add_director/repositorys/add_
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
 
 class ProfessionalAddDirectorVm extends ChangeNotifier {
@@ -277,7 +278,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     final data = addDirectorVM.getBasicInfoData.first;
     nameController.text = data.name ?? '';
     mobileNumberCntr.text = data.phone ?? '';
-    descController.text = data.description ?? '';
+    final document = parse(data.description ?? '');
+    final String parsedString = document.body?.text ?? "";
+    descController.text = parsedString;
     addressController.text = data.address ?? '';
     emailController.text = data.email ?? '';
     alternateNumberController.text = data.altPhone ?? '';

@@ -8,15 +8,17 @@ class CustomRoundedButton extends StatelessWidget {
   final double width;
   final double? fontSize;
   final double height;
-final TextStyle? txtstyle;
+  final TextStyle? txtstyle;
   const CustomRoundedButton({
     super.key,
     required this.text,
     required this.onPressed,
-     this.backgroundColor,
-     this.textColor,
+    this.backgroundColor,
+    this.textColor,
     this.width = 140,
-    this.height = 50, this.txtstyle, this.fontSize,
+    this.height = 50,
+    this.txtstyle,
+    this.fontSize,
   });
 
   @override
@@ -35,12 +37,11 @@ final TextStyle? txtstyle;
         ),
         child: Text(
           text,
-          style:  txtstyle ??  TextStyle(
-            color: textColor,
-            fontSize:fontSize?? 16,
-            fontWeight: FontWeight.w600,
-            
-          ),
+          style: txtstyle ??
+              TextStyle(
+                  color: textColor,
+                  fontSize: fontSize ?? 16,
+                  fontWeight: FontWeight.w600),
         ),
       ),
     );

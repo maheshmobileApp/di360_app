@@ -55,9 +55,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
             ),
             if (showForm) _buildGalleryForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-            addDirectorVM.getBasicInfoData.first.directoryGalleryPosts?.first
-                        .image ==
-                    []
+            addDirectorVM.getBasicInfoData.first.directoryGalleryPosts?.length == 0
                 ? Center(child: Text('No gallery'))
                 : ListView.builder(
                     shrinkWrap: true,
