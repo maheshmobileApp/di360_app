@@ -43,6 +43,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                 jobsData?.companyName ?? "",
                 jobsData?.jRole ?? "",
                 _getShortTime(jobsData?.createdAt ?? ""),
+                jobsData?.title ?? "",
               ),
               addVertical(10),
               _descriptionWidget(jobsData?.description ?? ""),
@@ -126,7 +127,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _logoWithTitle(BuildContext context, String imageUrl, String title,
-      String role, String? time) {
+      String role, String? time,String jobTitle) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -162,6 +163,16 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               width: getSize(context).width * 0.5,
               child: Text(
                 title,
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            addVertical(4),
+            SizedBox(
+              width: getSize(context).width * 0.5,
+              child: Text(
+                jobTitle,
                 style:
                     TextStyles.semiBold(fontSize: 16, color: AppColors.black),
                 overflow: TextOverflow.ellipsis,

@@ -1,5 +1,8 @@
 String talentsRequest = r'''query GetJobProfileData {
-  job_profiles(order_by: {created_at: desc}) {
+  job_profiles(
+      order_by: { created_at: desc }
+    where: { active_status: { _eq: "ACTIVE" } }
+  ) {
     id
     created_at
     updated_at

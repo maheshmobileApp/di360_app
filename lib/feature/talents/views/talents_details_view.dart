@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
@@ -11,6 +12,7 @@ import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/toast.dart';
+import 'package:di360_flutter/widgets/certificates_view.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/education_data_withicon.dart';
@@ -19,9 +21,10 @@ import 'package:di360_flutter/widgets/experience_info.dart';
 import 'package:di360_flutter/widgets/header_image.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
+class TalentsDetailsView extends StatefulWidget {
   final JobProfile? talentList;
 
   const TalentsDetailsView({
@@ -30,27 +33,35 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
   });
 
   @override
+  State<TalentsDetailsView> createState() => _TalentsDetailsViewState();
+}
+
+class _TalentsDetailsViewState extends State<TalentsDetailsView>
+    with BaseContextHelpers {
+  @override
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
     return Scaffold(
         body: HeaderImageView(
           logo: "",
-          title: talentList?.fullName ?? "",
+          title: widget.talentList?.fullName ?? "",
           body: _buildBodyContent(context, talentViewModel),
         ),
-        bottomNavigationBar: _bottomButtons(context));
+        bottomNavigationBar: talentViewModel.isShowBottomeActions
+            ? _bottomButtons(context)
+            : null);
   }
 
   Widget _buildBodyContent(
       BuildContext context, TalentsViewModel talentViewmodel) {
-    final List<String> educationList = talentList?.educations
+    final List<String> educationList = widget.talentList?.educations
             .map((e) => e.qualification ?? '')
             .where((e) => e.isNotEmpty)
             .toList() ??
         [];
     String profleImage = '';
-    if (talentList!.profileImage.isNotEmpty) {
-      profleImage = talentList!.profileImage.first.url ?? '';
+    if (widget.talentList!.profileImage.isNotEmpty) {
+      profleImage = widget.talentList!.profileImage.first.url ?? '';
     } 
     return Column(
       children: [
@@ -58,10 +69,10 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LogoWithTitle(
-                title: talentList?.fullName ?? "",
+                title: widget.talentList?.fullName ?? "",
                 showTime: false,
-                createdAt: talentList?.createdAt ?? "",
-                role: talentList?.jobDesignation ?? "",
+                createdAt: widget.talentList?.createdAt ?? "",
+                role: widget.talentList?.jobDesignation ?? "",
                 imageUrl: profleImage),
             SizedBox(height: 16),
             Column(
@@ -70,11 +81,11 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                 ExperienceInfo(
                     svgPath: ImageConst.briefcaseSvg,
                     text:
-                        '${talentList?.yearOfExperience ?? 0} Yrs Experience'),
+                        '${widget.talentList?.yearOfExperience ?? 0} Yrs Experience'),
                 SizedBox(height: 12),
                 ExperienceInfo(
                     svgPath: ImageConst.locationsvg,
-                    text: '${talentList?.location ?? ''}'),
+                    text: '${widget.talentList?.location ?? ''}'),
               ],
             ),
             Divider(
@@ -88,7 +99,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
             SizedBox(height: 16),
             Text("Skils"),
             SizedBox(height: 6),
-            CustomChipView(typesList: talentList?.skills ?? []),
+            CustomChipView(typesList: widget.talentList?.skills ?? []),
             SizedBox(height: 12),
             Divider(
               color: AppColors.geryColor,
@@ -96,7 +107,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
             SizedBox(height: 12),
             _sectionHeader("About me / Profile Summary"),
             SizedBox(height: 6),
-            _sectionText("${talentList?.aboutYourself ?? ""}"),
+            _sectionText("${widget.talentList?.aboutYourself ?? ""}"),
             Divider(
               color: AppColors.geryColor,
             ),
@@ -106,14 +117,14 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
             SizedBox(height: 16),
             _sectionHeader("Work Experience"),
             SizedBox(height: 8),
-            (talentList?.jobExperiences.isNotEmpty ?? false)
+            (widget.talentList?.jobExperiences.isNotEmpty ?? false)
                 ? ExperienceAccordionItem(
                     details: ListView.separated(
                       padding: EdgeInsets.all(6),
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        final item = talentList?.jobExperiences[index];
+                        final item = widget.talentList?.jobExperiences[index];
                         return ListTile(
                           contentPadding: EdgeInsets.all(0),
                           dense: true,
@@ -135,15 +146,42 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                         );
                       },
                       separatorBuilder: (context, index) => Divider(),
-                      itemCount: talentList!.jobExperiences.length,
+                      itemCount: widget.talentList!.jobExperiences.length,
                     ),
                   )
                 : SizedBox.shrink(),
             SizedBox(height: 16),
             _sectionHeader("Certifications"),
             SizedBox(height: 6),
-            // CustomChipView(typesList: talentList?.certificate ?? []),
+            CertificatesView(certificates: widget.talentList?.certificate),
+            SizedBox(height: 16),
+            _sectionHeader("Cover Letter"),
+            SizedBox(height: 6),
+            CertificatesView(certificates: widget.talentList?.coverLetter),
+            //  CustomChipView(typesList: talentList?.certificate),
             SizedBox(height: 20),
+            _sectionHeader("View CV"),
+            if (widget.talentList?.uploadResume != null)
+              InkWell(
+                onTap: () {
+                  navigationService.push(HorizantalPdf(
+                    // key: ValueKey(
+                    //   pdf?.url ?? '',
+                    // ),
+                    fileUrl: widget.talentList!.uploadResume.isNotEmpty
+                        ? widget.talentList!.uploadResume.first.url ?? ''
+                        : '',
+                    fileName: '',
+                    isfullScreen: true,
+                  ));
+                },
+                child: SvgPicture.asset(
+                  ImageConst.certificate_img,
+                  height: 55,
+                  width: 55,
+                  color: AppColors.primaryColor,
+                ),
+              )
           ],
         ),
       ],
@@ -151,6 +189,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _bottomButtons(BuildContext context) {
+      
     return Container(
       height: getSize(context).height * 0.1,
       decoration: BoxDecoration(boxShadow: [
@@ -236,7 +275,7 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
                     await LocalStorage.getStringVal(LocalStorageConst.userId);
                 final enquire = EnquiryRequest(
                     enquiryDescription: provider.enquiryData ?? '',
-                    talentId: talentList?.id ?? '',
+                    talentId: widget.talentList?.id ?? '',
                     enquiryFrom: userId);
                 await provider.enquire(enquire);
                 ToastMessage.show('Enquiry sent successfully!');
@@ -257,5 +296,13 @@ class TalentsDetailsView extends StatelessWidget with BaseContextHelpers {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final provider = Provider.of<TalentsViewModel>(context, listen: false);
+    provider.isShowBottomeActionss(widget.talentList?.id ?? '');
   }
 }

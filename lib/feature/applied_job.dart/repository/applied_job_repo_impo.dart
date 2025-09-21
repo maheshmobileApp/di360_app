@@ -14,7 +14,7 @@ class AppliedJobRepositoryImpl {
         "dental_professional_id": dentalProfessionalId,
       };
 
-      final raw = await http.query(enquireJobListQuery, variables: variables);
+      final raw = await http.query(appliedJobQuery, variables: variables);
 
       return AppliedJobRespo.fromJson(raw);
     } catch (e, stack) {

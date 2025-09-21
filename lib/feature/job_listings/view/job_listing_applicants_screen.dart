@@ -39,6 +39,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
           widget.jobsListingData?.logo ?? '',
           widget.jobsListingData?.companyName ?? '',
           widget.jobsListingData?.jRole ?? '',
+          widget.jobsListingData?.title ?? '',
         ),
       ),
       body: Column(
@@ -135,6 +136,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
   String logo,
   String company,
   String title,
+  String jobTitle
 ) {
   return Row(
     children: [
@@ -159,6 +161,9 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
           children: [
             Text(company,
                 style: TextStyles.medium2(color: AppColors.black)),
+              addVertical(2),
+              Text(jobTitle,
+                  style: TextStyles.regular2(color: AppColors.black)),
             addVertical(2),
             Text(title,
                 style: TextStyles.regular2(color: AppColors.black)),

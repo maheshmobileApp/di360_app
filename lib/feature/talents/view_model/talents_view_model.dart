@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_model.dart';
@@ -14,6 +16,7 @@ class TalentsViewModel extends ChangeNotifier {
 
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
+  bool isShowBottomeActions = false;
 
   List<JobProfile> talentList = [];
 
@@ -24,6 +27,13 @@ class TalentsViewModel extends ChangeNotifier {
       _expandedIndex = index;
     }
     notifyListeners();
+  }
+
+ isShowBottomeActionss(String professionalId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    isShowBottomeActions = userId == professionalId;
+    notifyListeners();
+
   }
 
   Future<void> fetchTalentProfiles(BuildContext context) async {

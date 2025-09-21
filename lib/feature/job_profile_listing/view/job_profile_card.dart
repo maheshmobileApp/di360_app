@@ -29,7 +29,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobsListingData.createdAt ?? '');
-    final String profileImageUrl = jobsListingData.profileImage.isNotEmpty
+    final String? profileImageUrl = jobsListingData.profileImage.isNotEmpty
         ? jobsListingData.profileImage.first.url
         : '';
     final List<String> workTypes = jobsListingData.workType;
@@ -50,7 +50,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 Expanded(
                   child: _logoWithTitle(
-                    profileImageUrl,
+                    profileImageUrl ?? "",
                     jobsListingData.fullName ?? '',
                     jobsListingData.jobDesignation ?? '',
                     jobsListingData.currentCompany ?? '',

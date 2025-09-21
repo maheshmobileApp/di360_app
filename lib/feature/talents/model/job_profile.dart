@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/model/certificates.dart';
+
 class JobProfile {
   final String? id;
   final String? createdAt;
@@ -317,33 +319,7 @@ class Education {
       };
 }
 
-class FileUpload {
-  final String url;
-  final String name;
-  final String type;
-  final String extension;
 
-  FileUpload({
-    required this.url,
-    required this.name,
-    required this.type,
-    required this.extension,
-  });
-
-  factory FileUpload.fromJson(Map<String, dynamic> json) => FileUpload(
-        url: json['url'] ?? '',
-        name: json['name'] ?? '',
-        type: json['type'] ?? '',
-        extension: json['extension'] ?? '',
-      );
-
-  Map<String, dynamic> toJson() => {
-        'url': url,
-        'name': name,
-        'type': type,
-        'extension': extension,
-      };
-}
 
 class DentalProfessional {
   final String? id;

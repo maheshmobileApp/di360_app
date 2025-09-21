@@ -48,8 +48,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LoginViewModel()),
-        ChangeNotifierProvider(create: (_) => DashBoardViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
         ChangeNotifierProvider(create: (_) => NewsFeedViewModel()),
         ChangeNotifierProvider(create: (_) => CommentViewModel()),
@@ -58,10 +56,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
         ChangeNotifierProvider(create: (_) => TalentsViewModel()),
-     
         ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
         ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
-        ChangeNotifierProvider(create: (_) => JobProfileViewModel()),
         ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
         ChangeNotifierProvider(create: (_) => DirectorViewModel()),
         ChangeNotifierProvider(create: (_) => TalentListingViewModel()),
