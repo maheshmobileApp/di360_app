@@ -67,7 +67,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> updateTheServices(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.updateService({
       "servicesObj": {
@@ -93,7 +93,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheServices(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteService({"id": id});
     if (res != null) {
@@ -108,7 +108,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheCertifi(
       BuildContext context, String id, dynamic img) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic attachments;
     if (addDirectorVM.certificateFile != null) {
@@ -137,7 +137,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheCertifi(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteCertificate({"id": id});
     if (res != null) {
@@ -152,7 +152,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheAchieve(
       BuildContext context, String id, dynamic img) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic attachments;
     if (addDirectorVM.achievementFile != null) {
@@ -181,7 +181,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheAchieve(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteAchieve({"id": id});
     if (res != null) {
@@ -196,7 +196,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheDocu(
       BuildContext context, String id, dynamic img) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic attachments;
     if (addDirectorVM.documentFile != null) {
@@ -225,7 +225,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheDocument(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteDocu({"id": id});
     if (res != null) {
@@ -240,7 +240,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheOurTeam(
       BuildContext context, String id, dynamic img) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic attachments;
     if (addDirectorVM.teamMemberFile != null) {
@@ -281,7 +281,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheOurTeam(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteOurTeam({"id": id});
     if (res != null) {
@@ -296,7 +296,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheGallery(
       BuildContext context, String id, dynamic img) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic attachments;
     if (addDirectorVM.galleryFile != null) {
@@ -322,7 +322,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> updateTheFAQ(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.updateFAQ({
       "faqsObj": {
@@ -346,7 +346,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheFAQ(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteFaq({"id": id});
     if (res != null) {
@@ -361,7 +361,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheTestimonial(
       BuildContext context, String id, dynamic img, dynamic msgImg) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic imageAttach;
     if (addDirectorVM.testimonialsFile != null) {
@@ -401,7 +401,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheTestimonial(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteTestimonial({"id": id});
     if (res != null) {
@@ -415,7 +415,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> updateTheTimings(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.updateTimings({
       "locationObj": {
@@ -443,7 +443,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTheTimimngs(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteTimings({"id": id});
     if (res != null) {
@@ -457,7 +457,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> updateTheSocialurl(BuildContext context, String id) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.updateSocailUrl({
       "locationObj": {
@@ -482,7 +482,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> addAppointment(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.addAppointment({
       "apptData": {
@@ -520,7 +520,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   clearAppointmentFields(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.serviceTimemInCntr.clear();
     addDirectorVM.selectedAccount = null;
     addDirectorVM.selectedDays = null;
@@ -530,7 +530,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> getAppointments(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl
         .getAppts(addDirectorVM.getBasicInfoData.first.id ?? '');

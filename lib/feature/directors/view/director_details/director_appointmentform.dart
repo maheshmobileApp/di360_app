@@ -18,7 +18,7 @@ class DirectorAppointmentform extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DirectorViewModel>(builder: (context, directionalVM, _) {
+    return Consumer<DirectoryViewModel>(builder: (context, directionalVM, _) {
       return Form(
           key: directionalVM.formKey,
           child: Padding(
@@ -211,7 +211,7 @@ class DirectorAppointmentform extends StatelessWidget
   }
 
   static Widget _buildUploadField(
-      BuildContext context, DirectorViewModel viewModel) {
+      BuildContext context, DirectoryViewModel viewModel) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text('Upload supporting images', style: TextStyles.medium2()),
       const SizedBox(height: 6),
@@ -242,7 +242,7 @@ class DirectorAppointmentform extends StatelessWidget
     ]);
   }
 
-  Widget availabileSlots(DirectorViewModel vm) {
+  Widget availabileSlots(DirectoryViewModel vm) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

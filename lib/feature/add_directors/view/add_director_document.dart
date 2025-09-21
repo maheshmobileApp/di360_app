@@ -27,7 +27,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
   dynamic img;
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -92,7 +92,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
   }
 
   Widget _buildDocumentForm(
-      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
+      AddDirectoryViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16),

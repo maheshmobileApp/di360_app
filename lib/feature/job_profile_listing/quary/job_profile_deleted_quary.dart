@@ -1,11 +1,16 @@
 const String deleteJobProfile = r'''
-mutation DeleteJobHiringsByProfessionalId($dental_professional_id: uuid!) {
-  delete_jobhirings(
-    where: { dental_professional_id: { _eq: $dental_professional_id } }
-  ) {
-    affected_rows
-  }
-}
+mutation DeleteJob($id: uuid!) {
+         delete_job_profiles_by_pk(id: $id) {
+           id
+         }
+         delete_talent_enquiries(where: {talent_id: { _eq: $id }}){
+         affected_rows
+         }
 
+         delete_talents_message(where: {talent_id: { _eq: $id }}){
+         affected_rows
+         }
+
+       }
 ''';
 

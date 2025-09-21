@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
@@ -128,7 +129,10 @@ class Routes {
         );
       },
       RouteList.catalogueFilterScreen: (context) => CatalogueFilterScreen(),
-      RouteList.addCatalogScreen: (context) => AddCatalogueScreen(),
+      RouteList.addCatalogScreen: (context) => ChangeNotifierProvider(
+            create: (context) => AddCatalogueViewModel(),
+            child: AddCatalogueScreen(),
+          ),
       RouteList.myCatalogueFilter: (context) => MyCatalogueFilterWidget(),
       RouteList.myCatalogueScreen: (context) => MyCataloguesScreen(),
       RouteList.directory: (context) => DirectorScreen(),

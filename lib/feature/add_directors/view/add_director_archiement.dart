@@ -29,7 +29,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -93,7 +93,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
   }
 
   Widget _buildAchievementForm(
-      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
+      AddDirectoryViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16),

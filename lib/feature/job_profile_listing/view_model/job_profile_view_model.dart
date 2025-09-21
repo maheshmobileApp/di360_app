@@ -71,15 +71,17 @@ class JobProfileListingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeJobsProfileData(BuildContext context) async {
+  Future<void> removeJobsProfileData(BuildContext context,
+      {required String jobProfileId}) async {
     Loaders.circularShowLoader(context);
-    final res = await repo.removeJobProfile();
+    final res = await repo.removeJobProfile(jobProfileId: jobProfileId);
     if (res != null) {
       scaffoldMessenger('JobListingData removed successfully');
       await fetchJobProfiles();
     } else {
       scaffoldMessenger('Failed to remove JobListingData');
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 }

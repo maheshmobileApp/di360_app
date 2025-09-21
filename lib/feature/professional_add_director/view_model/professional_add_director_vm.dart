@@ -77,20 +77,20 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   void updateHobby(BuildContext context, int index, String value) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.hobbies?[index].name = value;
     notifyListeners();
   }
 
   void addHobby(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.hobbies?.add(Hobbies(name: null));
     hobbiesCntr.add(TextEditingController());
     notifyListeners();
   }
 
   void removeHobby(BuildContext context, int index) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.hobbies?.removeAt(index);
     hobbiesCntr.removeAt(index);
     notifyListeners();
@@ -103,13 +103,13 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   void updateUniversities(BuildContext context, int index, String value) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.universitySchool?[index].name = value;
     notifyListeners();
   }
 
   void addUniversities(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.universitySchool
         ?.add(UniversitySchool(name: null));
     universitiesCntr.add(TextEditingController());
@@ -117,7 +117,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   void removeUniversities(BuildContext context, int index) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.universitySchool?.removeAt(index);
     universitiesCntr.removeAt(index);
     notifyListeners();
@@ -130,20 +130,20 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   void updateEducation(BuildContext context, int index, String value) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.education?[index].name = value;
     notifyListeners();
   }
 
   void addEducation(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.education?.add(Education(name: null));
     educationCntr.add(TextEditingController());
     notifyListeners();
   }
 
   void removeEducation(BuildContext context, int index) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.education?.removeAt(index);
     educationCntr.removeAt(index);
     notifyListeners();
@@ -156,27 +156,27 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   void updateWorkAt(BuildContext context, int index, String value) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.workingAt?[index].name = value;
     notifyListeners();
   }
 
   void addWorkAt(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.workingAt?.add(WorkingAt(name: null));
     workAtCntr.add(TextEditingController());
     notifyListeners();
   }
 
   void removeWorkAt(BuildContext context, int index) {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.workingAt?.removeAt(index);
     workAtCntr.removeAt(index);
     notifyListeners();
   }
 
   Future<void> addBasicData(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
 
@@ -226,7 +226,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   Future<void> updateBasicData(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
 
     var profile = addDirectorVM.logoFile == null
@@ -273,7 +273,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   assignTheProfessBasic(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectorViewModel>();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     final data = addDirectorVM.getBasicInfoData.first;
     nameController.text = data.name ?? '';
     mobileNumberCntr.text = data.phone ?? '';

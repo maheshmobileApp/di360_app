@@ -13,7 +13,7 @@ class DirectorDetailsScreen extends StatelessWidget {
   const DirectorDetailsScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final directionalVM = Provider.of<DirectorViewModel>(context);
+    final directionalVM = Provider.of<DirectoryViewModel>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,

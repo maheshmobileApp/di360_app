@@ -28,7 +28,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return ChangeNotifierProvider(
       create: (_) =>
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
@@ -174,7 +174,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildSection(
-      BuildContext context, ProfileCategory section, AddDirectorViewModel vm) {
+      BuildContext context, ProfileCategory section, AddDirectoryViewModel vm) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -264,7 +264,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .navigateTo(RouteList.TalentListingScreen);
                           } else if (item.title == 'My Directory') {
                             context
-                                .read<AddDirectorViewModel>()
+                                .read<AddDirectoryViewModel>()
                                 .getDirectories();
                             navigationService
                                 .navigateTo(RouteList.adddirectorview);

@@ -22,11 +22,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
+class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   final AddDirectorRepositoryImpl addDirectorRepositoryImpl =
       AddDirectorRepositoryImpl();
 
-  AddDirectorViewModel() {
+  AddDirectoryViewModel() {
     getBusinessTypes();
   }
 //controller....
@@ -187,7 +187,7 @@ class AddDirectorViewModel extends ChangeNotifier with ValidationMixins {
     if (res.isNotEmpty) {
       _currentStep = 0;
       getBasicInfoData = res;
-      await context.read<DirectorViewModel>().getFollowersCount(userId);
+      await context.read<DirectoryViewModel>().getFollowersCount(userId);
       await editVM.getAppointments(context);
       type == 'PROFESSIONAL'
           ? getBasicInfoData.isNotEmpty

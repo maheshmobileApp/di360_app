@@ -32,11 +32,10 @@ class JobProfileRepoImpl implements JobProfileRepository {
   }
 
   @override
-  Future<dynamic> removeJobProfile() async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+  Future<dynamic> removeJobProfile({required String jobProfileId}) async {
     final response = await http.mutation(
       deleteJobProfile,
-      {'dental_professional_id': userId},
+      {'id': jobProfileId},
     );
     return response;
   }

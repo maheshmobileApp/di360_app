@@ -19,7 +19,7 @@ class AddDirectorBasicInfo extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -133,7 +133,7 @@ class AddDirectorBasicInfo extends StatelessWidget
     ));
   }
 
-  Widget _buildBusineestype(AddDirectorViewModel addDirectorVM) {
+  Widget _buildBusineestype(AddDirectoryViewModel addDirectorVM) {
     final allCategories = addDirectorVM.directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();

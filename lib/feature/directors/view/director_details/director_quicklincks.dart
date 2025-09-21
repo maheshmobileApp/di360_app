@@ -14,7 +14,7 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
 
   @override
   Widget build(BuildContext context) {
-    final directionalVM = Provider.of<DirectorViewModel>(context);
+    final directionalVM = Provider.of<DirectoryViewModel>(context);
     final items = directionalVM.quickLinkItems;
 
     return Scaffold(

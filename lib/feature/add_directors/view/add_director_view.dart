@@ -25,7 +25,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   AddDirectorView({super.key});
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -60,7 +60,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildStepProgressBar(
-      currentStep, totalSteps, AddDirectorViewModel AddDirectorVM) {
+      currentStep, totalSteps, AddDirectoryViewModel AddDirectorVM) {
     return StepsView(
         currentStep: AddDirectorVM.currentStep,
         totalSteps: AddDirectorVM.totalSteps);
@@ -103,7 +103,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _bottomButtons(
-      BuildContext context, AddDirectorViewModel addDirectorVM) {
+      BuildContext context, AddDirectoryViewModel addDirectorVM) {
     int currentStep = addDirectorVM.currentStep;
     bool isLastStep = currentStep == addDirectorVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;

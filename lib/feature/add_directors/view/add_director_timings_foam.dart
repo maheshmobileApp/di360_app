@@ -17,7 +17,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
   
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return Container(
       decoration: BoxDecoration(
@@ -37,7 +37,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget addTimings(AddDirectorViewModel addDirectorVM, BuildContext context,
+  Widget addTimings(AddDirectoryViewModel addDirectorVM, BuildContext context,
       EditDeleteDirectorViewModel editVM) {
     final daysList = ConstantData.DaysList.toSet().toList();
     final _formKey = GlobalKey<FormState>();
@@ -135,7 +135,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget socialUrlsWidget(AddDirectorViewModel addDirectorVM,
+  Widget socialUrlsWidget(AddDirectoryViewModel addDirectorVM,
       BuildContext context, EditDeleteDirectorViewModel editVM) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       sectionHeader("Add social links"),

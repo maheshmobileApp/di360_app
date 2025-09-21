@@ -16,8 +16,8 @@ class ProfessionalDirectorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-    final directionalVM = Provider.of<DirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
+    final directionalVM = Provider.of<DirectoryViewModel>(context);
     final professVM = Provider.of<ProfessionalAddDirectorVm>(context);
     return SafeArea(
       child: Scaffold(

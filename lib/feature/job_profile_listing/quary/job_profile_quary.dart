@@ -4,6 +4,7 @@ query GetJobProfileData($dental_professional_id: uuid!) {
     where: {dental_professional_id: {_eq: $dental_professional_id}}
     order_by: {created_at: desc}
   ) {
+    id
     created_at
     updated_at
     skills

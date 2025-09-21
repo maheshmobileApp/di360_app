@@ -19,7 +19,7 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -56,7 +56,7 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _TeamMemberCard(BuildContext context, DirectoryTeamMembers member,
-      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
+      AddDirectoryViewModel addDirectorVM, EditDeleteDirectorViewModel editVM) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -122,7 +122,7 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
       BuildContext context, EditDeleteDirectorViewModel editVM,
       {String? hintText, String? id, dynamic imag}) {
     final addDirectorVM =
-        Provider.of<AddDirectorViewModel>(context, listen: false);
+        Provider.of<AddDirectoryViewModel>(context, listen: false);
     final _formKey = GlobalKey<FormState>();
     showModalBottomSheet(
       context: context,
