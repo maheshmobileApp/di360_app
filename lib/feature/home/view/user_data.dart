@@ -36,7 +36,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   child: CachedNetworkImageWidget(
                       imageUrl: bannerImg ?? '',
                       width: double.infinity,
-                      height: 200,
+                      height: 220,
                       fit: BoxFit.fill)),
           Positioned(
               left: 20,
