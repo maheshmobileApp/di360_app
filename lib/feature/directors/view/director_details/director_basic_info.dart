@@ -17,7 +17,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final directionalVM = Provider.of<DirectorViewModel>(context);
+    final directionalVM = Provider.of<DirectoryViewModel>(context);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             textStyle: TextStyles.regular3(color: AppColors.black)),
       );
 
-  Widget _serviceButtons(BuildContext context, DirectorViewModel vm) {
+  Widget _serviceButtons(BuildContext context, DirectoryViewModel vm) {
     final services = vm.directorDetails?.directoryServices ?? [];
 
     return Padding(
@@ -178,7 +178,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         ),
       );
 
-  Widget _teamcard(DirectorViewModel vm) {
+  Widget _teamcard(DirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
           vm.directorDetails?.directoryTeamMembers?.length ?? 0, (index) {
@@ -234,7 +234,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _galleryCard(DirectorViewModel vm) {
+  Widget _galleryCard(DirectoryViewModel vm) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ClipRRect(
@@ -252,7 +252,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             }).first));
   }
 
-  Widget _documentCard(DirectorViewModel vm) {
+  Widget _documentCard(DirectoryViewModel vm) {
     return CustomGrid(
       childAspectRatio: 0.80,
       children: List.generate(
@@ -317,7 +317,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _archievementcard(DirectorViewModel vm) {
+  Widget _archievementcard(DirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
           vm.directorDetails?.directoryAchievements?.length ?? 0, (index) {
@@ -353,7 +353,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _certificationcard(DirectorViewModel vm) {
+  Widget _certificationcard(DirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
           vm.directorDetails?.directoryCertifications?.length ?? 0, (index) {
@@ -389,7 +389,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _testimonialCard(DirectorViewModel vm) {
+  Widget _testimonialCard(DirectoryViewModel vm) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -454,7 +454,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _faqSection(DirectorViewModel vm) => Column(
+  Widget _faqSection(DirectoryViewModel vm) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: vm.directorDetails!.directoryFaqs!
           .map((val) => Column(
@@ -504,7 +504,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs(DirectorViewModel vm) => Padding(
+  Widget _contactFAQs(DirectoryViewModel vm) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(

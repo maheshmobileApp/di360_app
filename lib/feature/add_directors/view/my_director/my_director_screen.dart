@@ -15,8 +15,8 @@ class MyDirectorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
-    final directionalVM = Provider.of<DirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
+    final directionalVM = Provider.of<DirectoryViewModel>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,

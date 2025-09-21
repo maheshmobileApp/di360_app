@@ -327,5 +327,30 @@ Job Seek
 5) Create Profile
 
 
- smiletech@yopmail.com 
+
+
+
+/*
+
+Dental Suppliers 
+
+smiletech@yopmail.com 
 123456
+
+Create Job -> Admin -> Approve The job -> Job available in Market Place -
+
+Professional -> Appply and enquire the job 
+Applied job - >
+Enquired job -> Api 
+
+
+Dental Suppliers  -> 
+
+Job listing -> Applicats -> load the all data -> enquire and message 
+Enquiry List -> 
+ 
+
+Profile Create -> Admin approve-> market palce -> hire me / enquiry 
+
+
+*/

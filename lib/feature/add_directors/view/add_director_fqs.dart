@@ -17,7 +17,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -55,7 +55,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _faqItem(BuildContext context, AddDirectorViewModel addDirectorVM,
+  Widget _faqItem(BuildContext context, AddDirectoryViewModel addDirectorVM,
       DirectoryFaqs? data, EditDeleteDirectorViewModel editVM) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -104,7 +104,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
 
   void showFAQSBottomSheet(
       BuildContext context,
-      AddDirectorViewModel addDirectorVM,
+      AddDirectoryViewModel addDirectorVM,
       EditDeleteDirectorViewModel editVM,
       String? id) {
     final _formKey = GlobalKey<FormState>();
@@ -167,7 +167,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget addfaqsWidget(AddDirectorViewModel addDirectorVM) {
+  Widget addfaqsWidget(AddDirectoryViewModel addDirectorVM) {
     return Column(
       children: [
         InputTextField(
@@ -191,7 +191,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget(BuildContext context, AddDirectorViewModel addDirectorVM,
+  Widget menuWidget(BuildContext context, AddDirectoryViewModel addDirectorVM,
       DirectoryFaqs? data, EditDeleteDirectorViewModel editVM) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,

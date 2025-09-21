@@ -18,7 +18,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editDeleteVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -55,7 +55,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _ServiceCard(BuildContext context, DirectoryServices service,
-      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel vm) {
+      AddDirectoryViewModel addDirectorVM, EditDeleteDirectorViewModel vm) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -117,7 +117,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
   void showNewServiceBottomSheet(
       BuildContext context, EditDeleteDirectorViewModel vm, String editId) {
     final addDirectorVM =
-        Provider.of<AddDirectorViewModel>(context, listen: false);
+        Provider.of<AddDirectoryViewModel>(context, listen: false);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -186,7 +186,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
 class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

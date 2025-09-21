@@ -16,11 +16,11 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class DirectorViewModel extends ChangeNotifier {
+class DirectoryViewModel extends ChangeNotifier {
   final DirectorRepositoryImpl repository = DirectorRepositoryImpl();
   final HttpService _http = HttpService();
 
-  DirectorViewModel() {
+  DirectoryViewModel() {
     getBannerList();
     getDirectorCatagoryList();
   }

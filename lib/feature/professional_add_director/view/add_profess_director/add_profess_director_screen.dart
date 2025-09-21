@@ -24,7 +24,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final professAddDirectVM = Provider.of<ProfessionalAddDirectorVm>(context);
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
       appBar: AppBar(
           leading: IconButton(
@@ -92,7 +92,9 @@ class ProfessionalAddDirectorView extends StatelessWidget
   }
 
   Widget _bottomButtons(
-      BuildContext context, ProfessionalAddDirectorVm professAddDirectVM,AddDirectorViewModel addDirectorVM) {
+      BuildContext context,
+      ProfessionalAddDirectorVm professAddDirectVM,
+      AddDirectoryViewModel addDirectorVM) {
     int currentStep = professAddDirectVM.currentStep;
     bool isLastStep = currentStep == professAddDirectVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;

@@ -17,7 +17,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectVM = Provider.of<AddDirectoryViewModel>(context);
     final directData = addDirectVM.getBasicInfoData.first;
     return SingleChildScrollView(
       child: Column(
@@ -100,7 +100,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
             textStyle: TextStyles.regular3(color: AppColors.black)),
       );
 
-  Widget _serviceButtons(BuildContext context, AddDirectorViewModel vm) {
+  Widget _serviceButtons(BuildContext context, AddDirectoryViewModel vm) {
     final services = vm.getBasicInfoData.first.directoryServices ?? [];
 
     return Padding(
@@ -162,7 +162,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
         ),
       );
 
-  Widget _teamcard(AddDirectorViewModel vm) {
+  Widget _teamcard(AddDirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
           vm.getBasicInfoData.first.directoryTeamMembers?.length ?? 0, (index) {
@@ -218,7 +218,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _galleryCard(AddDirectorViewModel vm) {
+  Widget _galleryCard(AddDirectoryViewModel vm) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ClipRRect(
@@ -236,7 +236,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
             }).first));
   }
 
-  Widget _documentCard(AddDirectorViewModel vm) {
+  Widget _documentCard(AddDirectoryViewModel vm) {
     return CustomGrid(
       childAspectRatio: 0.75,
       children: List.generate(
@@ -301,7 +301,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _archievementcard(AddDirectorViewModel vm) {
+  Widget _archievementcard(AddDirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
           vm.getBasicInfoData.first.directoryAchievements?.length ?? 0, (index) {
@@ -337,7 +337,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _certificationcard(AddDirectorViewModel vm) {
+  Widget _certificationcard(AddDirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
           vm.getBasicInfoData.first.directoryCertifications?.length ?? 0, (index) {
@@ -373,7 +373,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _testimonialCard(AddDirectorViewModel vm) {
+  Widget _testimonialCard(AddDirectoryViewModel vm) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -438,7 +438,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _faqSection(AddDirectorViewModel vm) => Column(
+  Widget _faqSection(AddDirectoryViewModel vm) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: vm.getBasicInfoData.first.directoryFaqs!
           .map((val) => Column(
@@ -488,7 +488,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs(AddDirectorViewModel vm) => Padding(
+  Widget _contactFAQs(AddDirectoryViewModel vm) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(

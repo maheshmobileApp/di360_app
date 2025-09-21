@@ -14,7 +14,7 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final filterProvider = Provider.of<DirectorViewModel>(context);
+    final filterProvider = Provider.of<DirectoryViewModel>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.buttomBarColor,
@@ -75,7 +75,7 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget buildSearchBar(
-      DirectorViewModel filterProvider, BuildContext context) {
+      DirectoryViewModel filterProvider, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -131,7 +131,7 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget buildFilters(DirectorViewModel filterProvider, BuildContext context) {
+  Widget buildFilters(DirectoryViewModel filterProvider, BuildContext context) {
     if (filterProvider.catagoryTypesList!.isEmpty) {
       return Center(
         child: Padding(

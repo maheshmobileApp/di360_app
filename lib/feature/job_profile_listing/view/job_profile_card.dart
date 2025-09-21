@@ -211,7 +211,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
               onBack: () {
             navigationService.goBack();
-            vm.removeJobsProfileData(context);
+            vm.removeJobsProfileData(context, jobProfileId: id);
           });
         } else if (value == "Active") {
           showAlertMessage(

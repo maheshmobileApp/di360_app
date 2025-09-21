@@ -13,7 +13,7 @@ class OtherInforScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -86,7 +86,7 @@ class OtherInforScreen extends StatelessWidget {
   }
 
   Widget socialURLWidget(
-      AddDirectorViewModel addDirectVM, EditDeleteDirectorViewModel editVM) {
+      AddDirectoryViewModel addDirectVM, EditDeleteDirectorViewModel editVM) {
     final socialList = addDirectVM.getBasicInfoData.first.directoryLocations
         ?.where((v) => v.status == "SOCIAL")
         .toList();

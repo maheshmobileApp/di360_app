@@ -17,7 +17,7 @@ class AddSocialForm extends StatelessWidget with BaseContextHelpers {
   
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return Container(
       decoration: BoxDecoration(
@@ -35,7 +35,7 @@ class AddSocialForm extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget socialUrlsWidget(AddDirectorViewModel addDirectorVM,
+  Widget socialUrlsWidget(AddDirectoryViewModel addDirectorVM,
       BuildContext context, EditDeleteDirectorViewModel editVM) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       sectionHeader("Add social links"),

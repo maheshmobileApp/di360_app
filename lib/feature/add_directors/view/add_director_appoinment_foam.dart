@@ -11,7 +11,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
     with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final teamMemberList =
         addDirectorVM.getBasicInfoData.first.directoryTeamMembers;
     final serviceList = addDirectorVM.getBasicInfoData.first.directoryServices;

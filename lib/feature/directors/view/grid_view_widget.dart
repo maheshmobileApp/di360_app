@@ -16,7 +16,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DirectorViewModel>(builder: (context, value, child) {
+    return Consumer<DirectoryViewModel>(builder: (context, value, child) {
       return SingleChildScrollView(
         controller: controller,
         child: value.directorsList.isEmpty

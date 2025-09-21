@@ -20,7 +20,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
   const AddDirectorTestmonal({super.key});
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
@@ -51,7 +51,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _testimonialCard(AddDirectorViewModel addDirectorVM,
+  Widget _testimonialCard(AddDirectoryViewModel addDirectorVM,
       BuildContext context, EditDeleteDirectorViewModel editVM) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -157,7 +157,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
   }
 
   void showTestimonialBottomSheet(BuildContext context,
-      AddDirectorViewModel addDirectorVM, EditDeleteDirectorViewModel editVM,
+      AddDirectoryViewModel addDirectorVM, EditDeleteDirectorViewModel editVM,
       {DirectoryTestimonials? data}) {
     final _formKey = GlobalKey<FormState>();
     showModalBottomSheet(
@@ -228,7 +228,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget testimonialsWidget(
-      AddDirectorViewModel addDirectorVM, BuildContext context,
+      AddDirectoryViewModel addDirectorVM, BuildContext context,
       {String? imgUrl, String? picUrl}) {
     return Column(
       children: [
@@ -289,7 +289,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  bool validationImageAndPicture(AddDirectorViewModel addDirectorVM,
+  bool validationImageAndPicture(AddDirectoryViewModel addDirectorVM,
       BuildContext context, dynamic img, dynamic msgPic) {
     if (addDirectorVM.testimonialsFile?.path.isEmpty ?? false || img == null) {
       showTopMessage(context, 'Select image');

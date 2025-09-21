@@ -47,9 +47,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           title: widget.talentList?.fullName ?? "",
           body: _buildBodyContent(context, talentViewModel),
         ),
-        bottomNavigationBar: talentViewModel.isShowBottomeActions
-            ? _bottomButtons(context)
-            : null);
+        bottomNavigationBar: _bottomButtons(context));
   }
 
   Widget _buildBodyContent(

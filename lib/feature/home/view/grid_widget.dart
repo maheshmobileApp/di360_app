@@ -51,7 +51,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     } else if (title == 'Catalogue') {
       dashBoardVM.setIndex(3, navigatorKey.currentContext!);
     } else if (title == 'Directory') {
-      await context.read<DirectorViewModel>().getDirectorsList(context);
+      await context.read<DirectoryViewModel>().getDirectorsList(context);
       await navigationService.navigateTo(RouteList.directory);
     }
   }

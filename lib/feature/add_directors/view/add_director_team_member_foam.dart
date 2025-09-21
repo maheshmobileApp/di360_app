@@ -17,7 +17,7 @@ class AddDirectorTeamMemberFoam extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final AddDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final AddDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),

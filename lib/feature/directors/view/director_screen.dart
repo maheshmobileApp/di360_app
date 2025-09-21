@@ -62,10 +62,10 @@ class _DirectorScreenState extends State<DirectorScreen>
                 ),
               ),
               addVertical(16),
-              Selector<DirectorViewModel, bool>(
+              Selector<DirectoryViewModel, bool>(
                 selector: (_, vm) => vm.removeIcon,
                 builder: (context, removeIcon, _) {
-                  final directorVM = context.read<DirectorViewModel>();
+                  final directorVM = context.read<DirectoryViewModel>();
                   return SearchBarWidget(
                     controller: directorVM.searchController,
                     onFieldSubmitted: (value) async {

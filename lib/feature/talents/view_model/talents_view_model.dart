@@ -32,7 +32,7 @@ class TalentsViewModel extends ChangeNotifier {
  isShowBottomeActionss(String professionalId) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     isShowBottomeActions = userId == professionalId;
-    notifyListeners();
+    notifyListeners();// Suppliers,practice owener show the action button 
 
   }
 

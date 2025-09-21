@@ -12,7 +12,7 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final addDirectorVM = Provider.of<AddDirectorViewModel>(context);
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final professDirectorVM = Provider.of<ProfessionalAddDirectorVm>(context);
     return SingleChildScrollView(
       child: Padding(
