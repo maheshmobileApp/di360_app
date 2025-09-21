@@ -23,7 +23,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_m
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
-import 'package:di360_flutter/feature/job_profile/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
@@ -79,10 +79,17 @@ class Routes {
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
-      RouteList.JobProfileView: (context) => ChangeNotifierProvider(
-            create: (BuildContext context) => JobProfileViewModel(),
-            child: JobProfileView(),
+      RouteList.JobProfileView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        final profileData = args['profileData'] ?? null;
+        return ChangeNotifierProvider(
+          create: (BuildContext context) => JobProfileCreateViewModel(),
+          child: JobProfileView(
+            profile: profileData,
           ),
+        );
+      },
       RouteList.JobListingScreen: (context) => JobListingScreen(),
       RouteList.JobProfileScreen: (context) => JobProfileScreen(),
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),

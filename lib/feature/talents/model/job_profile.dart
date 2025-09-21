@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/model/certificates.dart';
+import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 
 class JobProfile {
   final String? id;
@@ -278,46 +279,7 @@ class JobExperience {
       };
 }
 
-class Education {
-  final String? finishDate;
-  final String? institution;
-  final String? qualification;
-  final String? courseHighlights;
-  final bool? qualificationFinished;
 
-  Education({
-    this.finishDate,
-    this.institution,
-    this.qualification,
-    this.courseHighlights,
-    this.qualificationFinished,
-  });
-
-  factory Education.fromJson(Map<String, dynamic> json) {
-    bool? qualificationFinished;
-    if (json['qualificationFinished'] is bool) {
-      qualificationFinished = json['qualificationFinished'];
-    } else if (json['qualificationFinished'] is String) {
-      qualificationFinished =
-          json['qualificationFinished'].toLowerCase() == 'true';
-    }
-    return Education(
-      finishDate: json['finishDate'],
-      institution: json['institution'],
-      qualification: json['qualification'],
-      courseHighlights: json['courseHighlights'],
-      qualificationFinished: qualificationFinished,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'finishDate': finishDate,
-        'institution': institution,
-        'qualification': qualification,
-        'courseHighlights': courseHighlights,
-        'qualificationFinished': qualificationFinished,
-      };
-}
 
 
 

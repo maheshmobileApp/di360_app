@@ -54,8 +54,13 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
             await navigationService.navigateTo(RouteList.JobProfileView);
             await vm.fetchJobProfiles();
           } else {
-            await navigationService.navigateTo(
+            final profileData = vm.filteredProfiles.first;
+            await navigationService
+                .navigateToWithParams(
               RouteList.JobProfileView,
+              params: {
+              "profileData": profileData,
+            }
             );
           }
         },
@@ -114,42 +119,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 60,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: vm.statuses.length,
-              itemBuilder: (context, index) {
-                final status = vm.statuses[index];
-                final isSelected = vm.selectedStatus == status.toUpperCase();
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                  decoration: BoxDecoration(
-                    gradient: isSelected
-                        ? const LinearGradient(
-                            colors: [Colors.pink, AppColors.primaryColor],
-                          )
-                        : null,
-                    color: isSelected ? null : AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(color: AppColors.primaryColor),
-                  ),
-                  child: Text(
-                    vm.displayName(status),
-                    style: TextStyles.regular2(
-                      color: isSelected
-                          ? AppColors.whiteColor
-                          : AppColors.primaryColor,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const Divider(),
+         
           Expanded(
             child: vm.isLoading
                 ? const Center(child: CircularProgressIndicator())

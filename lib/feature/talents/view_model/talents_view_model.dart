@@ -2,7 +2,6 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
-import 'package:di360_flutter/feature/talents/model/talents_model.dart';
 import '../../talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';

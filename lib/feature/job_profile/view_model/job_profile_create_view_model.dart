@@ -8,6 +8,8 @@ import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repo_impl.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repository.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+// import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/toast.dart';
@@ -16,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class JobProfileViewModel extends ChangeNotifier with ValidationMixins {
+class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   /// Clears all data in the JobProfileViewModel
   void clearAllData() {
     userFullName = "";
@@ -83,7 +85,7 @@ class JobProfileViewModel extends ChangeNotifier with ValidationMixins {
   final CreateJobProfileRepository repo = CreateJobProfileRepoImpl();
   final HttpService _http = HttpService();
 
-  JobProfileViewModel() {
+  JobProfileCreateViewModel() {
     fetchJobRoles();
   }
 
@@ -167,8 +169,9 @@ class JobProfileViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
 
-  initializeTheData() {
+  initializeTheData({required JobProfile profile}) {
     getUserFullName();
+    
   }
 
   getUserFullName() async {
@@ -739,6 +742,10 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
       Loaders.circularHideLoader(context);
       notifyListeners();
     }
+  }
+
+  setTheProfileUpdateData(){
+
   }
 
   @override
