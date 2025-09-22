@@ -23,12 +23,12 @@ class CustomChipView extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             margin: EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: AppColors.secondaryBlueColor,
+              color: AppColors.timeBgColor,
               borderRadius: BorderRadius.circular(16), // Adjust radius here
             ),
             child: Text(
               "${type?.toString() == 'null' ? 'N/A' : type?.toString()}",
-              style: TextStyle(color: AppColors.primaryBlueColor),
+              style: TextStyle(color: AppColors.primaryColor),
             ),
           ),
         );
