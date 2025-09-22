@@ -83,10 +83,12 @@ class Routes {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         final profileData = args['profileData'] ?? null;
+        final isEdit = args['isEdit'] ?? false;
         return ChangeNotifierProvider(
           create: (BuildContext context) => JobProfileCreateViewModel(),
           child: JobProfileView(
             profile: profileData,
+            isEdit: isEdit,
           ),
         );
       },

@@ -60,6 +60,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
               RouteList.JobProfileView,
               params: {
               "profileData": profileData,
+              "isEdit": true,
             }
             );
           }

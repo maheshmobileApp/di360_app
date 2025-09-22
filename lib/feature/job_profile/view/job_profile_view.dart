@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class JobProfileView extends StatefulWidget with BaseContextHelpers {
-  JobProfileView({super.key, required this.profile});
+  JobProfileView({super.key, required this.profile, required isEdit});
   final JobProfile profile;
 
   @override
@@ -31,9 +31,13 @@ class _JobProfileViewState extends State<JobProfileView> {
   }
 
   initilizeTheProfileData() async {
-    final jobProfileVM =
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final jobProfileVM =
         Provider.of<JobProfileCreateViewModel>(context, listen: false);
-    await jobProfileVM.initializeTheData(profile: widget.profile);
+      await jobProfileVM.initializeTheData(
+          profile: widget.profile, isEdit: true);
+    });
+ 
   }
 
 

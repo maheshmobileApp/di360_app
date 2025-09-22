@@ -5,6 +5,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/toast.dart';
+import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
@@ -339,19 +340,21 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Locum Toggle ─────
   String _formatDate(DateTime date) {
-    return DateFormat("d MMM yyyy").format(date);
+    return di360_date_utils.DateUtils.formatToDayMonthYear(date);
   }
 
   void setStartLocumDate(DateTime date) {
     startLocumDate = date;
-    startLocumDateController.text = DateFormat("M/d/yyyy").format(date);
+    startLocumDateController.text =
+        di360_date_utils.DateUtils.formatToYyyyMmDd(date);
     updateLocumSummary();
     notifyListeners();
   }
 
   void setEndLocumDate(DateTime date) {
     endLocumDate = date;
-    endLocumDateController.text = DateFormat("M/d/yyyy").format(date);
+    endLocumDateController.text =
+        di360_date_utils.DateUtils.formatToYyyyMmDd(date);
     updateLocumSummary();
     notifyListeners();
   }

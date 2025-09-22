@@ -169,9 +169,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
 
-  initializeTheData({required JobProfile profile}) {
+  initializeTheData({required JobProfile profile, bool isEdit = false}) {
     getUserFullName();
-    
+    if (isEdit) {
+      setTheProfileUpdateData(profile);
+    }
   }
 
   getUserFullName() async {
@@ -744,8 +746,11 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
     }
   }
 
-  setTheProfileUpdateData(){
-
+  setTheProfileUpdateData(JobProfile profile) {
+    mobileNumberController.text = profile.mobileNumber ?? "";
+    emailAddressController.text = profile.emailAddress ?? "";
+    selectedRole = profile.professionType;
+    notifyListeners();
   }
 
   @override
