@@ -1,13 +1,8 @@
-
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../feature/job_profile/model/job_education.dart';
-
-// Accepts a list of Education objects
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class EducationDataWithIcon extends StatelessWidget {
   final String iconPath;
@@ -43,16 +38,11 @@ class EducationDataWithIcon extends StatelessWidget {
               const SizedBox(width: 16),
               Text(
                 title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
+                style: TextStyles.bold2(),
               ),
             ],
           ),
           const SizedBox(height: 8),
-
-          // If no education data
           if (educationList.isEmpty)
             const Text(
               'No education details available',
@@ -61,7 +51,6 @@ class EducationDataWithIcon extends StatelessWidget {
           else
             Column(
               children: educationList.map((edu) {
-                // Build date string only if available
                 String? dateInfo;
                 if (edu.finishDate != null && edu.finishDate!.isNotEmpty) {
                   dateInfo = 'Finished: ${edu.finishDate}';
@@ -69,13 +58,11 @@ class EducationDataWithIcon extends StatelessWidget {
                     edu.expectedFinishDate!.isNotEmpty) {
                   dateInfo = 'Expected Finish: ${edu.expectedFinishDate}';
                 }
-
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Qualification
                       if (edu.qualification.isNotEmpty)
                         Text(
                           edu.qualification,
@@ -84,8 +71,6 @@ class EducationDataWithIcon extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-
-                      // Institution
                       if (edu.institution.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Text(
@@ -96,8 +81,6 @@ class EducationDataWithIcon extends StatelessWidget {
                           ),
                         ),
                       ],
-
-                      // Dates
                       if (dateInfo != null) ...[
                         const SizedBox(height: 4),
                         Text(
@@ -108,8 +91,6 @@ class EducationDataWithIcon extends StatelessWidget {
                           ),
                         ),
                       ],
-
-                      // Highlights
                       if (edu.courseHighlights.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Text(

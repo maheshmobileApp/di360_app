@@ -14,6 +14,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
+import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/gallary_view.dart';
 import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
@@ -262,8 +263,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         _sectionHeader('Job Description'),
         _sectionText('${widget.job.description ?? ''}'),
         SizedBox(height: 10),
-        _sectionHeader('Benefits'),
-          Text('${widget.job.offeredBenefits ?? ''}'),
+         _sectionHeader(
+            "Skills"
+          ),
+            SizedBox(height:6),
+          CustomChipView(typesList: widget.job.offeredBenefits ?? []),
+            SizedBox(height: 16),
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
