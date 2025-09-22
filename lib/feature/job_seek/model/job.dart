@@ -150,7 +150,7 @@ class Jobs {
 
  if (json['banner_image'] != null) {
     if (json['banner_image'] is Map) {
-      bannerImage = Banner.fromJson(json);
+      bannerImage = Banner.fromJson(json['banner_image']);
     } else if (json['banner_image'] is String) {
       bannerImage = Banner(url: json['banner_image']);
     }else{

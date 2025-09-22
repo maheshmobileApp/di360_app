@@ -750,6 +750,7 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
     mobileNumberController.text = profile.mobileNumber ?? "";
     emailAddressController.text = profile.emailAddress ?? "";
     selectedRole = profile.professionType;
+    aboutMeController.text = profile.aboutYourself ?? "";
     notifyListeners();
   }
 

@@ -373,8 +373,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
 
   Widget _sectionText(String text) {
     return Text(text,
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
+        maxLines: null,
+        overflow: TextOverflow.visible,
         style: TextStyles.regular1(color: AppColors.locationTextColor));
   }
 

@@ -89,6 +89,7 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
             ),
             addVertical(16),
             InputTextField(
+              controller: jobProfileVM.aboutMeController,
               hintText: "Enter About Yourself",
               maxLength: 500,
               maxLines: 5,
