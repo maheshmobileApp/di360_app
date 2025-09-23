@@ -15,4 +15,12 @@ class SessionModel {
   })  : sessionNameController = TextEditingController(text: sessionName),
         sessionInfoController = TextEditingController(text: sessionInfo),
         eventDateController = TextEditingController(text: eventDate);
+
+  void clear() {
+  sessionNameController.clear();
+  sessionInfoController.clear();
+  eventDateController.clear();
+  images = [];
+}
+
 }

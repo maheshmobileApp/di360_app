@@ -94,10 +94,7 @@ class CoursesListingDetails {
   String? startDate;
   String? endDate;
   String? startTime;
- 
-
-  
-
+  CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
 
   CoursesListingDetails(
       {this.id,
@@ -154,8 +151,7 @@ class CoursesListingDetails {
       this.startDate,
       this.endDate,
       this.startTime,
-      
-      });
+      this.courseRegisteredUsersAggregate});
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -243,6 +239,11 @@ class CoursesListingDetails {
     startDate = json['startDate'];
     endDate = json['endDate'];
     startTime = json['startTime'];
+    courseRegisteredUsersAggregate =
+        json['course_registered_users_aggregate'] != null
+            ? new CourseRegisteredUsersAggregate.fromJson(
+                json['course_registered_users_aggregate'])
+            : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -322,6 +323,10 @@ class CoursesListingDetails {
     data['startDate'] = this.startDate;
     data['endDate'] = this.endDate;
     data['startTime'] = this.startTime;
+    if (this.courseRegisteredUsersAggregate != null) {
+      data['course_registered_users_aggregate'] =
+          this.courseRegisteredUsersAggregate!.toJson();
+    }
     return data;
   }
 }
@@ -338,6 +343,42 @@ class Attachments {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    return data;
+  }
+}
+
+class CourseRegisteredUsersAggregate {
+  Aggregate? aggregate;
+
+  CourseRegisteredUsersAggregate({this.aggregate});
+
+  CourseRegisteredUsersAggregate.fromJson(Map<String, dynamic> json) {
+    aggregate = json['aggregate'] != null
+        ? new Aggregate.fromJson(json['aggregate'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.aggregate != null) {
+      data['aggregate'] = this.aggregate!.toJson();
+    }
+    return data;
+  }
+}
+
+class Aggregate {
+  int? count;
+
+  Aggregate({this.count});
+
+  Aggregate.fromJson(Map<String, dynamic> json) {
+    count = json['count'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['count'] = this.count;
     return data;
   }
 }

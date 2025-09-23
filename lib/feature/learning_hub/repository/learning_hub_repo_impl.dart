@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_coun
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
 
@@ -54,14 +55,13 @@ class LearningHubRepoImpl extends LearningHubRepository {
       whereCondition["status"] = {"_eq": listingStatus};
     }
 
-    if (searchText != null &&
-        searchText.isNotEmpty) {
-      whereCondition["company_name"] = {"_ilike": "%${searchText}%"};
+    if (searchText != null && searchText.isNotEmpty) {
+      whereCondition["course_name"] = {"_ilike": "%${searchText}%"};
     }
 
     final payload = {
       "where": whereCondition,
-      "limit": 20,
+      "limit": 100,
       "offset": 0,
     };
 
@@ -137,16 +137,23 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(String? courseId) async {
+  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(
+      String? courseId) async {
     final Map<String, dynamic> variables = {
       "course_id": "${courseId}",
-      "limit": 10,
+      "limit": 100,
       "offset": 0
     };
     final getUsersData =
         await http.query(getCourseRegisteredUsersQuery, variables: variables);
     final result = GetUsers.fromJson(getUsersData);
     return result.courseRegisteredUsers;
+  }
+
+  @override
+  Future userRegisterToCourse(dynamic variables) async {
+    final res = await http.mutation(userRegisterToCourseQuery, variables);
+    return res;
   }
 
   /*@override

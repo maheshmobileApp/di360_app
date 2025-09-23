@@ -45,7 +45,7 @@ class CourseRegisteredUsers {
   String? firstName;
   String? lastName;
   String? email;
-  Null? phoneNumber;
+  int? phoneNumber;
   String? description;
   String? courseId;
   String? fromId;

@@ -22,7 +22,7 @@ class NewCourseScreen extends StatefulWidget {
 class _JobCreateViewState extends State<NewCourseScreen> {
   @override
   Widget build(BuildContext context) {
-    final jobCreateVM = Provider.of<NewCourseViewModel>(context);
+    final newCourseVM = Provider.of<NewCourseViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -65,30 +65,30 @@ class _JobCreateViewState extends State<NewCourseScreen> {
       body: Column(
         children: [
           _buildStepProgressBar(
-              jobCreateVM.currentStep, jobCreateVM.totalSteps, jobCreateVM),
+              newCourseVM.currentStep, newCourseVM.totalSteps, newCourseVM),
           Expanded(
             child: PageView(
-              controller: jobCreateVM.pageController,
+              controller: newCourseVM.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-                jobCreateVM.totalSteps,
+                newCourseVM.totalSteps,
                 (index) => _buildStep(CourseCreateSteps.values[index],
-                    jobCreateVM.formKeys[index]),
+                    newCourseVM.formKeys[index]),
               ),
             ),
           ),
-          _bottomButtons(context, jobCreateVM),
+          _bottomButtons(context, newCourseVM),
         ],
       ),
     );
   }
 
   Widget _buildStepProgressBar(
-      currentStep, totalSteps, NewCourseViewModel jobcreateVm) {
+      currentStep, totalSteps, NewCourseViewModel newCourseVM) {
     return StepsView(
-        currentStep: jobcreateVm.currentStep,
-        totalSteps: jobcreateVm.totalSteps,
-        stepTitles: jobcreateVm.steps);
+        currentStep: newCourseVM.currentStep,
+        totalSteps: newCourseVM.totalSteps,
+        stepTitles: newCourseVM.steps);
   }
 
   Widget _buildStep(CourseCreateSteps stepIndex, GlobalKey<FormState> key) {
@@ -114,9 +114,9 @@ class _JobCreateViewState extends State<NewCourseScreen> {
     }
   }
 
-  Widget _bottomButtons(BuildContext context, NewCourseViewModel jobCreateVM) {
-    int currentStep = jobCreateVM.currentStep;
-    bool isLastStep = currentStep == jobCreateVM.totalSteps - 1;
+  Widget _bottomButtons(BuildContext context, NewCourseViewModel newCourseVM) {
+    int currentStep = newCourseVM.currentStep;
+    bool isLastStep = currentStep == newCourseVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;
     return Container(
       height: 80,
@@ -140,7 +140,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                 text: 'Previous',
                 height: 42,
                 onPressed: () {
-                  jobCreateVM.goToPreviousStep();
+                  newCourseVM.goToPreviousStep();
                 },
                 backgroundColor: AppColors.geryColor,
                 textColor: Colors.black,
@@ -155,10 +155,14 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
+                newCourseVM.validatePresenterImg();
+                newCourseVM.validateCourseHeaderBanner();
+                newCourseVM.validateGallery();
+                newCourseVM.validateCourseBanner();
                 final currentFormKey =
-                    jobCreateVM.formKeys[jobCreateVM.currentStep];
+                    newCourseVM.formKeys[newCourseVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
-                  await jobCreateVM.createdCourseListing(context, true);
+                  await newCourseVM.createdCourseListing(context, true);
                   navigationService.goBack();
                 }
               },
@@ -175,13 +179,13 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               fontSize: 12,
               onPressed: () async {
                 final currentFormKey =
-                    jobCreateVM.formKeys[jobCreateVM.currentStep];
+                    newCourseVM.formKeys[newCourseVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
-                    await jobCreateVM.createdCourseListing(context, false);
+                    await newCourseVM.createdCourseListing(context, false);
                     navigationService.goBack();
                   } else {
-                    jobCreateVM.goToNextStep();
+                    newCourseVM.goToNextStep();
                   }
                 }
               },

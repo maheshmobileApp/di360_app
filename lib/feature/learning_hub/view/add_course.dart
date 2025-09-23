@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_time_picker.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -34,6 +35,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
           children: [
             _sectionHeader("Add Course"),
             SizedBox(height: 16),
+            _buildCategoryTypes(jobCreateVM),
+            SizedBox(height: 8),
+            _buildCourseTypes(jobCreateVM),
+            SizedBox(height: 8),
             InputTextField(
               controller: jobCreateVM.courseNameController,
               hintText: "Enter Course Name",
@@ -44,9 +49,31 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                   : null,
             ),
             SizedBox(height: 8),
-            _buildCategoryTypes(jobCreateVM),
-            SizedBox(height: 8),
-            _buildCourseTypes(jobCreateVM),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTimePicker(
+                    controller: jobCreateVM.startTimeController,
+                    title: "Start Time",
+                    isRequired: true,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Please Select Time'
+                        : null,
+                  ),
+                ),
+                const SizedBox(width: 12), // spacing between fields
+                Expanded(
+                  child: CustomTimePicker(
+                    controller: jobCreateVM.endTimeController,
+                    title: "End Time",
+                    isRequired: true,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Please Select Time'
+                        : null,
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 8),
             if (showStartEndDate) ...[
               CustomDatePicker(
@@ -145,12 +172,14 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               isRequired: true,
               showPreview: true,
               selectedFile:
-                  jobCreateVM.selectedPresentedImg, // ✅ comes from ViewModel
+                  jobCreateVM.selectedPresentedImg, 
               onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
             ),
             SizedBox(height: 8),
+            _sectionHeader("Images/Video"),
+            SizedBox(height: 8),
             ImagePickerField(
-              title: "Course Header Banner",
+              title: "Course Header Banner / Video",
               isRequired: true,
               allowMultiple: true,
               showPreview: true,
@@ -168,13 +197,15 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
             ),
             SizedBox(height: 8),
             ImagePickerField(
-              title: "Course Banner Image",
+              title: "Course Header Banner Image",
               isRequired: true,
               allowMultiple: true,
               showPreview: true,
               selectedFiles: jobCreateVM.selectedCourseBannerImg,
               onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),
             ),
+            SizedBox(height: 8),
+            _sectionHeader("Price/Availability"),
             SizedBox(height: 8),
             InputTextField(
               hintText: "Enter your text here",
@@ -266,6 +297,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                   value == null || value.isEmpty ? 'Please Select Date' : null,
             ),
             SizedBox(height: 8),
+            /*
             InputTextField(
               hintText: "Enter Description",
               maxLength: 500,
@@ -280,7 +312,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               maxLines: 5,
               title: "Learning Objectives",
               controller: jobCreateVM.learningObjectivesDescController,
-            ),
+            ),*/
           ],
         ),
       ),

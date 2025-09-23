@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -184,23 +185,44 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         return CouresListingCard(
                           id: course.id ?? "",
                           logoUrl: course.presentedByImage?.url ?? '',
-                          companyName: course.presentedByName ?? '',
-                          courseTitle: course.companyName ?? '',
+                          companyName: course.courseName ?? '',
+                          courseTitle: course.presentedByName ?? '',
                           status: course.status ?? '',
                           description: course.description ?? '',
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
-                          registeredCount: course.numberOfSeats ?? 0,
+                          registeredCount: course.courseRegisteredUsersAggregate
+                                  ?.aggregate?.count ??
+                              0,
                           onDetailView: () async {
+                            if (course.status == "DRAFT") {
+                              scaffoldMessenger(
+                                  "Draft courses cannot be opened");
+                              return;
+                            }
+
                             await courseListingVM.getCourseDetails(
-                                context, course.id ?? "");
+                              context,
+                              course.id ?? "",
+                            );
 
                             navigationService.navigateTo(
                               RouteList.courseDetailScreen,
                             );
                           },
-                          onTapRegistered: () {
-                            // Handle navigation or API call
+                          onTapRegistered: () async {
+                            await courseListingVM.getCourseRegisteredUsers(
+                                context, course.id ?? "");
+                            final count = course.courseRegisteredUsersAggregate
+                                    ?.aggregate?.count ??
+                                0;
+
+                            if (count > 0) {
+                              navigationService
+                                  .navigateTo(RouteList.registeredUsersView);
+                            } else {
+                              scaffoldMessenger('No Registered Users');
+                            }
                           },
                           onMenuAction: (action, id) async {
                             switch (action) {

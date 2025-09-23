@@ -60,6 +60,7 @@ class ImageConst {
   static const String _svgBasePath = 'assets/svgs/';
   static const String noImage = 'assets/pngs/noImage.jpg';
 
+
   // Job related SVG icons
   static const String briefcaseSvg = '${_svgBasePath}briefcase.svg';
   static const String currencySvg = '${_svgBasePath}currency.svg';
@@ -74,6 +75,8 @@ class ImageConst {
   static const String contactLocation = '${_svgBasePath}contactLocation.svg';
   static const String contactMail = '${_svgBasePath}contactMail.svg';
   static const String contactPhone = '${_svgBasePath}contactPhone.svg';
+  static const String clock = '${_svgBasePath}Clock.svg';
+  static const String calenderBlank = '${_svgBasePath}CalendarBlank.svg';
 
   //static const String
 

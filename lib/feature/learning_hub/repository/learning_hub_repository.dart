@@ -18,4 +18,5 @@ abstract class LearningHubRepository {
   Future<GetCourseCategories> getCourseCategory();
   Future<dynamic> deleteCourse(String? courseId);
   Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(String? courseId);
+  Future<dynamic> userRegisterToCourse(dynamic variables);
 }
