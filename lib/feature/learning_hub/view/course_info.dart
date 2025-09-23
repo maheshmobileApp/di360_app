@@ -49,6 +49,22 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
             ] else if (jobCreateVM.selectedEvent == "Multiple Day") ...[
               _buildMultipleDayUI(jobCreateVM, context),
             ],
+            SizedBox(height: 8),
+            InputTextField(
+              hintText: "Enter Description",
+              maxLength: 500,
+              maxLines: 5,
+              title: "Topics Included",
+              controller: jobCreateVM.topicsIncludedDescController,
+            ),
+            SizedBox(height: 8),
+            InputTextField(
+              hintText: "Enter Description",
+              maxLength: 500,
+              maxLines: 5,
+              title: "Learning Objectives",
+              controller: jobCreateVM.learningObjectivesDescController,
+            ),
             /*InputTextField(
               controller: jobCreateVM.day1SessionNameController,
               hintText: "Enter Session Name",
@@ -85,8 +101,11 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
   /// Single Day
   Widget _buildSingleDayUI(
       NewCourseViewModel jobCreateVM, BuildContext context) {
+    if (jobCreateVM.sessions.isEmpty) {
+      jobCreateVM.addNewDay();
+    }
     final day =
-        jobCreateVM.sessions.first; // Always first session for Single Day
+        jobCreateVM.sessions.first; 
     return Column(
       children: [
         InputTextField(

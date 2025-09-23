@@ -44,8 +44,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final earlyBirdDateController = TextEditingController();
   final eventDateController = TextEditingController();
   final startDateController = TextEditingController();
+  final startTimeController = TextEditingController();
+  final endTimeController = TextEditingController();
   final endDateController = TextEditingController();
   final addressController = TextEditingController();
+
   bool showLocumDate = false;
 
   //imageFields
@@ -343,6 +346,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       );
     }
 
+    for (var session in sessions) {
+      session.clear(); // calls your clear() method
+    }
+
     return courseInfoList;
   }
 
@@ -388,6 +395,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
+    /*validatePresenterImg();
+    validateCourseHeaderBanner();
+    validateGallery();
+    validateCourseBanner();
+    buildCourseInfoList();
+    validateSponsoredByImg();*/
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     String? startDate = startDateController.text.isEmpty
@@ -509,6 +522,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     endDateController.text = "";
     addressController.text = "";
     courseInfoList = [];
+    startTimeController.text = "";
+    endTimeController.text = "";
+    sessions = [];
+    selectedEvent = "Single Day";
 
     // Page controller reset
     pageController.jumpToPage(

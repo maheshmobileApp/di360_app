@@ -27,7 +27,7 @@ class CourseInfoCardWidget extends StatelessWidget {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+      elevation: 1,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -91,7 +91,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                 _PriceTextWidget(
                   label: "Price",
                   first: false,
-                  originalPrice: "${totalPrice}",
+                  originalPrice: "${totalPrice} ",
                   discountedPrice: "${discountPrice}",
                 ),
               ],

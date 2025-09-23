@@ -41,4 +41,5 @@ class AppColors {
   static const Color timeblack = Color.fromRGBO(255, 241, 229, 0);
   static const Color timewhite = Color.fromRGBO(255, 241, 229, 1);
   static const Color typeTextColor = Color(0xFF0471DE);
+  static const Color greyLight = Color(0xffEDEFF1);
 }

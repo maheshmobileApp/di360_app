@@ -56,7 +56,7 @@ class CourseObject {
   String? contactWebsite;
   double? cpdPoints;
   int? numberOfSeats;
-  int? earlyBirdPrice;
+  dynamic? earlyBirdPrice;
   int? afterwardsPrice;
   List<CourseBannerImage>? courseGallery;
   List<CourseBannerImage>? courseBannerVideo;

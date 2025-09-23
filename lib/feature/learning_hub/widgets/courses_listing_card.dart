@@ -85,13 +85,24 @@ class CouresListingCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _registeredChip(registeredCount),
+                    GestureDetector(
+                      onTap: onTapRegistered,
+                      child: _registeredChip(registeredCount)),
                     GestureDetector(
                       onTap: onDetailView,
-                      child: SvgPicture.asset(
-                        ImageConst.nextArrow,
-                        width: 26,
-                        height: 26,
+                      child: Row(
+                        children: [
+                          Text(
+                            "Details",
+                            style: TextStyles.medium1(
+                                color: AppColors.primaryColor),
+                          ),
+                          SvgPicture.asset(
+                            ImageConst.nextArrow,
+                            width: 26,
+                            height: 26,
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -225,20 +236,12 @@ class CouresListingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color.fromRGBO(255, 241, 229, 0),
-            Color.fromRGBO(255, 241, 229, 1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(5),
+        color: AppColors.greyLight,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         "$registeredCount Registered",
-        style: TextStyles.semiBold(
-            fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
+        style: TextStyles.semiBold(fontSize: 10, color: AppColors.black),
       ),
     );
   }

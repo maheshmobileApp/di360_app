@@ -4,7 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class CustomDatePicker extends StatelessWidget {
+class CustomTimePicker extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback? onTap;
   final String? text;
@@ -13,7 +13,7 @@ class CustomDatePicker extends StatelessWidget {
   final bool? isRequired;
   final String? title;
 
-  const CustomDatePicker({
+  const CustomTimePicker({
     Key? key,
     required this.controller,
     this.onTap,
@@ -23,6 +23,16 @@ class CustomDatePicker extends StatelessWidget {
     this.isRequired,
     this.title,
   }) : super(key: key);
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      controller.text = picked.format(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +47,7 @@ class CustomDatePicker extends StatelessWidget {
             if (isRequired ?? false)
               const Text(
                 ' *',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
           ],
         ),
@@ -46,22 +55,20 @@ class CustomDatePicker extends StatelessWidget {
       TextFormField(
         controller: controller,
         readOnly: true,
-        onTap: onTap,
+        onTap: onTap ?? () => _selectTime(context), // 👈 default to time picker
         validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: SvgPicture.asset(
-                    ImageConst.calenderBlank,
-                    width: 20,
-                    height: 20,
-                  ),
-                ),
-          
-          suffixIcon: const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              ImageConst.clock,
+              width: 20,
+              height: 20,
+            ),
+          ),
           contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
-          hintText: hintText ?? "Date",
+          hintText: hintText ?? "Time",
           hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
