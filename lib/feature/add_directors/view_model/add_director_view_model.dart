@@ -185,6 +185,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     //  Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.getDirectoriesData();
     if (res.isNotEmpty) {
+      getBusinessTypes();
       _currentStep = 0;
       getBasicInfoData = res;
       await context.read<DirectoryViewModel>().getFollowersCount(userId);
@@ -284,9 +285,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void generateTimeSlots(BuildContext context, {int interval = 30}) {
     final start = _parseTimeString(context, serviceStartTimeCntr.text);
     final end = _parseTimeString(context, serviceEndTimeCntr.text);
+    final breakStart = _parseTimeString(context, breakStartTimeCntr.text);
+    final breakEnd = _parseTimeString(context, breakEndTimeCntr.text);
 
     if (start == null || end == null) {
       dayWiseTimeSlots = [];
+      serviceTimemInCntr.text = '';
       notifyListeners();
       return;
     }
@@ -294,6 +298,19 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     DateTime actualEnd = end;
     if (!actualEnd.isAfter(start)) {
       actualEnd = actualEnd.add(const Duration(days: 1));
+    }
+
+    int totalMinutes = actualEnd.difference(start).inMinutes;
+
+    if (breakStart != null && breakEnd != null) {
+      DateTime actualBreakEnd = breakEnd;
+      if (!actualBreakEnd.isAfter(breakStart)) {
+        actualBreakEnd = actualBreakEnd.add(const Duration(days: 1));
+      }
+
+      if (breakStart.isAfter(start) && actualBreakEnd.isBefore(actualEnd)) {
+        totalMinutes -= actualBreakEnd.difference(breakStart).inMinutes;
+      }
     }
 
     final formatter = DateFormat('HH:mm');
@@ -308,8 +325,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     }
 
     dayWiseTimeSlots = slots;
-    serviceTimemInCntr.text =
-        (actualEnd.difference(start).inMinutes).toString();
+    serviceTimemInCntr.text = totalMinutes.toString();
     notifyListeners();
   }
 

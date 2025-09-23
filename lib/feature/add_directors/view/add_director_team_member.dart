@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -62,59 +63,49 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: AppColors.cardcolor, borderRadius: BorderRadius.circular(16)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-              radius: 24,
-              backgroundColor: AppColors.buttomBarColor,
-              child:
-                  CachedNetworkImageWidget(imageUrl: member.image?.url ?? '')),
-          addHorizontal(12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  member.name ?? '',
-                  style: TextStyles.bold3(color: AppColors.black),
-                ),
-                addVertical(4),
-                Text(member.specialization ?? '', style: TextStyles.medium2()),
-                addVertical(4),
-                Text(member.location ?? '', style: TextStyles.medium2())
-              ],
-            ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        CircleAvatar(
+            radius: 24,
+            backgroundColor: AppColors.buttomBarColor,
+            child: CachedNetworkImageWidget(imageUrl: member.image?.url ?? '')),
+        addHorizontal(12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                member.name ?? '',
+                style: TextStyles.bold3(color: AppColors.black),
+              ),
+              addVertical(4),
+              Text(member.specialization ?? '', style: TextStyles.medium2()),
+              addVertical(4),
+              Text(member.location ?? '', style: TextStyles.medium2())
+            ],
           ),
-          addHorizontal(10),
-          GestureDetector(
-              onTap: () {
-                addDirectorVM.teamNameCntr.text = member.name ?? '';
-                addDirectorVM.teamDesignationCntr.text =
-                    member.specialization ?? '';
-                addDirectorVM.teamEmailIDCntr.text = member.email ?? '';
-                addDirectorVM.teamLocationCntr.text = member.location ?? '';
-                addDirectorVM.teamNumberCntr.text = member.phone ?? '';
-                addDirectorVM.appointmentShowVal =
-                    member.showInAppointments ?? false;
-                addDirectorVM.ourTeamShowVal = member.showInOurTeam ?? false;
-                showNewTeamMemberBottomSheet(context, editVM,
-                    hintText: member.image?.url ?? '',
-                    id: member.id,
-                    imag: member.image?.toJson());
-                editVM.updateIsEditOurTeam(true);
-              },
-              child: Icon(Icons.edit, color: AppColors.blueColor, size: 25)),
-          addHorizontal(20),
-          GestureDetector(
-            onTap: () {
-              editVM.deleteTheOurTeam(context, member.id ?? '');
-            },
-            child:
-                Icon(Icons.delete_outline, color: AppColors.redColor, size: 25),
-          ),
-        ],
-      ),
+        ),
+        addHorizontal(10),
+        MenuWidget(onSelected: (val) {
+          if (val == 'Edit') {
+            addDirectorVM.teamNameCntr.text = member.name ?? '';
+            addDirectorVM.teamDesignationCntr.text =
+                member.specialization ?? '';
+            addDirectorVM.teamEmailIDCntr.text = member.email ?? '';
+            addDirectorVM.teamLocationCntr.text = member.location ?? '';
+            addDirectorVM.teamNumberCntr.text = member.phone ?? '';
+            addDirectorVM.appointmentShowVal =
+                member.showInAppointments ?? false;
+            addDirectorVM.ourTeamShowVal = member.showInOurTeam ?? false;
+            showNewTeamMemberBottomSheet(context, editVM,
+                hintText: member.image?.url ?? '',
+                id: member.id,
+                imag: member.image?.toJson());
+            editVM.updateIsEditOurTeam(true);
+          } else if (val == 'Delete') {
+            editVM.deleteTheOurTeam(context, member.id ?? '');
+          }
+        })
+      ]),
     );
   }
 
@@ -167,7 +158,7 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
                           if (_formKey.currentState!.validate()) {
                             if (addDirectorVM.teamMemberFile?.path.isEmpty ??
                                 false || imag == null) {
-                              showTopMessage(context,'Select user picture');
+                              showTopMessage(context, 'Select user picture');
                             } else {
                               editVM.isEditOurTeam
                                   ? editVM.updateTheOurTeam(

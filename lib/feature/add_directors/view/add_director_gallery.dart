@@ -55,7 +55,9 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
             ),
             if (showForm) _buildGalleryForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-            addDirectorVM.getBasicInfoData.first.directoryGalleryPosts?.length == 0
+            addDirectorVM
+                        .getBasicInfoData.first.directoryGalleryPosts?.length ==
+                    0
                 ? Center(child: Text('No gallery'))
                 : ListView.builder(
                     shrinkWrap: true,
@@ -78,7 +80,9 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
                               id = galleryItem?.id;
                               serverImg =
                                   hasImages ? galleryItem.image?.first.url : '';
-                              galleryImg = galleryItem?.image?.first.toJson();
+                              galleryImg = hasImages
+                                  ? galleryItem.image?.first.toJson()
+                                  : null;
                               showForm = true;
                             });
                           },

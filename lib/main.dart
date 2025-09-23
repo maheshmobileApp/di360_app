@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
+import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
         ChangeNotifierProvider(create: (_) => TalentsViewModel()),
         ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
+        ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
         ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
         ChangeNotifierProvider(create: (_) => DirectoryViewModel()),
         ChangeNotifierProvider(create: (_) => TalentListingViewModel()),

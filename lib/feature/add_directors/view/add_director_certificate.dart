@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_direc
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -67,23 +68,23 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryCertificateCard(
-                    title: cert?.title ?? '',
-                    imageFile: cert?.attachments?.url,
-                    onDelete: () {
-                      editVM.deleteTheCertifi(context, cert?.id ?? '');
-                    },
-                    onEdit: () {
-                      addDirectorVM.certificateNameController.text =
-                          cert?.title ?? '';
-                      setState(() {
-                        fileName = cert?.attachments?.name ?? '';
-                        editId = cert?.id;
-                        img = cert?.attachments?.toJson();
-                        editVM.updateShowCertifiForm(true);
-                        showForm = true;
-                      });
-                    },
-                  ),
+                      title: cert?.title ?? '',
+                      imageFile: cert?.attachments?.url,
+                      onSelected: (val) {
+                        if (val == 'Edit') {
+                          addDirectorVM.certificateNameController.text =
+                              cert?.title ?? '';
+                          setState(() {
+                            fileName = cert?.attachments?.name ?? '';
+                            editId = cert?.id;
+                            img = cert?.attachments?.toJson();
+                            editVM.updateShowCertifiForm(true);
+                            showForm = true;
+                          });
+                        } else if (val == 'Delete') {
+                          editVM.deleteTheCertifi(context, cert?.id ?? '');
+                        }
+                      }),
                 );
               },
             ),
@@ -138,8 +139,8 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             onSecond: () {
               if (addDirectorVM.certificateNameController.text.isEmpty) {
                 scaffoldMessenger('Enter certificate name');
-              } else if (addDirectorVM.certificateFile?.path.isEmpty ?? false ||
-                  img == null) {
+              } else if (addDirectorVM.certificateFile?.path.isEmpty ??
+                  false || img == null) {
                 scaffoldMessenger('Enter attachement');
               } else {
                 editVM.showCertifiForm
@@ -167,15 +168,10 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
 class AddDirectoryCertificateCard extends StatelessWidget {
   final String title;
   final String? imageFile;
-  final Function()? onDelete;
-  final Function()? onEdit;
+  final Function(String)? onSelected;
 
   const AddDirectoryCertificateCard(
-      {super.key,
-      required this.title,
-      this.imageFile,
-      this.onDelete,
-      this.onEdit});
+      {super.key, required this.title, this.imageFile, this.onSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -205,16 +201,7 @@ class AddDirectoryCertificateCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          GestureDetector(
-            onTap: onEdit,
-            child: Icon(Icons.edit, color: AppColors.blueColor, size: 25),
-          ),
-          SizedBox(width: 20),
-          GestureDetector(
-            onTap: onDelete,
-            child:
-                Icon(Icons.delete_outline, color: AppColors.redColor, size: 25),
-          ),
+          MenuWidget(onSelected: onSelected)
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
-import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/add_catalogue_screen.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogue_filter_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/my_catalogues_screen.dart';
@@ -18,7 +17,6 @@ import 'package:di360_flutter/feature/directors/view/directories_filter_screen.d
 import 'package:di360_flutter/feature/enquiries/view/enquiries_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
-//import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_screen.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart';
@@ -35,7 +33,6 @@ import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dar
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
-import 'package:di360_flutter/feature/learning_hub/view/registered_users_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
@@ -84,12 +81,10 @@ class Routes {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         final profileData = args['profileData'] ?? null;
-        final isEdit = args['isEdit'] ?? false;
         return ChangeNotifierProvider(
           create: (BuildContext context) => JobProfileCreateViewModel(),
           child: JobProfileView(
             profile: profileData,
-            isEdit: isEdit,
           ),
         );
       },
@@ -139,10 +134,7 @@ class Routes {
         );
       },
       RouteList.catalogueFilterScreen: (context) => CatalogueFilterScreen(),
-      RouteList.addCatalogScreen: (context) => ChangeNotifierProvider(
-            create: (context) => AddCatalogueViewModel(),
-            child: AddCatalogueScreen(),
-          ),
+      RouteList.addCatalogScreen: (context) => AddCatalogueScreen(),
       RouteList.myCatalogueFilter: (context) => MyCatalogueFilterWidget(),
       RouteList.myCatalogueScreen: (context) => MyCataloguesScreen(),
       RouteList.directory: (context) => DirectorScreen(),
@@ -159,7 +151,6 @@ class Routes {
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
-      RouteList.registeredUsersView: (context) => RegisteredUsersView()
     };
   }
 }
