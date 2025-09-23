@@ -1,4 +1,3 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
@@ -7,6 +6,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_direc
 import 'package:di360_flutter/feature/add_directors/widgets/close_add_button_widget.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -84,8 +84,8 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                                               ),
                                             ),
                                       Spacer(),
-                                      InkWell(
-                                        onTap: () {
+                                      MenuWidget(onSelected: (val) {
+                                        if (val == 'Edit') {
                                           addDirectorVM.testiNameCntr.text =
                                               data.name ?? '';
                                           addDirectorVM.roleCntr.text =
@@ -96,19 +96,11 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                                           showTestimonialBottomSheet(
                                               context, addDirectorVM, editVM,
                                               data: data);
-                                        },
-                                        child: Icon(Icons.edit,
-                                            color: AppColors.blueColor,
-                                            size: 25),
-                                      ),
-                                      addHorizontal(20),
-                                      InkWell(
-                                          onTap: () =>
-                                              editVM.deleteTheTestimonial(
-                                                  context, data.id ?? ''),
-                                          child: Icon(Icons.delete,
-                                              color: AppColors.redColor,
-                                              size: 25))
+                                        } else if (val == 'Delete') {
+                                          editVM.deleteTheTestimonial(
+                                              context, data.id ?? '');
+                                        }
+                                      })
                                     ],
                                   ),
                                   addVertical(16),

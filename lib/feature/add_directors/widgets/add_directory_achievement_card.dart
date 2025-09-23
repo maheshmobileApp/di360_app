@@ -1,16 +1,16 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class AddDirectoryAchievementCard extends StatelessWidget {
   final String title;
   final String? imageFile;
-  final Function()? onDelete;
-  final Function()? onEdit;
+  final Function(String)? onSelected;
 
   const AddDirectoryAchievementCard(
-      {super.key, required this.title, this.imageFile, this.onDelete,this.onEdit});
+      {super.key, required this.title, this.imageFile, this.onSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +34,7 @@ class AddDirectoryAchievementCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          GestureDetector(
-            onTap: onEdit,
-            child:  Icon(Icons.edit,color: AppColors.blueColor, size: 25),
-          ),
-          const SizedBox(width: 20),
-          GestureDetector(
-            onTap: onDelete,
-            child:  Icon(
-              Icons.delete_outline,
-              color: AppColors.redColor,
-              size: 25,
-            ),
-          ),
+          MenuWidget(onSelected: onSelected)
         ],
       ),
     );

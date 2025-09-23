@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart'
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +32,7 @@ class OtherInformationScreen extends StatelessWidget {
                     addDirectorVM.serviceStartTimeCntr.clear();
                     addDirectorVM.serviceEndTimeCntr.clear();
                     addDirectorVM.selectedAccount = null;
+                    addDirectorVM.selectedDays = null;
                     addDirectorVM.socialAccountsurlCntr.clear();
                     editVM.updateIsEditTimings(false);
                     editVM.updateIsEditSocialMed(false);
@@ -124,23 +126,19 @@ class OtherInformationScreen extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  InkWell(
-                      onTap: () {
-                        List<String> parts = obj?.clinicTime?.split('-') ?? [];
-                        addDirectVM.selectWeekCntr.text = obj?.weekName ?? '';
-                        addDirectVM.serviceStartTimeCntr.text = parts[0].trim();
-                        addDirectVM.serviceEndTimeCntr.text = parts[1].trim();
-                        editVM.updateIsEditTimings(true);
-                        showBusinessTimingsBottomSheet(context, obj?.id ?? '');
-                      },
-                      child: Icon(Icons.edit,
-                          color: AppColors.blueColor, size: 25)),
-                  SizedBox(width: 20),
-                  InkWell(
-                      onTap: () =>
-                          editVM.deleteTheTimimngs(context, obj?.id ?? ''),
-                      child: Icon(Icons.delete,
-                          color: AppColors.redColor, size: 25)),
+                  MenuWidget(onSelected: (v) {
+                    if (v == 'Edit') {
+                      List<String> parts = obj?.clinicTime?.split('-') ?? [];
+                      addDirectVM.selectWeekCntr.text = obj?.weekName ?? '';
+                      addDirectVM.selectedDays = obj?.weekName ?? '';
+                      addDirectVM.serviceStartTimeCntr.text = parts[0].trim();
+                      addDirectVM.serviceEndTimeCntr.text = parts[1].trim();
+                      editVM.updateIsEditTimings(true);
+                      showBusinessTimingsBottomSheet(context, obj?.id ?? '');
+                    } else if (v == 'Delete') {
+                      editVM.deleteTheTimimngs(context, obj?.id ?? '');
+                    }
+                  })
                 ],
               ),
             );
@@ -172,30 +170,21 @@ class OtherInformationScreen extends StatelessWidget {
                 final data = socialList?[index];
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Text(data?.mediaName, style: TextStyles.medium2()),
-                      Spacer(),
-                      InkWell(
-                          onTap: () {
-                            addDirectVM.selectedAccount = data?.mediaName;
-                            addDirectVM.socialAccountsurlCntr.text =
-                                data?.mediaLink;
-                            editVM.updateIsEditSocialMed(true);
-                            showBusinessTimingsBottomSheet(
-                                context, data?.id ?? '');
-                          },
-                          child: Icon(Icons.edit,
-                              color: AppColors.blueColor, size: 25)),
-                      SizedBox(width: 20),
-                      InkWell(
-                        onTap: () =>
-                            editVM.deleteTheTimimngs(context, data?.id ?? ''),
-                        child: Icon(Icons.delete,
-                            color: AppColors.redColor, size: 25),
-                      )
-                    ],
-                  ),
+                  child: Row(children: [
+                    Text(data?.mediaName, style: TextStyles.medium2()),
+                    Spacer(),
+                    MenuWidget(onSelected: (v) {
+                      if (v == 'Edit') {
+                        addDirectVM.selectedAccount = data?.mediaName;
+                        addDirectVM.socialAccountsurlCntr.text =
+                            data?.mediaLink;
+                        editVM.updateIsEditSocialMed(true);
+                        showBusinessTimingsBottomSheet(context, data?.id ?? '');
+                      } else if (v == 'Delete') {
+                        editVM.deleteTheTimimngs(context, data?.id ?? '');
+                      }
+                    })
+                  ]),
                 );
               },
             ),

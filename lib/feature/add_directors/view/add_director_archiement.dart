@@ -68,11 +68,9 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                   child: AddDirectoryAchievementCard(
                     title: achievement?.title ?? '',
                     imageFile: achievement?.attachments?.url,
-                    onDelete: () {
-                      editVM.deleteTheAchieve(context, achievement?.id ?? '');
-                    },
-                    onEdit: () {
-                      addDirectorVM.achievementNameController.text =
+                      onSelected: (val) {
+                        if (val == 'Edit') {
+                          addDirectorVM.achievementNameController.text =
                           achievement?.title ?? '';
                       editVM.updateIsEditAchieve(true);
                       setState(() {
@@ -81,7 +79,10 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                         img = achievement?.attachments?.toJson();
                         showForm = true;
                       });
-                    },
+                        } else if (val == 'Delete') {
+                          editVM.deleteTheAchieve(context, achievement?.id ?? '');
+                        }
+                      }
                   ),
                 );
               },

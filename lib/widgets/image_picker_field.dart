@@ -6,165 +6,102 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ImagePickerField extends FormField<List<File>> {
-  ImagePickerField({
-    Key? key,
-    String? title,
-    bool isRequired = false,
-    double borderRadius = 8.0,
-    String? hintText,
-    bool showPreview = true,
-    bool allowMultiple = false,
-    File? selectedFile,
-    List<File>? selectedFiles,
-    ValueChanged<File?>? onFilePicked,
-    ValueChanged<List<File>>? onFilesPicked,
-    FormFieldValidator<List<File>>? validator,
-    AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
-  }) : super(
-          key: key,
-          initialValue: allowMultiple
-              ? (selectedFiles ?? [])
-              : (selectedFile != null ? [selectedFile] : []),
-          validator: (files) {
-            if (isRequired && (files == null || files.isEmpty)) {
-              return "This field is required";
-            }
-            if (validator != null) {
-              return validator(files);
-            }
-            return null;
-          },
-          autovalidateMode: autovalidateMode,
-          builder: (FormFieldState<List<File>> state) {
-            final hasFiles = state.value != null && state.value!.isNotEmpty;
-            final singleFile =
-                !allowMultiple && hasFiles ? state.value!.first : null;
+class ImagePickerField extends StatelessWidget {
+  final String? title;
+  final bool isRequired;
+  final double borderRadius;
+  final String? hintText;
+  final bool showPreview;
+  final bool allowMultiple;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (title != null)
-                  Row(
-                    children: [
-                      Text(title,
-                          style: TextStyles.regular3(color: AppColors.black)),
-                      if (isRequired)
-                        const Text(
-                          ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                    ],
-                  ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    _showPickerSheet(
-                      state.context,
-                      allowMultiple,
-                      (picked) {
-                        if (allowMultiple) {
-                          state.didChange(picked ?? []);
-                          if (onFilesPicked != null)
-                            onFilesPicked!(picked ?? []);
-                        } else {
-                          state.didChange(picked != null ? [picked.first] : []);
-                          if (onFilePicked != null) {
-                            onFilePicked!(picked != null ? picked.first : null);
-                          }
-                        }
-                      },
-                    );
-                  },
-                  child: DottedBorder(
-                    color: Colors.grey.shade400,
-                    strokeWidth: 1.5,
-                    dashPattern: const [6, 4],
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(borderRadius),
-                    child: Container(
-                      width: double.infinity,
-                      height: showPreview ? 150 : null,
-                      alignment: Alignment.center,
-                      child: hasFiles
-                          ? allowMultiple
-                              ? ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: state.value!.length,
-                                  separatorBuilder: (_, __) =>
-                                      const SizedBox(width: 10),
-                                  itemBuilder: (_, index) {
-                                    final file = state.value![index];
-                                    final isVideo = file.path
-                                        .toLowerCase()
-                                        .endsWith(".mp4");
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: isVideo
-                                          ? const Icon(Icons.videocam,
-                                              size: 50, color: Colors.grey)
-                                          : Image.file(file,
-                                              fit: BoxFit.contain),
-                                    );
-                                  },
-                                )
-                              : (singleFile!.path.toLowerCase().endsWith(".mp4")
-                                  ? const Icon(Icons.videocam,
-                                      size: 50, color: Colors.grey)
-                                  : Image.file(
-                                      singleFile,
-                                      fit: BoxFit.contain,
-                                      width: double.infinity,
-                                    ))
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(ImageConst.upload),
-                                const SizedBox(height: 20),
-                                Text(
-                                  "Click here to Choose a file.",
-                                  style: TextStyles.medium2(
-                                      color: AppColors.black),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  hintText ??
-                                      "JPEG, PNG formats, up to 5 MB each",
-                                  style: TextStyles.regular2(
-                                      color: AppColors.dropDownHint),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6, left: 4),
-                    child: Text(
-                      state.errorText!,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        );
+  // Single file
+  final File? selectedFile;
+  final ValueChanged<File?>? onFilePicked;
 
-  /// helper to reuse your bottom sheet logic
-  static void _showPickerSheet(
-    BuildContext context,
-    bool allowMultiple,
-    ValueChanged<List<File>?> onPicked,
-  ) {
+  // Multiple files
+  final List<File>? selectedFiles;
+  final ValueChanged<List<File>>? onFilesPicked;
+
+  const ImagePickerField({
+    super.key,
+    this.title,
+    this.isRequired = false,
+    this.borderRadius = 8.0,
+    this.hintText,
+    this.showPreview = true,
+    this.allowMultiple = false,
+    this.selectedFile,
+    this.onFilePicked,
+    this.selectedFiles,
+    this.onFilesPicked,
+  });
+
+  Future<void> _pickFile(BuildContext context, ImageSource source) async {
     final picker = ImagePicker();
 
+    if (allowMultiple) {
+      if (source == ImageSource.gallery) {
+        // ✅ Multiple selection from gallery
+        final pickedList = await picker.pickMultiImage(imageQuality: 80);
+        if (pickedList.isNotEmpty) {
+          final files = pickedList.map((e) => File(e.path)).toList();
+
+          // ✅ Filter size < 5MB
+          final validFiles = files.where((file) {
+            final fileSizeMB = file.lengthSync() / (1024 * 1024);
+            return fileSizeMB <= 5;
+          }).toList();
+
+          if (onFilesPicked != null) onFilesPicked!(validFiles);
+        }
+      } else if (source == ImageSource.camera) {
+        // ✅ Single image from camera, but return as a List<File>
+        final picked = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 80,
+        );
+        if (picked != null) {
+          final file = File(picked.path);
+          final fileSizeMB = file.lengthSync() / (1024 * 1024);
+
+          if (fileSizeMB > 5) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("File size must be under 5 MB")),
+            );
+            return;
+          }
+
+          if (onFilesPicked != null) onFilesPicked!([file]);
+        }
+      }
+    } else {
+      XFile? picked;
+      if (source == ImageSource.camera) {
+        picked = await picker.pickImage(
+            source: ImageSource.camera, imageQuality: 80);
+      } else {
+        picked = await picker.pickMedia(imageQuality: 80);
+      }
+
+      if (picked != null) {
+        final file = File(picked.path);
+        final fileSizeMB = file.lengthSync() / (1024 * 1024);
+
+        if (fileSizeMB > 5) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("File size must be under 5 MB")),
+          );
+          return;
+        }
+
+        if (onFilePicked != null) onFilePicked!(file);
+      }
+    }
+
+    Navigator.pop(context);
+  }
+
+  void _showPickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -172,53 +109,12 @@ class ImagePickerField extends FormField<List<File>> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) {
-        Future<void> pickFromGallery() async {
-          if (allowMultiple) {
-            final pickedList = await picker.pickMultiImage(imageQuality: 80);
-            if (pickedList.isNotEmpty) {
-              final files = pickedList.map((e) => File(e.path)).toList();
-              final validFiles = files
-                  .where((f) => f.lengthSync() / (1024 * 1024) <= 5)
-                  .toList();
-              onPicked(validFiles);
-            }
-          } else {
-            final picked = await picker.pickMedia(imageQuality: 80);
-            if (picked != null) {
-              final file = File(picked.path);
-              if (file.lengthSync() / (1024 * 1024) > 5) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("File size must be under 5 MB")),
-                );
-              } else {
-                onPicked([file]);
-              }
-            }
-          }
-          Navigator.pop(context);
-        }
-
-        Future<void> pickFromCamera() async {
-          final picked = await picker.pickImage(
-              source: ImageSource.camera, imageQuality: 80);
-          if (picked != null) {
-            final file = File(picked.path);
-            if (file.lengthSync() / (1024 * 1024) > 5) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("File size must be under 5 MB")),
-              );
-            } else {
-              onPicked([file]);
-            }
-          }
-          Navigator.pop(context);
-        }
-
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // ✅ Drag Handle
               Container(
                 width: 40,
                 height: 5,
@@ -228,7 +124,7 @@ class ImagePickerField extends FormField<List<File>> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 "Choose Option",
                 style: TextStyle(
                   fontSize: 18,
@@ -244,13 +140,13 @@ class ImagePickerField extends FormField<List<File>> {
                     icon: Icons.photo_library,
                     label: "Gallery",
                     color: Colors.blue,
-                    onTap: pickFromGallery,
+                    onTap: () => _pickFile(context, ImageSource.gallery),
                   ),
                   _buildOption(
                     icon: Icons.camera_alt,
                     label: "Camera",
                     color: Colors.green,
-                    onTap: pickFromCamera,
+                    onTap: () => _pickFile(context, ImageSource.camera),
                   ),
                 ],
               ),
@@ -261,8 +157,7 @@ class ImagePickerField extends FormField<List<File>> {
       },
     );
   }
-
-  static Widget _buildOption({
+  Widget _buildOption({
     required IconData icon,
     required String label,
     required Color color,
@@ -291,6 +186,93 @@ class ImagePickerField extends FormField<List<File>> {
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSingleFile = selectedFile != null;
+    final hasMultipleFiles = selectedFiles != null && selectedFiles!.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title != null)
+          Row(
+            children: [
+              Text(title!, style: TextStyles.regular3(color: AppColors.black)),
+              if (isRequired)
+                const Text(
+                  ' *',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
+          ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () => _showPickerSheet(context),
+          child: DottedBorder(
+            color: Colors.grey.shade400,
+            strokeWidth: 1.5,
+            dashPattern: const [6, 4],
+            borderType: BorderType.RRect,
+            radius: Radius.circular(borderRadius),
+            child: Container(
+              width: double.infinity,
+              height: showPreview ? 150 : null,
+              alignment: Alignment.center,
+              child: hasMultipleFiles
+                  ? ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: selectedFiles!.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 10),
+                      itemBuilder: (_, index) {
+                        final file = selectedFiles![index];
+                        final isVideo =
+                            file.path.toLowerCase().endsWith(".mp4");
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: isVideo
+                              ? const Icon(Icons.videocam,
+                                  size: 50, color: Colors.grey)
+                              : Image.file(file,
+                                  fit: BoxFit.contain),
+                        );
+                      },
+                    )
+                  : hasSingleFile
+                      ? (selectedFile!.path.toLowerCase().endsWith(".mp4")
+                          ? const Icon(Icons.videocam,
+                              size: 50, color: Colors.grey)
+                          : Image.file(
+                              selectedFile!,
+                              fit: BoxFit.contain,
+                              width: double.infinity,
+                            ))
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(ImageConst.upload),
+                            const SizedBox(height: 20),
+                            Text(
+                              "Click here to Choose a file.",
+                              style: TextStyles.medium2(color: AppColors.black),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              hintText ?? "JPEG, PNG formats, up to 5 MB each",
+                              style: TextStyles.regular2(
+                                  color: AppColors.dropDownHint),
+                            ),
+                          ],
+                        ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

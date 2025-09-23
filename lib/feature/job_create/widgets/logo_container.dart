@@ -62,7 +62,7 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
                   ? Stack(
                       fit: StackFit.expand,
                       children: [
-                        serverImg != null
+                        imageFile == null
                             ? CachedNetworkImageWidget(
                                 imageUrl: serverImg ?? '',
                                 fit: BoxFit.fitHeight,
@@ -76,11 +76,11 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
                           top: 8,
                           right: 8,
                           child: GestureDetector(
-                            onTap: onRemove, // 🔹 Call remove callback
+                            onTap: onRemove,
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.black54,
-                                shape: BoxShape.circle,
+                                shape: BoxShape.circle
                               ),
                               padding: const EdgeInsets.all(4),
                               child: const Icon(

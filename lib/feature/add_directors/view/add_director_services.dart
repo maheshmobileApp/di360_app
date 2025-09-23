@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -90,25 +91,21 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              addDirectorVM.serviceNameController.text = service.name ?? '';
-              addDirectorVM.toggleService(service.showInAppointments ?? false);
-              addDirectorVM.updateIsEditService(true);
-              addDirectorVM.serviceDescController.text =
-                  service.description ?? '';
-              showNewServiceBottomSheet(context, vm, service.id ?? '');
+          MenuWidget(
+            onSelected: (val) {
+              if (val == 'Edit') {
+                addDirectorVM.serviceNameController.text = service.name ?? '';
+                addDirectorVM
+                    .toggleService(service.showInAppointments ?? false);
+                addDirectorVM.updateIsEditService(true);
+                addDirectorVM.serviceDescController.text =
+                    service.description ?? '';
+                showNewServiceBottomSheet(context, vm, service.id ?? '');
+              } else if (val == 'Delete') {
+                vm.deleteTheServices(context, service.id ?? '');
+              }
             },
-            child: const Icon(Icons.edit, color: AppColors.blueColor, size: 25),
-          ),
-          addHorizontal(20),
-          GestureDetector(
-            onTap: () {
-              vm.deleteTheServices(context, service.id ?? '');
-            },
-            child: const Icon(Icons.delete_outline,
-                color: AppColors.redColor, size: 25),
-          ),
+          )
         ],
       ),
     );
@@ -127,9 +124,9 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
       ),
       builder: (context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          maxChildSize: 0.75,
-          minChildSize: 0.6,
+          initialChildSize: 0.85,
+          maxChildSize: 0.85,
+          minChildSize: 0.7,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -181,7 +178,6 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
     );
   }
 }
-
 
 class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
   @override

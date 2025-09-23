@@ -11,6 +11,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddDirectorDocument extends StatefulWidget {
   const AddDirectorDocument({super.key});
@@ -63,26 +64,32 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                 final doc = addDirectorVM
                     .getBasicInfoData.first.directoryDocuments?[index];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: AddDirectoryDocumentCard(
-                    title: doc?.name ?? '',
-                    imageFile: doc?.attachment?.url,
-                    onDelete: () {
-                      editVM.deleteTheDocument(context, doc?.id ?? '');
-                    },
-                    onEdit: () {
-                      addDirectorVM.documentNameController.text =
-                          doc?.name ?? '';
-                      setState(() {
-                        showForm = true;
-                        docEditId = doc?.id ?? '';
-                        docName = doc?.attachment?.name;
-                        img = doc?.attachment?.toJson();
-                      });
-                      editVM.updateIsEditDocu(true);
-                    },
-                  ),
-                );
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: AddDirectoryDocumentCard(
+                        title: doc?.name ?? '',
+                        imageFile: doc?.attachment?.url,
+                        onSelected: (val) async {
+                          if (val == 'Edit') {
+                            addDirectorVM.documentNameController.text =
+                                doc?.name ?? '';
+                            setState(() {
+                              showForm = true;
+                              docEditId = doc?.id ?? '';
+                              docName = doc?.attachment?.name;
+                              img = doc?.attachment?.toJson();
+                            });
+                            editVM.updateIsEditDocu(true);
+                          } else if (val == 'Delete') {
+                            editVM.deleteTheDocument(context, doc?.id ?? '');
+                          } else if (val == 'Download') {
+                            if (await canLaunchUrl(
+                                Uri.parse(doc?.attachment?.url ?? ''))) {
+                              await launchUrl(
+                                  Uri.parse(doc?.attachment?.url ?? ''),
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          }
+                        }));
               },
             ),
           ],
