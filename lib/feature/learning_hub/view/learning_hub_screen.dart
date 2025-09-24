@@ -195,11 +195,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                   ?.aggregate?.count ??
                               0,
                           onDetailView: () async {
-                            if (course.status == "DRAFT") {
+                           /* if (course.status == "DRAFT") {
                               scaffoldMessenger(
                                   "Draft courses cannot be opened");
                               return;
-                            }
+                            }*/
 
                             await courseListingVM.getCourseDetails(
                               context,

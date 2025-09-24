@@ -155,13 +155,15 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
-                newCourseVM.validatePresenterImg();
-                newCourseVM.validateCourseHeaderBanner();
-                newCourseVM.validateGallery();
-                newCourseVM.validateCourseBanner();
                 final currentFormKey =
                     newCourseVM.formKeys[newCourseVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
+                  await newCourseVM.validatePresenterImg();
+                  await newCourseVM.validateCourseHeaderBanner();
+                  await newCourseVM.validateGallery();
+                  await newCourseVM.validateCourseBanner();
+                  await newCourseVM.buildCourseInfoList();
+                  await newCourseVM.validateSponsoredByImg();
                   await newCourseVM.createdCourseListing(context, true);
                   navigationService.goBack();
                 }
