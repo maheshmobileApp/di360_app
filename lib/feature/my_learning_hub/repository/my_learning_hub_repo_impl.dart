@@ -8,7 +8,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
   final HttpService http = HttpService();
   @override
   Future<List<CoursesListingDetails>?> getCoursesWithMyRegistrations(
-      String? userId) async {
+      String? userId, String? searchText) async {
     final Map<String, dynamic> variables = {
       "limit": 10,
       "offset": 0,

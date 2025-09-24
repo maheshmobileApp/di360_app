@@ -172,7 +172,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       validateSponsoredByImg();
     }
 
-    // Move to next step if validations pass
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
       pageController.nextPage(
