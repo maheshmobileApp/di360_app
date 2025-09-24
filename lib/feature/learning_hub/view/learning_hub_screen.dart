@@ -237,11 +237,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                                /*addData(newCourseVM, course);
+                                addData(newCourseVM, course);
 
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );*/
+                                );
 
                                 break;
                               case "Delete":

@@ -59,7 +59,12 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
           ),
           actions: [
             addHorizontal(15),
-            SvgPicture.asset(ImageConst.search, color: AppColors.black),
+            GestureDetector(
+                onTap: () {
+                  myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen);
+                },
+                child: SvgPicture.asset(ImageConst.search,
+                    color: AppColors.black)),
             addHorizontal(15),
             GestureDetector(
               onTap: () => {
@@ -105,7 +110,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                 hintText: "Search Course...",
                 onClear: () {},
                 onChanged: (value) {
-                  //myLearningHubVM.getCoursesWithMyRegistrations(context);
+                  myLearningHubVM.getCoursesWithMyRegistrations(context);
                 },
               ),
             Expanded(
@@ -142,7 +147,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                               RouteList.courseDetailScreen,
                             );
                           },
-                          createdAt: courseData.startDate ?? "",
+                          createdAt: courseData.createdAt ?? "",
                         );
                       },
                     ),

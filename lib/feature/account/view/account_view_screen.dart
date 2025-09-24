@@ -271,12 +271,24 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             context
                                 .read<CourseListingViewModel>()
                                 .getCoursesListingData(context,""); 
+                            context
+                                .read<CourseListingViewModel>()
+                                .searchBarOpen = false; 
+                            context
+                                .read<CourseListingViewModel>()
+                                .searchController.text = ""; 
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
                           } else if (item.title == 'My Learning Hub') {
                             context
                                 .read<MyLearningHubViewModel>()
                                 .getCoursesWithMyRegistrations(context);
+                            context
+                                .read<MyLearningHubViewModel>()
+                                .searchBarOpen = false; 
+                            context
+                                .read<MyLearningHubViewModel>()
+                                .searchController.text = ""; 
                             context
                                 .read<NewCourseViewModel>()
                                 .fetchCourseCategory();
