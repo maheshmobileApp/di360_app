@@ -159,8 +159,7 @@ class BannersListScreen extends StatelessWidget with BaseContextHelpers {
                   return BannersCard(
                     item: bannersVM.bannersList?[index],
                   );
-                  // CatalogueCard(
-                  //item: myCatalogVM.myCatalogueList?[index]);
+                 
                 },
               ),
             )
@@ -169,7 +168,7 @@ class BannersListScreen extends StatelessWidget with BaseContextHelpers {
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
-            // myCatalogVM.clearAddCatalogueData();
+             bannersVM.clearAddBannerData();
              navigationService.navigateTo(RouteList.addBanners);
           },
           child: SvgPicture.asset(ImageConst.addFeed),

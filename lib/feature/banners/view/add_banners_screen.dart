@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/banners/widgets/banners_schedule_date.dart
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
@@ -43,14 +44,7 @@ class AddBannersScreen extends StatelessWidget
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 child: Column(
                   children: [
-                     _buildCategoryTypes(bannersVM),
-                    // InputTextField(
-                    //   title: 'Banner Name',
-                    //   isRequired: true,
-                    //   hintText: 'Enter Banner Name',
-                    //   controller: bannersVM.bannerNameController,
-                    //   validator: validateBannerName,
-                    // ),
+                    _buildCategoryTypes(bannersVM),
                     addVertical(15),
                     InputTextField(
                       title: 'Banner Name',
@@ -65,8 +59,59 @@ class AddBannersScreen extends StatelessWidget
                       isRequired: true,
                       showPreview: true,
                       selectedFile: bannersVM.selectedPresentedImg,
-                      onFilePicked: (file) => bannersVM.setPresentedImg(file),
+                      onFilePicked: (file) async {
+                        final actualSize = await bannersVM.getImageSize(file!);
+                        final requiredDim =
+                            bannersVM.selectedCatagory?.dimensions;
+
+                        final isValid =
+                           bannersVM.checkDimensions(actualSize, requiredDim);
+
+                        if (!isValid) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    "Invalid image size. Expected $requiredDim but got ${actualSize?.width.toInt()}x${actualSize?.height.toInt()}")),
+                          );
+                          return;
+                        }
+
+                        // valid → save in VM
+                        bannersVM.setPresentedImg(file);
+                      },
                     ),
+
+                    // ImagePickerField(
+                    //   title: "Banner Image",
+                    //   isRequired: true,
+                    //   showPreview: true,
+                    //   selectedFile: bannersVM.selectedPresentedImg,
+                    //   onFilePicked: (file) async {
+                    //     final selectedCategory = bannersVM.selectedCatagory;
+
+                    //     final isValid = await bannersVM.validateImageDimensions(
+                    //         file!, selectedCategory?.dimensions);
+                    //     if (!isValid) {
+                    //       // show error
+                    //       ScaffoldMessenger.of(context).showSnackBar(
+                    //         SnackBar(
+                    //             content: Text(
+                    //                 "Invalid image size. Expected ${selectedCategory?.dimensions}")),
+                    //       );
+                    //       return;
+                    //     }
+
+                    //     // valid image → save
+                    //     bannersVM.setPresentedImg(file);
+                    //   },
+                    // ),
+                    // ImagePickerField(
+                    //   title: "Banner Image",
+                    //   isRequired: true,
+                    //   showPreview: true,
+                    //   selectedFile: bannersVM.selectedPresentedImg,
+                    //   onFilePicked: (file) => bannersVM.setPresentedImg(file),
+                    // ),
                     addVertical(15),
                     InputTextField(
                       title: 'URL',
@@ -97,8 +142,11 @@ class AddBannersScreen extends StatelessWidget
                           child: AppButton(
                               text: 'Send for Approval',
                               height: 42,
-                              onTap: () {
-                                if (formKey.currentState!.validate()) {}
+                              onTap: () async {
+                                if (formKey.currentState!.validate() &&
+                                    validateURlAndData(bannersVM)) {
+                                  bannersVM.addBannersData(context);
+                                }
                               }),
                         )
                       ],
@@ -113,29 +161,20 @@ class AddBannersScreen extends StatelessWidget
     );
   }
 
-  // CustomDropDown(
-  //                     isRequired: true,
-  //                     value: addCataloguVM.selectedCatagory,
-  //                     title: "Category",
-  //                     onChanged: (v) {
-  //                       addCataloguVM
-  //                           .updateSelectedCatagory(v as CatalogueCategories?);
-  //                     },
-  //                     items: addCataloguVM.catagorysList
-  //                             ?.map<DropdownMenuItem<CatalogueCategories>>(
-  //                                 (CatalogueCategories value) {
-  //                           return DropdownMenuItem<CatalogueCategories>(
-  //                             value: value,
-  //                             child: Text(value.name ?? ''),
-  //                           );
-  //                         }).toList() ??
-  //                         [],
-  //                     hintText: "Select category",
-  //                     validator: (value) =>
-  //                         value == null || value.toString().isEmpty
-  //                             ? 'Please select category'
-  //                             : null,
-  //                   ),
+  bool validateURlAndData(BannersViewModel bannerVm) {
+    if (bannerVm.selectedPresentedImg == null) {
+      scaffoldMessenger('Please select Banner image');
+      return false;
+    } else if (bannerVm.scheduleDate == null) {
+      scaffoldMessenger('Please select schedule date');
+      return false;
+    } else if (bannerVm.expiryDate == null) {
+      scaffoldMessenger('Please select expiry date');
+      return false;
+    }
+    return true;
+  }
+
   Widget _buildCategoryTypes(BannersViewModel bannersVM) {
     return CustomDropDown(
       isRequired: true,

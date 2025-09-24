@@ -5,13 +5,15 @@ import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart' as flutter;
 
 class BannersCard extends StatelessWidget with BaseContextHelpers {
-   final Banners? item;
-  const BannersCard({super.key,this.item});
+  final Banners? item;
+  const BannersCard({super.key, this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +45,10 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
                   padding: EdgeInsets.all(14.0),
                   child: Column(children: [
                     addVertical(8),
-                    _buildBannersName('Banner Name', ""),
+                    _buildBannersName('Banner Name', item?.bannerName),
                     addVertical(10),
-                    _buildBannersRow(
-                        'Category',
-                        item?.bannerName,
-                        'Views',
-                        '${item?.views}',
-                        false),
+                    _buildBannersRow('Category', item?.categoryName, 'Views',
+                        '${item?.views}', false),
                     addVertical(10),
                     _buildBannersRow('Scheduler date', item?.scheduleDate,
                         'Expiry Date', item?.expiryDate, true)
@@ -67,7 +65,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
               child: Text(
-                 item?.status ?? '',
+                item?.status ?? '',
                 style: TextStyles.medium3(
                     color: item?.status == 'APPROVED'
                         ? AppColors.greenColor
@@ -80,7 +78,12 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
               right: 2,
               top: 15,
               child: menuWidget(
-                  bannersVM, context, item?.id, item?.expiryDate ?? ''))
+                bannersVM,
+                context,
+                item?.id,
+                item?.expiryDate ?? '',
+                item?.image?.isNotEmpty == true ? item?.image?.first.url : null,
+              ))
         ],
       ),
     );
@@ -133,14 +136,38 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget(
-      BannersViewModel vm, BuildContext context, String? id, String expDate) {
+  Widget menuWidget(BannersViewModel vm, BuildContext context, String? id,
+      String expDate, String? url) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: const EdgeInsets.all(0),
       onSelected: (value) {
         if (value == "View") {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Column(
+                  children: [
+                    Text("Preview"),
+                  ],
+                ),
+                content: (url != null && url.isNotEmpty)
+                    ? flutter.Image.network(
+                        url,
+                        fit: BoxFit.contain,
+                      )
+                    : Text("No image available"),
+                actions: [
+                  TextButton(
+                    onPressed: () => navigationService.goBack(),
+                    child: Text("Close"),
+                  ),
+                ],
+              );
+            },
+          );
           //  vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
           // vm.editCatalogueNavigator(context, id, expDate);
@@ -155,7 +182,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
               context, 'Are you sure you want to delete this catalogue?',
               onBack: () {
             navigationService.goBack();
-            //vm.removeCatalogue(context, id);
+            vm.removeBanner(context, id);
           });
         } else if (value == "sendApproval") {
           showAlertMessage(context, 'Do you really want to change status?',
