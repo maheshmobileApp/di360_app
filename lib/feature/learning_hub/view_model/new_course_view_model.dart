@@ -172,7 +172,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       validateSponsoredByImg();
     }
 
-    // Move to next step if validations pass
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
       pageController.nextPage(
@@ -207,7 +206,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
 
-  void validatePresenterImg() async {
+  Future<void> validatePresenterImg() async {
     var value = await _http.uploadImage(selectedPresentedImg?.path);
     presenter_image = value['url'];
     print(presenter_image);
@@ -395,12 +394,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
-    /*validatePresenterImg();
-    validateCourseHeaderBanner();
-    validateGallery();
-    validateCourseBanner();
-    buildCourseInfoList();
-    validateSponsoredByImg();*/
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     String? startDate = startDateController.text.isEmpty

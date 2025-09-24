@@ -121,4 +121,13 @@ mixin ValidationMixins {
     if (value == null || value.isEmpty) return 'Please select category name';
     return null;
   }
+    
+    String? validateBannerName(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter banner name';
+    return null;
+  }
+   String? validateUrl(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter URL';
+    return null;
+  }
 }

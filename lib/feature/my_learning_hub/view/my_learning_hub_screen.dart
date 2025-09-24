@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
@@ -58,7 +59,12 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
           ),
           actions: [
             addHorizontal(15),
-            SvgPicture.asset(ImageConst.search, color: AppColors.black),
+            GestureDetector(
+                onTap: () {
+                  myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen);
+                },
+                child: SvgPicture.asset(ImageConst.search,
+                    color: AppColors.black)),
             addHorizontal(15),
             GestureDetector(
               onTap: () => {
@@ -98,6 +104,15 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
         body: Column(
           children: [
             Divider(),
+            if (myLearningHubVM.searchBarOpen)
+              SearchWidget(
+                controller: myLearningHubVM.searchController,
+                hintText: "Search Course...",
+                onClear: () {},
+                onChanged: (value) {
+                  myLearningHubVM.getCoursesWithMyRegistrations(context);
+                },
+              ),
             Expanded(
               child: myLearningHubVM.myRegisteredCourses.isEmpty
                   ? Center(
@@ -132,7 +147,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                               RouteList.courseDetailScreen,
                             );
                           },
-                          createdAt: courseData.startDate ?? "",
+                          createdAt: courseData.createdAt ?? "",
                         );
                       },
                     ),

@@ -15,7 +15,6 @@ import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/widgets/certificates_view.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
-import 'package:di360_flutter/widgets/education_data_withicon.dart';
 import 'package:di360_flutter/widgets/exerinace_info_icons.dart';
 import 'package:di360_flutter/widgets/header_image.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
@@ -23,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TalentsDetailsView extends StatefulWidget  with BaseContextHelpers{
+class TalentsDetailsView extends StatefulWidget with BaseContextHelpers {
   final JobProfile? talentList;
 
   const TalentsDetailsView({
@@ -86,7 +85,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 ),
             ],
           ),
-           addVertical(16),
+          addVertical(16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -94,27 +93,27 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                   icon: Icons.work,
                   text:
                       '${widget.talentList?.yearOfExperience ?? 0} Yrs Experience'),
-               addVertical(12),
+              addVertical(12),
               ExerinaceInfoIcons(
                   icon: Icons.location_on,
                   text: '${widget.talentList?.location ?? ''}'),
-               addVertical(12),
+              addVertical(12),
               ExerinaceInfoIcons(
                   icon: Icons.call,
                   text: '${widget.talentList?.mobileNumber ?? ''}'),
-                addVertical(12),
+              addVertical(12),
               ExerinaceInfoIcons(
                   icon: Icons.business,
                   text: '${widget.talentList?.currentCompany ?? ''}'),
-                addVertical(12),
+              addVertical(12),
               ExerinaceInfoIcons(
                   icon: Icons.email,
                   text: '${widget.talentList?.emailAddress ?? ''}'),
-               addVertical(12),
+              addVertical(12),
               ExerinaceInfoIcons(
                   icon: Icons.language,
                   text: '${widget.talentList?.languagesSpoken ?? ''}'),
-               addVertical(12),
+              addVertical(12),
               ExerinaceInfoIcons(
                   icon: Icons.build,
                   text: '${widget.talentList?.areasExpertise ?? ''}'),
@@ -123,61 +122,59 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           Divider(
             color: AppColors.geryColor,
           ),
-           addVertical(16),
+          addVertical(16),
           // EducationDataWithIcon(
           //   iconPath: ImageConst.graduationSvg,
           //   title: 'Education',
           //   educationList: widget.talentList?.educations ?? [],
           // ),
-           addVertical(16),
-         _sectionHeader(
-            "Skills"
-          ),
-            addVertical(6),
+          addVertical(16),
+          _sectionHeader("Skills"),
+          addVertical(6),
           CustomChipView(typesList: widget.talentList?.skills ?? []),
-            addVertical(16),
+          addVertical(16),
           _sectionHeader("Work Type"),
-           addVertical(6),
+          addVertical(6),
           CustomChipView(typesList: widget.talentList?.workType ?? []),
           addVertical(10),
-           _sectionHeader("ABN Number"),
-           ExerinaceInfoIcons(
-                  icon: Icons.call,
+          _sectionHeader("ABN Number"),
+          ExerinaceInfoIcons(
+            icon: Icons.call,
             text: widget.talentList?.abnNumber ?? '',
           ),
-            addVertical(16),
-         _sectionHeader("Profession Type"),
+          addVertical(16),
+          _sectionHeader("Profession Type"),
           addVertical(6),
-            ExerinaceInfoIcons(
-                  icon: Icons.work_history_outlined,
-              text:'${widget.talentList?.professionType?? ''}' ),
-           addVertical(10),
-           _sectionHeader("AHPRA Number"),
           ExerinaceInfoIcons(
-                  icon: Icons.call,
+              icon: Icons.work_history_outlined,
+              text: '${widget.talentList?.professionType ?? ''}'),
+          addVertical(10),
+          _sectionHeader("AHPRA Number"),
+          ExerinaceInfoIcons(
+            icon: Icons.call,
             text: widget.talentList?.aphraNumber ?? '',
           ),
-            addVertical(16),
+          addVertical(16),
           _sectionHeader("Work Rights"),
           addVertical(6),
-           ExerinaceInfoIcons(
-                  icon: Icons.assessment,
-              text:'${widget.talentList?.workRights?? ''}' ),
+          ExerinaceInfoIcons(
+              icon: Icons.assessment,
+              text: '${widget.talentList?.workRights ?? ''}'),
           const Divider(),
           _sectionHeader("About me / Profile Summary"),
           _sectionText(widget.talentList?.aboutYourself ?? ''),
           const Divider(),
           _sectionHeader("Work Experience"),
-            addVertical(16),
+          addVertical(16),
           _buildJobExperiencesList(talentViewmodel),
           const SizedBox.shrink(),
-           addVertical(16),
+          addVertical(16),
           _sectionHeader("Certifications"),
           CertificatesView(certificates: widget.talentList?.certificate),
-           addVertical(16),
+          addVertical(16),
           _sectionHeader("Cover Letter"),
           CertificatesView(certificates: widget.talentList?.coverLetter),
-            addVertical(16),
+          addVertical(16),
           _sectionHeader('Job Location'),
           Text(widget.talentList?.location ?? ''),
           locationView(context),
@@ -212,7 +209,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 textColor: AppColors.primaryColor,
               ),
             ),
-             addHorizontal(16),
+            addHorizontal(16),
             Expanded(
               child: CustomRoundedButton(
                 text: 'Hire Me',

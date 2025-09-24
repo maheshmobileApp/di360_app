@@ -6,6 +6,8 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart'
 import 'package:di360_flutter/feature/add_directors/view/my_director/my_director_screen.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.dart';
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
+import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
+import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
@@ -151,6 +153,8 @@ class Routes {
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
+      RouteList.bannersListView: (context) => BannersListScreen(),
+      RouteList.addBanners: (context) => AddBannersScreen(),
     };
   }
 }
