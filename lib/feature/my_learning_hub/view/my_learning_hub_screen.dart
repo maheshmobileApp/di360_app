@@ -105,7 +105,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                 hintText: "Search Course...",
                 onClear: () {},
                 onChanged: (value) {
-                  myLearningHubVM.getCoursesWithMyRegistrations(context, value);
+                  //myLearningHubVM.getCoursesWithMyRegistrations(context);
                 },
               ),
             Expanded(

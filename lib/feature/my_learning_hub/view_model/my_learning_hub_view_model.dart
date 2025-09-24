@@ -13,10 +13,10 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
   bool searchBarOpen = false;
   final searchController = TextEditingController();
 
-  Future<void> getCoursesWithMyRegistrations(BuildContext context,String? searchText) async {
+  Future<void> getCoursesWithMyRegistrations(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
-    final res = await repo.getCoursesWithMyRegistrations(userId,searchText);
+    final res = await repo.getCoursesWithMyRegistrations(userId);
 
     if (res != null) {
       myRegisteredCourses = res;
