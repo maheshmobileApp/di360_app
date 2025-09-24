@@ -52,4 +52,6 @@ class RouteList {
   static const String professionDirectorScreen = '/professionDirectorScreen';
   static const String professionAddDirectorView = '/professionAddDirectorView';
   static const String registeredUsersView = '/registeredUsersView';
+  static const String bannersListView = '/bannersListView';
+  static const String addBanners = '/addBanners';
 }
