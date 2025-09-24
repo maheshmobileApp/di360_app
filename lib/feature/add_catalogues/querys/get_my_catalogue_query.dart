@@ -1,11 +1,6 @@
 const String getMyCatalogueQuery = r'''
-query catalogues($limit: Int, $offset: Int, $searchTitle: String, $searchCategory: String, $searchCompany: String, $status: [String!], $dental_supplier_id: uuid, $startDate: timestamp, $endDate: timestamp) {
-  catalogues(
-    order_by: {id: desc}
-    limit: $limit
-    offset: $offset
-    where: {_and: [{status: {_in: $status}, dental_supplier_id: {_eq: $dental_supplier_id}}, {_or: [{title: {_ilike: $searchTitle}}, {catalogue_category: {name: {_ilike: $searchCategory}}}, {dental_supplier: {name: {_ilike: $searchCompany}}}]}]}
-  ) {
+query catalogues($limit: Int, $offset: Int, $where: catalogues_bool_exp!) {
+  catalogues(order_by: {id: desc}, limit: $limit, offset: $offset, where: $where) {
     id
     title
     catalogue_status
@@ -23,6 +18,11 @@ query catalogues($limit: Int, $offset: Int, $searchTitle: String, $searchCategor
       __typename
     }
     catalogue_category {
+      id
+      name
+      __typename
+    }
+    catalogue_sub_category {
       id
       name
       __typename

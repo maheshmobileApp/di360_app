@@ -29,9 +29,9 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          addTimings(addDirectorVM, context, editVM),
+          socialUrlsWidget(addDirectorVM, context, editVM),
           addVertical(20),
-          socialUrlsWidget(addDirectorVM, context, editVM)
+          addTimings(addDirectorVM, context, editVM)
         ],
       ),
     );
@@ -159,7 +159,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
       InputTextField(
         title: "Social Accounts URL",
         hintText: "Paste/enter link",
-        keyboardType: TextInputType.emailAddress,
+        keyboardType: TextInputType.text,
         controller: addDirectorVM.socialAccountsurlCntr,
         validator: (value) =>
             value == null || value.isEmpty ? 'Please select urls' : null,

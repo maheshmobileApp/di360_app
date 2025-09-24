@@ -117,9 +117,9 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
       ),
       builder: (context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.55,
-          maxChildSize: 0.55,
-          minChildSize: 0.4,
+          initialChildSize: 0.75,
+          maxChildSize: 0.75,
+          minChildSize: 0.7,
           expand: false,
           builder: (context, scrollController) {
             return Form(

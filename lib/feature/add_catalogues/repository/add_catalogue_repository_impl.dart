@@ -26,9 +26,53 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   }
 
   @override
-  Future<List<Catalogues>?> getMyCatalogues(dynamic variables) async {
-    final catalogueData =
-        await http.query(getMyCatalogueQuery, variables: variables);
+  Future<List<Catalogues>?> getMyCatalogues(
+      List<String>? catalogStatus, List<String>? status) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final catalogueData = await http.query(getMyCatalogueQuery, variables: {
+      "limit": 100,
+      "offset": 0,
+      "where": {
+        "_and": [
+          {
+            "_and": [
+              {
+                "title": {"_ilike": "%%"}
+              }
+            ]
+          },
+          {
+            "dental_supplier_id": {"_eq": userId}
+          },
+          {
+            "_or": [
+              {
+                "status": {
+                  "_in": catalogStatus?.isEmpty == true
+                      ? [
+                          "APPROVED",
+                          "PENDING_APPROVAL",
+                          "EXPIRED",
+                          "SCHEDULED",
+                          "REJECTED",
+                          "DRAFT"
+                        ]
+                      : catalogStatus
+                }
+              },
+              if (status?.isNotEmpty == true)
+                {
+                  "catalogue_status": {
+                    "_in": status?.isEmpty == true
+                        ? ["ACTIVE", "INACTIVE"]
+                        : status
+                  }
+                }
+            ]
+          }
+        ]
+      }
+    });
     final result = MyCataloguesData.fromJson(catalogueData);
     return result.catalogues ?? [];
   }
@@ -90,12 +134,8 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   @override
   Future<CatalogueCountData> catalogueCounts() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final data = await http.query(GetCatalogueCountsQuery, variables: {
-      "title": "%%",
-      "categoryName": "%%",
-      "supplierId": userId
-    });
-
+    final data = await http.query(GetCatalogueCountsQuery,
+        variables: {"dental_supplier_id": userId});
     final result = CatalogueCountData.fromJson(data);
     return result;
   }

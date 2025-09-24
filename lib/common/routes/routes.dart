@@ -84,7 +84,7 @@ class Routes {
         return ChangeNotifierProvider(
           create: (BuildContext context) => JobProfileCreateViewModel(),
           child: JobProfileView(
-            profile: profileData,
+            profile: profileData, isEdit: null,
           ),
         );
       },

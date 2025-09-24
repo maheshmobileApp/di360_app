@@ -1,88 +1,76 @@
 const String GetCatalogueCountsQuery = r'''
-query GetCatalogueStatusCounts($title: String!, $categoryName: String!, $supplierId: uuid!) {
+query get_all_supply_aggregate_status_wise_v2($dental_supplier_id: uuid) {
   all: catalogues_aggregate(
-    where: {
-      status: {_eq: "APPROVED"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
+    where: {status: {_in: ["APPROVED", "PENDING_APPROVAL", "EXPIRED", "DRAFT", "SCHEDULED", "REJECTED"]}, dental_supplier_id: {_eq: $dental_supplier_id}}
   ) {
     aggregate {
       count
+      __typename
     }
-  }
-  approved: catalogues_aggregate(
-    where: {
-      status: {_eq: "APPROVED"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
-  ) {
-    aggregate {
-      count
-    }
-  }
-  pending: catalogues_aggregate(
-    where: {
-      status: {_eq: "PENDING_APPROVAL"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
-  ) {
-    aggregate {
-      count
-    }
-  }
-  rejected: catalogues_aggregate(
-    where: {
-      status: {_eq: "REJECTED"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
-  ) {
-    aggregate {
-      count
-    }
-  }
-  expired: catalogues_aggregate(
-    where: {
-      status: {_eq: "EXPIRED"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
-  ) {
-    aggregate {
-      count
-    }
+    __typename
   }
   draft: catalogues_aggregate(
-    where: {
-      status: {_eq: "DRAFT"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
+    where: {status: {_eq: "DRAFT"}, dental_supplier_id: {_eq: $dental_supplier_id}}
   ) {
     aggregate {
       count
+      __typename
     }
+    __typename
+  }
+  approval_pending: catalogues_aggregate(
+    where: {status: {_eq: "PENDING_APPROVAL"}, dental_supplier_id: {_eq: $dental_supplier_id}}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+  approved: catalogues_aggregate(
+    where: {_and: [{catalogue_status: {_eq: "ACTIVE"}}, {status: {_in: ["APPROVED", "SCHEDULED"]}}, {dental_supplier_id: {_eq: $dental_supplier_id}}]}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
   }
   scheduled: catalogues_aggregate(
-    where: {
-      status: {_eq: "SCHEDULED"},
-      title: {_ilike: $title},
-      catalogue_category: {name: {_ilike: $categoryName}},
-      dental_supplier_id: {_eq: $supplierId}
-    }
+    where: {status: {_eq: "SCHEDULED"}, dental_supplier_id: {_eq: $dental_supplier_id}}
   ) {
     aggregate {
       count
+      __typename
     }
+    __typename
+  }
+  rejected: catalogues_aggregate(
+    where: {status: {_eq: "REJECTED"}, dental_supplier_id: {_eq: $dental_supplier_id}}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+  expired: catalogues_aggregate(
+    where: {status: {_eq: "EXPIRED"}, dental_supplier_id: {_eq: $dental_supplier_id}}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+  inactive: catalogues_aggregate(
+    where: {_and: [{catalogue_status: {_eq: "INACTIVE"}}, {status: {_in: ["APPROVED", "SCHEDULED"]}}, {dental_supplier_id: {_eq: $dental_supplier_id}}]}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
   }
 }
 ''';

@@ -124,11 +124,11 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             color: AppColors.geryColor,
           ),
            addVertical(16),
-          EducationDataWithIcon(
-            iconPath: ImageConst.graduationSvg,
-            title: 'Education',
-            educationList: widget.talentList?.educations ?? [],
-          ),
+          // EducationDataWithIcon(
+          //   iconPath: ImageConst.graduationSvg,
+          //   title: 'Education',
+          //   educationList: widget.talentList?.educations ?? [],
+          // ),
            addVertical(16),
          _sectionHeader(
             "Skills"
