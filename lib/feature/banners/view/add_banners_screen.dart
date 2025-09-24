@@ -145,9 +145,14 @@ class AddBannersScreen extends StatelessWidget
                               onTap: () async {
                                 if (formKey.currentState!.validate() &&
                                     validateURlAndData(bannersVM)) {
-                                  bannersVM.addBannersData(context);
+                                       bannersVM.isEditBanner
+                                    ? bannersVM.updateBannerData(
+                                        context)
+                                    : bannersVM.addBannersData(context);
+                                  
                                 }
                               }),
+                               
                         )
                       ],
                     )
