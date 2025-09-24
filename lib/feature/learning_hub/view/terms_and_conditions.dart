@@ -37,16 +37,24 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
               hintText: "Enter Terms & Conditions",
               maxLength: 500,
               maxLines: 5,
+               isRequired: true,
               title: "Terms & Conditions",
               controller: newCourseVM.termsAndConditionsController,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Terms & Conditions'
+                  : null,
             ),
             SizedBox(height: 8),
             InputTextField(
               hintText: "Enter Cancellation & Refund Policy",
               maxLength: 500,
               maxLines: 5,
+               isRequired: true,
               title: "Cancellation & Refund Policy",
               controller: newCourseVM.cancellationController,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter Cancellation & Refund Policy'
+                  : null,
             ),
             SizedBox(height: 8),
 
