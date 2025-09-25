@@ -320,8 +320,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
     // Images / files (from API)
     viewModel.presenter_image = course.presentedByImage?.url ?? "";
     viewModel.courseBannerImageHeaderList = [];
-    viewModel.selectedGalleryList =[];
-    viewModel.courseBannerImgList =[];
+    viewModel.selectedGalleryList = [];
+    viewModel.courseBannerImgList = [];
     viewModel.sponsoredByImgList = [];
 
     // Sessions / Course Event Info
