@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/botted_border_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/schedule_expiry_data_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
@@ -30,7 +31,7 @@ class AddCatalogueScreen extends StatelessWidget
             onTap: () => navigationService.goBack(),
             child: const Icon(Icons.arrow_back_ios, color: AppColors.black)),
         title: Text('Add Catalogue',
-            style: TextStyles.medium2(color: AppColors.black)),
+            style: TextStyles.bold5(color: AppColors.black)),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -45,19 +46,39 @@ class AddCatalogueScreen extends StatelessWidget
                   children: [
                     CustomDropDown(
                       isRequired: true,
+                      value: addCataloguVM.selectedCatalogueType,
+                      title: "Type",
+                      onChanged: (v) {
+                        addCataloguVM
+                            .updateSelectedCatalogueType(v as CatalogueTypes?);
+                      },
+                      items: addCataloguVM.catalogueTypesList
+                              ?.map<DropdownMenuItem<CatalogueTypes>>(
+                                  (CatalogueTypes value) {
+                            return DropdownMenuItem<CatalogueTypes>(
+                                value: value, child: Text(value.name ?? ''));
+                          }).toList() ??
+                          [],
+                      hintText: "Select type",
+                      validator: (value) =>
+                          value == null || value.toString().isEmpty
+                              ? 'Please select type'
+                              : null,
+                    ),
+                    addVertical(15),
+                    CustomDropDown(
+                      isRequired: true,
                       value: addCataloguVM.selectedCatagory,
                       title: "Category",
                       onChanged: (v) {
-                        addCataloguVM
-                            .updateSelectedCatagory(v as CatalogueCategories?);
+                        addCataloguVM.updateSelectedCatagory(
+                            v as CatalogueSubCategories?);
                       },
                       items: addCataloguVM.catagorysList
-                              ?.map<DropdownMenuItem<CatalogueCategories>>(
-                                  (CatalogueCategories value) {
-                            return DropdownMenuItem<CatalogueCategories>(
-                              value: value,
-                              child: Text(value.name ?? ''),
-                            );
+                              ?.map<DropdownMenuItem<CatalogueSubCategories>>(
+                                  (CatalogueSubCategories value) {
+                            return DropdownMenuItem<CatalogueSubCategories>(
+                                value: value, child: Text(value.name ?? ''));
                           }).toList() ??
                           [],
                       hintText: "Select category",
@@ -111,7 +132,11 @@ class AddCatalogueScreen extends StatelessWidget
                             onTap: () {
                               if (formKey.currentState!.validate() &&
                                   validateURlAndData(addCataloguVM)) {
-                                addCataloguVM.editCatalogueData(context, true);
+                                addCataloguVM.isEditCatalogue
+                                    ? addCataloguVM.editCatalogueData(
+                                        context, true)
+                                    : addCataloguVM.addCatalogueData(
+                                        context, true);
                               }
                             }),
                         AppButton(
@@ -124,7 +149,8 @@ class AddCatalogueScreen extends StatelessWidget
                                 addCataloguVM.isEditCatalogue
                                     ? addCataloguVM.editCatalogueData(
                                         context, false)
-                                    : addCataloguVM.addCatalogueData(context);
+                                    : addCataloguVM.addCatalogueData(
+                                        context, false);
                               }
                             })
                       ],
