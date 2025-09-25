@@ -546,4 +546,57 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     pageController.jumpToPage(
         0); // or pageController.animateToPage(...) if you want animation
   }
+
+  Future<void> loadCourseData(course) async {
+    // Reset image/file selections
+    selectedPresentedImg = null;
+    selectedCourseHeaderBanner = null;
+    selectedGallery = null;
+    selectedCourseBannerImg = null;
+    selectedEventImg = null;
+    selectedsponsoredByImg = null;
+
+    // Dropdown / selections
+    selectedCategoryId = course.courseCategoryId;
+    selectedCourseType = course.type;
+    selectedEvent = course.eventType ?? "";
+
+    // Text controllers
+    courseNameController.text = course.courseName ?? "";
+    presenterNameController.text = course.presentedByName ?? "";
+    cpdPointsController.text = course.cpdPoints?.toString() ?? "0";
+    numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
+    totalPriceController.text = course.afterwardsPrice?.toString() ?? "";
+    birdPriceController.text = course.earlyBirdPrice?.toString() ?? "";
+    courseDescController.text = course.description ?? "";
+    topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    learningObjectivesDescController.text = course.learningObjectives ?? "";
+    nameController.text = course.contactName ?? "";
+    phoneController.text = course.contactPhone ?? "";
+    emailController.text = course.contactEmail ?? "";
+    websiteController.text = course.contactWebsite ?? "";
+    registerLinkController.text = course.registerLink ?? "";
+    termsAndConditionsController.text = course.terms ?? "";
+    cancellationController.text = course.refundPolicy ?? "";
+    rsvpDateController.text = course.rsvpDate ?? "";
+    earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
+    startDateController.text = DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
+    endDateController.text = DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
+    addressController.text = course.address ?? "";
+    startTimeController.text = course.startTime ?? "";
+    endTimeController.text = course.startTime ?? ""; // if same
+
+    // Images / files (from API)
+    presenter_image = course.presentedByImage?.url ?? "";
+    courseBannerImageHeaderList = [];
+    selectedGalleryList = [];
+    courseBannerImgList = [];
+    sponsoredByImgList = [];
+
+    // Sessions / Course Event Info
+    courseInfoList = [];
+    sessions = [];
+
+    notifyListeners();
+  }
 }
