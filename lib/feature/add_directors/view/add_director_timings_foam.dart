@@ -29,8 +29,6 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          socialUrlsWidget(addDirectorVM, context, editVM),
-          addVertical(20),
           addTimings(addDirectorVM, context, editVM)
         ],
       ),
@@ -118,7 +116,7 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
               ),
             ],
           ),
-          addVertical(12),
+          addVertical(25),
           AppButton(
             text: editVM.isEditTimings ? 'Update' : 'Add',
             onTap: () {
@@ -130,6 +128,31 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
               }
             },
           )
+        ],
+      ),
+    );
+  }
+}
+
+class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
+  final String? id;
+  AddSocialAccountForm({super.key,this.id});
+  
+  @override
+  Widget build(BuildContext context) {
+    final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
+    final editVM = Provider.of<EditDeleteDirectorViewModel>(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          socialUrlsWidget(addDirectorVM, context, editVM),
         ],
       ),
     );

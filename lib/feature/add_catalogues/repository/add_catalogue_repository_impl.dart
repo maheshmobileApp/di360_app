@@ -4,12 +4,14 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catalogue_view_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_count_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/add_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catagorys_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catalogue_view_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/edit_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/get_catalogue_counts_query.dart';
+import 'package:di360_flutter/feature/add_catalogues/querys/get_catalogue_type_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/get_my_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/inactive_view_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/remove_catalogue_query.dart';
@@ -27,7 +29,8 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
 
   @override
   Future<List<Catalogues>?> getMyCatalogues(
-      List<String>? catalogStatus, List<String>? status) async {
+      List<String>? catalogStatus, List<String>? status,
+      {String? type, String? subCatagory}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final catalogueData = await http.query(getMyCatalogueQuery, variables: {
       "limit": 100,
@@ -44,6 +47,18 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
           {
             "dental_supplier_id": {"_eq": userId}
           },
+          if (type?.isNotEmpty == true)
+            {
+              "catalogue_category": {
+                "name": {"_ilike": "%$type%"}
+              }
+            },
+          if (subCatagory?.isNotEmpty == true)
+            {
+              "catalogue_sub_category": {
+                "name": {"_ilike": "%$subCatagory%"}
+              }
+            },
           {
             "_or": [
               {
@@ -111,18 +126,10 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   }
 
   @override
-  Future<List<CatalogueCategories>?> getCatagorys() async {
-    final data = await http.query(catagorys_query, variables: {
-      "andList": [
-        {
-          "status": {
-            "_in": ["APPROVED", "PENDING_APPROVAL", "SCHEDULED"]
-          }
-        }
-      ]
-    });
-    final result = CatagoryData.fromJson(data);
-    return result.catalogueCategories;
+  Future<List<CatalogueSubCategories>?> getCatagorys() async {
+    final data = await http.query(catagorys_query);
+    final result = CatagoriesData.fromJson(data);
+    return result.catalogueSubCategories;
   }
 
   @override
@@ -138,5 +145,12 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
         variables: {"dental_supplier_id": userId});
     final result = CatalogueCountData.fromJson(data);
     return result;
+  }
+
+  @override
+  Future<List<CatalogueTypes>?> getCatalogueTypes() async {
+    final data = await http.query(getCatalogueTypesQuery);
+    final result = CatalogueTypeData.fromJson(data);
+    return result.catalogueCategories;
   }
 }
