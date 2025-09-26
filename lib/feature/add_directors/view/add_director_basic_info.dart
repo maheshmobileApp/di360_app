@@ -91,7 +91,6 @@ class AddDirectorBasicInfo extends StatelessWidget
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please enter  address' : null,
           ),
-          Divider(thickness: 4),
           addVertical(20),
           sectionHeader("Logo & Banner"),
           addVertical(20),

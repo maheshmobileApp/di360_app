@@ -289,7 +289,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
     }
     if ((addDirectorVM.testimonialsPicFile?.path.isEmpty ??
             false || msgPic == null) &&
-        addDirectorVM.messageCntr.text.isNotEmpty) {
+        addDirectorVM.messageCntr.text.isEmpty) {
       showTopMessage(
           context, 'Please add either a message or a picture, not both');
       return false;
