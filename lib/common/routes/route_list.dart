@@ -34,6 +34,7 @@ class RouteList {
   static const String TalentListingScreen = ' TalentListingScreen';
   static const String TalentListingFilter = '/TalentListingFilter';
   static const String JobListingApplicantscreen = '/JobListingApplicantscreen';
+  static const String MyJobProfileScreen = '/MyJobProfileScreen';
   static const String adddirectorview = 'adddirectorview';
   static const String JobListingApplicantsMessege =
       '/JobListingApplicantsMessege';

@@ -26,6 +26,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart'
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/my_job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -121,6 +122,10 @@ class Routes {
         return JobListingApplicantsScreen(
           jobsListingData: args as Jobs,
         );
+      },
+      RouteList.MyJobProfileScreen: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as JobProfile;
+        return MyJobProfileScreen(jobsListingData: args);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
