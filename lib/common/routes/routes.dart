@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.da
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
+import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
@@ -154,11 +155,10 @@ class Routes {
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
-      RouteList.bannersListView: (context) => BannersListScreen(),
+      RouteList.bannersListView: (context) => ChangeNotifierProvider(
+          create: (_) => BannersViewModel(), child: BannersListScreen()),
       RouteList.addBanners: (context) => AddBannersScreen(),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
     };
   }
 }
-
-//        ChangeNotifierProvider(create: (_) => JobProfileViewModel()),
