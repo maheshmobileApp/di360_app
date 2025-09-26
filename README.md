@@ -353,4 +353,13 @@ Enquiry List ->
 Profile Create -> Admin approve-> market palce -> hire me / enquiry 
 
 
+/*
+1. Learning hub 
+2. My Directory
+3. Catelog
+4. News feed
+5. Banner 
+
+*/
+
 */
