@@ -106,7 +106,7 @@ class BannersViewModel extends ChangeNotifier {
       catalogStatus = ['REJECTED'];
     }
 
-    getBannersList(context);
+    getBannersList();
     notifyListeners();
   }
 
@@ -140,8 +140,7 @@ class BannersViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getBannersList(BuildContext context) async {
-    // Loaders.circularShowLoader(context);
+  Future<void> getBannersList() async {
     final res = await repo.getMyBanners({
       "where": {
         "status": {
@@ -164,10 +163,7 @@ class BannersViewModel extends ChangeNotifier {
     if (res != null) {
       bannersList = res;
       print("REEEEE${bannersList}");
-      //  Loaders.circularHideLoader(context);
-    } else {
-      // Loaders.circularHideLoader(context);
-    }
+    } else {}
     notifyListeners();
   }
 
@@ -181,7 +177,7 @@ class BannersViewModel extends ChangeNotifier {
   }
 
 //add banner
-  Future<void> addBannersData(BuildContext context) async {
+  Future<void> addBannersData(BuildContext context, bool isDarft) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
@@ -196,7 +192,7 @@ class BannersViewModel extends ChangeNotifier {
             "extension": "jpeg"
           }
         ],
-        "status": "PENDING",
+        "status": isDarft ? "DRAFT" : "PENDING",
         "banner_name": bannerNameController.text,
         "category_name": selectedCatagory?.name,
         "from_id": id,
@@ -214,7 +210,7 @@ class BannersViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddBannerData();
-      getBannersList(navigatorKey.currentContext!);
+      getBannersList();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -228,7 +224,7 @@ class BannersViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger('Banner removed successfully');
       Loaders.circularHideLoader(context);
-      getBannersList(context);
+      getBannersList();
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
@@ -269,7 +265,7 @@ class BannersViewModel extends ChangeNotifier {
   }
 
   //update Banner
-  Future<void> updateBannerData(BuildContext context) async {
+  Future<void> updateBannerData(BuildContext context, bool isDarft) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
@@ -294,7 +290,7 @@ class BannersViewModel extends ChangeNotifier {
               '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
           "category_name": selectedCatagory?.name,
           "from_id": id,
-          "status": "PENDING",
+          "status": isDarft ? "DRAFT" : "PENDING",
           "company_name": name
         }
       }
@@ -303,7 +299,7 @@ class BannersViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddBannerData();
-      getBannersList(navigatorKey.currentContext!);
+      getBannersList();
     } else {
       Loaders.circularHideLoader(context);
     }
