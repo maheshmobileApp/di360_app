@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.d
 import 'package:di360_flutter/feature/learning_hub/widgets/sponsors_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
   const CourseDetailScreen({
@@ -38,18 +39,31 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 final top = constraints.biggest.height;
                 final isCollapsed =
                     top <= kToolbarHeight + MediaQuery.of(context).padding.top;
+
                 return FlexibleSpaceBar(
-                    centerTitle: false,
-                    title: isCollapsed
-                        ? Text(
-                            courseDetails.courseName ?? '',
-                            style: TextStyles.bold2(color: AppColors.black),
-                          )
-                        : null,
-                    background: BannerImageWidget(
-                      imageUrl:
-                          courseDetails.courseBannerImage?.first.url ?? "",
-                    ));
+                  centerTitle: false,
+                  title: isCollapsed
+                      ? Text(
+                          courseDetails.courseName ?? '',
+                          style: TextStyles.bold2(color: AppColors.black),
+                        )
+                      : null,
+                  background: CarouselSlider(
+                    options: CarouselOptions(
+                      height: 250,
+                      autoPlay: true,
+                      viewportFraction: 1.0, // full width
+                      enableInfiniteScroll: true,
+                    ),
+                    items: (courseDetails.courseBannerImage ?? [])
+                        .map((e) => e.url ?? "")
+                        .where((url) => url.isNotEmpty)
+                        .map(
+                          (url) => BannerImageWidget(imageUrl: url),
+                        )
+                        .toList(),
+                  ),
+                );
               },
             ),
             leading: IconButton(
@@ -72,8 +86,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           profilePic: courseDetails.presentedByImage?.url ?? "",
                           presentByName: courseDetails.presentedByName ?? "",
                           cpdHours: courseDetails.cpdPoints.toString(),
-                          platform: courseDetails.feedType ?? "",
-                          webinar: courseDetails.type ?? "",
+                          platform: courseDetails.type ?? "",
+                          webinar: courseDetails.feedType ?? "",
                           totalPrice: courseDetails.afterwardsPrice.toString(),
                           discountPrice:
                               courseDetails.earlyBirdPrice.toString(),
