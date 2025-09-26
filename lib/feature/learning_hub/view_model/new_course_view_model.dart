@@ -219,14 +219,14 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final file = selectedCourseHeaderBanner?.path;
 
     // ⬅️ upload single file
-    final res = await  _http.uploadImage(file);
+    final res = await _http.uploadImage(file);
 
     // Build your object and wrap it in a list
     courseBannerImageHeaderList = [
       CourseBannerImage(
         name: res['name'],
         url: res['url'],
-        type: res['type'] ,
+        type: res['type'],
         size: res['size'],
       )
     ];
@@ -564,10 +564,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     // Text controllers
     courseNameController.text = course.courseName ?? "";
     presenterNameController.text = course.presentedByName ?? "";
-    cpdPointsController.text = course.cpdPoints?.toString() ?? "0";
+    cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0);
     numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
-    totalPriceController.text = course.afterwardsPrice?.toString() ?? "";
-    birdPriceController.text = course.earlyBirdPrice?.toString() ?? "";
+    totalPriceController.text = course.afterwardsPrice?.toStringAsFixed(0) ?? "";
+    birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
     courseDescController.text = course.description ?? "";
     topicsIncludedDescController.text = course.topicsIncluded ?? "";
     learningObjectivesDescController.text = course.learningObjectives ?? "";
@@ -580,8 +580,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     cancellationController.text = course.refundPolicy ?? "";
     rsvpDateController.text = course.rsvpDate ?? "";
     earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    startDateController.text = DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
-    endDateController.text = DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
+    startDateController.text =
+        DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
+    endDateController.text =
+        DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
     addressController.text = course.address ?? "";
     startTimeController.text = course.startTime ?? "";
     endTimeController.text = course.startTime ?? ""; // if same
