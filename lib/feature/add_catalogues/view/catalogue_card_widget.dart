@@ -113,7 +113,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(subTitleVal ?? '', format: 'MMM d, y')
+                  ? jiffyDataWidget(titleVal ?? '', format: 'MMM d, y')
                   : titleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),

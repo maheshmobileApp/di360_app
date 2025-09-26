@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catalogue_view_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/repository/add_catalogue_repository_impl.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
@@ -21,6 +22,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
   AddCatalogueViewModel() {
     getCatalogCounts();
     getCatagorysData();
+    getCatalogueTypeData();
     initializeFilterOptions();
     activeStatus = ["ACTIVE", "INACTIVE"];
   }
@@ -61,9 +63,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
   String? monthCount;
   List<Catalogues>? myCatalogueList;
   CataloguesByPk? cataloguView;
-  List<CatalogueCategories>? catagorysList;
+  List<CatalogueSubCategories>? catagorysList;
+  List<CatalogueTypes>? catalogueTypesList;
   TextEditingController catalogueNameController = TextEditingController();
-  CatalogueCategories? selectedCatagory;
+  CatalogueSubCategories? selectedCatagory;
+  CatalogueTypes? selectedCatalogueType;
   String? thumbnailImagePath;
   String? thumbnailServerPath;
   dynamic thumbnailImageObj;
@@ -71,8 +75,13 @@ class AddCatalogueViewModel extends ChangeNotifier {
   dynamic pdfPathUrl;
   bool isEditCatalogue = false;
 
-  void updateSelectedCatagory(CatalogueCategories? catagory) {
+  void updateSelectedCatagory(CatalogueSubCategories? catagory) {
     selectedCatagory = catagory;
+    notifyListeners();
+  }
+
+  void updateSelectedCatalogueType(CatalogueTypes? type) {
+    selectedCatalogueType = type;
     notifyListeners();
   }
 
@@ -109,7 +118,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       catalogStatus = ['REJECTED'];
       activeStatus = [];
     } else if (status == 'InActive') {
-      catalogStatus = ["SCHEDULED"];
+      catalogStatus = ["APPROVED", "SCHEDULED"];
       activeStatus = ["INACTIVE"];
     }
 
@@ -164,7 +173,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addCatalogueData(BuildContext context) async {
+  Future<void> addCatalogueData(BuildContext context, bool isDarft) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final isoString = DateTime.now().toUtc().toIso8601String();
 
@@ -184,7 +193,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
     final res = await repo.addCatalogue({
       "catalogueObj": {
         "title": catalogueNameController.text,
-        "catalogue_category_id": selectedCatagory?.id,
+        "catalogue_category_id": selectedCatalogueType?.id,
+        "catalogue_sub_category_id": selectedCatagory?.id,
         "thumbnail_image": thumbnailImageObj,
         "attachment": pdfPathUrl,
         "dental_supplier_id": id,
@@ -194,7 +204,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "months_count": null,
         "expiryDay":
             '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
-        "status": "PENDING_APPROVAL",
+        "status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
         "pending_at": isoString
       }
     });
@@ -219,15 +229,18 @@ class AddCatalogueViewModel extends ChangeNotifier {
     pdfPath = null;
     pdfPathUrl = null;
     selectedCatagory = null;
+    selectedCatalogueType = null;
     scheduleDate = null;
     expiryDate = null;
     updateEditCatalogueVal(false);
     notifyListeners();
   }
 
-  Future<void> getMyCataloguesData(BuildContext context) async {
+  Future<void> getMyCataloguesData(BuildContext context,
+      {String? type, String? subCatagory}) async {
     Loaders.circularShowLoader(context);
-    final res = await repo.getMyCatalogues(catalogStatus, activeStatus);
+    final res = await repo.getMyCatalogues(catalogStatus, activeStatus,
+        type: type, subCatagory: subCatagory);
     getCatalogCounts();
     if (res != null) {
       myCatalogueList = res;
@@ -319,7 +332,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
     monthCount = '${cataloguView?.monthsCount ?? ''}';
     pdfPath = cataloguView?.attachment?.name ?? '';
     pdfPathUrl = cataloguView?.attachment;
-    assignTheSelectedCatagory(cataloguView?.catalogueCategory?.id);
+    assignTheSelectedCatagory(cataloguView?.catalogueSubCategory?.id);
+    assignTheSelectedCatalogueType(cataloguView?.catalogueCategory?.id);
     scheduleDate = DateTime.parse(cataloguView?.schedulerDay ?? '');
     expiryDate = DateTime.parse(expirysDate);
     notifyListeners();
@@ -331,10 +345,24 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  assignTheSelectedCatalogueType(String? id) {
+    final obj = catalogueTypesList?.firstWhere((v) => v.id == id);
+    updateSelectedCatalogueType(obj);
+    notifyListeners();
+  }
+
   Future<void> getCatagorysData() async {
     final res = await repo.getCatagorys();
     if (res != null) {
       catagorysList = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> getCatalogueTypeData() async {
+    final res = await repo.getCatalogueTypes();
+    if (res != null) {
+      catalogueTypesList = res;
     }
     notifyListeners();
   }
@@ -355,7 +383,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
       "id": editCatalogueId,
       "updateObj": {
         "title": catalogueNameController.text,
-        "catalogue_category_id": selectedCatagory?.id,
+        "catalogue_category_id": selectedCatalogueType?.id,
+        "catalogue_sub_category_id": selectedCatagory?.id,
         "thumbnail_image": thumbnailImageObj,
         "attachment": pdfPathUrl,
         "catalogue_status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
@@ -422,27 +451,29 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, Set<int>> selectedIndices = {'catagory': {}, 'status': {}};
+  Map<String, Set<int>> selectedIndices = {'type': {}, 'catagory': {}};
 
-  Map<String, bool> sectionVisibility = {'catagory': true, 'status': true};
+  Map<String, bool> sectionVisibility = {'type': true, 'catagory': true};
 
-  List<String> catagory = ['Company', 'Monthly', 'New Product', 'Promotional'];
   String? selectedCatagoryName;
+  String? selectedType;
 
   void initializeFilterOptions() async {
     filterOptions = {
-      'Catagory': catagory.map((e) {
-        return FilterItem(
-          name: e,
-          id: '',
-        );
-      }).toList(),
-      'Status': statuses.map((e) {
-        return FilterItem(
-          name: e,
-          id: '',
-        );
-      }).toList()
+      'Type': catalogueTypesList?.map((e) {
+            return FilterItem(
+              name: e.name ?? '',
+              id: e.id ?? '',
+            );
+          }).toList() ??
+          [],
+      'Catagory': catagorysList?.map((e) {
+            return FilterItem(
+              name: e.name ?? '',
+              id: e.id ?? '',
+            );
+          }).toList() ??
+          []
     };
     notifyListeners();
   }
@@ -451,12 +482,13 @@ class AddCatalogueViewModel extends ChangeNotifier {
     selectedIndices.updateAll((key, value) => {});
     searchController.clear();
     selectedCatagoryName = null;
+    selectedType = null;
     updateCatalogFilterApply(false);
     getMyCataloguesData(navigatorKey.currentContext!);
     notifyListeners();
   }
 
-  void printSelectedItems() {
+  void printSelectedItems() async {
     selectedIndices.forEach((section, indices) {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {
@@ -465,12 +497,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
           final name = items[i].name;
           if (section == "Catagory") {
             selectedCatagoryName = name;
-          } else if (section == "Status") {
-            changeStatus(name, navigatorKey.currentContext!);
+          } else if (section == "Type") {
+            selectedType = name;
           }
         }
       }
     });
+    await getMyCataloguesData(navigatorKey.currentContext!,
+        type: selectedType, subCatagory: selectedCatagoryName);
   }
 }
 

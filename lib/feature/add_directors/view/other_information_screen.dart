@@ -43,6 +43,27 @@ class OtherInformationScreen extends StatelessWidget {
             ),
             SizedBox(height: 15),
             timingsWidget(addDirectorVM, editVM),
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                sectionHeader('Add Social Accounts'),
+                CustomAddButton(
+                  label: 'Add +',
+                  onPressed: () {
+                    addDirectorVM.selectWeekCntr.clear();
+                    addDirectorVM.serviceStartTimeCntr.clear();
+                    addDirectorVM.serviceEndTimeCntr.clear();
+                    addDirectorVM.selectedAccount = null;
+                    addDirectorVM.selectedDays = null;
+                    addDirectorVM.socialAccountsurlCntr.clear();
+                    editVM.updateIsEditTimings(false);
+                    editVM.updateIsEditSocialMed(false);
+                    showSocialAccountBottomSheet(context, '');
+                  },
+                ),
+              ],
+            ),
             SizedBox(height: 15),
             socialURLWidget(addDirectorVM, editVM)
           ],
@@ -61,9 +82,9 @@ class OtherInformationScreen extends StatelessWidget {
       ),
       builder: (context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.6,
+          initialChildSize: 0.45,
+          maxChildSize: 0.45,
+          minChildSize: 0.4,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -81,6 +102,49 @@ class OtherInformationScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 20),
                         child: AddDirectorTimingsFoam(id: id),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  
+  void showSocialAccountBottomSheet(BuildContext context, String id) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          maxChildSize: 0.75,
+          minChildSize: 0.6,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 20),
+                        child: AddSocialAccountForm(id: id),
                       ),
                     ),
                   ],

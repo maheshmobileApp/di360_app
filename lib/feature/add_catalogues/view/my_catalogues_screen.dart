@@ -69,8 +69,10 @@ class MyCataloguesScreen extends StatelessWidget with BaseContextHelpers {
               SvgPicture.asset(ImageConst.search, color: AppColors.black),
               addHorizontal(15),
               GestureDetector(
-                  onTap: () =>
-                      navigationService.navigateTo(RouteList.myCatalogueFilter),
+                  onTap: () {
+                    myCatalogVM.initializeFilterOptions();
+                    navigationService.navigateTo(RouteList.myCatalogueFilter);
+                  },
                   child: SvgPicture.asset(ImageConst.filter,
                       color: AppColors.black)),
               if (myCatalogVM.catalogFilterApply == true)
