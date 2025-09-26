@@ -22,6 +22,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     getCatalogCounts();
     getCatagorysData();
     initializeFilterOptions();
+    activeStatus = ["ACTIVE", "INACTIVE"];
   }
 
   String selectedStatus = 'All';
@@ -32,7 +33,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
     'Pending Approval',
     'Approved & Scheduled',
     'Expired',
-    'Reject'
+    'Reject',
+    'InActive'
   ];
 
   int? allCatalogueCount = 0;
@@ -41,6 +43,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
   int? approvedScheduledCatalogueCount = 0;
   int? expiredCatalogueCount = 0;
   int? rejectCatalogueCount = 0;
+  int? inActiveCatalogueCount = 0;
 
   Map<String, int?> get statusCountMap => {
         'All': allCatalogueCount,
@@ -49,9 +52,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
         'Approved & Scheduled': approvedScheduledCatalogueCount,
         'Expired': expiredCatalogueCount,
         'Reject': rejectCatalogueCount,
+        'InActive': inActiveCatalogueCount
       };
 
   List<String>? catalogStatus = [];
+  List<String>? activeStatus = [];
   String? editCatalogueId;
   String? monthCount;
   List<Catalogues>? myCatalogueList;
@@ -87,16 +92,25 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "REJECTED",
         "DRAFT"
       ];
+      activeStatus = ["ACTIVE", "INACTIVE"];
     } else if (status == 'Draft') {
       catalogStatus = ['DRAFT'];
+      activeStatus = [];
     } else if (status == 'Pending Approval') {
       catalogStatus = ['PENDING_APPROVAL'];
+      activeStatus = [];
     } else if (status == 'Approved & Scheduled') {
       catalogStatus = ["APPROVED", "SCHEDULED"];
+      activeStatus = ["ACTIVE"];
     } else if (status == 'Expired') {
       catalogStatus = ['EXPIRED'];
+      activeStatus = [];
     } else if (status == 'Reject') {
       catalogStatus = ['REJECTED'];
+      activeStatus = [];
+    } else if (status == 'InActive') {
+      catalogStatus = ["SCHEDULED"];
+      activeStatus = ["INACTIVE"];
     }
 
     getMyCataloguesData(context);
@@ -212,26 +226,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
   }
 
   Future<void> getMyCataloguesData(BuildContext context) async {
-    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
-    final res = await repo.getMyCatalogues({
-      "limit": 70,
-      "offset": 0,
-      "searchTitle": "%${searchController.text}%",
-      "searchCategory": "%$selectedCatagoryName%",
-      "searchCompany": "%%",
-      "status": catalogStatus?.isEmpty == true
-          ? [
-              "APPROVED",
-              "PENDING_APPROVAL",
-              "EXPIRED",
-              "SCHEDULED",
-              "REJECTED",
-              "DRAFT"
-            ]
-          : catalogStatus,
-      "dental_supplier_id": id
-    });
+    final res = await repo.getMyCatalogues(catalogStatus, activeStatus);
     getCatalogCounts();
     if (res != null) {
       myCatalogueList = res;
@@ -249,9 +245,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       cataloguView = res;
       Loaders.circularHideLoader(context);
       navigationService.push(HorizantalPdf(
-        key: ValueKey(
-          cataloguView?.attachment?.url ?? '',
-        ),
+        key: ValueKey(cataloguView?.attachment?.url ?? ''),
         fileUrl: cataloguView?.attachment?.url ?? '',
         fileName: cataloguView?.attachment?.name ?? '',
         isfullScreen: true,
@@ -394,18 +388,13 @@ class AddCatalogueViewModel extends ChangeNotifier {
 
   Future<void> getCatalogCounts() async {
     final res = await repo.catalogueCounts();
-    allCatalogueCount = ((res.expired?.aggregate?.count ?? 0) +
-        (res.scheduled?.aggregate?.count ?? 0) +
-        (res.approved?.aggregate?.count ?? 0) +
-        (res.pending?.aggregate?.count ?? 0) +
-        (res.draft?.aggregate?.count ?? 0) +
-        (res.rejected?.aggregate?.count ?? 0));
-    pendingApprovalCatalogueCount = res.pending?.aggregate?.count;
+    allCatalogueCount = res.all?.aggregate?.count;
+    pendingApprovalCatalogueCount = res.approvalPending?.aggregate?.count;
     draftCatalogueCount = res.draft?.aggregate?.count;
-    approvedScheduledCatalogueCount = ((res.scheduled?.aggregate?.count ?? 0) +
-        (res.approved?.aggregate?.count ?? 0));
+    approvedScheduledCatalogueCount = res.approved?.aggregate?.count;
     expiredCatalogueCount = res.expired?.aggregate?.count;
     rejectCatalogueCount = res.rejected?.aggregate?.count;
+    inActiveCatalogueCount = res.inactive?.aggregate?.count;
     notifyListeners();
   }
 

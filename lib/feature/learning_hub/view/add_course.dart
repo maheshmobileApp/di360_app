@@ -181,10 +181,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
             ImagePickerField(
               title: "Course Header Banner / Video",
               isRequired: true,
-              allowMultiple: true,
               showPreview: true,
-              selectedFiles: jobCreateVM.selectedCourseHeaderBanner,
-              onFilesPicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
+              selectedFile: jobCreateVM.selectedCourseHeaderBanner,
+              onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
             ),
             SizedBox(height: 8),
             ImagePickerField(

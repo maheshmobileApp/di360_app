@@ -51,6 +51,15 @@
           ]
         },
         {
+          "title": "Learning Hub",
+          "subTitle": [
+            {
+              "title": "My Learning Hub",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            }
+          ]
+        },
+        {
           "title": "Support Request",
           "subTitle": [
             {
@@ -100,6 +109,16 @@
             {
               "title": "Job Listings",
               "asset": "assets/profile/jobseek/#000000ff.svg"
+            }
+          ]
+        },
+        {
+          "title": "Learning Hub",
+          "subTitle": [
+         
+            {
+              "title": "My Learning Hub",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
             }
           ]
         },
@@ -253,6 +272,15 @@
           "subTitle": [
             {
               "title": "Catalogues",
+              "asset": "assets/profile/payments&others/call-center 1.svg"
+            }
+          ]
+        },
+        {
+          "title": "Learning Hub",
+          "subTitle": [
+            {
+              "title": "Learning Hub",
               "asset": "assets/profile/payments&others/call-center 1.svg"
             }
           ]

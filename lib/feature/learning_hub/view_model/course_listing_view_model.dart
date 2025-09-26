@@ -172,4 +172,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     userPhoneNumberController.text = "";
     userDescriptionController.text = "";
   }
+
+  
 }

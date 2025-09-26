@@ -4,7 +4,9 @@ class MyCatalogueRes {
   MyCatalogueRes({this.data});
 
   MyCatalogueRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new MyCataloguesData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new MyCataloguesData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +56,7 @@ class Catalogues {
   String? createdAt;
   DentalSupplier? dentalSupplier;
   CatalogueCategory? catalogueCategory;
+  CatalogueSubCategory? catalogueSubCategory;
   String? sTypename;
 
   Catalogues(
@@ -71,6 +74,7 @@ class Catalogues {
       this.createdAt,
       this.dentalSupplier,
       this.catalogueCategory,
+      this.catalogueSubCategory,
       this.sTypename});
 
   Catalogues.fromJson(Map<String, dynamic> json) {
@@ -91,6 +95,9 @@ class Catalogues {
         : null;
     catalogueCategory = json['catalogue_category'] != null
         ? new CatalogueCategory.fromJson(json['catalogue_category'])
+        : null;
+    catalogueSubCategory = json['catalogue_sub_category'] != null
+        ? new CatalogueSubCategory.fromJson(json['catalogue_sub_category'])
         : null;
     sTypename = json['__typename'];
   }
@@ -147,6 +154,28 @@ class CatalogueCategory {
   CatalogueCategory({this.id, this.name, this.sTypename});
 
   CatalogueCategory.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class CatalogueSubCategory {
+  String? id;
+  String? name;
+  String? sTypename;
+
+  CatalogueSubCategory({this.id, this.name, this.sTypename});
+
+  CatalogueSubCategory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     sTypename = json['__typename'];

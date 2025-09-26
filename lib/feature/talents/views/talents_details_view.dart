@@ -15,7 +15,6 @@ import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/widgets/certificates_view.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
-import 'package:di360_flutter/widgets/education_data_withicon.dart';
 import 'package:di360_flutter/widgets/exerinace_info_icons.dart';
 import 'package:di360_flutter/widgets/header_image.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';

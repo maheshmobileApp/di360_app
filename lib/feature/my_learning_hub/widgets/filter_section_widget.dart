@@ -33,94 +33,97 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Top handle
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(4),
+    return SizedBox(
+       height: MediaQuery.of(context).size.height * 0.8,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Top handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Filter",
-                  style: TextStyles.bold4(color: AppColors.primaryColor),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedOptions.clear();
-                    });
-                    widget.onClear();
-                  },
-                  child: Text("Clear all",
-                      style:
-                          TextStyles.regular3(color: AppColors.lightGeryColor)),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Dynamic filter sections
-            ...widget.sections.map(
-              (section) => _FilterSection(
-                title: section.title,
-                options: section.options,
-                selectedOption: selectedOptions[section.title],
-                onOptionSelected: (value) =>
-                    _onOptionSelected(section.title, value),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: CustomRoundedButton(
-                    text: 'Cancel',
-                    height: 40,
-                    backgroundColor: AppColors.timeBgColor,
-                    textColor: AppColors.primaryColor,
+              const SizedBox(height: 12),
+      
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Filter",
+                    style: TextStyles.bold4(color: AppColors.primaryColor),
+                  ),
+                  TextButton(
                     onPressed: () {
-                      navigationService.goBack();
+                      setState(() {
+                        selectedOptions.clear();
+                      });
+                      widget.onClear();
                     },
+                    child: Text("Clear all",
+                        style:
+                            TextStyles.regular3(color: AppColors.lightGeryColor)),
                   ),
+                ],
+              ),
+      
+              const SizedBox(height: 8),
+      
+              // Dynamic filter sections
+              ...widget.sections.map(
+                (section) => _FilterSection(
+                  title: section.title,
+                  options: section.options,
+                  selectedOption: selectedOptions[section.title],
+                  onOptionSelected: (value) =>
+                      _onOptionSelected(section.title, value),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    height: 40,
-                    text: 'Apply',
-                    onTap: () {
-                      widget.onApply(selectedOptions);
-                      navigationService.goBack();
-                    },
+              ),
+      
+              const SizedBox(height: 24),
+      
+              // Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomRoundedButton(
+                      text: 'Cancel',
+                      height: 40,
+                      backgroundColor: AppColors.timeBgColor,
+                      textColor: AppColors.primaryColor,
+                      onPressed: () {
+                        navigationService.goBack();
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: AppButton(
+                      height: 40,
+                      text: 'Apply',
+                      onTap: () {
+                        widget.onApply(selectedOptions);
+                        navigationService.goBack();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

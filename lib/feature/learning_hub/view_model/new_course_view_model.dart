@@ -53,7 +53,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   //imageFields
   File? selectedPresentedImg;
-  List<File>? selectedCourseHeaderBanner;
+  File? selectedCourseHeaderBanner;
   List<File>? selectedGallery;
   List<File>? selectedCourseBannerImg;
   List<File>? selectedEventImg;
@@ -105,7 +105,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   List<JobTypes> EmpTypes = [];
   List<String> empOptions = [];
 //------------------------Set Values-------------------------------
-  void setCourseHeaderBaner(List<File>? value) {
+  void setCourseHeaderBaner(File? value) {
     selectedCourseHeaderBanner = value;
     notifyListeners();
   }
@@ -172,7 +172,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       validateSponsoredByImg();
     }
 
-    // Move to next step if validations pass
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
       pageController.nextPage(
@@ -207,10 +206,32 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
 
-  void validatePresenterImg() async {
+  Future<void> validatePresenterImg() async {
     var value = await _http.uploadImage(selectedPresentedImg?.path);
     presenter_image = value['url'];
     print(presenter_image);
+    notifyListeners();
+  }
+
+  Future<void> validateCourseHeaderBanner() async {
+    if (selectedCourseHeaderBanner == null) return;
+
+    final file = selectedCourseHeaderBanner?.path;
+
+    // ⬅️ upload single file
+    final res = await _http.uploadImage(file);
+
+    // Build your object and wrap it in a list
+    courseBannerImageHeaderList = [
+      CourseBannerImage(
+        name: res['name'],
+        url: res['url'],
+        type: res['type'],
+        size: res['size'],
+      )
+    ];
+
+    // notify listeners for UI update
     notifyListeners();
   }
 
@@ -230,7 +251,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return uploaded;
   }
 
-  Future<void> validateCourseHeaderBanner() async {
+  /*Future<void> validateCourseHeaderBanner() async {
     courseBannerImageHeaderList = await uploadFiles(
       selectedCourseHeaderBanner,
       (file, res) => CourseBannerImage(
@@ -241,7 +262,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       ),
     );
     notifyListeners();
-  }
+  }*/
 
   Future<void> validateGallery() async {
     selectedGalleryList = await uploadFiles(
@@ -395,12 +416,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
-    /*validatePresenterImg();
-    validateCourseHeaderBanner();
-    validateGallery();
-    validateCourseBanner();
-    buildCourseInfoList();
-    validateSponsoredByImg();*/
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     String? startDate = startDateController.text.isEmpty
@@ -423,9 +438,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         rsvpDate: rsvpDateController.text,
         presentedByName: presenterNameController.text,
         presentedByImage: PresentedByImage(url: presenter_image),
-        courseBannerImage: courseBannerImageHeaderList,
+        courseBannerImage: courseBannerImgList,
         courseGallery: selectedGalleryList,
-        courseBannerVideo: courseBannerImgList,
+        courseBannerVideo: courseBannerImageHeaderList,
         description: courseDescController.text,
         cpdPoints: double.parse(cpdPointsController.text),
         numberOfSeats: int.parse(numberOfSeatsController.text),
@@ -530,5 +545,60 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     // Page controller reset
     pageController.jumpToPage(
         0); // or pageController.animateToPage(...) if you want animation
+  }
+
+  Future<void> loadCourseData(course) async {
+    // Reset image/file selections
+    selectedPresentedImg = null;
+    selectedCourseHeaderBanner = null;
+    selectedGallery = null;
+    selectedCourseBannerImg = null;
+    selectedEventImg = null;
+    selectedsponsoredByImg = null;
+
+    // Dropdown / selections
+    selectedCategoryId = course.courseCategoryId;
+    selectedCourseType = course.type;
+    selectedEvent = course.eventType ?? "";
+
+    // Text controllers
+    courseNameController.text = course.courseName ?? "";
+    presenterNameController.text = course.presentedByName ?? "";
+    cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0);
+    numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
+    totalPriceController.text = course.afterwardsPrice?.toStringAsFixed(0) ?? "";
+    birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
+    courseDescController.text = course.description ?? "";
+    topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    learningObjectivesDescController.text = course.learningObjectives ?? "";
+    nameController.text = course.contactName ?? "";
+    phoneController.text = course.contactPhone ?? "";
+    emailController.text = course.contactEmail ?? "";
+    websiteController.text = course.contactWebsite ?? "";
+    registerLinkController.text = course.registerLink ?? "";
+    termsAndConditionsController.text = course.terms ?? "";
+    cancellationController.text = course.refundPolicy ?? "";
+    rsvpDateController.text = course.rsvpDate ?? "";
+    earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
+    startDateController.text =
+        DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
+    endDateController.text =
+        DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
+    addressController.text = course.address ?? "";
+    startTimeController.text = course.startTime ?? "";
+    endTimeController.text = course.startTime ?? ""; // if same
+
+    // Images / files (from API)
+    presenter_image = course.presentedByImage?.url ?? "";
+    courseBannerImageHeaderList = [];
+    selectedGalleryList = [];
+    courseBannerImgList = [];
+    sponsoredByImgList = [];
+
+    // Sessions / Course Event Info
+    courseInfoList = [];
+    sessions = [];
+
+    notifyListeners();
   }
 }

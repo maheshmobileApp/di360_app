@@ -1,11 +1,11 @@
 const String getMyRegisteredCourseQuery = r'''
-query getCoursesWithMyRegistrations( $limit: Int, $offset: Int, $from_id: uuid!) {
+query getCoursesWithMyRegistrations(
+  $limit: Int
+  $offset: Int
+  $where: courses_bool_exp
+) {
   courses(
-    where: {
-      _and: [
-        { course_registered_users: { from_id: { _eq: $from_id } } }
-      ]
-    }
+    where: $where
     limit: $limit
     offset: $offset
     order_by: { created_at: desc }
@@ -16,10 +16,9 @@ query getCoursesWithMyRegistrations( $limit: Int, $offset: Int, $from_id: uuid!)
     startDate
     endDate
     presented_by_name
-    presented_by_image 
-    cpd_points
-    webinar_link
+    presented_by_image
     company_name
+    cpd_points
     status
     active_status
     created_at

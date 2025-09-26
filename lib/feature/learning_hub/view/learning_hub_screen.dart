@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
@@ -96,7 +97,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
             if (courseListingVM.searchBarOpen)
               SearchWidget(
                 controller: courseListingVM.searchController,
-                hintText: "Search company...",
+                hintText: "Search Course...",
                 onClear: () {},
                 onChanged: (value) {
                   courseListingVM.getCoursesListingData(context, value);
@@ -195,11 +196,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                   ?.aggregate?.count ??
                               0,
                           onDetailView: () async {
-                            if (course.status == "DRAFT") {
+                            /* if (course.status == "DRAFT") {
                               scaffoldMessenger(
                                   "Draft courses cannot be opened");
                               return;
-                            }
+                            }*/
 
                             await courseListingVM.getCourseDetails(
                               context,
@@ -236,7 +237,18 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                                print("Edit course $id");
+                                await courseListingVM.getCourseDetails(
+                                    context, course.id ?? "");
+                                newCourseVM.fetchCourseCategory();
+                                newCourseVM.fetchCourseType();
+
+                                await newCourseVM.loadCourseData(
+                                    courseListingVM.courseDetails.first);
+
+                                navigationService.navigateTo(
+                                  RouteList.newCourseScreen,
+                                );
+
                                 break;
                               case "Delete":
                                 courseListingVM.deleteCourse(

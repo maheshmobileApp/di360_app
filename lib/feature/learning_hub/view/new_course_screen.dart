@@ -1,10 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/create_course_enum.dart';
@@ -23,6 +25,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
   @override
   Widget build(BuildContext context) {
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
+    final courseListVM = Provider.of<CourseListingViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -77,7 +80,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               ),
             ),
           ),
-          _bottomButtons(context, newCourseVM),
+          _bottomButtons(context, newCourseVM, courseListVM),
         ],
       ),
     );
@@ -114,7 +117,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
     }
   }
 
-  Widget _bottomButtons(BuildContext context, NewCourseViewModel newCourseVM) {
+  Widget _bottomButtons(BuildContext context, NewCourseViewModel newCourseVM,
+      CourseListingViewModel courseListVM) {
     int currentStep = newCourseVM.currentStep;
     bool isLastStep = currentStep == newCourseVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;
@@ -155,13 +159,15 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
-                newCourseVM.validatePresenterImg();
-                newCourseVM.validateCourseHeaderBanner();
-                newCourseVM.validateGallery();
-                newCourseVM.validateCourseBanner();
                 final currentFormKey =
                     newCourseVM.formKeys[newCourseVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
+                  await newCourseVM.validatePresenterImg();
+                  await newCourseVM.validateCourseHeaderBanner();
+                  await newCourseVM.validateGallery();
+                  await newCourseVM.validateCourseBanner();
+                  await newCourseVM.buildCourseInfoList();
+                  await newCourseVM.validateSponsoredByImg();
                   await newCourseVM.createdCourseListing(context, true);
                   navigationService.goBack();
                 }
@@ -183,7 +189,9 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                 if (currentFormKey.currentState?.validate() ?? false) {
                   if (isLastStep) {
                     await newCourseVM.createdCourseListing(context, false);
-                    navigationService.goBack();
+                    courseListVM.selectedStatus = "All";
+                    await courseListVM.getCoursesListingData(context, "");
+                    navigationService.navigateTo(RouteList.learningHubScreen);
                   } else {
                     newCourseVM.goToNextStep();
                   }
