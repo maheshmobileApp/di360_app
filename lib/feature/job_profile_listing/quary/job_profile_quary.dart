@@ -58,11 +58,22 @@ query GetJobProfileData($dental_professional_id: uuid!) {
       profile_image
       gender
     }
-    jobhirings {
-      id
-    }
+   jobhirings {
+        id
+        created_at
+        dental_supplier_id
+        dental_professional_id
+        hiring_status
+        job_profiles_id
+      }
+      talent_enquiries {
+        id
+        talent_id
+        enquiry_description
+        enquiry_from
+        created_at
+        updated_at
+      }
   }
 }
-
-
  ''';
