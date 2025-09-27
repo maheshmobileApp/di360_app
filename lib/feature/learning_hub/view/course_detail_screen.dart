@@ -11,22 +11,46 @@ import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/sponsors_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
-  const CourseDetailScreen({
-    super.key,
-  });
+  const CourseDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
+
+    if (courseListingVM.courseDetails.isEmpty) {
+      return const Scaffold(
+        body: Center(child: Text("No course details available")),
+      );
+    }
+
     final courseDetails = courseListingVM.courseDetails.first;
 
+    final bannerUrls = (courseDetails.courseBannerImage ?? [])
+        .map((e) => e.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    final galleryUrls = (courseDetails.courseGallery ?? [])
+        .map((e) => e.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    final sponsorUrls = (courseDetails.sponsorByImage ?? [])
+        .map((e) => e.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    final firstEventInfo = (courseDetails.courseEventInfo?.isNotEmpty ?? false)
+        ? courseDetails.courseEventInfo!.first
+        : null;
+
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -48,29 +72,27 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           style: TextStyles.bold2(color: AppColors.black),
                         )
                       : null,
-                  background: CarouselSlider(
-                    options: CarouselOptions(
-                      height: 250,
-                      autoPlay: true,
-                      viewportFraction: 1.0, // full width
-                      enableInfiniteScroll: true,
-                    ),
-                    items: (courseDetails.courseBannerImage ?? [])
-                        .map((e) => e.url ?? "")
-                        .where((url) => url.isNotEmpty)
-                        .map(
-                          (url) => BannerImageWidget(imageUrl: url),
-                        )
-                        .toList(),
-                  ),
+                  background: (bannerUrls.isEmpty)
+                      ? const SizedBox.shrink()
+                      : CarouselSlider(
+                          options: CarouselOptions(
+                            height: 250,
+                            autoPlay: true,
+                            viewportFraction: 1.0,
+                            enableInfiniteScroll: true,
+                          ),
+                          items: bannerUrls
+                              .map((url) => BannerImageWidget(imageUrl: url))
+                              .toList(),
+                        ),
                 );
               },
             ),
             leading: Container(
-              margin: const EdgeInsets.all(8), // outer spacing
+              margin: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
-                color: Colors.white, // white background
-                shape: BoxShape.circle, // circular button
+                color: Colors.white,
+                shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
@@ -88,102 +110,85 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
           SliverToBoxAdapter(
             child: Container(
               color: AppColors.whiteColor,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CourseInfoCardWidget(
-                          time: "",
-                          date: courseDetails.startDate ?? "",
-                          courseName: courseDetails.courseName ?? "",
-                          profilePic: courseDetails.presentedByImage?.url ?? "",
-                          presentByName: courseDetails.presentedByName ?? "",
-                          cpdHours:
-                              courseDetails.cpdPoints?.toInt().toString() ??
-                                  "0",
-                          platform: courseDetails.type ?? "",
-                          webinar: courseDetails.feedType ?? "",
-                          totalPrice: courseDetails.afterwardsPrice.toString(),
-                          discountPrice:
-                              courseDetails.earlyBirdPrice.toString(),
-                        ),
-                        const SizedBox(height: 12),
-                        CourseDescriptionWidget(
-                            title: 'Course Description',
-                            description: courseDetails.description ?? ""),
-                        const SizedBox(height: 12),
-                        (courseDetails.courseEventInfo?.first.info == "")
-                            ? SizedBox.shrink()
-                            : Column(
-                                children: [
-                                  EventDayDataWidget(
-                                      title:
-                                          '${courseDetails.eventType ?? ""} Event',
-                                      descriptions:
-                                          courseDetails.courseEventInfo ?? []),
-                                  GalleryImgWidget(
-                                    imageUrls: (courseDetails.courseEventInfo
-                                                ?.first.images ??
-                                            [])
-                                        .map((e) => e.url ?? "")
-                                        .where((url) => url.isNotEmpty)
-                                        .toList(),
-                                  ),
-                                ],
-                              ),
-                        const SizedBox(height: 12),
-                        GalleryImgWidget(
-                          title: "Gallery",
-                          imageUrls: (courseDetails.courseGallery ?? [])
-                              .map((e) => e.url ?? "")
-                              .where((url) => url.isNotEmpty)
-                              .toList(),
-                        ),
-                        const SizedBox(height: 12),
-                        (courseDetails.sponsorByImage?.length== 0)?SizedBox.shrink(): GalleryImgWidget(
-                          title: "Sponsors",
-                          height: 100,
-                          width: 100,
-                          imageUrls: (courseDetails.sponsorByImage ?? [])
-                              .map((e) => e.url ?? "")
-                              .where((url) => url.isNotEmpty)
-                              .toList(),
-                        ),
-                        const SizedBox(height: 12),
-                        (courseDetails.terms=="")?SizedBox.shrink():  CourseDescriptionWidget(
-                            title: 'Terms & Conditions',
-                            description: courseDetails.terms ?? ""),
-                        const SizedBox(height: 12),
-                          (courseDetails.refundPolicy=="")?SizedBox.shrink():   CourseDescriptionWidget(
-                            title: 'Cancellation & Refund Policy',
-                            description: courseDetails.refundPolicy ?? ""),
-                        const SizedBox(height: 12),
-                        ContactInfoWidget(
-                            location: courseDetails.address ?? "",
-                            email: courseDetails.contactEmail ?? "",
-                            phoneNumber: courseDetails.contactPhone ?? ""),
-                        (courseDetails.address != null &&
-                                courseDetails.address!.isNotEmpty)
-                            ? LocationViewWidget(
-                                location: courseDetails.address!,
-                              )
-                            : SizedBox.shrink(),
-                      ],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CourseInfoCardWidget(
+                      time: "",
+                      date: courseDetails.startDate ?? "",
+                      courseName: courseDetails.courseName ?? "",
+                      profilePic: courseDetails.presentedByImage?.url ?? "",
+                      presentByName: courseDetails.presentedByName ?? "",
+                      cpdHours: courseDetails.cpdPoints?.toInt().toString() ?? "0",
+                      platform: courseDetails.type ?? "",
+                      webinar: courseDetails.feedType ?? "",
+                      totalPrice: courseDetails.afterwardsPrice?.toString() ?? "0",
+                      discountPrice: courseDetails.earlyBirdPrice?.toString() ?? "0",
                     ),
-                  ),
-                  const Divider(),
-                  RegisterNowWidget(
-                    currentPrice: courseDetails.earlyBirdPrice.toString(),
-                    oldPrice: courseDetails.afterwardsPrice.toString(),
-                    onPressed: () {
-                      courseListingVM.setCourseId(courseDetails.id ?? "");
-                      RegistrationUserForm.show(context);
-                    },
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    if (courseDetails.description != "")
+                    CourseDescriptionWidget(
+                      title: 'Course Description',
+                      description: courseDetails.description ?? "",
+                    ),
+                    const SizedBox(height: 12),
+                    if (firstEventInfo != null && firstEventInfo.info!.isNotEmpty) ...[
+                      EventDayDataWidget(
+                        title: '${courseDetails.eventType ?? ""} Event',
+                        descriptions: courseDetails.courseEventInfo ?? [],
+                      ),
+                      GalleryImgWidget(
+                        imageUrls: (firstEventInfo.images ?? [])
+                            .map((e) => e.url ?? "")
+                            .where((url) => url.isNotEmpty)
+                            .toList(),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    if (galleryUrls.isNotEmpty)
+                      GalleryImgWidget(title: "Gallery", imageUrls: galleryUrls),
+                    const SizedBox(height: 12),
+                    if (sponsorUrls.isNotEmpty)
+                      GalleryImgWidget(
+                        title: "Sponsors",
+                        height: 100,
+                        width: 100,
+                        imageUrls: sponsorUrls,
+                      ),
+                    const SizedBox(height: 12),
+                    if ((courseDetails.terms ?? "").isNotEmpty)
+                      CourseDescriptionWidget(
+                        title: 'Terms & Conditions',
+                        description: courseDetails.terms ?? "",
+                      ),
+                    const SizedBox(height: 12),
+                    if ((courseDetails.refundPolicy ?? "").isNotEmpty)
+                      CourseDescriptionWidget(
+                        title: 'Cancellation & Refund Policy',
+                        description: courseDetails.refundPolicy ?? "",
+                      ),
+                    const SizedBox(height: 12),
+                    if (courseDetails.address != "" && courseDetails.contactEmail != ""&&courseDetails.contactPhone != "")
+                    ContactInfoWidget(
+                      location: courseDetails.address ?? "",
+                      email: courseDetails.contactEmail ?? "",
+                      phoneNumber: courseDetails.contactPhone ?? "",
+                    ),
+                    if ((courseDetails.address ?? "").isNotEmpty)
+                      LocationViewWidget(location: courseDetails.address!),
+                    const Divider(),
+                    RegisterNowWidget(
+                      currentPrice: courseDetails.earlyBirdPrice?.toString() ?? "0",
+                      oldPrice: courseDetails.afterwardsPrice?.toString() ?? "0",
+                      onPressed: () {
+                        courseListingVM.setCourseId(courseDetails.id ?? "");
+                        RegistrationUserForm.show(context);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

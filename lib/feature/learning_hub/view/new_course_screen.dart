@@ -124,7 +124,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
     bool isFirstStep = currentStep == 0;
     return Container(
       height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
         boxShadow: [
@@ -158,20 +158,24 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               fontSize: 12,
               text: 'Save Draft',
               height: 42,
+              width: 160,
               onPressed: () async {
-                
                 final currentFormKey =
                     newCourseVM.formKeys[newCourseVM.currentStep];
-                if (currentFormKey.currentState?.validate() ?? false) {
-                  await newCourseVM.validatePresenterImg();
-                  await newCourseVM.validateCourseHeaderBanner();
-                  await newCourseVM.validateGallery();
-                  await newCourseVM.validateCourseBanner();
-                  await newCourseVM.buildCourseInfoList();
-                  await newCourseVM.validateSponsoredByImg();
-                  await newCourseVM.createdCourseListing(context, true);
-                  navigationService.goBack();
+                if (true) {
+                  if (newCourseVM.selectedPresentedImg?.path.isNotEmpty ??
+                      false) {
+                    await newCourseVM.validatePresenterImg();
+                    await newCourseVM.validateCourseHeaderBanner();
+                    await newCourseVM.validateGallery();
+                    await newCourseVM.validateCourseBanner();
+                    await newCourseVM.buildCourseInfoList();
+                    await newCourseVM.validateSponsoredByImg();
+                  }
                 }
+                await newCourseVM.createdCourseListing(context, true);
+                courseListVM.selectedStatus = "All";
+                await courseListVM.getCoursesListingData(context, "");
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -192,7 +196,6 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     await newCourseVM.createdCourseListing(context, false);
                     courseListVM.selectedStatus = "All";
                     await courseListVM.getCoursesListingData(context, "");
-                    navigationService.goBack();
                   } else {
                     newCourseVM.goToNextStep();
                   }
