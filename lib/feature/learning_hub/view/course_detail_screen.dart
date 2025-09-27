@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widg
 import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -128,6 +129,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       discountPrice: courseDetails.earlyBirdPrice?.toString() ?? "0",
                     ),
                     const SizedBox(height: 12),
+                    /*MediaWidget(url: courseDetails.courseBannerVideo?.first.url??"",),
+                    const SizedBox(height: 12),*/
                     if (courseDetails.description != "")
                     CourseDescriptionWidget(
                       title: 'Course Description',

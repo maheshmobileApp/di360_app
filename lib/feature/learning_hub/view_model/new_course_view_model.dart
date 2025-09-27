@@ -216,7 +216,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> validateCourseHeaderBanner() async {
+  /*Future<void> validateCourseHeaderBanner() async {
     if (selectedCourseHeaderBanner == null) return;
 
     final file = selectedCourseHeaderBanner?.path;
@@ -236,7 +236,39 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     // notify listeners for UI update
     notifyListeners();
-  }
+  }*/
+
+  Future<void> validateCourseHeaderBanner() async {
+  if (selectedCourseHeaderBanner == null) return;
+
+  final file = selectedCourseHeaderBanner?.path;
+  if (file == null || file.isEmpty) return;
+
+  // detect type from file extension
+  final lower = file.toLowerCase();
+  final bool isVideo = lower.endsWith(".mp4") ||
+      lower.endsWith(".mov") ||
+      lower.endsWith(".avi") ||
+      lower.endsWith(".mkv") ||
+      lower.endsWith(".wmv");
+
+  // ⬅️ Call correct upload API
+  final res = await _http.uploadImage(file);
+
+  // Build your object and wrap it in a list
+  courseBannerImageHeaderList = [
+    CourseBannerImage(
+      name: res['name'],
+      url: res['url'],
+      type: isVideo ? "video" : "image", // explicitly set type
+      size: res['size'],
+    )
+  ];
+
+  // notify listeners for UI update
+  notifyListeners();
+}
+
 
   Future<List<T>> uploadFiles<T>(
     List<File>? files,
