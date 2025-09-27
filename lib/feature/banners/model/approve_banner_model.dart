@@ -1,11 +1,10 @@
- 
- class getBannerResp {
-  BannersData? data;
+class ApproveBannerResp {
+  ApproveBannerData? data;
 
-  getBannerResp({this.data});
+  ApproveBannerResp({this.data});
 
-  getBannerResp.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new BannersData.fromJson(json['data']) : null;
+  ApproveBannerResp.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? new ApproveBannerData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -17,22 +16,18 @@
   }
 }
 
-class BannersData {
-  List<Banners>? banners;
-  BannersAggregate? bannersAggregate;
+class ApproveBannerData {
+  List<ApproveBanners>? banners;
 
-  BannersData({this.banners, this.bannersAggregate});
+  ApproveBannerData({this.banners});
 
-  BannersData.fromJson(Map<String, dynamic> json) {
+  ApproveBannerData.fromJson(Map<String, dynamic> json) {
     if (json['banners'] != null) {
-      banners = <Banners>[];
+      banners = <ApproveBanners>[];
       json['banners'].forEach((v) {
-        banners!.add(new Banners.fromJson(v));
+        banners!.add(new ApproveBanners.fromJson(v));
       });
     }
-    bannersAggregate = json['banners_aggregate'] != null
-        ? new BannersAggregate.fromJson(json['banners_aggregate'])
-        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -40,45 +35,48 @@ class BannersData {
     if (this.banners != null) {
       data['banners'] = this.banners!.map((v) => v.toJson()).toList();
     }
-    if (this.bannersAggregate != null) {
-      data['banners_aggregate'] = this.bannersAggregate!.toJson();
-    }
     return data;
   }
 }
 
-class Banners {
+class ApproveBanners {
+  String? id;
+  String? bannerName;
+  String? categoryName;
   String? status;
+  int? views;
   String? expiryDate;
   List<Image>? image;
   String? scheduleDate;
-  String? bannerName;
-  String? categoryName;
-  String? companyName;
   String? createdAt;
   String? updatedAt;
   String? fromId;
-  String? id;
-  int? views;
+  String? url;
+  String? companyName;
   DentalSuppliers? dentalSuppliers;
 
-  Banners(
-      {this.status,
+  ApproveBanners(
+      {this.id,
+      this.bannerName,
+      this.categoryName,
+      this.status,
+      this.views,
       this.expiryDate,
       this.image,
       this.scheduleDate,
-      this.bannerName,
-      this.categoryName,
-      this.companyName,
       this.createdAt,
       this.updatedAt,
       this.fromId,
-      this.id,
-      this.views,
+      this.url,
+      this.companyName,
       this.dentalSuppliers});
 
-  Banners.fromJson(Map<String, dynamic> json) {
+  ApproveBanners.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    bannerName = json['banner_name'];
+    categoryName = json['category_name'];
     status = json['status'];
+    views = json['views'];
     expiryDate = json['expiry_date'];
     if (json['image'] != null) {
       image = <Image>[];
@@ -87,14 +85,11 @@ class Banners {
       });
     }
     scheduleDate = json['schedule_date'];
-    bannerName = json['banner_name'];
-    categoryName = json['category_name'];
-    companyName = json['company_name'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     fromId = json['from_id'];
-    id = json['id'];
-    views = json['views'];
+    url = json['url'];
+    companyName = json['company_name'];
     dentalSuppliers = json['dental_suppliers'] != null
         ? new DentalSuppliers.fromJson(json['dental_suppliers'])
         : null;
@@ -102,20 +97,21 @@ class Banners {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['banner_name'] = this.bannerName;
+    data['category_name'] = this.categoryName;
     data['status'] = this.status;
+    data['views'] = this.views;
     data['expiry_date'] = this.expiryDate;
     if (this.image != null) {
       data['image'] = this.image!.map((v) => v.toJson()).toList();
     }
     data['schedule_date'] = this.scheduleDate;
-    data['banner_name'] = this.bannerName;
-    data['category_name'] = this.categoryName;
-    data['company_name'] = this.companyName;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['from_id'] = this.fromId;
-    data['id'] = this.id;
-    data['views'] = this.views;
+    data['url'] = this.url;
+    data['company_name'] = this.companyName;
     if (this.dentalSuppliers != null) {
       data['dental_suppliers'] = this.dentalSuppliers!.toJson();
     }
@@ -149,59 +145,17 @@ class Image {
 }
 
 class DentalSuppliers {
-  String? id;
   String? name;
-  String? type;
 
-  DentalSuppliers({this.id, this.name, this.type});
+  DentalSuppliers({this.name});
 
   DentalSuppliers.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
     name = json['name'];
-    type = json['type'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
     data['name'] = this.name;
-    data['type'] = this.type;
-    return data;
-  }
-}
-
-class BannersAggregate {
-  Aggregate? aggregate;
-
-  BannersAggregate({this.aggregate});
-
-  BannersAggregate.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new Aggregate.fromJson(json['aggregate'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    return data;
-  }
-}
-
-class Aggregate {
-  int? count;
-
-  Aggregate({this.count});
-
-  Aggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
     return data;
   }
 }

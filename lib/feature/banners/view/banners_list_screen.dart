@@ -5,21 +5,23 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/banners/widgets/banners_card.dart';
-import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class BannersListScreen extends StatelessWidget with BaseContextHelpers {
+class BannersListScreen extends StatefulWidget {
   const BannersListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final notificationVM = Provider.of<NotificationViewModel>(context);
-    final bannersVM = Provider.of<BannersViewModel>(context);
+  State<BannersListScreen> createState() => _BannersListScreenState();
+}
 
+class _BannersListScreenState extends State<BannersListScreen>
+    with BaseContextHelpers {
+  @override
+  Widget build(BuildContext context) {
+    final bannersVM = Provider.of<BannersViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
@@ -42,41 +44,7 @@ class BannersListScreen extends StatelessWidget with BaseContextHelpers {
                 ),
               ],
             ),
-            actions: [
-              Builder(
-                builder: (context) => GestureDetector(
-                    onTap: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        SvgPicture.asset(ImageConst.notification,
-                            color: AppColors.black),
-                        if (notificationVM.notificationCount != 0)
-                          Positioned(
-                              top: -16,
-                              right: -13,
-                              child: CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: AppColors.primaryColor,
-                                  child: Text(
-                                      '${notificationVM.notificationCount}',
-                                      style: TextStyles.medium1(
-                                          color: AppColors.whiteColor))))
-                      ],
-                    )),
-              ),
-              addHorizontal(15),
-              SvgPicture.asset(ImageConst.search, color: AppColors.black),
-              addHorizontal(15),
-              GestureDetector(
-                  onTap: () =>
-                      navigationService.navigateTo(RouteList.myCatalogueFilter),
-                  child: SvgPicture.asset(ImageConst.filter,
-                      color: AppColors.black)),
-              addHorizontal(15)
-            ]),
+           ),
         body: Column(
           children: [
             SizedBox(
@@ -137,8 +105,7 @@ class BannersListScreen extends StatelessWidget with BaseContextHelpers {
             Divider(),
             Expanded(
               child:
-                  bannersVM.bannersList?.isNotEmpty == false
-
+                  bannersVM.bannersList.isNotEmpty == false
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -154,10 +121,10 @@ class BannersListScreen extends StatelessWidget with BaseContextHelpers {
                     )
                   :
                   ListView.builder(
-                itemCount: bannersVM.bannersList?.length,
+                      itemCount: bannersVM.bannersList.length,
                 itemBuilder: (context, index) {
                   return BannersCard(
-                    item: bannersVM.bannersList?[index],
+                          item: bannersVM.bannersList[index],
                   );
                  
                 },
@@ -173,5 +140,10 @@ class BannersListScreen extends StatelessWidget with BaseContextHelpers {
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 }
