@@ -51,6 +51,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   bool showLocumDate = false;
 
+  //server
+  String? serverPresentedImg;
+
   //imageFields
   File? selectedPresentedImg;
   File? selectedCourseHeaderBanner;
@@ -448,7 +451,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
             : double.parse(cpdPointsController.text),
         numberOfSeats: (numberOfSeatsController.text.isEmpty)
             ? null
-            :int.parse(numberOfSeatsController.text),
+            : int.parse(numberOfSeatsController.text),
         priceInAud: 0,
         priceInUsd: 0,
         earlyBirdPrice: (birdPriceController.text.isEmpty)
@@ -485,7 +488,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         createdById: userId,
         companyName: name,
         status: isDraft ? "DRAFT" : "PENDING",
-        type: (selectedCourseType==null)?"":selectedCourseType,
+        type: (selectedCourseType == null) ? "" : selectedCourseType,
         feedType: "LEARNHUB",
       ).toJson(),
     });
