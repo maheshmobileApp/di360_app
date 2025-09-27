@@ -1,7 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -54,12 +58,38 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
              addVertical(10),
-            const Divider(),
-            Row(children: [
-              _roundedButton("Message"),
-              addHorizontal(10),
-              _roundedButton("Enquiry"),
-            ])
+              const Divider(),
+            Row(
+              children: [
+               InkWell(
+                  onTap: () async {
+                    final profileId = jobsListingData.id;
+                    final jobId = jobsListingData.jobDesignation;
+                    if (profileId == null || jobId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Talent or Job ID not available"),
+                        ),
+                      );
+                      return;
+                    }
+                    final userId = await LocalStorage.getStringVal(
+                        LocalStorageConst.userId);
+                    navigationService.navigateToWithParams(
+                      RouteList.JobListingApplicantsMessege,
+                      params: {
+                        "jobId": jobId,
+                        "applicantId": profileId,
+                        "userId": userId,
+                      },
+                    );
+                  },
+                  child: _roundedButton("Message"),
+                ),
+                addHorizontal(10),
+                _roundedButton("Enquiry"),
+              ],
+            ),
           ],
         ),
       ),
