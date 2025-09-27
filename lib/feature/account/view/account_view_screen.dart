@@ -275,10 +275,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 Loaders.circularHideLoader(context);
                             context
                                 .read<CourseListingViewModel>()
-                                .searchBarOpen = false; 
+                                .searchBarOpen = false;
                             context
                                 .read<CourseListingViewModel>()
-                                .searchController.text = ""; 
+                                .searchController
+                                .text = "";
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
                           } else if (item.title == 'My Learning Hub') {
@@ -287,10 +288,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .getCoursesWithMyRegistrations(context);
                             context
                                 .read<MyLearningHubViewModel>()
-                                .searchBarOpen = false; 
+                                .searchBarOpen = false;
                             context
                                 .read<MyLearningHubViewModel>()
-                                .searchController.text = ""; 
+                                .searchController
+                                .text = "";
                             context
                                 .read<NewCourseViewModel>()
                                 .fetchCourseCategory();
@@ -299,11 +301,13 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .fetchCourseType();
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
-                          }
-                          else if (item.title == "Banners") {
-                              context
+                          } else if (item.title == "Banners") {
+                            Loaders.circularShowLoader(context);
+                            await context
                                 .read<BannersViewModel>()
-                                .getBannersList(navigatorKey.currentContext!);
+                                .getBannersList();
+
+                            Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
                           }

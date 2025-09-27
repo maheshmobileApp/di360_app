@@ -65,7 +65,7 @@ class AddBannersScreen extends StatelessWidget
                             bannersVM.selectedCatagory?.dimensions;
 
                         final isValid =
-                           bannersVM.checkDimensions(actualSize, requiredDim);
+                            bannersVM.checkDimensions(actualSize, requiredDim);
 
                         if (!isValid) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -131,8 +131,11 @@ class AddBannersScreen extends StatelessWidget
                             text: 'Save as Draft',
                             height: 42,
                             onTap: () {
-                              if (formKey.currentState!.validate()) {
-                                formKey.currentState?.save();
+                              if (formKey.currentState!.validate() &&
+                                  validateURlAndData(bannersVM)) {
+                                bannersVM.isEditBanner
+                                    ? bannersVM.updateBannerData(context, true)
+                                    : bannersVM.addBannersData(context, true);
                               }
                             },
                           ),
@@ -145,7 +148,11 @@ class AddBannersScreen extends StatelessWidget
                               onTap: () async {
                                 if (formKey.currentState!.validate() &&
                                     validateURlAndData(bannersVM)) {
-                                  bannersVM.addBannersData(context);
+                                  bannersVM.isEditBanner
+                                      ? bannersVM.updateBannerData(
+                                          context, false)
+                                      : bannersVM.addBannersData(
+                                          context, false);
                                 }
                               }),
                         )

@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.da
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
+import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
@@ -25,6 +26,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart'
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/my_job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -122,6 +124,10 @@ class Routes {
           jobsListingData: args as Jobs,
         );
       },
+      RouteList.MyJobProfileScreen: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as JobProfile;
+        return MyJobProfileScreen(jobsListingData: args);
+      },
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -155,12 +161,11 @@ class Routes {
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
-      RouteList.bannersListView: (context) => BannersListScreen(),
+      RouteList.bannersListView: (context) => ChangeNotifierProvider(
+          create: (_) => BannersViewModel(), child: BannersListScreen()),
       RouteList.addBanners: (context) => AddBannersScreen(),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
       RouteList.learningHubMasterView: (context) => LearningHubMasterView()
     };
   }
 }
-
-//        ChangeNotifierProvider(create: (_) => JobProfileViewModel()),

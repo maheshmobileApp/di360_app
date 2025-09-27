@@ -170,7 +170,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           );
           //  vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
-          // vm.editCatalogueNavigator(context, id, expDate);
+           vm.editCatalogueNavigator(context, id);
         } else if (value == "Inactive") {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {

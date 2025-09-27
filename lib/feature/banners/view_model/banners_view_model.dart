@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/banners/model/edit_banner_view_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/repository/banner_repository_impl.dart';
@@ -11,8 +13,6 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class BannersViewModel extends ChangeNotifier {
   final BannerRepositoryImpl repo = BannerRepositoryImpl();
@@ -28,6 +28,9 @@ class BannersViewModel extends ChangeNotifier {
   List<Banners>? bannersList;
   dynamic bannner_image;
   dynamic banner_name;
+  BannersByPk? bannerView;
+  String? editBannerId;
+  bool isEditBanner = false;
   void updateSelectedCatagory(BannerCategories? catagory) {
     selectedCatagory = catagory;
     notifyListeners();
@@ -103,7 +106,7 @@ class BannersViewModel extends ChangeNotifier {
       catalogStatus = ['REJECTED'];
     }
 
-    getBannersList(context);
+    getBannersList();
     notifyListeners();
   }
 
@@ -137,8 +140,7 @@ class BannersViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getBannersList(BuildContext context) async {
-    // Loaders.circularShowLoader(context);
+  Future<void> getBannersList() async {
     final res = await repo.getMyBanners({
       "where": {
         "status": {
@@ -161,10 +163,7 @@ class BannersViewModel extends ChangeNotifier {
     if (res != null) {
       bannersList = res;
       print("REEEEE${bannersList}");
-      //  Loaders.circularHideLoader(context);
-    } else {
-      // Loaders.circularHideLoader(context);
-    }
+    } else {}
     notifyListeners();
   }
 
@@ -178,7 +177,7 @@ class BannersViewModel extends ChangeNotifier {
   }
 
 //add banner
-  Future<void> addBannersData(BuildContext context) async {
+  Future<void> addBannersData(BuildContext context, bool isDarft) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
@@ -193,11 +192,11 @@ class BannersViewModel extends ChangeNotifier {
             "extension": "jpeg"
           }
         ],
-        "status": "PENDING",
+        "status": isDarft ? "DRAFT" : "PENDING",
         "banner_name": bannerNameController.text,
         "category_name": selectedCatagory?.name,
         "from_id": id,
-        "views": 9,
+        //"views": 9,
         "company_name": name,
         "url": urlController.text,
         "schedule_date":
@@ -211,7 +210,7 @@ class BannersViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddBannerData();
-      getBannersList(navigatorKey.currentContext!);
+      getBannersList();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -225,9 +224,83 @@ class BannersViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger('Banner removed successfully');
       Loaders.circularHideLoader(context);
-      getBannersList(context);
+      getBannersList();
     } else {
       scaffoldMessenger(res);
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  //data assign in editfields
+  assignTheSelectedCatagory(String? name) {
+    final obj = catagorysList?.firstWhere((v) => v.name == name);
+    updateSelectedCatagory(obj);
+    notifyListeners();
+  }
+
+  Future<void> editDataAssign(BannersByPk? bannersView) async {
+    bannerNameController.text = bannersView?.bannerName ?? '';
+    assignTheSelectedCatagory(bannersView?.categoryName);
+    editBannerId = bannersView?.id ?? "";
+    bannner_image = bannersView?.image?.first.url ?? "";
+    urlController.text = bannersView?.url ?? "";
+    scheduleDate = DateTime.parse(bannersView?.scheduleDate ?? '');
+    expiryDate = DateTime.parse(bannersView?.expiryDate ?? "");
+    notifyListeners();
+  }
+
+  Future<void> editCatalogueNavigator(BuildContext context, String? id) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.editBannerView(id);
+    if (res != null) {
+      bannerView = res;
+      editDataAssign(res);
+      Loaders.circularHideLoader(context);
+      navigationService.navigateTo(RouteList.addBanners);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  //update Banner
+  Future<void> updateBannerData(BuildContext context, bool isDarft) async {
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
+    Loaders.circularShowLoader(context);
+    await validateBannerImg();
+    final res = await repo.updateBanner({
+      {
+        "id": editBannerId,
+        "data": {
+          "banner_name": bannerNameController.text,
+          "url": urlController.text,
+          "image": [
+            {
+              "url": bannner_image,
+              "name": banner_name,
+              "type": "image",
+              "extension": "jpeg"
+            }
+          ],
+          "schedule_date":
+              '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
+          "expiry_date":
+              '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
+          "category_name": selectedCatagory?.name,
+          "from_id": id,
+          "status": isDarft ? "DRAFT" : "PENDING",
+          "company_name": name
+        }
+      }
+    });
+    if (res != null) {
+      Loaders.circularHideLoader(context);
+      navigationService.goBack();
+      clearAddBannerData();
+      getBannersList();
+    } else {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -240,7 +313,7 @@ class BannersViewModel extends ChangeNotifier {
     selectedCatagory = null;
     scheduleDate = null;
     expiryDate = null;
-
+    selectedPresentedImg = null;
     notifyListeners();
   }
 }

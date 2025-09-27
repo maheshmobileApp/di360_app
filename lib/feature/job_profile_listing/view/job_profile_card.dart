@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/job_profile_listing/widget/availibility_caleder_card.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -10,7 +11,6 @@ import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-
 
 class JobProfileCard extends StatelessWidget with BaseContextHelpers {
   final JobProfile jobsListingData;
@@ -33,57 +33,134 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
         ? jobsListingData.profileImage.first.url
         : '';
     final List<String> workTypes = jobsListingData.workType;
+    String resolveAvailabilityType(dynamic jobProfile) {
+      final raw = (jobProfile?.availabilityType ?? '').toString().toLowerCase();
+      if (['days', 'dates', 'both'].contains(raw)) return raw;
+      final hasDates =
+          (jobProfile?.availabilityDate as List?)?.isNotEmpty == true;
+      final hasDays =
+          (jobProfile?.availabilityDay as List?)?.isNotEmpty == true;
+      if (hasDates && hasDays) return 'both';
+      if (hasDates) return 'dates';
+      if (hasDays) return 'days';
+      return 'none';
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: const Color.fromRGBO(220, 224, 228, 1)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: const Color.fromRGBO(220, 224, 228, 1)),
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _logoWithTitle(
-                    profileImageUrl ?? "",
-                    jobsListingData.fullName ?? '',
-                    jobsListingData.jobDesignation ?? '',
-                    jobsListingData.currentCompany ?? '',
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _logoWithTitle(
+                        profileImageUrl ?? "",
+                        jobsListingData.fullName ?? '',
+                        jobsListingData.jobDesignation ?? '',
+                        jobsListingData.currentCompany ?? '',
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        JobTimeChip(time: time),
+                        const SizedBox(width: 4),
+                        menuWidget(
+                          vm,
+                          context,
+                          index!,
+                          jobsListingData.id ?? '',
+                          jobsListingData.activeStatus ?? '',
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+                addVertical(12),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _chipWidget(workTypes)),
+                  ],
+                ),
+                addVertical(10),
                 Row(
                   children: [
-                    JobTimeChip(time: time),
-                    const SizedBox(width: 4),
-                    menuWidget(
-                      vm,
-                      context,
-                      index!,
-                      jobsListingData.id ?? '',
-                      jobsListingData.activeStatus ?? '',
+                    _statusChip(jobsListingData.adminStatus ?? ''),
+                    addHorizontal(10),
+                    availabilityChip(
+                      label: 'Availability',
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AvailabilityCalendarDialog(
+                            availabilityType:
+                                resolveAvailabilityType(jobsListingData),
+                            availabilityDays:
+                                (jobsListingData.availabilityDay as List?)
+                                        ?.map((e) => e?.toString() ?? '')
+                                        .where((s) => s.isNotEmpty)
+                                        .toList() ??
+                                    <String>[],
+                            availabilityDates:
+                                (jobsListingData.availabilityDate as List?)
+                                        ?.map((e) => e?.toString() ?? '')
+                                        .where((s) => s.isNotEmpty)
+                                        .toList() ??
+                                    <String>[],
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
               ],
             ),
-            addVertical(12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: _chipWidget(workTypes)),
-                addHorizontal( 8),
-                _statusChip(jobsListingData.adminStatus ?? ''),
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromRGBO(116, 130, 148, 0.15),
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
+                ),
               ],
             ),
-            addVertical(10),
-            _descriptionWidget(jobsListingData.aboutYourself ?? ''),
-          ],
-        ),
+            child: InkWell(
+              onTap: () async {
+                navigationService.navigateToWithParams(
+                  RouteList.MyJobProfileScreen,
+                  params: jobsListingData,
+                );
+              },
+              child: Center(
+                child: Text(
+                  "${jobsListingData.jobHirings.length} requests, "
+                  "${jobsListingData.talentEnquiries?.length ?? 0} enquiry for this job profile",
+                  style: TextStyles.medium1(color: AppColors.black),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -121,14 +198,15 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                   ),
           ),
         ),
-          addHorizontal( 6),
+        addHorizontal(6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 name,
-                style: TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -140,8 +218,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
               ),
               Text(
                 companyName,
-                style:
-                    TextStyles.regular1(color: AppColors.lightGeryColor),
+                style: TextStyles.regular1(color: AppColors.lightGeryColor),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -178,22 +255,6 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
       }).toList(),
     );
   }
-
-  Widget _descriptionWidget(String description) {
-    return SizedBox(
-      width: double.infinity,
-      child: Text(
-        description.isNotEmpty ? description : '',
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyles.regular1(
-          color: AppColors.bottomNavUnSelectedColor,
-        ),
-      ),
-    );
-  }
-
-  
 
   Widget menuWidget(
     JobProfileListingViewModel vm,
@@ -250,7 +311,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
           ),
           PopupMenuItem(
             value: "Delete",
-            child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+            child:
+                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
           ),
         ];
         if (activeStatus.toUpperCase() == "ACTIVE") {
@@ -334,5 +396,43 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     } catch (_) {
       return '';
     }
+  }
+
+  Widget availabilityChip({
+    required String label,
+    Color backgroundColor = const Color(0xFFFFF1E5),
+    Color textColor = AppColors.primaryColor,
+    double fontSize = 13,
+    double height = 30,
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 8),
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: height,
+        padding: padding,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.calendar_today,
+                size: 20, color: AppColors.primaryColor),
+            const SizedBox(width: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: fontSize,
+                color: textColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
