@@ -271,8 +271,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<CourseListingViewModel>()
-                                .getCoursesListingData(context,""); 
-                                Loaders.circularHideLoader(context);
+                                .getCoursesListingData(context, "");
+                            Loaders.circularHideLoader(context);
                             context
                                 .read<CourseListingViewModel>()
                                 .searchBarOpen = false;
@@ -283,9 +283,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
                           } else if (item.title == 'My Learning Hub') {
-                            context
+                            Loaders.circularShowLoader(context);
+                            await context
                                 .read<MyLearningHubViewModel>()
                                 .getCoursesWithMyRegistrations(context);
+                            Loaders.circularHideLoader(context);
                             context
                                 .read<MyLearningHubViewModel>()
                                 .searchBarOpen = false;

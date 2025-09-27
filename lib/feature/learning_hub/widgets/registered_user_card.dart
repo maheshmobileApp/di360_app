@@ -7,6 +7,7 @@ class RegisteredUserCard extends StatelessWidget {
   final String userName;
   final String userMail;
   final String description;
+  final String userPhone;
 
   const RegisteredUserCard({
     super.key,
@@ -14,6 +15,7 @@ class RegisteredUserCard extends StatelessWidget {
     required this.userName,
     required this.userMail,
     required this.description,
+    required this.userPhone,
   });
 
   @override
@@ -47,22 +49,55 @@ class RegisteredUserCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(userName,
-                    style: TextStyles.medium2(color: AppColors.black)),
+                Text(userName.toUpperCase(),
+                    style: TextStyles.bold2(color: AppColors.black)),
                 const SizedBox(height: 4),
-                Text(userMail,
-                    style: TextStyles.regular1(
-                        color: AppColors.bottomNavUnSelectedColor)),
-                const SizedBox(height: 6),
-                Text("Description :",
-                    style: TextStyles.regular2(color: AppColors.black)),
-                Text(
-                  description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyles.regular1(
-                      color: AppColors.bottomNavUnSelectedColor),
+                Row(
+                  children: [
+                    Icon(Icons.email,
+                        size: 16, color: AppColors.bottomNavUnSelectedColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      userMail,
+                      style: TextStyles.regular2(
+                          color: AppColors.bottomNavUnSelectedColor),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.phone,
+                        size: 16, color: AppColors.bottomNavUnSelectedColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      userPhone,
+                      style: TextStyles.regular2(
+                          color: AppColors.bottomNavUnSelectedColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (description.isNotEmpty) ...[
+                      Text(
+                        "Description :",
+                        style: TextStyles.bold2(color: AppColors.black),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyles.regular1(
+                          color: AppColors.bottomNavUnSelectedColor,
+                        ),
+                      ),
+                    ],
+                  ],
+                )
               ],
             ),
           ),
