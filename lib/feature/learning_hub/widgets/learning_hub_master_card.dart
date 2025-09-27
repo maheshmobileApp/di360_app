@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -49,13 +50,18 @@ class ListingHubMasterCard extends StatelessWidget {
             // Image with tags overlay
             Stack(
               children: [
-                Image.network(
-                  imageUrl,
+                CachedNetworkImageWidget(
+                  imageUrl: imageUrl,
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorWidget: const Icon(
+                    Icons.broken_image,
+                    size: 50,
+                    color: AppColors.lightGeryColor,
+                  ),
                 ),
-                Positioned(
+                /*Positioned(
                   left: 8,
                   bottom: 8,
                   child: Container(
@@ -71,11 +77,11 @@ class ListingHubMasterCard extends StatelessWidget {
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
-                ),
+                ),*/
                 (date.isEmpty && date == "")
                     ? SizedBox.shrink()
                     : Positioned(
-                        left: 140,
+                        left: 8,
                         bottom: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
