@@ -3,6 +3,7 @@ import 'package:video_player/video_player.dart';
 
 class MediaWidget extends StatefulWidget {
   final String url;
+  final String? name;
   final double height;
   final double? width;
   final double borderRadius;
@@ -11,8 +12,9 @@ class MediaWidget extends StatefulWidget {
     Key? key,
     required this.url,
     this.height = 150,
-    this.width,
+    this.width = 300,
     this.borderRadius = 12,
+    required this.name,
   }) : super(key: key);
 
   @override
@@ -23,7 +25,7 @@ class _MediaWidgetState extends State<MediaWidget> {
   VideoPlayerController? _controller;
 
   bool get _isVideo {
-    final lower = widget.url.toLowerCase();
+    final lower = widget.name ?? "";
     return lower.endsWith(".mp4") ||
         lower.endsWith(".mov") ||
         lower.endsWith(".avi") ||
@@ -36,7 +38,11 @@ class _MediaWidgetState extends State<MediaWidget> {
     if (_isVideo) {
       _controller = VideoPlayerController.network(widget.url)
         ..initialize().then((_) {
-          setState(() {}); // refresh after init
+          setState(() {});
+          _controller!.play();
+          _controller!.setLooping(true);
+          _controller!.setVolume(1.0);
+
         });
     }
   }
@@ -49,64 +55,44 @@ class _MediaWidgetState extends State<MediaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(widget.borderRadius),
-          child: _isVideo
-              ? (_controller != null && _controller!.value.isInitialized)
-                  ? Stack(
-                      children: [
-                        SizedBox(
-                          height: widget.height,
-                          child: VideoPlayer(_controller!),
-                        ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              icon: Icon(
-                                _controller!.value.isPlaying
-                                    ? Icons.pause_circle_filled
-                                    : Icons.play_circle_fill,
-                                size: 48,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _controller!.value.isPlaying
-                                      ? _controller!.pause()
-                                      : _controller!.play();
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Container(
-                      height: widget.height,
-                      width: widget.width,
-                      color: Colors.black12,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        child: _isVideo
+            ? (_controller != null && _controller!.value.isInitialized)
+                ? Stack(
+                    children: [
+                      SizedBox(
+                        height: widget.height,
+                        width:
+                            widget.width ?? MediaQuery.of(context).size.width,
+                        child: VideoPlayer(_controller!),
                       ),
-                    )
-              : Image.network(
-                  widget.url,
-                  height: widget.height,
-                  width: widget.width,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) =>
-                      progress == null ? child : const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.broken_image, color: Colors.red),
-                  ),
+                      
+                    ],
+                  )
+                : Container(
+                    height: widget.height,
+                    width: widget.width,
+                    color: Colors.black12,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+            : Image.network(
+                widget.url,
+                height: widget.height,
+                width: widget.width,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, progress) => progress == null
+                    ? child
+                    : const Center(child: CircularProgressIndicator()),
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey.shade300,
+                  child: const Icon(Icons.broken_image, color: Colors.red),
                 ),
-        ),
-      ],
+              ),
+      ),
     );
   }
 }

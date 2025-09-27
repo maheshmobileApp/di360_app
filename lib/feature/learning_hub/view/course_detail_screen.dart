@@ -129,8 +129,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       discountPrice: courseDetails.earlyBirdPrice?.toString() ?? "0",
                     ),
                     const SizedBox(height: 12),
-                    /*MediaWidget(url: courseDetails.courseBannerVideo?.first.url??"",),
-                    const SizedBox(height: 12),*/
+                    MediaWidget(url: courseDetails.courseBannerVideo?.first.url??"",name:  courseDetails.courseBannerVideo?.first.name??"",),
+                    const SizedBox(height: 12),
                     if (courseDetails.description != "")
                     CourseDescriptionWidget(
                       title: 'Course Description',
