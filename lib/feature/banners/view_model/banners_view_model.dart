@@ -4,11 +4,10 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/banners/model/edit_banner_view_model.dart';
+import 'package:di360_flutter/feature/banners/model/edit_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/repository/banner_repository_impl.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -17,22 +16,29 @@ import 'package:flutter/material.dart';
 class BannersViewModel extends ChangeNotifier {
   final BannerRepositoryImpl repo = BannerRepositoryImpl();
   final HttpService _http = HttpService();
-  BannersViewModel() {
-    getBannerCategoryData();
-  }
+
   File? selectedPresentedImg;
   TextEditingController bannerNameController = TextEditingController();
   TextEditingController urlController = TextEditingController();
   List<BannerCategories>? catagorysList;
   BannerCategories? selectedCatagory;
-  List<Banners>? bannersList;
+  List<Banners> bannersList = [];
   dynamic bannner_image;
   dynamic banner_name;
   BannersByPk? bannerView;
   String? editBannerId;
   bool isEditBanner = false;
+
+  getBannerData(BuildContext context) {
+    getBannersList(context);
+  }
   void updateSelectedCatagory(BannerCategories? catagory) {
     selectedCatagory = catagory;
+    notifyListeners();
+  }
+
+  void updateEditBannerVal(bool val) {
+    isEditBanner = val;
     notifyListeners();
   }
 
@@ -45,21 +51,21 @@ class BannersViewModel extends ChangeNotifier {
     'Expired',
     'Reject'
   ];
-  List<String>? catalogStatus = [];
-  int? allCatalogueCount = 0;
-  int? draftCatalogueCount = 0;
-  int? pendingApprovalCatalogueCount = 0;
-  int? approvedScheduledCatalogueCount = 0;
-  int? expiredCatalogueCount = 0;
-  int? rejectCatalogueCount = 0;
+  List<String>? bannersStatus = [];
+  int? allBannersCount = 0;
+  int? draftBannersCount = 0;
+  int? pendingApprovalBannersCount = 0;
+  int? approvedScheduledBannersCount = 0;
+  int? expiredBannersCount = 0;
+  int? rejectBannersCount = 0;
   File? bannerFile;
   Map<String, int?> get statusCountMap => {
-        'All': allCatalogueCount,
-        'Draft': draftCatalogueCount,
-        'Pending Approval': pendingApprovalCatalogueCount,
-        'Approved & Scheduled': approvedScheduledCatalogueCount,
-        'Expired': expiredCatalogueCount,
-        'Reject': rejectCatalogueCount,
+        'All': allBannersCount,
+        'Draft': draftBannersCount,
+        'Pending Approval': pendingApprovalBannersCount,
+        'Approved & Scheduled': approvedScheduledBannersCount,
+        'Expired': expiredBannersCount,
+        'Reject': rejectBannersCount,
       };
   DateTime? scheduleDate;
   DateTime? expiryDate;
@@ -86,7 +92,7 @@ class BannersViewModel extends ChangeNotifier {
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {
-      catalogStatus = [
+      bannersStatus = [
         "APPROVED",
         "PENDING",
         "EXPIRED",
@@ -95,18 +101,29 @@ class BannersViewModel extends ChangeNotifier {
         "DRAFT"
       ];
     } else if (status == 'Draft') {
-      catalogStatus = ['DRAFT'];
+      bannersStatus = ['DRAFT'];
     } else if (status == 'Pending Approval') {
-      catalogStatus = ['PENDING'];
+      bannersStatus = ['PENDING'];
     } else if (status == 'Approved & Scheduled') {
-      catalogStatus = ["APPROVED", "SCHEDULED"];
+      bannersStatus = ["APPROVED", "SCHEDULED"];
     } else if (status == 'Expired') {
-      catalogStatus = ['EXPIRED'];
+      bannersStatus = ['EXPIRED'];
     } else if (status == 'Reject') {
-      catalogStatus = ['REJECTED'];
+      bannersStatus = ['REJECTED'];
     }
+    getBannersList(context);
 
-    getBannersList();
+    notifyListeners();
+  }
+
+  Future<void> getBannersCounts() async {
+    final res = await repo.bannersCounts();
+    allBannersCount = res.aLL?.aggregate?.count;
+    pendingApprovalBannersCount = res.pending?.aggregate?.count;
+    draftBannersCount = res.draft?.aggregate?.count;
+    approvedScheduledBannersCount = res.approved?.aggregate?.count;
+    expiredBannersCount = res.expired?.aggregate?.count;
+    rejectBannersCount = res.rejected?.aggregate?.count;
     notifyListeners();
   }
 
@@ -140,11 +157,13 @@ class BannersViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getBannersList() async {
-    final res = await repo.getMyBanners({
+  Future<void> getBannersList(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    await getBannersCounts();
+   final res = await repo.getMyBanners({
       "where": {
         "status": {
-          "_in": catalogStatus?.isEmpty == true
+          "_in": bannersStatus?.isEmpty == true
               ? [
                   "APPROVED",
                   "PENDING",
@@ -153,17 +172,17 @@ class BannersViewModel extends ChangeNotifier {
                   "REJECTED",
                   "DRAFT"
                 ]
-              : catalogStatus,
+              : bannersStatus,
         },
-        "category_name": {"_ilike": "%all%"}
+        "from_id": {"_eq": userId}
       },
-      "limit": 70,
+      "limit": 10000,
       "offset": 0
     });
+
     if (res != null) {
       bannersList = res;
-      print("REEEEE${bannersList}");
-    } else {}
+    } 
     notifyListeners();
   }
 
@@ -210,7 +229,7 @@ class BannersViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddBannerData();
-      getBannersList();
+      getBannersList(context);
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -224,7 +243,7 @@ class BannersViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger('Banner removed successfully');
       Loaders.circularHideLoader(context);
-      getBannersList();
+      getBannersList(context);
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
@@ -255,7 +274,9 @@ class BannersViewModel extends ChangeNotifier {
     final res = await repo.editBannerView(id);
     if (res != null) {
       bannerView = res;
+      updateEditBannerVal(true);
       editDataAssign(res);
+
       Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.addBanners);
     } else {
@@ -296,10 +317,11 @@ class BannersViewModel extends ChangeNotifier {
       }
     });
     if (res != null) {
+      getBannersCounts();
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddBannerData();
-      getBannersList();
+      getBannersList(context);
     } else {
       Loaders.circularHideLoader(context);
     }

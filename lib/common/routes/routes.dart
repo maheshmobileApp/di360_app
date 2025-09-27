@@ -161,9 +161,9 @@ class Routes {
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
-      RouteList.bannersListView: (context) => ChangeNotifierProvider(
-          create: (_) => BannersViewModel(), child: BannersListScreen()),
-      RouteList.addBanners: (context) => AddBannersScreen(),
+      RouteList.bannersListView: (context) => BannersListScreen(),
+      RouteList.addBanners: (context) => ChangeNotifierProvider(
+          create: (_) => BannersViewModel(), child: AddBannersScreen()),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
       RouteList.learningHubMasterView: (context) => LearningHubMasterView()
     };
