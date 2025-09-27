@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/banners/model/edit_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/repository/banner_repository_impl.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -17,22 +16,22 @@ import 'package:flutter/material.dart';
 class BannersViewModel extends ChangeNotifier {
   final BannerRepositoryImpl repo = BannerRepositoryImpl();
   final HttpService _http = HttpService();
-  BannersViewModel() {
-    getBannersCounts();
 
-    getBannerCategoryData();
-  }
   File? selectedPresentedImg;
   TextEditingController bannerNameController = TextEditingController();
   TextEditingController urlController = TextEditingController();
   List<BannerCategories>? catagorysList;
   BannerCategories? selectedCatagory;
-  List<Banners>? bannersList;
+  List<Banners> bannersList = [];
   dynamic bannner_image;
   dynamic banner_name;
   BannersByPk? bannerView;
   String? editBannerId;
   bool isEditBanner = false;
+
+  getBannerData(BuildContext context) {
+    getBannersList(context);
+  }
   void updateSelectedCatagory(BannerCategories? catagory) {
     selectedCatagory = catagory;
     notifyListeners();
@@ -125,7 +124,6 @@ class BannersViewModel extends ChangeNotifier {
     approvedScheduledBannersCount = res.approved?.aggregate?.count;
     expiredBannersCount = res.expired?.aggregate?.count;
     rejectBannersCount = res.rejected?.aggregate?.count;
-
     notifyListeners();
   }
 
@@ -161,9 +159,8 @@ class BannersViewModel extends ChangeNotifier {
 
   Future<void> getBannersList(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-
     await getBannersCounts();
-    final res = await repo.getMyBanners({
+   final res = await repo.getMyBanners({
       "where": {
         "status": {
           "_in": bannersStatus?.isEmpty == true
@@ -179,15 +176,13 @@ class BannersViewModel extends ChangeNotifier {
         },
         "from_id": {"_eq": userId}
       },
-      "limit": 70,
+      "limit": 10000,
       "offset": 0
     });
 
     if (res != null) {
       bannersList = res;
-
-      print("REEEEE${bannersList}");
-    } else {}
+    } 
     notifyListeners();
   }
 
