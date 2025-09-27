@@ -5,6 +5,9 @@ query ShowCourses($where: courses_bool_exp, $limit: Int, $offset: Int) { courses
   startDate endDate
   presented_by_image
   presented_by_name 
+  cpd_points
+  course_banner_image
+  address
   description 
   company_name 
   status 

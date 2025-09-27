@@ -237,7 +237,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                                await courseListingVM.getCourseDetails(
+                                /*await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
@@ -247,12 +247,17 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );
+                                );*/
 
                                 break;
                               case "Delete":
-                                courseListingVM.deleteCourse(
-                                    context, course.id ?? "");
+                                showAlertMessage(context,
+                                    'Are you sure you want to delete this course?',
+                                    onBack: () {
+                                  navigationService.goBack();
+                                  courseListingVM.deleteCourse(
+                                      context, course.id ?? "");
+                                });
 
                                 break;
                               case "Inactive":

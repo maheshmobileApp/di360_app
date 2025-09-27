@@ -100,8 +100,21 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> getAllListingData(BuildContext context) async {
+    //Loaders.circularShowLoader(context);
+
+    final res = await repo.getAllListingData(searchController.text);
+
+    if (res != null) {
+      coursesListingList = res;
+      //Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
   Future<void> fetchCourseStatusCounts(BuildContext context) async {
-    final res = await repo.courseListingStatusCount();
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await repo.courseListingStatusCount(userId);
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     activeCount = res.approve?.aggregate?.count ?? 0;
     inActiveCount = res.inactive?.aggregate?.count ?? 0;
@@ -172,6 +185,4 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     userPhoneNumberController.text = "";
     userDescriptionController.text = "";
   }
-
-  
 }

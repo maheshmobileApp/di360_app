@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 class RegistrationUserForm {
   static void show(BuildContext context) {
-    final formKey = GlobalKey<FormState>(); // 👈 form key
+    final formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
       context: context,
@@ -44,9 +44,9 @@ class RegistrationUserForm {
                             TextStyles.medium4(color: AppColors.primaryColor),
                       ),
                       Text(
-                        "Course name",
+                        courseVM.courseDetails.first.courseName??"",
                         style:
-                            TextStyles.medium1(color: AppColors.lightGeryColor),
+                            TextStyles.medium2(color: AppColors.lightGeryColor),
                       ),
                       const SizedBox(height: 16),
 
