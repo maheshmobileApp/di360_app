@@ -1,10 +1,13 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/banners/model/edit_banner_view_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/quary/add_banner_quary.dart';
 import 'package:di360_flutter/feature/banners/quary/category_quary.dart';
 import 'package:di360_flutter/feature/banners/quary/delete_banner_query.dart';
+import 'package:di360_flutter/feature/banners/quary/edit_banner_view.dart';
 import 'package:di360_flutter/feature/banners/quary/get_banners_query.dart';
+import 'package:di360_flutter/feature/banners/quary/update_banner_query.dart';
 import 'package:di360_flutter/feature/banners/repository/banners_repository.dart';
 
 class BannerRepositoryImpl extends BannersRepository {
@@ -35,6 +38,21 @@ class BannerRepositoryImpl extends BannersRepository {
   Future<dynamic> deleteBanner(String? id) async {
     final deleteBannerData = await http.mutation(deleteBannerQuery, {"id": id});
     return deleteBannerData;
+  }
+
+  @override
+  Future<BannersByPk?> editBannerView(String? id) async{
+     final editbannerViewData =
+        await http.query(editBannerViewQuary, variables: {"id": id});
+    final result = BannerViewData.fromJson(editbannerViewData);
+    return result.bannersByPk;
+  }
+  
+  @override
+  
+  Future<dynamic> updateBanner(variables) async {
+    final data = await http.mutation(updateBannerQuary, variables);
+    return data;
   }
  
 }
