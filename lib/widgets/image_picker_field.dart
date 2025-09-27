@@ -190,11 +190,18 @@ class ImagePickerField extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final hasSingleFile = selectedFile != null;
-    final hasMultipleFiles = selectedFiles != null && selectedFiles!.isNotEmpty;
+Widget build(BuildContext context) {
+  final hasSingleFile = selectedFile != null;
+  final hasMultipleFiles = selectedFiles != null && selectedFiles!.isNotEmpty;
 
-    return Column(
+  return FormField<bool>(
+    validator: (value) {
+      if (isRequired && !hasSingleFile && !hasMultipleFiles) {
+        return "Please upload ${title ?? "file"}";
+      }
+      return null;
+    },
+    builder: (field) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null)
@@ -215,7 +222,7 @@ class ImagePickerField extends StatelessWidget {
         GestureDetector(
           onTap: () => _showPickerSheet(context),
           child: DottedBorder(
-            color: Colors.grey.shade400,
+            color: field.hasError ? Colors.red : Colors.grey.shade400,
             strokeWidth: 1.5,
             dashPattern: const [6, 4],
             borderType: BorderType.RRect,
@@ -238,8 +245,7 @@ class ImagePickerField extends StatelessWidget {
                           child: isVideo
                               ? const Icon(Icons.videocam,
                                   size: 50, color: Colors.grey)
-                              : Image.file(file,
-                                  fit: BoxFit.contain),
+                              : Image.file(file, fit: BoxFit.contain),
                         );
                       },
                     )
@@ -263,7 +269,8 @@ class ImagePickerField extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              hintText ?? "JPEG, PNG formats, up to 5 MB each",
+                              hintText ??
+                                  "JPEG, PNG formats, up to 5 MB each",
                               style: TextStyles.regular2(
                                   color: AppColors.dropDownHint),
                             ),
@@ -272,7 +279,16 @@ class ImagePickerField extends StatelessWidget {
             ),
           ),
         ),
+        if (field.hasError) ...[
+          const SizedBox(height: 5),
+          Text(
+            field.errorText ?? "",
+            style: const TextStyle(color: Colors.red, fontSize: 12),
+          ),
+        ]
       ],
-    );
-  }
+    ),
+  );
+}
+
 }

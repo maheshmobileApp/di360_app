@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
@@ -146,9 +147,10 @@ class CouresListingCard extends StatelessWidget {
                 ),
                 child: Text(
                   status,
-                  style: TextStyles.medium1(
-                    color: AppColors.greenColor,
+                  style: TextStyles.bold4(
+                    color: StatusColors.getColor(status),
                     fontSize: 10,
+                    
                   ),
                 ),
               ),

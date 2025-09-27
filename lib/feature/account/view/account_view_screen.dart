@@ -268,9 +268,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .read<AddDirectoryViewModel>()
                                 .fetchTheDirectorData(context);
                           } else if (item.title == 'Learning Hub') {
-                            context
+                            Loaders.circularShowLoader(context);
+                            await context
                                 .read<CourseListingViewModel>()
-                                .getCoursesListingData(context, "");
+                                .getCoursesListingData(context,""); 
+                                Loaders.circularHideLoader(context);
                             context
                                 .read<CourseListingViewModel>()
                                 .searchBarOpen = false;

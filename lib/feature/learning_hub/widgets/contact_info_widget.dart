@@ -50,9 +50,13 @@ class ContactInfoWidget extends StatelessWidget {
           _buildRow(ImageConst.contactLocation, location),
         ],
         const SizedBox(height: 6),
+        if (email != null && email!.isNotEmpty) ...[
         _buildRow(ImageConst.contactMail, email),
+        ],
         const SizedBox(height: 6),
+        if (phoneNumber != null && phoneNumber!.isNotEmpty) ...[
         _buildRow(ImageConst.contactPhone, phoneNumber),
+        ],
       ],
     );
   }
