@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/my_appointments/my_appointment_view_model/appointment_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -308,6 +309,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
+                          } else if (item.title == "Appointments") {
+                            await context
+                                .read<AppointmentViewModel>()
+                                .getAppointmentData();
                           }
                         },
                       ),
