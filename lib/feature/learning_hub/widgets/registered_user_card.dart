@@ -78,16 +78,26 @@ class RegisteredUserCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text("Description :",
-                    style: TextStyles.bold2(color: AppColors.black)),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyles.regular1(
-                      color: AppColors.bottomNavUnSelectedColor),
-                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (description.isNotEmpty) ...[
+                      Text(
+                        "Description :",
+                        style: TextStyles.bold2(color: AppColors.black),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyles.regular1(
+                          color: AppColors.bottomNavUnSelectedColor,
+                        ),
+                      ),
+                    ],
+                  ],
+                )
               ],
             ),
           ),
