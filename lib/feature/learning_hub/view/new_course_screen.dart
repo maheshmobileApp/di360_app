@@ -159,6 +159,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
+                
                 final currentFormKey =
                     newCourseVM.formKeys[newCourseVM.currentStep];
                 if (currentFormKey.currentState?.validate() ?? false) {
@@ -191,7 +192,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     await newCourseVM.createdCourseListing(context, false);
                     courseListVM.selectedStatus = "All";
                     await courseListVM.getCoursesListingData(context, "");
-                    navigationService.navigateTo(RouteList.learningHubScreen);
+                    navigationService.goBack();
                   } else {
                     newCourseVM.goToNextStep();
                   }

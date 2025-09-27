@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.d
 import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_description_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
@@ -31,7 +32,6 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
           SliverAppBar(
             expandedHeight: 200.0,
             pinned: true,
-            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             iconTheme: const IconThemeData(color: AppColors.black),
             elevation: 0,
             flexibleSpace: LayoutBuilder(
@@ -66,9 +66,23 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 );
               },
             ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.black),
-              onPressed: () => Navigator.pop(context),
+            leading: Container(
+              margin: const EdgeInsets.all(8), // outer spacing
+              decoration: const BoxDecoration(
+                color: Colors.white, // white background
+                shape: BoxShape.circle, // circular button
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -82,10 +96,14 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CourseInfoCardWidget(
+                          time: "",
+                          date: courseDetails.startDate ?? "",
                           courseName: courseDetails.courseName ?? "",
                           profilePic: courseDetails.presentedByImage?.url ?? "",
                           presentByName: courseDetails.presentedByName ?? "",
-                          cpdHours: courseDetails.cpdPoints.toString(),
+                          cpdHours:
+                              courseDetails.cpdPoints?.toInt().toString() ??
+                                  "0",
                           platform: courseDetails.type ?? "",
                           webinar: courseDetails.feedType ?? "",
                           totalPrice: courseDetails.afterwardsPrice.toString(),
@@ -97,23 +115,51 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             title: 'Course Description',
                             description: courseDetails.description ?? ""),
                         const SizedBox(height: 12),
+                        (courseDetails.courseEventInfo?.first.info == "")
+                            ? SizedBox.shrink()
+                            : Column(
+                                children: [
+                                  EventDayDataWidget(
+                                      title:
+                                          '${courseDetails.eventType ?? ""} Event',
+                                      descriptions:
+                                          courseDetails.courseEventInfo ?? []),
+                                  GalleryImgWidget(
+                                    imageUrls: (courseDetails.courseEventInfo
+                                                ?.first.images ??
+                                            [])
+                                        .map((e) => e.url ?? "")
+                                        .where((url) => url.isNotEmpty)
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
+                        const SizedBox(height: 12),
                         GalleryImgWidget(
+                          title: "Gallery",
                           imageUrls: (courseDetails.courseGallery ?? [])
                               .map((e) => e.url ?? "")
                               .where((url) => url.isNotEmpty)
                               .toList(),
                         ),
                         const SizedBox(height: 12),
-                        SponsorsImageWidget(
+                        (courseDetails.sponsorByImage?.length== 0)?SizedBox.shrink(): GalleryImgWidget(
+                          title: "Sponsors",
+                          height: 100,
+                          width: 100,
                           imageUrls: (courseDetails.sponsorByImage ?? [])
                               .map((e) => e.url ?? "")
                               .where((url) => url.isNotEmpty)
                               .toList(),
                         ),
                         const SizedBox(height: 12),
-                        CourseDescriptionWidget(
+                        (courseDetails.terms=="")?SizedBox.shrink():  CourseDescriptionWidget(
                             title: 'Terms & Conditions',
                             description: courseDetails.terms ?? ""),
+                        const SizedBox(height: 12),
+                          (courseDetails.refundPolicy=="")?SizedBox.shrink():   CourseDescriptionWidget(
+                            title: 'Cancellation & Refund Policy',
+                            description: courseDetails.refundPolicy ?? ""),
                         const SizedBox(height: 12),
                         ContactInfoWidget(
                             location: courseDetails.address ?? "",

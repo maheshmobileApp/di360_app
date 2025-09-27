@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.d
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/delete_course_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/get_all_listing_data_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_category_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_registered_users_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_count.dart';
@@ -58,6 +59,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
     if (searchText != null && searchText.isNotEmpty) {
       whereCondition["course_name"] = {"_ilike": "%${searchText}%"};
     }
+    whereCondition["created_by_id"] = {"_eq": userId};
 
     final payload = {
       "where": whereCondition,
@@ -89,8 +91,21 @@ class LearningHubRepoImpl extends LearningHubRepository {
    */
 
   @override
-  Future<CourseStatusCountData> courseListingStatusCount() async {
-    final response = await http.query(getCourseStatusCount);
+  Future<CourseStatusCountData> courseListingStatusCount(String? userId) async {
+    final Map<String, dynamic> variables = {
+      "whereAll": {
+        "created_by_id": {"_eq": "${userId}"}
+      },
+      "whereDraft": {
+        "status": {"_eq": "DRAFT"},
+        "created_by_id": {"_eq": "${userId}"}
+      },
+      "where": {
+        "created_by_id": {"_eq": "${userId}"}
+      }
+    };
+    final response =
+        await http.query(getCourseStatusCount, variables: variables);
     print("Raw response: $response");
     final result = CourseStatusCountData.fromJson(response);
     print("Parsed result: $result");
@@ -154,6 +169,19 @@ class LearningHubRepoImpl extends LearningHubRepository {
   Future userRegisterToCourse(dynamic variables) async {
     final res = await http.mutation(userRegisterToCourseQuery, variables);
     return res;
+  }
+
+  @override
+  Future<List<CoursesListingDetails>?> getAllListingData(String? searchText) async {
+    final payload = {"limit": 10, "offset": 0, "where": {   "course_name": { "_ilike": "%${searchText}%" }}};
+
+    final listingData = await http.query(
+      getAllListingDataQuery,
+      variables: payload,
+    );
+
+    final result = CoursesListingData.fromJson(listingData);
+    return result.courses ?? [];
   }
 
   /*@override

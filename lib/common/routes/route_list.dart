@@ -54,4 +54,5 @@ class RouteList {
   static const String registeredUsersView = '/registeredUsersView';
   static const String bannersListView = '/bannersListView';
   static const String addBanners = '/addBanners';
+  static const String learningHubMasterView = '/learningHubMasterView';
 }

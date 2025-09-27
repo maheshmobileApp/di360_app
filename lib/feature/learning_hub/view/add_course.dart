@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddCourse extends StatelessWidget with BaseContextHelpers {
@@ -35,9 +36,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
           children: [
             _sectionHeader("Add Course"),
             SizedBox(height: 16),
-            _buildCategoryTypes(jobCreateVM),
-            SizedBox(height: 8),
             _buildCourseTypes(jobCreateVM),
+            SizedBox(height: 8),
+            _buildCategoryTypes(jobCreateVM),
             SizedBox(height: 8),
             InputTextField(
               controller: jobCreateVM.courseNameController,
@@ -91,7 +92,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                   );
                   if (picked != null) {
                     jobCreateVM.startDateController.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
+                        DateFormat("dd/MM/yyyy").format(picked);
                   }
                 },
                 validator: (value) => value == null || value.isEmpty
@@ -106,15 +107,23 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 text: null,
                 hintText: "Date",
                 onTap: () async {
+                  DateTime startDate =
+                      jobCreateVM.startDateController.text.isNotEmpty
+                          ? DateFormat("dd/MM/yyyy")
+                              .parse(jobCreateVM.startDateController.text)
+                          : DateTime.now();
+
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
+                    initialDate: startDate,
+                    firstDate:
+                        startDate, // 👈 End date cannot be before start date
                     lastDate: DateTime(2100),
                   );
+
                   if (picked != null) {
                     jobCreateVM.endDateController.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
+                        DateFormat("dd/MM/yyyy").format(picked);
                   }
                 },
                 validator: (value) => value == null || value.isEmpty
@@ -171,8 +180,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               title: "Presented By (Image)",
               isRequired: true,
               showPreview: true,
-              selectedFile:
-                  jobCreateVM.selectedPresentedImg, 
+              selectedFile: jobCreateVM.selectedPresentedImg,
               onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
             ),
             SizedBox(height: 8),
