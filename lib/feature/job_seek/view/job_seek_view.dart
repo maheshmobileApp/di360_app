@@ -105,18 +105,28 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 : const Text(""),
           )
         : ListView.builder(
-          itemCount: vm.jobs.length,
+              itemCount:
+                  vm.jobs.length + (vm.jobs.length ~/ 5), // extra for banners,
           itemBuilder: (context, index) {
-            final jobData = vm.jobs[index];
-            return InkWell(
-              onTap: () {
-                navigationService.navigateToWithParams(
-                  RouteList.jobdetailsScreen,
-                  params: jobData,
-                );
-              },
-              child: JobSeekCard(jobsData: jobData),
-            );
+                if ((index + 1) % 6 == 0) {
+                  return Container(
+                    height: 100,
+                    color: Colors.red,
+                  );
+                } else {
+                  final itemIndex = index - (index ~/ 6);
+                  final jobData = vm.jobs[itemIndex];
+                  return InkWell(
+                    onTap: () {
+                      navigationService.navigateToWithParams(
+                        RouteList.jobdetailsScreen,
+                        params: jobData,
+                      );
+                    },
+                    child: JobSeekCard(jobsData: jobData),
+                  );
+                }
+           
           },
         ),
   );
