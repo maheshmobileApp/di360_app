@@ -160,19 +160,31 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               height: 42,
               width: 160,
               onPressed: () async {
-                final currentFormKey =
-                    newCourseVM.formKeys[newCourseVM.currentStep];
-                if (true) {
-                  if (newCourseVM.selectedPresentedImg?.path.isNotEmpty ??
-                      false) {
-                    await newCourseVM.validatePresenterImg();
-                    await newCourseVM.validateCourseHeaderBanner();
-                    await newCourseVM.validateGallery();
-                    await newCourseVM.validateCourseBanner();
-                    await newCourseVM.buildCourseInfoList();
-                    await newCourseVM.validateSponsoredByImg();
-                  }
+                if (newCourseVM.selectedPresentedImg?.path.isNotEmpty ??
+                    false) {
+                  await newCourseVM.validatePresenterImg();
                 }
+
+                if (newCourseVM.selectedCourseHeaderBanner?.path.isNotEmpty ??
+                    false) {
+                  await newCourseVM.validateCourseHeaderBanner();
+                }
+                if (newCourseVM.selectedGallery?.isNotEmpty ?? false) {
+                  await newCourseVM.validateGallery();
+                }
+
+                if (newCourseVM.selectedCourseBannerImg?.isNotEmpty ??
+                    false) {
+                  await newCourseVM.validateCourseBanner();
+                }
+                if ((newCourseVM.courseInfoList?.isNotEmpty ?? false)) {
+                  await newCourseVM.buildCourseInfoList();
+                }
+                if (newCourseVM.selectedsponsoredByImg?.isNotEmpty ??
+                    false) {
+                  await newCourseVM.validateSponsoredByImg();
+                }
+
                 await newCourseVM.createdCourseListing(context, true);
                 courseListVM.selectedStatus = "All";
                 await courseListVM.getCoursesListingData(context, "");
