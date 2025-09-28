@@ -73,10 +73,11 @@ class BannerRepositoryImpl extends BannersRepository {
   
  @override
   Future<ApproveBannerResp> getApprovedBanners(dynamic variables) async {
+    
     final response = await http.query(
       approveBannerQuary,
       variables: variables ?? {
-        "limit": 10,
+        "limit": 100,
         "offset": 0,
       },
     );

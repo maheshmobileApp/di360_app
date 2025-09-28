@@ -1,4 +1,4 @@
-const String approveBannerQuary = r''' 
+const String approveBannerQuary = r'''
 query getApprovedBanners($limit: Int, $offset: Int) {
   banners(
     where: { status: { _eq: "APPROVED" }}
@@ -25,3 +25,5 @@ query getApprovedBanners($limit: Int, $offset: Int) {
   }
 }
 ''';
+
+// category_name: { _eq: $category_name }
