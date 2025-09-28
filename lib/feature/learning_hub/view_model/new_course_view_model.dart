@@ -53,6 +53,13 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   //server
   String? serverPresentedImg;
+  String? serverCourseHeaderBanner;
+  List<String>? serverGallery;
+  List<String>? serverCourseBannerImg;
+  List<String>? serverEventImg;
+  List<String>? serverEventImgs;
+  List<String>? serverSponsoredByImg;
+  List<String>? serverSessionImg;
 
   //imageFields
   File? selectedPresentedImg;
@@ -239,36 +246,35 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }*/
 
   Future<void> validateCourseHeaderBanner() async {
-  if (selectedCourseHeaderBanner == null) return;
+    if (selectedCourseHeaderBanner == null) return;
 
-  final file = selectedCourseHeaderBanner?.path;
-  if (file == null || file.isEmpty) return;
+    final file = selectedCourseHeaderBanner?.path;
+    if (file == null || file.isEmpty) return;
 
-  // detect type from file extension
-  final lower = file.toLowerCase();
-  final bool isVideo = lower.endsWith(".mp4") ||
-      lower.endsWith(".mov") ||
-      lower.endsWith(".avi") ||
-      lower.endsWith(".mkv") ||
-      lower.endsWith(".wmv");
+    // detect type from file extension
+    final lower = file.toLowerCase();
+    final bool isVideo = lower.endsWith(".mp4") ||
+        lower.endsWith(".mov") ||
+        lower.endsWith(".avi") ||
+        lower.endsWith(".mkv") ||
+        lower.endsWith(".wmv");
 
-  // ⬅️ Call correct upload API
-  final res = await _http.uploadImage(file);
+    // ⬅️ Call correct upload API
+    final res = await _http.uploadImage(file);
 
-  // Build your object and wrap it in a list
-  courseBannerImageHeaderList = [
-    CourseBannerImage(
-      name: res['name'],
-      url: res['url'],
-      type: isVideo ? "video" : "image", // explicitly set type
-      size: res['size'],
-    )
-  ];
+    // Build your object and wrap it in a list
+    courseBannerImageHeaderList = [
+      CourseBannerImage(
+        name: res['name'],
+        url: res['url'],
+        type: isVideo ? "video" : "image", // explicitly set type
+        size: res['size'],
+      )
+    ];
 
-  // notify listeners for UI update
-  notifyListeners();
-}
-
+    // notify listeners for UI update
+    notifyListeners();
+  }
 
   Future<List<T>> uploadFiles<T>(
     List<File>? files,
@@ -585,59 +591,4 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         0); // or pageController.animateToPage(...) if you want animation
   }
 
-  Future<void> loadCourseData(course) async {
-    // Reset image/file selections
-    selectedPresentedImg = null;
-    selectedCourseHeaderBanner = null;
-    selectedGallery = null;
-    selectedCourseBannerImg = null;
-    selectedEventImg = null;
-    selectedsponsoredByImg = null;
-
-    // Dropdown / selections
-    selectedCategoryId = course.courseCategoryId;
-    selectedCourseType = course.type;
-    selectedEvent = course.eventType ?? "";
-
-    // Text controllers
-    courseNameController.text = course.courseName ?? "";
-    presenterNameController.text = course.presentedByName ?? "";
-    cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0);
-    numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
-    totalPriceController.text =
-        course.afterwardsPrice?.toStringAsFixed(0) ?? "";
-    birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
-    courseDescController.text = course.description ?? "";
-    topicsIncludedDescController.text = course.topicsIncluded ?? "";
-    learningObjectivesDescController.text = course.learningObjectives ?? "";
-    nameController.text = course.contactName ?? "";
-    phoneController.text = course.contactPhone ?? "";
-    emailController.text = course.contactEmail ?? "";
-    websiteController.text = course.contactWebsite ?? "";
-    registerLinkController.text = course.registerLink ?? "";
-    termsAndConditionsController.text = course.terms ?? "";
-    cancellationController.text = course.refundPolicy ?? "";
-    rsvpDateController.text = course.rsvpDate ?? "";
-    earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    startDateController.text =
-        DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
-    endDateController.text =
-        DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
-    addressController.text = course.address ?? "";
-    startTimeController.text = course.startTime ?? "";
-    endTimeController.text = course.startTime ?? ""; // if same
-
-    // Images / files (from API)
-    presenter_image = course.presentedByImage?.url ?? "";
-    courseBannerImageHeaderList = [];
-    selectedGalleryList = [];
-    courseBannerImgList = [];
-    sponsoredByImgList = [];
-
-    // Sessions / Course Event Info
-    courseInfoList = [];
-    sessions = [];
-
-    notifyListeners();
-  }
 }

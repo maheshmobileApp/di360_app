@@ -13,6 +13,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class LearningHubScreen extends StatefulWidget {
@@ -242,7 +243,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
 
-                                await newCourseVM.loadCourseData(
+                                await loadCourseData(newCourseVM,
                                     courseListingVM.courseDetails.first);
 
                                 navigationService.navigateTo(
@@ -283,5 +284,85 @@ class _JobListingScreenState extends State<LearningHubScreen>
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));
+  }
+
+  Future<void> loadCourseData(NewCourseViewModel newCourseVM,CoursesListingDetails course) async {
+    // Reset image/file selections
+    newCourseVM.serverPresentedImg = course.presentedByImage?.url??"";
+    newCourseVM.serverCourseHeaderBanner= course.courseBannerVideo?.first.url;
+    newCourseVM.serverGallery = course.courseGallery
+        ?.map((item) => item.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList() ??
+    [];
+    newCourseVM.serverCourseBannerImg = course.courseBannerImage
+        ?.map((item) => item.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList() ??
+    [];
+    newCourseVM.serverEventImg  = course.courseEventInfo
+        ?.map((item) => item.images?.first.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList() ??
+    [];
+    newCourseVM.serverEventImgs = course.courseEventInfo
+        ?.map((item) => item.images?.first.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList() ??
+    [];
+    newCourseVM.serverSponsoredByImg = course.sponsorByImage
+        ?.map((item) => item.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList() ??
+    [];
+    newCourseVM.serverSessionImg  = course.courseEventInfo
+        ?.map((item) => item.images?.first.url  ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList() ??
+    [];
+
+    // Dropdown / selections
+    newCourseVM.selectedCategoryId = course.courseCategoryId;
+    newCourseVM.selectedCourseType = course.type;
+    newCourseVM.selectedEvent = course.eventType ?? "";
+
+    // Text controllers
+    newCourseVM.courseNameController.text = course.courseName ?? "";
+    newCourseVM.presenterNameController.text = course.presentedByName ?? "";
+    newCourseVM.cpdPointsController.text = course.cpdPoints.toString();
+    newCourseVM.numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
+    newCourseVM.totalPriceController.text =
+        course.afterwardsPrice?.toStringAsFixed(0) ?? "";
+    newCourseVM.birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
+    newCourseVM.courseDescController.text = course.description ?? "";
+    newCourseVM.topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    newCourseVM.learningObjectivesDescController.text = course.learningObjectives ?? "";
+    newCourseVM.nameController.text = course.contactName ?? "";
+    newCourseVM.phoneController.text = course.contactPhone ?? "";
+    newCourseVM.emailController.text = course.contactEmail ?? "";
+    newCourseVM.websiteUrlController.text = course.contactWebsite ?? "";
+    newCourseVM.registerLinkController.text = course.registerLink ?? "";
+    newCourseVM.termsAndConditionsController.text = course.terms ?? "";
+    newCourseVM.cancellationController.text = course.refundPolicy ?? "";
+    newCourseVM.rsvpDateController.text = course.rsvpDate ?? "";
+    newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
+    newCourseVM.startDateController.text =
+        DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
+    newCourseVM.endDateController.text =
+        DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
+    newCourseVM.addressController.text = course.address ?? "";
+    newCourseVM.startTimeController.text = course.startTime ?? "";
+    newCourseVM.endTimeController.text = course.startTime ?? ""; // if same
+
+    // Images / files (from API)
+    newCourseVM.presenter_image = course.presentedByImage?.url ?? "";
+    newCourseVM.courseBannerImageHeaderList = [];
+    newCourseVM.selectedGalleryList = [];
+    newCourseVM.courseBannerImgList = [];
+    newCourseVM.sponsoredByImgList = [];
+
+    // Sessions / Course Event Info
+    newCourseVM.courseInfoList = [];
+    newCourseVM.sessions = [];
   }
 }
