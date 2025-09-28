@@ -30,6 +30,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
                 title: "Sponsored By",
                 isRequired: true,
                 showPreview: true,
+                serverImages: newCourseVM.serverSponsoredByImg,
                 allowMultiple: true,
                 selectedFiles: newCourseVM.selectedsponsoredByImg, 
                 onFilesPicked: (file) => newCourseVM.setSponsoredBy(file), 

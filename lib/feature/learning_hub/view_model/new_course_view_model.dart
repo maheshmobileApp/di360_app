@@ -53,6 +53,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   //server
   String? serverPresentedImg;
+  String? serverCourseHeaderBanner;
+  List<String>? serverGallery;
+  List<String>? serverCourseBannerImg;
+  List<String>? serverSponsoredByImg;
 
   //imageFields
   File? selectedPresentedImg;
@@ -98,8 +102,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   ];
 
   final PageController pageController = PageController();
-  int _currentStep = 0;
-  int get currentStep => _currentStep;
+  int currentStep = 0;
+  int get currentStepmain => currentStep;
   int get totalSteps => steps.length;
 
   List<JobsRoleList> category = [];
@@ -164,19 +168,19 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (!validateCurrentStep()) return;
 
     // Step-specific validations
-    if (_currentStep == 0) {
+    if (currentStep == 0) {
       validatePresenterImg();
       validateCourseHeaderBanner();
       validateGallery();
       validateCourseBanner();
-    } else if (_currentStep == 1) {
+    } else if (currentStep == 1) {
       buildCourseInfoList();
-    } else if (_currentStep == 2) {
+    } else if (currentStep == 2) {
       validateSponsoredByImg();
     }
 
-    if (_currentStep < totalSteps - 1) {
-      _currentStep++;
+    if (currentStep < totalSteps - 1) {
+      currentStep++;
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
@@ -186,8 +190,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void goToPreviousStep() {
-    if (_currentStep > 0) {
-      _currentStep--;
+    if (currentStep > 0) {
+      currentStep--;
       pageController.previousPage(
           duration: const Duration(milliseconds: 300), curve: Curves.ease);
       notifyListeners();
@@ -196,7 +200,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void goToStep(int step) {
     if (step >= 0 && step < totalSteps) {
-      _currentStep = step;
+      currentStep = step;
       pageController.jumpToPage(step);
       notifyListeners();
     }
@@ -205,8 +209,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   // ───── Validation Methods ─────
   bool validateCurrentStep() {
     //  if (_currentStep == 1) return validateLogoAndBanner();
-    if (_currentStep == 5) return validateOtherLinksStep();
-    return formKeys[_currentStep].currentState?.validate() ?? false;
+    if (currentStep == 5) return validateOtherLinksStep();
+    return formKeys[currentStep].currentState?.validate() ?? false;
   }
 
   Future<void> validatePresenterImg() async {
@@ -239,36 +243,35 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }*/
 
   Future<void> validateCourseHeaderBanner() async {
-  if (selectedCourseHeaderBanner == null) return;
+    if (selectedCourseHeaderBanner == null) return;
 
-  final file = selectedCourseHeaderBanner?.path;
-  if (file == null || file.isEmpty) return;
+    final file = selectedCourseHeaderBanner?.path;
+    if (file == null || file.isEmpty) return;
 
-  // detect type from file extension
-  final lower = file.toLowerCase();
-  final bool isVideo = lower.endsWith(".mp4") ||
-      lower.endsWith(".mov") ||
-      lower.endsWith(".avi") ||
-      lower.endsWith(".mkv") ||
-      lower.endsWith(".wmv");
+    // detect type from file extension
+    final lower = file.toLowerCase();
+    final bool isVideo = lower.endsWith(".mp4") ||
+        lower.endsWith(".mov") ||
+        lower.endsWith(".avi") ||
+        lower.endsWith(".mkv") ||
+        lower.endsWith(".wmv");
 
-  // ⬅️ Call correct upload API
-  final res = await _http.uploadImage(file);
+    // ⬅️ Call correct upload API
+    final res = await _http.uploadImage(file);
 
-  // Build your object and wrap it in a list
-  courseBannerImageHeaderList = [
-    CourseBannerImage(
-      name: res['name'],
-      url: res['url'],
-      type: isVideo ? "video" : "image", // explicitly set type
-      size: res['size'],
-    )
-  ];
+    // Build your object and wrap it in a list
+    courseBannerImageHeaderList = [
+      CourseBannerImage(
+        name: res['name'],
+        url: res['url'],
+        type: isVideo ? "video" : "image", // explicitly set type
+        size: res['size'],
+      )
+    ];
 
-  // notify listeners for UI update
-  notifyListeners();
-}
-
+    // notify listeners for UI update
+    notifyListeners();
+  }
 
   Future<List<T>> uploadFiles<T>(
     List<File>? files,
@@ -500,7 +503,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         contactName: nameController.text,
         contactEmail: emailController.text,
         contactPhone: phoneController.text,
-        contactWebsite: websiteController.text,
+        contactWebsite: websiteUrlController.text,
         afterwardsPrice: (totalPriceController.text.isEmpty)
             ? null
             : int.parse(totalPriceController.text),
@@ -509,10 +512,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         userRole: type,
         startDate: startDate,
         endDate: endDate,
-        image: "",
-        video: "",
-        completeDetails: "",
-        attachments: null,
         isFeatured: false,
         activeStatus: "ACTIVE",
         address: addressController.text,
@@ -522,6 +521,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         status: isDraft ? "DRAFT" : "PENDING",
         type: (selectedCourseType == null) ? "" : selectedCourseType,
         feedType: "LEARNHUB",
+        startTime: startTimeController.text,
+        endTime: endTimeController.text,
+        
       ).toJson(),
     });
 
@@ -567,7 +569,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     termsAndConditionsController.text = "";
     cancellationController.text = "";
     rsvpDateController.text = "";
-    _currentStep = 0;
+    currentStep = 0;
     earlyBirdDateController.text = "";
     sessioInfoController.text = "";
     day1SessionNameController.text = "";
@@ -587,7 +589,24 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> loadCourseData(course) async {
     // Reset image/file selections
-    selectedPresentedImg = null;
+    serverPresentedImg = course.presentedByImage?.url ?? "";
+    serverCourseHeaderBanner = course.courseBannerVideo?.first.url ?? "";
+    serverGallery = course.courseGallery
+            ?.map((item) => item.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
+    serverCourseBannerImg = course.courseBannerImage
+            ?.map((item) => item.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
+    serverSponsoredByImg = course.sponsorByImage
+            ?.map((item) => item.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
+
     selectedCourseHeaderBanner = null;
     selectedGallery = null;
     selectedCourseBannerImg = null;
@@ -602,7 +621,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     // Text controllers
     courseNameController.text = course.courseName ?? "";
     presenterNameController.text = course.presentedByName ?? "";
-    cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0);
+    cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0) ?? "";
     numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
     totalPriceController.text =
         course.afterwardsPrice?.toStringAsFixed(0) ?? "";

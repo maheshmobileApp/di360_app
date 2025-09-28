@@ -16,8 +16,8 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final jobCreateVM = Provider.of<NewCourseViewModel>(context);
-    final type = jobCreateVM.selectedCourseType;
+    final newCourseVM = Provider.of<NewCourseViewModel>(context);
+    final type = newCourseVM.selectedCourseType;
     final showStartEndDate = [
       "Event",
       "Webinar",
@@ -38,12 +38,12 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
             children: [
               _sectionHeader("Add Course"),
               SizedBox(height: 16),
-              _buildCourseTypes(jobCreateVM),
+              _buildCourseTypes(newCourseVM),
               SizedBox(height: 8),
-              _buildCategoryTypes(jobCreateVM),
+              _buildCategoryTypes(newCourseVM),
               SizedBox(height: 8),
               InputTextField(
-                controller: jobCreateVM.courseNameController,
+                controller: newCourseVM.courseNameController,
                 hintText: "Enter Course Name",
                 title: "Course Name",
                 isRequired: true,
@@ -56,7 +56,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 children: [
                   Expanded(
                     child: CustomTimePicker(
-                      controller: jobCreateVM.startTimeController,
+                      controller: newCourseVM.startTimeController,
                       title: "Start Time",
                       isRequired: true,
                       validator: (value) => value == null || value.isEmpty
@@ -67,7 +67,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                   const SizedBox(width: 12), // spacing between fields
                   Expanded(
                     child: CustomTimePicker(
-                      controller: jobCreateVM.endTimeController,
+                      controller: newCourseVM.endTimeController,
                       title: "End Time",
                       isRequired: true,
                       validator: (value) => value == null || value.isEmpty
@@ -82,7 +82,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 CustomDatePicker(
                   isRequired: true,
                   title: "Start Date",
-                  controller: jobCreateVM.startDateController,
+                  controller: newCourseVM.startDateController,
                   text: null,
                   hintText: "Date",
                   onTap: () async {
@@ -93,7 +93,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                       lastDate: DateTime(2100),
                     );
                     if (picked != null) {
-                      jobCreateVM.startDateController.text =
+                      newCourseVM.startDateController.text =
                           DateFormat("dd/MM/yyyy").format(picked);
                     }
                   },
@@ -105,14 +105,14 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 CustomDatePicker(
                   isRequired: true,
                   title: "End Date",
-                  controller: jobCreateVM.endDateController,
+                  controller: newCourseVM.endDateController,
                   text: null,
                   hintText: "Date",
                   onTap: () async {
                     DateTime startDate =
-                        jobCreateVM.startDateController.text.isNotEmpty
+                        newCourseVM.startDateController.text.isNotEmpty
                             ? DateFormat("dd/MM/yyyy")
-                                .parse(jobCreateVM.startDateController.text)
+                                .parse(newCourseVM.startDateController.text)
                             : DateTime.now();
       
                     final picked = await showDatePicker(
@@ -124,7 +124,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                     );
       
                     if (picked != null) {
-                      jobCreateVM.endDateController.text =
+                      newCourseVM.endDateController.text =
                           DateFormat("dd/MM/yyyy").format(picked);
                     }
                   },
@@ -136,7 +136,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ],
               if (showAddress) ...[
                 InputTextField(
-                  controller: jobCreateVM.addressController,
+                  controller: newCourseVM.addressController,
                   hintText: "Enter Address",
                   title: "Address",
                   isRequired: true,
@@ -149,7 +149,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               CustomDatePicker(
                 isRequired: true,
                 title: "RSVP Date",
-                controller: jobCreateVM.rsvpDateController,
+                controller: newCourseVM.rsvpDateController,
                 text: null,
                 hintText: "Date",
                 onTap: () async {
@@ -160,7 +160,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
-                    jobCreateVM.rsvpDateController.text =
+                    newCourseVM.rsvpDateController.text =
                         "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },
@@ -169,7 +169,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ),
               SizedBox(height: 8),
               InputTextField(
-                controller: jobCreateVM.presenterNameController,
+                controller: newCourseVM.presenterNameController,
                 hintText: "Enter Presenter Name",
                 title: "Presented By (Name)",
                 isRequired: true,
@@ -181,9 +181,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ImagePickerField(
                 title: "Presented By (Image)",
                 isRequired: true,
+                serverImage: newCourseVM.serverPresentedImg,
                 showPreview: true,
-                selectedFile: jobCreateVM.selectedPresentedImg,
-                onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
+                selectedFile: newCourseVM.selectedPresentedImg,
+                onFilePicked: (file) => newCourseVM.setPresentedImg(file),
               ),
               SizedBox(height: 8),
               _sectionHeader("Images/Video"),
@@ -191,27 +192,30 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ImagePickerField(
                 title: "Course Header Banner / Video",
                 isRequired: true,
+                serverImage: newCourseVM.serverCourseHeaderBanner,
                 showPreview: true,
-                selectedFile: jobCreateVM.selectedCourseHeaderBanner,
-                onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
+                selectedFile: newCourseVM.selectedCourseHeaderBanner,
+                onFilePicked: (file) => newCourseVM.setCourseHeaderBaner(file),
               ),
               SizedBox(height: 8),
               ImagePickerField(
                 title: "Gallery",
                 isRequired: true,
                 allowMultiple: true,
+                serverImages: newCourseVM.serverGallery,
                 showPreview: true,
-                selectedFiles: jobCreateVM.selectedGallery,
-                onFilesPicked: (file) => jobCreateVM.setGallery(file),
+                selectedFiles: newCourseVM.selectedGallery,
+                onFilesPicked: (file) => newCourseVM.setGallery(file),
               ),
               SizedBox(height: 8),
               ImagePickerField(
                 title: "Course Header Banner Image",
                 isRequired: true,
                 allowMultiple: true,
+                serverImages: newCourseVM.serverCourseBannerImg,
                 showPreview: true,
-                selectedFiles: jobCreateVM.selectedCourseBannerImg,
-                onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),
+                selectedFiles: newCourseVM.selectedCourseBannerImg,
+                onFilesPicked: (file) => newCourseVM.setCourseBannerImg(file),
               ),
               SizedBox(height: 8),
               _sectionHeader("Price/Availability"),
@@ -225,11 +229,11 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please enter Course Description'
                     : null,
-                controller: jobCreateVM.courseDescController,
+                controller: newCourseVM.courseDescController,
               ),
               SizedBox(height: 8),
               InputTextField(
-                controller: jobCreateVM.cpdPointsController,
+                controller: newCourseVM.cpdPointsController,
                 keyboardType: TextInputType.number,
                 hintText: "Enter CPD Points",
                 title: "CPD Points (Hours)",
@@ -241,7 +245,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 keyboardType: TextInputType.number,
-                controller: jobCreateVM.numberOfSeatsController,
+                controller: newCourseVM.numberOfSeatsController,
                 hintText: "Enter number of seats",
                 title: "Number of Seats",
                 isRequired: true,
@@ -252,7 +256,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 keyboardType: TextInputType.number,
-                controller: jobCreateVM.totalPriceController,
+                controller: newCourseVM.totalPriceController,
                 hintText: "Enter Total Price",
                 title: "Total Price",
                 isRequired: true,
@@ -263,7 +267,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 keyboardType: TextInputType.number,
-                controller: jobCreateVM.birdPriceController,
+                controller: newCourseVM.birdPriceController,
                 hintText: "Enter Early Bird Price",
                 title: "Early Bird Price",
                 isRequired: true,
@@ -274,7 +278,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
       
                   final birdPrice = double.tryParse(value) ?? 0;
                   final totalPrice =
-                      double.tryParse(jobCreateVM.totalPriceController.text) ?? 0;
+                      double.tryParse(newCourseVM.totalPriceController.text) ?? 0;
       
                   if (birdPrice > totalPrice) {
                     return 'Bird Price cannot be more than Total Price';
@@ -287,7 +291,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               CustomDatePicker(
                 isRequired: true,
                 title: "Early Bird End Date",
-                controller: jobCreateVM.earlyBirdDateController,
+                controller: newCourseVM.earlyBirdDateController,
                 text: null,
                 hintText: "Date",
                 onTap: () async {
@@ -298,7 +302,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
-                    jobCreateVM.earlyBirdDateController.text =
+                    newCourseVM.earlyBirdDateController.text =
                         "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },

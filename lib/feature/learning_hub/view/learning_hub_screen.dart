@@ -280,6 +280,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
             navigationService.navigateTo(RouteList.newCourseScreen);
             newCourseVM.fetchCourseType();
             newCourseVM.fetchCourseCategory();
+            newCourseVM.currentStep = 0;
+            newCourseVM.resetForm();
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));
