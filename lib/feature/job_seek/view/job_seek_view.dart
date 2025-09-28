@@ -110,8 +110,8 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
           itemBuilder: (context, index) {
                 if ((index + 1) % 6 == 0) {
                   return Container(
-                    height: 100,
-                    color: Colors.red,
+                    height: 1,
+                    color: Colors.white,
                   );
                 } else {
                   final itemIndex = index - (index ~/ 6);
