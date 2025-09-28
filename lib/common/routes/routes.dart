@@ -35,6 +35,7 @@ import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registered_users_view.dart';
@@ -164,6 +165,7 @@ class Routes {
           create: (_) => BannersViewModel(), child: BannersListScreen()),
       RouteList.addBanners: (context) => AddBannersScreen(),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
+      RouteList.learningHubMasterView: (context) => LearningHubMasterView()
     };
   }
 }

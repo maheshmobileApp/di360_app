@@ -367,9 +367,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       );
     }
 
-    for (var session in sessions) {
+    /*for (var session in sessions) {
       session.clear(); // calls your clear() method
-    }
+    }*/
 
     return courseInfoList;
   }
@@ -417,6 +417,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> createdCourseListing(BuildContext context, bool isDraft) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     String? startDate = startDateController.text.isEmpty
         ? null
@@ -442,11 +443,17 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         courseGallery: selectedGalleryList,
         courseBannerVideo: courseBannerImageHeaderList,
         description: courseDescController.text,
-        cpdPoints: double.parse(cpdPointsController.text),
-        numberOfSeats: int.parse(numberOfSeatsController.text),
+        cpdPoints: (cpdPointsController.text.isEmpty)
+            ? null
+            : double.parse(cpdPointsController.text),
+        numberOfSeats: (numberOfSeatsController.text.isEmpty)
+            ? null
+            :int.parse(numberOfSeatsController.text),
         priceInAud: 0,
         priceInUsd: 0,
-        earlyBirdPrice: int.parse(birdPriceController.text),
+        earlyBirdPrice: (birdPriceController.text.isEmpty)
+            ? null
+            : int.parse(birdPriceController.text),
         earlyBirdEndDate: earlyBirdDateController.text,
         topicsIncluded: topicsIncludedDescController.text,
         learningObjectives: learningObjectivesDescController.text,
@@ -459,7 +466,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         contactEmail: emailController.text,
         contactPhone: phoneController.text,
         contactWebsite: websiteController.text,
-        afterwardsPrice: int.parse(totalPriceController.text),
+        afterwardsPrice: (totalPriceController.text.isEmpty)
+            ? null
+            : int.parse(totalPriceController.text),
         registerLink: registerLinkController.text,
         activeStatusFeed: "",
         userRole: type,
@@ -472,18 +481,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         isFeatured: false,
         activeStatus: "ACTIVE",
         address: addressController.text,
-        scheduledAt: null,
         maxSubscribers: 1000,
-        seoMetadata: null,
-        webinarLink: null,
         createdById: userId,
-        companyName: null,
+        companyName: name,
         status: isDraft ? "DRAFT" : "PENDING",
-        type: selectedCourseType,
+        type: (selectedCourseType==null)?"":selectedCourseType,
         feedType: "LEARNHUB",
-        startTime: null,
-        shortId: null,
-        shortInfo: null,
       ).toJson(),
     });
 
@@ -566,7 +569,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     presenterNameController.text = course.presentedByName ?? "";
     cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0);
     numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
-    totalPriceController.text = course.afterwardsPrice?.toStringAsFixed(0) ?? "";
+    totalPriceController.text =
+        course.afterwardsPrice?.toStringAsFixed(0) ?? "";
     birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
     courseDescController.text = course.description ?? "";
     topicsIncludedDescController.text = course.topicsIncluded ?? "";
