@@ -30,14 +30,11 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
               style: TextStyles.regular3(color: AppColors.black),),
               addVertical( 8),
             ChipTextField(
-             
               chips: jobProfileVM.languages,
               hintText: "Enter multiple languages",
               onChanged: (chips) {
-          
               },
             ),
-
               addVertical(16),
               Text("Areas of Expertise",
                style: TextStyles.regular3(color: AppColors.black),
