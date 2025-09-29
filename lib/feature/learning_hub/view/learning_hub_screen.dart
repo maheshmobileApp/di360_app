@@ -367,6 +367,28 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.selectedGalleryList = [];
     newCourseVM.courseBannerImgList = [];
     newCourseVM.sponsoredByImgList = [];
-    newCourseVM.loadCourseForEdit(course);
+    loadCourseForEdit(newCourseVM, course);
+  }
+
+  void loadCourseForEdit(NewCourseViewModel newCourseVM,CoursesListingDetails course) {
+    newCourseVM.selectedEvent =
+        course.eventType; // "Single Day" or "Multiple Day"
+
+    newCourseVM.sessions = course.courseEventInfo?.map((event) {
+          return SessionModel(
+            sessionName: event.name,
+            sessionInfo: event.info,
+            eventDate: event.date,
+            images: [],
+            serverImagesList: event.images, // keep reference to server images
+          );
+        }).toList() ??
+        [];
+
+    if (newCourseVM.sessions.isEmpty) newCourseVM.sessions.add(SessionModel());
+
+    newCourseVM.topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    newCourseVM.learningObjectivesDescController.text =
+        course.learningObjectives ?? "";
   }
 }
