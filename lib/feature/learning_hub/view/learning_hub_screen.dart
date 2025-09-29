@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
@@ -286,40 +289,41 @@ class _JobListingScreenState extends State<LearningHubScreen>
         ));
   }
 
-  Future<void> loadCourseData(NewCourseViewModel newCourseVM,CoursesListingDetails course) async {
+  Future<void> loadCourseData(
+      NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
     // Reset image/file selections
-    newCourseVM.serverPresentedImg = course.presentedByImage?.url??"";
-    newCourseVM.serverCourseHeaderBanner= course.courseBannerVideo?.first.url;
+    newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
+    newCourseVM.serverCourseHeaderBanner = course.courseBannerVideo?.first.url;
     newCourseVM.serverGallery = course.courseGallery
-        ?.map((item) => item.url ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList() ??
-    [];
+            ?.map((item) => item.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
     newCourseVM.serverCourseBannerImg = course.courseBannerImage
-        ?.map((item) => item.url ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList() ??
-    [];
-    newCourseVM.serverEventImg  = course.courseEventInfo
-        ?.map((item) => item.images?.first.url ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList() ??
-    [];
+            ?.map((item) => item.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
+    newCourseVM.serverEventImg = course.courseEventInfo
+            ?.map((item) => item.images?.first.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
     newCourseVM.serverEventImgs = course.courseEventInfo
-        ?.map((item) => item.images?.first.url ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList() ??
-    [];
+            ?.map((item) => item.images?.first.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
     newCourseVM.serverSponsoredByImg = course.sponsorByImage
-        ?.map((item) => item.url ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList() ??
-    [];
-    newCourseVM.serverSessionImg  = course.courseEventInfo
-        ?.map((item) => item.images?.first.url  ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList() ??
-    [];
+            ?.map((item) => item.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
+    newCourseVM.serverSessionImg = course.courseEventInfo
+            ?.map((item) => item.images?.first.url ?? "")
+            .where((url) => url.isNotEmpty)
+            .toList() ??
+        [];
 
     // Dropdown / selections
     newCourseVM.selectedCategoryId = course.courseCategoryId;
@@ -330,13 +334,16 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.courseNameController.text = course.courseName ?? "";
     newCourseVM.presenterNameController.text = course.presentedByName ?? "";
     newCourseVM.cpdPointsController.text = course.cpdPoints.toString();
-    newCourseVM.numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
+    newCourseVM.numberOfSeatsController.text =
+        course.numberOfSeats?.toString() ?? "";
     newCourseVM.totalPriceController.text =
         course.afterwardsPrice?.toStringAsFixed(0) ?? "";
-    newCourseVM.birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
+    newCourseVM.birdPriceController.text =
+        course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
     newCourseVM.courseDescController.text = course.description ?? "";
     newCourseVM.topicsIncludedDescController.text = course.topicsIncluded ?? "";
-    newCourseVM.learningObjectivesDescController.text = course.learningObjectives ?? "";
+    newCourseVM.learningObjectivesDescController.text =
+        course.learningObjectives ?? "";
     newCourseVM.nameController.text = course.contactName ?? "";
     newCourseVM.phoneController.text = course.contactPhone ?? "";
     newCourseVM.emailController.text = course.contactEmail ?? "";
@@ -360,9 +367,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.selectedGalleryList = [];
     newCourseVM.courseBannerImgList = [];
     newCourseVM.sponsoredByImgList = [];
-
-    // Sessions / Course Event Info
-    newCourseVM.courseInfoList = [];
-    newCourseVM.sessions = [];
+    newCourseVM.loadCourseForEdit(course);
   }
 }

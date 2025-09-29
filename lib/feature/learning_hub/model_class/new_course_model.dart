@@ -1,4 +1,4 @@
-class CoursesResponse {
+/*class CoursesResponse {
   CourseObject? object;
 
   CoursesResponse({this.object});
@@ -461,7 +461,7 @@ class CourseBannerImage {
   }
 
   Map<String, dynamic> toJson() => {'url': url, 'name': name, 'size': size, 'type': type};
-}
+}*/
 
 
 /* Supporting classes */

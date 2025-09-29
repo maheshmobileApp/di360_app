@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
@@ -246,6 +247,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }*/
 
   Future<void> validateCourseHeaderBanner() async {
+    if (serverCourseHeaderBanner !=""){
+
+    }else{
+      
+    }
     if (selectedCourseHeaderBanner == null) return;
 
     final file = selectedCourseHeaderBanner?.path;
@@ -381,6 +387,28 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
+  void loadCourseForEdit(CoursesListingDetails course) {
+    selectedEvent = course.eventType; // "Single Day" or "Multiple Day"
+
+    sessions = course.courseEventInfo?.map((event) {
+          return SessionModel(
+            sessionName: event.name,
+            sessionInfo: event.info,
+            eventDate: event.date,
+            images: [],
+            serverImagesList: event.images, // keep reference to server images
+          );
+        }).toList() ??
+        [];
+
+    if (sessions.isEmpty) sessions.add(SessionModel());
+
+    topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    learningObjectivesDescController.text = course.learningObjectives ?? "";
+
+    notifyListeners();
+  }
+
   /// Get session details as plain data (ready for API)
   List<Map<String, dynamic>> getSessionDetails() {
     return sessions.map((session) {
@@ -474,7 +502,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
-      "object": CourseObject(
+      "object": CoursesListingDetails(
         courseName: courseNameController.text,
         courseCategoryId: selectedCategoryId,
         rsvpDate: rsvpDateController.text,
@@ -511,14 +539,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
             ? null
             : int.parse(totalPriceController.text),
         registerLink: registerLinkController.text,
-        activeStatusFeed: "",
         userRole: type,
         startDate: startDate,
         endDate: endDate,
-        image: "",
-        video: "",
-        completeDetails: "",
-        attachments: null,
         isFeatured: false,
         activeStatus: "ACTIVE",
         address: addressController.text,
@@ -590,5 +613,4 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     pageController.jumpToPage(
         0); // or pageController.animateToPage(...) if you want animation
   }
-
 }
