@@ -79,7 +79,7 @@ class CoursesListingDetails {
   String? contactEmail;
   String? contactPhone;
   String? contactWebsite;
-  double? cpdPoints;
+  dynamic? cpdPoints;
   dynamic? numberOfSeats;
   dynamic? earlyBirdPrice;
   dynamic? afterwardsPrice;

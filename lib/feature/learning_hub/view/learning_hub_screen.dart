@@ -241,7 +241,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                                await courseListingVM.getCourseDetails(
+                               /* await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
@@ -251,7 +251,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );
+                                );*/
 
                                 break;
                               case "Delete":
@@ -327,13 +327,14 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     // Dropdown / selections
     newCourseVM.selectedCategoryId = course.courseCategoryId;
+    await newCourseVM.setSelectedCourseCategoryName(course.courseCategoryId);
     newCourseVM.selectedCourseType = course.type;
     newCourseVM.selectedEvent = course.eventType ?? "";
 
     // Text controllers
     newCourseVM.courseNameController.text = course.courseName ?? "";
     newCourseVM.presenterNameController.text = course.presentedByName ?? "";
-    newCourseVM.cpdPointsController.text = course.cpdPoints.toString();
+    newCourseVM.cpdPointsController.text = course.cpdPoints.toStringAsFixed(0);
     newCourseVM.numberOfSeatsController.text =
         course.numberOfSeats?.toString() ?? "";
     newCourseVM.totalPriceController.text =
