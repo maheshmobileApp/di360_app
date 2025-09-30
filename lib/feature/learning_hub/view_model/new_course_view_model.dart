@@ -37,6 +37,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final emailController = TextEditingController();
   final websiteUrlController = TextEditingController();
   final registerLinkController = TextEditingController();
+  final meetingLinkController = TextEditingController();
   final termsAndConditionsController = TextEditingController();
   final cancellationController = TextEditingController();
   final websiteController = TextEditingController();

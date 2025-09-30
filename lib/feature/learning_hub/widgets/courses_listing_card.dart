@@ -87,8 +87,8 @@ class CouresListingCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                      onTap: onTapRegistered,
-                      child: _registeredChip(registeredCount)),
+                        onTap: onTapRegistered,
+                        child: _registeredChip(registeredCount)),
                     GestureDetector(
                       onTap: onDetailView,
                       child: Row(
@@ -150,7 +150,6 @@ class CouresListingCard extends StatelessWidget {
                   style: TextStyles.bold4(
                     color: StatusColors.getColor(status),
                     fontSize: 10,
-                    
                   ),
                 ),
               ),
@@ -264,14 +263,18 @@ class CouresListingCard extends StatelessWidget {
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
-        _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
+        if (status != "EXPIRED")
+          _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
+        if (status != "APPROVE")
+          _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
         if (status == "APPROVE")
           _popupItem(
               "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
         if (status == "REJECT")
           _popupItem(
               "Active", Icons.nightlight_outlined, AppColors.primaryColor),
+        if (status == "EXPIRED")
+          _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),
       ],
     );
   }

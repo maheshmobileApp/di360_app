@@ -11,7 +11,8 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String profilePic;
   final String totalPrice;
   final String discountPrice;
-  final String date;
+  final String startDate;
+  final String endDate;
   final String time;
 
   const CourseInfoCardWidget(
@@ -24,7 +25,9 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.profilePic,
       required this.totalPrice,
       required this.discountPrice,
-      required this.date, required this.time});
+      required this.startDate,
+      required this.endDate,
+      required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +77,9 @@ class CourseInfoCardWidget extends StatelessWidget {
               children: [
                 _InfoTextWidget(
                   label: "Date",
-                  value: (date.isEmpty&& date=="")?"Not Specified":"${DateFormat("d MMM").format(DateTime.parse("${date}"))} ${time}",
+                  value: (startDate.isEmpty && endDate.isEmpty)
+                      ? "Not Specified"
+                      : "${DateFormat("d MMM").format(DateTime.parse("${startDate}"))} - ${DateFormat("d MMM").format(DateTime.parse("${endDate}"))} ",
                   first: true,
                 ),
                 _InfoTextWidget(

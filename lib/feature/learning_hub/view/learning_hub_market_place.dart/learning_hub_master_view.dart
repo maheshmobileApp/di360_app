@@ -7,8 +7,9 @@ import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.d
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/search_filter_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
+import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -36,52 +37,29 @@ class _JobListingScreenState extends State<LearningHubMasterView>
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 234, 234),
+      backgroundColor: const Color.fromARGB(255, 249, 248, 248),
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         title: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Text(
-                'Dental Interface',
-                style: TextStyles.bold4(color: AppColors.black),
+          clipBehavior: Clip.none,
+          children: [
+            Text(
+              'Dental Interface',
+              style: TextStyles.bold4(color: AppColors.black),
+            ),
+            Positioned(
+              top: -9,
+              right: -18,
+              child: SvgPicture.asset(
+                ImageConst.logo,
+                height: 20,
+                width: 20,
               ),
-              Positioned(
-                top: -9,
-                right: -18,
-                child: SvgPicture.asset(
-                  ImageConst.logo,
-                  height: 20,
-                  width: 20,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
+        ),
         actions: [
-          Builder(
-            builder: (context) => GestureDetector(
-                onTap: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    SvgPicture.asset(ImageConst.notification,
-                        color: AppColors.black),
-                    if (notificationVM.notificationCount != 0)
-                      Positioned(
-                          top: -16,
-                          right: -13,
-                          child: CircleAvatar(
-                              radius: 12,
-                              backgroundColor: AppColors.primaryColor,
-                              child: Text('${notificationVM.notificationCount}',
-                                  style: TextStyles.medium1(
-                                      color: AppColors.whiteColor))))
-                  ],
-                )),
-          ),
-          addHorizontal(30),
+          addHorizontal(15),
           GestureDetector(
               onTap: () {
                 courseListingVM.setSearchBar(!courseListingVM.searchBarOpen);
@@ -89,22 +67,48 @@ class _JobListingScreenState extends State<LearningHubMasterView>
               child:
                   SvgPicture.asset(ImageConst.search, color: AppColors.black)),
           addHorizontal(20),
+          GestureDetector(
+            onTap: () => {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => FilterBottomSheet(
+                  sections: [
+                    FilterSectionModel(
+                      title: "Filter by Type",
+                      options: newCourseVM.courseTypeNames,
+                    ),
+                    FilterSectionModel(
+                      title: "Category",
+                      options: newCourseVM.courseCategory,
+                    ),
+                  ],
+                  onApply: (selectedOptions) {},
+                  onClear: () {
+                    navigationService.goBack();
+                  },
+                ),
+              )
+            },
+            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          ),
+          addHorizontal(15),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                ImageConst.catalogueBg,
-                fit: BoxFit.cover,
+            if (courseListingVM.searchBarOpen)
+              SearchWidget(
+                controller: courseListingVM.searchController,
+                hintText: "Search Course...",
+                onClear: () {},
+                onChanged: (value) {
+                  courseListingVM.getAllListingData(context);
+                },
               ),
-            ),
-            addVertical(12),
-            SearchFilterWidget(controller: courseListingVM.searchController, onSearch: () {  }, onFilterTap: () {  },),
-            Divider(),
             Expanded(
                 child: courseListingVM.coursesListingList.isEmpty
                     ? Center(
@@ -118,18 +122,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           ],
                         ),
                       )
-                    : GridView.builder(
-                        shrinkWrap: true,
+                    : ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemCount: courseListingVM.coursesListingList.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // 2 columns
-                          crossAxisSpacing: 0, // horizontal spacing
-                          mainAxisSpacing: 12, // vertical spacing
-                          childAspectRatio:
-                              0.400, // adjust height/width ratio of the cards
-                        ),
                         itemBuilder: (context, index) {
                           final jobData =
                               courseListingVM.coursesListingList[index];
@@ -154,8 +149,10 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 RouteList.courseDetailScreen,
                               );
                             },
-                            registerTap: () {
+                            registerTap: () async{
                               courseListingVM.setCourseId(course.id ?? "");
+                              await courseListingVM.getCourseDetails(
+                                  context, course.id??"");
                               RegistrationUserForm.show(context);
                             },
                           );
