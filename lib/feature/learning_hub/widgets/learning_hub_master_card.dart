@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/register_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,6 +17,7 @@ class ListingHubMasterCard extends StatelessWidget {
   final VoidCallback onTap;
   final String profilePic;
   final String presenterName;
+  final VoidCallback registerTap;
 
   const ListingHubMasterCard({
     super.key,
@@ -28,18 +30,18 @@ class ListingHubMasterCard extends StatelessWidget {
     this.isFree = true,
     required this.onTap,
     required this.profilePic,
-    required this.presenterName,
+    required this.presenterName, required this.registerTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(8),
       child: Card(
         color: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
         ),
         elevation: 3,
         margin: const EdgeInsets.all(8),
@@ -50,15 +52,18 @@ class ListingHubMasterCard extends StatelessWidget {
             // Image with tags overlay
             Stack(
               children: [
-                CachedNetworkImageWidget(
-                  imageUrl: imageUrl,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorWidget: const Icon(
-                    Icons.broken_image,
-                    size: 50,
-                    color: AppColors.lightGeryColor,
+                GestureDetector(
+                  onTap: onTap,
+                  child: CachedNetworkImageWidget(
+                    imageUrl: imageUrl,
+                    height: 140,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorWidget: const Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: AppColors.lightGeryColor,
+                    ),
                   ),
                 ),
                 /*Positioned(
@@ -78,7 +83,7 @@ class ListingHubMasterCard extends StatelessWidget {
                     ),
                   ),
                 ),*/
-                (date.isEmpty && date == "")
+                /*(date.isEmpty && date == "")
                     ? SizedBox.shrink()
                     : Positioned(
                         left: 8,
@@ -104,18 +109,27 @@ class ListingHubMasterCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
+                      ),*/
               ],
             ),
 
             // Info section
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    "PRESENTED BY",
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // Placeholder for Logo
                       CircleAvatar(
@@ -123,7 +137,7 @@ class ListingHubMasterCard extends StatelessWidget {
                         backgroundImage: profilePic.isNotEmpty
                             ? NetworkImage(profilePic)
                             : null,
-                        radius: 20,
+                        radius: 15,
                         child: profilePic.isEmpty
                             ? const Icon(Icons.business,
                                 size: 20, color: AppColors.lightGeryColor)
@@ -136,17 +150,10 @@ class ListingHubMasterCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              companyName,
+                              presenterName.toUpperCase(),
                               style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              presenterName,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -155,72 +162,74 @@ class ListingHubMasterCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const Divider(),
                   Text(
-                    description,
+                    companyName,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey[700]),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
+                  const Divider(),
+                  Column(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(135, 184, 219, 244),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.access_time,
-                                size: 16, color: Colors.blue),
-                            const SizedBox(width: 4),
-                            Text(
-                              "CPD: ${cpdHours} Hrs",
-                              style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time, color: Colors.grey, size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            "CPD HOURS: ${cpdHours}",
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      (location.isEmpty && location == "")
-                          ? SizedBox.shrink()
-                          : Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(135, 184, 219, 244),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.location_on_outlined,
-                                        size: 16, color: Colors.blue),
-                                    const SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
-                                        "${location}",
-                                        style: const TextStyle(
-                                            color: Colors.blue,
-                                            overflow: TextOverflow.ellipsis,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on_outlined,
+                              color: Colors.grey, size: 20),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              "${location}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_month_outlined,
+                              color: Colors.grey, size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            date,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                  Row(
+
+                  /*Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
@@ -241,10 +250,15 @@ class ListingHubMasterCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
+                  ),*/
                 ],
               ),
             ),
+            Spacer(),
+            RegisterButton(
+              text: 'Register Now',
+              onTap: registerTap,
+            )
           ],
         ),
       ),

@@ -29,6 +29,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
                ImagePickerField(
                 title: "Sponsored By",
                 isRequired: true,
+                serverImages: newCourseVM.serverSponsoredByImg,
                 showPreview: true,
                 allowMultiple: true,
                 selectedFiles: newCourseVM.selectedsponsoredByImg, 
