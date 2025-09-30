@@ -6,7 +6,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_info_item.dart';
-
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';

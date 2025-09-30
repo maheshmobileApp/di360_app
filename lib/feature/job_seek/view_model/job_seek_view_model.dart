@@ -5,8 +5,6 @@ import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
-import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
-import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo_impl.dart';
@@ -32,7 +30,8 @@ String? _enquiryData;
 Jobs? selectedJob;
 bool isJobApplied = false;
 List<Jobs> jobs = [];
-List<JobSeekFilterModel> filteredJobs = [];
+List<Jobs> filteredJobs = [];
+
 final TextEditingController locationController = TextEditingController();
 final TextEditingController locumDateController = TextEditingController();
 late Map<String, List<FilterItem>> filterOptions;
@@ -71,7 +70,7 @@ List<String> experienceOptions = ["0",
     "35-40",
     "40+"
 ];
-   //selcetd incex api shuld call...
+  
   int _selectedTabIndex = 0;
 
   int get selectedTabIndex => _selectedTabIndex;
@@ -139,8 +138,27 @@ Future<void> fetchJobsForSelectedTab(BuildContext context) async {
   }
 }
 Future<void> fetchFilteredJobs(BuildContext context) async {
-  
+  isLoading = true;
+  notifyListeners();
+  try {
+    printSelectedItems(); 
+    final result = await repo.fetchFilteredJobs(
+      selectedProfessions,
+      selectedEmploymentTypes,
+      selectedExperiences,
+      selectedAvailability,
+    );
+    filteredJobs = result;
+    print("Fetched ${filteredJobs.length} filtered jobs");
+  } catch (e) {
+    print("Error fetching filtered jobs: $e");
+    filteredJobs = [];
+  } finally {
+    isLoading = false;
+    notifyListeners();
+  }
 }
+
 
   Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
     applyJobRequest.jobId = selectedJob?.id ?? '';

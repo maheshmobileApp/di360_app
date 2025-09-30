@@ -39,6 +39,8 @@ class CourseInfoCardWidget extends StatelessWidget {
             const Text("A Comprehensive Guide",
                 style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 12),
+            const Text("Presented by",
+                style: TextStyle(color: Colors.black)),
             Row(
               children: [
                 CircleAvatar(
