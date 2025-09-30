@@ -126,7 +126,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                   children: [
                     CourseInfoCardWidget(
                       time: "",
-                      date: courseDetails?.startDate ?? "",
+                      startDate: courseDetails?.startDate ?? "",
+                      endDate: courseDetails?.endDate ?? "",
                       courseName: courseDetails?.courseName ?? "",
                       profilePic: courseDetails?.presentedByImage?.url ?? "",
                       presentByName: courseDetails?.presentedByName ?? "",

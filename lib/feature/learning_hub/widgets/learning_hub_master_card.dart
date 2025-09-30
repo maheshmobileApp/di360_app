@@ -178,13 +178,13 @@ class ListingHubMasterCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.access_time, color: Colors.grey, size: 20),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 6),
                           Text(
                             "CPD HOURS: ${cpdHours}",
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -195,14 +195,14 @@ class ListingHubMasterCard extends StatelessWidget {
                         children: [
                           Icon(Icons.location_on_outlined,
                               color: Colors.grey, size: 20),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              "${location}",
+                              (location.isEmpty)?"------":"${location}",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -214,13 +214,13 @@ class ListingHubMasterCard extends StatelessWidget {
                         children: [
                           Icon(Icons.calendar_month_outlined,
                               color: Colors.grey, size: 20),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 6),
                           Text(
-                            date,
+                            (date.isEmpty)?"------":date,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -254,7 +254,7 @@ class ListingHubMasterCard extends StatelessWidget {
                 ],
               ),
             ),
-            Spacer(),
+            //Spacer(),
             RegisterButton(
               text: 'Register Now',
               onTap: registerTap,

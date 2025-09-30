@@ -42,8 +42,9 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                 keyboardType: TextInputType.number,
                 maxLength: 10,
                 isRequired: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter Phone' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Phone'
+                    : null,
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -55,14 +56,15 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                   if (value == null || value.isEmpty) {
                     return 'Please enter Email';
                   }
-      
+
                   // Simple email regex
-                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-      
+                  final emailRegex =
+                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
                   if (!emailRegex.hasMatch(value)) {
                     return 'Please enter a valid Email';
                   }
-      
+
                   return null;
                 },
               ),
@@ -87,6 +89,17 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                     : null,
               ),
               SizedBox(height: 8),
+              jobCreateVM.selectedCategory == "Webinar"
+                  ? InputTextField(
+                      controller: jobCreateVM.meetingLinkController,
+                      hintText: "Enter Meeting Link",
+                      title: "Meeting Link",
+                      isRequired: true,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter Meeting link'
+                          : null,
+                    )
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
