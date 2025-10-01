@@ -22,6 +22,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedCategory;
   List<CourseCategories> courseCategoryList = [];
   String? selectedCategoryId;
+  bool editOptionEnable = false;
 
   /********************************** */
   final userFirstNameController = TextEditingController();
@@ -32,6 +33,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   void setSearchBar(bool value) {
     searchBarOpen = value;
+    notifyListeners();
+  }
+
+  void setEditOption(bool value) {
+    editOptionEnable = value;
     notifyListeners();
   }
 
@@ -161,11 +167,13 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> userRegisterToCourse(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
 
     final res = await repo.userRegisterToCourse({
       "object": {
         "course_id": courseId,
+        "from_id": userId,
         "first_name": userFirstNameController.text,
         "last_name": userLastNameController.text,
         "phone_number": userPhoneNumberController.text,

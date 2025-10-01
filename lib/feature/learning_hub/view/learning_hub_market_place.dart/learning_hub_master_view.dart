@@ -94,16 +94,12 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                         context,
                         type ?? "",
                         courseListingVM.selectedCategoryId ?? "",
-                        date??"",
-                      location??"");
+                        date ?? "",
+                        location ?? "");
                   },
                   onClear: () {
                     courseListingVM.getMarketPlaceCoursesWithFilters(
-                        context,
-                        "",
-                        "",
-                        "",
-                      "");
+                        context, "", "", "", "");
                     navigationService.goBack();
                   },
                 ),
@@ -169,9 +165,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             },
                             registerTap: () async {
                               courseListingVM.setCourseId(course.id ?? "");
-                              await courseListingVM.getCourseDetails(
-                                  context, course.id ?? "");
-                              RegistrationUserForm.show(context);
+                              RegistrationUserForm.show(
+                                  context, course.courseName ?? "");
                             },
                           );
                         },

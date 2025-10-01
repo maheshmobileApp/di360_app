@@ -173,15 +173,13 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                   await newCourseVM.validateGallery();
                 }
 
-                if (newCourseVM.selectedCourseBannerImg?.isNotEmpty ??
-                    false) {
+                if (newCourseVM.selectedCourseBannerImg?.isNotEmpty ?? false) {
                   await newCourseVM.validateCourseBanner();
                 }
                 if ((newCourseVM.courseInfoList?.isNotEmpty ?? false)) {
                   await newCourseVM.buildCourseInfoList();
                 }
-                if (newCourseVM.selectedsponsoredByImg?.isNotEmpty ??
-                    false) {
+                if (newCourseVM.selectedsponsoredByImg?.isNotEmpty ?? false) {
                   await newCourseVM.validateSponsoredByImg();
                 }
 
@@ -197,19 +195,35 @@ class _JobCreateViewState extends State<NewCourseScreen> {
 
           Expanded(
             child: CustomRoundedButton(
-              text: isLastStep ? 'Submit' : 'Next',
+              text: isLastStep
+                  ? (courseListVM.editOptionEnable ? 'Update' : 'Submit')
+                  : 'Next',
               height: 42,
               fontSize: 12,
               onPressed: () async {
-                final currentFormKey =
-                    newCourseVM.formKeys[newCourseVM.currentStep];
-                if (currentFormKey.currentState?.validate() ?? false) {
-                  if (isLastStep) {
-                    await newCourseVM.createdCourseListing(context, false);
-                    courseListVM.selectedStatus = "All";
-                    await courseListVM.getCoursesListingData(context, "");
-                  } else {
-                    newCourseVM.goToNextStep();
+                if (courseListVM.editOptionEnable) {
+                  final currentFormKey =
+                      newCourseVM.formKeys[newCourseVM.currentStep];
+                  if (currentFormKey.currentState?.validate() ?? false) {
+                    if (isLastStep) {
+                      await newCourseVM.updateCourseListing(context,courseListVM.courseId, false);
+                      courseListVM.selectedStatus = "All";
+                      await courseListVM.getCoursesListingData(context, "");
+                    } else {
+                      newCourseVM.goToNextStep();
+                    }
+                  }
+                } else {
+                  final currentFormKey =
+                      newCourseVM.formKeys[newCourseVM.currentStep];
+                  if (currentFormKey.currentState?.validate() ?? false) {
+                    if (isLastStep) {
+                      await newCourseVM.createdCourseListing(context, false);
+                      courseListVM.selectedStatus = "All";
+                      await courseListVM.getCoursesListingData(context, "");
+                    } else {
+                      newCourseVM.goToNextStep();
+                    }
                   }
                 }
               },

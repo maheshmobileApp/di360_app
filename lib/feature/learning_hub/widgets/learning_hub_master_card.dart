@@ -58,7 +58,7 @@ class ListingHubMasterCard extends StatelessWidget {
                     imageUrl: imageUrl,
                     height: 140,
                     width: double.infinity,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     errorWidget: const Icon(
                       Icons.broken_image,
                       size: 50,
@@ -66,9 +66,9 @@ class ListingHubMasterCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                /*Positioned(
-                  left: 8,
-                  bottom: 8,
+                Positioned(
+                  right: 8,
+                  top: 8,
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -78,11 +78,11 @@ class ListingHubMasterCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      isFree ? "Free Master Class" : "Paid Master Class",
+                      isFree ? "SOLD OUT" : "FILLING FAST",
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
-                ),*/
+                ),
                 /*(date.isEmpty && date == "")
                     ? SizedBox.shrink()
                     : Positioned(

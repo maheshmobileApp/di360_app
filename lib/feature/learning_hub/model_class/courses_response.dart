@@ -347,6 +347,28 @@ class Attachments {
   }
 }
 
+class Address {
+  final String? city;
+  final String? country;
+
+  Address({this.city, this.country});
+
+  factory Address.fromJson(Map<String, dynamic> json) {
+    return Address(
+      city: json['city'] as String?,
+      country: json['country'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "city": city,
+      "country": country,
+    };
+  }
+}
+
+
 class CourseRegisteredUsersAggregate {
   Aggregate? aggregate;
 

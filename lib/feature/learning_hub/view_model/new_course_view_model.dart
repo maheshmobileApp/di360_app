@@ -188,14 +188,14 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     // Step-specific validations
     if (_currentStep == 0) {
-      validatePresenterImg();
-      validateCourseHeaderBanner();
-      validateGallery();
-      validateCourseBanner();
+      serverPresentedImg == "" ? validatePresenterImg() : null;
+      serverCourseHeaderBanner == "" ? validateCourseHeaderBanner() : null;
+      serverGallery!.isEmpty ? validateGallery() : null;
+      serverCourseBannerImg!.isEmpty ? validateCourseBanner() : null;
     } else if (_currentStep == 1) {
       buildCourseInfoList();
     } else if (_currentStep == 2) {
-      validateSponsoredByImg();
+      serverSponsoredByImg!.isEmpty ? validateSponsoredByImg() : null;
     }
 
     if (_currentStep < totalSteps - 1) {
@@ -223,6 +223,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       pageController.jumpToPage(step);
       notifyListeners();
     }
+  }
+
+  void setCurrentStep(int step) {
+    _currentStep = step;
+    notifyListeners();
   }
 
   // ───── Validation Methods ─────
@@ -412,7 +417,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<List<CourseEventInfo>> buildCourseInfoList() async {
     for (var session in sessions) {
       // upload all images for this session
-      final uploadedImgs = await uploadSessionImages(session.images);
+      final uploadedImgs = session.serverImages.isEmpty
+          ? await uploadSessionImages(session.images)
+          : null;
 
       courseInfoList.add(
         CourseEventInfo(
@@ -561,6 +568,98 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> updateCourseListing(
+      BuildContext context, String? courseId, bool isDraft) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    String? rsvpDate = rsvpDateController.text.isEmpty
+        ? null
+        : DateFormat("yyyy-MM-dd").format(
+            DateFormat("d/M/yyyy").parse(rsvpDateController.text),
+          );
+    String? startDate = startDateController.text.isEmpty
+        ? null
+        : DateFormat("yyyy-MM-dd").format(
+            DateFormat("d/M/yyyy").parse(startDateController.text),
+          );
+
+    String? endDate = endDateController.text.isEmpty
+        ? null
+        : DateFormat("yyyy-MM-dd").format(
+            DateFormat("d/M/yyyy").parse(endDateController.text),
+          );
+
+    Loaders.circularShowLoader(context);
+    final result = await repo.updateCourseListing({
+      "id": courseId,
+      "changes": CourseObject(
+              courseName: courseNameController.text,
+              courseCategoryId: selectedCategoryId,
+              rsvpDate: rsvpDate,
+              presentedByName: presenterNameController.text,
+              presentedByImage: PresentedByImage(url: presenter_image),
+              courseBannerImage: courseBannerImgList,
+              courseGallery: selectedGalleryList,
+              courseBannerVideo: courseBannerImageHeaderList,
+              description: courseDescController.text,
+              cpdPoints: (cpdPointsController.text.isEmpty)
+                  ? null
+                  : double.parse(cpdPointsController.text),
+              numberOfSeats: (numberOfSeatsController.text.isEmpty)
+                  ? null
+                  : int.parse(numberOfSeatsController.text),
+              priceInAud: 0,
+              priceInUsd: 0,
+              earlyBirdPrice: (birdPriceController.text.isEmpty)
+                  ? null
+                  : int.parse(birdPriceController.text),
+              earlyBirdEndDate: earlyBirdDateController.text,
+              topicsIncluded: topicsIncludedDescController.text,
+              learningObjectives: learningObjectivesDescController.text,
+              eventType: selectedEvent,
+              courseEventInfo: courseInfoList,
+              sponsorByImage: sponsoredByImgList,
+              terms: termsAndConditionsController.text,
+              refundPolicy: cancellationController.text,
+              contactName: nameController.text,
+              contactEmail: emailController.text,
+              contactPhone: phoneController.text,
+              contactWebsite: websiteUrlController.text,
+              afterwardsPrice: (totalPriceController.text.isEmpty)
+                  ? null
+                  : int.parse(totalPriceController.text),
+              registerLink: registerLinkController.text,
+              userRole: type,
+              startDate: startDate,
+              endDate: endDate,
+              isFeatured: false,
+              activeStatus: "ACTIVE",
+              address: addressController.text,
+              maxSubscribers: 1000,
+              createdById: userId,
+              companyName: name,
+              status: isDraft ? "DRAFT" : "PENDING",
+              type: (selectedCourseType == null) ? "" : selectedCourseType,
+              feedType: "LEARNHUB",
+              startTime: startTimeController.text,
+              endTime: endTimeController.text)
+          .toJson(),
+    });
+
+    if (result != null) {
+      scaffoldMessenger("Course is updated Successfully");
+      navigationService.goBack();
+
+      Loaders.circularHideLoader(context);
+      resetForm();
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
   void resetForm() {
     // Reset dropdowns & selections
 
@@ -607,5 +706,19 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     // Page controller reset
     pageController.jumpToPage(
         0); // or pageController.animateToPage(...) if you want animation
+  }
+
+  void serverImagesClear() {
+    serverPresentedImg = "";
+    serverCourseHeaderBanner = "";
+    serverGallery = [];
+    serverCourseBannerImg = [];
+    serverEventImg = [];
+    serverEventImgs = [];
+    serverSponsoredByImg = [];
+    serverSessionImg = [];
+    for (var session in sessions) {
+      session.serverImages.clear();
+    }
   }
 }

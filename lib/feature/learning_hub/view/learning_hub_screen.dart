@@ -241,8 +241,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                               /* await courseListingVM.getCourseDetails(
+                                await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
+                                courseListingVM.setEditOption(true);
+                                courseListingVM.setCourseId(course.id ?? "");
+
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
 
@@ -251,7 +254,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );*/
+                                );
 
                                 break;
                               case "Delete":
@@ -271,7 +274,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                 print("Make course $id active");
                                 break;
                               case "Re-Listing":
-                               await courseListingVM.getCourseDetails(
+                                await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
@@ -293,6 +296,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
+            newCourseVM.setCurrentStep(0);
+            newCourseVM.serverImagesClear();
+            courseListingVM.setEditOption(false);
             navigationService.navigateTo(RouteList.newCourseScreen);
             newCourseVM.fetchCourseType();
             newCourseVM.fetchCourseCategory();
@@ -383,7 +389,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
     loadCourseForEdit(newCourseVM, course);
   }
 
-  void loadCourseForEdit(NewCourseViewModel newCourseVM,CoursesListingDetails course) {
+  void loadCourseForEdit(
+      NewCourseViewModel newCourseVM, CoursesListingDetails course) {
     newCourseVM.selectedEvent =
         course.eventType; // "Single Day" or "Multiple Day"
 
