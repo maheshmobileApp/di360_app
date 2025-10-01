@@ -84,7 +84,19 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                       options: newCourseVM.courseCategory,
                     ),
                   ],
-                  onApply: (selectedOptions) {},
+                  onApply: (selectedOptions) {
+                    final type = selectedOptions["Filter by Type"];
+                    final category = selectedOptions["Category"];
+                    final date = selectedOptions["Filter by Date"];
+                    final location = selectedOptions["Filter by Location"];
+                    courseListingVM.setSelectedCourseCategory(category);
+                    courseListingVM.getMarketPlaceCoursesWithFilters(
+                        context,
+                        type ?? "",
+                        courseListingVM.selectedCategoryId ?? "",
+                        date??"",
+                      location??"");
+                  },
                   onClear: () {
                     navigationService.goBack();
                   },
@@ -149,10 +161,10 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 RouteList.courseDetailScreen,
                               );
                             },
-                            registerTap: () async{
+                            registerTap: () async {
                               courseListingVM.setCourseId(course.id ?? "");
                               await courseListingVM.getCourseDetails(
-                                  context, course.id??"");
+                                  context, course.id ?? "");
                               RegistrationUserForm.show(context);
                             },
                           );

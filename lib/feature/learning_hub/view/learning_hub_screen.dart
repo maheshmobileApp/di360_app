@@ -270,6 +270,18 @@ class _JobListingScreenState extends State<LearningHubScreen>
                               case "Active":
                                 print("Make course $id active");
                                 break;
+                              case "Re-Listing":
+                               await courseListingVM.getCourseDetails(
+                                    context, course.id ?? "");
+                                newCourseVM.fetchCourseCategory();
+                                newCourseVM.fetchCourseType();
+
+                                await loadCourseData(newCourseVM,
+                                    courseListingVM.courseDetails.first);
+
+                                navigationService.navigateTo(
+                                  RouteList.newCourseScreen,
+                                );
                             }
                           },
                         );
