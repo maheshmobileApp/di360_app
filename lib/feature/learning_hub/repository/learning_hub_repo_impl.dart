@@ -173,8 +173,15 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getAllListingData(String? searchText) async {
-    final payload = {"limit": 10, "offset": 0, "where": {   "course_name": { "_ilike": "%${searchText}%" }}};
+  Future<List<CoursesListingDetails>?> getAllListingData(
+      String? searchText) async {
+    final payload = {
+      "limit": 10,
+      "offset": 0,
+      "where": {
+        "course_name": {"_ilike": "%${searchText}%"}
+      }
+    };
 
     final listingData = await http.query(
       getAllListingDataQuery,
@@ -184,56 +191,62 @@ class LearningHubRepoImpl extends LearningHubRepository {
     final result = CoursesListingData.fromJson(listingData);
     return result.courses ?? [];
   }
-  
-  @override
-  Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(String? userId, String type, String courseCategoryId, String startDate, String address) async {
-    final List<Map<String, dynamic>> andConditions = [
-      {
-        "course_registered_users": {
-          "from_id": {"_eq": userId}
-        }
-      }
-    ];
 
-    if (type != null && type.isNotEmpty) {
+  @override
+  Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
+      String type,
+      String courseCategoryId,
+      String startDate,
+      String address) async {
+    final List<Map<String, dynamic>> andConditions = [];
+
+    
+    
+
+    if (type.isNotEmpty) {
       andConditions.add({
-        "type": {"_in": [type]}
+        "type": {
+          "_in": [type]
+        }
       });
     }
 
-    if (startDate != null && startDate.isNotEmpty) {
+    if (courseCategoryId.isNotEmpty) {
+      andConditions.add({
+        "course_category_id": {
+          "_in": [courseCategoryId]
+        }
+      });
+    }
+
+    if (startDate.isNotEmpty) {
       andConditions.add({
         "startDate": {"_eq": startDate}
       });
     }
 
-    if (address != null && address.isNotEmpty) {
+    if (address.isNotEmpty) {
       andConditions.add({
-        "address": {"_cast": {"String":{"_ilike":"%${address}%"}}}
-      });
-    }
-
-    if (courseCategoryId != null && courseCategoryId.isNotEmpty) {
-      andConditions.add({
-        "course_category_id": {
-          "_in":  [
-        courseCategoryId
-      ]
-
+        "address": {
+          "_cast": {
+            "String": {"_ilike": "%$address%"}
+          }
         }
       });
     }
 
     final Map<String, dynamic> variables = {
-      "where": {
-        "_and": andConditions,
-      },
       "limit": 10,
       "offset": 0,
+      "where": {
+        "_and": andConditions 
+      }
     };
 
-    final getMarketPlaceCourses = await http
-        .query(getMarketPlaceCoursesQuery, variables: variables);
+    final getMarketPlaceCourses = await http.query(
+      getMarketPlaceCoursesQuery,
+      variables: variables,
+    );
 
     final response = CoursesListingData.fromJson(getMarketPlaceCourses);
     return response.courses ?? [];

@@ -92,6 +92,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                     onClear: () {
                       navigationService.goBack();
                     },
+                    
                   ),
                 )
               },

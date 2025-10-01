@@ -175,7 +175,9 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     });
     if (res != null) {
       getCoursesListingData(context, searchController.text);
-      scaffoldMessenger("User Successfully Registered");
+      scaffoldMessenger(
+        "Successfully Submitted!\nThank you for your interest.\nOur organiser will be in touch with you soon.",
+      );
       clearAll();
       Loaders.circularHideLoader(context);
     }
@@ -188,10 +190,9 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       String courseCategoryId,
       String startDate,
       String address) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     final res = await repo.getMarketPlaceCoursesWithFilters(
-        userId, type, courseCategoryId, startDate, address);
+        type, courseCategoryId, startDate, address);
 
     if (res != null) {
       coursesListingList = res;

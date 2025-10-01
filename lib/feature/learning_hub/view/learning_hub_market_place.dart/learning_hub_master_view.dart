@@ -98,6 +98,12 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                       location??"");
                   },
                   onClear: () {
+                    courseListingVM.getMarketPlaceCoursesWithFilters(
+                        context,
+                        "",
+                        "",
+                        "",
+                      "");
                     navigationService.goBack();
                   },
                 ),

@@ -22,5 +22,5 @@ abstract class LearningHubRepository {
   Future<dynamic> userRegisterToCourse(dynamic variables);
   Future<List<CoursesListingDetails>?> getAllListingData(String? searchText);
   Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
-      String? userId, String type, String courseCategoryId,String startDate,String address);
+      String type, String courseCategoryId,String startDate,String address);
 }
