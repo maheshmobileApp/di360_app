@@ -643,6 +643,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Testimonial added successfully');
     } else {

@@ -1,9 +1,11 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
+import 'package:di360_flutter/feature/add_catalogues/repository/add_catalogue_repository_impl.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository_impl.dart';
-import 'package:di360_flutter/feature/catalogue/model_class/filter_catagories_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/filter_suppliers_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
@@ -12,10 +14,12 @@ import 'package:di360_flutter/utils/loader.dart';
 
 class CatalogueViewModel extends ChangeNotifier {
   final CatalogueRepositoryImpl repo = CatalogueRepositoryImpl();
+  final AddCatalogueRepositoryImpl addCataRepo = AddCatalogueRepositoryImpl();
 
   CatalogueViewModel() {
+    getFilterTypes();
     getFilterCatagorie();
-    getFilterSupplier();
+    //getFilterSupplier();
   }
 
   TextEditingController searchController = TextEditingController();
@@ -23,7 +27,8 @@ class CatalogueViewModel extends ChangeNotifier {
   List<CatalogueCategories> catalogueCategories = [];
   CataloguesByPk? cataloguesByIdData;
   List<CatalogData>? reletedCatalogues = [];
-  List<FilterCategories>? filterCategories = [];
+  List<CatalogueSubCategories> filterCategories = [];
+  List<CatalogueTypes> filterTypes = [];
   List<DentalSuppliers>? filterSuppliers = [];
 
   Map<String, bool> showMoreMap = {};
@@ -31,6 +36,7 @@ class CatalogueViewModel extends ChangeNotifier {
   late Map<String, List<FilterItem>> filterOptions;
   List<String> suppliers = [];
   List<String> catagroies = [];
+  String? type = '';
   String? selectedUserId;
   bool? cataloguesLoading;
   bool? catalogFilterApply;
@@ -41,14 +47,16 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   Map<String, Set<int>> selectedIndices = {
-    'suppliers': {},
+    'type': {},
     'categories': {},
+    'suppliers': {},
     'favourites': {},
   };
 
   Map<String, bool> sectionVisibility = {
-    'suppliers': true,
+    'type': true,
     'categories': true,
+    'suppliers': true,
     'favourites': true,
   };
 
@@ -90,7 +98,7 @@ class CatalogueViewModel extends ChangeNotifier {
     await Future.delayed(const Duration(seconds: 1));
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(
-        searchController.text, catagroies, suppliers, selectedUserId ?? '');
+        searchController.text,type, catagroies, suppliers, selectedUserId ?? '');
     if (res != []) {
       catalogueCategories = res;
       initializeExpanded(catalogueCategories);
@@ -139,8 +147,17 @@ class CatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getFilterTypes() async {
+    final res = await addCataRepo.getCatalogueTypes();
+    if (res != null) {
+      filterTypes = res;
+      initializeFilterOptions();
+    }
+    notifyListeners();
+  }
+
   Future<void> getFilterCatagorie() async {
-    final res = await repo.getFilterCatagories();
+    final res = await addCataRepo.getCatagorys();
     if (res != null) {
       filterCategories = res;
       initializeFilterOptions();
@@ -268,20 +285,18 @@ class CatalogueViewModel extends ChangeNotifier {
   void initializeFilterOptions() async {
     final user_id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     filterOptions = {
-      'suppliers': filterSuppliers?.map((e) {
-            return FilterItem(
-              name: e.name ?? '',
-              id: e.id ?? '',
-            );
-          }).toList() ??
-          [],
-      'categories': filterCategories?.map((e) {
-            return FilterItem(
-              name: e.name ?? '',
-              id: e.id ?? '',
-            );
-          }).toList() ??
-          [],
+      'Types': filterTypes.map((e) {
+        return FilterItem(name: e.name ?? '', id: e.id ?? '');
+      }).toList(),
+      'categories': filterCategories.map((e) {
+        return FilterItem(
+          name: e.name ?? '',
+          id: e.id ?? '',
+        );
+      }).toList(),
+      'suppliers': [
+        FilterItem(name: 'smiletech', id: user_id),
+      ],
       'favourites': [
         FilterItem(name: 'My Favourites', id: user_id),
       ],
@@ -314,6 +329,7 @@ class CatalogueViewModel extends ChangeNotifier {
     selectedUserId = null;
     suppliers = [];
     catagroies = [];
+    type = null;
     updateCatalogFilterApply(false);
     fetchCatalogue(context);
     notifyListeners();
@@ -322,19 +338,23 @@ class CatalogueViewModel extends ChangeNotifier {
   void printSelectedItems() {
     suppliers = [];
     catagroies = [];
+    type = null;
     selectedIndices.forEach((section, indices) {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {
         for (final i in indices) {
           updateCatalogFilterApply(true);
           final id = items[i].id;
+          final name = items[i].name;
           if (section == "suppliers") {
-            suppliers.add(id);
+            suppliers.add(name);
           } else if (section == "categories") {
             catagroies.add(id);
           } else if (section == "favourites") {
             selectedUserId = id;
-          }
+          } else if (section == "Types") {
+            type = id;
+          } 
         }
       }
     });

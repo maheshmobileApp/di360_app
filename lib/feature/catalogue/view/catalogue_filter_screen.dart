@@ -24,12 +24,21 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
           children: [
             Column(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    ImageConst.catalogueBg,
-                    fit: BoxFit.cover,
-                  ),
+                Stack(
+                  children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.asset(ImageConst.catalogueBg,
+                            fit: BoxFit.cover)),
+                            Positioned(
+                              left: 10,top: 20,
+                              child: InkWell(
+                                onTap: () => navigationService.goBack(),
+                              child: CircleAvatar(
+                                radius: 20,
+                                child: Icon(Icons.arrow_back,color: AppColors.black)),
+                            ))
+                  ],
                 ),
                 addVertical(16),
                 buildSearchBar(filterProvider, context),
@@ -192,20 +201,18 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                         false;
 
                     return CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: selected,
-                      activeColor: AppColors.primaryColor,
-                      onChanged: (val) {
-                        filterProvider.selectItem(section, index);
-                      },
-                      title: Text(
-                        filter.name,
-                        style: TextStyles.regular3(
-                          color: AppColors.lightGeryColor,
+                        contentPadding: EdgeInsets.zero,
+                        value: selected,
+                        activeColor: AppColors.primaryColor,
+                        onChanged: (val) {
+                          filterProvider.selectItem(section, index);
+                        },
+                        title: Text(
+                          filter.name,
+                          style: TextStyles.regular3(
+                              color: AppColors.lightGeryColor),
                         ),
-                      ),
-                      controlAffinity: ListTileControlAffinity.leading,
-                    );
+                        controlAffinity: ListTileControlAffinity.leading);
                   }).toList(),
                 SizedBox(height: 16),
               ],

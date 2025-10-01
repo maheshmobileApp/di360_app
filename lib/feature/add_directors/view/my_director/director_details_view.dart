@@ -4,7 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
-import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -42,17 +42,18 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           if (directData.directoryCertifications?.length != 0)
             _sectionTitle(
                 'OUR CERTIFICATIONS', _certificationcard(addDirectVM)),
-          if (directData.directoryAppointments?.length != 0)
-            _sectionTitle('Book an appointment with <Clinic Name>',
-                DirectorAppointmentform()),
+          // if (directData.directoryAppointments?.length != 0)
+          //   _sectionTitle('Book an appointment with <Clinic Name>',
+          //       DirectorAppointmentform()),
           addVertical(10),
           if (directData.directoryTestimonials?.length != 0)
             _sectionTitle(
-                'HOW TESTLS HAS HELPED OTHERS', _testimonialCard(addDirectVM)),
+                'HOW ${directData.name?.toUpperCase()} HAS HELPED OTHERS',
+                _testimonialCard(addDirectVM)),
           if (directData.directoryFaqs?.length != 0)
             _sectionTitle('FAQ', _faqSection(addDirectVM)),
           if (directData.directoryLocations?.length != 0)
-            _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM)),
+            _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM,context)),
         ],
       ),
     );
@@ -106,9 +107,9 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
-        children: services.map( (val)=> _outlinedButton(context, val.name ?? '')
-        ).toList()
-      ),
+          children: services
+              .map((val) => _outlinedButton(context, val.name ?? ''))
+              .toList()),
     );
   }
 
@@ -130,10 +131,12 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(label,
-                            style: TextStyles.bold6(color: AppColors.black)),
+                        Expanded(
+                          child: Text(label,
+                              style: TextStyles.bold6(color: AppColors.black)),
+                        ),
                         GestureDetector(
-                          onTap: () => navigationService.goBack,
+                          onTap: () => navigationService.goBack(),
                           child: const Icon(Icons.close,
                               color: AppColors.primaryColor),
                         ),
@@ -221,19 +224,17 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
   Widget _galleryCard(AddDirectoryViewModel vm) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: vm.getBasicInfoData.first.directoryGalleryPosts?.map((img) {
-              return CustomGrid(
-                  children: img.image!.map((url) {
-                return img.image?.length != 0
-                    ? CachedNetworkImageWidget(
-                        imageUrl: url.url ?? '',
-                        fit: BoxFit.fill,
-                      )
-                    : SizedBox();
-              }).toList());
-            }).first));
+        child: CustomGrid(
+            children:
+                vm.getBasicInfoData.first.directoryGalleryPosts?.map((url) {
+                      return url.image?.length != 0
+                          ? CachedNetworkImageWidget(
+                              imageUrl: url.image?.first.url ?? '',
+                              fit: BoxFit.fill,
+                            )
+                          : SizedBox();
+                    }).toList() ??
+                    []));
   }
 
   Widget _documentCard(AddDirectoryViewModel vm) {
@@ -304,7 +305,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
   Widget _archievementcard(AddDirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
-          vm.getBasicInfoData.first.directoryAchievements?.length ?? 0, (index) {
+          vm.getBasicInfoData.first.directoryAchievements?.length ?? 0,
+          (index) {
         final achieve = vm.getBasicInfoData.first.directoryAchievements?[index];
         return Container(
           decoration: BoxDecoration(
@@ -340,8 +342,10 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
   Widget _certificationcard(AddDirectoryViewModel vm) {
     return CustomGrid(
       children: List.generate(
-          vm.getBasicInfoData.first.directoryCertifications?.length ?? 0, (index) {
-        final certificate = vm.getBasicInfoData.first.directoryCertifications?[index];
+          vm.getBasicInfoData.first.directoryCertifications?.length ?? 0,
+          (index) {
+        final certificate =
+            vm.getBasicInfoData.first.directoryCertifications?[index];
         return Container(
           decoration: BoxDecoration(
               color: AppColors.hintColor,
@@ -488,7 +492,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs(AddDirectoryViewModel vm) => Padding(
+  Widget _contactFAQs(AddDirectoryViewModel vm,BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
@@ -539,13 +543,12 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
             ],
           ),
           const SizedBox(height: 20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              ImageConst.mapsPng,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 180,
+          InkWell(
+            onTap: () => openLocationInMaps(context,vm.getBasicInfoData.first.address ?? ''),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(ImageConst.mapsPng,
+                  fit: BoxFit.cover, width: double.infinity, height: 180),
             ),
           ),
           const SizedBox(height: 25),

@@ -35,8 +35,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     selectExperience = null;
     jobDesignationController.clear();
     currentCompanyController.clear();
-    languagesSpokenController.clear();
-    areaOfExpertise.clear();
+    languages.clear();
+    expertise.clear();
     skillsController.clear();
     joiningDateController.clear();
     availabilityDateController.clear();
@@ -130,6 +130,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       TextEditingController();
   final TextEditingController courseHighlightsController =
       TextEditingController();
+ 
+  List<String> languages = [];
+  List<String> expertise = [];
   List<String> selectskills = [];
   String? selectedStartMonth;
   String? selectedStartYear;
@@ -711,8 +714,8 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
                     })
                 .toList(),
             "work_rights": selectworkRight,
-            "languages_spoken": languagesSpokenController.text,
-            "areas_expertise": areaOfExpertise.text,
+            "languages_spoken":  languages,
+            "areas_expertise": expertise,
             "skills": selectskills.map((toElement) => toElement).toList(),
             "salary_amount": 120000, // need to send dynamically
             "salary_type": "Per Year", // need to send dynamically
