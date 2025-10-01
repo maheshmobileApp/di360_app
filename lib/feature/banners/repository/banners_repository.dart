@@ -12,5 +12,5 @@ abstract class BannersRepository {
   Future<BannersByPk?> editBannerView(String? id);
   Future<dynamic> updateBanner(dynamic variables);
   Future<BannersCountData> bannersCounts();
-  Future<ApproveBannerResp> getApprovedBanners(dynamic variables);
+  Future<ApproveBannerResp> getApprovedBanners({dynamic variables});
 }

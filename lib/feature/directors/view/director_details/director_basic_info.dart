@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             _sectionTitle('FAQ', _faqSection(directionalVM),
                 key: directionalVM.sectionKeys['FAQ']),
           if (directionalVM.directorDetails?.directoryLocations?.length != 0)
-            _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM),
+            _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM, context),
                 key: directionalVM.sectionKeys['Contact Us']),
         ],
       ),
@@ -504,7 +505,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs(DirectoryViewModel vm) => Padding(
+  Widget _contactFAQs(DirectoryViewModel vm, BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
@@ -555,15 +556,13 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             ],
           ),
           const SizedBox(height: 20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              ImageConst.mapsPng,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 180,
-            ),
-          ),
+          InkWell(
+              onTap: () => openLocationInMaps(
+                  context, vm.directorDetails?.address ?? ''),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(ImageConst.mapsPng,
+                      fit: BoxFit.cover, width: double.infinity, height: 180))),
           const SizedBox(height: 25),
           Column(
               children: vm.directorDetails!.directoryLocations!
