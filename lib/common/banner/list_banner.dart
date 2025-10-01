@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 
 const double _bannerHorizontalPadding = 24.0;
 const double _bannerHeight = 180.0;
 const double _bannerListHeight = 200.0;
+const int _bannerScrollDuration = 3;//Duration in Seconds
 
 class ListBanner extends StatefulWidget {
   final int pageIndex;
@@ -19,7 +21,8 @@ class _ListBannerState extends State<ListBanner> {
   final ScrollController _scrollController = ScrollController();
   int _currentIndex = 0;
   static const Duration _scrollDuration = Duration(milliseconds: 500);
-  static const Duration _timerDuration = Duration(seconds: 3);
+  static const Duration _timerDuration =
+      Duration(seconds: _bannerScrollDuration);
   Timer? _timer;
 
   @override
@@ -72,7 +75,7 @@ class _ListBannerState extends State<ListBanner> {
     final screenWidth = MediaQuery.of(context).size.width;
     final bannerWidth = (screenWidth - (_bannerHorizontalPadding * 2));
     return SizedBox(
-      height: 220,
+      height: _bannerListHeight,
       child: ListView.separated(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
@@ -94,15 +97,7 @@ class _ListBannerState extends State<ListBanner> {
                 children: [
                   if (imageUrl != null && imageUrl.isNotEmpty)
                     Expanded(
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: Colors.grey[300],
-                          child: Icon(Icons.broken_image, size: 48),
-                        ),
-                      ),
+                      child: CachedNetworkImageWidget(imageUrl: imageUrl),
                     ),
                 ],
               ),
