@@ -34,7 +34,7 @@ class RegisterButton extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(width: 4,),
+            const SizedBox(width: 10,),
             Container(
               width: 28,
               height: 28,
