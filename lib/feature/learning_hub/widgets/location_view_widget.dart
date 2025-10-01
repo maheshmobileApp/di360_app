@@ -20,7 +20,7 @@ class LocationViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-       crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Map View",
@@ -28,11 +28,11 @@ class LocationViewWidget extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          location??"",
+          location ?? "",
           style: TextStyles.medium2(color: AppColors.black),
         ),
         GestureDetector(
-          onTap: () => _openLocationInMaps(context),
+          onTap: () => openLocationInMaps(context,location),
           child: Container(
             height: height,
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -52,47 +52,48 @@ class LocationViewWidget extends StatelessWidget {
       ],
     );
   }
+}
 
-  Future<void> _openLocationInMaps(BuildContext context) async {
-    if (location == null || location!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Location not available',
-            style: TextStyles.regular1(color: AppColors.whiteColor),
-          ),
-          backgroundColor: AppColors.redColor,
+Future<void> openLocationInMaps(
+    BuildContext context, final String? location) async {
+  if (location == null || location.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Location not available',
+          style: TextStyles.regular1(color: AppColors.whiteColor),
         ),
-      );
+        backgroundColor: AppColors.redColor,
+      ),
+    );
+    return;
+  }
+
+  final String encodedLocation = Uri.encodeComponent(location);
+  final String googleMapsApp = 'google.navigation:q=$encodedLocation';
+  final String googleMapsWeb =
+      'https://www.google.com/maps/search/?api=1&query=$encodedLocation';
+
+  try {
+    final Uri appUri = Uri.parse(googleMapsApp);
+    if (await canLaunchUrl(appUri)) {
+      await launchUrl(appUri, mode: LaunchMode.externalApplication);
       return;
     }
+  } catch (_) {}
 
-    final String encodedLocation = Uri.encodeComponent(location!);
-    final String googleMapsApp = 'google.navigation:q=$encodedLocation';
-    final String googleMapsWeb =
-        'https://www.google.com/maps/search/?api=1&query=$encodedLocation';
-
-    try {
-      final Uri appUri = Uri.parse(googleMapsApp);
-      if (await canLaunchUrl(appUri)) {
-        await launchUrl(appUri, mode: LaunchMode.externalApplication);
-        return;
-      }
-    } catch (_) {}
-
-    try {
-      final Uri webUri = Uri.parse(googleMapsWeb);
-      await launchUrl(webUri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Could not open maps application',
-            style: TextStyles.regular1(color: AppColors.whiteColor),
-          ),
-          backgroundColor: AppColors.redColor,
+  try {
+    final Uri webUri = Uri.parse(googleMapsWeb);
+    await launchUrl(webUri, mode: LaunchMode.externalApplication);
+  } catch (_) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Could not open maps application',
+          style: TextStyles.regular1(color: AppColors.whiteColor),
         ),
-      );
-    }
+        backgroundColor: AppColors.redColor,
+      ),
+    );
   }
 }

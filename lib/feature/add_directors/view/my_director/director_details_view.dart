@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           if (directData.directoryFaqs?.length != 0)
             _sectionTitle('FAQ', _faqSection(addDirectVM)),
           if (directData.directoryLocations?.length != 0)
-            _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM)),
+            _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM,context)),
         ],
       ),
     );
@@ -491,7 +492,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs(AddDirectoryViewModel vm) => Padding(
+  Widget _contactFAQs(AddDirectoryViewModel vm,BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
@@ -542,13 +543,12 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
             ],
           ),
           const SizedBox(height: 20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              ImageConst.mapsPng,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 180,
+          InkWell(
+            onTap: () => openLocationInMaps(context,vm.getBasicInfoData.first.address ?? ''),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(ImageConst.mapsPng,
+                  fit: BoxFit.cover, width: double.infinity, height: 180),
             ),
           ),
           const SizedBox(height: 25),
