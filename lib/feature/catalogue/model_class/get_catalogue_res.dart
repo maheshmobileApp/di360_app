@@ -80,6 +80,7 @@ class Catalogues {
   ThumbnailImage? thumbnailImage;
   String? schedulerDay;
   DentalSupplier? dentalSupplier;
+  CatalogueSubCategory? catalogueSubCategory;
   List<CatalogueFavorites>? catalogueFavorites;
   String? sTypename;
 
@@ -90,6 +91,7 @@ class Catalogues {
       this.thumbnailImage,
       this.schedulerDay,
       this.dentalSupplier,
+      this.catalogueSubCategory,
       this.catalogueFavorites,
       this.sTypename});
 
@@ -112,6 +114,9 @@ class Catalogues {
     schedulerDay = json['schedulerDay'];
     dentalSupplier = json['dental_supplier'] != null
         ? new DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
+    catalogueSubCategory = json['catalogue_sub_category'] != null
+        ? new CatalogueSubCategory.fromJson(json['catalogue_sub_category'])
         : null;
     if (json['catalogue_favorites'] != null) {
       catalogueFavorites = <CatalogueFavorites>[];
@@ -193,44 +198,40 @@ class ThumbnailImage {
 }
 
 class DentalSupplier {
-  List<Directories>? directories;
-  String? sTypename;
-
-  DentalSupplier({this.directories, this.sTypename});
-
-  DentalSupplier.fromJson(Map<String, dynamic> json) {
-    if (json['directories'] != null) {
-      directories = <Directories>[];
-      json['directories'].forEach((v) {
-        directories!.add(new Directories.fromJson(v));
-      });
-    }
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.directories != null) {
-      data['directories'] = this.directories!.map((v) => v.toJson()).toList();
-    }
-    data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class Directories {
   String? name;
   String? sTypename;
 
-  Directories({this.name, this.sTypename});
+  DentalSupplier({this.name, this.sTypename});
 
-  Directories.fromJson(Map<String, dynamic> json) {
+  DentalSupplier.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class CatalogueSubCategory {
+  String? id;
+  String? name;
+  String? sTypename;
+
+  CatalogueSubCategory({this.id, this.name, this.sTypename});
+
+  CatalogueSubCategory.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     data['__typename'] = this.sTypename;
     return data;

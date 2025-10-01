@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
@@ -8,6 +9,7 @@ import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widg
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -156,18 +158,29 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                 style: TextStyles.bold1(color: AppColors.black, fontSize: 16)),
           ),
           Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: vm.reletedCatalogues
-                        ?.map((c) => buildCatalogueCard(context, c, vm))
-                        .toList() ??
-                    [],
-              ),
-            ),
-          )
+          vm.reletedCatalogues?.isEmpty ?? false
+              ? Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      SvgPicture.asset(ImageConst.noCatalogue,
+                          height: 200, width: 450),
+                      addVertical(10),
+                      Text("No Releted Catalogues",
+                          style: TextStyles.medium2(color: AppColors.black))
+                    ]))
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: vm.reletedCatalogues
+                              ?.map((c) => buildCatalogueCard(context, c, vm))
+                              .toList() ??
+                          [],
+                    ),
+                  ),
+                )
         ],
       ),
     );

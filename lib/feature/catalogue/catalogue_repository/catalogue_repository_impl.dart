@@ -5,12 +5,9 @@ import 'package:di360_flutter/feature/catalogue/model_class/filter_suppliers_res
 import 'package:di360_flutter/feature/catalogue/querys/add_like_catalogue_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/catalogue_by_id_request.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository.dart';
-import 'package:di360_flutter/feature/catalogue/querys/filter_catagories_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/filter_supplier_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/get_catalogue_request.dart';
-import 'package:di360_flutter/feature/catalogue/querys/get_catalogues_by_id_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/get_related_catalogues.dart';
-import 'package:di360_flutter/feature/catalogue/model_class/filter_catagories_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
@@ -21,50 +18,50 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<CatalogueCategories>> getCatalogue(String? searchText,
-      List<String>? categories, List<String>? suppliers, String loginId) async {
-    final andList = <Map<String, dynamic>>[
-      {
-        "_or": [
-          {
-            "dental_supplier": {
-              "name": {"_ilike": "%$searchText%"}
-            }
-          },
-          {
-            "title": {"_ilike": "%$searchText%"}
+  Future<List<CatalogueCategories>> getCatalogue(
+      String? searchText,
+      String? typeId,
+      List<String>? categories,
+      List<String>? suppliers,
+      String loginId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final catalogueData = await http.query(getCatalogueQuery, variables: {
+      "categoryWhere": {
+        "status": {"_eq": "ACTIVE"},
+        "catalogues": {
+          "dental_supplier": {
+            "name": {"_ilike": "%%"}
           }
-        ],
+        }
+      },
+      "catalogueWhere": {
         "status": {
           "_in": ["APPROVED", "SCHEDULED"]
-        }
+        },
+        "catalogue_status": {"_eq": "ACTIVE"},
+        if (typeId != null && typeId.isNotEmpty)
+          "catalogue_category_id": {"_eq": typeId},
+        if (suppliers != null && suppliers.isNotEmpty)
+          "dental_supplier": {
+            "name": {"_in": suppliers}
+          },
+        if (categories != null && categories.isNotEmpty)
+          "catalogue_sub_category": {
+            "id": {"_in": categories}
+          },
+        if (searchText != null && searchText.isNotEmpty)
+          "dental_supplier": {
+            "name": {"_ilike": "%$searchText%"}
+          },
+        if (loginId != '' && loginId.isNotEmpty)
+          "catalogue_favorites": {
+            if (type == 'SUPPLIER') "dental_supplier_id": {"_eq": loginId},
+            if (type == 'PRACTICE') "dental_practice_id": {"_eq": loginId},
+            if (type == 'PROFESSIONAL')
+              "dental_professional_id": {"_eq": loginId}
+          }
       }
-      
-    ];
-    if (suppliers != null && suppliers.isNotEmpty) {
-      andList.add({
-        "dental_supplier_id": {
-          "_in": suppliers,
-        }
-      });
-    }
-    if (categories != null && categories.isNotEmpty) {
-      andList.add({
-        "catalogue_category_id": {
-          "_in": categories,
-        }
-      });
-    }
-
-    final catalogueData = await http.query(
-      loginId.isEmpty ? getCatalogueRequest : getCatalogueByIdRequest,
-      variables: {
-        "andList": andList,
-        "limit": 50,
-        "offset": 0,
-        if (loginId.isNotEmpty) "loginId": loginId
-      },
-    );
+    });
     if (catalogueData != null) {
       final result = CatalogueData.fromJson(catalogueData);
       return result.catalogueCategories ?? [];
@@ -87,13 +84,6 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
         .query(getRelatedCatalogQuery, variables: {"id": catalogueId});
     final result = ReletedCataloguData.fromJson(catalogueData);
     return result.catalogues;
-  }
-
-  @override
-  Future<List<FilterCategories>?> getFilterCatagories() async {
-    final data = await http.query(filterCategoriesQuery);
-    final result = CatagoriesData.fromJson(data);
-    return result.catalogueCategories;
   }
 
   @override
