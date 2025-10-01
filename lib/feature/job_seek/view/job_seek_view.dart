@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -105,17 +106,26 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 : const Text(""),
           )
         : ListView.builder(
-              itemCount:
-                  vm.jobs.length + (vm.jobs.length ~/ 5), // extra for banners,
-          itemBuilder: (context, index) {
-                if ((index + 1) % 6 == 0) {
-                  return Container(
-                    height: 1,
-                    color: Colors.white,
-                  );
+              itemCount: vm.jobs.length + 2, // +2 for two banners
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  // Banner at the top
+                  return ListBanner(pageIndex: 0);
+                } else if (index == 5) {
+                  // Banner at 5th position (after 4 jobs)
+                  return ListBanner(pageIndex: 1);
                 } else {
-                  final itemIndex = index - (index ~/ 6);
-                  final jobData = vm.jobs[itemIndex];
+                  // Adjust job index: -1 if before 5, -2 if after 5
+                  int jobIdx = index;
+                  if (index > 5) {
+                    jobIdx = index - 2;
+                  } else {
+                    jobIdx = index - 1;
+                  }
+                  if (jobIdx < 0 || jobIdx >= vm.jobs.length) {
+                    return SizedBox.shrink();
+                  }
+                  final jobData = vm.jobs[jobIdx];
                   return InkWell(
                     onTap: () {
                       navigationService.navigateToWithParams(
@@ -126,9 +136,8 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                     child: JobSeekCard(jobsData: jobData),
                   );
                 }
-           
-          },
-        ),
+              },
+            ),
   );
 }
 

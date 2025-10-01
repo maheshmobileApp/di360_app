@@ -15,11 +15,11 @@ class BannerServices {
   List<ApproveBanners>? get headderBanner => _haderBanner;
 
 	Future<void> fetchListViewBanners(dynamic variables) async {
-		final bannersData = await _repository.getApprovedBanners(variables);
+		final bannersData = await _repository.getApprovedBanners(variables: variables);
 		_listBanner = bannersData.data?.banners ?? [];
 	}
   Future<void> fetchHeaderBanners(dynamic variables) async {
-    final bannersData = await _repository.getApprovedBanners(variables);
+    final bannersData = await _repository.getApprovedBanners(variables: variables);
     _haderBanner = bannersData.data?.banners ?? [];
   }
 }

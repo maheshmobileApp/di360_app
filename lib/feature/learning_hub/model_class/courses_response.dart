@@ -170,7 +170,7 @@ class CoursesListingDetails {
     isFeatured = json['is_featured'];
     activeStatus = json['active_status'];
     type = json['type'];
-    address = json['address'];
+    address =  json['address'];
     scheduledAt = json['scheduled_at'];
     maxSubscribers = json['max_subscribers'];
     priceInAud = json['price_in_aud'];
