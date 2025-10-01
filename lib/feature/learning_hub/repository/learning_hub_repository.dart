@@ -13,10 +13,14 @@ abstract class LearningHubRepository {
   Future<List<CoursesListingDetails>?> getCoursesListing(
       String? listingStatus, String? userId, String? searchText);
   Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId);
-  Future<CourseStatusCountData> courseListingStatusCount();
+  Future<CourseStatusCountData> courseListingStatusCount(String? userId);
   Future<GetCourseTypes> getCourseType();
   Future<GetCourseCategories> getCourseCategory();
   Future<dynamic> deleteCourse(String? courseId);
-  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(String? courseId);
+  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(
+      String? courseId);
   Future<dynamic> userRegisterToCourse(dynamic variables);
+  Future<List<CoursesListingDetails>?> getAllListingData(String? searchText);
+  Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
+      String? userId, String type, String courseCategoryId,String startDate,String address);
 }

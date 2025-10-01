@@ -16,10 +16,17 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddBannersScreen extends StatelessWidget
-    with BaseContextHelpers, ValidationMixins {
+class AddBannersScreen extends StatefulWidget {
   AddBannersScreen({super.key});
+
+  @override
+  State<AddBannersScreen> createState() => _AddBannersScreenState();
+}
+
+class _AddBannersScreenState extends State<AddBannersScreen>
+    with BaseContextHelpers, ValidationMixins {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final bannersVM = Provider.of<BannersViewModel>(context);
@@ -203,5 +210,13 @@ class AddBannersScreen extends StatelessWidget
           ? 'Please select category'
           : null,
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final bannersVM = Provider.of<BannersViewModel>(context, listen: false);
+    bannersVM.getBannerCategoryData();
   }
 }

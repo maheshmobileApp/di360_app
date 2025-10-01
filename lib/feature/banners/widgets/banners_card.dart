@@ -171,12 +171,6 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           //  vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
            vm.editCatalogueNavigator(context, id);
-        } else if (value == "Inactive") {
-          showAlertMessage(context, 'Do you really want to change status?',
-              onBack: () {
-            navigationService.goBack();
-            // vm.inActiveCatalogue(context, id);
-          });
         } else if (value == "Delete") {
           showAlertMessage(
               context, 'Are you sure you want to delete this catalogue?',
@@ -184,30 +178,15 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
             navigationService.goBack();
             vm.removeBanner(context, id);
           });
-        } else if (value == "sendApproval") {
-          showAlertMessage(context, 'Do you really want to change status?',
-              onBack: () {
-            navigationService.goBack();
-            // vm.sendApprovalCatalogue(context, id);
-          });
-        }
+        } 
       },
       itemBuilder: (context) => [
         PopupMenuItem(
             value: "View",
             child: _buildRow(
                 Icons.remove_red_eye, AppColors.black, "View Banner")),
-        if (vm.selectedStatus == 'Approved & Scheduled' ||
-            vm.selectedStatus == 'Reject')
-          PopupMenuItem(
-              value: "Inactive",
-              child: _buildRow(
-                  Icons.local_activity, AppColors.primaryColor, "Inactive")),
-        if (vm.selectedStatus == 'Draft')
-          PopupMenuItem(
-              value: "sendApproval",
-              child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
-                  "Send for Approval")),
+      
+       
         if (vm.selectedStatus != 'Approved & Scheduled')
           PopupMenuItem(
               value: "Edit",

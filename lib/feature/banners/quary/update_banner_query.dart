@@ -7,3 +7,4 @@ mutation UpdateBanner($id: uuid!, $data: banners_set_input!) {
   }
 }
 ''';
+

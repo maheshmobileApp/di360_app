@@ -7,7 +7,8 @@ class GalleryImgWidget extends StatelessWidget {
   final double height;
   final double borderRadius;
   final double spacing;
-  final String? title; // optional title
+  final String? title;
+  final double? width;
 
   const GalleryImgWidget({
     Key? key,
@@ -15,7 +16,8 @@ class GalleryImgWidget extends StatelessWidget {
     this.height = 150,
     this.borderRadius = 12,
     this.spacing = 8,
-    this.title = "Gallery", // default title
+    this.title = "",
+    this.width = 0, // default title
   }) : super(key: key);
 
   @override
@@ -42,8 +44,10 @@ class GalleryImgWidget extends StatelessWidget {
                 child: Image.network(
                   imageUrls[index],
                   height: height,
-                  width: height * 2.18, // aspect ratio like reference
-                  fit: BoxFit.cover,
+                  width: (width == 0)
+                      ? height * 1.5
+                      : width, // aspect ratio like reference
+                  fit: BoxFit.contain,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
@@ -55,7 +59,9 @@ class GalleryImgWidget extends StatelessWidget {
                   },
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: height,
-                    width: height * 1.5,
+                    width: (width == 0)
+                      ? height * 1.5
+                      : width,
                     color: Colors.grey.shade300,
                     child: const Icon(Icons.broken_image, color: Colors.red),
                   ),

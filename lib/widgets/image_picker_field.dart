@@ -14,13 +14,17 @@ class ImagePickerField extends StatelessWidget {
   final bool showPreview;
   final bool allowMultiple;
 
-  // Single file
+  // Local Single file
   final File? selectedFile;
   final ValueChanged<File?>? onFilePicked;
 
-  // Multiple files
+  // Local Multiple files
   final List<File>? selectedFiles;
   final ValueChanged<List<File>>? onFilesPicked;
+
+  // 🔹 Server Images
+  final String? serverImage;
+  final List<String>? serverImages;
 
   const ImagePickerField({
     super.key,
@@ -34,6 +38,8 @@ class ImagePickerField extends StatelessWidget {
     this.onFilePicked,
     this.selectedFiles,
     this.onFilesPicked,
+    this.serverImage,
+    this.serverImages,
   });
 
   Future<void> _pickFile(BuildContext context, ImageSource source) async {
@@ -41,21 +47,16 @@ class ImagePickerField extends StatelessWidget {
 
     if (allowMultiple) {
       if (source == ImageSource.gallery) {
-        // ✅ Multiple selection from gallery
         final pickedList = await picker.pickMultiImage(imageQuality: 80);
         if (pickedList.isNotEmpty) {
           final files = pickedList.map((e) => File(e.path)).toList();
-
-          // ✅ Filter size < 5MB
           final validFiles = files.where((file) {
             final fileSizeMB = file.lengthSync() / (1024 * 1024);
             return fileSizeMB <= 5;
           }).toList();
-
           if (onFilesPicked != null) onFilesPicked!(validFiles);
         }
       } else if (source == ImageSource.camera) {
-        // ✅ Single image from camera, but return as a List<File>
         final picked = await picker.pickImage(
           source: ImageSource.camera,
           imageQuality: 80,
@@ -63,14 +64,12 @@ class ImagePickerField extends StatelessWidget {
         if (picked != null) {
           final file = File(picked.path);
           final fileSizeMB = file.lengthSync() / (1024 * 1024);
-
           if (fileSizeMB > 5) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("File size must be under 5 MB")),
             );
             return;
           }
-
           if (onFilesPicked != null) onFilesPicked!([file]);
         }
       }
@@ -78,7 +77,9 @@ class ImagePickerField extends StatelessWidget {
       XFile? picked;
       if (source == ImageSource.camera) {
         picked = await picker.pickImage(
-            source: ImageSource.camera, imageQuality: 80);
+          source: ImageSource.camera,
+          imageQuality: 80,
+        );
       } else {
         picked = await picker.pickMedia(imageQuality: 80);
       }
@@ -86,14 +87,12 @@ class ImagePickerField extends StatelessWidget {
       if (picked != null) {
         final file = File(picked.path);
         final fileSizeMB = file.lengthSync() / (1024 * 1024);
-
         if (fileSizeMB > 5) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("File size must be under 5 MB")),
           );
           return;
         }
-
         if (onFilePicked != null) onFilePicked!(file);
       }
     }
@@ -114,7 +113,6 @@ class ImagePickerField extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ✅ Drag Handle
               Container(
                 width: 40,
                 height: 5,
@@ -124,7 +122,7 @@ class ImagePickerField extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
+              const Text(
                 "Choose Option",
                 style: TextStyle(
                   fontSize: 18,
@@ -157,6 +155,7 @@ class ImagePickerField extends StatelessWidget {
       },
     );
   }
+
   Widget _buildOption({
     required IconData icon,
     required String label,
@@ -193,86 +192,130 @@ class ImagePickerField extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasSingleFile = selectedFile != null;
     final hasMultipleFiles = selectedFiles != null && selectedFiles!.isNotEmpty;
+    final hasServerSingle = serverImage != null && serverImage!.isNotEmpty;
+    final hasServerMultiple = serverImages != null && serverImages!.isNotEmpty;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title != null)
-          Row(
-            children: [
-              Text(title!, style: TextStyles.regular3(color: AppColors.black)),
-              if (isRequired)
-                const Text(
-                  ' *',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
+    return FormField<bool>(
+      validator: (value) {
+        if (isRequired &&
+            !hasSingleFile &&
+            !hasMultipleFiles &&
+            !hasServerSingle &&
+            !hasServerMultiple) {
+          return "Please upload ${title ?? "file"}";
+        }
+        return null;
+      },
+      builder: (field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null)
+            Row(
+              children: [
+                Text(title!, style: TextStyles.regular3(color: AppColors.black)),
+                if (isRequired)
+                  const Text(
+                    ' *',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-            ],
-          ),
-        const SizedBox(height: 10),
-        GestureDetector(
-          onTap: () => _showPickerSheet(context),
-          child: DottedBorder(
-            color: Colors.grey.shade400,
-            strokeWidth: 1.5,
-            dashPattern: const [6, 4],
-            borderType: BorderType.RRect,
-            radius: Radius.circular(borderRadius),
-            child: Container(
-              width: double.infinity,
-              height: showPreview ? 150 : null,
-              alignment: Alignment.center,
-              child: hasMultipleFiles
-                  ? ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: selectedFiles!.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 10),
-                      itemBuilder: (_, index) {
-                        final file = selectedFiles![index];
-                        final isVideo =
-                            file.path.toLowerCase().endsWith(".mp4");
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: isVideo
-                              ? const Icon(Icons.videocam,
-                                  size: 50, color: Colors.grey)
-                              : Image.file(file,
-                                  fit: BoxFit.contain),
-                        );
-                      },
-                    )
-                  : hasSingleFile
-                      ? (selectedFile!.path.toLowerCase().endsWith(".mp4")
-                          ? const Icon(Icons.videocam,
-                              size: 50, color: Colors.grey)
-                          : Image.file(
-                              selectedFile!,
-                              fit: BoxFit.contain,
-                              width: double.infinity,
-                            ))
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(ImageConst.upload),
-                            const SizedBox(height: 20),
-                            Text(
-                              "Click here to Choose a file.",
-                              style: TextStyles.medium2(color: AppColors.black),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              hintText ?? "JPEG, PNG formats, up to 5 MB each",
-                              style: TextStyles.regular2(
-                                  color: AppColors.dropDownHint),
-                            ),
-                          ],
-                        ),
+              ],
+            ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () => _showPickerSheet(context),
+            child: DottedBorder(
+              color: field.hasError ? Colors.red : Colors.grey.shade400,
+              strokeWidth: 1.5,
+              dashPattern: const [6, 4],
+              borderType: BorderType.RRect,
+              radius: Radius.circular(borderRadius),
+              child: Container(
+                width: double.infinity,
+                height: showPreview ? 150 : null,
+                alignment: Alignment.center,
+                child: hasMultipleFiles
+                    ? _buildLocalMultipleFiles()
+                    : hasSingleFile
+                        ? _buildLocalSingleFile()
+                        : hasServerMultiple
+                            ? _buildServerMultipleFiles()
+                            : hasServerSingle
+                                ? _buildServerSingleFile()
+                                : _buildPlaceholder(),
+              ),
             ),
           ),
-        ),
-      ],
+          if (field.hasError) ...[
+            const SizedBox(height: 5),
+            Text(
+              field.errorText ?? "",
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ]
+        ],
+      ),
     );
   }
+
+  // 🔹 Preview helpers
+  Widget _buildLocalMultipleFiles() => ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: selectedFiles!.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, index) {
+          final file = selectedFiles![index];
+          final isVideo = file.path.toLowerCase().endsWith(".mp4");
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: isVideo
+                ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                : Image.file(file, fit: BoxFit.contain),
+          );
+        },
+      );
+
+  Widget _buildLocalSingleFile() => selectedFile!.path
+          .toLowerCase()
+          .endsWith(".mp4")
+      ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+      : Image.file(selectedFile!, fit: BoxFit.contain, width: double.infinity);
+
+  Widget _buildServerMultipleFiles() => ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: serverImages!.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, index) {
+          final url = serverImages![index];
+          final isVideo = url.toLowerCase().endsWith(".mp4");
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: isVideo
+                ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                : Image.network(url, fit: BoxFit.contain),
+          );
+        },
+      );
+
+  Widget _buildServerSingleFile() => serverImage!.toLowerCase().endsWith(".mp4")
+      ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+      : Image.network(serverImage!,
+          fit: BoxFit.contain, width: double.infinity);
+
+  Widget _buildPlaceholder() => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(ImageConst.upload),
+          const SizedBox(height: 20),
+          Text("Click here to Choose a file.",
+              style: TextStyles.medium2(color: AppColors.black)),
+          const SizedBox(height: 8),
+          Text(
+            hintText ?? "JPEG, PNG formats, up to 5 MB each",
+            style: TextStyles.regular2(color: AppColors.dropDownHint),
+          ),
+        ],
+      );
 }
