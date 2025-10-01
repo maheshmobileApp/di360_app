@@ -7,7 +7,7 @@ import 'package:di360_flutter/feature/job_profile/view/add_experience_dialog.dar
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/widgets/add_section_button.dart';
-import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/feature/job_profile/widgets/chip_selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,18 +25,27 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionHeader("Skills"),
-            addVertical(16),
-            InputTextField(
-              controller: jobProfileVM.languagesSpokenController,
-              hintText: "Enter the multiple languages you speak",
-              title: "Languages Spoken",
+           addVertical(16),
+              Text("Languages Spoken",  
+              style: TextStyles.regular3(color: AppColors.black),),
+              addVertical( 8),
+            ChipTextField(
+              chips: jobProfileVM.languages,
+              hintText: "Enter multiple languages",
+              onChanged: (chips) {
+              },
             ),
-            addVertical(16),
-            InputTextField(
-              controller: jobProfileVM.areaOfExpertise,
-              hintText: "Enter multiple areas of expertise",
-              title: "Areas of Expertise",
-            ),
+              addVertical(16),
+              Text("Areas of Expertise",
+               style: TextStyles.regular3(color: AppColors.black),
+               ),
+              addVertical(8),
+            ChipTextField(
+              chips: jobProfileVM.expertise,
+              hintText: "Enter areas of expertise",
+              onChanged: (chips) {
+              },),
+
             addVertical(16),
             Text(
               "Skills",
