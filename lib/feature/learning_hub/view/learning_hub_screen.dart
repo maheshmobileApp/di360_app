@@ -241,9 +241,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                               /* await courseListingVM.getCourseDetails(
+                                await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
                                 courseListingVM.setEditOption(true);
+                                newCourseVM.setCurrentStep(0);
                                 courseListingVM.setCourseId(course.id ?? "");
 
                                 newCourseVM.fetchCourseCategory();
@@ -254,7 +255,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );*/
+                                );
 
                                 break;
                               case "Delete":
@@ -297,6 +298,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
             newCourseVM.setCurrentStep(0);
+            //newCourseVM.resetForm();
             newCourseVM.serverImagesClear();
             courseListingVM.setEditOption(false);
             navigationService.navigateTo(RouteList.newCourseScreen);
@@ -335,7 +337,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
             "")
         .where((url) => url.isNotEmpty)
         .toList();
-
 
     newCourseVM.serverSponsoredByImg = (course.sponsorByImage ?? [])
         .map((item) => item.url ?? "")
