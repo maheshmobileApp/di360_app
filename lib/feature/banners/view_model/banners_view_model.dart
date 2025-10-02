@@ -203,9 +203,12 @@ class BannersViewModel extends ChangeNotifier {
   }
 
   Future<void> validateBannerImg() async {
-    var value = await _http.uploadImage(selectedPresentedImg?.path);
-    bannner_image = value['url'];
-    banner_name = value['name'];
+    dynamic value;
+    if (selectedPresentedImg?.path != null) {
+      value = await _http.uploadImage(selectedPresentedImg?.path);
+      bannner_image = value['url'];
+      banner_name = value['name'];
+    }
     print(bannner_image);
     print(banner_name);
     notifyListeners();
@@ -278,6 +281,7 @@ class BannersViewModel extends ChangeNotifier {
     assignTheSelectedCatagory(bannersView?.categoryName);
     editBannerId = bannersView?.id ?? "";
     bannner_image = bannersView?.image?.first.url;
+    banner_name = bannersView?.image?.first.name;
     urlController.text = bannersView?.url ?? "";
     scheduleDate = DateTime.parse(bannersView?.scheduleDate ?? '');
     expiryDate = DateTime.parse(bannersView?.expiryDate ?? "");
@@ -373,15 +377,15 @@ class BannersViewModel extends ChangeNotifier {
 
   //clere fields
   clearAddBannerData() {
-  bannerNameController.clear();
-  urlController.clear();
-  selectedCatagory = null;
-  scheduleDate = null;
-  expiryDate = null;
-  selectedPresentedImg = null;
-  bannner_image = null;
-  isEditBanner = false;
-  isRelistBanner = false;
-  notifyListeners();
-}
+    bannerNameController.clear();
+    urlController.clear();
+    selectedCatagory = null;
+    scheduleDate = null;
+    expiryDate = null;
+    selectedPresentedImg = null;
+    bannner_image = null;
+    isEditBanner = false;
+    isRelistBanner = false;
+    notifyListeners();
+  }
 }

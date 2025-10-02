@@ -161,7 +161,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
   }
 
   bool validateURlAndData(BannersViewModel bannerVm) {
-    if (bannerVm.selectedPresentedImg == null && bannerVm.bannner_image == null) {
+    if (bannerVm.selectedPresentedImg != null || bannerVm.bannner_image == null) {
       scaffoldMessenger('Please select Banner image');
       return false;
     } else if (bannerVm.scheduleDate == null) {
