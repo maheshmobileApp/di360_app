@@ -43,7 +43,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               top: 44,
               child: CircleAvatar(
                   radius: 25, child: SvgPicture.asset(ImageConst.logo))),
-          Positioned(
+        /*  Positioned(
               right: 20,
               top: 44,
               child: CircleAvatar(
@@ -51,7 +51,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                 radius: 25,
                 child:
                     Image.asset(ImageConst.menu, color: AppColors.whiteColor),
-              )),
+              )),*/
           Positioned(
               right: 1,
               left: 1,
