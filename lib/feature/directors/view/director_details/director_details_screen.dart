@@ -1,9 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/feature/add_directors/view/my_director/user_details_widget.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_basic_info.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,7 +29,7 @@ class DirectorDetailsScreen extends StatelessWidget {
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: UserData(
+              child: UserDetailsWidget(
                 imageUrl: directionalVM.directorDetails?.logo?.url ??
                     directionalVM.directorDetails?.profileImage?.url ??
                     '',

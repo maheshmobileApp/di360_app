@@ -169,8 +169,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
             value: "View",
             child: _buildRow(
                 Icons.remove_red_eye, AppColors.black, "View Catalogue")),
-        if (vm.selectedStatus == 'Approved & Scheduled' ||
-            vm.selectedStatus == 'Reject')
+        if (vm.selectedStatus == 'Approved & Scheduled')
           PopupMenuItem(
               value: "Inactive",
               child: _buildRow(

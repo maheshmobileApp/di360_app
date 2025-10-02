@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationUserForm {
-  static void show(BuildContext context) {
+  static void show(BuildContext context, String courseName) {
     final formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
@@ -47,8 +47,7 @@ class RegistrationUserForm {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.of(context)
-                                  .pop(); 
+                              Navigator.of(context).pop();
                             },
                             child: const Icon(
                               Icons.close,
@@ -60,9 +59,7 @@ class RegistrationUserForm {
                       ),
 
                       Text(
-                        courseVM.courseDetails.first.courseName
-                                ?.toUpperCase() ??
-                            "",
+                        courseName,
                         style:
                             TextStyles.medium3(color: AppColors.primaryColor),
                       ),

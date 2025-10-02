@@ -245,7 +245,6 @@ class BannersViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       navigationService.goBack();
       clearAddBannerData();
-      getBannersList(context);
     } else {
       Loaders.circularHideLoader(context);
     }

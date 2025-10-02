@@ -8,17 +8,14 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
-import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
-import 'package:di360_flutter/feature/my_appointments/my_appointment_view_model/appointment_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -225,10 +222,6 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               LocalStorageConst.userId);
 
                           if (item.title == 'Catalogues') {
-                            await context
-                                .read<AddCatalogueViewModel>()
-                                .getMyCataloguesData(
-                                    navigatorKey.currentContext!);
                             await navigationService
                                 .navigateTo(RouteList.myCatalogueScreen);
                           } else if (item.title == 'Job Listings') {
@@ -305,18 +298,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
-                           //Loaders.circularShowLoader(context);
-                            // await context
-                            //     .read<BannersViewModel>()
-                            //     .getBannerData(context);
-                        
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
-                              // Loaders.circularHideLoader(context);
                           } else if (item.title == "Appointments") {
-                            await context
-                                .read<AppointmentViewModel>()
-                                .getAppointmentData();
+                            navigationService.navigateTo(RouteList.myAppointment);
                           }
                         },
                       ),
