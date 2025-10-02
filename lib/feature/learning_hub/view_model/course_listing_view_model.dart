@@ -182,7 +182,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
-      getCoursesListingData(context, searchController.text);
       scaffoldMessenger(
         "Successfully Submitted!\nThank you for your interest.\nOur organiser will be in touch with you soon.",
       );

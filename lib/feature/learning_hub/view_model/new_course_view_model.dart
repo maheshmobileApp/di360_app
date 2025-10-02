@@ -117,21 +117,26 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 //------------------------Set Values-------------------------------
   void setCourseHeaderBaner(File? value) {
     selectedCourseHeaderBanner = value;
+    serverCourseHeaderBanner = "";
     notifyListeners();
   }
 
   void setPresentedImg(File? value) {
     selectedPresentedImg = value;
+    serverPresentedImg = "";
+
     notifyListeners();
   }
 
   void setGallery(List<File>? value) {
     selectedGallery = value;
+    serverGallery = [];
     notifyListeners();
   }
 
   void setCourseBannerImg(List<File>? value) {
     selectedCourseBannerImg = value;
+    serverCourseBannerImg = [];
     notifyListeners();
   }
 
@@ -142,6 +147,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setSponsoredBy(List<File>? value) {
     selectedsponsoredByImg = value;
+    serverSponsoredByImg = [];
     notifyListeners();
   }
 
@@ -149,6 +155,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     selectedCourseType = value;
     notifyListeners();
   }
+
+  
 
   void setSelectedCourseCategory(String? name) async {
     await fetchCourseCategory();
@@ -190,14 +198,14 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     // Step-specific validations
     if (_currentStep == 0) {
-      serverPresentedImg == "" ? validatePresenterImg() : null;
-      serverCourseHeaderBanner == "" ? validateCourseHeaderBanner() : null;
-      serverGallery!.isEmpty ? validateGallery() : null;
-      serverCourseBannerImg!.isEmpty ? validateCourseBanner() : null;
+      serverPresentedImg!.isEmpty ? validatePresenterImg() : null;
+      validateCourseHeaderBanner();
+      validateGallery();
+      validateCourseBanner();
     } else if (_currentStep == 1) {
       buildCourseInfoList();
     } else if (_currentStep == 2) {
-      serverSponsoredByImg!.isEmpty ? validateSponsoredByImg() : null;
+      validateSponsoredByImg();
     }
 
     if (_currentStep < totalSteps - 1) {
@@ -246,56 +254,47 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  /*Future<void> validateCourseHeaderBanner() async {
-    if (selectedCourseHeaderBanner == null) return;
-
-    final file = selectedCourseHeaderBanner?.path;
-
-    // ⬅️ upload single file
-    final res = await _http.uploadImage(file);
-
-    // Build your object and wrap it in a list
-    courseBannerImageHeaderList = [
-      CourseBannerImage(
-        name: res['name'],
-        url: res['url'],
-        type: res['type'],
-        size: res['size'],
-      )
-    ];
-
-    // notify listeners for UI update
-    notifyListeners();
-  }*/
-
   Future<void> validateCourseHeaderBanner() async {
-    if (selectedCourseHeaderBanner == null) return;
+    // If server already has a header banner, just use it
+    if (serverCourseHeaderBanner != null &&
+        serverCourseHeaderBanner!.isNotEmpty) {
+      courseBannerImageHeaderList = [
+        CourseBannerImage(
+          name: serverCourseHeaderBanner!.split('/').last,
+          url: serverCourseHeaderBanner!,
+          type:
+              "image", // default as image (you can refine if you know it’s video)
+          size: 0, // unknown server-side size
+        )
+      ];
+    } else {
+      // Otherwise upload new banner if selected
+      if (selectedCourseHeaderBanner == null) return;
 
-    final file = selectedCourseHeaderBanner?.path;
-    if (file == null || file.isEmpty) return;
+      final file = selectedCourseHeaderBanner?.path;
+      if (file == null || file.isEmpty) return;
 
-    // detect type from file extension
-    final lower = file.toLowerCase();
-    final bool isVideo = lower.endsWith(".mp4") ||
-        lower.endsWith(".mov") ||
-        lower.endsWith(".avi") ||
-        lower.endsWith(".mkv") ||
-        lower.endsWith(".wmv");
+      // detect type from file extension
+      final lower = file.toLowerCase();
+      final bool isVideo = lower.endsWith(".mp4") ||
+          lower.endsWith(".mov") ||
+          lower.endsWith(".avi") ||
+          lower.endsWith(".mkv") ||
+          lower.endsWith(".wmv");
 
-    // ⬅️ Call correct upload API
-    final res = await _http.uploadImage(file);
+      // Upload via API
+      final res = await _http.uploadImage(file);
 
-    // Build your object and wrap it in a list
-    courseBannerImageHeaderList = [
-      CourseBannerImage(
-        name: res['name'],
-        url: res['url'],
-        type: isVideo ? "video" : "image", // explicitly set type
-        size: res['size'],
-      )
-    ];
+      courseBannerImageHeaderList = [
+        CourseBannerImage(
+          name: res['name'],
+          url: res['url'],
+          type: isVideo ? "video" : "image",
+          size: res['size'],
+        )
+      ];
+    }
 
-    // notify listeners for UI update
     notifyListeners();
   }
 
@@ -315,55 +314,90 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     return uploaded;
   }
 
-  /*Future<void> validateCourseHeaderBanner() async {
-    courseBannerImageHeaderList = await uploadFiles(
-      selectedCourseHeaderBanner,
-      (file, res) => CourseBannerImage(
-        name: file.path.split('/').last,
-        url: res['url'],
-        type: res['type'] ?? "image/jpeg",
-        size: res['size'] ?? file.lengthSync(),
-      ),
-    );
-    notifyListeners();
-  }*/
-
   Future<void> validateGallery() async {
-    selectedGalleryList = await uploadFiles(
-      selectedGallery,
-      (file, res) => CourseBannerImage(
-        name: file.path.split('/').last,
-        url: res['url'],
-        type: res['type'] ?? "image/jpeg",
-        size: res['size'] ?? file.lengthSync(),
-      ),
-    );
+    if (serverGallery != null && serverGallery!.isNotEmpty) {
+      // If serverGallery already has values, just map them to CourseBannerImage
+      selectedGalleryList = serverGallery!
+          .map(
+            (url) => CourseBannerImage(
+              name: url.split('/').last,
+              url: url,
+              type: "image/jpeg", // you can adjust if you have type info
+              size: 0, // since we don’t know original file size
+            ),
+          )
+          .toList();
+    } else {
+      // Otherwise upload the new images
+      selectedGalleryList = await uploadFiles(
+        selectedGallery,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+    }
+
     notifyListeners();
   }
 
   Future<void> validateCourseBanner() async {
-    courseBannerImgList = await uploadFiles(
-      selectedCourseBannerImg,
-      (file, res) => CourseBannerImage(
-        name: file.path.split('/').last,
-        url: res['url'],
-        type: res['type'] ?? "image/jpeg",
-        size: res['size'] ?? file.lengthSync(),
-      ),
-    );
+    if (serverCourseBannerImg != null && serverCourseBannerImg!.isNotEmpty) {
+      // If serverGallery already has values, just map them to CourseBannerImage
+      courseBannerImgList = serverCourseBannerImg!
+          .map(
+            (url) => CourseBannerImage(
+              name: url.split('/').last,
+              url: url,
+              type: "image/jpeg", // you can adjust if you have type info
+              size: 0, // since we don’t know original file size
+            ),
+          )
+          .toList();
+    } else {
+      // Otherwise upload the new images
+      courseBannerImgList = await uploadFiles(
+        selectedCourseBannerImg,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+    }
+
     notifyListeners();
   }
 
   Future<void> validateSponsoredByImg() async {
-    sponsoredByImgList = await uploadFiles(
-      selectedsponsoredByImg,
-      (file, res) => CourseBannerImage(
-        name: file.path.split('/').last,
-        url: res['url'],
-        type: res['type'] ?? "image/jpeg",
-        size: res['size'] ?? file.lengthSync(),
-      ),
-    );
+    if (serverSponsoredByImg != null && serverSponsoredByImg!.isNotEmpty) {
+      // If serverGallery already has values, just map them to CourseBannerImage
+      sponsoredByImgList = serverSponsoredByImg!
+          .map(
+            (url) => CourseBannerImage(
+              name: url.split('/').last,
+              url: url,
+              type: "image/jpeg", // you can adjust if you have type info
+              size: 0, // since we don’t know original file size
+            ),
+          )
+          .toList();
+    } else {
+      // Otherwise upload the new images
+      sponsoredByImgList = await uploadFiles(
+        selectedsponsoredByImg,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+    }
+
     notifyListeners();
   }
 
@@ -400,6 +434,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (index < sessions.length) {
       sessions[index].images = files;
       selectedEventImg = files;
+      sessions[index].serverImages = [];
+      
       notifyListeners();
     }
   }
@@ -417,25 +453,30 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<List<CourseEventInfo>> buildCourseInfoList() async {
+    courseInfoList.clear(); // in case you call this multiple times
+
     for (var session in sessions) {
-      // upload all images for this session
-      final uploadedImgs = session.serverImages.isEmpty
-          ? await uploadSessionImages(session.images)
-          : null;
+      // Decide whether to reuse serverImages or upload new ones
+      final images = session.serverImages.isNotEmpty
+          ? session.serverImages
+              .map((url) => Images(
+                    name: url.split('/').last,
+                    url: url,
+                    type: "image/jpeg", // adjust if you have type info
+                    size: 0, // unknown size for server-side images
+                  ))
+              .toList()
+          : await uploadSessionImages(session.images);
 
       courseInfoList.add(
         CourseEventInfo(
-          date: session.eventDateController.text, // or session-specific date
+          date: session.eventDateController.text,
           name: session.sessionNameController.text,
           info: session.sessionInfoController.text,
-          images: uploadedImgs,
+          images: images,
         ),
       );
     }
-
-    /*for (var session in sessions) {
-      session.clear(); // calls your clear() method
-    }*/
 
     return courseInfoList;
   }
@@ -576,32 +617,17 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-    String? rsvpDate = rsvpDateController.text.isEmpty
-        ? null
-        : DateFormat("yyyy-MM-dd").format(
-            DateFormat("d/M/yyyy").parse(rsvpDateController.text),
-          );
-    String? startDate = startDateController.text.isEmpty
-        ? null
-        : DateFormat("yyyy-MM-dd").format(
-            DateFormat("d/M/yyyy").parse(startDateController.text),
-          );
-
-    String? endDate = endDateController.text.isEmpty
-        ? null
-        : DateFormat("yyyy-MM-dd").format(
-            DateFormat("d/M/yyyy").parse(endDateController.text),
-          );
-
     Loaders.circularShowLoader(context);
     final result = await repo.updateCourseListing({
       "id": courseId,
       "changes": CourseObject(
               courseName: courseNameController.text,
               courseCategoryId: selectedCategoryId,
-              rsvpDate: rsvpDate,
+              rsvpDate: rsvpDateController.text,
               presentedByName: presenterNameController.text,
-              presentedByImage: PresentedByImage(url: presenter_image),
+              presentedByImage: serverPresentedImg!.isNotEmpty
+                  ? PresentedByImage(url: serverPresentedImg)
+                  : PresentedByImage(url: presenter_image),
               courseBannerImage: courseBannerImgList,
               courseGallery: selectedGalleryList,
               courseBannerVideo: courseBannerImageHeaderList,
@@ -634,8 +660,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
                   : int.parse(totalPriceController.text),
               registerLink: registerLinkController.text,
               userRole: type,
-              startDate: startDate,
-              endDate: endDate,
+              startDate: startDateController.text,
+              endDate: endDateController.text,
               isFeatured: false,
               activeStatus: "ACTIVE",
               address: addressController.text,

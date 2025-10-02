@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CouresListingCard extends StatelessWidget {
   final String id;
@@ -16,6 +17,7 @@ class CouresListingCard extends StatelessWidget {
   final List<String> types;
   final String createdAt;
   final int registeredCount;
+  final String meetingLink;
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
@@ -35,6 +37,7 @@ class CouresListingCard extends StatelessWidget {
     this.onTapRegistered,
     this.onMenuAction,
     this.onDetailView,
+    required this.meetingLink,
   });
 
   @override
@@ -78,7 +81,7 @@ class CouresListingCard extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                _chipWidget(types),
+                _chipWidget(types, meetingLink),
                 const SizedBox(height: 8),
 
                 _descriptionWidget(description),
@@ -183,31 +186,68 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _chipWidget(List<String> types) {
+  Widget _chipWidget(List<String> types, String meetingLink) {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
       children: types.map((type) {
         final label = type.isEmpty ? 'N/A' : type;
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: AppColors.secondaryBlueColor,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-            child: Text(
-              label,
-              style: TextStyles.regular1(
-                color: AppColors.typeTextColor,
-                fontSize: 12,
+        return Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.secondaryBlueColor,
+                borderRadius: BorderRadius.circular(30),
               ),
-              overflow: TextOverflow.ellipsis,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                child: Text(
+                  label,
+                  style: TextStyles.regular1(
+                    color: AppColors.typeTextColor,
+                    fontSize: 12,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
-          ),
+
+            //_meetingLinkWidget(meetingLink)
+          ],
         );
       }).toList(),
+    );
+  }
+
+  Widget _meetingLinkWidget(String link) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: AppColors.borderColor)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: GestureDetector(
+          onTap: () async {
+            final url = Uri.parse(link);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            } else {
+              // Handle if the URL can't be launched
+              debugPrint('Could not launch $url');
+            }
+          },
+          child: Text(
+            "Meeting Link",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyles.regular1(
+              color: AppColors.bottomNavUnSelectedColor,
+            ),
+          ),
+        ),
+      ),
     );
   }
 

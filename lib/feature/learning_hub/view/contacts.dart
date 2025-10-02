@@ -89,7 +89,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                     : null,
               ),
               SizedBox(height: 8),
-              jobCreateVM.selectedCategory == "Webinar"
+              jobCreateVM.selectedCourseType == "Webinar"
                   ? InputTextField(
                       controller: jobCreateVM.meetingLinkController,
                       hintText: "Enter Meeting Link",
