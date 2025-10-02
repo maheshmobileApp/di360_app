@@ -117,7 +117,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(subTitleVal ?? '', format: 'MMM d, y')
+                  ? jiffyDataWidget(titleVal ?? '', format: 'MMM d, y')
                   : titleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),
@@ -181,13 +181,17 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
         } 
       },
       itemBuilder: (context) => [
+         if ( vm.selectedStatus != 'Reject')
         PopupMenuItem(
             value: "View",
             child: _buildRow(
                 Icons.remove_red_eye, AppColors.black, "View Banner")),
-      
-       
-        if (vm.selectedStatus != 'Approved & Scheduled')
+       if ( vm.selectedStatus == 'Expired')
+            PopupMenuItem(
+              value: "Re-Listing",
+              child:
+                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Re-Listing")),
+        if (vm.selectedStatus != 'Expired')
           PopupMenuItem(
               value: "Edit",
               child:

@@ -161,7 +161,7 @@ class BannersViewModel extends ChangeNotifier {
   }
 
   Future<void> getBannersList(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  //  Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     await getBannersCounts();
     final res = await repo.getMyBanners({
@@ -187,7 +187,7 @@ class BannersViewModel extends ChangeNotifier {
     if (res != null) {
       bannersList = res;
     }
-    Loaders.circularHideLoader(context);
+   // Loaders.circularHideLoader(context);
     notifyListeners();
   }
 //   Future<void> getBannersList(BuildContext context) async {
@@ -306,7 +306,7 @@ class BannersViewModel extends ChangeNotifier {
     bannerNameController.text = bannersView?.bannerName ?? '';
     assignTheSelectedCatagory(bannersView?.categoryName);
     editBannerId = bannersView?.id ?? "";
-    bannner_image = bannersView?.image?.first.url ?? "";
+    selectedPresentedImg = bannner_image;
     urlController.text = bannersView?.url ?? "";
     scheduleDate = DateTime.parse(bannersView?.scheduleDate ?? '');
     expiryDate = DateTime.parse(bannersView?.expiryDate ?? "");
@@ -379,6 +379,7 @@ class BannersViewModel extends ChangeNotifier {
     scheduleDate = null;
     expiryDate = null;
     selectedPresentedImg = null;
+    updateEditBannerVal(false);
     notifyListeners();
   }
 }
