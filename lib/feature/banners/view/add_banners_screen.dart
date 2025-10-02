@@ -36,7 +36,12 @@ class _AddBannersScreenState extends State<AddBannersScreen>
         leading: GestureDetector(
             onTap: () => navigationService.goBack(),
             child: const Icon(Icons.arrow_back_ios, color: AppColors.black)),
-        title: Text(bannersVM.isEditBanner ? 'Edit Banner' : 'Add Banners',
+        title: Text(
+            bannersVM.isRelistBanner
+                ? 'Re-List Banner'
+                : bannersVM.isEditBanner
+                    ? 'Edit Banner'
+                    : 'Add Banner',
             style: TextStyles.medium2(color: AppColors.black)),
       ),
       body: SingleChildScrollView(
@@ -63,11 +68,11 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                       title: "Banner Image",
                       isRequired: true,
                       showPreview: true,
-                        serverImage: bannersVM.bannner_image, 
+                      serverImage: bannersVM.bannner_image,
                       selectedFile: bannersVM.selectedPresentedImg,
-                       onFilePicked: (file) => bannersVM.setPresentedImg(file),
-                     // selectedFiles: jobCreateVM.selectedGallery,
-               //  onFilesPicked: (file) => bannersVM.setPresentedImg(file),
+                      onFilePicked: (file) => bannersVM.setPresentedImg(file),
+                      // selectedFiles: jobCreateVM.selectedGallery,
+                      //  onFilesPicked: (file) => bannersVM.setPresentedImg(file),
                       // onFilePicked: (file) async {
                       //   final actualSize = await bannersVM.getImageSize(file!);
                       //   final requiredDim =
@@ -110,9 +115,11 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                             onTap: () {
                               if (formKey.currentState!.validate() &&
                                   validateURlAndData(bannersVM)) {
-                                bannersVM.isEditBanner
-                                    ? bannersVM.updateBannerData(context, true)
-                                    : bannersVM.addBannersData(context, true);
+                                if (bannersVM.isEditBanner) {
+                                  bannersVM.updateBannerData(context, false);
+                                } else {
+                                  bannersVM.addBannersData(context, false);
+                                }
                               }
                             },
                           ),
@@ -125,12 +132,20 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                               onTap: () async {
                                 if (formKey.currentState!.validate() &&
                                     validateURlAndData(bannersVM)) {
-                                  bannersVM.isEditBanner
-                                      ? bannersVM.updateBannerData(
-                                          context, false)
-                                      : bannersVM.addBannersData(
-                                          context, false);
+                                  if (bannersVM.isEditBanner) {
+                                    bannersVM.updateBannerData(context, false);
+                                  } else {
+                                    bannersVM.addBannersData(context, false);
+                                  }
                                 }
+                                // if (formKey.currentState!.validate() &&
+                                //     validateURlAndData(bannersVM)) {
+                                //   bannersVM.isEditBanner
+                                //       ? bannersVM.updateBannerData(
+                                //           context, false)
+                                //       : bannersVM.addBannersData(
+                                //           context, false);
+                                // }
                               }),
                         )
                       ],
@@ -146,7 +161,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
   }
 
   bool validateURlAndData(BannersViewModel bannerVm) {
-    if (bannerVm.selectedPresentedImg == null) {
+    if (bannerVm.selectedPresentedImg != null || bannerVm.bannner_image == null) {
       scaffoldMessenger('Please select Banner image');
       return false;
     } else if (bannerVm.scheduleDate == null) {
@@ -167,19 +182,17 @@ class _AddBannersScreenState extends State<AddBannersScreen>
       onChanged: (v) {
         bannersVM.updateSelectedCatagory(v as BannerCategories);
       },
-      items: bannersVM.catagorysList.map<DropdownMenuItem<BannerCategories>>(
-              (BannerCategories value) {
-            return DropdownMenuItem<BannerCategories>(
-              value: value,
-              child: Text(value.name ?? ''),
-            );
-          }).toList(),
+      items: bannersVM.catagorysList
+          .map<DropdownMenuItem<BannerCategories>>((BannerCategories value) {
+        return DropdownMenuItem<BannerCategories>(
+          value: value,
+          child: Text(value.name ?? ''),
+        );
+      }).toList(),
       hintText: "Select Category",
       validator: (value) => value == null || value.toString().isEmpty
           ? 'Please select category'
           : null,
     );
   }
-
-
 }

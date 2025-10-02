@@ -170,37 +170,67 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           );
           //  vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
-           vm.editCatalogueNavigator(context, id);
-        } else if (value == "Delete") {
+          vm.editBannerNavigator(context, id);
+        } else if(value == "Re-Listing"){
+            vm.relistBannerNavigator(context, id);
+        }
+         else if (value == "Delete") {
           showAlertMessage(
               context, 'Are you sure you want to delete this catalogue?',
               onBack: () {
             navigationService.goBack();
             vm.removeBanner(context, id);
           });
-        } 
+        }
       },
       itemBuilder: (context) => [
-         if ( item?.status != 'REJECTED')
-        PopupMenuItem(
+        // ✅ PENDING, APPROVED, EXPIRED → View (except REJECTED)
+        if (item?.status != 'REJECTED')
+          PopupMenuItem(
             value: "View",
             child: _buildRow(
-                Icons.remove_red_eye, AppColors.black, "View Banner")),
-       if ( item?.status == 'Expired'.toUpperCase())
-            PopupMenuItem(
-              value: "Re-Listing",
-              child:
-                  _buildRow(Icons.list, AppColors.blueColor, "Re-Listing")),
-        if (item?.status != 'Expired'.toUpperCase())
+              Icons.remove_red_eye,
+              AppColors.black,
+              "View Banner",
+            ),
+          ),
+
+        // ✅ Only show Edit when NOT EXPIRED, NOT APPROVED, NOT REJECTED
+        if (item?.status == 'PENDING')
           PopupMenuItem(
-              value: "Edit",
-              child:
-                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
-        PopupMenuItem(
+            value: "Edit",
+            child: _buildRow(
+              Icons.edit_outlined,
+              AppColors.blueColor,
+              "Edit",
+            ),
+          ),
+
+        // ✅ Only EXPIRED → Re-Listing
+        if (item?.status == 'EXPIRED')
+          PopupMenuItem(
+            value: "Re-Listing",
+            child: _buildRow(
+              Icons.list,
+              AppColors.blueColor,
+              "Re-Listing",
+            ),
+          ),
+
+        // ✅ Delete allowed in PENDING, EXPIRED, REJECTED
+        if (item?.status == 'PENDING' ||
+            item?.status == 'EXPIRED' ||
+            item?.status == 'REJECTED')
+          PopupMenuItem(
             value: "Delete",
-            child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),
+            child: _buildRow(
+              Icons.delete_outline,
+              AppColors.redColor,
+              "Delete",
+            ),
+          ),
       ],
+
     );
   }
 
