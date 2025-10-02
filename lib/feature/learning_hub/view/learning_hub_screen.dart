@@ -241,7 +241,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                                await courseListingVM.getCourseDetails(
+                               /* await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
                                 courseListingVM.setEditOption(true);
                                 courseListingVM.setCourseId(course.id ?? "");
@@ -254,7 +254,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );
+                                );*/
 
                                 break;
                               case "Delete":
