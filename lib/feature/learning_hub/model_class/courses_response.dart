@@ -94,6 +94,7 @@ class CoursesListingDetails {
   String? startDate;
   String? endDate;
   String? startTime;
+  String? endTime;
   CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
 
   CoursesListingDetails(
@@ -151,6 +152,7 @@ class CoursesListingDetails {
       this.startDate,
       this.endDate,
       this.startTime,
+      this.endTime,
       this.courseRegisteredUsersAggregate});
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
@@ -170,7 +172,7 @@ class CoursesListingDetails {
     isFeatured = json['is_featured'];
     activeStatus = json['active_status'];
     type = json['type'];
-    address =  json['address'];
+    address = json['address'];
     scheduledAt = json['scheduled_at'];
     maxSubscribers = json['max_subscribers'];
     priceInAud = json['price_in_aud'];
@@ -239,6 +241,7 @@ class CoursesListingDetails {
     startDate = json['startDate'];
     endDate = json['endDate'];
     startTime = json['startTime'];
+    endTime = json['endTime'];
     courseRegisteredUsersAggregate =
         json['course_registered_users_aggregate'] != null
             ? new CourseRegisteredUsersAggregate.fromJson(
@@ -323,6 +326,7 @@ class CoursesListingDetails {
     data['startDate'] = this.startDate;
     data['endDate'] = this.endDate;
     data['startTime'] = this.startTime;
+    data['endTime'] = this.endTime;
     if (this.courseRegisteredUsersAggregate != null) {
       data['course_registered_users_aggregate'] =
           this.courseRegisteredUsersAggregate!.toJson();
@@ -367,7 +371,6 @@ class Address {
     };
   }
 }
-
 
 class CourseRegisteredUsersAggregate {
   Aggregate? aggregate;

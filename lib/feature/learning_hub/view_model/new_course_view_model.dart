@@ -150,7 +150,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void setSelectedCourseCategory(String? name) {
+  void setSelectedCourseCategory(String? name) async {
+    await fetchCourseCategory();
     selectedCategory = name;
 
     if (name != null) {
@@ -167,6 +168,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> setSelectedCourseCategoryName(String? id) async {
+    await fetchCourseCategory();
     selectedCategoryId = id;
 
     if (id != null) {
@@ -653,7 +655,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       navigationService.goBack();
 
       Loaders.circularHideLoader(context);
-      resetForm();
+      //resetForm();
     } else {
       Loaders.circularHideLoader(context);
     }

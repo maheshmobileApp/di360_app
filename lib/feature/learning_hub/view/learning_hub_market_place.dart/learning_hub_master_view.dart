@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -143,8 +144,13 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           final jobData =
                               courseListingVM.coursesListingList[index];
                           final course = jobData;
+                          final seats = (course.numberOfSeats -
+                                  course.courseRegisteredUsersAggregate
+                                      ?.aggregate?.count)
+                              .toString();
 
                           return ListingHubMasterCard(
+                            remainingOfSeats: seats,
                             presenterName: course.presentedByName ?? "",
                             profilePic: course.presentedByImage?.url ?? '',
                             imageUrl: course.courseBannerImage?.first.url ?? '',
@@ -164,9 +170,13 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               );
                             },
                             registerTap: () async {
-                              courseListingVM.setCourseId(course.id ?? "");
-                              RegistrationUserForm.show(
-                                  context, course.courseName ?? "");
+                              if (seats != "0") {
+                                courseListingVM.setCourseId(course.id ?? "");
+                                RegistrationUserForm.show(
+                                    context, course.courseName ?? "");
+                              } else {
+                                scaffoldMessenger('Seats are sold out!');
+                              }
                             },
                           );
                         },
