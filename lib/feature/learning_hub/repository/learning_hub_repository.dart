@@ -10,6 +10,7 @@ abstract class LearningHubRepository {
   Future<List<JobsRoleList>> getCategory();
   Future<List<JobTypes>> getEmpTypes();
   Future<dynamic> createCourseListing(dynamic variables);
+  Future<dynamic> updateCourseListing(dynamic variables);
   Future<List<CoursesListingDetails>?> getCoursesListing(
       String? listingStatus, String? userId, String? searchText);
   Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId);
@@ -22,5 +23,5 @@ abstract class LearningHubRepository {
   Future<dynamic> userRegisterToCourse(dynamic variables);
   Future<List<CoursesListingDetails>?> getAllListingData(String? searchText);
   Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
-      String? userId, String type, String courseCategoryId,String startDate,String address);
+      String type, String courseCategoryId,String startDate,String address);
 }

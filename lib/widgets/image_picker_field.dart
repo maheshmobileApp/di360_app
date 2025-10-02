@@ -13,7 +13,7 @@ class ImagePickerField extends StatelessWidget {
   final String? hintText;
   final bool showPreview;
   final bool allowMultiple;
-
+final String? imageUrl;
   // Local Single file
   final File? selectedFile;
   final ValueChanged<File?>? onFilePicked;
@@ -27,11 +27,13 @@ class ImagePickerField extends StatelessWidget {
   final List<String>? serverImages;
 
   const ImagePickerField({
+
     super.key,
     this.title,
     this.isRequired = false,
     this.borderRadius = 8.0,
     this.hintText,
+    this.imageUrl,
     this.showPreview = true,
     this.allowMultiple = false,
     this.selectedFile,
