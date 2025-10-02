@@ -2,9 +2,9 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/director_details_view.dart';
+import 'package:di360_flutter/feature/add_directors/view/my_director/user_details_widget.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -33,7 +33,7 @@ class MyDirectorScreen extends StatelessWidget {
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: UserData(
+              child: UserDetailsWidget(
                 imageUrl: addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
                 userName: addDirectorVM.getBasicInfoData.first.professionType,
                 followerCount:

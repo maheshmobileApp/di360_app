@@ -181,6 +181,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ImagePickerField(
                 title: "Presented By (Image)",
                 isRequired: true,
+                serverImage: jobCreateVM.serverPresentedImg,
                 showPreview: true,
                 selectedFile: jobCreateVM.selectedPresentedImg,
                 onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
@@ -191,6 +192,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ImagePickerField(
                 title: "Course Header Banner / Video",
                 isRequired: true,
+                serverImage: jobCreateVM.serverCourseHeaderBanner,
                 showPreview: true,
                 selectedFile: jobCreateVM.selectedCourseHeaderBanner,
                 onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
@@ -199,6 +201,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ImagePickerField(
                 title: "Gallery",
                 isRequired: true,
+                serverImages: jobCreateVM.serverGallery,
                 allowMultiple: true,
                 showPreview: true,
                 selectedFiles: jobCreateVM.selectedGallery,
@@ -209,6 +212,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 title: "Course Header Banner Image",
                 isRequired: true,
                 allowMultiple: true,
+                serverImages: jobCreateVM.serverCourseBannerImg,
                 showPreview: true,
                 selectedFiles: jobCreateVM.selectedCourseBannerImg,
                 onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),

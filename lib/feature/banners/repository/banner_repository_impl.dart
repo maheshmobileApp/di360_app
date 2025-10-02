@@ -72,16 +72,21 @@ class BannerRepositoryImpl extends BannersRepository {
  
   
  @override
-  Future<ApproveBannerResp> getApprovedBanners(dynamic variables) async {
+  Future<ApproveBannerResp> getApprovedBanners(
+      {dynamic variables = const {
+        "limit": 100,
+        "offset": 0,
+      }}) async {
+    
     final response = await http.query(
       approveBannerQuary,
-      variables: variables ?? {
-        "limit": 10,
+      variables: {
+        "limit": 100,
         "offset": 0,
       },
     );
 
-    if (response != null && response['data'] != null) {
+    if (response != null && response['banners'] != null) {
       return ApproveBannerResp.fromJson(response);
     } else {
       throw Exception("Empty response received from server");

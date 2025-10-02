@@ -115,11 +115,11 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                         ),
                       ),
                     ),
-                    if(vm.catalogFilterApply == true) 
-                    GestureDetector(
-                      onTap: () => vm.clearSelections(context),
-                      child: Icon(Icons.close,color: AppColors.black),
-                    )
+                    if (vm.catalogFilterApply == true)
+                      GestureDetector(
+                        onTap: () => vm.clearSelections(context),
+                        child: Icon(Icons.close, color: AppColors.black),
+                      )
                   ],
                 ),
               ),
@@ -224,24 +224,36 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
           if (expanded) ...[
             Divider(),
             addVertical(10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 23),
-              child: GridView.count(
-                padding: EdgeInsets.all(0),
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                childAspectRatio: 0.55,
-                children: displayList!
-                    .map((c) => buildCatalogueCard(context, vm, c, () async {
-                          await vm.getCatalogDetails(context, c.id ?? '');
-                          await vm.getReletedCatalog(context, cat.id ?? '');
-                          await navigationService
-                              .navigateTo(RouteList.catalogueDetails);
-                        }, displayList))
-                    .toList(),
-              ),
-            ),
+            displayList?.isEmpty ?? false
+                ? Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                        SvgPicture.asset(ImageConst.noCatalogue,height: 170,width: 450),
+                        addVertical(10),
+                        Text("No ${cat.name} Catalogues",
+                            style: TextStyles.medium2(color: AppColors.black))
+                      ]))
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 23),
+                    child: GridView.count(
+                      padding: EdgeInsets.all(0),
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.55,
+                      children: displayList!
+                          .map((c) =>
+                              buildCatalogueCard(context, vm, c, () async {
+                                await vm.getCatalogDetails(context, c.id ?? '');
+                                await vm.getReletedCatalog(
+                                    context, cat.id ?? '');
+                                await navigationService
+                                    .navigateTo(RouteList.catalogueDetails);
+                              }, displayList))
+                          .toList(),
+                    ),
+                  ),
             addVertical(12),
             Divider(),
             addVertical(5),
@@ -317,11 +329,9 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          c.dentalSupplier?.directories?.first.name ?? '',
-                          style: TextStyles.regular2(
-                              color: AppColors.primaryColor),
-                        ),
+                        Text(c.dentalSupplier?.name ?? '',
+                            style: TextStyles.regular2(
+                                color: AppColors.primaryColor)),
                         addVertical(5),
                         Text(
                           c.title ?? '',

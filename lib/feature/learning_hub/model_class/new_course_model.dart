@@ -4,8 +4,9 @@ class CoursesResponse {
   CoursesResponse({this.object});
 
   CoursesResponse.fromJson(Map<String, dynamic> json) {
-    object =
-        json['object'] != null ? new CourseObject.fromJson(json['object']) : null;
+    object = json['object'] != null
+        ? new CourseObject.fromJson(json['object'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -69,6 +70,7 @@ class CourseObject {
   String? startDate;
   String? endDate;
   String? startTime;
+  String? endTime;
 
   CourseObject(
       {this.courseCategoryId,
@@ -121,7 +123,8 @@ class CourseObject {
       this.rsvpDate,
       this.startDate,
       this.endDate,
-      this.startTime});
+      this.startTime,
+      this.endTime});
 
   CourseObject.fromJson(Map<String, dynamic> json) {
     courseCategoryId = json['course_category_id'];
@@ -206,6 +209,7 @@ class CourseObject {
     startDate = json['startDate'];
     endDate = json['endDate'];
     startTime = json['startTime'];
+    endTime = json['endTime'];
   }
 
   Map<String, dynamic> toJson() {
@@ -282,6 +286,7 @@ class CourseObject {
     data['startDate'] = this.startDate;
     data['endDate'] = this.endDate;
     data['startTime'] = this.startTime;
+    data['endTime'] = this.endTime;
     return data;
   }
 }
@@ -406,7 +411,8 @@ class SponsorByImage {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() => {'url': url, 'name': name, 'size': size, 'type': type};
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
 }
 
 class CourseGallery {
@@ -424,7 +430,8 @@ class CourseGallery {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() => {'url': url, 'name': name, 'size': size, 'type': type};
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
 }
 
 class CourseBannerVideo {
@@ -442,7 +449,8 @@ class CourseBannerVideo {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() => {'url': url, 'name': name, 'size': size, 'type': type};
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
 }
 
 class CourseBannerImage {
@@ -460,7 +468,8 @@ class CourseBannerImage {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() => {'url': url, 'name': name, 'size': size, 'type': type};
+  Map<String, dynamic> toJson() =>
+      {'url': url, 'name': name, 'size': size, 'type': type};
 }
 
 

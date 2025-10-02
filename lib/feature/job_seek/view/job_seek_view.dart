@@ -1,8 +1,12 @@
+import 'package:di360_flutter/common/banner/generic_list_view_with_banners.dart';
+import 'package:di360_flutter/common/banner/list_banner.dart';
+import 'package:di360_flutter/common/banner/utils.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_card.dart';
 import 'package:di360_flutter/feature/job_seek/view/tab_switch.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
@@ -66,23 +70,10 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
               addHorizontal(15),
             ],
           ),
-          body: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                height: getSize(context).height * 0.25,
-                decoration: const BoxDecoration(color: AppColors.geryColor),
-                child: Image.asset(
-                  ImageConst.jobHeaderPng,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Expanded(
-                child: jobSeekViewModel.selectedTabIndex == 0
-                    ? _buildJobsList(jobSeekViewModel)
-                    : const TalentsView(),
-              ),
-            ],
+          body: Expanded(
+            child: jobSeekViewModel.selectedTabIndex == 0
+                ? _buildJobsList(jobSeekViewModel)
+                : const TalentsView(),
           ),
     
           floatingActionButton:
@@ -104,21 +95,27 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 ? const CircularProgressIndicator()
                 : const Text(""),
           )
-        : ListView.builder(
-          itemCount: vm.jobs.length,
-          itemBuilder: (context, index) {
-            final jobData = vm.jobs[index];
-            return InkWell(
-              onTap: () {
-                navigationService.navigateToWithParams(
-                  RouteList.jobdetailsScreen,
-                  params: jobData,
+          : GenericListViewWithBanners<Jobs>(
+              items: vm.jobs,
+              bannerIndices: BannerUtils.calculateBannerIndices(
+                  vm.jobs.length), // Show banners at 0 and 5
+              itemBuilder: (context, dataIndex) {
+                final jobData = vm.jobs[dataIndex];
+                return InkWell(
+                  onTap: () {
+                    navigationService.navigateToWithParams(
+                      RouteList.jobdetailsScreen,
+                      params: jobData,
+                    );
+                  },
+                  child: JobSeekCard(jobsData: jobData),
                 );
               },
-              child: JobSeekCard(jobsData: jobData),
-            );
-          },
-        ),
+              bannerBuilder: (context, bannerPos) {
+                // bannerPos is 0 for index 0, 1 for index 5, etc.
+                return ListBanner(pageIndex: bannerPos);
+              },
+            ),
   );
 }
 

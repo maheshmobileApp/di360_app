@@ -4,13 +4,15 @@ class ApproveBannerResp {
   ApproveBannerResp({this.data});
 
   ApproveBannerResp.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new ApproveBannerData.fromJson(json['data']) : null;
+    data = json['banners'] != null
+        ? new ApproveBannerData.fromJson(json['banners'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data!.toJson();
+      data['banners'] = this.data!.toJson();
     }
     return data;
   }
@@ -21,10 +23,10 @@ class ApproveBannerData {
 
   ApproveBannerData({this.banners});
 
-  ApproveBannerData.fromJson(Map<String, dynamic> json) {
-    if (json['banners'] != null) {
+  ApproveBannerData.fromJson(List<dynamic> bannerData) {
+    if (bannerData.isNotEmpty) {
       banners = <ApproveBanners>[];
-      json['banners'].forEach((v) {
+      bannerData.forEach((v) {
         banners!.add(new ApproveBanners.fromJson(v));
       });
     }

@@ -37,6 +37,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final emailController = TextEditingController();
   final websiteUrlController = TextEditingController();
   final registerLinkController = TextEditingController();
+  final meetingLinkController = TextEditingController();
   final termsAndConditionsController = TextEditingController();
   final cancellationController = TextEditingController();
   final websiteController = TextEditingController();
@@ -51,6 +52,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   bool showLocumDate = false;
 
+  //server
+  String? serverPresentedImg;
+  String? serverCourseHeaderBanner;
+  List<String>? serverGallery;
+  List<String>? serverCourseBannerImg;
+  List<String>? serverEventImg;
+  List<String>? serverEventImgs;
+  List<String>? serverSponsoredByImg;
+  List<String>? serverSessionImg;
   //imageFields
   File? selectedPresentedImg;
   File? selectedCourseHeaderBanner;
@@ -156,6 +166,22 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> setSelectedCourseCategoryName(String? id) async {
+    selectedCategoryId = id;
+
+    if (id != null) {
+      final match = courseCategoryList.firstWhere(
+        (course) => course.id == id,
+        orElse: () => CourseCategories(),
+      );
+      selectedCategory = match.name;
+    } else {
+      selectedCategory = null;
+    }
+
+    notifyListeners();
+  }
+
   // -------------------Navigation-------------------------
   void goToNextStep() {
     if (!validateCurrentStep()) return;
@@ -213,7 +239,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> validateCourseHeaderBanner() async {
+  /*Future<void> validateCourseHeaderBanner() async {
     if (selectedCourseHeaderBanner == null) return;
 
     final file = selectedCourseHeaderBanner?.path;
@@ -227,6 +253,37 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         name: res['name'],
         url: res['url'],
         type: res['type'],
+        size: res['size'],
+      )
+    ];
+
+    // notify listeners for UI update
+    notifyListeners();
+  }*/
+
+  Future<void> validateCourseHeaderBanner() async {
+    if (selectedCourseHeaderBanner == null) return;
+
+    final file = selectedCourseHeaderBanner?.path;
+    if (file == null || file.isEmpty) return;
+
+    // detect type from file extension
+    final lower = file.toLowerCase();
+    final bool isVideo = lower.endsWith(".mp4") ||
+        lower.endsWith(".mov") ||
+        lower.endsWith(".avi") ||
+        lower.endsWith(".mkv") ||
+        lower.endsWith(".wmv");
+
+    // ⬅️ Call correct upload API
+    final res = await _http.uploadImage(file);
+
+    // Build your object and wrap it in a list
+    courseBannerImageHeaderList = [
+      CourseBannerImage(
+        name: res['name'],
+        url: res['url'],
+        type: isVideo ? "video" : "image", // explicitly set type
         size: res['size'],
       )
     ];
@@ -419,6 +476,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    String? rsvpDate = rsvpDateController.text.isEmpty
+        ? null
+        : DateFormat("yyyy-MM-dd").format(
+            DateFormat("d/M/yyyy").parse(rsvpDateController.text),
+          );
     String? startDate = startDateController.text.isEmpty
         ? null
         : DateFormat("yyyy-MM-dd").format(
@@ -434,60 +496,57 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final result = await repo.createCourseListing({
       "object": CourseObject(
-        courseName: courseNameController.text,
-        courseCategoryId: selectedCategoryId,
-        rsvpDate: rsvpDateController.text,
-        presentedByName: presenterNameController.text,
-        presentedByImage: PresentedByImage(url: presenter_image),
-        courseBannerImage: courseBannerImgList,
-        courseGallery: selectedGalleryList,
-        courseBannerVideo: courseBannerImageHeaderList,
-        description: courseDescController.text,
-        cpdPoints: (cpdPointsController.text.isEmpty)
-            ? null
-            : double.parse(cpdPointsController.text),
-        numberOfSeats: (numberOfSeatsController.text.isEmpty)
-            ? null
-            :int.parse(numberOfSeatsController.text),
-        priceInAud: 0,
-        priceInUsd: 0,
-        earlyBirdPrice: (birdPriceController.text.isEmpty)
-            ? null
-            : int.parse(birdPriceController.text),
-        earlyBirdEndDate: earlyBirdDateController.text,
-        topicsIncluded: topicsIncludedDescController.text,
-        learningObjectives: learningObjectivesDescController.text,
-        eventType: selectedEvent,
-        courseEventInfo: courseInfoList,
-        sponsorByImage: sponsoredByImgList,
-        terms: termsAndConditionsController.text,
-        refundPolicy: cancellationController.text,
-        contactName: nameController.text,
-        contactEmail: emailController.text,
-        contactPhone: phoneController.text,
-        contactWebsite: websiteController.text,
-        afterwardsPrice: (totalPriceController.text.isEmpty)
-            ? null
-            : int.parse(totalPriceController.text),
-        registerLink: registerLinkController.text,
-        activeStatusFeed: "",
-        userRole: type,
-        startDate: startDate,
-        endDate: endDate,
-        image: "",
-        video: "",
-        completeDetails: "",
-        attachments: null,
-        isFeatured: false,
-        activeStatus: "ACTIVE",
-        address: addressController.text,
-        maxSubscribers: 1000,
-        createdById: userId,
-        companyName: name,
-        status: isDraft ? "DRAFT" : "PENDING",
-        type: (selectedCourseType==null)?"":selectedCourseType,
-        feedType: "LEARNHUB",
-      ).toJson(),
+              courseName: courseNameController.text,
+              courseCategoryId: selectedCategoryId,
+              rsvpDate: rsvpDate,
+              presentedByName: presenterNameController.text,
+              presentedByImage: PresentedByImage(url: presenter_image),
+              courseBannerImage: courseBannerImgList,
+              courseGallery: selectedGalleryList,
+              courseBannerVideo: courseBannerImageHeaderList,
+              description: courseDescController.text,
+              cpdPoints: (cpdPointsController.text.isEmpty)
+                  ? null
+                  : double.parse(cpdPointsController.text),
+              numberOfSeats: (numberOfSeatsController.text.isEmpty)
+                  ? null
+                  : int.parse(numberOfSeatsController.text),
+              priceInAud: 0,
+              priceInUsd: 0,
+              earlyBirdPrice: (birdPriceController.text.isEmpty)
+                  ? null
+                  : int.parse(birdPriceController.text),
+              earlyBirdEndDate: earlyBirdDateController.text,
+              topicsIncluded: topicsIncludedDescController.text,
+              learningObjectives: learningObjectivesDescController.text,
+              eventType: selectedEvent,
+              courseEventInfo: courseInfoList,
+              sponsorByImage: sponsoredByImgList,
+              terms: termsAndConditionsController.text,
+              refundPolicy: cancellationController.text,
+              contactName: nameController.text,
+              contactEmail: emailController.text,
+              contactPhone: phoneController.text,
+              contactWebsite: websiteUrlController.text,
+              afterwardsPrice: (totalPriceController.text.isEmpty)
+                  ? null
+                  : int.parse(totalPriceController.text),
+              registerLink: registerLinkController.text,
+              userRole: type,
+              startDate: startDate,
+              endDate: endDate,
+              isFeatured: false,
+              activeStatus: "ACTIVE",
+              address: addressController.text,
+              maxSubscribers: 1000,
+              createdById: userId,
+              companyName: name,
+              status: isDraft ? "DRAFT" : "PENDING",
+              type: (selectedCourseType == null) ? "" : selectedCourseType,
+              feedType: "LEARNHUB",
+              startTime: startTimeController.text,
+              endTime: endTimeController.text)
+          .toJson(),
     });
 
     if (result != null) {
@@ -548,61 +607,5 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     // Page controller reset
     pageController.jumpToPage(
         0); // or pageController.animateToPage(...) if you want animation
-  }
-
-  Future<void> loadCourseData(course) async {
-    // Reset image/file selections
-    selectedPresentedImg = null;
-    selectedCourseHeaderBanner = null;
-    selectedGallery = null;
-    selectedCourseBannerImg = null;
-    selectedEventImg = null;
-    selectedsponsoredByImg = null;
-
-    // Dropdown / selections
-    selectedCategoryId = course.courseCategoryId;
-    selectedCourseType = course.type;
-    selectedEvent = course.eventType ?? "";
-
-    // Text controllers
-    courseNameController.text = course.courseName ?? "";
-    presenterNameController.text = course.presentedByName ?? "";
-    cpdPointsController.text = course.cpdPoints?.toStringAsFixed(0);
-    numberOfSeatsController.text = course.numberOfSeats?.toString() ?? "";
-    totalPriceController.text =
-        course.afterwardsPrice?.toStringAsFixed(0) ?? "";
-    birdPriceController.text = course.earlyBirdPrice?.toStringAsFixed(0) ?? "";
-    courseDescController.text = course.description ?? "";
-    topicsIncludedDescController.text = course.topicsIncluded ?? "";
-    learningObjectivesDescController.text = course.learningObjectives ?? "";
-    nameController.text = course.contactName ?? "";
-    phoneController.text = course.contactPhone ?? "";
-    emailController.text = course.contactEmail ?? "";
-    websiteController.text = course.contactWebsite ?? "";
-    registerLinkController.text = course.registerLink ?? "";
-    termsAndConditionsController.text = course.terms ?? "";
-    cancellationController.text = course.refundPolicy ?? "";
-    rsvpDateController.text = course.rsvpDate ?? "";
-    earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    startDateController.text =
-        DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate ?? ""));
-    endDateController.text =
-        DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate ?? ""));
-    addressController.text = course.address ?? "";
-    startTimeController.text = course.startTime ?? "";
-    endTimeController.text = course.startTime ?? ""; // if same
-
-    // Images / files (from API)
-    presenter_image = course.presentedByImage?.url ?? "";
-    courseBannerImageHeaderList = [];
-    selectedGalleryList = [];
-    courseBannerImgList = [];
-    sponsoredByImgList = [];
-
-    // Sessions / Course Event Info
-    courseInfoList = [];
-    sessions = [];
-
-    notifyListeners();
   }
 }

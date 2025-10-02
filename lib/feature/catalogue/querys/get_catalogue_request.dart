@@ -1,33 +1,32 @@
-const String getCatalogueRequest = r'''
-query catalogues($andList: [catalogues_bool_exp!], $limit: Int, $offset: Int) {
-  catalogue_categories(where: {catalogues: {_and: $andList}}) {
+const String getCatalogueQuery = r'''
+query getFilteredCatalogueData(
+  $categoryWhere: catalogue_categories_bool_exp!
+  $catalogueWhere: catalogues_bool_exp!
+) {
+  catalogue_categories(where: $categoryWhere) {
     id
     name
-    catalogues(
-      where: {_and: $andList}
-      order_by: {updated_at: desc}
-      limit: $limit
-      offset: $offset
-    ) {
+    catalogues(limit: 100, where: $catalogueWhere) {
       id
       title
       status
       thumbnail_image
       schedulerDay
       dental_supplier {
-        directories {
-          name
-          __typename
-        }
+        name
+        __typename
+      }
+      catalogue_sub_category {
+        id
+        name
         __typename
       }
       catalogue_favorites {
-        id
         catalogue_id
         type
         dental_supplier_id
-        dental_professional_id
         dental_practice_id
+        dental_professional_id
         __typename
       }
       __typename
