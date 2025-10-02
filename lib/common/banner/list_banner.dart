@@ -38,6 +38,7 @@ class _ListBannerState extends State<ListBanner> {
       if (banners == null || banners.isEmpty) return;
       final int start = widget.pageIndex * 5;
       final int end = (start + 5).clamp(0, banners.length);
+      if (start >= end || start >= banners.length) return;
       final items = banners.sublist(start, end);
       if (items.length <= 1) return;
       setState(() {
