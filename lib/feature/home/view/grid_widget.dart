@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
-import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -54,7 +53,6 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     } else if (title == 'Catalogue') {
       dashBoardVM.setIndex(3, navigatorKey.currentContext!);
     } else if (title == 'Directory') {
-      await context.read<DirectoryViewModel>().getDirectorsList(context);
       await navigationService.navigateTo(RouteList.directory);
     } else if (title == 'Learning Hub') {
       Loaders.circularShowLoader(context);
