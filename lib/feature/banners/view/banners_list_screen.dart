@@ -132,9 +132,10 @@ class _BannersListScreenState extends State<BannersListScreen>
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
-          onPressed: () {
+          onPressed: () async {
             bannersVM.clearAddBannerData();
-            navigationService.navigateTo(RouteList.addBanners);
+            await navigationService.navigateTo(RouteList.addBanners);
+            _loadData();
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));
@@ -143,7 +144,6 @@ class _BannersListScreenState extends State<BannersListScreen>
   @override
   void initState() {
     super.initState();
-      // Delay loader until widget tree is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });

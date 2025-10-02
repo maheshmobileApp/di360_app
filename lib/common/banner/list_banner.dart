@@ -8,6 +8,7 @@ const double _bannerHorizontalPadding = 24.0;
 const double _bannerHeight = 180.0;
 const double _bannerListHeight = 200.0;
 const int _bannerScrollDuration = 3;//Duration in Seconds
+const int _bannerVisibleItems = 3;
 
 class ListBanner extends StatefulWidget {
   final int pageIndex;
@@ -36,8 +37,8 @@ class _ListBannerState extends State<ListBanner> {
       if (!mounted) return;
       final banners = BannerServices.instance.listBanner;
       if (banners == null || banners.isEmpty) return;
-      final int start = widget.pageIndex * 5;
-      final int end = (start + 5).clamp(0, banners.length);
+      final int start = widget.pageIndex * _bannerVisibleItems;
+      final int end = (start + _bannerVisibleItems).clamp(0, banners.length);
       if (start >= end || start >= banners.length) return;
       final items = banners.sublist(start, end);
       if (items.length <= 1) return;
@@ -67,8 +68,8 @@ class _ListBannerState extends State<ListBanner> {
     if (banners == null || banners.isEmpty) {
       return SizedBox.shrink();
     }
-    final int start = widget.pageIndex * 5;
-    final int end = (start + 5).clamp(0, banners.length);
+    final int start = widget.pageIndex * _bannerVisibleItems;
+    final int end = (start + _bannerVisibleItems).clamp(0, banners.length);
     if (start >= banners.length) {
       return SizedBox.shrink();
     }
