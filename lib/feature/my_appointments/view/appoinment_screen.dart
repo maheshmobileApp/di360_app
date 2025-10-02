@@ -6,8 +6,22 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AppoinmentScreen extends StatelessWidget {
+class AppoinmentScreen extends StatefulWidget {
   const AppoinmentScreen({super.key});
+
+  @override
+  State<AppoinmentScreen> createState() => _AppoinmentScreenState();
+}
+
+class _AppoinmentScreenState extends State<AppoinmentScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((s) {
+      final appointVM = context.read<AppointmentViewModel>();
+      appointVM.getAppointmentData(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
