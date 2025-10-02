@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 class RegistrationUserForm {
   static void show(BuildContext context) {
-    final formKey = GlobalKey<FormState>(); // 👈 form key
+    final formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
       context: context,
@@ -38,15 +38,33 @@ class RegistrationUserForm {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Title
-                      Text(
-                        "Registration",
-                        style:
-                            TextStyles.medium4(color: AppColors.primaryColor),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Submit and Register for",
+                            style: TextStyles.medium4(color: AppColors.black),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pop(); 
+                            },
+                            child: const Icon(
+                              Icons.close,
+                              color: AppColors.black,
+                              size: 24,
+                            ),
+                          ),
+                        ],
                       ),
+
                       Text(
-                        "Course name",
+                        courseVM.courseDetails.first.courseName
+                                ?.toUpperCase() ??
+                            "",
                         style:
-                            TextStyles.medium1(color: AppColors.lightGeryColor),
+                            TextStyles.medium3(color: AppColors.primaryColor),
                       ),
                       const SizedBox(height: 16),
 
@@ -126,7 +144,7 @@ class RegistrationUserForm {
                             }
                           },
                           backgroundColor: AppColors.primaryColor,
-                          text: "Submit Details",
+                          text: "Submit And Register",
                           width: 150,
                           height: 42,
                           textColor: AppColors.whiteColor,

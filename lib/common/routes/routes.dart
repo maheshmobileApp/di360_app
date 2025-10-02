@@ -26,6 +26,7 @@ import 'package:di360_flutter/feature/job_listings/view/job_listing_screen.dart'
 import 'package:di360_flutter/feature/job_profile/view/job_profile_view.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_screen.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/my_job_profile_screen.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
@@ -34,12 +35,14 @@ import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/learning_hub_market_place.dart/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/new_course_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registered_users_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
+import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
@@ -53,12 +56,11 @@ import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:provider/provider.dart';
-
 import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
-//   ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
-//LoginViewModel
+
+
 class Routes {
   static Map<String, WidgetBuilder> get routes {
     return {
@@ -88,7 +90,8 @@ class Routes {
         return ChangeNotifierProvider(
           create: (BuildContext context) => JobProfileCreateViewModel(),
           child: JobProfileView(
-            profile: profileData, isEdit: null,
+            profile: profileData,
+            isEdit: null,
           ),
         );
       },
@@ -108,19 +111,21 @@ class Routes {
           applicant: args['applicant'],
         );
       },
-
       RouteList.AppliedJobScreen: (context) {
         return AppliedJobScreen();
       },
       RouteList.EnquiriesScreen: (context) {
         return EnquiriesScreen();
       },
-
       RouteList.JobListingApplicantscreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingApplicantsScreen(
           jobsListingData: args as Jobs,
         );
+      },
+      RouteList.MyJobProfileScreen: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as JobProfile;
+        return MyJobProfileScreen(jobsListingData: args);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
@@ -129,7 +134,6 @@ class Routes {
           job: args as Jobs,
         );
       },
-
       RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
@@ -153,12 +157,14 @@ class Routes {
       RouteList.myLearningHubScreen: (context) => MyLearningHubScreen(),
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
+      RouteList.myAppointment: (context) => AppoinmentScreen(),
       RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
       RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
-      RouteList.bannersListView: (context) => ChangeNotifierProvider(
-          create: (_) => BannersViewModel(), child: BannersListScreen()),
-      RouteList.addBanners: (context) => AddBannersScreen(),
+      RouteList.bannersListView: (context) => BannersListScreen(),
+      RouteList.addBanners: (context) => ChangeNotifierProvider(
+          create: (_) => BannersViewModel(), child: AddBannersScreen()),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
+      RouteList.learningHubMasterView: (context) => LearningHubMasterView()
     };
   }
 }

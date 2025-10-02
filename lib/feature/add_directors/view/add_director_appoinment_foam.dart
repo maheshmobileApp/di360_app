@@ -103,104 +103,88 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
           Row(
             children: [
               Flexible(
-                flex: 1,
-                child: InputTextField(
-                  title: "Service Start Time",
-                  hintText: "00:00",
-                  controller: addDirectorVM.serviceStartTimeCntr,
-                  readOnly: true,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        addDirectorVM.serviceStartTimeCntr.text =
-                            picked.format(context);
-                        addDirectorVM.generateTimeSlots(context);
-                      }
-                    },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
-                ),
-              ),
+                  flex: 1,
+                  child: InputTextField(
+                      title: "Service Start Time",
+                      hintText: "00:00",
+                      controller: addDirectorVM.serviceStartTimeCntr,
+                      readOnly: true,
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          addDirectorVM.serviceStartTimeCntr.text =
+                              picked.format(context);
+                          addDirectorVM.generateTimeSlots(context);
+                        }
+                      },
+                      prefixIcon: Icon(Icons.access_time, size: 20))),
               addHorizontal(12),
               Flexible(
-                flex: 1,
-                child: InputTextField(
-                  title: "Service End Time",
-                  hintText: "00:00",
-                  controller: addDirectorVM.serviceEndTimeCntr,
-                  readOnly: true,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        addDirectorVM.serviceEndTimeCntr.text =
-                            picked.format(context);
-                        addDirectorVM.generateTimeSlots(context);
-                      }
-                    },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
-                ),
-              ),
+                  flex: 1,
+                  child: InputTextField(
+                      title: "Service End Time",
+                      hintText: "00:00",
+                      controller: addDirectorVM.serviceEndTimeCntr,
+                      readOnly: true,
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          addDirectorVM.serviceEndTimeCntr.text =
+                              picked.format(context);
+                          addDirectorVM.generateTimeSlots(context);
+                        }
+                      },
+                      prefixIcon: Icon(Icons.access_time, size: 20))),
             ],
           ),
           addVertical(12),
           Row(
             children: [
               Flexible(
-                flex: 1,
-                child: InputTextField(
-                  title: "Break Start Time",
-                  hintText: "00:00",
-                  controller: addDirectorVM.breakStartTimeCntr,
-                  readOnly: true,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        addDirectorVM.breakStartTimeCntr.text =
-                            picked.format(context);
-                        addDirectorVM.generateTimeSlots(context);
-                      }
-                    },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
-                ),
-              ),
+                  flex: 1,
+                  child: InputTextField(
+                      title: "Break Start Time",
+                      hintText: "00:00",
+                      controller: addDirectorVM.breakStartTimeCntr,
+                      readOnly: true,
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          addDirectorVM.breakStartTimeCntr.text =
+                              picked.format(context);
+                          addDirectorVM.generateTimeSlots(context);
+                        }
+                      },
+                      prefixIcon: Icon(Icons.access_time, size: 20))),
               addHorizontal(12),
               Flexible(
-                flex: 1,
-                child: InputTextField(
-                  title: "Break End Time",
-                  hintText: "00:00",
-                  controller: addDirectorVM.breakEndTimeCntr,
-                  readOnly: true,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        addDirectorVM.breakEndTimeCntr.text =
-                            picked.format(context);
-                        addDirectorVM.generateTimeSlots(context);
-                      }
-                    },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
-                ),
-              ),
+                  flex: 1,
+                  child: InputTextField(
+                      title: "Break End Time",
+                      hintText: "00:00",
+                      controller: addDirectorVM.breakEndTimeCntr,
+                      readOnly: true,
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          addDirectorVM.breakEndTimeCntr.text =
+                              picked.format(context);
+                          addDirectorVM.generateTimeSlots(context);
+                        }
+                      },
+                      prefixIcon: Icon(Icons.access_time, size: 20))),
             ],
           ),
         ],

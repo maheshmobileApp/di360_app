@@ -104,6 +104,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         child: RegisteredUserCard(
+                          userPhone: userData.phoneNumber.toString(),
                           userName:
                               "${userData.firstName ?? ""} ${userData.lastName ?? ""}",
                           userMail: userData.email ?? "",

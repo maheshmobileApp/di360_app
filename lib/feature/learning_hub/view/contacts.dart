@@ -16,76 +16,92 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader("Contacts"),
-            SizedBox(height: 16),
-            InputTextField(
-              controller: jobCreateVM.nameController,
-              hintText: "Enter Name",
-              title: "Name",
-              isRequired: true,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter Name' : null,
-            ),
-            SizedBox(height: 8),
-            InputTextField(
-              controller: jobCreateVM.phoneController,
-              hintText: "Enter Phone",
-              title: "Phone",
-              keyboardType: TextInputType.number,
-              maxLength: 10,
-              isRequired: true,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter Phone' : null,
-            ),
-            SizedBox(height: 8),
-            InputTextField(
-              controller: jobCreateVM.emailController,
-              hintText: "Enter Email",
-              title: "Email",
-              isRequired: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter Email';
-                }
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader("Contacts"),
+              SizedBox(height: 16),
+              InputTextField(
+                controller: jobCreateVM.nameController,
+                hintText: "Enter Name",
+                title: "Name",
+                isRequired: true,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter Name' : null,
+              ),
+              SizedBox(height: 8),
+              InputTextField(
+                controller: jobCreateVM.phoneController,
+                hintText: "Enter Phone",
+                title: "Phone",
+                keyboardType: TextInputType.number,
+                maxLength: 10,
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Phone'
+                    : null,
+              ),
+              SizedBox(height: 8),
+              InputTextField(
+                controller: jobCreateVM.emailController,
+                hintText: "Enter Email",
+                title: "Email",
+                isRequired: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Email';
+                  }
 
-                // Simple email regex
-                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  // Simple email regex
+                  final emailRegex =
+                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-                if (!emailRegex.hasMatch(value)) {
-                  return 'Please enter a valid Email';
-                }
+                  if (!emailRegex.hasMatch(value)) {
+                    return 'Please enter a valid Email';
+                  }
 
-                return null;
-              },
-            ),
-            SizedBox(height: 8),
-            InputTextField(
-              controller: jobCreateVM.websiteUrlController,
-              hintText: "Enter Website Url",
-              title: "Website Url",
-              isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Website url'
-                  : null,
-            ),
-            SizedBox(height: 8),
-            InputTextField(
-              controller: jobCreateVM.registerLinkController,
-              hintText: "Enter Register Link",
-              title: "Register Link",
-              isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Register link'
-                  : null,
-            ),
-            SizedBox(height: 8),
-          ],
+                  return null;
+                },
+              ),
+              SizedBox(height: 8),
+              InputTextField(
+                controller: jobCreateVM.websiteUrlController,
+                hintText: "Enter Website Url",
+                title: "Website Url",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Website url'
+                    : null,
+              ),
+              SizedBox(height: 8),
+              InputTextField(
+                controller: jobCreateVM.registerLinkController,
+                hintText: "Enter Register Link",
+                title: "Register Link",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Register link'
+                    : null,
+              ),
+              SizedBox(height: 8),
+              jobCreateVM.selectedCategory == "Webinar"
+                  ? InputTextField(
+                      controller: jobCreateVM.meetingLinkController,
+                      hintText: "Enter Meeting Link",
+                      title: "Meeting Link",
+                      isRequired: true,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter Meeting link'
+                          : null,
+                    )
+                  : const SizedBox.shrink(),
+            ],
+          ),
         ),
       ),
     );

@@ -34,6 +34,7 @@ class RouteList {
   static const String TalentListingScreen = ' TalentListingScreen';
   static const String TalentListingFilter = '/TalentListingFilter';
   static const String JobListingApplicantscreen = '/JobListingApplicantscreen';
+  static const String MyJobProfileScreen = '/MyJobProfileScreen';
   static const String adddirectorview = 'adddirectorview';
   static const String JobListingApplicantsMessege =
       '/JobListingApplicantsMessege';
@@ -54,4 +55,6 @@ class RouteList {
   static const String registeredUsersView = '/registeredUsersView';
   static const String bannersListView = '/bannersListView';
   static const String addBanners = '/addBanners';
+  static const String myAppointment = '/myAppointment';
+  static const String learningHubMasterView = '/learningHubMasterView';
 }

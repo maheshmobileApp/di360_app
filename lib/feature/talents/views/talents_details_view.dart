@@ -111,23 +111,29 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                   text: '${widget.talentList?.emailAddress ?? ''}'),
               addVertical(12),
               ExerinaceInfoIcons(
-                  icon: Icons.language,
-                  text: '${widget.talentList?.languagesSpoken ?? ''}'),
+                icon: Icons.language,
+                text: (widget.talentList?.languagesSpoken != null)
+                    ? widget.talentList!.languagesSpoken.join(", ")
+                    : '',
+              ),
               addVertical(12),
               ExerinaceInfoIcons(
-                  icon: Icons.build,
-                  text: '${widget.talentList?.areasExpertise ?? ''}'),
+                icon: Icons.build,
+                text: (widget.talentList?.areasExpertise != null)
+                    ? widget.talentList!.areasExpertise.join(", ")
+                    : '',
+              ),
             ],
           ),
           Divider(
             color: AppColors.geryColor,
           ),
           addVertical(16),
-          // EducationDataWithIcon(
-          //   iconPath: ImageConst.graduationSvg,
-          //   title: 'Education',
-          //   educationList: widget.talentList?.educations ?? [],
-          // ),
+          //EducationDataWithIcon(
+          //iconPath: ImageConst.graduationSvg,
+          //title: 'Education',
+          //educationList: widget.talentList?.educations ?? [],
+          //),
           addVertical(16),
           _sectionHeader("Skills"),
           addVertical(6),

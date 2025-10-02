@@ -24,74 +24,77 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader("Course Info"),
-            SizedBox(height: 16),
-            CustomRadioGroup<String>(
-              title: "Course Event Info",
-              isRequired: true,
-              options: const ["Single Day", "Multiple Day"],
-              selectedValue: jobCreateVM.selectedEvent,
-              labelBuilder: (value) => value,
-              direction: Axis.vertical, // try Axis.vertical also
-              onChanged: (value) {
-                jobCreateVM.setSelectedEvent(value);
-              },
-            ),
-            SizedBox(height: 16),
-            if (jobCreateVM.selectedEvent == "Single Day") ...[
-              _buildSingleDayUI(jobCreateVM, context),
-            ] else if (jobCreateVM.selectedEvent == "Multiple Day") ...[
-              _buildMultipleDayUI(jobCreateVM, context),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader("Course Info"),
+              SizedBox(height: 16),
+              CustomRadioGroup<String>(
+                title: "Course Event Info",
+                isRequired: true,
+                options: const ["Single Day", "Multiple Day"],
+                selectedValue: jobCreateVM.selectedEvent,
+                labelBuilder: (value) => value,
+                direction: Axis.vertical, // try Axis.vertical also
+                onChanged: (value) {
+                  jobCreateVM.setSelectedEvent(value);
+                },
+              ),
+              SizedBox(height: 16),
+              if (jobCreateVM.selectedEvent == "Single Day") ...[
+                _buildSingleDayUI(jobCreateVM, context),
+              ] else if (jobCreateVM.selectedEvent == "Multiple Day") ...[
+                _buildMultipleDayUI(jobCreateVM, context),
+              ],
+              SizedBox(height: 8),
+              InputTextField(
+                hintText: "Enter Description",
+                maxLength: 500,
+                maxLines: 5,
+                title: "Topics Included",
+                controller: jobCreateVM.topicsIncludedDescController,
+              ),
+              SizedBox(height: 8),
+              InputTextField(
+                hintText: "Enter Description",
+                maxLength: 500,
+                maxLines: 5,
+                title: "Learning Objectives",
+                controller: jobCreateVM.learningObjectivesDescController,
+              ),
+              /*InputTextField(
+                controller: jobCreateVM.day1SessionNameController,
+                hintText: "Enter Session Name",
+                title: "Day 1 Session Name",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Session name'
+                    : null,
+              ),
+              SizedBox(height: 8),
+              InputTextField(
+                controller: jobCreateVM.sessioInfoController,
+                hintText: "Enter Information",
+                title: "Session Info",
+                isRequired: true,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Session Info'
+                    : null,
+              ),
+              SizedBox(height: 8),
+              ImagePickerField(
+                title: "Event Image",
+                isRequired: true,
+                showPreview: true, // show full image
+              ),
+              SizedBox(height: 8),*/
             ],
-            SizedBox(height: 8),
-            InputTextField(
-              hintText: "Enter Description",
-              maxLength: 500,
-              maxLines: 5,
-              title: "Topics Included",
-              controller: jobCreateVM.topicsIncludedDescController,
-            ),
-            SizedBox(height: 8),
-            InputTextField(
-              hintText: "Enter Description",
-              maxLength: 500,
-              maxLines: 5,
-              title: "Learning Objectives",
-              controller: jobCreateVM.learningObjectivesDescController,
-            ),
-            /*InputTextField(
-              controller: jobCreateVM.day1SessionNameController,
-              hintText: "Enter Session Name",
-              title: "Day 1 Session Name",
-              isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Session name'
-                  : null,
-            ),
-            SizedBox(height: 8),
-            InputTextField(
-              controller: jobCreateVM.sessioInfoController,
-              hintText: "Enter Information",
-              title: "Session Info",
-              isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter Session Info'
-                  : null,
-            ),
-            SizedBox(height: 8),
-            ImagePickerField(
-              title: "Event Image",
-              isRequired: true,
-              showPreview: true, // show full image
-            ),
-            SizedBox(height: 8),*/
-          ],
+          ),
         ),
       ),
     );
@@ -156,6 +159,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           title: "Event Image",
           isRequired: true,
           showPreview: true,
+          serverImages: day.serverImages,
           allowMultiple: true,
           selectedFiles: day.images,
           onFilesPicked: (files) => jobCreateVM.setEventImgs(0, files),
@@ -228,6 +232,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 title: "Event Image",
                 isRequired: true,
                 allowMultiple: true,
+                serverImages: day.serverImages,
                 showPreview: true,
                 selectedFiles: day.images,
                 onFilesPicked: (files) =>

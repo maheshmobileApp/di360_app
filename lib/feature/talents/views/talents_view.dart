@@ -1,3 +1,6 @@
+import 'package:di360_flutter/common/banner/generic_list_view_with_banners.dart';
+import 'package:di360_flutter/common/banner/list_banner.dart';
+import 'package:di360_flutter/common/banner/utils.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/feature/talents/views/talents_card.dart';
@@ -11,22 +14,25 @@ class TalentsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: talentViewModel.talentList.length,
-        itemBuilder: (BuildContext context, int index) {
-          final talentData = talentViewModel.talentList[index];
-          return InkWell(
-              onTap: () {
-                navigationService.navigateToWithParams(
-                    RouteList.talentdetailsScreen,
-                    params: talentViewModel.talentList[index]);
-              },
-              child: TalentsCard(
-                talentList: talentData,
-              ));
-        },
-      ),
+    return GenericListViewWithBanners(
+      items: talentViewModel.talentList,
+      itemBuilder: (BuildContext context, int index) {
+        final talentData = talentViewModel.talentList[index];
+        return InkWell(
+            onTap: () {
+              navigationService.navigateToWithParams(
+                  RouteList.talentdetailsScreen,
+                  params: talentViewModel.talentList[index]);
+            },
+            child: TalentsCard(
+              talentList: talentData,
+            ));
+      },
+      bannerIndices:
+          BannerUtils.calculateBannerIndices(talentViewModel.talentList.length),
+      bannerBuilder: (BuildContext context, int bannerPosition) {
+        return ListBanner(pageIndex: bannerPosition);
+      },
     );
-  }
+}
 }

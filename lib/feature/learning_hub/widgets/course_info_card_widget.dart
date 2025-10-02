@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CourseInfoCardWidget extends StatelessWidget {
   final String courseName;
@@ -10,6 +11,9 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String profilePic;
   final String totalPrice;
   final String discountPrice;
+  final String startDate;
+  final String endDate;
+  final String time;
 
   const CourseInfoCardWidget(
       {super.key,
@@ -20,7 +24,10 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.webinar,
       required this.profilePic,
       required this.totalPrice,
-      required this.discountPrice});
+      required this.discountPrice,
+      required this.startDate,
+      required this.endDate,
+      required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +64,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${presentByName}",
+                    Text("${presentByName}".toUpperCase(),
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     Text("A Comprehensive Guide",
                         style: TextStyle(color: Colors.grey)),
@@ -65,13 +72,16 @@ class CourseInfoCardWidget extends StatelessWidget {
                 )
               ],
             ),
+            Row(),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _InfoTextWidget(
-                  label: "CPD Duration",
-                  value: "${cpdHours}",
+                  label: "Date",
+                  value: (startDate.isEmpty && endDate.isEmpty)
+                      ? "Not Specified"
+                      : "${DateFormat("d MMM").format(DateTime.parse("${startDate}"))} - ${DateFormat("d MMM").format(DateTime.parse("${endDate}"))} ",
                   first: true,
                 ),
                 _InfoTextWidget(
@@ -86,9 +96,9 @@ class CourseInfoCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _InfoTextWidget(
-                  label: "Webinar",
+                  label: "CPD Hours",
                   first: true,
-                  value: "${webinar}",
+                  value: "${cpdHours}",
                 ),
                 _PriceTextWidget(
                   label: "Price",
@@ -126,7 +136,7 @@ class _InfoTextWidget extends StatelessWidget {
         Text(label,
             style: const TextStyle(
               color: AppColors.lightGeryColor,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w400,
             )),
         const SizedBox(height: 4),
@@ -173,7 +183,7 @@ class _PriceTextWidget extends StatelessWidget {
             Text(
               "\$${originalPrice}",
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 color: Colors.black,
                 decoration: TextDecoration.lineThrough, // strike-through
               ),
@@ -182,7 +192,7 @@ class _PriceTextWidget extends StatelessWidget {
               "AUD \$${discountedPrice}",
               style: const TextStyle(
                 fontSize: 16,
-                color: AppColors.primaryColor,
+                color: AppColors.activesendary,
                 fontWeight: FontWeight.bold,
               ),
             ),

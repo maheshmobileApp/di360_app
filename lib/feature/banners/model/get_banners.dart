@@ -1,4 +1,5 @@
-class getBannerResp {
+ 
+ class getBannerResp {
   BannersData? data;
 
   getBannerResp({this.data});

@@ -36,8 +36,8 @@ class JobProfile {
   final List<String> availabilityDay;
   final String? workRights;
   final String? yearOfExperience;
-  final String? languagesSpoken;
-  final String? areasExpertise;
+  final List<String> languagesSpoken;
+  final List<String> areasExpertise;
   final String? percentage;
   final int? salaryAmount;
   final String? salaryType;
@@ -50,136 +50,162 @@ class JobProfile {
   final DentalProfessional? dentalProfessional;
   final List<JobHiring> jobHirings;
   final List<TalentEnquiries>? talentEnquiries;
-  JobProfile({
-    this.id,
-    this.createdAt,
-    this.updatedAt,
-    this.skills,
-    required this.jobExperiences,
-    required this.educations,
-    required this.uploadResume,
-    this.jobDesignation,
-    this.currentCompany,
-    this.currentCtc,
-    this.dentalProfessionalId,
-    this.postAnonymously = false,
-    this.adminStatus,
-    this.activeStatus,
-    required this.profileImage,
-    this.fullName,
-    this.mobileNumber,
-    this.emailAddress,
-    required this.workType,
-    this.professionType,
-    this.location,
-    this.country,
-    this.city,
-    this.state,
-    required this.coverLetter,
-    required this.certificate,
-    this.radius,
-    this.abnNumber,
-    this.availabilityOption,
-    required this.availabilityDate,
-    required this.fromDate,
-    required this.availabilityDay,
-    this.workRights,
-    this.yearOfExperience,
-    this.languagesSpoken,
-    this.areasExpertise,
-    this.percentage,
-    this.salaryAmount,
-    this.salaryType,
-    this.aphraNumber,
-    this.willingToTravel = false,
-    this.travelDistance,
-    this.aboutYourself,
-    this.availabilityType,
-    required this.unavailabilityDate,
-    this.dentalProfessional,
-    required this.jobHirings,
-    this.talentEnquiries
-  });
-
-  static List<String> _normalizeList(dynamic value) {
-    if (value is List) {
-      return value.map((e) => e.toString()).toList();
-    } else if (value is String && value.isNotEmpty) {
-      return [value];
-    }
-    return [];
-  }
+  JobProfile(
+      {this.id,
+      this.createdAt,
+      this.updatedAt,
+      this.skills,
+      required this.jobExperiences,
+      required this.educations,
+      required this.uploadResume,
+      this.jobDesignation,
+      this.currentCompany,
+      this.currentCtc,
+      this.dentalProfessionalId,
+      this.postAnonymously = false,
+      this.adminStatus,
+      this.activeStatus,
+      required this.profileImage,
+      this.fullName,
+      this.mobileNumber,
+      this.emailAddress,
+      required this.workType,
+      this.professionType,
+      this.location,
+      this.country,
+      this.city,
+      this.state,
+      required this.coverLetter,
+      required this.certificate,
+      this.radius,
+      this.abnNumber,
+      this.availabilityOption,
+      required this.availabilityDate,
+      required this.fromDate,
+      required this.availabilityDay,
+      this.workRights,
+      this.yearOfExperience,
+      required this.languagesSpoken,
+      required this.areasExpertise,
+      this.percentage,
+      this.salaryAmount,
+      this.salaryType,
+      this.aphraNumber,
+      this.willingToTravel = false,
+      this.travelDistance,
+      this.aboutYourself,
+      this.availabilityType,
+      required this.unavailabilityDate,
+      this.dentalProfessional,
+      required this.jobHirings,
+      this.talentEnquiries});
 
   factory JobProfile.fromJson(Map<String, dynamic> json) {
-    final value = JobProfile(
-        id: json['id'],
-        createdAt: json['created_at'],
-        updatedAt: json['updated_at'],
-        skills: (json['skills'] as List?)?.map((e) => e.toString()).toList(),
-      jobExperiences: (json['jobexperiences'] as List? ?? [])
-            .map((e) => JobExperience.fromJson(e))
-            .toList(),
-        educations: (json['educations'] as List? ?? [])
-            .map((e) => Education.fromJson(e))
-            .toList(),
-        uploadResume: (json['upload_resume'] as List? ?? [])
-            .map((e) => FileUpload.fromJson(e))
-            .toList(),
-        jobDesignation: json['job_designation'],
-        currentCompany: json['current_company'],
-        currentCtc: json['current_ctc'],
-        dentalProfessionalId: json['dental_professional_id'],
-        postAnonymously: json['post_anonymously'] ?? false,
-        adminStatus: json['admin_status'],
-        activeStatus: json['active_status'],
-        profileImage: (json['profile_image'] as List? ?? [])
-            .map((e) => FileUpload.fromJson(e))
-            .toList(),
-        fullName: json['full_name'],
-        mobileNumber: json['mobile_number'],
-        emailAddress: json['email_address'],
-        workType: _normalizeList(json['work_type']),
-        professionType: json['profession_type'],
-        location: json['location'],
-        country: json['country'],
-        city: json['city'],
-        state: json['state'],
-        coverLetter: (json['cover_letter'] as List? ?? [])
-            .map((e) => FileUpload.fromJson(e))
-            .toList(),
-        certificate: (json['certificate'] as List? ?? [])
-            .map((e) => FileUpload.fromJson(e))
-            .toList(),
-        radius: json['radius'],
-        abnNumber: json['abn_number'],
-        availabilityOption: json['availabilityOption'],
-        availabilityDate: _normalizeList(json['availabilityDate']),
-        fromDate: _normalizeList(json['fromDate']),
-        availabilityDay: _normalizeList(json['availabilityDay']),
-        workRights: json['work_rights'],
-        yearOfExperience: json['year_of_experience'],
-        languagesSpoken: json['languages_spoken'],
-        areasExpertise: json['areas_expertise'],
-        percentage: json['percentage'],
-        salaryAmount: json['salary_amount'],
-        salaryType: json['salary_type'],
-        aphraNumber: json['aphra_number'],
-        willingToTravel: json['willing_to_travel'] ?? false,
-        travelDistance: json['travel_distance'],
-        aboutYourself: json['about_yourself'],
-        availabilityType: json['availabilityType'],
-        unavailabilityDate: _normalizeList(json['unavailabilityDate']),
-        dentalProfessional: json['dental_professional'] != null
-            ? DentalProfessional.fromJson(json['dental_professional'])
-            : null,
-        jobHirings: (json['jobhirings'] as List? ?? [])
-            .map((e) => JobHiring.fromJson(e))
-            .toList(),
-            talentEnquiries: (json['talent_enquiries'] as List?)
-            ?.map((e) => TalentEnquiries.fromJson(e))
-            .toList(),
-      );
-return value;
+    List<String> normalizeStringList(dynamic value) {
+      if (value == null) return [];
+      if (value is String && value.isNotEmpty) return [value];
+      if (value is List) return value.map((e) => e.toString()).toList();
+      return [];
+    }
+
+    List<FileUpload> parseFileUploadList(dynamic value) {
+      if (value == null) return [];
+      if (value is List) {
+        return value
+            .map((e) => e is Map<String, dynamic>
+                ? FileUpload.fromJson(e)
+                : FileUpload(url: e.toString()))
+            .toList();
+      }
+      return [];
+    }
+
+    List<JobExperience> parseJobExperiences(dynamic value) {
+      if (value == null) return [];
+      if (value is List) {
+        return value.map((e) => JobExperience.fromJson(e)).toList();
+      }
+      return [];
+    }
+
+    List<Education> parseEducations(dynamic value) {
+      if (value == null) return [];
+      if (value is List) {
+        return value.map((e) => Education.fromJson(e)).toList();
+      }
+      return [];
+    }
+
+    List<JobHiring> parseJobHirings(dynamic value) {
+      if (value == null) return [];
+      if (value is List) {
+        return value.map((e) => JobHiring.fromJson(e)).toList();
+      }
+      return [];
+    }
+
+    List<TalentEnquiries> parseTalentEnquiries(dynamic value) {
+      if (value == null) return [];
+      if (value is List) {
+        return value.map((e) => TalentEnquiries.fromJson(e)).toList();
+      }
+      return [];
+    }
+
+    return JobProfile(
+      id: json['id']?.toString(),
+      createdAt: json['created_at']?.toString(),
+      updatedAt: json['updated_at']?.toString(),
+      skills: normalizeStringList(json['skills']),
+      jobExperiences: parseJobExperiences(json['jobexperiences']),
+      educations: parseEducations(json['educations']),
+      uploadResume: parseFileUploadList(json['upload_resume']),
+      jobDesignation: json['job_designation']?.toString(),
+      currentCompany: json['current_company']?.toString(),
+      currentCtc: json['current_ctc']?.toString(),
+      dentalProfessionalId: json['dental_professional_id']?.toString(),
+      postAnonymously: json['post_anonymously'] ?? false,
+      adminStatus: json['admin_status']?.toString(),
+      activeStatus: json['active_status']?.toString(),
+      profileImage: parseFileUploadList(json['profile_image']),
+      fullName: json['full_name']?.toString(),
+      mobileNumber: json['mobile_number']?.toString(),
+      emailAddress: json['email_address']?.toString(),
+      workType: normalizeStringList(json['work_type']),
+      professionType: json['profession_type']?.toString(),
+      location: json['location']?.toString(),
+      country: json['country']?.toString(),
+      city: json['city']?.toString(),
+      state: json['state']?.toString(),
+      coverLetter: parseFileUploadList(json['cover_letter']),
+      certificate: parseFileUploadList(json['certificate']),
+      radius: json['radius']?.toString(),
+      abnNumber: json['abn_number']?.toString(),
+      availabilityOption: json['availabilityOption']?.toString(),
+      availabilityDate: normalizeStringList(json['availabilityDate']),
+      fromDate: normalizeStringList(json['fromDate']),
+      availabilityDay: normalizeStringList(json['availabilityDay']),
+      workRights: json['work_rights']?.toString(),
+      yearOfExperience: json['year_of_experience']?.toString(),
+      languagesSpoken: normalizeStringList(json['languages_spoken']),
+      areasExpertise: normalizeStringList(json['areas_expertise']),
+      percentage: json['percentage']?.toString(),
+      salaryAmount: json['salary_amount'] is int
+          ? json['salary_amount']
+          : int.tryParse(json['salary_amount']?.toString() ?? ''),
+      salaryType: json['salary_type']?.toString(),
+      aphraNumber: json['aphra_number']?.toString(),
+      willingToTravel: json['willing_to_travel'] ?? false,
+      travelDistance: json['travel_distance']?.toString(),
+      aboutYourself: json['about_yourself']?.toString(),
+      availabilityType: json['availabilityType']?.toString(),
+      unavailabilityDate: normalizeStringList(json['unavailabilityDate']),
+      dentalProfessional: json['dental_professional'] != null
+          ? DentalProfessional.fromJson(json['dental_professional'])
+          : null,
+      jobHirings: parseJobHirings(json['jobhirings']),
+      talentEnquiries: parseTalentEnquiries(json['talent_enquiries']),
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -216,9 +242,8 @@ return value;
         'fromDate': fromDate,
         'availabilityDay': availabilityDay,
         'work_rights': workRights,
-        'year_of_experience': yearOfExperience,
-        'languages_spoken': languagesSpoken,
-        'areas_expertise': areasExpertise,
+        'languages_spoken': List<String>.from(languagesSpoken),
+        'areas_expertise': List<String>.from(areasExpertise),
         'percentage': percentage,
         'salary_amount': salaryAmount,
         'salary_type': salaryType,
@@ -279,10 +304,6 @@ class JobExperience {
       };
 }
 
-
-
-
-
 class DentalProfessional {
   final String? id;
   final String? gender;
@@ -314,6 +335,7 @@ class JobHiring {
 
   Map<String, dynamic> toJson() => {'id': id, '__typename': typeName};
 }
+
 class TalentEnquiries {
   String? id;
   String? talentId;
