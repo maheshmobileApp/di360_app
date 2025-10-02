@@ -117,21 +117,26 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 //------------------------Set Values-------------------------------
   void setCourseHeaderBaner(File? value) {
     selectedCourseHeaderBanner = value;
+    serverCourseHeaderBanner = "";
     notifyListeners();
   }
 
   void setPresentedImg(File? value) {
     selectedPresentedImg = value;
+    serverPresentedImg = "";
+
     notifyListeners();
   }
 
   void setGallery(List<File>? value) {
     selectedGallery = value;
+    serverGallery = [];
     notifyListeners();
   }
 
   void setCourseBannerImg(List<File>? value) {
     selectedCourseBannerImg = value;
+    serverCourseBannerImg = [];
     notifyListeners();
   }
 
@@ -142,6 +147,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setSponsoredBy(List<File>? value) {
     selectedsponsoredByImg = value;
+    serverSponsoredByImg = [];
     notifyListeners();
   }
 
@@ -149,6 +155,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     selectedCourseType = value;
     notifyListeners();
   }
+
+  
 
   void setSelectedCourseCategory(String? name) async {
     await fetchCourseCategory();
@@ -426,6 +434,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (index < sessions.length) {
       sessions[index].images = files;
       selectedEventImg = files;
+      sessions[index].serverImages = [];
+      
       notifyListeners();
     }
   }

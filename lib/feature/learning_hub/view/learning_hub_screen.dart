@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -189,6 +190,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         print(courseListingVM.coursesListingList.length);
                         return CouresListingCard(
                           id: course.id ?? "",
+                          meetingLink: course.meetingLink??"",
                           logoUrl: course.presentedByImage?.url ?? '',
                           companyName: course.courseName ?? '',
                           courseTitle: course.presentedByName ?? '',
