@@ -24,7 +24,7 @@ class BannerRepositoryImpl extends BannersRepository {
   Future<List<BannerCategories>> bannerCategotyList() async {
     final bannerCategoriesData = await http.query(bannersCategoryQuery);
     final result = BannersCategoriesData.fromJson(bannerCategoriesData);
-    return result.bannerCategories ?? [];
+    return result.bannerCategories??[];
   }
 
   @override
