@@ -50,7 +50,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
                     _buildBannersRow('Category', item?.categoryName, 'Views',
                         '${item?.views}', false),
                     addVertical(10),
-                    _buildBannersRow('Scheduler date', item?.scheduleDate,
+                    _buildBannersRow('Scheduler Date', item?.scheduleDate,
                         'Expiry Date', item?.expiryDate, true)
                   ]))),
           Positioned(

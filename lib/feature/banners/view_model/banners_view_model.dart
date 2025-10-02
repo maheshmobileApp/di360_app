@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/banners/model/edit_banner_model.dart';
 import 'package:di360_flutter/feature/banners/model/get_banners.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/repository/banner_repository_impl.dart';
+import 'package:di360_flutter/feature/banners/widgets/banner_loader.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -20,7 +21,7 @@ class BannersViewModel extends ChangeNotifier {
   File? selectedPresentedImg;
   TextEditingController bannerNameController = TextEditingController();
   TextEditingController urlController = TextEditingController();
-  List<BannerCategories>? catagorysList;
+  List<BannerCategories> catagorysList= [];
   BannerCategories? selectedCatagory;
   List<Banners> bannersList = [];
   dynamic bannner_image;
@@ -31,7 +32,9 @@ class BannersViewModel extends ChangeNotifier {
 
   getBannerData(BuildContext context) {
     getBannersList(context);
+    getBannerCategoryData();
   }
+
   void updateSelectedCatagory(BannerCategories? catagory) {
     selectedCatagory = catagory;
     notifyListeners();
@@ -158,9 +161,10 @@ class BannersViewModel extends ChangeNotifier {
   }
 
   Future<void> getBannersList(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     await getBannersCounts();
-   final res = await repo.getMyBanners({
+    final res = await repo.getMyBanners({
       "where": {
         "status": {
           "_in": bannersStatus?.isEmpty == true
@@ -182,9 +186,49 @@ class BannersViewModel extends ChangeNotifier {
 
     if (res != null) {
       bannersList = res;
-    } 
+    }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
+//   Future<void> getBannersList(BuildContext context) async {
+//   BannerLoaders.circularShowLoader();
+
+//   try {
+//     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+//     await getBannersCounts();
+
+//     final res = await repo.getMyBanners({
+//       "where": {
+//         "status": {
+//           "_in": bannersStatus?.isEmpty == true
+//               ? [
+//                   "APPROVED",
+//                   "PENDING",
+//                   "EXPIRED",
+//                   "SCHEDULED",
+//                   "REJECTED",
+//                   "DRAFT"
+//                 ]
+//               : bannersStatus,
+//         },
+//         "from_id": {"_eq": userId}
+//       },
+//       "limit": 10000,
+//       "offset": 0,
+//     });
+
+//     if (res != null) {
+//       bannersList = res;
+//     }
+//     notifyListeners();
+//   } catch (e) {
+//     debugPrint("Error loading banners: $e");
+//   } finally {
+//     if (context.mounted) {
+//       BannerLoaders.circularHideLoader();
+//     }
+//   }
+// }
 
   Future<void> validateBannerImg() async {
     var value = await _http.uploadImage(selectedPresentedImg?.path);
@@ -253,7 +297,7 @@ class BannersViewModel extends ChangeNotifier {
 
   //data assign in editfields
   assignTheSelectedCatagory(String? name) {
-    final obj = catagorysList?.firstWhere((v) => v.name == name);
+    final obj = catagorysList.firstWhere((v) => v.name == name);
     updateSelectedCatagory(obj);
     notifyListeners();
   }
@@ -276,7 +320,6 @@ class BannersViewModel extends ChangeNotifier {
       bannerView = res;
       updateEditBannerVal(true);
       editDataAssign(res);
-
       Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.addBanners);
     } else {
@@ -292,7 +335,7 @@ class BannersViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     await validateBannerImg();
     final res = await repo.updateBanner({
-      {
+      
         "id": editBannerId,
         "data": {
           "banner_name": bannerNameController.text,
@@ -314,7 +357,7 @@ class BannersViewModel extends ChangeNotifier {
           "status": isDarft ? "DRAFT" : "PENDING",
           "company_name": name
         }
-      }
+      
     });
     if (res != null) {
       getBannersCounts();

@@ -6,11 +6,9 @@ import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/banners/widgets/banners_schedule_date.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
-import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +36,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
         leading: GestureDetector(
             onTap: () => navigationService.goBack(),
             child: const Icon(Icons.arrow_back_ios, color: AppColors.black)),
-        title: Text('Add Banners',
+        title: Text(bannersVM.isEditBanner ? 'Edit Banner' : 'Add Banners',
             style: TextStyles.medium2(color: AppColors.black)),
       ),
       body: SingleChildScrollView(
@@ -66,59 +64,30 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                       isRequired: true,
                       showPreview: true,
                       selectedFile: bannersVM.selectedPresentedImg,
-                      onFilePicked: (file) async {
-                        final actualSize = await bannersVM.getImageSize(file!);
-                        final requiredDim =
-                            bannersVM.selectedCatagory?.dimensions;
+                       onFilePicked: (file) => bannersVM.setPresentedImg(file),
+                     // selectedFiles: jobCreateVM.selectedGallery,
+               //  onFilesPicked: (file) => bannersVM.setPresentedImg(file),
+                      // onFilePicked: (file) async {
+                      //   final actualSize = await bannersVM.getImageSize(file!);
+                      //   final requiredDim =
+                      //       bannersVM.selectedCatagory?.dimensions;
 
-                        final isValid =
-                            bannersVM.checkDimensions(actualSize, requiredDim);
+                      //   final isValid =
+                      //       bannersVM.checkDimensions(actualSize, requiredDim);
 
-                        if (!isValid) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    "Invalid image size. Expected $requiredDim but got ${actualSize?.width.toInt()}x${actualSize?.height.toInt()}")),
-                          );
-                          return;
-                        }
+                      //   if (!isValid) {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(
+                      //           content: Text(
+                      //               "Invalid image size. Expected $requiredDim but got ${actualSize?.width.toInt()}x${actualSize?.height.toInt()}")),
+                      //     );
+                      //     return;
+                      //   }
 
-                        // valid → save in VM
-                        bannersVM.setPresentedImg(file);
-                      },
+                      //   // valid → save in VM
+                      //   bannersVM.setPresentedImg(file);
+                      // },
                     ),
-
-                    // ImagePickerField(
-                    //   title: "Banner Image",
-                    //   isRequired: true,
-                    //   showPreview: true,
-                    //   selectedFile: bannersVM.selectedPresentedImg,
-                    //   onFilePicked: (file) async {
-                    //     final selectedCategory = bannersVM.selectedCatagory;
-
-                    //     final isValid = await bannersVM.validateImageDimensions(
-                    //         file!, selectedCategory?.dimensions);
-                    //     if (!isValid) {
-                    //       // show error
-                    //       ScaffoldMessenger.of(context).showSnackBar(
-                    //         SnackBar(
-                    //             content: Text(
-                    //                 "Invalid image size. Expected ${selectedCategory?.dimensions}")),
-                    //       );
-                    //       return;
-                    //     }
-
-                    //     // valid image → save
-                    //     bannersVM.setPresentedImg(file);
-                    //   },
-                    // ),
-                    // ImagePickerField(
-                    //   title: "Banner Image",
-                    //   isRequired: true,
-                    //   showPreview: true,
-                    //   selectedFile: bannersVM.selectedPresentedImg,
-                    //   onFilePicked: (file) => bannersVM.setPresentedImg(file),
-                    // ),
                     addVertical(15),
                     InputTextField(
                       title: 'URL',
@@ -197,14 +166,13 @@ class _AddBannersScreenState extends State<AddBannersScreen>
       onChanged: (v) {
         bannersVM.updateSelectedCatagory(v as BannerCategories);
       },
-      items: bannersVM.catagorysList?.map<DropdownMenuItem<BannerCategories>>(
+      items: bannersVM.catagorysList.map<DropdownMenuItem<BannerCategories>>(
               (BannerCategories value) {
             return DropdownMenuItem<BannerCategories>(
               value: value,
               child: Text(value.name ?? ''),
             );
-          }).toList() ??
-          [],
+          }).toList(),
       hintText: "Select Category",
       validator: (value) => value == null || value.toString().isEmpty
           ? 'Please select category'
@@ -212,11 +180,5 @@ class _AddBannersScreenState extends State<AddBannersScreen>
     );
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    final bannersVM = Provider.of<BannersViewModel>(context, listen: false);
-    bannersVM.getBannerCategoryData();
-  }
+
 }

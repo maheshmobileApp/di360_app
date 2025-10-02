@@ -302,11 +302,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<BannersViewModel>()
-                                .getBannerData(context);
-                            Loaders.circularHideLoader(context);
+                           
+                            // await context
+                            //     .read<BannersViewModel>()
+                            //     .getBannerData(context);
+                        
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
                           }

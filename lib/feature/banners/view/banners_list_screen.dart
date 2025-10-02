@@ -25,26 +25,26 @@ class _BannersListScreenState extends State<BannersListScreen>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            title: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Text(
-                  'Dental Interface',
-                  style: TextStyles.bold4(color: AppColors.black),
+          backgroundColor: AppColors.whiteColor,
+          title: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Text(
+                'Dental Interface',
+                style: TextStyles.bold4(color: AppColors.black),
+              ),
+              Positioned(
+                top: -9,
+                right: -18,
+                child: SvgPicture.asset(
+                  ImageConst.logo,
+                  height: 20,
+                  width: 20,
                 ),
-                Positioned(
-                  top: -9,
-                  right: -18,
-                  child: SvgPicture.asset(
-                    ImageConst.logo,
-                    height: 20,
-                    width: 20,
-                  ),
-                ),
-              ],
-            ),
-           ),
+              ),
+            ],
+          ),
+        ),
         body: Column(
           children: [
             SizedBox(
@@ -57,7 +57,7 @@ class _BannersListScreenState extends State<BannersListScreen>
                   bool isSelected = bannersVM.selectedStatus == status;
                   return GestureDetector(
                     onTap: () {
-                       bannersVM.changeStatus(status, context);
+                      bannersVM.changeStatus(status, context);
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(
@@ -104,13 +104,12 @@ class _BannersListScreenState extends State<BannersListScreen>
             ),
             Divider(),
             Expanded(
-              child:
-                  bannersVM.bannersList.isNotEmpty == false
+              child: bannersVM.bannersList.isNotEmpty == false
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                         // SvgPicture.asset(ImageConst.noCatalogue),
+                          // SvgPicture.asset(ImageConst.noCatalogue),
                           addVertical(10),
                           Text(
                             "No Banners",
@@ -119,24 +118,22 @@ class _BannersListScreenState extends State<BannersListScreen>
                         ],
                       ),
                     )
-                  :
-                  ListView.builder(
+                  : ListView.builder(
                       itemCount: bannersVM.bannersList.length,
-                itemBuilder: (context, index) {
-                  return BannersCard(
+                      itemBuilder: (context, index) {
+                        return BannersCard(
                           item: bannersVM.bannersList[index],
-                  );
-                 
-                },
-              ),
+                        );
+                      },
+                    ),
             )
           ],
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
-             bannersVM.clearAddBannerData();
-             navigationService.navigateTo(RouteList.addBanners);
+            bannersVM.clearAddBannerData();
+            navigationService.navigateTo(RouteList.addBanners);
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));
@@ -145,5 +142,6 @@ class _BannersListScreenState extends State<BannersListScreen>
   @override
   void initState() {
     super.initState();
+    context.read<BannersViewModel>().getBannerData(context);
   }
 }

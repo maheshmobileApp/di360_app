@@ -54,7 +54,7 @@ class BannersScheduleExpiryPage extends StatelessWidget {
           children: [
             Expanded(
               child: DatePickerField(
-                label: "Schedule date",
+                label: "Schedule Date",
                 selectedDate: provider.scheduleDate,
                 onTap: () => _pickScheduleDate(context),
               ),
@@ -93,9 +93,14 @@ class DatePickerField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyles.regular3(color: AppColors.black),
+        Row(
+          children: [
+            Text(
+              label,
+              style: TextStyles.regular3(color: AppColors.black),
+            ),
+            Text("*", style: TextStyles.regular3(color: AppColors.redColor),)
+          ],
         ),
         const SizedBox(height: 8),
         ElevatedButton.icon(
