@@ -23,9 +23,17 @@ class _DirectorScreenState extends State<DirectorScreen>
 
   bool _showScrollToTop = false;
 
+  fetchDirectorData() {
+    final directorVM = context.read<DirectoryViewModel>();
+    directorVM.getDirectorsList(context);
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((s) {
+      fetchDirectorData();
+    });
     _scrollController.addListener(() {
       if (_scrollController.offset > 700) {
         if (!_showScrollToTop) {
@@ -60,7 +68,8 @@ class _DirectorScreenState extends State<DirectorScreen>
                     child:
                         Image.asset(ImageConst.catalogueBg, fit: BoxFit.cover)),
                 Positioned(
-                  top: 10,left: 10,
+                    top: 10,
+                    left: 10,
                     child: CircleAvatar(
                         radius: 20,
                         child: InkWell(
