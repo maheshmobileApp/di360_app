@@ -20,7 +20,7 @@ class BannersViewModel extends ChangeNotifier {
   File? selectedPresentedImg;
   TextEditingController bannerNameController = TextEditingController();
   TextEditingController urlController = TextEditingController();
-  List<BannerCategories> catagorysList= [];
+  List<BannerCategories> catagorysList = [];
   BannerCategories? selectedCatagory;
   List<Banners> bannersList = [];
   dynamic bannner_image;
@@ -28,7 +28,8 @@ class BannersViewModel extends ChangeNotifier {
   BannersByPk? bannerView;
   String? editBannerId;
   bool isEditBanner = false;
-String? existingBannerImageUrl;
+  bool isRelistBanner = false;
+  String? existingBannerImageUrl;
 
   getBannerData(BuildContext context) {
     getBannersList(context);
@@ -135,7 +136,8 @@ String? existingBannerImageUrl;
     print("redp${catagorysList}");
     notifyListeners();
   }
-//based on image 
+
+//based on image
   Future<ui.Size?> getImageSize(File file) async {
     try {
       final bytes = await file.readAsBytes();
@@ -160,75 +162,45 @@ String? existingBannerImageUrl;
     }
   }
 
-  // Future<void> getBannersList(BuildContext context) async {
-  // //  Loaders.circularShowLoader(context);
-  //   final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  //   await getBannersCounts();
-  //   final res = await repo.getMyBanners({
-  //     "where": {
-  //       "status": {
-  //         "_in": bannersStatus?.isEmpty == true
-  //             ? [
-  //                 "APPROVED",
-  //                 "PENDING",
-  //                 "EXPIRED",
-  //                 "SCHEDULED",
-  //                 "REJECTED",
-  //                 "DRAFT"
-  //               ]
-  //             : bannersStatus,
-  //       },
-  //       "from_id": {"_eq": userId}
-  //     },
-  //     "limit": 10000,
-  //     "offset": 0
-  //   });
-
-  //   if (res != null) {
-  //     bannersList = res;
-  //   }
-  //  // Loaders.circularHideLoader(context);
-  //   notifyListeners();
-  // }
   Future<void> getBannersList(BuildContext context) async {
-  Loaders.circularShowLoader(context);
+    Loaders.circularShowLoader(context);
 
-  try {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    await getBannersCounts();
+    try {
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      await getBannersCounts();
 
-    final res = await repo.getMyBanners({
-      "where": {
-        "status": {
-          "_in": bannersStatus?.isEmpty == true
-              ? [
-                  "APPROVED",
-                  "PENDING",
-                  "EXPIRED",
-                  "SCHEDULED",
-                  "REJECTED",
-                  "DRAFT"
-                ]
-              : bannersStatus,
+      final res = await repo.getMyBanners({
+        "where": {
+          "status": {
+            "_in": bannersStatus?.isEmpty == true
+                ? [
+                    "APPROVED",
+                    "PENDING",
+                    "EXPIRED",
+                    "SCHEDULED",
+                    "REJECTED",
+                    "DRAFT"
+                  ]
+                : bannersStatus,
+          },
+          "from_id": {"_eq": userId}
         },
-        "from_id": {"_eq": userId}
-      },
-      "limit": 10000,
-      "offset": 0,
-    });
+        "limit": 10000,
+        "offset": 0,
+      });
 
-    if (res != null) {
-      bannersList = res;
-    }
-    notifyListeners();
-  } catch (e) {
-    debugPrint("Error loading banners: $e");
-  } finally {
-    if (context.mounted) {
-      Loaders.circularHideLoader(context);
+      if (res != null) {
+        bannersList = res;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error loading banners: $e");
+    } finally {
+      if (context.mounted) {
+        Loaders.circularHideLoader(context);
+      }
     }
   }
-}
 
   Future<void> validateBannerImg() async {
     var value = await _http.uploadImage(selectedPresentedImg?.path);
@@ -313,7 +285,7 @@ String? existingBannerImageUrl;
     notifyListeners();
   }
 
-  Future<void> editCatalogueNavigator(BuildContext context, String? id) async {
+  Future<void> editBannerNavigator(BuildContext context, String? id) async {
     Loaders.circularShowLoader(context);
     final res = await repo.editBannerView(id);
     if (res != null) {
@@ -335,29 +307,27 @@ String? existingBannerImageUrl;
     Loaders.circularShowLoader(context);
     await validateBannerImg();
     final res = await repo.updateBanner({
-      
-        "id": editBannerId,
-        "data": {
-          "banner_name": bannerNameController.text,
-          "url": urlController.text,
-          "image": [
-            {
-              "url": bannner_image,
-              "name": banner_name,
-              "type": "image",
-              "extension": "jpeg"
-            }
-          ],
-          "schedule_date":
-              '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
-          "expiry_date":
-              '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
-          "category_name": selectedCatagory?.name,
-          "from_id": id,
-          "status": isDarft ? "DRAFT" : "PENDING",
-          "company_name": name
-        }
-      
+      "id": editBannerId,
+      "data": {
+        "banner_name": bannerNameController.text,
+        "url": urlController.text,
+        "image": [
+          {
+            "url": bannner_image,
+            "name": banner_name,
+            "type": "image",
+            "extension": "jpeg"
+          }
+        ],
+        "schedule_date":
+            '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
+        "expiry_date":
+            '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
+        "category_name": selectedCatagory?.name,
+        "from_id": id,
+        "status": isDarft ? "DRAFT" : "PENDING",
+        "company_name": name
+      }
     });
     if (res != null) {
       getBannersCounts();
@@ -371,16 +341,48 @@ String? existingBannerImageUrl;
     notifyListeners();
   }
 
-  //clere fields
-  clearAddBannerData() {
-    bannerNameController.clear();
-    urlController.clear();
-    selectedCatagory = null;
+  //Relisting
+  Future<void> relistDataAssign(BannersByPk? bannersView) async {
+    bannerNameController.text = bannersView?.bannerName ?? '';
+    assignTheSelectedCatagory(bannersView?.categoryName);
+    editBannerId = bannersView?.id ?? "";
+    bannner_image = bannersView?.image?.first.url;
+    urlController.text = bannersView?.url ?? "";
+
+    // ✅ Clear schedule and expiry for fresh entry
     scheduleDate = null;
     expiryDate = null;
-    selectedPresentedImg = null;
-    bannner_image= null;
-    updateEditBannerVal(false);
+
+    isRelistBanner = true; // mark as relisting
     notifyListeners();
   }
+
+  Future<void> relistBannerNavigator(BuildContext context, String? id) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.editBannerView(id);
+    if (res != null) {
+      bannerView = res;
+      updateEditBannerVal(false); // not editing existing banner
+      relistDataAssign(res);
+      Loaders.circularHideLoader(context);
+      navigationService.navigateTo(RouteList.addBanners);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  //clere fields
+  clearAddBannerData() {
+  bannerNameController.clear();
+  urlController.clear();
+  selectedCatagory = null;
+  scheduleDate = null;
+  expiryDate = null;
+  selectedPresentedImg = null;
+  bannner_image = null;
+  isEditBanner = false;
+  isRelistBanner = false;
+  notifyListeners();
+}
 }
