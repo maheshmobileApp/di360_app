@@ -11,9 +11,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class MyCataloguesScreen extends StatelessWidget with BaseContextHelpers {
+class MyCataloguesScreen extends StatefulWidget {
   const MyCataloguesScreen({super.key});
 
+  @override
+  State<MyCataloguesScreen> createState() => _MyCataloguesScreenState();
+}
+
+class _MyCataloguesScreenState extends State<MyCataloguesScreen>
+    with BaseContextHelpers {
+
+      @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((s) {
+      final catalogVM = context.read<AddCatalogueViewModel>();
+      catalogVM.getMyCataloguesData(context);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
@@ -141,7 +156,7 @@ class MyCataloguesScreen extends StatelessWidget with BaseContextHelpers {
             ),
             Divider(),
             Expanded(
-              child: myCatalogVM.myCatalogueList?.isNotEmpty == false
+              child: myCatalogVM.myCatalogueList?.isEmpty ?? false
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

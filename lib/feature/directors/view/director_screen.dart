@@ -23,9 +23,17 @@ class _DirectorScreenState extends State<DirectorScreen>
 
   bool _showScrollToTop = false;
 
+  fetchDirectorData() {
+    final directorVM = context.read<DirectoryViewModel>();
+    directorVM.getDirectorsList(context);
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((s) {
+      fetchDirectorData();
+    });
     _scrollController.addListener(() {
       if (_scrollController.offset > 700) {
         if (!_showScrollToTop) {
@@ -54,13 +62,21 @@ class _DirectorScreenState extends State<DirectorScreen>
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  ImageConst.catalogueBg,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              Stack(children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child:
+                        Image.asset(ImageConst.catalogueBg, fit: BoxFit.cover)),
+                Positioned(
+                    top: 10,
+                    left: 10,
+                    child: CircleAvatar(
+                        radius: 20,
+                        child: InkWell(
+                            onTap: () => navigationService.goBack(),
+                            child: Icon(Icons.arrow_back,
+                                color: AppColors.black))))
+              ]),
               addVertical(16),
               Selector<DirectoryViewModel, bool>(
                 selector: (_, vm) => vm.removeIcon,
