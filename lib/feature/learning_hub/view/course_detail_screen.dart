@@ -197,7 +197,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       oldPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
                       onPressed: () {
                         courseListingVM.setCourseId(courseDetails?.id ?? "");
-                        RegistrationUserForm.show(context);
+                        RegistrationUserForm.show(context, courseDetails?.courseName??"");
                       },
                     ),
                   ],
