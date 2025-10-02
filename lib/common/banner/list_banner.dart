@@ -8,7 +8,7 @@ const double _bannerHorizontalPadding = 24.0;
 const double _bannerHeight = 180.0;
 const double _bannerListHeight = 200.0;
 const int _bannerScrollDuration = 3;//Duration in Seconds
-const int _bannerVisibleItems = 3;
+const int _bannerVisibleItems = 2;
 
 class ListBanner extends StatefulWidget {
   final int pageIndex;
