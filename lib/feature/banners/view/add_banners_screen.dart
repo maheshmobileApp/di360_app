@@ -63,6 +63,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                       title: "Banner Image",
                       isRequired: true,
                       showPreview: true,
+                        serverImage: bannersVM.bannner_image, 
                       selectedFile: bannersVM.selectedPresentedImg,
                        onFilePicked: (file) => bannersVM.setPresentedImg(file),
                      // selectedFiles: jobCreateVM.selectedGallery,

@@ -6,6 +6,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/banners/widgets/banners_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -142,6 +143,17 @@ class _BannersListScreenState extends State<BannersListScreen>
   @override
   void initState() {
     super.initState();
-    context.read<BannersViewModel>().getBannerData(context);
+      // Delay loader until widget tree is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+    // _loadData();
   }
+  Future<void> _loadData() async {
+  Loaders.circularShowLoader(context);
+  await context.read<BannersViewModel>().getBannerData(context);
+  if (mounted) {
+    Loaders.circularHideLoader(context);
+  }
+}
 }
