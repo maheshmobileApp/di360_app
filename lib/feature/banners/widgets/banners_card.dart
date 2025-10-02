@@ -181,17 +181,17 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
         } 
       },
       itemBuilder: (context) => [
-         if ( vm.selectedStatus != 'Reject')
+         if ( item?.status != 'REJECTED')
         PopupMenuItem(
             value: "View",
             child: _buildRow(
                 Icons.remove_red_eye, AppColors.black, "View Banner")),
-       if ( vm.selectedStatus == 'Expired')
+       if ( item?.status == 'Expired'.toUpperCase())
             PopupMenuItem(
               value: "Re-Listing",
               child:
-                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Re-Listing")),
-        if (vm.selectedStatus != 'Expired')
+                  _buildRow(Icons.list, AppColors.blueColor, "Re-Listing")),
+        if (item?.status != 'Expired'.toUpperCase())
           PopupMenuItem(
               value: "Edit",
               child:
