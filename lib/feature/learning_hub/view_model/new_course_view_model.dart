@@ -664,6 +664,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               endDate: endDateController.text,
               isFeatured: false,
               activeStatus: "ACTIVE",
+              activeStatusFeed: "PENDING",
               address: addressController.text,
               maxSubscribers: 1000,
               createdById: userId,
@@ -671,6 +672,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",
+              webinarLink: meetingLinkController.text,
               startTime: startTimeController.text,
               endTime: endTimeController.text)
           .toJson(),

@@ -30,8 +30,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
     }
 
     final courseDetails = courseListingVM.courseDetails.isNotEmpty
-    ? courseListingVM.courseDetails.first
-    : null;
+        ? courseListingVM.courseDetails.first
+        : null;
 
     final headerBannerUrls = (courseDetails?.courseBannerVideo ?? [])
         .map((e) => e.url ?? "")
@@ -54,9 +54,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         .toList();
 
     final firstEventInfo = (courseDetails?.courseEventInfo?.isNotEmpty ?? false)
-    ? courseDetails?.courseEventInfo!.first
-    : null;
-
+        ? courseDetails?.courseEventInfo!.first
+        : null;
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -131,23 +130,31 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       courseName: courseDetails?.courseName ?? "",
                       profilePic: courseDetails?.presentedByImage?.url ?? "",
                       presentByName: courseDetails?.presentedByName ?? "",
-                      cpdHours: courseDetails?.cpdPoints?.toInt().toString() ?? "0",
+                      cpdHours:
+                          courseDetails?.cpdPoints?.toInt().toString() ?? "0",
                       platform: courseDetails?.type ?? "",
                       webinar: courseDetails?.feedType ?? "",
-                      totalPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
-                      discountPrice: courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                      totalPrice:
+                          courseDetails?.afterwardsPrice?.toString() ?? "0",
+                      discountPrice:
+                          courseDetails?.earlyBirdPrice?.toString() ?? "0",
                     ),
                     const SizedBox(height: 12),
                     if (headerBannerUrls.isNotEmpty)
-                    MediaWidget(url: courseDetails?.courseBannerVideo?.first.url??"",name:  courseDetails?.courseBannerVideo?.first.name??"",),
+                      MediaWidget(
+                        url: courseDetails?.courseBannerVideo?.first.url ?? "",
+                        name:
+                            courseDetails?.courseBannerVideo?.first.name ?? "",
+                      ),
                     const SizedBox(height: 12),
                     if (courseDetails?.description != "")
-                    CourseDescriptionWidget(
-                      title: 'Course Description',
-                      description: courseDetails?.description ?? "",
-                    ),
+                      CourseDescriptionWidget(
+                        title: 'Course Description',
+                        description: courseDetails?.description ?? "",
+                      ),
                     const SizedBox(height: 12),
-                    if (firstEventInfo != null && firstEventInfo.info!.isNotEmpty) ...[
+                    if (firstEventInfo != null &&
+                        firstEventInfo.info!.isNotEmpty) ...[
                       EventDayDataWidget(
                         title: '${courseDetails?.eventType ?? ""} Event',
                         descriptions: courseDetails?.courseEventInfo ?? [],
@@ -161,7 +168,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     ],
                     const SizedBox(height: 12),
                     if (galleryUrls.isNotEmpty)
-                      GalleryImgWidget(title: "Gallery", imageUrls: galleryUrls),
+                      GalleryImgWidget(
+                          title: "Gallery", imageUrls: galleryUrls),
                     const SizedBox(height: 12),
                     if (sponsorUrls.isNotEmpty)
                       GalleryImgWidget(
@@ -183,23 +191,38 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         description: courseDetails?.refundPolicy ?? "",
                       ),
                     const SizedBox(height: 12),
-                    if (courseDetails?.address != "" && courseDetails?.contactEmail != ""&&courseDetails?.contactPhone != "")
-                    ContactInfoWidget(
-                      location: courseDetails?.address ?? "",
-                      email: courseDetails?.contactEmail ?? "",
-                      phoneNumber: courseDetails?.contactPhone ?? "",
-                    ),
+                    if (courseDetails?.address != "" ||
+                        courseDetails?.contactEmail != "" ||
+                        courseDetails?.contactPhone != "")
+                      ContactInfoWidget(
+                        location: courseDetails?.address ?? "",
+                        email: courseDetails?.contactEmail ?? "",
+                        phoneNumber: courseDetails?.contactPhone ?? "",
+                      ),
                     if ((courseDetails?.address ?? "").isNotEmpty)
                       LocationViewWidget(location: courseDetails?.address!),
-                    const Divider(),
-                    RegisterNowWidget(
-                      currentPrice: courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                      oldPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
-                      onPressed: () {
-                        courseListingVM.setCourseId(courseDetails?.id ?? "");
-                        RegistrationUserForm.show(context, courseDetails?.courseName??"");
-                      },
-                    ),
+                    
+                    (courseDetails?.status == "APPROVE")
+                        ? Column(
+                          children: [
+                            const Divider(),
+                            RegisterNowWidget(
+                                currentPrice:
+                                    courseDetails?.earlyBirdPrice?.toString() ??
+                                        "0",
+                                oldPrice:
+                                    courseDetails?.afterwardsPrice?.toString() ??
+                                        "0",
+                                onPressed: () {
+                                  courseListingVM
+                                      .setCourseId(courseDetails?.id ?? "");
+                                  RegistrationUserForm.show(
+                                      context, courseDetails?.courseName ?? "");
+                                },
+                              ),
+                          ],
+                        )
+                        : SizedBox.shrink(),
                   ],
                 ),
               ),
