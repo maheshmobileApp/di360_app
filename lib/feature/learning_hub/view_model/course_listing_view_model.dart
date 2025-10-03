@@ -57,23 +57,31 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     'Reject',
   ];
   String? listingStatus = "";
+  String? activeStatus = "";
 
   void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
     if (status == 'All') {
       listingStatus = "All";
+      activeStatus = "";
     } else if (status == 'Draft') {
       listingStatus = 'DRAFT';
+      activeStatus = "";
     } else if (status == 'Pending Approval') {
       listingStatus = 'PENDING';
+      activeStatus = "";
     } else if (status == 'Active') {
       listingStatus = "APPROVE";
+      activeStatus = "ACTIVE";
     } else if (status == 'InActive') {
-      listingStatus = 'INACTIVE';
+      listingStatus = 'APPROVE';
+      activeStatus = "INACTIVE";
     } else if (status == 'Expired') {
       listingStatus = 'EXPIRED';
+      activeStatus = "";
     } else if (status == 'Reject') {
       listingStatus = 'REJECT';
+      activeStatus = "";
     }
 
     getCoursesListingData(context);
@@ -102,7 +110,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getCoursesListingData(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getCoursesListing(
-        listingStatus, userId, searchController.text);
+        listingStatus,activeStatus, userId, searchController.text);
 
     fetchCourseStatusCounts(context);
     if (res != null) {
@@ -124,7 +132,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.courseListingStatusCount(userId);
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
-    activeCount = res.approve?.aggregate?.count ?? 0;
+    activeCount = res.active?.aggregate?.count ?? 0;
     inActiveCount = res.inactive?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
@@ -220,6 +228,17 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       selectedCategoryId = null;
     }
 
+    notifyListeners();
+  }
+
+  Future<void> updateCourseStatus(
+      BuildContext context, String courseId, String status) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.updateCourseStatus(courseId, status);
+    if (res != null) {
+      getCoursesListingData(context);
+      Loaders.circularHideLoader(context);
+    }
     notifyListeners();
   }
 

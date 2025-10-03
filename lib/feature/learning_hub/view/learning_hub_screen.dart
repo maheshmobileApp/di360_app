@@ -196,6 +196,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           companyName: course.courseName ?? '',
                           courseTitle: course.presentedByName ?? '',
                           status: course.status ?? '',
+                          activeStatus: course.activeStatus??"",
                           description: course.description ?? '',
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
@@ -266,10 +267,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Inactive":
-                                print("Make course $id inactive");
+                                courseListingVM.updateCourseStatus(
+                                    context, course.id ?? "", "INACTIVE");
                                 break;
                               case "Active":
-                                print("Make course $id active");
+                                courseListingVM.updateCourseStatus(
+                                    context, course.id ?? "", "ACTIVE");
                                 break;
                               case "Re-Listing":
                                 await courseListingVM.getCourseDetails(

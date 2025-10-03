@@ -18,6 +18,7 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query
 import 'package:di360_flutter/feature/learning_hub/querys/get_market_place_courses.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
@@ -55,13 +56,17 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getCoursesListing(
-      String? listingStatus, String? userId, String? searchText) async {
+      String? listingStatus,String? activeStatus, String? userId, String? searchText) async {
     final Map<String, dynamic> whereCondition = {};
 
     if (listingStatus != null &&
         listingStatus.isNotEmpty &&
         listingStatus != "All") {
       whereCondition["status"] = {"_eq": listingStatus};
+    }
+
+    if (activeStatus != null && activeStatus.isNotEmpty) {
+      whereCondition["active_status"] = {"_eq": activeStatus};
     }
 
     if (searchText != null && searchText.isNotEmpty) {
@@ -207,9 +212,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
       String address) async {
     final List<Map<String, dynamic>> andConditions = [];
 
-    
-    
-
     if (type.isNotEmpty) {
       andConditions.add({
         "type": {
@@ -245,9 +247,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
     final Map<String, dynamic> variables = {
       "limit": 10,
       "offset": 0,
-      "where": {
-        "_and": andConditions 
-      }
+      "where": {"_and": andConditions}
     };
 
     final getMarketPlaceCourses = await http.query(
@@ -257,6 +257,13 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
     final response = CoursesListingData.fromJson(getMarketPlaceCourses);
     return response.courses ?? [];
+  }
+
+  @override
+  Future updateCourseStatus(String courseId, String status) async {
+    final Map<String, dynamic> variables = {"id": courseId, "status": status};
+    final res = await http.mutation(getUpdateCourseStatus, variables);
+    return res;
   }
 
   /*@override
