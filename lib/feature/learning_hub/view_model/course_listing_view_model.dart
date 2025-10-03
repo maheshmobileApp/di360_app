@@ -13,6 +13,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
 
   List<CoursesListingDetails> coursesListingList = [];
+  List<CoursesListingDetails> marketPlaceCoursesList = [];
   List<CoursesListingDetails> courseDetails = [];
   List<CourseRegisteredUsers> registeredUsers = [];
   String selectedStatus = "All";
@@ -98,10 +99,10 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Reject': rejectStatusCount,
       };
 
-  Future<void> getCoursesListingData(
-      BuildContext context) async {
+  Future<void> getCoursesListingData(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getCoursesListing(listingStatus, userId, searchController.text);
+    final res = await repo.getCoursesListing(
+        listingStatus, userId, searchController.text);
 
     fetchCourseStatusCounts(context);
     if (res != null) {
@@ -111,13 +112,10 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> getAllListingData(BuildContext context) async {
-    //Loaders.circularShowLoader(context);
-
     final res = await repo.getAllListingData(searchController.text);
 
     if (res != null) {
-      coursesListingList = res;
-      //Loaders.circularHideLoader(context);
+      marketPlaceCoursesList = res;
     }
     notifyListeners();
   }

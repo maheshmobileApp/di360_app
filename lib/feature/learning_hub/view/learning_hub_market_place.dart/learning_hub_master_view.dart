@@ -33,7 +33,6 @@ class _JobListingScreenState extends State<LearningHubMasterView>
 
   @override
   Widget build(BuildContext context) {
-    final notificationVM = Provider.of<NotificationViewModel>(context);
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
@@ -125,7 +124,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                 },
               ),
             Expanded(
-                child: courseListingVM.coursesListingList.isEmpty
+                child: courseListingVM.marketPlaceCoursesList.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -139,16 +138,15 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                       )
                     : ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        itemCount: courseListingVM.coursesListingList.length,
+                        itemCount: courseListingVM.marketPlaceCoursesList.length,
                         itemBuilder: (context, index) {
                           final jobData =
-                              courseListingVM.coursesListingList[index];
+                              courseListingVM.marketPlaceCoursesList[index];
                           final course = jobData;
 
                           final seats = (course.numberOfSeats -
-                                  course.courseRegisteredUsersAggregate
-                                      ?.aggregate?.count)
-                              .toString();
+                              course.courseRegisteredUsersAggregate?.aggregate
+                                  ?.count);
 
                           return ListingHubMasterCard(
                             remainingOfSeats: seats,
@@ -171,7 +169,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               );
                             },
                             registerTap: () async {
-                              if (seats != "0") {
+                              if (seats >0) {
                                 courseListingVM.setCourseId(course.id ?? "");
                                 RegistrationUserForm.show(
                                     context, course.courseName ?? "");
