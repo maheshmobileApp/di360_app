@@ -24,8 +24,9 @@ class NewCourseScreen extends StatefulWidget {
 class _JobCreateViewState extends State<NewCourseScreen> {
   @override
   Widget build(BuildContext context) {
-    final newCourseVM = Provider.of<NewCourseViewModel>(context);
-    final courseListVM = Provider.of<CourseListingViewModel>(context);
+    final newCourseVM = context.watch<NewCourseViewModel>();
+    final courseListVM = context.watch<CourseListingViewModel>();
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -185,7 +186,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
 
                 await newCourseVM.createdCourseListing(context, true);
                 courseListVM.selectedStatus = "All";
-                await courseListVM.getCoursesListingData(context, "");
+                await courseListVM.getCoursesListingData(context);
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -206,11 +207,12 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                       newCourseVM.formKeys[newCourseVM.currentStep];
                   if (currentFormKey.currentState?.validate() ?? false) {
                     if (isLastStep) {
-                      await newCourseVM.updateCourseListing(context,courseListVM.courseId, false);
+                      await newCourseVM.updateCourseListing(
+                          context, courseListVM.courseId, false);
                       courseListVM.selectedStatus = "All";
-                      await courseListVM.getCoursesListingData(context, "");
+                      await courseListVM.getCoursesListingData(context);
                     } else {
-                      newCourseVM.goToNextStep();
+                      context.read<NewCourseViewModel>().goToNextStep();
                     }
                   }
                 } else {
@@ -220,9 +222,10 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     if (isLastStep) {
                       await newCourseVM.createdCourseListing(context, false);
                       courseListVM.selectedStatus = "All";
-                      await courseListVM.getCoursesListingData(context, "");
+                      await courseListVM.getCoursesListingData(context);
                     } else {
-                      newCourseVM.goToNextStep();
+                      context.read<NewCourseViewModel>().goToNextStep();
+
                     }
                   }
                 }

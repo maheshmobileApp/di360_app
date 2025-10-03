@@ -156,8 +156,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  
-
   void setSelectedCourseCategory(String? name) async {
     await fetchCourseCategory();
     selectedCategory = name;
@@ -198,7 +196,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     // Step-specific validations
     if (_currentStep == 0) {
-      serverPresentedImg!.isEmpty ? validatePresenterImg() : null;
+      validatePresenterImg();
       validateCourseHeaderBanner();
       validateGallery();
       validateCourseBanner();
@@ -248,10 +246,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validatePresenterImg() async {
-    var value = await _http.uploadImage(selectedPresentedImg?.path);
-    presenter_image = value['url'];
-    print(presenter_image);
-    notifyListeners();
+    if (serverPresentedImg!.isEmpty) {
+      var value = await _http.uploadImage(selectedPresentedImg?.path);
+      presenter_image = value['url'];
+      print(presenter_image);
+      notifyListeners();
+    } else {
+      presenter_image = serverPresentedImg ?? "";
+      notifyListeners();
+    }
   }
 
   Future<void> validateCourseHeaderBanner() async {
@@ -435,7 +438,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       sessions[index].images = files;
       selectedEventImg = files;
       sessions[index].serverImages = [];
-      
+
       notifyListeners();
     }
   }
@@ -730,10 +733,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     endTimeController.text = "";
     sessions = [];
     selectedEvent = "Single Day";
-
-    // Page controller reset
-    pageController.jumpToPage(
-        0); // or pageController.animateToPage(...) if you want animation
   }
 
   void serverImagesClear() {
@@ -747,6 +746,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     serverSessionImg = [];
     for (var session in sessions) {
       session.serverImages.clear();
+    }
+  }
+
+  void eraseDateFields() {
+    startDateController.text = "";
+    endDateController.text = "";
+    earlyBirdDateController.text = "";
+    for (var session in sessions) {
+      session.eventDateController.text = "";
     }
   }
 }
