@@ -144,6 +144,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           final jobData =
                               courseListingVM.coursesListingList[index];
                           final course = jobData;
+
                           final seats = (course.numberOfSeats -
                                   course.courseRegisteredUsersAggregate
                                       ?.aggregate?.count)

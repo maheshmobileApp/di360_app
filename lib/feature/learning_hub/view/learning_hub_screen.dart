@@ -32,6 +32,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
   @override
   void initState() {
     super.initState();
+    context.read<CourseListingViewModel>().getCoursesListingData(context);
   }
 
   @override
@@ -202,7 +203,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                   ?.aggregate?.count ??
                               0,
                           onDetailView: () async {
-
                             await courseListingVM.getCourseDetails(
                               context,
                               course.id ?? "",
