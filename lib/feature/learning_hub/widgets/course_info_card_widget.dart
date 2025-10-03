@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -45,29 +46,33 @@ class CourseInfoCardWidget extends StatelessWidget {
             const SizedBox(height: 4),
             const Text("A Comprehensive Guide",
                 style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 12),
-            Row(
+            const SizedBox(height: 4),
+            const Divider(),
+            const SizedBox(height: 4),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: AppColors.geryColor,
-                  backgroundImage:
-                      profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
-                  radius: 30,
-                  child: profilePic.isEmpty
-                      ? const Icon(Icons.business,
-                          size: 20, color: AppColors.lightGeryColor)
-                      : null,
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Text("PRESENTED BY",
+                    style: TextStyles.medium1(color: AppColors.black)),
+                const SizedBox(height: 2),
+                Row(
                   children: [
+                    CircleAvatar(
+                      backgroundColor: AppColors.geryColor,
+                      backgroundImage: profilePic.isNotEmpty
+                          ? NetworkImage(profilePic)
+                          : null,
+                      radius: 20,
+                      child: profilePic.isEmpty
+                          ? const Icon(Icons.business,
+                              size: 20, color: AppColors.lightGeryColor)
+                          : null,
+                    ),
+                    const SizedBox(width: 10),
                     Text("${presentByName}".toUpperCase(),
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text("A Comprehensive Guide",
-                        style: TextStyle(color: Colors.grey)),
+                        style: TextStyle(fontWeight: FontWeight.bold))
                   ],
-                )
+                ),
               ],
             ),
             Row(),

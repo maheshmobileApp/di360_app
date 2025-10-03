@@ -179,6 +179,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             if (images.isNotEmpty)
                               GalleryImgWidget(
                                 imageUrls: images,
+                              
                               ),
                           ],
                         );

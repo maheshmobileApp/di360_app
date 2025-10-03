@@ -139,7 +139,7 @@ class RegistrationUserForm {
                               await courseVM.userRegisterToCourse(context);
                               navigationService.goBack();
                               courseVM.clearAll();
-                              await courseVM.getCoursesListingData(context, "");
+                              await courseVM.getCoursesListingData(context);
                             }
                           },
                           backgroundColor: AppColors.primaryColor,

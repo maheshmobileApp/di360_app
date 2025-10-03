@@ -105,7 +105,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 hintText: "Search Course...",
                 onClear: () {},
                 onChanged: (value) {
-                  courseListingVM.getCoursesListingData(context, value);
+                  courseListingVM.getCoursesListingData(context);
                 },
               ),
             SizedBox(
@@ -190,7 +190,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         print(courseListingVM.coursesListingList.length);
                         return CouresListingCard(
                           id: course.id ?? "",
-                          meetingLink: course.meetingLink??"",
+                          meetingLink: course.meetingLink ?? "",
                           logoUrl: course.presentedByImage?.url ?? '',
                           companyName: course.courseName ?? '',
                           courseTitle: course.presentedByName ?? '',
@@ -202,11 +202,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                   ?.aggregate?.count ??
                               0,
                           onDetailView: () async {
-                            /* if (course.status == "DRAFT") {
-                              scaffoldMessenger(
-                                  "Draft courses cannot be opened");
-                              return;
-                            }*/
 
                             await courseListingVM.getCourseDetails(
                               context,
@@ -251,10 +246,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
-
+                                Loaders.circularShowLoader(context);
                                 await loadCourseData(newCourseVM,
                                     courseListingVM.courseDetails.first);
-
+                                Loaders.circularHideLoader(context);
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
                                 );
@@ -279,12 +274,17 @@ class _JobListingScreenState extends State<LearningHubScreen>
                               case "Re-Listing":
                                 await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
+                                courseListingVM.setEditOption(true);
+                                newCourseVM.setCurrentStep(0);
+                                courseListingVM.setCourseId(course.id ?? "");
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
-
+                                Loaders.circularShowLoader(context);
                                 await loadCourseData(newCourseVM,
                                     courseListingVM.courseDetails.first);
+                                newCourseVM.eraseDateFields();
 
+                                Loaders.circularHideLoader(context);
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
                                 );
@@ -300,7 +300,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
             newCourseVM.setCurrentStep(0);
-            //newCourseVM.resetForm();
+            newCourseVM.resetForm();
             newCourseVM.serverImagesClear();
             courseListingVM.setEditOption(false);
             navigationService.navigateTo(RouteList.newCourseScreen);

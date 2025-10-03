@@ -265,7 +265,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<CourseListingViewModel>()
-                                .getCoursesListingData(context, "");
+                                .getCoursesListingData(context);
                             Loaders.circularHideLoader(context);
                             context
                                 .read<CourseListingViewModel>()
