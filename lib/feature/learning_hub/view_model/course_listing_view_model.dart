@@ -185,7 +185,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       scaffoldMessenger(
         "Successfully Submitted!\nThank you for your interest.\nOur organiser will be in touch with you soon.",
       );
-      clearAll();
       Loaders.circularHideLoader(context);
     }
     notifyListeners();

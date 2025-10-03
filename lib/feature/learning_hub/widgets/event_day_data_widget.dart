@@ -26,13 +26,44 @@ class EventDayDataWidget extends StatelessWidget {
         ...descriptions.map(
           (desc) => Padding(
             padding: const EdgeInsets.only(bottom: 6.0),
-            child: Text(
-              "• ${desc.info ?? ''}", // 👈 use proper field from CourseEventInfo
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoRow("Name", desc.name ?? ""),
+                const SizedBox(height: 6),
+                _buildInfoRow("Date", desc.date ?? ""),
+                const SizedBox(height: 6),
+                _buildInfoRow("Info", desc.info ?? ""),
+              ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: "$label: ",
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold, // label bold
+              color: Colors.black,
+            ),
+          ),
+          TextSpan(
+            text: value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal, // value normal
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
