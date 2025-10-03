@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -29,15 +30,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-          bannerImg == null || bannerImg?.isEmpty == true
-              ? SvgPicture.asset(ImageConst.homeBG)
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImageWidget(
-                      imageUrl: bannerImg ?? '',
-                      width: double.infinity,
-                      height: 220,
-                      fit: BoxFit.fill)),
+          ListBanner(),
           Positioned(
               left: 20,
               top: 44,

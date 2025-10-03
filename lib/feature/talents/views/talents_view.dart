@@ -31,7 +31,7 @@ class TalentsView extends StatelessWidget {
       bannerIndices:
           BannerUtils.calculateBannerIndices(talentViewModel.talentList.length),
       bannerBuilder: (BuildContext context, int bannerPosition) {
-        return ListBanner(pageIndex: bannerPosition);
+        return ListBanner();
       },
     );
 }

@@ -6,13 +6,12 @@ import 'package:di360_flutter/services/banner_services.dart';
 
 const double _bannerHorizontalPadding = 24.0;
 const double _bannerHeight = 180.0;
-const double _bannerListHeight = 200.0;
+const double _bannerListHeight = 250.0;
 const int _bannerScrollDuration = 3;//Duration in Seconds
-const int _bannerVisibleItems = 2;
+// const int _bannerVisibleItems = 2;
 
 class ListBanner extends StatefulWidget {
-  final int pageIndex;
-  const ListBanner({Key? key, required this.pageIndex}) : super(key: key);
+  const ListBanner({Key? key}) : super(key: key);
 
   @override
   State<ListBanner> createState() => _ListBannerState();
@@ -36,14 +35,9 @@ class _ListBannerState extends State<ListBanner> {
     _timer = Timer.periodic(_timerDuration, (_) {
       if (!mounted) return;
       final banners = BannerServices.instance.listBanner;
-      if (banners == null || banners.isEmpty) return;
-      final int start = widget.pageIndex * _bannerVisibleItems;
-      final int end = (start + _bannerVisibleItems).clamp(0, banners.length);
-      if (start >= end || start >= banners.length) return;
-      final items = banners.sublist(start, end);
-      if (items.length <= 1) return;
+      if (banners == null || banners.length <= 1) return;
       setState(() {
-        _currentIndex = (_currentIndex + 1) % items.length;
+        _currentIndex = (_currentIndex + 1) % banners.length;
       });
       final screenWidth = MediaQuery.of(context).size.width;
       final bannerWidth = (screenWidth - (_bannerHorizontalPadding * 2));
@@ -68,12 +62,7 @@ class _ListBannerState extends State<ListBanner> {
     if (banners == null || banners.isEmpty) {
       return SizedBox.shrink();
     }
-    final int start = widget.pageIndex * _bannerVisibleItems;
-    final int end = (start + _bannerVisibleItems).clamp(0, banners.length);
-    if (start >= banners.length) {
-      return SizedBox.shrink();
-    }
-    final items = banners.sublist(start, end);
+    final shuffledBanners = List.of(banners)..shuffle();
     final screenWidth = MediaQuery.of(context).size.width;
     final bannerWidth = (screenWidth - (_bannerHorizontalPadding * 2));
     return SizedBox(
@@ -82,10 +71,10 @@ class _ListBannerState extends State<ListBanner> {
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        itemCount: items.length,
+        itemCount: shuffledBanners.length,
         separatorBuilder: (_, __) => SizedBox(width: 12),
         itemBuilder: (context, idx) {
-          final banner = items[idx];
+          final banner = shuffledBanners[idx];
           final String? imageUrl =
               (banner.image != null && banner.image!.isNotEmpty)
                   ? banner.image!.first.url
