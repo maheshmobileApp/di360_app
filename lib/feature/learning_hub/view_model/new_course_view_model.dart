@@ -750,6 +750,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void eraseDateFields() {
+    startTimeController.text = "";
+    endTimeController.text = "";
+    rsvpDateController.text = "";
     startDateController.text = "";
     endDateController.text = "";
     earlyBirdDateController.text = "";

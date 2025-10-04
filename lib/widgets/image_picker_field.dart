@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/widgets/network_video_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -305,6 +306,7 @@ final String? imageUrl;
       ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
       : Image.network(serverImage!,
           fit: BoxFit.contain, width: double.infinity);
+          //NetworkVideoWidget(url: serverImage!)
 
   Widget _buildPlaceholder() => Column(
         mainAxisAlignment: MainAxisAlignment.center,

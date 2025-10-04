@@ -11,8 +11,9 @@ abstract class LearningHubRepository {
   Future<List<JobTypes>> getEmpTypes();
   Future<dynamic> createCourseListing(dynamic variables);
   Future<dynamic> updateCourseListing(dynamic variables);
+  Future<dynamic> updateCourseStatus(String courseId, String status);
   Future<List<CoursesListingDetails>?> getCoursesListing(
-      String? listingStatus, String? userId, String? searchText);
+      String? listingStatus,String? activeStatus,String? userId, String? searchText);
   Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId);
   Future<CourseStatusCountData> courseListingStatusCount(String? userId);
   Future<GetCourseTypes> getCourseType();
@@ -23,5 +24,5 @@ abstract class LearningHubRepository {
   Future<dynamic> userRegisterToCourse(dynamic variables);
   Future<List<CoursesListingDetails>?> getAllListingData(String? searchText);
   Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
-      String type, String courseCategoryId,String startDate,String address);
+      String type, String courseCategoryId, String startDate, String address);
 }

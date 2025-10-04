@@ -13,6 +13,7 @@ class CouresListingCard extends StatelessWidget {
   final String companyName;
   final String courseTitle;
   final String status;
+  final String activeStatus;
   final String description;
   final List<String> types;
   final String createdAt;
@@ -38,6 +39,7 @@ class CouresListingCard extends StatelessWidget {
     this.onMenuAction,
     this.onDetailView,
     required this.meetingLink,
+    required this.activeStatus,
   });
 
   @override
@@ -307,12 +309,12 @@ class CouresListingCard extends StatelessWidget {
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
         if (status != "APPROVE")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
-        if (status == "APPROVE")
-          _popupItem(
-              "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
-        if (status == "REJECT")
-          _popupItem(
-              "Active", Icons.nightlight_outlined, AppColors.primaryColor),
+        if (status != "EXPIRED" && status != "PENDING")
+        (status == "APPROVE")
+            ? _popupItem(
+                "Inactive", Icons.nightlight_outlined, AppColors.primaryColor)
+            : _popupItem(
+                "Active", Icons.nightlight_outlined, AppColors.primaryColor),
         if (status == "EXPIRED")
           _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),
       ],
