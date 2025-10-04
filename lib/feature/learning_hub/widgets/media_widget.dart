@@ -23,6 +23,7 @@ class MediaWidget extends StatefulWidget {
 
 class _MediaWidgetState extends State<MediaWidget> {
   VideoPlayerController? _controller;
+  bool _isPlaying = false;
 
   bool get _isVideo {
     final lower = widget.name ?? "";
@@ -38,13 +39,24 @@ class _MediaWidgetState extends State<MediaWidget> {
     if (_isVideo) {
       _controller = VideoPlayerController.network(widget.url)
         ..initialize().then((_) {
-          setState(() {});
-          _controller!.play();
-          _controller!.setLooping(true);
-          _controller!.setVolume(1.0);
-
+          setState(() {}); // refresh UI
         });
     }
+  }
+
+  void _togglePlayPause() {
+    if (_controller == null) return;
+    setState(() {
+      if (_controller!.value.isPlaying) {
+        _controller!.pause();
+        _isPlaying = false;
+      } else {
+        _controller!.play();
+        _controller!.setLooping(true);
+        _controller!.setVolume(1.0);
+        _isPlaying = true;
+      }
+    });
   }
 
   @override
@@ -61,14 +73,31 @@ class _MediaWidgetState extends State<MediaWidget> {
         child: _isVideo
             ? (_controller != null && _controller!.value.isInitialized)
                 ? Stack(
+                    alignment: Alignment.center,
                     children: [
                       SizedBox(
                         height: widget.height,
-                        width:
-                            widget.width ?? MediaQuery.of(context).size.width,
+                        width: widget.width ?? MediaQuery.of(context).size.width,
                         child: VideoPlayer(_controller!),
                       ),
-                      
+                      // Play/Pause button overlay
+                      GestureDetector(
+                        onTap: _togglePlayPause,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black45,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Icon(
+                            _controller!.value.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                        ),
+                      ),
                     ],
                   )
                 : Container(
