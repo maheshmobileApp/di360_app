@@ -333,26 +333,26 @@ class ImagePickerField extends StatelessWidget {
         children: [
           selectedFile!.path.toLowerCase().endsWith(".mp4")
               ? FutureBuilder<String?>(
-                        future: VideoThumbnail.thumbnailFile(
-                          video: selectedFile!.path,
-                          imageFormat: ImageFormat.JPEG,
-                          maxHeight: 150,
-                          quality: 75,
-                        ),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data != null) {
-                            return Image.file(
-                              File(snapshot.data!),
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return const Center(
-                              child: Icon(Icons.videocam,
-                                  size: 50, color: Colors.grey),
-                            );
-                          }
-                        },
-                      )
+                  future: VideoThumbnail.thumbnailFile(
+                    video: selectedFile!.path,
+                    imageFormat: ImageFormat.JPEG,
+                    maxHeight: 150,
+                    quality: 75,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      return Image.file(
+                        File(snapshot.data!),
+                        fit: BoxFit.cover,
+                      );
+                    } else {
+                      return const Center(
+                        child:
+                            Icon(Icons.videocam, size: 50, color: Colors.grey),
+                      );
+                    }
+                  },
+                )
               : Image.file(selectedFile!,
                   fit: BoxFit.contain, width: double.infinity),
 
@@ -393,9 +393,9 @@ class ImagePickerField extends StatelessWidget {
                 right: 4,
                 child: GestureDetector(
                   onTap: () {
-                    final updatedList = List<String>.from(serverImages!)
-                      ..removeAt(index);
-                    onServerFilesRemoved?.call(updatedList);
+                    serverImages!.removeAt(index);
+                    onServerFilesRemoved
+                        ?.call(List<String>.from(serverImages!));
                   },
                   child: const CircleAvatar(
                     radius: 12,

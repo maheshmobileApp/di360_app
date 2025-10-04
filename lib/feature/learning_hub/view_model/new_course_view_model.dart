@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/constants/string_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
@@ -136,12 +137,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setServerGallery(List<String>? value) {
-    serverGallery = [];
+    serverGallery = value;
     notifyListeners();
   }
 
   void setServerCourseBannerImg(List<String>? value) {
-    serverCourseBannerImg = [];
+    serverCourseBannerImg = value;
     notifyListeners();
   }
 
@@ -457,6 +458,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
       notifyListeners();
     }
+  }
+
+  void setServerEventImgs(int index, List<String> files) {
+    sessions[index].serverImages = files;
+
+    notifyListeners();
   }
 
   /// Get session details as plain data (ready for API)
