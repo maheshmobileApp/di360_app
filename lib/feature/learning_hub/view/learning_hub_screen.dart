@@ -197,7 +197,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           companyName: course.courseName ?? '',
                           courseTitle: course.presentedByName ?? '',
                           status: course.status ?? '',
-                          activeStatus: course.activeStatus??"",
+                          activeStatus: course.activeStatus ?? "",
                           description: course.description ?? '',
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
@@ -322,7 +322,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     newCourseVM.serverCourseHeaderBanner =
         course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty
-            ? MediaInfo(url: course.courseBannerVideo?.first.url??"", type:  course.courseBannerVideo?.first.type??"")
+            ? MediaInfo(
+                url: course.courseBannerVideo?.first.url ?? "",
+                type: course.courseBannerVideo?.first.type ?? "")
             : null;
 
     newCourseVM.serverGallery = (course.courseGallery ?? [])
@@ -421,8 +423,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
       newCourseVM.addressController.text = "";
     }
 
-    newCourseVM.startTimeController.text = course.startTime ?? "";
-    newCourseVM.endTimeController.text = course.endTime ?? "";
+    String startTime = course.startTime ?? "";
+    String endTime = course.endTime ?? "";
+
+    newCourseVM.startTimeController.text =
+        DateFormat.jm().format(DateTime.parse("2025-10-04T${startTime}").toUtc());
+    newCourseVM.endTimeController.text =
+        DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}").toUtc());
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";

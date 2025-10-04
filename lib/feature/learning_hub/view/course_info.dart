@@ -155,6 +155,9 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           isRequired: true,
           showPreview: true,
           serverImages: day.serverImages,
+          onServerFilesRemoved: (updatedList) {
+                  day.serverImages = updatedList;
+                },
           allowMultiple: true,
           selectedFiles: day.images,
           onFilesPicked: (files) => jobCreateVM.setEventImgs(0, files),
@@ -234,6 +237,9 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 isRequired: true,
                 allowMultiple: true,
                 serverImages: day.serverImages,
+                onServerFilesRemoved: (updatedList) {
+                  day.serverImages = updatedList;
+                },
                 showPreview: true,
                 selectedFiles: day.images,
                 onFilesPicked: (files) =>

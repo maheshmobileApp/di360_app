@@ -55,7 +55,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   //server
   String? serverPresentedImg;
-  MediaInfo?  serverCourseHeaderBanner;
+  MediaInfo? serverCourseHeaderBanner;
   List<String>? serverGallery;
   List<String>? serverCourseBannerImg;
   List<String>? serverEventImg;
@@ -142,6 +142,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setServerCourseBannerImg(List<String>? value) {
     serverCourseBannerImg = [];
+    notifyListeners();
+  }
+
+  void setServerSponsorImg(List<String>? value) {
+    serverSponsoredByImg = [];
     notifyListeners();
   }
 
@@ -257,7 +262,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validatePresenterImg() async {
-    if (serverPresentedImg!.isEmpty) {
+    if (serverPresentedImg == null) {
       var value = await _http.uploadImage(selectedPresentedImg?.path);
       presenter_image = value['url'];
       print(presenter_image);
@@ -639,9 +644,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               courseCategoryId: selectedCategoryId,
               rsvpDate: rsvpDateController.text,
               presentedByName: presenterNameController.text,
-              presentedByImage: serverPresentedImg!.isNotEmpty
-                  ? PresentedByImage(url: serverPresentedImg)
-                  : PresentedByImage(url: presenter_image),
+              presentedByImage: PresentedByImage(url: presenter_image),
               courseBannerImage: courseBannerImgList,
               courseGallery: selectedGalleryList,
               courseBannerVideo: courseBannerImageHeaderList,
@@ -747,7 +750,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void serverImagesClear() {
-    serverPresentedImg = "";
+    serverPresentedImg = null;
     serverCourseHeaderBanner = null;
     serverGallery = [];
     serverCourseBannerImg = [];
@@ -773,13 +776,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   bool isDateDuplicate(int currentIndex, String date) {
-  for (int i = 0; i < sessions.length; i++) {
-    if (i != currentIndex &&
-        sessions[i].eventDateController.text.trim() == date.trim()) {
-      return true; // duplicate found
+    for (int i = 0; i < sessions.length; i++) {
+      if (i != currentIndex &&
+          sessions[i].eventDateController.text.trim() == date.trim()) {
+        return true; // duplicate found
+      }
     }
+    return false;
   }
-  return false;
-}
-
 }
