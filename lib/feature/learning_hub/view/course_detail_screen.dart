@@ -59,6 +59,29 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      bottomNavigationBar: (courseDetails?.status == "APPROVE")
+          ? Column(
+              mainAxisSize: MainAxisSize.min, // 🔑 prevent unbounded height
+              children: [
+                const Divider(height: 1),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RegisterNowWidget(
+                    currentPrice:
+                        courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                    oldPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
+                    onPressed: () {
+                      courseListingVM.setCourseId(courseDetails?.id ?? "");
+                      RegistrationUserForm.show(
+                        context,
+                        courseDetails?.courseName ?? "",
+                      );
+                    },
+                  ),
+                ),
+              ],
+            )
+          : const SizedBox.shrink(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -119,7 +142,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
             child: Container(
               color: AppColors.whiteColor,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -138,14 +161,11 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           courseDetails?.afterwardsPrice?.toString() ?? "0",
                       discountPrice:
                           courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                      bannerUrl:
+                          courseDetails?.courseBannerVideo?.first.url ?? "",
+                      bannerName:
+                          courseDetails?.courseBannerVideo?.first.name ?? "",
                     ),
-                    const SizedBox(height: 12),
-                    if (headerBannerUrls.isNotEmpty)
-                      MediaWidget(
-                        url: courseDetails?.courseBannerVideo?.first.url ?? "",
-                        name:
-                            courseDetails?.courseBannerVideo?.first.name ?? "",
-                      ),
                     const SizedBox(height: 12),
                     if (courseDetails?.description != "")
                       CourseDescriptionWidget(
@@ -153,6 +173,13 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         description: courseDetails?.description ?? "",
                       ),
                     const SizedBox(height: 12),
+                    Text(
+                      (courseDetails?.eventType == "Single Day")
+                          ? "Single Day Event"
+                          : "Multiple Day Event",
+                      style: TextStyles.bold2(color: AppColors.primaryColor),
+                    ),
+                    const SizedBox(height: 6),
                     if ((courseDetails?.courseEventInfo?.isNotEmpty ??
                         false)) ...[
                       ...courseDetails!.courseEventInfo!
@@ -166,21 +193,16 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             .map((e) => e.url ?? "")
                             .where((url) => url.isNotEmpty)
                             .toList();
-
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             EventDayDataWidget(
                               title: (courseDetails.eventType == "Single Day")
-                                  ? "${courseDetails.eventType ?? ""} Event"
-                                  : "${courseDetails.eventType ?? ""} Event - Day ${index + 1}", // 👈 dynamic day title
+                                  ? "Event Details : "
+                                  : "Day ${index + 1}", // 👈 dynamic day title
                               descriptions: [eventInfo],
+                              images: images,
                             ),
-                            if (images.isNotEmpty)
-                              GalleryImgWidget(
-                                imageUrls: images,
-                              
-                              ),
                           ],
                         );
                       }),
@@ -210,37 +232,13 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         description: courseDetails?.refundPolicy ?? "",
                       ),
                     const SizedBox(height: 12),
-                    if (courseDetails?.address != "" &&
-                        courseDetails?.contactEmail != "" &&
-                        courseDetails?.contactPhone != "")
-                      ContactInfoWidget(
-                        location: courseDetails?.address ?? "",
-                        email: courseDetails?.contactEmail ?? "",
-                        phoneNumber: courseDetails?.contactPhone ?? "",
-                      ),
+                    ContactInfoWidget(
+                      location: courseDetails?.address ?? "",
+                      email: courseDetails?.contactEmail ?? "",
+                      phoneNumber: courseDetails?.contactPhone ?? "",
+                    ),
                     if ((courseDetails?.address ?? "").isNotEmpty)
                       LocationViewWidget(location: courseDetails?.address!),
-                    (courseDetails?.status == "APPROVE")
-                        ? Column(
-                            children: [
-                              const Divider(),
-                              RegisterNowWidget(
-                                currentPrice:
-                                    courseDetails?.earlyBirdPrice?.toString() ??
-                                        "0",
-                                oldPrice: courseDetails?.afterwardsPrice
-                                        ?.toString() ??
-                                    "0",
-                                onPressed: () {
-                                  courseListingVM
-                                      .setCourseId(courseDetails?.id ?? "");
-                                  RegistrationUserForm.show(
-                                      context, courseDetails?.courseName ?? "");
-                                },
-                              ),
-                            ],
-                          )
-                        : SizedBox.shrink(),
                   ],
                 ),
               ),

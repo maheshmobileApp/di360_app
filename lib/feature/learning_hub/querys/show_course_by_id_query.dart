@@ -52,6 +52,7 @@ const String showCourseById = r'''query ShowCourseById($id: uuid!) {
     startDate
     endDate
     startTime
+    endTime
     created_at
     updated_at
 
