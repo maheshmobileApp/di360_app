@@ -30,11 +30,10 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
               children: [
                 sectionHeader("Add FAQ's"),
                 CustomAddButton(
-                  label: 'Add +',
-                  onPressed: () {
-                    showFAQSBottomSheet(context, addDirectorVM, editVM, '');
-                  },
-                ),
+                    label: 'Add +',
+                    onPressed: () {
+                      showFAQSBottomSheet(context, addDirectorVM, editVM, '');
+                    }),
               ],
             ),
             addVertical(16),
@@ -111,83 +110,98 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      showDragHandle: false,
       backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          maxChildSize: 0.75,
-          minChildSize: 0.7,
-          expand: false,
-          builder: (context, scrollController) {
+        // return DraggableScrollableSheet(
+        //   initialChildSize: 0.50,
+        //   maxChildSize: 0.50,
+        //   minChildSize: 0.5,
+        //   expand: false,
+        //   builder: (context, scrollController) {
             return Form(
               key: _formKey,
-              child: Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(24))),
-                child: SafeArea(
-                  top: false,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
-                          child: addfaqsWidget(addDirectorVM),
-                        ),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SingleChildScrollView(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(24))),
+                    child: SafeArea(
+                      top: false,
+                      child: Column(
+                        children: [
+                          addfaqsWidget(addDirectorVM),
+                          CloseAddButtonWidget(
+                            closeBtn: () {
+                              navigationService.goBack();
+                              editVM.updateIsEditFAQ(false);
+                            },
+                            addBtn: () {
+                              if (_formKey.currentState!.validate()) {
+                                editVM.isEditFAQ
+                                    ? editVM.updateTheFAQ(context, id ?? '')
+                                    : addDirectorVM.addFAQs(context);
+                                navigationService.goBack();
+                              }
+                            },
+                            btnText: editVM.isEditFAQ ? 'Update' : 'Add',
+                          )
+                        ],
                       ),
-                      CloseAddButtonWidget(
-                        closeBtn: () {
-                          navigationService.goBack();
-                          editVM.updateIsEditFAQ(false);
-                        },
-                        addBtn: () {
-                          if (_formKey.currentState!.validate()) {
-                            editVM.isEditFAQ
-                                ? editVM.updateTheFAQ(context, id ?? '')
-                                : addDirectorVM.addFAQs(context);
-                            navigationService.goBack();
-                          }
-                        },
-                        btnText: editVM.isEditFAQ ? 'Update' : 'Add',
-                      )
-                    ],
+                    ),
                   ),
                 ),
               ),
             );
-          },
-        );
+        //   },
+        // );
       },
     );
   }
 
   Widget addfaqsWidget(AddDirectoryViewModel addDirectorVM) {
-    return Column(
-      children: [
-        InputTextField(
-            hintText: "Enter question",
-            title: " Question ",
-            controller: addDirectorVM.questionCntr,
-            isRequired: true,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter  question'
-                : null),
-        addVertical(20),
-        InputTextField(
-            hintText: "Enter answer",
-            maxLength: 500,
-            maxLines: 5,
-            title: "Answer",
-            controller: addDirectorVM.answerCntr,
-            validator: (value) =>
-                value == null || value.isEmpty ? 'Please enter  answer' : null),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+      child: Column(
+        children: [
+          addVertical(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              sectionHeader("Faq's"),
+              InkWell(
+                  onTap: () => navigationService.goBack(),
+                  child: Icon(Icons.close, color: AppColors.black))
+            ],
+          ),
+          addVertical(10),
+          InputTextField(
+              hintText: "Enter question",
+              title: " Question ",
+              controller: addDirectorVM.questionCntr,
+              isRequired: true,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter  question'
+                  : null),
+          addVertical(20),
+          InputTextField(
+              hintText: "Enter answer",
+              maxLength: 500,
+              maxLines: 5,
+              title: "Answer",
+              controller: addDirectorVM.answerCntr,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter  answer' : null),
+        ],
+      ),
     );
   }
 

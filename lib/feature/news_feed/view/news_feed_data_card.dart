@@ -17,6 +17,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
+import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -402,10 +403,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               child: Row(
                 children: [
-                  Icon(
-                    isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: AppColors.primaryColor,
-                  ),
+                  Icon(isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: AppColors.primaryColor),
                   addHorizontal(8),
                   Text('$likeCount Likes',
                       style: TextStyles.regular2(color: AppColors.black)),
@@ -414,6 +413,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           ),
         ),
+        addHorizontal(10),
+        ShareWidget(),
         Spacer(),
         Container(
           decoration: BoxDecoration(

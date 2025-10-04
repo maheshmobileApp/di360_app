@@ -76,82 +76,47 @@ class OtherInformationScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      showDragHandle: false,
       backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.45,
-          minChildSize: 0.4,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 20),
-                        child: AddDirectorTimingsFoam(id: id),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        return SingleChildScrollView(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: AddDirectorTimingsFoam(id: id),
+            ),
+          ),
         );
       },
     );
   }
 
-  
   void showSocialAccountBottomSheet(BuildContext context, String id) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      showDragHandle: false,
       backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          maxChildSize: 0.75,
-          minChildSize: 0.6,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 20),
-                        child: AddSocialAccountForm(id: id),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SingleChildScrollView(
+            child: AddSocialAccountForm(id: id),
+          ),
         );
       },
     );

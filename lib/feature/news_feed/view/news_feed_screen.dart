@@ -134,17 +134,17 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
             addHorizontal(15)
           ],
         ),
-        body: Column(
-          children: [
-            Container(color: AppColors.whiteColor, child: Divider()),
-            Expanded(
-              child: homeViewModel.allNewsFeedsData?.newsfeeds?.length == 0
-                  ? Center(
-                      child: Text('No Data',
-                          style: TextStyles.clashSemiBold(
-                              color: AppColors.black, fontSize: 20)))
-                  : ListView.builder(
-                    controller: newsFeedVM.feedScrollController,
+        body: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
+            ? Center(
+                child: Text('No Data',
+                    style: TextStyles.clashSemiBold(
+                        color: AppColors.black, fontSize: 20)))
+            : Column(
+                children: [
+                  Container(color: AppColors.whiteColor, child: Divider()),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: newsFeedVM.feedScrollController,
                       itemCount:
                           homeViewModel.allNewsFeedsData?.newsfeeds?.length,
                       itemBuilder: (context, index) {
@@ -153,9 +153,9 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                         return NewsFeedDataCard(newsfeeds: newsData);
                       },
                     ),
-            ),
-          ],
-        ),
+                  ),
+                ],
+              ),
         floatingActionButton: FloatingActionButton(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),

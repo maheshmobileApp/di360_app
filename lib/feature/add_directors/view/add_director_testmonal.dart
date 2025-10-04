@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
@@ -160,60 +161,58 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.95,
-          maxChildSize: 0.95,
-          minChildSize: 0.6,
-          expand: false,
-          builder: (context, scrollController) {
-            return Form(
-              key: _formKey,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                ),
-                child: SafeArea(
-                  top: false,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
+        return Form(
+          key: _formKey,
+          child: SizedBox(
+            height: getSize(context).height * 0.8,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      children: [
+                        Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
                           child: testimonialsWidget(addDirectorVM, context,
                               imgUrl: data?.profileImage?.url,
                               picUrl: data?.msgPic?.url),
                         ),
-                      ),
-                      CloseAddButtonWidget(
-                        closeBtn: () {
-                          editVM.updateIsEditTestimonials(false);
-                          navigationService.goBack();
-                        },
-                        addBtn: () {
-                          if (_formKey.currentState!.validate() &&
-                              validationImageAndPicture(addDirectorVM, context,
-                                  data?.profileImage?.url, data?.msgPic?.url)) {
-                            editVM.isEditTestimonal
-                                ? editVM.updateTheTestimonial(
-                                    context,
-                                    data?.id ?? '',
-                                    data?.profileImage?.toJson(),
-                                    data?.msgPic?.toJson())
-                                : addDirectorVM.addTestimonials(context);
+                        CloseAddButtonWidget(
+                          closeBtn: () {
+                            editVM.updateIsEditTestimonials(false);
                             navigationService.goBack();
-                          }
-                        },
-                        btnText: editVM.isEditTestimonal ? 'Update' : 'Add',
-                      )
-                    ],
+                          },
+                          addBtn: () {
+                            if (_formKey.currentState!.validate() &&
+                                validationImageAndPicture(addDirectorVM, context,
+                                    data?.profileImage?.url, data?.msgPic?.url)) {
+                              editVM.isEditTestimonal
+                                  ? editVM.updateTheTestimonial(
+                                      context,
+                                      data?.id ?? '',
+                                      data?.profileImage?.toJson(),
+                                      data?.msgPic?.toJson())
+                                  : addDirectorVM.addTestimonials(context);
+                              navigationService.goBack();
+                            }
+                          },
+                          btnText: editVM.isEditTestimonal ? 'Update' : 'Add',
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );
@@ -224,6 +223,17 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
       {String? imgUrl, String? picUrl}) {
     return Column(
       children: [
+        addVertical(10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            sectionHeader('Testimonials'),
+            InkWell(
+                onTap: () => navigationService.goBack(),
+                child: Icon(Icons.close, color: AppColors.black))
+          ],
+        ),
+        addVertical(10),
         InputTextField(
           hintText: "Enter name",
           title: " Name ",

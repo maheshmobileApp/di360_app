@@ -105,28 +105,91 @@ class ImagePickerInputField extends StatelessWidget {
   }
 }
 
-void imagePickerSelection(BuildContext context, VoidCallback? galleryOnTap,
-      VoidCallback? cameraOnTap) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) {
-        return Wrap(
+void imagePickerSelection(
+    BuildContext context, Function()? galleryOnTap, Function()? cameraOnTap) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
-              onTap: galleryOnTap,
+            Container(
+              width: 40,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: cameraOnTap,
+            const SizedBox(height: 20),
+            const Text(
+              "Choose Option",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
             ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buildOption(
+                  icon: Icons.photo_library,
+                  label: "Gallery",
+                  color: Colors.blue,
+                  onTap: galleryOnTap ?? () {},
+                ),
+                buildOption(
+                  icon: Icons.camera_alt,
+                  label: "Camera",
+                  color: Colors.green,
+                  onTap: cameraOnTap ?? () {},
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
           ],
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
+Widget buildOption({
+  required IconData icon,
+  required String label,
+  required Color color,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 30, color: color),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    ),
+  );
+}

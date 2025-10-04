@@ -1,8 +1,10 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,16 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          sectionHeader("Add Appointments"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              sectionHeader("Add Appointments"),
+              InkWell(
+                  onTap: () => navigationService.goBack(),
+                  child: Icon(Icons.close, color: AppColors.black))
+            ],
+          ),
+          sectionHeader(""),
           addVertical(12),
           CustomDropDown<String>(
             title: 'Select Team Member',

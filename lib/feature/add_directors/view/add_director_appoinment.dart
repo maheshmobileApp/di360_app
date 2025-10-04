@@ -112,51 +112,49 @@ class AddDirectorAppoinment extends StatelessWidget with BaseContextHelpers {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      showDragHandle: false,
       backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Form(
-          key: _formKey,
-          child: DraggableScrollableSheet(
-            initialChildSize: 0.85,
-            maxChildSize: 0.95,
-            minChildSize: 0.6,
-            expand: false,
-            builder: (context, scrollController) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                ),
-                child: SafeArea(
-                  top: false,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
-                          child: AddDirectorAppoinmentFoam(),
-                        ),
-                      ),
-                      CloseAddButtonWidget(
-                        addBtn: () {
-                          if (_formKey.currentState!.validate()) {
-                            editVM.addAppointment(context);
-                            navigationService.goBack();
-                          }
-                        },
-                      )
-                    ],
+        // return DraggableScrollableSheet(
+        //   initialChildSize: 0.85,
+        //   maxChildSize: 0.95,
+        //   minChildSize: 0.6,
+        //   expand: false,
+        //   builder: (context, scrollController) {
+            return Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      children: [
+                        AddDirectorAppoinmentFoam(),
+                        CloseAddButtonWidget(
+                          addBtn: () {
+                            if (_formKey.currentState!.validate()) {
+                              editVM.addAppointment(context);
+                              navigationService.goBack();
+                            }
+                          },
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
-        );
+              ),
+            );
+        //   },
+        // );
       },
     );
   }
