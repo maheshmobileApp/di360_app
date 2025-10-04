@@ -138,6 +138,9 @@ class RegistrationUserForm {
                               formKey.currentState!.save();
                               await courseVM.userRegisterToCourse(context);
                               navigationService.goBack();
+                              courseVM.clearAll();
+                              await courseVM.getCoursesListingData(context);
+                              
                             }
                           },
                           backgroundColor: AppColors.primaryColor,

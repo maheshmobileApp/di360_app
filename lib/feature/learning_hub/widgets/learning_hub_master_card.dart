@@ -18,7 +18,7 @@ class ListingHubMasterCard extends StatelessWidget {
   final String profilePic;
   final String presenterName;
   final VoidCallback registerTap;
-  final String remainingOfSeats;
+  final dynamic remainingOfSeats;
 
   const ListingHubMasterCard(
       {super.key,
@@ -80,7 +80,7 @@ class ListingHubMasterCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      remainingOfSeats == "0" ? "SOLD OUT" : "FILLING FAST !",
+                      remainingOfSeats <= 0 ? "SOLD OUT" : "FILLING FAST !",
                       style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),

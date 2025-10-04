@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +32,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
   @override
   void initState() {
     super.initState();
+    context.read<CourseListingViewModel>().getCoursesListingData(context);
   }
 
   @override
@@ -104,7 +106,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 hintText: "Search Course...",
                 onClear: () {},
                 onChanged: (value) {
-                  courseListingVM.getCoursesListingData(context, value);
+                  courseListingVM.getCoursesListingData(context);
                 },
               ),
             SizedBox(
@@ -189,10 +191,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         print(courseListingVM.coursesListingList.length);
                         return CouresListingCard(
                           id: course.id ?? "",
+                          meetingLink: course.meetingLink ?? "",
                           logoUrl: course.presentedByImage?.url ?? '',
                           companyName: course.courseName ?? '',
                           courseTitle: course.presentedByName ?? '',
                           status: course.status ?? '',
+                          activeStatus: course.activeStatus??"",
                           description: course.description ?? '',
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
@@ -200,12 +204,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                                   ?.aggregate?.count ??
                               0,
                           onDetailView: () async {
-                            /* if (course.status == "DRAFT") {
-                              scaffoldMessenger(
-                                  "Draft courses cannot be opened");
-                              return;
-                            }*/
-
                             await courseListingVM.getCourseDetails(
                               context,
                               course.id ?? "",
@@ -241,20 +239,21 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Edit":
-                               /* await courseListingVM.getCourseDetails(
+                                await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
                                 courseListingVM.setEditOption(true);
+                                newCourseVM.setCurrentStep(0);
                                 courseListingVM.setCourseId(course.id ?? "");
 
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
-
+                                Loaders.circularShowLoader(context);
                                 await loadCourseData(newCourseVM,
                                     courseListingVM.courseDetails.first);
-
+                                Loaders.circularHideLoader(context);
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );*/
+                                );
 
                                 break;
                               case "Delete":
@@ -268,20 +267,27 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                                 break;
                               case "Inactive":
-                                print("Make course $id inactive");
+                                courseListingVM.updateCourseStatus(
+                                    context, course.id ?? "", "INACTIVE");
                                 break;
                               case "Active":
-                                print("Make course $id active");
+                                courseListingVM.updateCourseStatus(
+                                    context, course.id ?? "", "ACTIVE");
                                 break;
                               case "Re-Listing":
                                 await courseListingVM.getCourseDetails(
                                     context, course.id ?? "");
+                                courseListingVM.setEditOption(true);
+                                newCourseVM.setCurrentStep(0);
+                                courseListingVM.setCourseId(course.id ?? "");
                                 newCourseVM.fetchCourseCategory();
                                 newCourseVM.fetchCourseType();
-
+                                Loaders.circularShowLoader(context);
                                 await loadCourseData(newCourseVM,
                                     courseListingVM.courseDetails.first);
+                                newCourseVM.eraseDateFields();
 
+                                Loaders.circularHideLoader(context);
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
                                 );
@@ -297,6 +303,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () {
             newCourseVM.setCurrentStep(0);
+            newCourseVM.resetForm();
             newCourseVM.serverImagesClear();
             courseListingVM.setEditOption(false);
             navigationService.navigateTo(RouteList.newCourseScreen);
@@ -335,7 +342,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
             "")
         .where((url) => url.isNotEmpty)
         .toList();
-
 
     newCourseVM.serverSponsoredByImg = (course.sponsorByImage ?? [])
         .map((item) => item.url ?? "")

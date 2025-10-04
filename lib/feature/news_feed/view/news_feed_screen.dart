@@ -1,9 +1,13 @@
+import 'package:di360_flutter/common/banner/generic_list_view_with_banners.dart';
+import 'package:di360_flutter/common/banner/list_banner.dart';
+import 'package:di360_flutter/common/banner/utils.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
@@ -143,14 +147,18 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                       child: Text('No Data',
                           style: TextStyles.clashSemiBold(
                               color: AppColors.black, fontSize: 20)))
-                  : ListView.builder(
-                    controller: newsFeedVM.feedScrollController,
-                      itemCount:
-                          homeViewModel.allNewsFeedsData?.newsfeeds?.length,
-                      itemBuilder: (context, index) {
-                        final newsData =
-                            homeViewModel.allNewsFeedsData?.newsfeeds?[index];
+                  : GenericListViewWithBanners<Newsfeeds>(
+                      items: homeViewModel.allNewsFeedsData?.newsfeeds ?? [],
+                      bannerIndices: BannerUtils.calculateBannerIndices(
+                          homeViewModel.allNewsFeedsData?.newsfeeds?.length ??
+                              0),
+                      itemBuilder: (context, dataIndex) {
+                        final newsData = homeViewModel
+                            .allNewsFeedsData?.newsfeeds?[dataIndex];
                         return NewsFeedDataCard(newsfeeds: newsData);
+                      },
+                      bannerBuilder: (context, bannerPosition) {
+                        return ListBanner();
                       },
                     ),
             ),
@@ -168,3 +176,16 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         ));
   }
 }
+/*
+
+ListView.builder(
+                    controller: newsFeedVM.feedScrollController,
+                      itemCount:
+                          homeViewModel.allNewsFeedsData?.newsfeeds?.length,
+                      itemBuilder: (context, index) {
+                        final newsData =
+                            homeViewModel.allNewsFeedsData?.newsfeeds?[index];
+                        return NewsFeedDataCard(newsfeeds: newsData);
+                      },
+                    )
+ */
