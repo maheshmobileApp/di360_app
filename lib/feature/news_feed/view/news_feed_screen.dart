@@ -158,7 +158,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                         return NewsFeedDataCard(newsfeeds: newsData);
                       },
                       bannerBuilder: (context, bannerPosition) {
-                        return ListBanner(pageIndex: bannerPosition);
+                        return ListBanner();
                       },
                     ),
             ),

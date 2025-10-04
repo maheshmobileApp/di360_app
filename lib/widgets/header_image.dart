@@ -1,5 +1,5 @@
+import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class HeaderImageView extends StatelessWidget {
@@ -13,7 +13,7 @@ class HeaderImageView extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          expandedHeight: 240.0,
+          expandedHeight: 200.0,
           pinned: true,
           foregroundColor: AppColors.black,
           backgroundColor: Colors.white,
@@ -21,7 +21,6 @@ class HeaderImageView extends StatelessWidget {
           elevation: 0,
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-           
               final top = constraints.biggest.height;
               final isCollapsed =
                   top <= kToolbarHeight + MediaQuery.of(context).padding.top;
@@ -35,17 +34,9 @@ class HeaderImageView extends StatelessWidget {
                       : null, // No title when expanded
                   background: Stack(
                     children: [
-                      logo != "" || logo!.isNotEmpty
-                          ? CachedNetworkImageWidget(
-                              imageUrl: logo ?? "",
-                              width: double.infinity,
-                            )
-                          : Container(
-                              height: double.maxFinite,
-                              color: AppColors.geryColor,
-                            ),
+                      ListBanner(),
                       Positioned(
-                        top: MediaQuery.of(context).padding.top + 40,
+                        top: MediaQuery.of(context).padding.top,
                         left: 10,
                         child: isCollapsed
                             ? IconButton(
@@ -74,7 +65,9 @@ class HeaderImageView extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: Container(
-              color: Colors.white, padding: EdgeInsets.all(16), child: body),
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: body),
         ),
       ],
     );
