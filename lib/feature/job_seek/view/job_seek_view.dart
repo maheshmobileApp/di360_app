@@ -63,23 +63,28 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
               SvgPicture.asset(ImageConst.search, color: AppColors.black),
               addHorizontal(15),
               GestureDetector(
-                onTap: () => navigationService
-                    .navigateTo(RouteList.JobSeekFilterScreen),
-                child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+                onTap: () {
+                  if (jobSeekViewModel.selectedTabIndex == 0) {
+                    navigationService.navigateTo(RouteList.JobSeekFilterScreen);
+                  } else {
+                    navigationService.navigateTo(RouteList.TalentFliterScreen);
+                  }
+                },
+                child: SvgPicture.asset(
+                  ImageConst.filter,
+                  color: AppColors.black,
+                ),
               ),
               addHorizontal(15),
             ],
           ),
-          body: Expanded(
-            child: jobSeekViewModel.selectedTabIndex == 0
-                ? _buildJobsList(jobSeekViewModel)
-                : const TalentsView(),
-          ),
-    
-          floatingActionButton:
-              jobSeekViewModel.isHidleFolatingButton == false
-                  ? const TabSwitch()
-                  : null,
+          body: jobSeekViewModel.selectedTabIndex == 0
+              ? _buildJobsList(jobSeekViewModel)
+              : const TalentsView(),
+
+          floatingActionButton: jobSeekViewModel.isHidleFolatingButton == false
+              ? const TabSwitch()
+              : null,
           floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         );
       },
@@ -87,18 +92,17 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
   }
 
   Widget _buildJobsList(JobSeekViewModel vm) {
-  return RefreshIndicator(
-    onRefresh: () async => await vm.refreshJobs(context),
-    child: vm.jobs.isEmpty
-        ? Center(
-            child: vm.isRefreshing
-                ? const CircularProgressIndicator()
-                : const Text(""),
-          )
+    return RefreshIndicator(
+      onRefresh: () async => await vm.refreshJobs(context),
+      child: vm.jobs.isEmpty
+          ? Center(
+              child: vm.isRefreshing
+                  ? const CircularProgressIndicator()
+                  : const Text(""),
+            )
           : GenericListViewWithBanners<Jobs>(
               items: vm.jobs,
-              bannerIndices: BannerUtils.calculateBannerIndices(
-                  vm.jobs.length), // Show banners at 0 and 5
+              bannerIndices: BannerUtils.calculateBannerIndices(vm.jobs.length),
               itemBuilder: (context, dataIndex) {
                 final jobData = vm.jobs[dataIndex];
                 return InkWell(
@@ -112,11 +116,9 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 );
               },
               bannerBuilder: (context, bannerPos) {
-                // bannerPos is 0 for index 0, 1 for index 5, etc.
                 return ListBanner(pageIndex: bannerPos);
               },
             ),
-  );
-}
-
+    );
+  }
 }

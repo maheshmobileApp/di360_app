@@ -1,5 +1,6 @@
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';
+import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -7,23 +8,22 @@ import 'package:provider/provider.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:intl/intl.dart';
 
-class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
-  const JobSeekFilterScreen({super.key});
-
+class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
+  const TalentsFilterScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<JobSeekViewModel>(context);
-
+    final model = Provider.of<TalentsViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         elevation: 0,
-        title: const Text("Filter Jobs",
-            style: TextStyle(fontSize: 20, color: AppColors.black)),
+        title: const Text(
+          "Filter Jobs",
+          style: TextStyle(fontSize: 20, color: AppColors.black),
+        ),
         iconTheme: const IconThemeData(color: AppColors.black),
       ),
       body: SafeArea(
@@ -79,7 +79,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget buildFilters(BuildContext context, JobSeekViewModel model) {
+  Widget buildFilters(BuildContext context, TalentsViewModel model) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
@@ -104,25 +104,31 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               child: _locationSearchBar(model),
             ),
             _filterSection(
+              title: 'Filter by Availability Dates',
+              options: const [],
+              selectedIndices: const {},
+              onToggle: (_) {},
+              child: _AvailabilityDate(context, model),
+            ),
+            _filterSection(
+              title: 'Filter by  Availability Days',
+              options: model.getSortedDaysOptions().map((e) => e.name).toList(),
+              selectedIndices: model.selectedIndices['availability']?? {},
+              onToggle: (index) => model.selectItem('availability', index),
+            ),
+            _filterSection( 
               title: 'Filter by Profession',
-              options: model
-                  .getSortedProfessionOptions()
-                  .map((e) => e.name)
-                  .toList(),
+              options:
+                  model.getSortedProfessionOptions().map((e) => e.name).toList(),
               selectedIndices: model.selectedIndices['profession'] ?? {},
               onToggle: (index) => model.selectItem('profession', index),
             ),
             _filterSection(
               title: 'Filter by Employment Type',
-              options: model
-                  .getSortedEmploymentOptions()
-                  .map((e) => e.name)
-                  .toList(),
+              options:
+                  model.getSortedEmploymentOptions().map((e) => e.name).toList(),
               selectedIndices: model.selectedIndices['employment'] ?? {},
               onToggle: (index) => model.selectItem('employment', index),
-              child: model.showLocumDate
-                  ? _locumDateSection(context, model)
-                  : null,
             ),
             _filterSectionWithDropdown(
               title: 'Filter by Experience',
@@ -168,7 +174,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _locationSearchBar(JobSeekViewModel model) {
+  Widget _locationSearchBar(TalentsViewModel model) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -190,9 +196,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
           ),
           IconButton(
             icon: const Icon(Icons.search, size: 22),
-            onPressed: () {
-             
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -224,7 +228,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             );
           }),
         if (child != null) child,
-        const SizedBox(height: 10),
+        Divider(),
       ],
     );
   }
@@ -240,32 +244,37 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
       children: [child],
     );
   }
-
-  Widget _locumDateSection(BuildContext context, JobSeekViewModel model) {
+  Widget _AvailabilityDate(BuildContext context, TalentsViewModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 12),
         MultiDateCalendarPicker(
-          selectedDates: model.selectedLocumDatesObjects,
-          controller: model.locumDateController,
+          selectedDates: model.availabilityDates,
+          controller: model.availabilityDateController,
           onDatesChanged: (dates) {
-            model.selectedLocumDatesObjects = dates; 
-            model.updateLocumDateControllerText();
+            model.availabilityDates = dates;
+            model.updateAvailabilityDateControllerText();
           },
-          title: "Availability Date",
         ),
         const SizedBox(height: 12),
-        if (model.selectedLocumDatesObjects.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: model.selectedLocumDatesObjects.map((date) {
-              return Chip(
-                label: Text(DateFormat('MMM d, yyyy').format(date)),
-                onDeleted: () => model.removeLocumDate(date),
-              );
-            }).toList(),
-          ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: model.availabilityDates.map((date) {
+            return Chip(
+              label: Text(DateFormat('MMM d, yyyy').format(date)),
+              onDeleted: () {
+                model.removeAvailabilityDate(date);
+                if (model.availabilityDates.isEmpty) {
+                  model.availabilityDateController.clear();
+                } else {
+                  model.updateAvailabilityDateControllerText();
+                }
+              },
+            );
+          }).toList(),
+        ),
       ],
     );
   }

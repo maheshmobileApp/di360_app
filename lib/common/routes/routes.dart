@@ -43,6 +43,7 @@ import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dar
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_filter_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
@@ -55,11 +56,11 @@ import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
+import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
 import 'package:provider/provider.dart';
 import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
-
 
 class Routes {
   static Map<String, WidgetBuilder> get routes {
@@ -81,6 +82,7 @@ class Routes {
           create: (BuildContext context) => JobCreateViewModel(),
           child: JobCreateView()),
       RouteList.JobSeekFilterScreen: (context) => JobSeekFilterScreen(),
+       RouteList.TalentFliterScreen: (context) => TalentsFilterScreen(),
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) {
@@ -142,6 +144,14 @@ class Routes {
         );
       },
       RouteList.catalogueFilterScreen: (context) => CatalogueFilterScreen(),
+      RouteList.learningHubFliterScreen: (context) => MyLearningHubFilterScreen(
+            onApply: (selectedOptions) {
+            
+            },
+            onClear: () {
+            
+            },
+          ),
       RouteList.addCatalogScreen: (context) => AddCatalogueScreen(),
       RouteList.myCatalogueFilter: (context) => MyCatalogueFilterWidget(),
       RouteList.myCatalogueScreen: (context) => MyCataloguesScreen(),
@@ -158,8 +168,10 @@ class Routes {
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.myAppointment: (context) => AppoinmentScreen(),
-      RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
-      RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
+      RouteList.professionDirectorScreen: (context) =>
+          ProfessionalDirectorScreen(),
+      RouteList.professionAddDirectorView: (context) =>
+          ProfessionalAddDirectorView(),
       RouteList.bannersListView: (context) => BannersListScreen(),
       RouteList.addBanners: (context) => ChangeNotifierProvider(
           create: (_) => BannersViewModel(), child: AddBannersScreen()),
