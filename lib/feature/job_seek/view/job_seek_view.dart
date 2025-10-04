@@ -113,7 +113,7 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
               },
               bannerBuilder: (context, bannerPos) {
                 // bannerPos is 0 for index 0, 1 for index 5, etc.
-                return ListBanner(pageIndex: bannerPos);
+                return ListBanner();
               },
             ),
   );

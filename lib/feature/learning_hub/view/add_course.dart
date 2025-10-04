@@ -222,7 +222,6 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter your text here",
-                maxLength: 500,
                 maxLines: 5,
                 isRequired: true,
                 title: "Course Description",
