@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
@@ -54,7 +55,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   //server
   String? serverPresentedImg;
-  String? serverCourseHeaderBanner;
+  MediaInfo?  serverCourseHeaderBanner;
   List<String>? serverGallery;
   List<String>? serverCourseBannerImg;
   List<String>? serverEventImg;
@@ -117,13 +118,13 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 //------------------------Set Values-------------------------------
   void setCourseHeaderBaner(File? value) {
     selectedCourseHeaderBanner = value;
-    serverCourseHeaderBanner = "";
+    serverCourseHeaderBanner = null;
     notifyListeners();
   }
 
   void setPresentedImg(File? value) {
     selectedPresentedImg = value;
-    serverPresentedImg = "";
+    serverPresentedImg = null;
 
     notifyListeners();
   }
@@ -131,6 +132,16 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   void setGallery(List<File>? value) {
     selectedGallery = value;
     serverGallery = [];
+    notifyListeners();
+  }
+
+  void setServerGallery(List<String>? value) {
+    serverGallery = [];
+    notifyListeners();
+  }
+
+  void setServerCourseBannerImg(List<String>? value) {
+    serverCourseBannerImg = [];
     notifyListeners();
   }
 
@@ -260,11 +271,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> validateCourseHeaderBanner() async {
     // If server already has a header banner, just use it
     if (serverCourseHeaderBanner != null &&
-        serverCourseHeaderBanner!.isNotEmpty) {
+        serverCourseHeaderBanner!.url.isNotEmpty) {
       courseBannerImageHeaderList = [
         CourseBannerImage(
-          name: serverCourseHeaderBanner!.split('/').last,
-          url: serverCourseHeaderBanner!,
+          name: serverCourseHeaderBanner!.url.split('/').last,
+          url: serverCourseHeaderBanner?.url,
           type:
               "image", // default as image (you can refine if you know it’s video)
           size: 0, // unknown server-side size
@@ -737,7 +748,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void serverImagesClear() {
     serverPresentedImg = "";
-    serverCourseHeaderBanner = "";
+    serverCourseHeaderBanner = null;
     serverGallery = [];
     serverCourseBannerImg = [];
     serverEventImg = [];

@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -321,8 +322,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     newCourseVM.serverCourseHeaderBanner =
         course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty
-            ? course.courseBannerVideo!.first.url ?? ""
-            : "";
+            ? MediaInfo(url: course.courseBannerVideo?.first.url??"", type:  course.courseBannerVideo?.first.type??"")
+            : null;
 
     newCourseVM.serverGallery = (course.courseGallery ?? [])
         .map((item) => item.url ?? "")

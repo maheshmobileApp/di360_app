@@ -14,7 +14,7 @@ class ImagePickerField extends StatelessWidget {
   final String? hintText;
   final bool showPreview;
   final bool allowMultiple;
-final String? imageUrl;
+  final String? imageUrl;
   // Local Single file
   final File? selectedFile;
   final ValueChanged<File?>? onFilePicked;
@@ -25,10 +25,15 @@ final String? imageUrl;
 
   // 🔹 Server Images
   final String? serverImage;
+  final String? serverImageType;
   final List<String>? serverImages;
 
-  const ImagePickerField({
+  final ValueChanged<String?>? onServerFileRemoved;
+  final ValueChanged<List<String>>? onServerFilesRemoved;
 
+
+
+  const ImagePickerField({
     super.key,
     this.title,
     this.isRequired = false,
@@ -43,6 +48,9 @@ final String? imageUrl;
     this.onFilesPicked,
     this.serverImage,
     this.serverImages,
+    this.serverImageType,
+    this.onServerFileRemoved, 
+    this.onServerFilesRemoved, 
   });
 
   Future<void> _pickFile(BuildContext context, ImageSource source) async {
@@ -215,7 +223,8 @@ final String? imageUrl;
           if (title != null)
             Row(
               children: [
-                Text(title!, style: TextStyles.regular3(color: AppColors.black)),
+                Text(title!,
+                    style: TextStyles.regular3(color: AppColors.black)),
                 if (isRequired)
                   const Text(
                     ' *',
@@ -271,20 +280,58 @@ final String? imageUrl;
         itemBuilder: (_, index) {
           final file = selectedFiles![index];
           final isVideo = file.path.toLowerCase().endsWith(".mp4");
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: isVideo
-                ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
-                : Image.file(file, fit: BoxFit.contain),
+
+          return Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: isVideo
+                    ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                    : Image.file(file, fit: BoxFit.contain),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: () {
+                    final newList = List<File>.from(selectedFiles!);
+                    newList.removeAt(index);
+                    onFilesPicked?.call(newList);
+                  },
+                  child: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.black54,
+                    child: Icon(Icons.close, color: Colors.white, size: 14),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       );
 
-  Widget _buildLocalSingleFile() => selectedFile!.path
-          .toLowerCase()
-          .endsWith(".mp4")
-      ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
-      : Image.file(selectedFile!, fit: BoxFit.contain, width: double.infinity);
+  Widget _buildLocalSingleFile() => Stack(
+        children: [
+          selectedFile!.path.toLowerCase().endsWith(".mp4")
+              ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+              : Image.file(selectedFile!,
+                  fit: BoxFit.contain, width: double.infinity),
+
+          // 🔹 Remove Button
+          Positioned(
+            top: 4,
+            right: 4,
+            child: GestureDetector(
+              onTap: () => onFilePicked?.call(null), // clears file
+              child: const CircleAvatar(
+                radius: 14,
+                backgroundColor: Colors.black54,
+                child: Icon(Icons.close, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
+        ],
+      );
 
   Widget _buildServerMultipleFiles() => ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -293,20 +340,59 @@ final String? imageUrl;
         itemBuilder: (_, index) {
           final url = serverImages![index];
           final isVideo = url.toLowerCase().endsWith(".mp4");
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: isVideo
-                ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
-                : Image.network(url, fit: BoxFit.contain),
+
+          return Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: isVideo
+                    ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                    : Image.network(url, fit: BoxFit.contain),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: () {
+                    final updatedList = List<String>.from(serverImages!)
+                    ..removeAt(index);
+                  onServerFilesRemoved?.call(updatedList);
+                    
+                  },
+                  child: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.black54,
+                    child: Icon(Icons.close, color: Colors.white, size: 14),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       );
 
-  Widget _buildServerSingleFile() => serverImage!.toLowerCase().endsWith(".mp4")
-      ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
-      : Image.network(serverImage!,
-          fit: BoxFit.contain, width: double.infinity);
-          //NetworkVideoWidget(url: serverImage!)
+  Widget _buildServerSingleFile() => Stack(
+        children: [
+          serverImageType != "image"
+              ? NetworkVideoWidget(url: serverImage!)
+              : Image.network(serverImage!,
+                  fit: BoxFit.contain, width: double.infinity),
+          Positioned(
+            top: 4,
+            right: 4,
+            child: GestureDetector(
+              onTap: () {
+                onServerFileRemoved?.call(null); 
+              },
+              child: const CircleAvatar(
+                radius: 14,
+                backgroundColor: Colors.black54,
+                child: Icon(Icons.close, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
+        ],
+      );
 
   Widget _buildPlaceholder() => Column(
         mainAxisAlignment: MainAxisAlignment.center,

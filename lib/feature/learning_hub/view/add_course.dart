@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_time_picker.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -53,30 +54,39 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ),
               SizedBox(height: 8),
               Row(
-                children: [
-                  Expanded(
-                    child: CustomTimePicker(
-                      controller: jobCreateVM.startTimeController,
-                      title: "Start Time",
-                      isRequired: true,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please Select Time'
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 12), // spacing between fields
-                  Expanded(
-                    child: CustomTimePicker(
-                      controller: jobCreateVM.endTimeController,
-                      title: "End Time",
-                      isRequired: true,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please Select Time'
-                          : null,
-                    ),
-                  ),
-                ],
-              ),
+  children: [
+    Expanded(
+      child: CustomTimePicker(
+        controller: jobCreateVM.startTimeController,
+        title: "Start Time",
+        isRequired: true,
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Please Select Start Time';
+          return null;
+        },
+      ),
+    ),
+    const SizedBox(width: 12),
+    Expanded(
+  child: CustomTimePicker(
+    controller: jobCreateVM.endTimeController,
+    title: "End Time",
+    isRequired: true,
+    validator: (value) {
+      if (value == null || value.isEmpty) return 'Please Select End Time';
+      if (jobCreateVM.startTimeController.text.isNotEmpty &&
+          !isEndTimeAfterStartTime(
+              jobCreateVM.startTimeController.text, value)) {
+        return 'End Time must be later than Start Time';
+      }
+      return null;
+    },
+  ),
+),
+
+  ],
+),
+
               SizedBox(height: 8),
               if (showStartEndDate) ...[
                 CustomDatePicker(
@@ -114,7 +124,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                             ? DateFormat("dd/MM/yyyy")
                                 .parse(jobCreateVM.startDateController.text)
                             : DateTime.now();
-      
+
                     final picked = await showDatePicker(
                       context: context,
                       initialDate: startDate,
@@ -122,7 +132,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                           startDate, // 👈 End date cannot be before start date
                       lastDate: DateTime(2100),
                     );
-      
+
                     if (picked != null) {
                       jobCreateVM.endDateController.text =
                           DateFormat("dd/MM/yyyy").format(picked);
@@ -147,7 +157,6 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ],
               SizedBox(height: 8),
               CustomDatePicker(
-                isRequired: true,
                 title: "RSVP Date",
                 controller: jobCreateVM.rsvpDateController,
                 text: null,
@@ -164,8 +173,6 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                         "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please Select Date' : null,
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -182,6 +189,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 title: "Presented By (Image)",
                 isRequired: true,
                 serverImage: jobCreateVM.serverPresentedImg,
+                serverImageType: "image",
+                onServerFileRemoved: (value) {
+                  jobCreateVM.setPresentedImg(null);
+                },
                 showPreview: true,
                 selectedFile: jobCreateVM.selectedPresentedImg,
                 onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
@@ -192,8 +203,12 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ImagePickerField(
                 title: "Course Header Banner / Video",
                 isRequired: true,
-                serverImage: jobCreateVM.serverCourseHeaderBanner,
+                serverImage: jobCreateVM.serverCourseHeaderBanner?.url,
+                serverImageType: jobCreateVM.serverCourseHeaderBanner?.type,
                 showPreview: true,
+                onServerFileRemoved: (value) {
+                  jobCreateVM.setCourseHeaderBaner(null);
+                },
                 selectedFile: jobCreateVM.selectedCourseHeaderBanner,
                 onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
               ),
@@ -203,6 +218,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 isRequired: true,
                 serverImages: jobCreateVM.serverGallery,
                 allowMultiple: true,
+                onServerFilesRemoved: (updatedList) {
+                  jobCreateVM.setServerGallery(updatedList);
+                },
                 showPreview: true,
                 selectedFiles: jobCreateVM.selectedGallery,
                 onFilesPicked: (file) => jobCreateVM.setGallery(file),
@@ -214,6 +232,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 allowMultiple: true,
                 serverImages: jobCreateVM.serverCourseBannerImg,
                 showPreview: true,
+                onServerFilesRemoved: (updatedList) {
+                  jobCreateVM.setServerCourseBannerImg(updatedList);
+                },
                 selectedFiles: jobCreateVM.selectedCourseBannerImg,
                 onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),
               ),
@@ -222,6 +243,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter your text here",
+                maxLength: 500,
                 maxLines: 5,
                 isRequired: true,
                 title: "Course Description",
@@ -274,15 +296,16 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                   if (value == null || value.isEmpty) {
                     return 'Please enter Bird Price';
                   }
-      
+
                   final birdPrice = double.tryParse(value) ?? 0;
                   final totalPrice =
-                      double.tryParse(jobCreateVM.totalPriceController.text) ?? 0;
-      
+                      double.tryParse(jobCreateVM.totalPriceController.text) ??
+                          0;
+
                   if (birdPrice > totalPrice) {
                     return 'Bird Price cannot be more than Total Price';
                   }
-      
+
                   return null;
                 },
               ),
@@ -305,8 +328,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                         "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please Select Date' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please Select Date'
+                    : null,
               ),
               SizedBox(height: 8),
               /*
@@ -382,4 +406,35 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
           : null,
     );
   }
+
+  DateTime? parseTime(String timeString) {
+  try {
+    // Try 24-hour format first: "HH:mm"
+    final parts = timeString.split(':');
+    if (parts.length == 2) {
+      int hour = int.parse(parts[0]);
+      int minute = int.parse(parts[1].replaceAll(RegExp(r'[^0-9]'), '')); // remove AM/PM if any
+
+      // If time has AM/PM
+      if (timeString.toLowerCase().contains('pm') && hour < 12) hour += 12;
+      if (timeString.toLowerCase().contains('am') && hour == 12) hour = 0;
+
+      return DateTime(0, 1, 1, hour, minute);
+    }
+  } catch (e) {
+    return null;
+  }
+  return null;
+}
+
+  bool isEndTimeAfterStartTime(String startTime, String endTime) {
+  final start = parseTime(startTime);
+  final end = parseTime(endTime);
+
+  if (start == null || end == null) return false;
+
+  return end.isAfter(start);
+}
+
+
 }

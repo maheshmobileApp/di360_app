@@ -5,6 +5,8 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/radio_button_group.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -13,8 +15,6 @@ import 'package:provider/provider.dart';
 
 class CourseInfo extends StatelessWidget with BaseContextHelpers {
   CourseInfo({super.key});
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +103,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
     if (jobCreateVM.sessions.isEmpty) {
       jobCreateVM.addNewDay();
     }
-    final day =
-        jobCreateVM.sessions.first; 
+    final day = jobCreateVM.sessions.first;
     return Column(
       children: [
         InputTextField(
@@ -239,7 +238,14 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () => jobCreateVM.removeDay(index),
+                    onPressed: () {
+                      showAlertMessage(context,
+                          'Are you sure you want to remove event?',
+                          onBack: () {
+                        navigationService.goBack();
+                        jobCreateVM.removeDay(index);
+                      });
+                    },
                     child:
                         Text("Remove Day", style: TextStyle(color: Colors.red)),
                   ),
@@ -250,8 +256,9 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
         }).toList(),
         SizedBox(height: 12),
         Align(
-          alignment: Alignment.center,
+          alignment: Alignment.bottomRight,
           child: AppButton(
+            radius: 2,
             onTap: () => jobCreateVM.addNewDay(),
             text: "Add Day",
             width: 100.0,
@@ -267,5 +274,29 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
       title,
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
+  }
+
+  bool _validateMultipleDayDates(NewCourseViewModel jobCreateVM) {
+    final dateList =
+        jobCreateVM.sessions.map((d) => d.eventDateController.text).toList();
+
+    // Check for empty
+    if (dateList.any((d) => d.isEmpty)) return false;
+
+    // Check for duplicates
+    if (dateList.toSet().length != dateList.length) return false;
+
+    // Check ascending order
+    final dateObjects = dateList.map((d) {
+      final parts = d.split('/');
+      return DateTime(
+          int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+    }).toList();
+
+    for (int i = 1; i < dateObjects.length; i++) {
+      if (!dateObjects[i].isAfter(dateObjects[i - 1])) return false;
+    }
+
+    return true;
   }
 }
