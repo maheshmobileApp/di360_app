@@ -30,6 +30,7 @@ class BannersViewModel extends ChangeNotifier {
   bool isEditBanner = false;
   bool isRelistBanner = false;
   String? existingBannerImageUrl;
+  String? requiredDimension;
 
   getBannerData(BuildContext context) {
     getBannersList(context);
@@ -38,8 +39,16 @@ class BannersViewModel extends ChangeNotifier {
 
   void updateSelectedCatagory(BannerCategories? catagory) {
     selectedCatagory = catagory;
+      requiredDimension = catagory?.dimensions; // store dimension
+    selectedPresentedImg = null; // reset old image
     notifyListeners();
   }
+  // void updateSelectedCatagory(BannerCategories category) {
+  //   selectedCatagory = category;
+  //   requiredDimension = category.dimensions; // store dimension
+  //   selectedPresentedImg = null; // reset old image
+  //   notifyListeners();
+  // }
 
   void updateEditBannerVal(bool val) {
     isEditBanner = val;
@@ -351,8 +360,6 @@ class BannersViewModel extends ChangeNotifier {
     editBannerId = bannersView?.id ?? "";
     bannner_image = bannersView?.image?.first.url;
     urlController.text = bannersView?.url ?? "";
-
-    // ✅ Clear schedule and expiry for fresh entry
     scheduleDate = null;
     expiryDate = null;
 
