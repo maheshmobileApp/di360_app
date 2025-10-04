@@ -6,6 +6,7 @@ import 'package:di360_flutter/widgets/network_video_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ImagePickerField extends StatelessWidget {
   final String? title;
@@ -31,8 +32,6 @@ class ImagePickerField extends StatelessWidget {
   final ValueChanged<String?>? onServerFileRemoved;
   final ValueChanged<List<String>>? onServerFilesRemoved;
 
-
-
   const ImagePickerField({
     super.key,
     this.title,
@@ -49,8 +48,8 @@ class ImagePickerField extends StatelessWidget {
     this.serverImage,
     this.serverImages,
     this.serverImageType,
-    this.onServerFileRemoved, 
-    this.onServerFilesRemoved, 
+    this.onServerFileRemoved,
+    this.onServerFilesRemoved,
   });
 
   Future<void> _pickFile(BuildContext context, ImageSource source) async {
@@ -286,7 +285,27 @@ class ImagePickerField extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: isVideo
-                    ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                    ? FutureBuilder<String?>(
+                        future: VideoThumbnail.thumbnailFile(
+                          video: file.path,
+                          imageFormat: ImageFormat.JPEG,
+                          maxHeight: 150,
+                          quality: 75,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return Image.file(
+                              File(snapshot.data!),
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return const Center(
+                              child: Icon(Icons.videocam,
+                                  size: 50, color: Colors.grey),
+                            );
+                          }
+                        },
+                      )
                     : Image.file(file, fit: BoxFit.contain),
               ),
               Positioned(
@@ -313,7 +332,27 @@ class ImagePickerField extends StatelessWidget {
   Widget _buildLocalSingleFile() => Stack(
         children: [
           selectedFile!.path.toLowerCase().endsWith(".mp4")
-              ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+              ? FutureBuilder<String?>(
+                        future: VideoThumbnail.thumbnailFile(
+                          video: selectedFile!.path,
+                          imageFormat: ImageFormat.JPEG,
+                          maxHeight: 150,
+                          quality: 75,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return Image.file(
+                              File(snapshot.data!),
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return const Center(
+                              child: Icon(Icons.videocam,
+                                  size: 50, color: Colors.grey),
+                            );
+                          }
+                        },
+                      )
               : Image.file(selectedFile!,
                   fit: BoxFit.contain, width: double.infinity),
 
@@ -355,9 +394,8 @@ class ImagePickerField extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     final updatedList = List<String>.from(serverImages!)
-                    ..removeAt(index);
-                  onServerFilesRemoved?.call(updatedList);
-                    
+                      ..removeAt(index);
+                    onServerFilesRemoved?.call(updatedList);
                   },
                   child: const CircleAvatar(
                     radius: 12,
@@ -382,7 +420,7 @@ class ImagePickerField extends StatelessWidget {
             right: 4,
             child: GestureDetector(
               onTap: () {
-                onServerFileRemoved?.call(null); 
+                onServerFileRemoved?.call(null);
               },
               child: const CircleAvatar(
                 radius: 14,

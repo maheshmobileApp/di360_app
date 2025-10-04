@@ -206,9 +206,15 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                         "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please Select Date'
-                    : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Select Date';
+                  }
+                  if (jobCreateVM.isDateDuplicate(index, value)) {
+                    return 'This date is already selected for another session';
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -239,8 +245,8 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      showAlertMessage(context,
-                          'Are you sure you want to remove event?',
+                      showAlertMessage(
+                          context, 'Are you sure you want to remove event?',
                           onBack: () {
                         navigationService.goBack();
                         jobCreateVM.removeDay(index);
@@ -274,29 +280,5 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
       title,
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
-  }
-
-  bool _validateMultipleDayDates(NewCourseViewModel jobCreateVM) {
-    final dateList =
-        jobCreateVM.sessions.map((d) => d.eventDateController.text).toList();
-
-    // Check for empty
-    if (dateList.any((d) => d.isEmpty)) return false;
-
-    // Check for duplicates
-    if (dateList.toSet().length != dateList.length) return false;
-
-    // Check ascending order
-    final dateObjects = dateList.map((d) {
-      final parts = d.split('/');
-      return DateTime(
-          int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
-    }).toList();
-
-    for (int i = 1; i < dateObjects.length; i++) {
-      if (!dateObjects[i].isAfter(dateObjects[i - 1])) return false;
-    }
-
-    return true;
   }
 }

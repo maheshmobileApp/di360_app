@@ -422,8 +422,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     }
 
     newCourseVM.startTimeController.text = course.startTime ?? "";
-    newCourseVM.endTimeController.text =
-        course.endTime ?? course.startTime ?? "";
+    newCourseVM.endTimeController.text = course.endTime ?? "";
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";

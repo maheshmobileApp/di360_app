@@ -771,4 +771,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       session.eventDateController.text = "";
     }
   }
+
+  bool isDateDuplicate(int currentIndex, String date) {
+  for (int i = 0; i < sessions.length; i++) {
+    if (i != currentIndex &&
+        sessions[i].eventDateController.text.trim() == date.trim()) {
+      return true; // duplicate found
+    }
+  }
+  return false;
+}
+
 }
