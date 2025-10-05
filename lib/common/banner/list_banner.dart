@@ -41,11 +41,13 @@ class _ListBannerState extends State<ListBanner> {
       });
       final screenWidth = MediaQuery.of(context).size.width;
       final bannerWidth = (screenWidth - (_bannerHorizontalPadding * 2));
-      _scrollController.animateTo(
-        _currentIndex * (bannerWidth + 12), // 12 is separator width
-        duration: _scrollDuration,
-        curve: Curves.easeInOut,
-      );
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _currentIndex * (bannerWidth + 12), // 12 is separator width
+          duration: _scrollDuration,
+          curve: Curves.easeInOut,
+        );
+      }
     });
   }
 
@@ -83,12 +85,19 @@ class _ListBannerState extends State<ListBanner> {
             width: bannerWidth,
             height: _bannerHeight,
             child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (imageUrl != null && imageUrl.isNotEmpty)
                     Expanded(
-                      child: CachedNetworkImageWidget(imageUrl: imageUrl),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImageWidget(imageUrl: imageUrl),
+                      ),
                     ),
                 ],
               ),

@@ -24,6 +24,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     if (courseListingVM.courseDetails.isEmpty) {
       return const Scaffold(
+        backgroundColor: AppColors.lightGeryColor,
         body: Center(child: Text("No course details available")),
       );
     }
@@ -48,7 +49,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         .toList();
 
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.greyLightcolor,
       bottomNavigationBar: (courseDetails?.status == "APPROVE")
           ? Column(
               mainAxisSize: MainAxisSize.min, // 🔑 prevent unbounded height
