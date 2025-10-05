@@ -125,66 +125,58 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
-        // return DraggableScrollableSheet(
-        //   initialChildSize: 0.85,
-        //   maxChildSize: 0.95,
-        //   minChildSize: 0.6,
-        //   expand: false,
-        //   builder: (context, scrollController) {
-            return SizedBox(
-              height: getSize(context).height * 0.9,
-              child: Form(
-                key: _formKey,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: SingleChildScrollView(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          color: AppColors.buttomBarColor,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(24))),
-                      child: SafeArea(
-                        top: false,
-                        child: Column(
-                          children: [
-                            AddDirectorTeamMemberFoam(hinttext: hintText),
-                            CustomBottomButton(
-                              onFirst: () {
-                                editVM.updateIsEditOurTeam(false);
+        return SizedBox(
+          height: getSize(context).height * 0.9,
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: AppColors.buttomBarColor,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(24))),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      children: [
+                        AddDirectorTeamMemberFoam(hinttext: hintText),
+                        CustomBottomButton(
+                          onFirst: () {
+                            editVM.updateIsEditOurTeam(false);
+                            navigationService.goBack();
+                          },
+                          onSecond: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (addDirectorVM.teamMemberFile?.path.isEmpty ??
+                                  false || imag == null) {
+                                showTopMessage(context, 'Select user picture');
+                              } else {
+                                editVM.isEditOurTeam
+                                    ? editVM.updateTheOurTeam(
+                                        context, id ?? '', imag)
+                                    : addDirectorVM.addTeamMember(context);
                                 navigationService.goBack();
-                              },
-                              onSecond: () {
-                                if (_formKey.currentState!.validate()) {
-                                  if (addDirectorVM.teamMemberFile?.path.isEmpty ??
-                                      false || imag == null) {
-                                    showTopMessage(context, 'Select user picture');
-                                  } else {
-                                    editVM.isEditOurTeam
-                                        ? editVM.updateTheOurTeam(
-                                            context, id ?? '', imag)
-                                        : addDirectorVM.addTeamMember(context);
-                                    navigationService.goBack();
-                                  }
-                                }
-                              },
-                              firstLabel: "Close",
-                              secondLabel: editVM.isEditOurTeam ? 'Update' : "Add",
-                              firstBgColor: AppColors.timeBgColor,
-                              firstTextColor: AppColors.primaryColor,
-                              secondBgColor: AppColors.primaryColor,
-                              secondTextColor: AppColors.whiteColor,
-                            )
-                          ],
-                        ),
-                      ),
+                              }
+                            }
+                          },
+                          firstLabel: "Close",
+                          secondLabel: editVM.isEditOurTeam ? 'Update' : "Add",
+                          firstBgColor: AppColors.timeBgColor,
+                          firstTextColor: AppColors.primaryColor,
+                          secondBgColor: AppColors.primaryColor,
+                          secondTextColor: AppColors.whiteColor,
+                        )
+                      ],
                     ),
                   ),
                 ),
               ),
-            );
-        //   },
-        // );
+            ),
+          ),
+        );
       },
     );
   }

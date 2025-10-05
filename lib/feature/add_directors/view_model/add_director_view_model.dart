@@ -99,6 +99,26 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   DirectoryCategories? selectedBusineestype;
   List<GetDirectories> getBasicInfoData = [];
 
+  
+  final List<String> _selectedTeamMemberList = [];
+  List<String> get selectedTeamMemberList =>
+      List.unmodifiable(_selectedTeamMemberList);
+
+      
+  void addTeamMemberList(String teamMember) {
+    if (!_selectedTeamMemberList.contains(teamMember)) {
+      _selectedTeamMemberList.add(teamMember);
+    }
+  }
+
+  void removeTeamMemberList(String teamMember) {
+    _selectedTeamMemberList.remove(teamMember);
+  }
+
+  void clearTeamMemberList() {
+    _selectedTeamMemberList.clear();
+  }
+
   // Toggles
   bool serviceShowApmt = false;
   bool isEditService = false;
