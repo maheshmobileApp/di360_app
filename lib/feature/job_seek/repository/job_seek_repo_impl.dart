@@ -99,44 +99,42 @@ class JobSeekRepoImpl extends JobSeekRepository {
       throw Exception('Failed to load work types from local asset: $e');
     }
   }
-
-@override
-Future<List<Jobs>> fetchFilteredJobs(
+ @override
+ Future<List<Jobs>> fetchFilteredJobs(
   List<String>? professions,
   List<String>? employmentTypes,
   List<String>? experiences,
   List<String>? availability,
 ) async {
   try {
+    final List<Map<String, dynamic>> andConditions = [];
+if (professions != null && professions.isNotEmpty) {
+  andConditions.add({"j_role": {"_in": professions}});
+}
+if (employmentTypes != null && employmentTypes.isNotEmpty) {
+  andConditions.add({"TypeofEmployment": {"_overlap": employmentTypes}});
+}
+if (experiences != null && experiences.isNotEmpty) {
+  andConditions.add({"years_of_experience": {"_in": experiences}});
+}
+if (availability != null && availability.isNotEmpty) {
+  andConditions.add({"availability_date": {"_overlap": availability}});
+}
+andConditions.add({"status": {"_eq": "APPROVE"}});
     final variables = {
-  "where": {
-    "_and": [
-      if (professions != null && professions.isNotEmpty)
-        {"j_role": {"_in": professions}},
-      if (employmentTypes != null && employmentTypes.isNotEmpty)
-        {"TypeofEmployment": {"_contains": employmentTypes}}, // ✅ changed
-      if (experiences != null && experiences.isNotEmpty)
-        {"years_of_experience": {"_in": experiences}},
-      if (availability != null && availability.isNotEmpty)
-        {"availability_date": {"_in": availability}},
-      {"status": {"_eq": "active"}},
-    ]
-  }
-};
-
+      "where": {
+        "_and": andConditions,
+      },
+    };
     print("Filter Variables: $variables");
-    final result = await _http.query(
-      getAllJobsFilterQuery,
-      variables: variables,
-    );
+    final result = await _http.query(getAllJobsFilterQuery, variables: variables);
     final jobsJson = result['jobs'] as List<dynamic>? ?? [];
-    print("Fetched ${jobsJson.length} filtered jobs"); 
+    print("{jobs: $jobsJson}");
+    print("Fetched ${jobsJson.length} filtered jobs");
     return jobsJson.map((e) => Jobs.fromJson(e)).toList();
   } catch (e) {
     print("Error in fetchFilteredJobs repo: $e");
     return [];
   }
 }
-
-
 }

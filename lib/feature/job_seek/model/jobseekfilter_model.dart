@@ -1,139 +1,278 @@
-class JobSeekFilterModel {
-  Where? where;
+class JobSeekFiltersResponse {
+  final JobData? data;
 
-  JobSeekFilterModel({this.where});
+  JobSeekFiltersResponse({this.data});
 
-  factory JobSeekFilterModel.fromJson(Map<String, dynamic> json) {
-    return JobSeekFilterModel(
-      where: json['where'] != null ? Where.fromJson(json['where']) : null,
+  factory JobSeekFiltersResponse.fromJson(Map<String, dynamic> json) {
+    return JobSeekFiltersResponse(
+      data: json['data'] != null ? JobData.fromJson(json['data']) : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (where != null) {
-      data['where'] = where!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'data': data?.toJson(),
+      };
 }
 
-class Where {
-  List<And>? andList;
+class JobData {
+  final List<Job>? jobs;
 
-  Where({this.andList});
+  JobData({this.jobs});
 
-  factory Where.fromJson(Map<String, dynamic> json) {
-    return Where(
-      andList: json['_and'] != null
-          ? (json['_and'] as List).map((v) => And.fromJson(v)).toList()
-          : [],
+  factory JobData.fromJson(Map<String, dynamic> json) {
+    return JobData(
+      jobs: (json['jobs'] as List?)
+          ?.map((e) => Job.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_and': andList?.map((v) => v.toJson()).toList() ?? [],
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'jobs': jobs?.map((e) => e.toJson()).toList(),
+      };
 }
 
-class And {
-  Status? status;
-  JRole? jRole;
-  TypeofEmployment? typeofEmployment;
-  Status? yearsOfExperience;
-  TypeofEmployment? availabilityDate;
+class Job {
+  final String? id;
+  final String? title;
+  final String? jType;
+  final String? jRole;
+  final String? description;
+  final List<String>? typeOfEmployment;
+  final String? yearsOfExperience;
+  final List<String>? availabilityDate;
+  final String? dentalPracticeId;
+  final String? dentalSupplierId;
+  final String? activeStatus;
+  final String? location;
+  final String? logo;
+  final String? state;
+  final String? city;
+  final String? salary;
+  final String? companyName;
+  final String? websiteUrl;
+  final String? payRange;
+  final String? education;
+  final String? video;
+  final String? closedAt;
+  final String? status;
+  final List<String>? offeredBenefits;
+  final String? country;
+  final String? endDateToggle;
+  final num? payMax;
+  final num? payMin;
+  final String? hiringPeriod;
+  final String? noOfPeople;
+  final String? rateBilling;
+  final String? linkedinUrl;
+  final String? instagramUrl;
+  final String? facebookUrl;
+  final List<ClinicLogo>? clinicLogo;
+  final dynamic bannerImage;
+  final String? timings;
+  final String? timingToggle;
+  final String? createdAt;
+  final JobApplicantsAggregate? jobApplicantsAggregate;
 
-  And({
-    this.status,
+  Job({
+    this.id,
+    this.title,
+    this.jType,
     this.jRole,
-    this.typeofEmployment,
+    this.description,
+    this.typeOfEmployment,
     this.yearsOfExperience,
     this.availabilityDate,
+    this.dentalPracticeId,
+    this.dentalSupplierId,
+    this.activeStatus,
+    this.location,
+    this.logo,
+    this.state,
+    this.city,
+    this.salary,
+    this.companyName,
+    this.websiteUrl,
+    this.payRange,
+    this.education,
+    this.video,
+    this.closedAt,
+    this.status,
+    this.offeredBenefits,
+    this.country,
+    this.endDateToggle,
+    this.payMax,
+    this.payMin,
+    this.hiringPeriod,
+    this.noOfPeople,
+    this.rateBilling,
+    this.linkedinUrl,
+    this.instagramUrl,
+    this.facebookUrl,
+    this.clinicLogo,
+    this.bannerImage,
+    this.timings,
+    this.timingToggle,
+    this.createdAt,
+    this.jobApplicantsAggregate,
   });
 
-  factory And.fromJson(Map<String, dynamic> json) {
-    return And(
-      status: json['status'] != null ? Status.fromJson(json['status']) : null,
-      jRole: json['j_role'] != null ? JRole.fromJson(json['j_role']) : null,
-      typeofEmployment: json['TypeofEmployment'] != null
-          ? TypeofEmployment.fromJson(json['TypeofEmployment'])
+  factory Job.fromJson(Map<String, dynamic> json) {
+    return Job(
+      id: json['id'],
+      title: json['title'],
+      jType: json['j_type'],
+      jRole: json['j_role'],
+      description: json['description'],
+      typeOfEmployment: (json['TypeofEmployment'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      yearsOfExperience: json['years_of_experience'],
+      availabilityDate: (json['availability_date'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      dentalPracticeId: json['dental_practice_id'],
+      dentalSupplierId: json['dental_supplier_id'],
+      activeStatus: json['active_status'],
+      location: json['location'],
+      logo: json['logo'],
+      state: json['state'],
+      city: json['city'],
+      salary: json['salary'],
+      companyName: json['company_name'],
+      websiteUrl: json['website_url'],
+      payRange: json['pay_range'],
+      education: json['education'],
+      video: json['video'],
+      closedAt: json['closed_at'],
+      status: json['status'],
+      offeredBenefits: (json['offered_benefits'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      country: json['country'],
+      endDateToggle: json['endDateToggle'],
+      payMax: json['pay_max'],
+      payMin: json['pay_min'],
+      hiringPeriod: json['hiring_period'],
+      noOfPeople: json['no_of_people'],
+      rateBilling: json['rate_billing'],
+      linkedinUrl: json['linkedin_url'],
+      instagramUrl: json['instagram_url'],
+      facebookUrl: json['facebook_url'],
+      clinicLogo: (json['clinic_logo'] is List)
+          ? (json['clinic_logo'] as List)
+              .map((e) => ClinicLogo.fromJson(e))
+              .toList()
           : null,
-      yearsOfExperience: json['years_of_experience'] != null
-          ? Status.fromJson(json['years_of_experience'])
-          : null,
-      availabilityDate: json['availability_date'] != null
-          ? TypeofEmployment.fromJson(json['availability_date'])
+      bannerImage: json['banner_image'],
+      timings: json['timings'],
+      timingToggle: json['timingtoggle'],
+      createdAt: json['created_at'],
+      jobApplicantsAggregate: json['job_applicants_aggregate'] != null
+          ? JobApplicantsAggregate.fromJson(json['job_applicants_aggregate'])
           : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (status != null) data['status'] = status!.toJson();
-    if (jRole != null) data['j_role'] = jRole!.toJson();
-    if (typeofEmployment != null) {
-      data['TypeofEmployment'] = typeofEmployment!.toJson();
-    }
-    if (yearsOfExperience != null) {
-      data['years_of_experience'] = yearsOfExperience!.toJson();
-    }
-    if (availabilityDate != null) {
-      data['availability_date'] = availabilityDate!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'j_type': jType,
+        'j_role': jRole,
+        'description': description,
+        'TypeofEmployment': typeOfEmployment,
+        'years_of_experience': yearsOfExperience,
+        'availability_date': availabilityDate,
+        'dental_practice_id': dentalPracticeId,
+        'dental_supplier_id': dentalSupplierId,
+        'active_status': activeStatus,
+        'location': location,
+        'logo': logo,
+        'state': state,
+        'city': city,
+        'salary': salary,
+        'company_name': companyName,
+        'website_url': websiteUrl,
+        'pay_range': payRange,
+        'education': education,
+        'video': video,
+        'closed_at': closedAt,
+        'status': status,
+        'offered_benefits': offeredBenefits,
+        'country': country,
+        'endDateToggle': endDateToggle,
+        'pay_max': payMax,
+        'pay_min': payMin,
+        'hiring_period': hiringPeriod,
+        'no_of_people': noOfPeople,
+        'rate_billing': rateBilling,
+        'linkedin_url': linkedinUrl,
+        'instagram_url': instagramUrl,
+        'facebook_url': facebookUrl,
+        'clinic_logo': clinicLogo?.map((e) => e.toJson()).toList(),
+        'banner_image': bannerImage,
+        'timings': timings,
+        'timingtoggle': timingToggle,
+        'created_at': createdAt,
+        'job_applicants_aggregate': jobApplicantsAggregate?.toJson(),
+      };
 }
 
-class Status {
-  String? sEq;
+class ClinicLogo {
+  final String? url;
+  final String? name;
+  final String? type;
+  final String? extension;
 
-  Status({this.sEq});
+  ClinicLogo({this.url, this.name, this.type, this.extension});
 
-  factory Status.fromJson(Map<String, dynamic> json) {
-    return Status(sEq: json['_eq']);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_eq': sEq,
-    };
-  }
-}
-
-class JRole {
-  List<String>? inList;
-
-  JRole({this.inList});
-
-  factory JRole.fromJson(Map<String, dynamic> json) {
-    return JRole(
-      inList: json['_in']?.cast<String>(),
+  factory ClinicLogo.fromJson(Map<String, dynamic> json) {
+    return ClinicLogo(
+      url: json['url'],
+      name: json['name'],
+      type: json['type'],
+      extension: json['extension'],
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_in': inList,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'url': url,
+        'name': name,
+        'type': type,
+        'extension': extension,
+      };
 }
 
-class TypeofEmployment {
-  List<String>? hasKeysAny;
+class JobApplicantsAggregate {
+  final Aggregate? aggregate;
 
-  TypeofEmployment({this.hasKeysAny});
+  JobApplicantsAggregate({this.aggregate});
 
-  factory TypeofEmployment.fromJson(Map<String, dynamic> json) {
-    return TypeofEmployment(
-      hasKeysAny: json['_has_keys_any']?.cast<String>(),
+  factory JobApplicantsAggregate.fromJson(Map<String, dynamic> json) {
+    return JobApplicantsAggregate(
+      aggregate: json['aggregate'] != null
+          ? Aggregate.fromJson(json['aggregate'])
+          : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_has_keys_any': hasKeysAny,
-    };
+  Map<String, dynamic> toJson() => {
+        'aggregate': aggregate?.toJson(),
+      };
+}
+
+class Aggregate {
+  final int? count;
+
+  Aggregate({this.count});
+
+  factory Aggregate.fromJson(Map<String, dynamic> json) {
+    return Aggregate(
+      count: json['count'],
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'count': count,
+      };
 }
