@@ -1,9 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -35,6 +35,7 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
           ),
           sectionHeader(""),
           addVertical(12),
+          dropdownTitle('Select Team Member'),
           CustomMultiSelectDropDown<String>(
             items: teamMemberList?.map((e) => e.name ?? '').toList() ?? [],
             selectedItems: addDirectorVM.selectedTeamMemberList,
@@ -55,69 +56,58 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
               }
             },
           ),
-        /*  CustomDropDown<String>(
-            title: 'Select Team Member',
-            hintText: 'Select',
-            isRequired: true,
-            value: addDirectorVM.selectedTeamMember?.id,
-            items: teamMemberList
-                    ?.map((e) => DropdownMenuItem<String>(
-                          value: e.id,
-                          child: Text(e.name ?? ''),
-                        ))
-                    .toList() ??
-                [],
-            onChanged: (val) {
-              if (val != null) {
-                final member = teamMemberList?.firstWhere((m) => m.id == val);
-                addDirectorVM.selectedTeamMember = member;
-              }
-            },
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please Select Team Member'
-                : null,
-          ),*/
           addVertical(12),
-          CustomDropDown<String>(
-            title: 'Services',
-            hintText: 'Select',
-            isRequired: true,
-            value: addDirectorVM.selectdService?.id,
-            items: serviceList
-                    ?.map((e) => DropdownMenuItem<String>(
-                          value: e.id,
-                          child: Text(e.name ?? ''),
-                        ))
-                    .toList() ??
-                [],
-            onChanged: (val) {
-              if (val != null) {
-                final member = serviceList?.firstWhere((m) => m.id == val);
-                addDirectorVM.selectdService = member;
+          dropdownTitle('Select Services'),
+          CustomMultiSelectDropDown<String>(
+            items: serviceList?.map((e) => e.name ?? '').toList() ?? [],
+            selectedItems: addDirectorVM.selectedServiceList,
+            itemLabel: (item) => item,
+            hintText: "Select ",
+            onSelectionChanged: (selected) {
+              final current =
+                  List<String>.from(addDirectorVM.selectedServiceList);
+              for (final emp in current) {
+                if (!selected.contains(emp)) {
+                  addDirectorVM.removeServicesList(emp);
+                }
+              }
+              for (final emp in selected) {
+                if (!current.contains(emp)) {
+                  addDirectorVM.addServicesList(emp);
+                }
               }
             },
-            validator: (value) =>
-                value == null || value.isEmpty ? 'Please Select Service' : null,
           ),
           addVertical(12),
           Row(
             children: [
               Flexible(
                 flex: 1,
-                child: CustomDropDown<String>(
-                  title: 'Select a day',
-                  hintText: 'Select',
-                  isRequired: true,
-                  value: daysList.contains(addDirectorVM.selectedDays)
-                      ? addDirectorVM.selectedDays
-                      : null,
-                  items: daysList
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-                  onChanged: (val) => addDirectorVM.selectedDays = val,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please Select a Day'
-                      : null,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    dropdownTitle('Select a day'),
+                    CustomMultiSelectDropDown<String>(
+                      items: daysList,
+                      selectedItems: addDirectorVM.selectedDaysList,
+                      itemLabel: (item) => item,
+                      hintText: "Select ",
+                      onSelectionChanged: (selected) {
+                        final current =
+                            List<String>.from(addDirectorVM.selectedDaysList);
+                        for (final emp in current) {
+                          if (!selected.contains(emp)) {
+                            addDirectorVM.removeDaysList(emp);
+                          }
+                        }
+                        for (final emp in selected) {
+                          if (!current.contains(emp)) {
+                            addDirectorVM.addDaysList(emp);
+                          }
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
               addHorizontal(12),
@@ -221,6 +211,15 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
           ),
         ],
       ),
+    );
+  }
+
+  Widget dropdownTitle(String title) {
+    return Column(
+      children: [
+        Text(title, style: TextStyles.regular3(color: AppColors.black)),
+        addVertical(4)
+      ],
     );
   }
 }

@@ -482,17 +482,17 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> addAppointment(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     final res = await addDirectorRepositoryImpl.addAppointment({
       "apptData": {
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
-        "directory_service_id": [addDirectorVM.selectdService?.id],
+        "directory_service_id": [],
         "day_wise_timeslots": addDirectorVM.dayWiseTimeSlots,
         "duration_in_minites": addDirectorVM.serviceTimemInCntr.text,
-        "service_name": [addDirectorVM.selectdService?.name],
-        "serviceMember": [addDirectorVM.selectedTeamMember?.name],
-        "weekdays": [addDirectorVM.selectedDays]
+        "service_name": addDirectorVM.selectedServiceList,
+        "serviceMember": addDirectorVM.selectedTeamMemberList,
+        "weekdays": addDirectorVM.selectedDaysList
       }
     });
     if (res != null) {
@@ -523,9 +523,9 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.serviceTimemInCntr.clear();
     addDirectorVM.selectedAccount = null;
-    addDirectorVM.selectedDays = null;
-    addDirectorVM.selectedTeamMember = null;
-    addDirectorVM.selectdService = null;
+    addDirectorVM.clearDaysList();
+    addDirectorVM.clearServicesList();
+    addDirectorVM.clearTeamMemberList();
     notifyListeners();
   }
 
