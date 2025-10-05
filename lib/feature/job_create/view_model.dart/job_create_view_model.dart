@@ -340,13 +340,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   // ───── Locum Toggle ─────
   String _formatDate(DateTime date) {
-    return di360_date_utils.DateUtils.formatToDayMonthYear(date);
+    return di360_date_utils.DateFormatUtils.formatToDayMonthYear(date);
   }
 
   void setStartLocumDate(DateTime date) {
     startLocumDate = date;
     startLocumDateController.text =
-        di360_date_utils.DateUtils.formatToYyyyMmDd(date);
+        di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
     updateLocumSummary();
     notifyListeners();
   }
@@ -354,7 +354,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   void setEndLocumDate(DateTime date) {
     endLocumDate = date;
     endLocumDateController.text =
-        di360_date_utils.DateUtils.formatToYyyyMmDd(date);
+        di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
     updateLocumSummary();
     notifyListeners();
   }

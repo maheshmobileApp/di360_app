@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/common/constants/string_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
@@ -10,6 +9,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dar
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
@@ -695,8 +695,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",
-              startTime: startTimeController.text,
-              endTime: endTimeController.text)
+              startTime:
+                  DateFormatUtils.convertTo24Hour(startTimeController.text),
+              endTime: DateFormatUtils.convertTo24Hour(endTimeController.text))
           .toJson(),
     });
 

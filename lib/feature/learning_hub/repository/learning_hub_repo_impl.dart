@@ -169,7 +169,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
       String? courseId) async {
     final Map<String, dynamic> variables = {
       "course_id": "${courseId}",
-      "limit": 100,
+      "limit": 1000,
       "offset": 0
     };
     final getUsersData =

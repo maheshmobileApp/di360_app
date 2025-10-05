@@ -37,10 +37,10 @@ class CourseInfoCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+    return Container(
+      // color: Colors.white,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // elevation: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

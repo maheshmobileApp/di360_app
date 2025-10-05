@@ -46,15 +46,15 @@ class ContactInfoWidget extends StatelessWidget {
           style: TextStyles.bold2(color: AppColors.primaryColor),
         ),
         const SizedBox(height: 6),
-        if (location != null && location!.isNotEmpty) ...[
+        if (location.isNotEmpty) ...[
           _buildRow(ImageConst.contactLocation, location),
         ],
         const SizedBox(height: 6),
-        if (email != null && email!.isNotEmpty) ...[
+        if (email.isNotEmpty) ...[
         _buildRow(ImageConst.contactMail, email),
         ],
         const SizedBox(height: 6),
-        if (phoneNumber != null && phoneNumber!.isNotEmpty) ...[
+        if (phoneNumber.isNotEmpty) ...[
         _buildRow(ImageConst.contactPhone, phoneNumber),
         ],
       ],
