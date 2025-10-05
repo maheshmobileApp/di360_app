@@ -31,6 +31,12 @@ class AddDirectorAppoinment extends StatelessWidget with BaseContextHelpers {
                   label: 'Add +',
                   onPressed: () {
                     addDirectorVM.clearTeamMemberList();
+                    addDirectorVM.clearServicesList();
+                    addDirectorVM.clearDaysList();
+                    addDirectorVM.serviceStartTimeCntr.clear();
+                    addDirectorVM.serviceEndTimeCntr.clear();
+                    addDirectorVM.breakEndTimeCntr.clear();
+                    addDirectorVM.breakStartTimeCntr.clear();
                     showAppointmentsBottomSheet(context, editVM);
                   },
                 ),
@@ -63,15 +69,20 @@ class AddDirectorAppoinment extends StatelessWidget with BaseContextHelpers {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(apptsData?.serviceMember?.first ?? '',
-                          style:
-                              TextStyles.bold4(color: AppColors.primaryColor)),
+                      Text(
+                        apptsData?.serviceMember?.join(', ') ?? '',
+                        style: TextStyles.bold4(color: AppColors.primaryColor),
+                      ),
                       addVertical(5),
-                      Text(apptsData?.serviceName?.first ?? '',
+                      Text(apptsData?.serviceName?.join(', ') ?? '',
                           style: TextStyles.semiBold(
                               fontSize: 15, color: AppColors.black)),
                       addVertical(5),
-                      Text(apptsData?.weekdays?.first ?? '',
+                      Text(apptsData?.weekdays?.join(', ') ?? '',
+                          style: TextStyles.semiBold(
+                              fontSize: 15, color: AppColors.black)),
+                      addVertical(5),
+                      Text('${apptsData?.durationInMinites ?? ''} min',
                           style: TextStyles.semiBold(
                               fontSize: 15, color: AppColors.black)),
                       addVertical(10),

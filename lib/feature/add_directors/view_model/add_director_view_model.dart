@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
-import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/main.dart';
@@ -103,6 +102,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   final List<String> _selectedTeamMemberList = [];
   List<String> get selectedTeamMemberList =>
       List.unmodifiable(_selectedTeamMemberList);
+  final List<String> _selectedServiceList = [];
+  List<String> get selectedServiceList =>
+      List.unmodifiable(_selectedServiceList);
+  final List<String> _selectedDaysList = [];
+  List<String> get selectedDaysList =>
+      List.unmodifiable(_selectedDaysList);
 
       
   void addTeamMemberList(String teamMember) {
@@ -118,6 +123,34 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void clearTeamMemberList() {
     _selectedTeamMemberList.clear();
   }
+      
+  void addServicesList(String services) {
+    if (!_selectedServiceList.contains(services)) {
+      _selectedServiceList.add(services);
+    }
+  }
+
+  void removeServicesList(String services) {
+    _selectedServiceList.remove(services);
+  }
+
+  void clearServicesList() {
+    _selectedServiceList.clear();
+  }
+    
+  void addDaysList(String days) {
+    if (!_selectedDaysList.contains(days)) {
+      _selectedDaysList.add(days);
+    }
+  }
+
+  void removeDaysList(String days) {
+    _selectedDaysList.remove(days);
+  }
+
+  void clearDaysList() {
+    _selectedDaysList.clear();
+  }
 
   // Toggles
   bool serviceShowApmt = false;
@@ -125,7 +158,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   bool appointmentShowVal = false;
   bool ourTeamShowVal = false;
 
-  DirectoryTeamMembers? selectedTeamMember;
+ /* DirectoryTeamMembers? selectedTeamMember;
   DirectoryServices? selectdService;
 
   void setSelectedTeamMember(DirectoryTeamMembers? members) {
@@ -136,7 +169,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void setSelectedServices(DirectoryServices? ser) {
     selectdService = ser;
     notifyListeners();
-  }
+  }*/
 
   void toggleService(bool value) {
     serviceShowApmt = value;

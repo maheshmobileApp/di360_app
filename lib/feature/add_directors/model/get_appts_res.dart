@@ -4,7 +4,9 @@ class GetApptsRes {
   GetApptsRes({this.data});
 
   GetApptsRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new AppointmentsData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new AppointmentsData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -25,8 +27,7 @@ class AppointmentsData {
     if (json['directory_appointment_slots'] != null) {
       directoryAppointmentSlots = <DirectoryApptsSlots>[];
       json['directory_appointment_slots'].forEach((v) {
-        directoryAppointmentSlots!
-            .add(new DirectoryApptsSlots.fromJson(v));
+        directoryAppointmentSlots!.add(new DirectoryApptsSlots.fromJson(v));
       });
     }
   }
@@ -63,12 +64,14 @@ class DirectoryApptsSlots {
 
   DirectoryApptsSlots.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    dayWiseTimeslots = json['day_wise_timeslots'].cast<String>();
-    serviceMember = json['serviceMember'].cast<String>();
-    serviceName = json['service_name'].cast<String>();
+    dayWiseTimeslots =
+        (json['day_wise_timeslots'] as List?)?.cast<String>() ?? [];
+    serviceMember = (json['serviceMember'] as List?)?.cast<String>() ?? [];
+    serviceName = (json['service_name'] as List?)?.cast<String>() ?? [];
     durationInMinites = json['duration_in_minites'];
-    directoryServiceId = json['directory_service_id'].cast<String>();
-    weekdays = json['weekdays'].cast<String>();
+    directoryServiceId =
+        (json['directory_service_id'] as List?)?.cast<String>() ?? [];
+    weekdays = (json['weekdays'] as List?)?.cast<String>() ?? [];
     sTypename = json['__typename'];
   }
 
