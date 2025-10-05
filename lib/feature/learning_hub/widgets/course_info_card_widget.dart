@@ -109,7 +109,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                     _InfoTextWidget(
                       label: "Date",
                       value: (startDate.isEmpty && endDate.isEmpty)
-                          ? "Not Specified"
+                          ? "--"
                           : "${DateFormat("d MMM").format(DateTime.parse("${startDate}"))} - ${DateFormat("d MMM").format(DateTime.parse("${endDate}"))} ",
                       first: true,
                     ),
@@ -129,17 +129,17 @@ class CourseInfoCardWidget extends StatelessWidget {
                       first: true,
                       value: "${cpdHours}",
                     ),
-                    _InfoTextWidget(
+                    /*_InfoTextWidget(
                       label: "Price",
                       first: true,
                       value: "\$${totalPrice}",
-                    ),
-                    /* _PriceTextWidget(
+                    ),*/
+                     _PriceTextWidget(
                 label: "Price",
                 first: false,
                 originalPrice: "${totalPrice} ",
                 discountedPrice: "${discountPrice}",
-              ),*/
+              ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -183,6 +183,7 @@ class _InfoTextWidget extends StatelessWidget {
             )),
         const SizedBox(width: 4),
         Text(value,
+        maxLines: 2,
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -209,34 +210,33 @@ class _PriceTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       crossAxisAlignment:
           first ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         Text(label,
             style: const TextStyle(
-              color: AppColors.lightGeryColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
+              color: AppColors.primaryColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             )),
-        const SizedBox(height: 4),
+        const SizedBox(width: 4),
         Row(
           children: [
             Text(
               "\$${originalPrice}",
               style: const TextStyle(
                 fontSize: 14,
-                color: Colors.black,
+                color: Colors.grey,
                 decoration: TextDecoration.lineThrough, // strike-through
               ),
             ),
             Text(
               "AUD \$${discountedPrice}",
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.activesendary,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.black)
             ),
           ],
         ),
