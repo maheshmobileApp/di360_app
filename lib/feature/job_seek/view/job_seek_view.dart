@@ -63,9 +63,17 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
               SvgPicture.asset(ImageConst.search, color: AppColors.black),
               addHorizontal(15),
               GestureDetector(
-                onTap: () => navigationService
-                    .navigateTo(RouteList.JobSeekFilterScreen),
-                child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+                onTap: () {
+                  if (jobSeekViewModel.selectedTabIndex == 0) {
+                    navigationService.navigateTo(RouteList.JobSeekFilterScreen);
+                  } else {
+                    navigationService.navigateTo(RouteList.TalentFliterScreen);
+                  }
+                },
+                child: SvgPicture.asset(
+                  ImageConst.filter,
+                  color: AppColors.black,
+                ),
               ),
               addHorizontal(15),
             ],

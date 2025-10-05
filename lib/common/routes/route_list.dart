@@ -57,4 +57,5 @@ class RouteList {
   static const String addBanners = '/addBanners';
   static const String myAppointment = '/myAppointment';
   static const String learningHubMasterView = '/learningHubMasterView';
+  static const String TalentFliterScreen= '/TalentFliterScreen';
 }
