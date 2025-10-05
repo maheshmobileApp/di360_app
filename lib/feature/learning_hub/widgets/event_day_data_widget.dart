@@ -17,9 +17,9 @@ class EventDayDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      color:  AppColors.whiteColor,
+    return Container(
+      // elevation: 2,
+      // color:  AppColors.whiteColor,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

@@ -10,7 +10,6 @@ import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widg
 import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,11 +32,6 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         ? courseListingVM.courseDetails.first
         : null;
 
-    final headerBannerUrls = (courseDetails?.courseBannerVideo ?? [])
-        .map((e) => e.url ?? "")
-        .where((url) => url.isNotEmpty)
-        .toList();
-
     final bannerUrls = (courseDetails?.courseBannerImage ?? [])
         .map((e) => e.url ?? "")
         .where((url) => url.isNotEmpty)
@@ -52,10 +46,6 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         .map((e) => e.url ?? "")
         .where((url) => url.isNotEmpty)
         .toList();
-
-    final firstEventInfo = (courseDetails?.courseEventInfo?.isNotEmpty ?? false)
-        ? courseDetails?.courseEventInfo!.first
-        : null;
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -94,7 +84,6 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 final top = constraints.biggest.height;
                 final isCollapsed =
                     top <= kToolbarHeight + MediaQuery.of(context).padding.top;
-
                 return FlexibleSpaceBar(
                   centerTitle: false,
                   title: isCollapsed
@@ -139,107 +128,129 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
             ),
           ),
           SliverToBoxAdapter(
-            child: Container(
-              color: AppColors.whiteColor,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CourseInfoCardWidget(
-                      time: "",
-                      startDate: courseDetails?.startDate ?? "",
-                      endDate: courseDetails?.endDate ?? "",
-                      courseName: courseDetails?.courseName ?? "",
-                      profilePic: courseDetails?.presentedByImage?.url ?? "",
-                      presentByName: courseDetails?.presentedByName ?? "",
-                      cpdHours:
-                          courseDetails?.cpdPoints?.toInt().toString() ?? "0",
-                      platform: courseDetails?.type ?? "",
-                      webinar: courseDetails?.feedType ?? "",
-                      totalPrice:
-                          courseDetails?.afterwardsPrice?.toString() ?? "0",
-                      discountPrice:
-                          courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                      bannerUrl:
-                          courseDetails?.courseBannerVideo?.first.url ?? "",
-                      bannerName:
-                          courseDetails?.courseBannerVideo?.first.name ?? "",
-                    ),
-                    const SizedBox(height: 12),
-                    if (courseDetails?.description != "")
-                      CourseDescriptionWidget(
-                        title: 'Course Description',
-                        description: courseDetails?.description ?? "",
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Card(
+                // color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 2,
+                color: AppColors.whiteColor,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CourseInfoCardWidget(
+                        time: "",
+                        startDate: courseDetails?.startDate ?? "",
+                        endDate: courseDetails?.endDate ?? "",
+                        courseName: courseDetails?.courseName ?? "",
+                        profilePic: courseDetails?.presentedByImage?.url ?? "",
+                        presentByName: courseDetails?.presentedByName ?? "",
+                        cpdHours:
+                            courseDetails?.cpdPoints?.toInt().toString() ?? "0",
+                        platform: courseDetails?.type ?? "",
+                        webinar: courseDetails?.feedType ?? "",
+                        totalPrice:
+                            courseDetails?.afterwardsPrice?.toString() ?? "0",
+                        discountPrice:
+                            courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                        bannerUrl:
+                            courseDetails?.courseBannerVideo?.first.url ?? "",
+                        bannerName:
+                            courseDetails?.courseBannerVideo?.first.name ?? "",
                       ),
-                    const SizedBox(height: 12),
-                    Text(
-                      (courseDetails?.eventType == "Single Day")
-                          ? "Single Day Event"
-                          : "Multiple Day Event",
-                      style: TextStyles.bold2(color: AppColors.primaryColor),
-                    ),
-                    const SizedBox(height: 6),
-                    if ((courseDetails?.courseEventInfo?.isNotEmpty ??
-                        false)) ...[
-                      ...courseDetails!.courseEventInfo!
-                          .asMap()
-                          .entries
-                          .map((entry) {
-                        final index = entry.key; // 0,1,2...
-                        final eventInfo = entry.value; // actual event
+                      const SizedBox(height: 12),
+                      if (courseDetails?.description != "")
+                        CourseDescriptionWidget(
+                          title: 'Course Description',
+                          description: courseDetails?.description ?? "",
+                        ),
+                      const SizedBox(height: 12),
+                      Text(
+                        (courseDetails?.eventType == "Single Day")
+                            ? "Single Day Event"
+                            : "Multiple Day Event",
+                        style: TextStyles.bold2(color: AppColors.primaryColor),
+                      ),
+                      const SizedBox(height: 6),
+                      if ((courseDetails?.courseEventInfo?.isNotEmpty ??
+                          false)) ...[
+                        ...courseDetails!.courseEventInfo!
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                          final index = entry.key; // 0,1,2...
+                          final eventInfo = entry.value; // actual event
 
-                        final images = (eventInfo.images ?? [])
-                            .map((e) => e.url ?? "")
-                            .where((url) => url.isNotEmpty)
-                            .toList();
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            EventDayDataWidget(
-                              title: (courseDetails.eventType == "Single Day")
-                                  ? "Event Details : "
-                                  : "Day ${index + 1}", // 👈 dynamic day title
-                              descriptions: [eventInfo],
-                              images: images,
-                            ),
-                          ],
-                        );
-                      }),
+                          final images = (eventInfo.images ?? [])
+                              .map((e) => e.url ?? "")
+                              .where((url) => url.isNotEmpty)
+                              .toList();
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              EventDayDataWidget(
+                                title: (courseDetails.eventType == "Single Day")
+                                    ? "Event Details : "
+                                    : "Day ${index + 1}", // 👈 dynamic day title
+                                descriptions: [eventInfo],
+                                images: images,
+                              ),
+                            ],
+                          );
+                        }),
+                      ],
+                      const SizedBox(height: 12),
+                      if (galleryUrls.isNotEmpty)
+                        GalleryImgWidget(
+                            title: "Gallery", imageUrls: galleryUrls),
+                      const SizedBox(height: 12),
+                      if (sponsorUrls.isNotEmpty)
+                        GalleryImgWidget(
+                          title: "Sponsors",
+                          height: 100,
+                          width: 100,
+                          imageUrls: sponsorUrls,
+                        ),
+                      const SizedBox(height: 12),
+                      if ((courseDetails?.terms ?? "").isNotEmpty)
+                        CourseDescriptionWidget(
+                          title: 'Terms & Conditions',
+                          description: courseDetails?.terms ?? "",
+                        ),
+                      const SizedBox(height: 12),
+                      if ((courseDetails?.refundPolicy ?? "").isNotEmpty)
+                        CourseDescriptionWidget(
+                          title: 'Cancellation & Refund Policy',
+                          description: courseDetails?.refundPolicy ?? "",
+                        ),
+                      const SizedBox(height: 12),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        elevation: 2,
+                        color: AppColors.greyLight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: [
+                              ContactInfoWidget(
+                                location: courseDetails?.address ?? "",
+                                email: courseDetails?.contactEmail ?? "",
+                                phoneNumber: courseDetails?.contactPhone ?? "",
+                              ),
+                              if ((courseDetails?.address ?? "").isNotEmpty)
+                                LocationViewWidget(
+                                    location: courseDetails?.address!),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
-                    const SizedBox(height: 12),
-                    if (galleryUrls.isNotEmpty)
-                      GalleryImgWidget(
-                          title: "Gallery", imageUrls: galleryUrls),
-                    const SizedBox(height: 12),
-                    if (sponsorUrls.isNotEmpty)
-                      GalleryImgWidget(
-                        title: "Sponsors",
-                        height: 100,
-                        width: 100,
-                        imageUrls: sponsorUrls,
-                      ),
-                    const SizedBox(height: 12),
-                    if ((courseDetails?.terms ?? "").isNotEmpty)
-                      CourseDescriptionWidget(
-                        title: 'Terms & Conditions',
-                        description: courseDetails?.terms ?? "",
-                      ),
-                    const SizedBox(height: 12),
-                    if ((courseDetails?.refundPolicy ?? "").isNotEmpty)
-                      CourseDescriptionWidget(
-                        title: 'Cancellation & Refund Policy',
-                        description: courseDetails?.refundPolicy ?? "",
-                      ),
-                    const SizedBox(height: 12),
-                    ContactInfoWidget(
-                      location: courseDetails?.address ?? "",
-                      email: courseDetails?.contactEmail ?? "",
-                      phoneNumber: courseDetails?.contactPhone ?? "",
-                    ),
-                    if ((courseDetails?.address ?? "").isNotEmpty)
-                      LocationViewWidget(location: courseDetails?.address!),
-                  ],
+                  ),
                 ),
               ),
             ),
