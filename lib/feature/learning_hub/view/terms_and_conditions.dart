@@ -26,21 +26,24 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
             children: [
               _sectionHeader("Terms And Conditions"),
               SizedBox(height: 16),
-               ImagePickerField(
+              ImagePickerField(
                 title: "Sponsored By",
                 isRequired: true,
                 serverImages: newCourseVM.serverSponsoredByImg,
                 showPreview: true,
+                onServerFilesRemoved: (updatedList) {
+                  newCourseVM.setServerSponsorImg(updatedList);
+                },
                 allowMultiple: true,
-                selectedFiles: newCourseVM.selectedsponsoredByImg, 
-                onFilesPicked: (file) => newCourseVM.setSponsoredBy(file), 
+                selectedFiles: newCourseVM.selectedsponsoredByImg,
+                onFilesPicked: (file) => newCourseVM.setSponsoredBy(file),
               ),
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter Terms & Conditions",
                 maxLength: 500,
                 maxLines: 5,
-                 isRequired: true,
+                isRequired: true,
                 title: "Terms & Conditions",
                 controller: newCourseVM.termsAndConditionsController,
                 validator: (value) => value == null || value.isEmpty
@@ -52,7 +55,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter Cancellation & Refund Policy",
                 maxLength: 500,
                 maxLines: 5,
-                 isRequired: true,
+                isRequired: true,
                 title: "Cancellation & Refund Policy",
                 controller: newCourseVM.cancellationController,
                 validator: (value) => value == null || value.isEmpty
@@ -60,7 +63,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
                     : null,
               ),
               SizedBox(height: 8),
-      
+
               /* if (jobCreateVM.showLocumDate) ...[
                 SizedBox(
                   height: 8,

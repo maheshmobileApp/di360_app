@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -196,7 +197,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           companyName: course.courseName ?? '',
                           courseTitle: course.presentedByName ?? '',
                           status: course.status ?? '',
-                          activeStatus: course.activeStatus??"",
+                          activeStatus: course.activeStatus ?? "",
                           description: course.description ?? '',
                           types: [course.type ?? ''],
                           createdAt: course.createdAt ?? '',
@@ -321,8 +322,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     newCourseVM.serverCourseHeaderBanner =
         course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty
-            ? course.courseBannerVideo!.first.url ?? ""
-            : "";
+            ? MediaInfo(
+                url: course.courseBannerVideo?.first.url ?? "",
+                type: course.courseBannerVideo?.first.type ?? "")
+            : null;
 
     newCourseVM.serverGallery = (course.courseGallery ?? [])
         .map((item) => item.url ?? "")
@@ -420,9 +423,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
       newCourseVM.addressController.text = "";
     }
 
-    newCourseVM.startTimeController.text = course.startTime ?? "";
+    String startTime = course.startTime ?? "";
+    String endTime = course.endTime ?? "";
+
+    newCourseVM.startTimeController.text =
+        DateFormat.jm().format(DateTime.parse("2025-10-04T${startTime}").toUtc());
     newCourseVM.endTimeController.text =
-        course.endTime ?? course.startTime ?? "";
+        DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}").toUtc());
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";

@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/constants/string_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
@@ -54,7 +56,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   //server
   String? serverPresentedImg;
-  String? serverCourseHeaderBanner;
+  MediaInfo? serverCourseHeaderBanner;
   List<String>? serverGallery;
   List<String>? serverCourseBannerImg;
   List<String>? serverEventImg;
@@ -117,13 +119,13 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 //------------------------Set Values-------------------------------
   void setCourseHeaderBaner(File? value) {
     selectedCourseHeaderBanner = value;
-    serverCourseHeaderBanner = "";
+    serverCourseHeaderBanner = null;
     notifyListeners();
   }
 
   void setPresentedImg(File? value) {
     selectedPresentedImg = value;
-    serverPresentedImg = "";
+    serverPresentedImg = null;
 
     notifyListeners();
   }
@@ -131,6 +133,21 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   void setGallery(List<File>? value) {
     selectedGallery = value;
     serverGallery = [];
+    notifyListeners();
+  }
+
+  void setServerGallery(List<String>? value) {
+    serverGallery = value;
+    notifyListeners();
+  }
+
+  void setServerCourseBannerImg(List<String>? value) {
+    serverCourseBannerImg = value;
+    notifyListeners();
+  }
+
+  void setServerSponsorImg(List<String>? value) {
+    serverSponsoredByImg = [];
     notifyListeners();
   }
 
@@ -246,7 +263,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validatePresenterImg() async {
-    if (serverPresentedImg!.isEmpty) {
+    if (serverPresentedImg == null) {
       var value = await _http.uploadImage(selectedPresentedImg?.path);
       presenter_image = value['url'];
       print(presenter_image);
@@ -260,11 +277,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> validateCourseHeaderBanner() async {
     // If server already has a header banner, just use it
     if (serverCourseHeaderBanner != null &&
-        serverCourseHeaderBanner!.isNotEmpty) {
+        serverCourseHeaderBanner!.url.isNotEmpty) {
       courseBannerImageHeaderList = [
         CourseBannerImage(
-          name: serverCourseHeaderBanner!.split('/').last,
-          url: serverCourseHeaderBanner!,
+          name: serverCourseHeaderBanner!.url.split('/').last,
+          url: serverCourseHeaderBanner?.url,
           type:
               "image", // default as image (you can refine if you know it’s video)
           size: 0, // unknown server-side size
@@ -441,6 +458,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
       notifyListeners();
     }
+  }
+
+  void setServerEventImgs(int index, List<String> files) {
+    sessions[index].serverImages = files;
+
+    notifyListeners();
   }
 
   /// Get session details as plain data (ready for API)
@@ -628,9 +651,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               courseCategoryId: selectedCategoryId,
               rsvpDate: rsvpDateController.text,
               presentedByName: presenterNameController.text,
-              presentedByImage: serverPresentedImg!.isNotEmpty
-                  ? PresentedByImage(url: serverPresentedImg)
-                  : PresentedByImage(url: presenter_image),
+              presentedByImage: PresentedByImage(url: presenter_image),
               courseBannerImage: courseBannerImgList,
               courseGallery: selectedGalleryList,
               courseBannerVideo: courseBannerImageHeaderList,
@@ -736,8 +757,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void serverImagesClear() {
-    serverPresentedImg = "";
-    serverCourseHeaderBanner = "";
+    serverPresentedImg = null;
+    serverCourseHeaderBanner = null;
     serverGallery = [];
     serverCourseBannerImg = [];
     serverEventImg = [];
@@ -759,5 +780,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     for (var session in sessions) {
       session.eventDateController.text = "";
     }
+  }
+
+  bool isDateDuplicate(int currentIndex, String date) {
+    for (int i = 0; i < sessions.length; i++) {
+      if (i != currentIndex &&
+          sessions[i].eventDateController.text.trim() == date.trim()) {
+        return true; // duplicate found
+      }
+    }
+    return false;
   }
 }

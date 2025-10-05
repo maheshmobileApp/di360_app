@@ -7,8 +7,9 @@ class AppButton extends StatelessWidget {
   final Function()? onTap;
   final double? height;
   final double? width;
+  final double radius;
   const AppButton(
-      {super.key, required this.text, this.onTap, this.height, this.width});
+      {super.key, required this.text, this.onTap, this.height, this.width, this.radius = 50});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class AppButton extends StatelessWidget {
         width: width ?? double.infinity,
         decoration: BoxDecoration(
             color: AppColors.buttonColor,
-            borderRadius: BorderRadius.circular(50)),
+            borderRadius: BorderRadius.circular(radius)),
         child: Center(
             child: Text(text,
                 style: TextStyles.medium3(color: AppColors.whiteColor))),

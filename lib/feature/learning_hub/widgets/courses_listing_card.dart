@@ -309,12 +309,12 @@ class CouresListingCard extends StatelessWidget {
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
         if (status != "APPROVE")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
-        if (status != "EXPIRED" && status != "PENDING")
-        (status == "APPROVE")
-            ? _popupItem(
-                "Inactive", Icons.nightlight_outlined, AppColors.primaryColor)
-            : _popupItem(
-                "Active", Icons.nightlight_outlined, AppColors.primaryColor),
+        if (activeStatus == "ACTIVE" && status == "APPROVE")
+          _popupItem(
+              "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
+        if (activeStatus == "INACTIVE" && status == "APPROVE")
+          _popupItem(
+              "Active", Icons.nightlight_outlined, AppColors.primaryColor),
         if (status == "EXPIRED")
           _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),
       ],
