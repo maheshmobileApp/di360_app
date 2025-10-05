@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
@@ -13,8 +14,8 @@ import 'package:provider/provider.dart';
 
 class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
   final String? id;
-  AddDirectorTimingsFoam({super.key,this.id});
-  
+  AddDirectorTimingsFoam({super.key, this.id});
+
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
@@ -24,13 +25,11 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          addTimings(addDirectorVM, context, editVM)
-        ],
+        children: [addTimings(addDirectorVM, context, editVM)],
       ),
     );
   }
@@ -43,7 +42,15 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
       key: _formKey,
       child: Column(
         children: [
-          sectionHeader("Add Timings"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              sectionHeader("Add Timings"),
+              InkWell(
+                  onTap: () => navigationService.goBack(),
+                  child: Icon(Icons.close, color: AppColors.black))
+            ],
+          ),
           addVertical(12),
           CustomDropDown<String>(
             title: 'Select a day',
@@ -136,8 +143,8 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
 
 class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
   final String? id;
-  AddSocialAccountForm({super.key,this.id});
-  
+  AddSocialAccountForm({super.key, this.id});
+
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
@@ -145,15 +152,18 @@ class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          socialUrlsWidget(addDirectorVM, context, editVM),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            socialUrlsWidget(addDirectorVM, context, editVM),
+          ],
+        ),
       ),
     );
   }
@@ -161,7 +171,15 @@ class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
   Widget socialUrlsWidget(AddDirectoryViewModel addDirectorVM,
       BuildContext context, EditDeleteDirectorViewModel editVM) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      sectionHeader("Add social links"),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          sectionHeader("Add social links"),
+          InkWell(
+              onTap: () => navigationService.goBack(),
+              child: Icon(Icons.close, color: AppColors.black))
+        ],
+      ),
       addVertical(12),
       CustomDropDown<String>(
         title: 'Account',
@@ -195,9 +213,9 @@ class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
               addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
             showTopMessage(context, 'select socail account & account url');
           } else {
-            editVM.isEditSocialMed ?
-            editVM.updateTheSocialurl(context, id ?? '') :
-            addDirectorVM.addSocialUrls(context);
+            editVM.isEditSocialMed
+                ? editVM.updateTheSocialurl(context, id ?? '')
+                : addDirectorVM.addSocialUrls(context);
             navigationService.goBack();
           }
         },

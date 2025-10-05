@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart'
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,8 +23,17 @@ class AddDirectorTeamMemberFoam extends StatelessWidget
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        sectionHeader(
-            editVM.isEditOurTeam ? 'Update Team Member' : "Add Team Member"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            sectionHeader(editVM.isEditOurTeam
+                ? 'Update Team Member'
+                : "Add Team Member"),
+            InkWell(
+                onTap: () => navigationService.goBack(),
+                child: Icon(Icons.close, color: AppColors.black))
+          ],
+        ),
         addVertical(6),
         InputTextField(
           hintText: "Enter Name",

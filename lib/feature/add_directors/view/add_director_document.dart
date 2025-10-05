@@ -48,6 +48,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                       addDirectorVM.documentNameController.clear();
                       docName = null;
                       showForm = !showForm;
+                      addDirectorVM.documentFile = null;
                     });
                   },
                 ),

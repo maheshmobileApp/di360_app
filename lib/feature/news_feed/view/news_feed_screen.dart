@@ -142,7 +142,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
           children: [
             Container(color: AppColors.whiteColor, child: Divider()),
             Expanded(
-              child: homeViewModel.allNewsFeedsData?.newsfeeds?.length == 0
+              child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
                   ? Center(
                       child: Text('No Data',
                           style: TextStyles.clashSemiBold(
@@ -161,9 +161,9 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                         return ListBanner();
                       },
                     ),
-            ),
-          ],
-        ),
+                  ),
+                ],
+              ),
         floatingActionButton: FloatingActionButton(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),

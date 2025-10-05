@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button
 import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                 CustomAddButton(
                   label: 'Add +',
                   onPressed: () {
-                    showNewServiceBottomSheet(context, editDeleteVM, '');
+                    showNewServiceBottomSheet(context, '');
                   },
                 ),
               ],
@@ -100,7 +101,7 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                 addDirectorVM.updateIsEditService(true);
                 addDirectorVM.serviceDescController.text =
                     service.description ?? '';
-                showNewServiceBottomSheet(context, vm, service.id ?? '');
+                showNewServiceBottomSheet(context, service.id ?? '');
               } else if (val == 'Delete') {
                 vm.deleteTheServices(context, service.id ?? '');
               }
@@ -111,83 +112,70 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  void showNewServiceBottomSheet(
-      BuildContext context, EditDeleteDirectorViewModel vm, String editId) {
-    final addDirectorVM =
-        Provider.of<AddDirectoryViewModel>(context, listen: false);
+  void showNewServiceBottomSheet(BuildContext context, String editId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.black,
+      isDismissible: false,
+      enableDrag: false,
+      showDragHandle: false,
+      backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.85,
-          minChildSize: 0.7,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.backgroundColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 20,
-                        ),
-                        child: AddDirectorServicesFoam(),
-                      ),
-                    ),
-                    CustomBottomButton(
-                        onFirst: () {
-                          addDirectorVM.serviceNameController.clear();
-                          addDirectorVM.toggleService(false);
-                          addDirectorVM.serviceDescController.clear();
-                          navigationService.goBack();
-                        },
-                        onSecond: () {
-                          addDirectorVM.isEditService
-                              ? vm.updateTheServices(context, editId)
-                              : addDirectorVM.addService(context);
-                          navigationService.goBack();
-                        },
-                        firstLabel: "Close",
-                        secondLabel:
-                            addDirectorVM.isEditService ? 'Update' : "Add",
-                        firstBgColor: AppColors.timeBgColor,
-                        firstTextColor: AppColors.primaryColor,
-                        secondBgColor: AppColors.primaryColor,
-                        secondTextColor: AppColors.whiteColor)
-                  ],
+        // return DraggableScrollableSheet(
+        //   initialChildSize: 0.59,
+        //   maxChildSize: 0.59,
+        //   minChildSize: 0.5,
+        //   expand: false,
+        //   builder: (context, scrollController) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: AppColors.backgroundColor,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(24))),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AddDirectorServicesFoam(editId: editId),
+                    ],
+                  ),
                 ),
               ),
             );
-          },
-        );
+        //   },
+        // );
       },
     );
   }
 }
 
 class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
+  final String editId;
+  AddDirectorServicesFoam({super.key, required this.editId});
+
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
+    final vm = Provider.of<EditDeleteDirectorViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        sectionHeader(
-            addDirectorVM.isEditService ? 'Update Service' : "New Service"),
+        addVertical(10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            sectionHeader(
+                addDirectorVM.isEditService ? 'Update Service' : "New Service"),
+            InkWell(
+                onTap: () => navigationService.goBack(),
+                child: Icon(Icons.close, color: AppColors.black))
+          ],
+        ),
         addVertical(20),
         InputTextField(
           hintText: "Enter Service Name",
@@ -216,7 +204,33 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
           maxLength: 500,
           maxLines: 5,
           title: "Short Description",
+          validator: (value) => value == null || value.isEmpty
+              ? 'Please enter description'
+              : null,
         ),
+        CustomBottomButton(
+            onFirst: () {
+              addDirectorVM.serviceNameController.clear();
+              addDirectorVM.toggleService(false);
+              addDirectorVM.serviceDescController.clear();
+              navigationService.goBack();
+            },
+            onSecond: () {
+              if (addDirectorVM.serviceNameController.text.isNotEmpty) {
+                addDirectorVM.isEditService
+                    ? vm.updateTheServices(context, editId)
+                    : addDirectorVM.addService(context);
+                navigationService.goBack();
+              } else {
+                showTopMessage(context, 'Please enter service name');
+              }
+            },
+            firstLabel: "Close",
+            secondLabel: addDirectorVM.isEditService ? 'Update' : "Add",
+            firstBgColor: AppColors.timeBgColor,
+            firstTextColor: AppColors.primaryColor,
+            secondBgColor: AppColors.primaryColor,
+            secondTextColor: AppColors.whiteColor)
       ]),
     );
   }
