@@ -140,7 +140,6 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                     width: 150,
                     onTap: () async {
                       model.clearSelections();
-                      navigationService.goBack();
                     },
                   ),
                   AppButton(
