@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.da
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
-import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
@@ -55,6 +54,7 @@ import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
+import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
 import 'package:provider/provider.dart';
 import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
@@ -100,6 +100,8 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
+       RouteList.TalentFliterScreen: (context) => TalentsFilterScreen(),
+      
       RouteList.JobListingApplicantsMessege: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
