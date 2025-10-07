@@ -2,12 +2,10 @@ import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_profession_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_seek_filter_worktype_model.dart';
-import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
-//import 'package:di360_flutter/feature/job_seek/model/job_seek_response_model.dart';
-//import 'package:di360_flutter/feature/job_seek/model/jobseekfilter_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 
 abstract class JobSeekRepository {
@@ -21,13 +19,13 @@ abstract class JobSeekRepository {
   Future<JobApplicantsResponse> getJobApplyStatus(String jobId, String dentalProfessionalId);
   Future<List<JobsRoleList>> getJobRoles();
   Future<List<JobTypes>> getJobWorkTypes();
-  Future<List<JobSeekFilterModel>> fetchFilteredJobs(
-  List<String>? roles,
-  List<String>? employmentTypes,
-  List<String>? experienceYears,
-  List<String>? availabilityDates,
-  
+  Future<List<Jobs>> fetchFilteredJobs(
+  List<String> professions,
+  List<String> employmentTypes,
+  List<String> experiences,
+  List<String> availability,
 );
+
 
  //Future<List<JobSeekResponseModel>> fetchFilteredJobs(JobSeekFilterModel filter)
  

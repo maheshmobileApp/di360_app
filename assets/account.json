@@ -8,10 +8,6 @@
             {
               "title": "View Profile",
               "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "My Subscriptions",
-              "asset": "assets/profile/payments&others/subscription 1.svg"
             }
           ]
         },
@@ -69,10 +65,6 @@
             {
               "title": "View Profile",
               "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "My Subscriptions",
-              "asset": "assets/profile/payments&others/subscription 1.svg"
             }
           ]
         },
@@ -132,10 +124,6 @@
             {
               "title": "View Profile",
               "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "My Subscriptions",
-              "asset": "assets/profile/payments&others/subscription 1.svg"
             }
           ]
         },
@@ -220,10 +208,6 @@
             {
               "title": "View Profile",
               "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "My Subscriptions",
-              "asset": "assets/profile/payments&others/subscription 1.svg"
             }
           ]
         },
