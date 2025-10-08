@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShareWidget extends StatelessWidget {
-  const ShareWidget({super.key});
+  final EdgeInsetsGeometry? padding;
+  final double? size;
+  const ShareWidget({super.key, this.padding, this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +21,9 @@ class ShareWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 color: AppColors.backgroundColor),
             child: Padding(
-                padding:
+                padding: padding ??
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                child: Icon(Icons.share, color: AppColors.primaryColor))));
+                child: Icon(Icons.share,
+                    color: AppColors.primaryColor, size: size))));
   }
 }

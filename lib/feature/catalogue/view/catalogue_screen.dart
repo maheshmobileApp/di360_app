@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_v
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_like_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -229,7 +230,8 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        SvgPicture.asset(ImageConst.noCatalogue,height: 170,width: 450),
+                        SvgPicture.asset(ImageConst.noCatalogue,
+                            height: 170, width: 450),
                         addVertical(10),
                         Text("No ${cat.name} Catalogues",
                             style: TextStyles.medium2(color: AppColors.black))
@@ -341,7 +343,16 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                       ],
                     ),
                   ),
-                  CatalogueLikeWidget(cat: c, catalogues: catalogues),
+                  Column(
+                    children: [
+                      CatalogueLikeWidget(cat: c, catalogues: catalogues),
+                      addVertical(4),
+                      ShareWidget(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                          size: 20)
+                    ],
+                  )
                 ],
               ),
             ),
