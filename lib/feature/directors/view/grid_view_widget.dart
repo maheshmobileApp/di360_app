@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.d
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -46,15 +47,15 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 8),
                               decoration: BoxDecoration(
-                                color: AppColors.whiteColor,
-                                border:
-                                    Border.all(color: AppColors.buttomBarColor),
-                                borderRadius: BorderRadius.circular(10)
-                              ),
+                                  color: AppColors.whiteColor,
+                                  border: Border.all(
+                                      color: AppColors.buttomBarColor),
+                                  borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
-                                onTap: () async{
+                                onTap: () async {
                                   print(director.id);
-                                await  value.GetDirectorDetails(director.id ?? '');
+                                  await value.GetDirectorDetails(
+                                      director.id ?? '');
                                 },
                                 child: Column(
                                   children: [
@@ -72,11 +73,23 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                         height: 1,
                                         color: AppColors.dividerColor),
                                     addVertical(6),
-                                    Text(director.name ?? '',
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        style: TextStyles.medium2(
-                                            color: AppColors.black)),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                              director.name ??
+                                                  director.companyName ??
+                                                  '',
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              style: TextStyles.medium2(
+                                                  color: AppColors.black)),
+                                        ),
+                                        ShareWidget()
+                                      ],
+                                    ),
                                     addVertical(6)
                                   ],
                                 ),
