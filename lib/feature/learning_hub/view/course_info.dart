@@ -101,7 +101,11 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
   Widget _buildSingleDayUI(
       NewCourseViewModel jobCreateVM, BuildContext context) {
     if (jobCreateVM.sessions.isEmpty) {
-      jobCreateVM.addNewDay();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        jobCreateVM.addNewDay();
+      });
+      // Optionally, return a placeholder widget here
+      return SizedBox.shrink();
     }
     final day = jobCreateVM.sessions.first;
     return Column(

@@ -144,7 +144,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CourseInfoCardWidget(
-                        time: "",
+                        time: courseDetails?.startTime ?? "",
                         startDate: courseDetails?.startDate ?? "",
                         endDate: courseDetails?.endDate ?? "",
                         courseName: courseDetails?.courseName ?? "",
@@ -194,9 +194,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               EventDayDataWidget(
-                                title: (courseDetails.eventType == "Single Day")
-                                    ? "Event Details : "
-                                    : "Day ${index + 1}", // 👈 dynamic day title
+                                 // 👈 dynamic day title
                                 descriptions: [eventInfo],
                                 images: images,
                               ),
@@ -211,7 +209,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       const SizedBox(height: 12),
                       if (sponsorUrls.isNotEmpty)
                         GalleryImgWidget(
-                          title: "Sponsors",
+                          title: "Sponsored by",
                           height: 100,
                           width: 100,
                           imageUrls: sponsorUrls,

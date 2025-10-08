@@ -109,9 +109,14 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
               SearchWidget(
                 controller: myLearningHubVM.searchController,
                 hintText: "Search Course...",
-                onClear: () {},
-                onChanged: (value) {
+                onClear: () {
+                  myLearningHubVM.searchController.clear();
                   myLearningHubVM.getCoursesWithMyRegistrations(context);
+                },
+                onSearch: () {
+                  myLearningHubVM.getCoursesWithMyRegistrations(context);
+                },
+                onChanged: (value) {
                 },
               ),
             Expanded(

@@ -16,5 +16,26 @@ static String convertTo24Hour(String time12h) {
     return DateFormat('HH:mm:ss').format(dateTime); // returns "22:32:00"
   }
 
+  static String convertToddmmm(String date) {
+    final dateTime = DateTime.parse(date); 
+    return DateFormat('dd MMM').format(dateTime); 
+  }
+
+  static String formatToHourAmPm(String timeStr) {
+    try {
+      // Prepend a dummy date to make it a valid DateTime
+      String isoStr = "2000-01-01T$timeStr";
+      DateTime time = DateTime.parse(isoStr);
+
+      // Convert to local time if needed
+      DateTime localTime = time.toLocal();
+
+      // Format as hour + AM/PM
+      return DateFormat('h a').format(localTime);
+    } catch (e) {
+      return timeStr; // fallback
+    }
+  }
+
 
 }

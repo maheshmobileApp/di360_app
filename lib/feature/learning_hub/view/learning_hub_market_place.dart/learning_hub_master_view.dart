@@ -10,7 +10,6 @@ import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_c
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
-import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
@@ -118,9 +117,15 @@ class _JobListingScreenState extends State<LearningHubMasterView>
               SearchWidget(
                 controller: courseListingVM.searchController,
                 hintText: "Search Course...",
-                onClear: () {},
-                onChanged: (value) {
+                onClear: () {
+                  courseListingVM.searchController.clear();
                   courseListingVM.getAllListingData(context);
+                },
+                onSearch: () {
+                  courseListingVM.getAllListingData(context);
+                },
+                onChanged: (value) {
+                  
                 },
               ),
             Expanded(
@@ -152,7 +157,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             remainingOfSeats: seats,
                             presenterName: course.presentedByName ?? "",
                             profilePic: course.presentedByImage?.url ?? '',
-                            imageUrl: course.courseBannerImage?.first.url ?? '',
+                            imageUrl: (course.courseBannerImage!.isNotEmpty)
+                                ? course.courseBannerImage?.first.url ?? ''
+                                : '',
                             companyName: course.courseName ?? '',
                             description: course.description ?? '',
                             date: course.startDate ?? "",
