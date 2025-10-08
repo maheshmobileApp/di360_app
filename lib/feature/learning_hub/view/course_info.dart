@@ -15,7 +15,6 @@ import 'package:provider/provider.dart';
 
 class CourseInfo extends StatelessWidget with BaseContextHelpers {
   CourseInfo({super.key});
-
   @override
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<NewCourseViewModel>(context);
