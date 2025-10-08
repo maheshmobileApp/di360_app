@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 
 class HttpService {
-  static String _url = 'https://dental-360-dev.hasura.app/v1/graphql';
+  static String _url = 'https://dental-interface-dev.hasura.app/v1/graphql';
   static String dioUrl = "https://api.dentalinterface.com/";
   HasuraConnect _hasuraConnect = HasuraConnect(_url, headers: {});
   static BaseOptions _options = new BaseOptions(
