@@ -11,14 +11,17 @@ class DateFormatUtils {
     return DateFormat('d MMM yyyy').format(date);
   }
 
-static String convertTo24Hour(String time12h) {
-    final dateTime = DateFormat.jm().parse(time12h); // parses "10:32 PM"
-    return DateFormat('HH:mm:ss').format(dateTime); // returns "22:32:00"
-  }
+static String convertTo24Hour(String time) {
+  // Clean up the input string
+  final cleaned = time.replaceAll('\u00A0', ' ').trim(); // Replace non-breaking space with normal space
+  final dateFormat = DateFormat.jm(); // or your format, e.g. 'hh:mm a'
+  final dateTime = dateFormat.parse(cleaned);
+  return DateFormat('HH:mm').format(dateTime);
+}
 
   static String convertToddmmm(String date) {
-    final dateTime = DateTime.parse(date); 
-    return DateFormat('dd MMM').format(dateTime); 
+    final dateTime = DateTime.parse(date);
+    return DateFormat('dd MMM').format(dateTime);
   }
 
   static String formatToHourAmPm(String timeStr) {
@@ -36,6 +39,4 @@ static String convertTo24Hour(String time12h) {
       return timeStr; // fallback
     }
   }
-
-
 }

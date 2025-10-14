@@ -643,13 +643,26 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
+    final rsvpDate = rsvpDateController.text.isNotEmpty
+        ? DateFormatUtils.formatToYyyyMmDd(
+            DateFormat("d/M/yyyy").parse(rsvpDateController.text))
+        : null;
+    final startDate = startDateController.text.isNotEmpty
+        ? DateFormatUtils.formatToYyyyMmDd(
+            DateFormat("d/M/yyyy").parse(startDateController.text))
+        : null;
+    final endDate = endDateController.text.isNotEmpty
+        ? DateFormatUtils.formatToYyyyMmDd(
+            DateFormat("d/M/yyyy").parse(endDateController.text))
+        : null;
+
     Loaders.circularShowLoader(context);
     final result = await repo.updateCourseListing({
       "id": courseId,
       "changes": CourseObject(
               courseName: courseNameController.text,
               courseCategoryId: selectedCategoryId,
-              rsvpDate: rsvpDateController.text,
+              rsvpDate: rsvpDate,
               presentedByName: presenterNameController.text,
               presentedByImage: PresentedByImage(url: presenter_image),
               courseBannerImage: courseBannerImgList,
@@ -684,8 +697,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
                   : int.parse(totalPriceController.text),
               registerLink: registerLinkController.text,
               userRole: type,
-              startDate: startDateController.text,
-              endDate: endDateController.text,
+              startDate: startDate,
+              endDate: endDate,
               isFeatured: false,
               activeStatus: "ACTIVE",
               address: addressController.text,

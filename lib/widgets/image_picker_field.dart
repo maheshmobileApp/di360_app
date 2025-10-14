@@ -64,7 +64,14 @@ class ImagePickerField extends StatelessWidget {
             final fileSizeMB = file.lengthSync() / (1024 * 1024);
             return fileSizeMB <= 5;
           }).toList();
-          if (onFilesPicked != null) onFilesPicked!(validFiles);
+
+          // ✅ Merge new files with previous files
+          final merged = <File>[
+            if (selectedFiles != null) ...selectedFiles!,
+            ...validFiles,
+          ];
+
+          if (onFilesPicked != null) onFilesPicked!(merged);
         }
       } else if (source == ImageSource.camera) {
         final picked = await picker.pickImage(
@@ -80,7 +87,12 @@ class ImagePickerField extends StatelessWidget {
             );
             return;
           }
-          if (onFilesPicked != null) onFilesPicked!([file]);
+          final merged = <File>[
+          if (selectedFiles != null) ...selectedFiles!,
+          file,
+        ];
+
+        if (onFilesPicked != null) onFilesPicked!(merged);
         }
       }
     } else {
@@ -236,7 +248,10 @@ class ImagePickerField extends StatelessWidget {
             ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => _showPickerSheet(context),
+            onTap: () {
+              _showPickerSheet(context);
+              field.didChange(true);
+            },
             child: DottedBorder(
               color: field.hasError ? Colors.red : Colors.grey.shade400,
               strokeWidth: 1.5,
@@ -272,62 +287,69 @@ class ImagePickerField extends StatelessWidget {
   }
 
   // 🔹 Preview helpers
-  Widget _buildLocalMultipleFiles() => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: selectedFiles!.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (_, index) {
-          final file = selectedFiles![index];
-          final isVideo = file.path.toLowerCase().endsWith(".mp4");
+  Widget _buildLocalMultipleFiles() {
+    final totalItems = selectedFiles!.length + 1; // extra add-card
 
-          return Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: isVideo
-                    ? FutureBuilder<String?>(
-                        future: VideoThumbnail.thumbnailFile(
-                          video: file.path,
-                          imageFormat: ImageFormat.JPEG,
-                          maxHeight: 150,
-                          quality: 75,
-                        ),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data != null) {
-                            return Image.file(
-                              File(snapshot.data!),
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return const Center(
-                              child: Icon(Icons.videocam,
-                                  size: 50, color: Colors.grey),
-                            );
-                          }
-                        },
-                      )
-                    : Image.file(file, fit: BoxFit.contain),
-              ),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: GestureDetector(
-                  onTap: () {
-                    final newList = List<File>.from(selectedFiles!);
-                    newList.removeAt(index);
-                    onFilesPicked?.call(newList);
-                  },
-                  child: const CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.black54,
-                    child: Icon(Icons.close, color: Colors.white, size: 14),
-                  ),
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: totalItems,
+      separatorBuilder: (_, __) => const SizedBox(width: 10),
+      itemBuilder: (_, index) {
+        if (index == selectedFiles!.length) {
+          // 🔹 Add item card
+          return _buildAddItemCard(() => _showPickerSheet(_));
+        }
+
+        final file = selectedFiles![index];
+        final isVideo = file.path.toLowerCase().endsWith(".mp4");
+
+        return Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: isVideo
+                  ? FutureBuilder<String?>(
+                      future: VideoThumbnail.thumbnailFile(
+                        video: file.path,
+                        imageFormat: ImageFormat.JPEG,
+                        maxHeight: 150,
+                        quality: 75,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data != null) {
+                          return Image.file(File(snapshot.data!),
+                              fit: BoxFit.cover);
+                        } else {
+                          return const Center(
+                            child: Icon(Icons.videocam,
+                                size: 50, color: Colors.grey),
+                          );
+                        }
+                      },
+                    )
+                  : Image.file(file, fit: BoxFit.contain),
+            ),
+            Positioned(
+              top: 4,
+              right: 4,
+              child: GestureDetector(
+                onTap: () {
+                  final newList = List<File>.from(selectedFiles!);
+                  newList.removeAt(index);
+                  onFilesPicked?.call(newList);
+                },
+                child: const CircleAvatar(
+                  radius: 12,
+                  backgroundColor: Colors.black54,
+                  child: Icon(Icons.close, color: Colors.white, size: 14),
                 ),
               ),
-            ],
-          );
-        },
-      );
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildLocalSingleFile() => Stack(
         children: [
@@ -372,42 +394,50 @@ class ImagePickerField extends StatelessWidget {
         ],
       );
 
-  Widget _buildServerMultipleFiles() => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: serverImages!.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (_, index) {
-          final url = serverImages![index];
-          final isVideo = url.toLowerCase().endsWith(".mp4");
+  Widget _buildServerMultipleFiles() {
+    final totalItems = serverImages!.length + 1; // add extra tile
 
-          return Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: isVideo
-                    ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
-                    : Image.network(url, fit: BoxFit.contain),
-              ),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: GestureDetector(
-                  onTap: () {
-                    serverImages!.removeAt(index);
-                    onServerFilesRemoved
-                        ?.call(List<String>.from(serverImages!));
-                  },
-                  child: const CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.black54,
-                    child: Icon(Icons.close, color: Colors.white, size: 14),
-                  ),
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: totalItems,
+      separatorBuilder: (_, __) => const SizedBox(width: 10),
+      itemBuilder: (_, index) {
+        if (index == serverImages!.length) {
+          // 🔹 Add item card
+          return _buildAddItemCard(() => _showPickerSheet(_));
+        }
+
+        final url = serverImages![index];
+        final isVideo = url.toLowerCase().endsWith(".mp4");
+
+        return Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: isVideo
+                  ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                  : Image.network(url, fit: BoxFit.contain),
+            ),
+            Positioned(
+              top: 4,
+              right: 4,
+              child: GestureDetector(
+                onTap: () {
+                  serverImages!.removeAt(index);
+                  onServerFilesRemoved?.call(List<String>.from(serverImages!));
+                },
+                child: const CircleAvatar(
+                  radius: 12,
+                  backgroundColor: Colors.black54,
+                  child: Icon(Icons.close, color: Colors.white, size: 14),
                 ),
               ),
-            ],
-          );
-        },
-      );
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildServerSingleFile() => Stack(
         children: [
@@ -446,4 +476,38 @@ class ImagePickerField extends StatelessWidget {
           ),
         ],
       );
+
+  Widget _buildAddItemCard(VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Container(
+          width: 120,
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: Colors.grey.shade400,
+                style: BorderStyle.solid,
+                width: 1.2),
+            borderRadius: BorderRadius.circular(8),
+            color: AppColors.whiteColor,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(ImageConst.upload),
+              const SizedBox(height: 8),
+              const Text(
+                "Add Item",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

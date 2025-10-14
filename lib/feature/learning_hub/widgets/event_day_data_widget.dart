@@ -44,8 +44,8 @@ class EventDayDataWidget extends StatelessWidget {
                                 Icon(Icons.calendar_month_outlined,
                                     color: AppColors.primaryColor, size: 20),
                                 const SizedBox(width: 4),
-                                Text(DateFormatUtils.convertToddmmm(desc.date ?? "")
-                                    .toUpperCase()),
+                                Text(desc.date ?? "", style: TextStyles.bold2(color: AppColors.black),)
+                                      
                                
                               ],
                             ),

@@ -398,10 +398,16 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.registerLinkController.text = course.registerLink ?? "";
     newCourseVM.termsAndConditionsController.text = course.terms ?? "";
     newCourseVM.cancellationController.text = course.refundPolicy ?? "";
-    newCourseVM.rsvpDateController.text = course.rsvpDate ?? "";
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
 
     // Dates (safe parse)
+
+    if (course.rsvpDate != null && course.rsvpDate!.isNotEmpty) {
+      newCourseVM.rsvpDateController.text =
+          DateFormat("d/M/yyyy").format(DateTime.parse(course.rsvpDate!));
+    } else {
+      newCourseVM.rsvpDateController.text = "";
+    }
     if (course.startDate != null && course.startDate!.isNotEmpty) {
       newCourseVM.startDateController.text =
           DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate!));
@@ -435,9 +441,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
     String endTime = course.endTime ?? "";
 
     newCourseVM.startTimeController.text = DateFormat.jm()
-        .format(DateTime.parse("2025-10-04T${startTime}").toUtc());
+    .format(DateTime.parse("2025-10-04T${startTime}"));
+
     newCourseVM.endTimeController.text =
-        DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}").toUtc());
+        DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}"));
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";
