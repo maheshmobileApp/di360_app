@@ -3,7 +3,8 @@ import 'package:hasura_connect/hasura_connect.dart';
 
 class HttpService {
   static String _url = 'https://dental-interface-dev.hasura.app/v1/graphql';
-  static String dioUrl = "https://api.dentalinterface.com/";
+  static String dioUrl = "https://qa-api.dentalinterface360.com/";
+  //https://qa-api.dentalinterface360.com/api/v1/file-upload/upload-s3
   HasuraConnect _hasuraConnect = HasuraConnect(_url, headers: {});
   static BaseOptions _options = new BaseOptions(
     baseUrl: dioUrl,
