@@ -124,9 +124,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                 onSearch: () {
                   courseListingVM.getAllListingData(context);
                 },
-                onChanged: (value) {
-                  
-                },
+               
               ),
             Expanded(
                 child: courseListingVM.marketPlaceCoursesList.isEmpty

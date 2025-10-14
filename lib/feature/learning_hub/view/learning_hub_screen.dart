@@ -68,7 +68,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 onSearch: () {
                   courseListingVM.getCoursesListingData(context);
                 },
-                onChanged: (value) {},
+              
               ),
             courseStatusWidget(courseListingVM),
             Divider(),

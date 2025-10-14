@@ -116,8 +116,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                 onSearch: () {
                   myLearningHubVM.getCoursesWithMyRegistrations(context);
                 },
-                onChanged: (value) {
-                },
+                
               ),
             Expanded(
               child: myLearningHubVM.myRegisteredCourses.isEmpty
