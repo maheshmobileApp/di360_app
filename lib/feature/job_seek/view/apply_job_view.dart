@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
@@ -228,10 +226,4 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyles.clashMedium(color: AppColors.buttonColor),
-    );
-  }
 }

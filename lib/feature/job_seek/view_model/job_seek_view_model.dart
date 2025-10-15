@@ -147,24 +147,24 @@ class JobSeekViewModel extends ChangeNotifier {
   Future<void> fetchFilteredJobs() async {
   isLoading = true;
   notifyListeners();
-
   try {
     print("Selected Professions: $selectedProfessions");
     print("Selected Employment Types: $selectedEmploymentTypes");
     print("Selected Experiences: $selectedExperiences");
     print("Selected Availability Dates: $selectedAvailability");
-
     final result = await repo.fetchFilteredJobs(
       selectedProfessions,
       selectedEmploymentTypes,
       selectedExperiences,
       selectedAvailability,
     );
-
+    jobs = result;
     filteredJobs = result;
-    print("Fetched ${filteredJobs.length} filtered jobs");
+    print("📦 Fetched ${result.length} filtered jobs");
+    print("🖥️ Updated job list in ViewModel: ${jobs.length} jobs now showing");
   } catch (e) {
-    print("Error fetching filtered jobs: $e");
+    print("❌ Error fetching filtered jobs: $e");
+    jobs = [];
     filteredJobs = [];
   } finally {
     isLoading = false;
@@ -172,9 +172,7 @@ class JobSeekViewModel extends ChangeNotifier {
   }
 }
 
-
-
-  Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
+ Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
     applyJobRequest.jobId = selectedJob?.id ?? '';
     final generatedID = GeneratedId.generateId();
     applyJobRequest.id = generatedID;

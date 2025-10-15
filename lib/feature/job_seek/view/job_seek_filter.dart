@@ -11,8 +11,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:intl/intl.dart';
 
-
-
 class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
   const JobSeekFilterScreen({super.key});
   @override
@@ -20,146 +18,147 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     final model = Provider.of<JobSeekViewModel>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.buttomBarColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        title: const Text(
-          "Filter Jobs",
-          style: TextStyle(fontSize: 20, color: AppColors.black),
+        backgroundColor: AppColors.buttomBarColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          elevation: 0,
+          title: const Text(
+            "Filter Jobs",
+            style: TextStyle(fontSize: 20, color: AppColors.black),
+          ),
+          iconTheme: const IconThemeData(color: AppColors.black),
         ),
-        iconTheme: const IconThemeData(color: AppColors.black),
-      ),
-     body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-            addVertical(10),
-            _buildLocationSearchBar(model),
-            addVertical(10),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        _buildFilterSection(
-                          context,
-                          title: "Filter by Profession",
-                          options: model
-                              .getSortedProfessionOptions()
-                              .map((e) => e.name)
-                              .toList(),
-                          selectedIndices:
-                              model.selectedIndices['profession'] ?? {},
-                          onToggle: (index) =>
-                              model.selectItem('profession', index),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                addVertical(10),
+                _buildLocationSearchBar(model),
+                addVertical(10),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            _buildFilterSection(
+                              context,
+                              title: "Filter by Profession",
+                              options: model
+                                  .getSortedProfessionOptions()
+                                  .map((e) => e.name)
+                                  .toList(),
+                              selectedIndices:
+                                  model.selectedIndices['profession'] ?? {},
+                              onToggle: (index) =>
+                                  model.selectItem('profession', index),
+                            ),
+                            Divider(),
+                            _buildFilterSection(
+                              context,
+                              title: "Filter by Employment Type",
+                              options: model
+                                  .getSortedEmploymentOptions()
+                                  .map((e) => e.name)
+                                  .toList(),
+                              selectedIndices:
+                                  model.selectedIndices['employment'] ?? {},
+                              onToggle: (index) =>
+                                  model.selectItem('employment', index),
+                              child: model.showLocumDate
+                                  ? _buildLocumDateSection(context, model)
+                                  : null,
+                            ),
+                            Divider(),
+                            _buildDropdownSection(
+                              title: "Filter by Experience",
+                              dropdown: CustomDropDown<String>(
+                                hintText: 'Select Experience',
+                                title: "",
+                                items: model.experienceOptions
+                                    .map((e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: TextStyles.regular3(
+                                              color: AppColors.lightGeryColor,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: model.selectedExperienceDropdown,
+                                onChanged: (val) {
+                                  if (val != null) model.setExperience(val);
+                                },
+                              ),
+                            ),
+                            Divider(),
+                            _buildDropdownSection(
+                              title: "Sort By Alphabetical Order",
+                              dropdown: CustomDropDown<String>(
+                                hintText: 'Select Sort Order',
+                                title: "",
+                                items: model.sortOptions
+                                    .map((e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: TextStyles.regular3(
+                                              color: AppColors.lightGeryColor,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: model.selectedSort,
+                                onChanged: (val) {
+                                  if (val != null) model.setSort(val);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        Divider(),
-                        _buildFilterSection(
-                          context,
-                          title: "Filter by Employment Type",
-                          options: model
-                              .getSortedEmploymentOptions()
-                              .map((e) => e.name)
-                              .toList(),
-                          selectedIndices:
-                              model.selectedIndices['employment'] ?? {},
-                          onToggle: (index) =>
-                              model.selectItem('employment', index),
-                          child: model.showLocumDate
-                              ? _buildLocumDateSection(context, model)
-                              : null,
-                        ),
-                        Divider(),
-                        _buildDropdownSection(
-                          title: "Filter by Experience",
-                          dropdown: CustomDropDown<String>(
-                            hintText: 'Select Experience',
-                            title: "",
-                            items: model.experienceOptions
-                                .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(
-                                        e,
-                                        style: TextStyles.regular3(
-                                          color: AppColors.lightGeryColor,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            value: model.selectedExperienceDropdown,
-                            onChanged: (val) {
-                              if (val != null) model.setExperience(val);
-                            },
-                          ),
-                        ),
-                        Divider(),
-                        _buildDropdownSection(
-                          title: "Sort By Alphabetical Order",
-                          dropdown: CustomDropDown<String>(
-                            hintText: 'Select Sort Order',
-                            title: "",
-                            items: model.sortOptions
-                                .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(
-                                        e,
-                                        style: TextStyles.regular3(
-                                          color: AppColors.lightGeryColor,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            value: model.selectedSort,
-                            onChanged: (val) {
-                              if (val != null) model.setSort(val);
-                            },
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  AppButton(
-                    text: 'Clear',
-                    height: 40,
-                    width: 150,
-                    onTap: () async {
-                      model.clearSelections();
-                    },
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      AppButton(
+                        text: 'Clear',
+                        height: 40,
+                        width: 150,
+                        onTap: () async {
+                          model.clearSelections();
+                        },
+                      ),
+                      AppButton(
+                        text: 'Apply',
+                        height: 40,
+                        width: 150,
+                        onTap: () async {
+                          model.printSelectedItems();
+                          await model.fetchFilteredJobs();
+                          navigationService.goBack();
+                        },
+                      ),
+                    ],
                   ),
-                  AppButton(
-                    text: 'Apply',
-                    height: 40,
-                    width: 150,
-                    onTap: () async {
-                      model.printSelectedItems();
-                      await model.fetchFilteredJobs();
-                      navigationService.goBack();
-                    },
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-     ) );
+          ),
+        ));
   }
+
   Widget _buildLocationSearchBar(JobSeekViewModel model) {
     return Container(
       decoration: BoxDecoration(
@@ -204,7 +203,6 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  
   Widget _buildFilterSection(
     BuildContext context, {
     required String title,
@@ -281,4 +279,3 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
   SizedBox addVertical(double h) => SizedBox(height: h);
   SizedBox addHorizontal(double w) => SizedBox(width: w);
 }
-

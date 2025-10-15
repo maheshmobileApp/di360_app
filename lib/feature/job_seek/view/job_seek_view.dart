@@ -78,31 +78,29 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
               addHorizontal(15),
             ],
           ),
-          body: Expanded(
-            child: jobSeekViewModel.selectedTabIndex == 0
-                ? _buildJobsList(jobSeekViewModel)
-                : const TalentsView(),
-          ),
-    
-          floatingActionButton:
-              jobSeekViewModel.isHidleFolatingButton == false
-                  ? const TabSwitch()
-                  : null,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          body: jobSeekViewModel.selectedTabIndex == 0
+              ? _buildJobsList(jobSeekViewModel)
+              : const TalentsView(),
+          floatingActionButton: jobSeekViewModel.isHidleFolatingButton == false
+              ? const TabSwitch()
+              : null,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         );
       },
     );
   }
 
   Widget _buildJobsList(JobSeekViewModel vm) {
-  return RefreshIndicator(
-    onRefresh: () async => await vm.refreshJobs(context),
-    child: vm.jobs.isEmpty
-        ? Center(
-            child: vm.isRefreshing
-                ? const CircularProgressIndicator()
-                : const Text(""),
-          )
+    print("🧾 Showing ${vm.jobs.length} jobs on screen");
+    return RefreshIndicator(
+      onRefresh: () async => await vm.refreshJobs(context),
+      child: vm.jobs.isEmpty
+          ? Center(
+              child: vm.isRefreshing
+                  ? const CircularProgressIndicator()
+                  : const Text(""),
+            )
           : GenericListViewWithBanners<Jobs>(
               items: vm.jobs,
               bannerIndices: BannerUtils.calculateBannerIndices(
@@ -124,7 +122,6 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 return ListBanner();
               },
             ),
-  );
-}
-
+    );
+  }
 }

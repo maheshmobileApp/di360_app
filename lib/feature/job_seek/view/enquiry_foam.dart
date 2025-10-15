@@ -1,8 +1,7 @@
-import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/widgets/closed_button_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 
 class EnquiryForm extends StatefulWidget {
   EnquiryForm({

@@ -100,7 +100,7 @@ class JobSeekRepoImpl extends JobSeekRepository {
     }
   }
  @override
- Future<List<Jobs>> fetchFilteredJobs(
+Future<List<Jobs>> fetchFilteredJobs(
   List<String>? professions,
   List<String>? employmentTypes,
   List<String>? experiences,
@@ -108,33 +108,45 @@ class JobSeekRepoImpl extends JobSeekRepository {
 ) async {
   try {
     final List<Map<String, dynamic>> andConditions = [];
-if (professions != null && professions.isNotEmpty) {
-  andConditions.add({"j_role": {"_in": professions}});
-}
-if (employmentTypes != null && employmentTypes.isNotEmpty) {
-  andConditions.add({"TypeofEmployment": {"_overlap": employmentTypes}});
-}
-if (experiences != null && experiences.isNotEmpty) {
-  andConditions.add({"years_of_experience": {"_in": experiences}});
-}
-if (availability != null && availability.isNotEmpty) {
-  andConditions.add({"availability_date": {"_overlap": availability}});
-}
-andConditions.add({"status": {"_eq": "APPROVE"}});
-    final variables = {
-      "where": {
-        "_and": andConditions,
-      },
-    };
-    print("Filter Variables: $variables");
+
+    // Always include APPROVE filter
+    andConditions.add({"status": {"_eq": "APPROVE"}});
+
+    // ✅ Only add filters if they have values
+    if (professions != null && professions.isNotEmpty) {
+      andConditions.add({"j_role": {"_in": professions}});
+    }
+
+    if (employmentTypes != null && employmentTypes.isNotEmpty) {
+      andConditions.add({"TypeofEmployment": {"_has_keys_any": employmentTypes}});
+    }
+
+    if (experiences != null && experiences.isNotEmpty) {
+      // Use _eq if one experience; _in if multiple
+      if (experiences.length == 1) {
+        andConditions.add({"years_of_experience": {"_eq": experiences.first}});
+      } else {
+        andConditions.add({"years_of_experience": {"_in": experiences}});
+      }
+    }
+
+    if (availability != null && availability.isNotEmpty) {
+      andConditions.add({"availability_date": {"_has_keys_any": availability}});
+    }
+
+    final variables = {"where": {"_and": andConditions}};
+    print("🔍 Filter Variables: $variables");
+
     final result = await _http.query(getAllJobsFilterQuery, variables: variables);
     final jobsJson = result['jobs'] as List<dynamic>? ?? [];
-    print("{jobs: $jobsJson}");
-    print("Fetched ${jobsJson.length} filtered jobs");
+
+    print("📦 Fetched ${jobsJson.length} filtered jobs");
     return jobsJson.map((e) => Jobs.fromJson(e)).toList();
   } catch (e) {
-    print("Error in fetchFilteredJobs repo: $e");
+    print("❌ Error in fetchFilteredJobs repo: $e");
     return [];
   }
 }
+
+
 }
