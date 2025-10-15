@@ -49,6 +49,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
         navigationService.navigateTo(RouteList.newCourseScreen);
         newCourseVM.fetchCourseType();
         newCourseVM.fetchCourseCategory();
+        newCourseVM.setEditMode(false);
       },
       child: SvgPicture.asset(ImageConst.addFeed),
     );
@@ -68,7 +69,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 onSearch: () {
                   courseListingVM.getCoursesListingData(context);
                 },
-              
               ),
             courseStatusWidget(courseListingVM),
             Divider(),
@@ -214,6 +214,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
+                        newCourseVM.setEditMode(true);
                         Loaders.circularShowLoader(context);
                         await loadCourseData(
                             newCourseVM, courseListingVM.courseDetails.first);
@@ -439,12 +440,14 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     String startTime = course.startTime ?? "";
     String endTime = course.endTime ?? "";
+    String start_time = startTime.split('+').first;
+    String end_time = endTime.split('+').first;
 
-    newCourseVM.startTimeController.text = DateFormat.jm()
-    .format(DateTime.parse("2025-10-04T${startTime}"));
+    newCourseVM.startTimeController.text =
+        DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(start_time));
 
     newCourseVM.endTimeController.text =
-        DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}"));
+        DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(end_time));
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";

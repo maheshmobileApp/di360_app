@@ -88,11 +88,11 @@ class ImagePickerField extends StatelessWidget {
             return;
           }
           final merged = <File>[
-          if (selectedFiles != null) ...selectedFiles!,
-          file,
-        ];
+            if (selectedFiles != null) ...selectedFiles!,
+            file,
+          ];
 
-        if (onFilesPicked != null) onFilesPicked!(merged);
+          if (onFilesPicked != null) onFilesPicked!(merged);
         }
       }
     } else {
@@ -262,15 +262,13 @@ class ImagePickerField extends StatelessWidget {
                 width: double.infinity,
                 height: showPreview ? 150 : null,
                 alignment: Alignment.center,
-                child: hasMultipleFiles
-                    ? _buildLocalMultipleFiles()
+                child: (hasServerMultiple || hasMultipleFiles)
+                    ? _buildCombinedFiles(context)
                     : hasSingleFile
                         ? _buildLocalSingleFile()
-                        : hasServerMultiple
-                            ? _buildServerMultipleFiles()
-                            : hasServerSingle
-                                ? _buildServerSingleFile()
-                                : _buildPlaceholder(),
+                        : hasServerSingle
+                            ? _buildServerSingleFile()
+                            : _buildPlaceholder(),
               ),
             ),
           ),
@@ -508,6 +506,103 @@ class ImagePickerField extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCombinedFiles(BuildContext context) {
+    final serverCount = serverImages?.length ?? 0;
+    final localCount = selectedFiles?.length ?? 0;
+    final totalItems = serverCount + localCount + 1; // +1 for Add Item
+
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: totalItems,
+      separatorBuilder: (_, __) => const SizedBox(width: 10),
+      itemBuilder: (context, index) {
+        if (index < serverCount) {
+          // Server image
+          final url = serverImages![index];
+          final isVideo = url.toLowerCase().endsWith(".mp4");
+          return Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: isVideo
+                    ? const Icon(Icons.videocam, size: 50, color: Colors.grey)
+                    : Image.network(url, fit: BoxFit.contain),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: () {
+                    final newList = List<String>.from(serverImages!);
+                    newList.removeAt(index);
+                    onServerFilesRemoved?.call(newList);
+                  },
+                  child: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.black54,
+                    child: Icon(Icons.close, color: Colors.white, size: 14),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else if (index < serverCount + localCount) {
+          // Local image
+          final localIndex = index - serverCount;
+          final file = selectedFiles![localIndex];
+          final isVideo = file.path.toLowerCase().endsWith(".mp4");
+          return Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: isVideo
+                    ? FutureBuilder<String?>(
+                        future: VideoThumbnail.thumbnailFile(
+                          video: file.path,
+                          imageFormat: ImageFormat.JPEG,
+                          maxHeight: 150,
+                          quality: 75,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return Image.file(File(snapshot.data!),
+                                fit: BoxFit.cover);
+                          } else {
+                            return const Center(
+                              child: Icon(Icons.videocam,
+                                  size: 50, color: Colors.grey),
+                            );
+                          }
+                        },
+                      )
+                    : Image.file(file, fit: BoxFit.contain),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: () {
+                    final newList = List<File>.from(selectedFiles!);
+                    newList.removeAt(localIndex);
+                    onFilesPicked?.call(newList);
+                  },
+                  child: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.black54,
+                    child: Icon(Icons.close, color: Colors.white, size: 14),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else {
+          // Add item card
+          return _buildAddItemCard(() => _showPickerSheet(context));
+        }
+      },
     );
   }
 }

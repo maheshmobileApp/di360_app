@@ -54,6 +54,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   bool showLocumDate = false;
 
+  ///edit
+  bool editMode = false;
+  List<File>? editGallery;
+
   //server
   String? serverPresentedImg;
   MediaInfo? serverCourseHeaderBanner;
@@ -132,7 +136,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setGallery(List<File>? value) {
     selectedGallery = value;
-    serverGallery = [];
+    notifyListeners();
+  }
+
+  void setEditMode(bool value) {
+    editMode = value;
     notifyListeners();
   }
 
@@ -147,13 +155,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setServerSponsorImg(List<String>? value) {
-    serverSponsoredByImg = [];
+    serverSponsoredByImg = value;
     notifyListeners();
   }
 
   void setCourseBannerImg(List<File>? value) {
     selectedCourseBannerImg = value;
-    serverCourseBannerImg = [];
     notifyListeners();
   }
 
@@ -164,7 +171,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setSponsoredBy(List<File>? value) {
     selectedsponsoredByImg = value;
-    serverSponsoredByImg = [];
     notifyListeners();
   }
 
@@ -335,8 +341,26 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validateGallery() async {
-    if (serverGallery != null && serverGallery!.isNotEmpty) {
-      // If serverGallery already has values, just map them to CourseBannerImage
+    if (editMode) {
+      selectedGalleryList = await uploadFiles(
+        selectedGallery,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls = selectedGalleryList
+          .map((img) => img.url)
+          .whereType<String>()
+          .toList();
+      if (serverGallery == null) {
+        serverGallery = newUrls;
+      } else {
+        serverGallery = [...serverGallery!, ...newUrls];
+      }
+
       selectedGalleryList = serverGallery!
           .map(
             (url) => CourseBannerImage(
@@ -364,8 +388,25 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validateCourseBanner() async {
-    if (serverCourseBannerImg != null && serverCourseBannerImg!.isNotEmpty) {
-      // If serverGallery already has values, just map them to CourseBannerImage
+    if (editMode) {
+      courseBannerImgList = await uploadFiles(
+        selectedCourseBannerImg,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls = courseBannerImgList
+          .map((img) => img.url)
+          .whereType<String>()
+          .toList();
+      if (serverCourseBannerImg == null) {
+        serverCourseBannerImg = newUrls;
+      } else {
+        serverCourseBannerImg = [...serverCourseBannerImg!, ...newUrls];
+      }
       courseBannerImgList = serverCourseBannerImg!
           .map(
             (url) => CourseBannerImage(
@@ -393,8 +434,23 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validateSponsoredByImg() async {
-    if (serverSponsoredByImg != null && serverSponsoredByImg!.isNotEmpty) {
-      // If serverGallery already has values, just map them to CourseBannerImage
+    if (editMode) {
+      sponsoredByImgList = await uploadFiles(
+        selectedsponsoredByImg,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls =
+          sponsoredByImgList.map((img) => img.url).whereType<String>().toList();
+      if (serverSponsoredByImg == null) {
+        serverSponsoredByImg = newUrls;
+      } else {
+        serverSponsoredByImg = [...serverSponsoredByImg!, ...newUrls];
+      }
       sponsoredByImgList = serverSponsoredByImg!
           .map(
             (url) => CourseBannerImage(
@@ -454,16 +510,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (index < sessions.length) {
       sessions[index].images = files;
       selectedEventImg = files;
-      sessions[index].serverImages = [];
-
       notifyListeners();
     }
   }
 
   void setServerEventImgs(int index, List<String> files) {
+    if (index >= 0 && index < sessions.length) {
     sessions[index].serverImages = files;
-
     notifyListeners();
+  }
   }
 
   /// Get session details as plain data (ready for API)
@@ -482,17 +537,35 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     courseInfoList.clear(); // in case you call this multiple times
 
     for (var session in sessions) {
-      // Decide whether to reuse serverImages or upload new ones
-      final images = session.serverImages.isNotEmpty
-          ? session.serverImages
-              .map((url) => Images(
-                    name: url.split('/').last,
-                    url: url,
-                    type: "image/jpeg", // adjust if you have type info
-                    size: 0, // unknown size for server-side images
-                  ))
-              .toList()
-          : await uploadSessionImages(session.images);
+      List<Images> images = [];
+
+      if (editMode) {
+        // 1. Upload new local images (if any)
+        final uploadedImages = await uploadSessionImages(session.images);
+
+        // 2. Collect new URLs from uploaded images
+        final newUrls =
+            uploadedImages.map((img) => img.url).whereType<String>().toList();
+
+        // 3. Combine serverImages and newUrls
+        final allUrls = [
+          ...(session.serverImages ?? []),
+          ...newUrls,
+        ];
+
+        // 4. Build Images list from all URLs
+        images = allUrls
+            .map((url) => Images(
+                  name: url.split('/').last,
+                  url: url,
+                  type: "image/jpeg", // adjust if you have type info
+                  size: 0, // unknown size for server-side images
+                ))
+            .toList();
+      } else {
+        // Otherwise upload the new images
+        images = await uploadSessionImages(session.images);
+      }
 
       courseInfoList.add(
         CourseEventInfo(
@@ -656,6 +729,13 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
             DateFormat("d/M/yyyy").parse(endDateController.text))
         : null;
 
+    final startTime = DateFormat("HH:mm:ss")
+            .format(DateFormat("h:mm a").parse(startTimeController.text)) +
+        "+00";
+    final endTime = DateFormat("HH:mm:ss")
+            .format(DateFormat("h:mm a").parse(endTimeController.text)) +
+        "+00";
+
     Loaders.circularShowLoader(context);
     final result = await repo.updateCourseListing({
       "id": courseId,
@@ -708,9 +788,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",
-              startTime:
-                  DateFormatUtils.convertTo24Hour(startTimeController.text),
-              endTime: DateFormatUtils.convertTo24Hour(endTimeController.text))
+              startTime: startTime,
+              endTime: endTime)
           .toJson(),
     });
 
@@ -719,7 +798,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       navigationService.goBack();
 
       Loaders.circularHideLoader(context);
-      //resetForm();
+      resetForm();
     } else {
       Loaders.circularHideLoader(context);
     }

@@ -12,11 +12,16 @@ class DateFormatUtils {
   }
 
 static String convertTo24Hour(String time) {
-  // Clean up the input string
-  final cleaned = time.replaceAll('\u00A0', ' ').trim(); // Replace non-breaking space with normal space
-  final dateFormat = DateFormat.jm(); // or your format, e.g. 'hh:mm a'
-  final dateTime = dateFormat.parse(cleaned);
-  return DateFormat('HH:mm').format(dateTime);
+  // Replace all Unicode whitespace (including non-breaking spaces) with a normal space and trim
+  final cleaned = time.replaceAll(RegExp(r'\s+'), ' ').replaceAll('\u00A0', ' ').trim();
+  try {
+    final dateFormat = DateFormat.jm();
+    final dateTime = dateFormat.parse(cleaned);
+    return DateFormat('HH:mm').format(dateTime);
+  } catch (e) {
+    // Optionally log or handle the error, then return the original string or a fallback
+    return time;
+  }
 }
 
   static String convertToddmmm(String date) {

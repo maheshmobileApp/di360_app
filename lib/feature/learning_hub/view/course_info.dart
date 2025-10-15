@@ -160,8 +160,8 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           showPreview: true,
           serverImages: day.serverImages,
           onServerFilesRemoved: (updatedList) {
-            day.serverImages = updatedList;
-          },
+                  jobCreateVM.setServerEventImgs(0, updatedList);
+                },
           allowMultiple: true,
           selectedFiles: day.images,
           onFilesPicked: (files) => jobCreateVM.setEventImgs(0, files),
