@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -13,19 +14,10 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<TalentListingViewModel>(context); 
+    final model = Provider.of<TalentListingViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        title: Text(
-          "Filter Talents",
-          style: TextStyle(fontSize: 20, color: AppColors.black),
-        ),
-        iconTheme: IconThemeData(color: AppColors.black),
-      ),
+      appBar: AppbarTitleBackIconWidget(title: 'Filter Talents'),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -76,7 +68,7 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-Widget buildFilters(BuildContext context, TalentListingViewModel model) {
+  Widget buildFilters(BuildContext context, TalentListingViewModel model) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Container(
@@ -105,7 +97,8 @@ Widget buildFilters(BuildContext context, TalentListingViewModel model) {
                             value: e,
                             child: Text(
                               e,
-                              style: TextStyles.regular3(color: AppColors.lightGeryColor),
+                              style: TextStyles.regular3(
+                                  color: AppColors.lightGeryColor),
                             ),
                           ))
                       .toList(),
@@ -125,7 +118,8 @@ Widget buildFilters(BuildContext context, TalentListingViewModel model) {
                             value: e,
                             child: Text(
                               e,
-                              style: TextStyles.regular3(color: AppColors.lightGeryColor),
+                              style: TextStyles.regular3(
+                                  color: AppColors.lightGeryColor),
                             ),
                           ))
                       .toList(),
@@ -140,15 +134,14 @@ Widget buildFilters(BuildContext context, TalentListingViewModel model) {
                 child: CustomDropDown<String>(
                   title: '',
                   hintText: 'Search Status',
-                  items: model.StatusOptions
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: TextStyles.regular3(color: AppColors.lightGeryColor),
-                            ),
-                          ))
-                      .toList(),
+                  items: model.StatusOptions.map((e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(
+                          e,
+                          style: TextStyles.regular3(
+                              color: AppColors.lightGeryColor),
+                        ),
+                      )).toList(),
                   value: model.selectedState,
                   onChanged: (val) {
                     if (val != null) model.setState(val);
@@ -161,6 +154,7 @@ Widget buildFilters(BuildContext context, TalentListingViewModel model) {
       ),
     );
   }
+
   Widget _filterSectionWithDropdown({
     required String title,
     required Widget child,
@@ -182,7 +176,8 @@ Widget buildFilters(BuildContext context, TalentListingViewModel model) {
             ),
             trailing: const Icon(Icons.expand_more),
             initiallyExpanded: true,
-            childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+            childrenPadding:
+                const EdgeInsets.only(left: 16, right: 16, bottom: 8),
             children: [child],
           ),
         ),
@@ -190,4 +185,3 @@ Widget buildFilters(BuildContext context, TalentListingViewModel model) {
     );
   }
 }
-

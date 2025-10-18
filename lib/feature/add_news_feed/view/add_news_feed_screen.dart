@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/view/upload_file_preview.dar
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,20 +23,14 @@ class AddNewsFeedScreen extends StatelessWidget
     final viewModel = Provider.of<AddNewsFeedViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
-        centerTitle: true,
-        leading: InkWell(
-            onTap: () {
-              navigationService.goBack();
-              viewModel.clearFeedNews();
-            },
-            child: Icon(Icons.arrow_back)),
-        title: Text(
-          viewModel.isEditNewsFeed == true ? 'Edit NewsFeed' : 'Add NewsFeed',
-          style: TextStyles.bold4(color: AppColors.whiteColor),
-        ),
-      ),
+      appBar: AppbarTitleBackIconWidget(
+          title: viewModel.isEditNewsFeed == true
+              ? 'Edit NewsFeed'
+              : 'Add NewsFeed',
+          backAction: () {
+            navigationService.goBack();
+            viewModel.clearFeedNews();
+          }),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

@@ -18,6 +18,7 @@ import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_v
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: _buildAppBar(),
+        appBar: AppBarWidget(),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {
             if (vm.error != null) {
@@ -60,46 +61,6 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
           },
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.whiteColor,
-      elevation: 0,
-      titleSpacing: 0,
-      title: Row(
-        children: [
-          addHorizontal(16),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Text(
-                'Dental Interface',
-                style: TextStyles.semiBold(
-                  color: AppColors.black,
-                  fontSize: 16,
-                ),
-              ),
-              Positioned(
-                top: -6,
-                right: -20,
-                child: SvgPicture.asset(
-                  ImageConst.logo,
-                  height: 20,
-                  width: 20,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      actions: const [
-        Icon(Icons.notifications_none, color: AppColors.black),
-        SizedBox(width: 10),
-        Icon(Icons.search, color: AppColors.black),
-        SizedBox(width: 10),
-      ],
     );
   }
 

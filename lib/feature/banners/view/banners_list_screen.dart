@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart
 import 'package:di360_flutter/feature/banners/widgets/banners_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -25,27 +26,7 @@ class _BannersListScreenState extends State<BannersListScreen>
     final bannersVM = Provider.of<BannersViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          title: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Text(
-                'Dental Interface',
-                style: TextStyles.bold4(color: AppColors.black),
-              ),
-              Positioned(
-                top: -9,
-                right: -18,
-                child: SvgPicture.asset(
-                  ImageConst.logo,
-                  height: 20,
-                  width: 20,
-                ),
-              ),
-            ],
-          ),
-        ),
+        appBar: AppBarWidget(),
         body: Column(
           children: [
             SizedBox(
@@ -149,11 +130,12 @@ class _BannersListScreenState extends State<BannersListScreen>
     });
     // _loadData();
   }
+
   Future<void> _loadData() async {
-  Loaders.circularShowLoader(context);
-  await context.read<BannersViewModel>().getBannerData(context);
-  if (mounted) {
-    Loaders.circularHideLoader(context);
+    Loaders.circularShowLoader(context);
+    await context.read<BannersViewModel>().getBannerData(context);
+    if (mounted) {
+      Loaders.circularHideLoader(context);
+    }
   }
-}
 }

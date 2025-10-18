@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/subscription_res.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -62,15 +63,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
     final selectedPlans = categorizedPlans[selectedCategory] ?? [];
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              navigationService.goBack();
-            }),
-        title: Text('Your Plan Details'),
-        centerTitle: true,
-      ),
+      appBar: AppbarTitleBackIconWidget(title: 'Your Plan Details'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

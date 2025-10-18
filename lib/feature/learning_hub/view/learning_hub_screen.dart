@@ -1,5 +1,3 @@
-
-
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -12,10 +10,10 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
-import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -37,26 +35,28 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   @override
   Widget build(BuildContext context) {
-    final notificationVM = Provider.of<NotificationViewModel>(context);
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
     var floatingActionButton = FloatingActionButton(
-          backgroundColor: AppColors.primaryColor,
-          onPressed: () {
-            newCourseVM.setCurrentStep(0);
-            newCourseVM.resetForm();
-            newCourseVM.serverImagesClear();
-            courseListingVM.setEditOption(false);
-            navigationService.navigateTo(RouteList.newCourseScreen);
-            newCourseVM.fetchCourseType();
-            newCourseVM.fetchCourseCategory();
-          },
-          child: SvgPicture.asset(ImageConst.addFeed),
-        );
+      backgroundColor: AppColors.primaryColor,
+      onPressed: () {
+        newCourseVM.setCurrentStep(0);
+        newCourseVM.resetForm();
+        newCourseVM.serverImagesClear();
+        courseListingVM.setEditOption(false);
+        navigationService.navigateTo(RouteList.newCourseScreen);
+        newCourseVM.fetchCourseType();
+        newCourseVM.fetchCourseCategory();
+      },
+      child: SvgPicture.asset(ImageConst.addFeed),
+    );
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: appBarWidget(notificationVM, courseListingVM),
+        appBar: AppBarWidget(
+            title: 'Course Listing',
+            searchAction: () =>
+                courseListingVM.setSearchBar(!courseListingVM.searchBarOpen)),
         body: Column(
           children: [
             if (courseListingVM.searchBarOpen)
@@ -76,255 +76,192 @@ class _JobListingScreenState extends State<LearningHubScreen>
         floatingActionButton: floatingActionButton);
   }
 
-  AppBar appBarWidget(NotificationViewModel notificationVM, CourseListingViewModel courseListingVM) {
-    return AppBar(
-        backgroundColor: AppColors.whiteColor,
-        title: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Text(
-              'Course Listing',
-              style: TextStyles.bold4(color: AppColors.black),
-            ),
-            Positioned(
-              top: -9,
-              right: -18,
-              child: SvgPicture.asset(
-                ImageConst.logo,
-                height: 20,
-                width: 20,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Builder(
-            builder: (context) => GestureDetector(
-                onTap: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    SvgPicture.asset(ImageConst.notification,
-                        color: AppColors.black),
-                    if (notificationVM.notificationCount != 0)
-                      Positioned(
-                          top: -16,
-                          right: -13,
-                          child: CircleAvatar(
-                              radius: 12,
-                              backgroundColor: AppColors.primaryColor,
-                              child: Text(
-                                  '${notificationVM.notificationCount}',
-                                  style: TextStyles.medium1(
-                                      color: AppColors.whiteColor))))
-                  ],
-                )),
-          ),
-          addHorizontal(30),
-          GestureDetector(
-              onTap: () {
-                courseListingVM.setSearchBar(!courseListingVM.searchBarOpen);
-              },
-              child: SvgPicture.asset(ImageConst.search,
-                  color: AppColors.black)),
-          addHorizontal(20),
-        ],
-      );
-  }
-
-  Expanded coursesListWidget(CourseListingViewModel courseListingVM, NewCourseViewModel newCourseVM) {
+  Expanded coursesListWidget(
+      CourseListingViewModel courseListingVM, NewCourseViewModel newCourseVM) {
     return Expanded(
-            child: courseListingVM.coursesListingList.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "No Data.",
-                          style: TextStyles.medium2(color: AppColors.black),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: courseListingVM.coursesListingList.length,
-                    itemBuilder: (context, index) {
-                      final jobData =
-                          courseListingVM.coursesListingList[index];
-                      final course = jobData;
-                      print(courseListingVM.coursesListingList.length);
-                      return CouresListingCard(
-                        id: course.id ?? "",
-                        meetingLink: course.meetingLink ?? "",
-                        logoUrl: course.presentedByImage?.url ?? '',
-                        companyName: course.courseName ?? '',
-                        courseTitle: course.presentedByName ?? '',
-                        status: course.status ?? '',
-                        activeStatus: course.activeStatus ?? "",
-                        description: course.description ?? '',
-                        types: [course.type ?? ''],
-                        createdAt: course.createdAt ?? '',
-                        registeredCount: course.courseRegisteredUsersAggregate
-                                ?.aggregate?.count ??
-                            0,
-                        onDetailView: () async {
-                          await courseListingVM.getCourseDetails(
-                            context,
-                            course.id ?? "",
-                          );
-
-                          navigationService.navigateTo(
-                            RouteList.courseDetailScreen,
-                          );
-                        },
-                        onTapRegistered: () async {
-                          await courseListingVM.getCourseRegisteredUsers(
-                              context, course.id ?? "");
-                          final count = course.courseRegisteredUsersAggregate
-                                  ?.aggregate?.count ??
-                              0;
-
-                          if (count > 0) {
-                            navigationService
-                                .navigateTo(RouteList.registeredUsersView);
-                          } else {
-                            scaffoldMessenger('No Registered Users');
-                          }
-                        },
-                        onMenuAction: (action, id) async {
-                          switch (action) {
-                            case "Preview":
-                              await courseListingVM.getCourseDetails(
-                                  context, course.id ?? "");
-
-                              navigationService.navigateTo(
-                                RouteList.courseDetailScreen,
-                              );
-
-                              break;
-                            case "Edit":
-                              await courseListingVM.getCourseDetails(
-                                  context, course.id ?? "");
-                              courseListingVM.setEditOption(true);
-                              newCourseVM.setCurrentStep(0);
-                              courseListingVM.setCourseId(course.id ?? "");
-
-                              newCourseVM.fetchCourseCategory();
-                              newCourseVM.fetchCourseType();
-                              Loaders.circularShowLoader(context);
-                              await loadCourseData(newCourseVM,
-                                  courseListingVM.courseDetails.first);
-                              Loaders.circularHideLoader(context);
-                              navigationService.navigateTo(
-                                RouteList.newCourseScreen,
-                              );
-
-                              break;
-                            case "Delete":
-                              showAlertMessage(context,
-                                  'Are you sure you want to delete this course?',
-                                  onBack: () {
-                                navigationService.goBack();
-                                courseListingVM.deleteCourse(
-                                    context, course.id ?? "");
-                              });
-
-                              break;
-                            case "Inactive":
-                              courseListingVM.updateCourseStatus(
-                                  context, course.id ?? "", "INACTIVE");
-                              break;
-                            case "Active":
-                              courseListingVM.updateCourseStatus(
-                                  context, course.id ?? "", "ACTIVE");
-                              break;
-                            case "Re-Listing":
-                              await courseListingVM.getCourseDetails(
-                                  context, course.id ?? "");
-                              courseListingVM.setEditOption(true);
-                              newCourseVM.setCurrentStep(0);
-                              courseListingVM.setCourseId(course.id ?? "");
-                              newCourseVM.fetchCourseCategory();
-                              newCourseVM.fetchCourseType();
-                              Loaders.circularShowLoader(context);
-                              await loadCourseData(newCourseVM,
-                                  courseListingVM.courseDetails.first);
-                              newCourseVM.eraseDateFields();
-
-                              Loaders.circularHideLoader(context);
-                              navigationService.navigateTo(
-                                RouteList.newCourseScreen,
-                              );
-                          }
-                        },
-                      );
-                    },
+      child: courseListingVM.coursesListingList.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "No Data.",
+                    style: TextStyles.medium2(color: AppColors.black),
                   ),
-          );
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: courseListingVM.coursesListingList.length,
+              itemBuilder: (context, index) {
+                final jobData = courseListingVM.coursesListingList[index];
+                final course = jobData;
+                print(courseListingVM.coursesListingList.length);
+                return CouresListingCard(
+                  id: course.id ?? "",
+                  meetingLink: course.meetingLink ?? "",
+                  logoUrl: course.presentedByImage?.url ?? '',
+                  companyName: course.courseName ?? '',
+                  courseTitle: course.presentedByName ?? '',
+                  status: course.status ?? '',
+                  activeStatus: course.activeStatus ?? "",
+                  description: course.description ?? '',
+                  types: [course.type ?? ''],
+                  createdAt: course.createdAt ?? '',
+                  registeredCount:
+                      course.courseRegisteredUsersAggregate?.aggregate?.count ??
+                          0,
+                  onDetailView: () async {
+                    await courseListingVM.getCourseDetails(
+                      context,
+                      course.id ?? "",
+                    );
+
+                    navigationService.navigateTo(
+                      RouteList.courseDetailScreen,
+                    );
+                  },
+                  onTapRegistered: () async {
+                    await courseListingVM.getCourseRegisteredUsers(
+                        context, course.id ?? "");
+                    final count = course
+                            .courseRegisteredUsersAggregate?.aggregate?.count ??
+                        0;
+
+                    if (count > 0) {
+                      navigationService
+                          .navigateTo(RouteList.registeredUsersView);
+                    } else {
+                      scaffoldMessenger('No Registered Users');
+                    }
+                  },
+                  onMenuAction: (action, id) async {
+                    switch (action) {
+                      case "Preview":
+                        await courseListingVM.getCourseDetails(
+                            context, course.id ?? "");
+
+                        navigationService.navigateTo(
+                          RouteList.courseDetailScreen,
+                        );
+
+                        break;
+                      case "Edit":
+                        await courseListingVM.getCourseDetails(
+                            context, course.id ?? "");
+                        courseListingVM.setEditOption(true);
+                        newCourseVM.setCurrentStep(0);
+                        courseListingVM.setCourseId(course.id ?? "");
+
+                        newCourseVM.fetchCourseCategory();
+                        newCourseVM.fetchCourseType();
+                        Loaders.circularShowLoader(context);
+                        await loadCourseData(
+                            newCourseVM, courseListingVM.courseDetails.first);
+                        Loaders.circularHideLoader(context);
+                        navigationService.navigateTo(
+                          RouteList.newCourseScreen,
+                        );
+
+                        break;
+                      case "Delete":
+                        showAlertMessage(context,
+                            'Are you sure you want to delete this course?',
+                            onBack: () {
+                          navigationService.goBack();
+                          courseListingVM.deleteCourse(
+                              context, course.id ?? "");
+                        });
+
+                        break;
+                      case "Inactive":
+                        courseListingVM.updateCourseStatus(
+                            context, course.id ?? "", "INACTIVE");
+                        break;
+                      case "Active":
+                        courseListingVM.updateCourseStatus(
+                            context, course.id ?? "", "ACTIVE");
+                        break;
+                      case "Re-Listing":
+                        await courseListingVM.getCourseDetails(
+                            context, course.id ?? "");
+                        courseListingVM.setEditOption(true);
+                        newCourseVM.setCurrentStep(0);
+                        courseListingVM.setCourseId(course.id ?? "");
+                        newCourseVM.fetchCourseCategory();
+                        newCourseVM.fetchCourseType();
+                        Loaders.circularShowLoader(context);
+                        await loadCourseData(
+                            newCourseVM, courseListingVM.courseDetails.first);
+                        newCourseVM.eraseDateFields();
+
+                        Loaders.circularHideLoader(context);
+                        navigationService.navigateTo(
+                          RouteList.newCourseScreen,
+                        );
+                    }
+                  },
+                );
+              },
+            ),
+    );
   }
 
   SizedBox courseStatusWidget(CourseListingViewModel courseListingVM) {
     return SizedBox(
-            height: 60,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: courseListingVM.statuses.length,
-              itemBuilder: (context, index) {
-                String status = courseListingVM.statuses[index];
-                bool isSelected = courseListingVM.selectedStatus == status;
-                return GestureDetector(
-                  onTap: () {
-                    courseListingVM.changeStatus(status, context);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.primaryColor
-                          : AppColors.whiteColor,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: AppColors.primaryColor),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          status,
-                          style: TextStyles.regular2(
-                            color: isSelected
-                                ? AppColors.whiteColor
-                                : AppColors.black,
-                          ),
-                        ),
-                        SizedBox(width: 6),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.whiteColor
-                                : AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            "${courseListingVM.statusCountMap[status]}",
-                            style: TextStyles.regular2(
-                              color: isSelected
-                                  ? AppColors.black
-                                  : AppColors.whiteColor,
-                            ),
-                          ),
-                        ),
-                      ],
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: courseListingVM.statuses.length,
+        itemBuilder: (context, index) {
+          String status = courseListingVM.statuses[index];
+          bool isSelected = courseListingVM.selectedStatus == status;
+          return GestureDetector(
+            onTap: () {
+              courseListingVM.changeStatus(status, context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color:
+                    isSelected ? AppColors.primaryColor : AppColors.whiteColor,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: AppColors.primaryColor),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    status,
+                    style: TextStyles.regular2(
+                      color:
+                          isSelected ? AppColors.whiteColor : AppColors.black,
                     ),
                   ),
-                );
-              },
+                  SizedBox(width: 6),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.whiteColor
+                          : AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "${courseListingVM.statusCountMap[status]}",
+                      style: TextStyles.regular2(
+                        color:
+                            isSelected ? AppColors.black : AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
+        },
+      ),
+    );
   }
 
   Future<void> loadCourseData(
@@ -438,8 +375,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
     String startTime = course.startTime ?? "";
     String endTime = course.endTime ?? "";
 
-    newCourseVM.startTimeController.text =
-        DateFormat.jm().format(DateTime.parse("2025-10-04T${startTime}").toUtc());
+    newCourseVM.startTimeController.text = DateFormat.jm()
+        .format(DateTime.parse("2025-10-04T${startTime}").toUtc());
     newCourseVM.endTimeController.text =
         DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}").toUtc());
 

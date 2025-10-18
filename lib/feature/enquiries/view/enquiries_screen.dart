@@ -1,11 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_card.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EnquiriesScreen extends StatelessWidget {
-
   const EnquiriesScreen({
     super.key,
   });
@@ -16,19 +16,7 @@ class EnquiriesScreen extends StatelessWidget {
       create: (_) => AppliedJobViewModel()..fetchAppliedJobs(),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          elevation: 0,
-          title: const Text(
-            'Enquiries',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          iconTheme: const IconThemeData(color: Colors.black),
-        ),
+        appBar: AppbarTitleBackIconWidget(title: 'Enquiries'),
         body: Consumer<AppliedJobViewModel>(
           builder: (context, vm, _) {
             if (vm.isLoading) {
@@ -58,7 +46,7 @@ class EnquiriesScreen extends StatelessWidget {
               itemCount: vm.appliedJobs.length,
               itemBuilder: (_, index) {
                 final job = vm.appliedJobs[index];
-                return  EnquiriesCard(
+                return EnquiriesCard(
                   appliedJob: job,
                   index: index,
                 );

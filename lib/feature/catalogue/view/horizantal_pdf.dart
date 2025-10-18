@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
@@ -90,19 +89,7 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
 
     return widget.isfullScreen == true
         ? Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppColors.whiteColor,
-              leading: GestureDetector(
-                onTap: () => navigationService.goBack(),
-                child: Icon(Icons.arrow_back_ios_new, color: AppColors.black),
-              ),
-              centerTitle: true,
-              title: Text(
-                widget.fileName,
-                style:
-                    TextStyles.semiBold(color: AppColors.black, fontSize: 16),
-              ),
-            ),
+            appBar: AppbarTitleBackIconWidget(title: widget.fileName),
             body: Column(
               children: [
                 Expanded(

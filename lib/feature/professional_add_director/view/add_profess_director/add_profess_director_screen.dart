@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/professional_add_director/view_model/profe
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/add_directory_enum.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,14 +27,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
     final professAddDirectVM = Provider.of<ProfessionalAddDirectorVm>(context);
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
-      appBar: AppBar(
-          leading: IconButton(
-              onPressed: () => NavigationService().goBack(),
-              icon: Icon(Icons.arrow_back_ios)),
-          title: Text(
-            "Add New Directory",
-            style: TextStyles.medium2(),
-          )),
+      appBar: AppbarTitleBackIconWidget(title: 'Add New Directory'),
       body: Column(
         children: [
           _buildStepProgressBar(professAddDirectVM.currentStep,
@@ -49,7 +43,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
               ),
             ),
           ),
-          _bottomButtons(context, professAddDirectVM,addDirectorVM),
+          _bottomButtons(context, professAddDirectVM, addDirectorVM),
         ],
       ),
     );
@@ -147,7 +141,8 @@ class ProfessionalAddDirectorView extends StatelessWidget
                       navigationService.goBack();
                     } else {
                       if (currentStep == 0) {
-                        addDirectorVM.getBasicInfoData.first.id?.isEmpty ?? false
+                        addDirectorVM.getBasicInfoData.first.id?.isEmpty ??
+                                false
                             ? await professAddDirectVM.addBasicData(context)
                             : await professAddDirectVM.updateBasicData(context);
                         professAddDirectVM.goToNextStep();

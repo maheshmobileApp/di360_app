@@ -14,7 +14,6 @@ import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart
 import 'package:di360_flutter/feature/job_create/repository/job_create_repo_impl.dart';
 import 'package:di360_flutter/feature/job_create/repository/job_create_repository.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:intl/intl.dart';
 
 class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final JobCreateRepository repo = JobCreateRepoImpl();

@@ -56,9 +56,9 @@ class CoursesListingDetails {
   String? type;
   String? address;
   String? scheduledAt;
-  dynamic? maxSubscribers;
-  dynamic? priceInAud;
-  dynamic? priceInUsd;
+  dynamic maxSubscribers;
+  dynamic priceInAud;
+  dynamic priceInUsd;
   SeoMetadata? seoMetadata;
   String? webinarLink;
   PresentedByImage? presentedByImage;
@@ -79,10 +79,10 @@ class CoursesListingDetails {
   String? contactEmail;
   String? contactPhone;
   String? contactWebsite;
-  dynamic? cpdPoints;
-  dynamic? numberOfSeats;
-  dynamic? earlyBirdPrice;
-  dynamic? afterwardsPrice;
+  dynamic cpdPoints;
+  dynamic numberOfSeats;
+  dynamic earlyBirdPrice;
+  dynamic afterwardsPrice;
   List<CourseBannerImage>? courseGallery;
   List<CourseBannerImage>? courseBannerVideo;
   List<CourseBannerImage>? courseBannerImage;
