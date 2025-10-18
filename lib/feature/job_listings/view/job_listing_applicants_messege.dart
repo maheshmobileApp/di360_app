@@ -5,11 +5,13 @@ import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class JobListingApplicantsMessege extends StatefulWidget with BaseContextHelpers {
+class JobListingApplicantsMessege extends StatefulWidget
+    with BaseContextHelpers {
   final String jobId;
   final String applicantId;
   final String userId;
@@ -51,19 +53,17 @@ class _JobListingApplicantsMessegeState
   Widget _buildAvatar(bool isMe) {
     if (isMe) {
       final homeViewModel = Provider.of<HomeViewModel>(context);
-        final profileUrl =  homeViewModel.profilePic ?? '';
+      final profileUrl = homeViewModel.profilePic ?? '';
       {
         return CircleAvatar(
-        radius: 22,
-        backgroundColor: AppColors.geryColor,
-         backgroundImage:  ( profileUrl.isNotEmpty)
-                    ? NetworkImage(profileUrl)
-            : null,
-        child: ( profileUrl.isEmpty)
-            ? const Icon(Icons.person, color: AppColors.whiteColor)
-            : null,
-      );
-        
+          radius: 22,
+          backgroundColor: AppColors.geryColor,
+          backgroundImage:
+              (profileUrl.isNotEmpty) ? NetworkImage(profileUrl) : null,
+          child: (profileUrl.isEmpty)
+              ? const Icon(Icons.person, color: AppColors.whiteColor)
+              : null,
+        );
       }
     } else {
       final professional = widget.applicant?.dentalProfessional;
@@ -86,12 +86,7 @@ class _JobListingApplicantsMessegeState
     return Consumer<JobListingsViewModel>(
       builder: (context, vm, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              "Messages",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
+          appBar: AppbarTitleBackIconWidget(title: 'Messages'),
           body: Column(
             children: [
               Expanded(
@@ -121,7 +116,6 @@ class _JobListingApplicantsMessegeState
                                   children: [
                                     if (!isMe) avatarWidget,
                                     if (!isMe) const SizedBox(width: 6),
-
                                     Text(
                                       formatDateTime(msg.createdAt),
                                       style: TextStyle(
@@ -129,7 +123,6 @@ class _JobListingApplicantsMessegeState
                                         color: Colors.grey[600],
                                       ),
                                     ),
-
                                     if (isMe) const SizedBox(width: 6),
                                     if (isMe) avatarWidget,
                                     if (isMe) _MessegeMenu(),
@@ -161,8 +154,8 @@ class _JobListingApplicantsMessegeState
               ),
               SafeArea(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   decoration: BoxDecoration(
                     border:
                         Border(top: BorderSide(color: Colors.grey.shade300)),
@@ -191,8 +184,7 @@ class _JobListingApplicantsMessegeState
                               if (scrollController.hasClients) {
                                 scrollController.animateTo(
                                   scrollController.position.maxScrollExtent,
-                                  duration:
-                                      const Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeOut,
                                 );
                               }
@@ -219,10 +211,7 @@ class _JobListingApplicantsMessegeState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-        
-        } else if (value == "Edit") {
-          
-        }
+        } else if (value == "Edit") {}
       },
       itemBuilder: (context) => [
         PopupMenuItem(

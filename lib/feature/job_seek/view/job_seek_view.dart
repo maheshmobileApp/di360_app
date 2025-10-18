@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/banner/utils.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
@@ -12,6 +11,7 @@ import 'package:di360_flutter/feature/job_seek/view/tab_switch.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/talents/views/talents_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -37,72 +37,41 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
       builder: (context, jobSeekViewModel, _) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            title: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Text(
-                  'Dental Interface',
-                  style: TextStyles.bold4(color: AppColors.black),
-                ),
-                Positioned(
-                  top: -9,
-                  right: -18,
-                  child: SvgPicture.asset(
-                    ImageConst.logo,
-                    height: 20,
-                    width: 20,
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              SvgPicture.asset(ImageConst.notification, color: AppColors.black),
-              addHorizontal(15),
-              SvgPicture.asset(ImageConst.search, color: AppColors.black),
-              addHorizontal(15),
-              GestureDetector(
-                onTap: () {
-                  if (jobSeekViewModel.selectedTabIndex == 0) {
-                    navigationService.navigateTo(RouteList.JobSeekFilterScreen);
-                  } else {
-                    navigationService.navigateTo(RouteList.TalentFliterScreen);
-                  }
-                },
-                child: SvgPicture.asset(
-                  ImageConst.filter,
-                  color: AppColors.black,
-                ),
-              ),
-              addHorizontal(15),
-            ],
-          ),
+          appBar: AppBarWidget(
+              filterWidget: GestureDetector(
+            onTap: () {
+              if (jobSeekViewModel.selectedTabIndex == 0) {
+                navigationService.navigateTo(RouteList.JobSeekFilterScreen);
+              } else {
+                navigationService.navigateTo(RouteList.TalentFliterScreen);
+              }
+            },
+            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          )),
           body: Expanded(
             child: jobSeekViewModel.selectedTabIndex == 0
                 ? _buildJobsList(jobSeekViewModel)
                 : const TalentsView(),
           ),
-    
-          floatingActionButton:
-              jobSeekViewModel.isHidleFolatingButton == false
-                  ? const TabSwitch()
-                  : null,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: jobSeekViewModel.isHidleFolatingButton == false
+              ? const TabSwitch()
+              : null,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         );
       },
     );
   }
 
   Widget _buildJobsList(JobSeekViewModel vm) {
-  return RefreshIndicator(
-    onRefresh: () async => await vm.refreshJobs(context),
-    child: vm.jobs.isEmpty
-        ? Center(
-            child: vm.isRefreshing
-                ? const CircularProgressIndicator()
-                : const Text(""),
-          )
+    return RefreshIndicator(
+      onRefresh: () async => await vm.refreshJobs(context),
+      child: vm.jobs.isEmpty
+          ? Center(
+              child: vm.isRefreshing
+                  ? const CircularProgressIndicator()
+                  : const Text(""),
+            )
           : GenericListViewWithBanners<Jobs>(
               items: vm.jobs,
               bannerIndices: BannerUtils.calculateBannerIndices(
@@ -124,7 +93,6 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 return ListBanner();
               },
             ),
-  );
-}
-
+    );
+  }
 }

@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart'
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,21 +24,7 @@ class RoleSelectionScreen extends StatelessWidget with BaseContextHelpers {
     final selectedBusiness = businessTypes?[selectedIndex];
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          leading: IconButton(
-              onPressed: () {
-                navigationService.goBack();
-              },
-              icon: const Icon(
-                Icons.arrow_back,
-                color: AppColors.black,
-              )),
-          centerTitle: true,
-          title: Text(
-            "Know Your Role",
-            style: TextStyles.clashSemiBold(color: AppColors.black),
-          )),
+      appBar: AppbarTitleBackIconWidget(title: 'Know Your Role'),
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(

@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,15 +25,7 @@ class AddCatalogueScreen extends StatelessWidget
     final addCataloguVM = Provider.of<AddCatalogueViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        centerTitle: true,
-        leading: GestureDetector(
-            onTap: () => navigationService.goBack(),
-            child: const Icon(Icons.arrow_back_ios, color: AppColors.black)),
-        title: Text('Add Catalogue',
-            style: TextStyles.bold5(color: AppColors.black)),
-      ),
+      appBar: AppbarTitleBackIconWidget(title: 'Add Catalogue'),
       body: SingleChildScrollView(
         child: Form(
           key: formKey,

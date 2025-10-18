@@ -151,7 +151,6 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
       children: vm.documents.entries.map((entry) {
         final title = entry.key;
         final file = entry.value;
-        if (file == null) return const SizedBox.shrink();
         final fileName = file.path.split('/').last;
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
