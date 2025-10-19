@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogu
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,21 +22,12 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
     final catalogueVM = Provider.of<CatalogueViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        leading: GestureDetector(
-          onTap: () async {
+      appBar: AppbarTitleBackIconWidget(
+          title: 'Catalogue Details',
+          backAction: () async {
             await catalogueVM.fetchCatalogue(context);
             navigationService.goBack();
-          },
-          child: Icon(Icons.arrow_back_ios_new, color: AppColors.black),
-        ),
-        centerTitle: true,
-        title: Text(
-          'Catalogue Details',
-          style: TextStyles.semiBold(color: AppColors.black, fontSize: 16),
-        ),
-      ),
+          }),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(

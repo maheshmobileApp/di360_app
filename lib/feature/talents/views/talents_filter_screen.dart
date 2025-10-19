@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.da
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -20,15 +21,7 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        title: const Text(
-          "Filter Talents",
-          style: TextStyle(fontSize: 20, color: AppColors.black),
-        ),
-        iconTheme: const IconThemeData(color: AppColors.black),
-      ),
+      appBar: AppbarTitleBackIconWidget(title: 'Filter Talents'),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -229,7 +222,6 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
                   ),
                   suffixIcon: GestureDetector(
                     onTap: () async {
-  
                       navigationService.goBack();
                     },
                     child: const Icon(Icons.search, color: AppColors.black),
