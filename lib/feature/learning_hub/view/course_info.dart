@@ -159,8 +159,8 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           showPreview: true,
           serverImages: day.serverImages,
           onServerFilesRemoved: (updatedList) {
-                  jobCreateVM.setServerEventImgs(0, updatedList);
-                },
+            jobCreateVM.setServerEventImgs(0, updatedList);
+          },
           allowMultiple: true,
           selectedFiles: day.images,
           onFilesPicked: (files) => jobCreateVM.setEventImgs(0, files),
@@ -201,12 +201,36 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 text: null,
                 hintText: "Date",
                 onTap: () async {
+                  DateTime initialDate = DateTime.now();
+                  DateTime firstDate = DateTime.now();
+
+                  if (index > 0) {
+                    final previousDateText = jobCreateVM
+                        .sessions[index - 1].eventDateController.text;
+                    if (previousDateText.isNotEmpty) {
+                      try {
+                        final parts = previousDateText.split('/');
+                        final previousDate = DateTime(
+                          int.parse(parts[2]),
+                          int.parse(parts[1]),
+                          int.parse(parts[0]),
+                        );
+                        initialDate = previousDate.add(const Duration(days: 1));
+                        firstDate = previousDate.add(const Duration(days: 1));
+                      } catch (_) {
+                        initialDate = DateTime.now();
+                        firstDate = DateTime.now();
+                      }
+                    }
+                  }
+
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
+                    initialDate: initialDate,
+                    firstDate: firstDate,
                     lastDate: DateTime(2100),
                   );
+
                   if (picked != null) {
                     day.eventDateController.text =
                         "${picked.day}/${picked.month}/${picked.year}";
