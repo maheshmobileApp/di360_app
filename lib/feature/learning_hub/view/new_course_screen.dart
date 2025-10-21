@@ -1,6 +1,4 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
@@ -8,9 +6,9 @@ import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/create_course_enum.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,43 +28,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              NavigationService().goBack();
-            },
-            icon: Icon(Icons.arrow_back_ios)),
-        title: Text(
-          "Create New Course",
-          style: TextStyles.medium3(),
-        ),
-        /*actions: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 5,
-                horizontal: 8,
-              ),
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(255, 241, 229, 1),
-                borderRadius: BorderRadius.circular(200),
-              ),
-              child: Text(
-                "Preview",
-                style: const TextStyle(
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  height: 1.0,
-                  letterSpacing: 0,
-                  color: Color.fromRGBO(255, 112, 0, 1),
-                ),
-              ),
-            ),
-          )
-        ],*/
-      ),
+      appBar: AppbarTitleBackIconWidget(title: 'Create New Course'),
       body: Column(
         children: [
           _buildStepProgressBar(

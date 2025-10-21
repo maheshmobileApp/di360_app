@@ -20,17 +20,19 @@ class JobCreateView extends StatefulWidget {
   @override
   State<JobCreateView> createState() => _JobCreateViewState();
 }
+
 class _JobCreateViewState extends State<JobCreateView> {
   @override
-    void initState() {
+  void initState() {
     initilizeTheProfileData();
     super.initState();
   }
+
   initilizeTheProfileData() async {
-    final jobCreateVM =
-        Provider.of<JobCreateViewModel>(context, listen: false);
+    final jobCreateVM = Provider.of<JobCreateViewModel>(context, listen: false);
     await jobCreateVM.initializeTheData();
   }
+
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
     return Scaffold(
@@ -47,27 +49,20 @@ class _JobCreateViewState extends State<JobCreateView> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(16.0), 
+            padding: const EdgeInsets.all(16.0),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: 5, 
-                horizontal: 8, 
+                vertical: 5,
+                horizontal: 8,
               ),
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(
-                    255, 241, 229, 1), 
+                color: const Color.fromRGBO(255, 241, 229, 1),
                 borderRadius: BorderRadius.circular(200),
               ),
               child: Text(
                 "Preview",
-                style: const TextStyle(
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12, 
-                  height: 1.0,
-                  letterSpacing: 0,
-                  color: Color.fromRGBO(255, 112, 0, 1), 
-                ),
+                style:
+                    TextStyles.regular1(color: Color.fromRGBO(255, 112, 0, 1)),
               ),
             ),
           )
@@ -97,10 +92,9 @@ class _JobCreateViewState extends State<JobCreateView> {
   Widget _buildStepProgressBar(
       currentStep, totalSteps, JobCreateViewModel jobcreateVm) {
     return StepsView(
-
-        currentStep: jobcreateVm.currentStep,
-        totalSteps: jobcreateVm.totalSteps,
-       );
+      currentStep: jobcreateVm.currentStep,
+      totalSteps: jobcreateVm.totalSteps,
+    );
   }
 
   Widget _buildStep(JobCreateSteps stepIndex, GlobalKey<FormState> key) {
@@ -187,7 +181,6 @@ class _JobCreateViewState extends State<JobCreateView> {
             ),
           ),
           SizedBox(width: 16),
-
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep ? 'Submit' : 'Next',

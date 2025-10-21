@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/news_feed/notification_view_model/notifica
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -35,7 +36,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   @override
   Widget build(BuildContext context) {
-    final notificationVM = Provider.of<NotificationViewModel>(context);
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
 
@@ -55,7 +55,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
     );
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: appBarWidget(notificationVM, courseListingVM),
+        appBar: AppBarWidget(
+            title: 'Course Listing',
+            searchAction: () =>
+                courseListingVM.setSearchBar(!courseListingVM.searchBarOpen)),
         body: Column(
           children: [
             if (courseListingVM.searchBarOpen)

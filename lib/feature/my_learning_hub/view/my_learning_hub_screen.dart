@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/register_course_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -37,71 +38,41 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          title: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Text(
-                'My Learning Hub',
-                style: TextStyles.bold4(color: AppColors.black),
-              ),
-              Positioned(
-                top: -9,
-                right: -18,
-                child: SvgPicture.asset(
-                  ImageConst.logo,
-                  height: 20,
-                  width: 20,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            addHorizontal(15),
-            GestureDetector(
-                onTap: () {
-                  myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen);
-                },
-                child: SvgPicture.asset(ImageConst.search,
-                    color: AppColors.black)),
-            addHorizontal(15),
-            GestureDetector(
-              onTap: () => {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => FilterBottomSheet(
-                    sections: [
-                      FilterSectionModel(
-                        title: "Filter by Type",
-                        options: newCourseVM.courseTypeNames,
-                      ),
-                      FilterSectionModel(
-                        title: "Category",
-                        options: newCourseVM.courseCategory,
-                      ),
-                    ],
-                    onApply: (selectedOptions) {
-                      final type = selectedOptions["Filter by Type"];
-                      final category = selectedOptions["Category"];
-                      myLearningHubVM.getCoursesWithFilters(
-                          context, type, category);
+        appBar: AppBarWidget(
+            title: 'My Learning Hub',
+            searchAction: () =>
+                myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen),
+            filterWidget: GestureDetector(
+                onTap: () => {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => FilterBottomSheet(
+                          sections: [
+                            FilterSectionModel(
+                              title: "Filter by Type",
+                              options: newCourseVM.courseTypeNames,
+                            ),
+                            FilterSectionModel(
+                              title: "Category",
+                              options: newCourseVM.courseCategory,
+                            ),
+                          ],
+                          onApply: (selectedOptions) {
+                            final type = selectedOptions["Filter by Type"];
+                            final category = selectedOptions["Category"];
+                            myLearningHubVM.getCoursesWithFilters(
+                                context, type, category);
+                          },
+                          onClear: () {
+                            navigationService.goBack();
+                          },
+                        ),
+                      )
                     },
-                    onClear: () {
-                      navigationService.goBack();
-                    },
-                    
-                  ),
-                )
-              },
-              child:
-                  SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-            ),
-            addHorizontal(15),
-          ],
-        ),
+                child: SvgPicture.asset(ImageConst.filter,
+                    color: AppColors.black))),
         body: Column(
           children: [
             Divider(),

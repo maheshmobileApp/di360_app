@@ -1,12 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_card.dart';
 import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class AppliedJobScreen extends StatelessWidget {
-
   const AppliedJobScreen({
     super.key,
   });
@@ -17,19 +16,7 @@ class AppliedJobScreen extends StatelessWidget {
       create: (_) => AppliedJobViewModel()..fetchAppliedJobs(),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.whiteColor,
-          elevation: 0,
-          title: const Text(
-            'Applied Jobs',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          iconTheme: const IconThemeData(color: Colors.black),
-        ),
+        appBar: AppbarTitleBackIconWidget(title: 'Applied Jobs'),
         body: Consumer<AppliedJobViewModel>(
           builder: (context, vm, _) {
             if (vm.isLoading) {

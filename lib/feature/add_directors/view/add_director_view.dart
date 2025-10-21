@@ -17,6 +17,7 @@ import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/add_directory_enum.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,17 +28,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              NavigationService().goBack();
-            },
-            icon: Icon(Icons.arrow_back_ios)),
-        title: Text(
-          "Add New Directory",
-          style: TextStyles.medium2(),
-        )
-      ),
+      appBar: AppbarTitleBackIconWidget(title: 'Add New Directory'), 
       body: Column(
         children: [
           _buildStepProgressBar(addDirectorVM.currentStep,

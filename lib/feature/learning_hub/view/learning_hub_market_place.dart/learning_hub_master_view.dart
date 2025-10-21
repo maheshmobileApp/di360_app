@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -37,36 +38,10 @@ class _JobListingScreenState extends State<LearningHubMasterView>
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 249, 248, 248),
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        title: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Text(
-              'Dental Interface',
-              style: TextStyles.bold4(color: AppColors.black),
-            ),
-            Positioned(
-              top: -9,
-              right: -18,
-              child: SvgPicture.asset(
-                ImageConst.logo,
-                height: 20,
-                width: 20,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          addHorizontal(15),
-          GestureDetector(
-              onTap: () {
-                courseListingVM.setSearchBar(!courseListingVM.searchBarOpen);
-              },
-              child:
-                  SvgPicture.asset(ImageConst.search, color: AppColors.black)),
-          addHorizontal(20),
-          GestureDetector(
+      appBar: AppBarWidget(
+          searchAction: () =>
+              courseListingVM.setSearchBar(!courseListingVM.searchBarOpen),
+          filterWidget: GestureDetector(
             onTap: () => {
               showModalBottomSheet(
                 context: context,
@@ -105,10 +80,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
               )
             },
             child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-          ),
-          addHorizontal(15),
-        ],
-      ),
+          )),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -141,7 +113,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                       )
                     : ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        itemCount: courseListingVM.marketPlaceCoursesList.length,
+                        itemCount:
+                            courseListingVM.marketPlaceCoursesList.length,
                         itemBuilder: (context, index) {
                           final jobData =
                               courseListingVM.marketPlaceCoursesList[index];
@@ -174,7 +147,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               );
                             },
                             registerTap: () async {
-                              if (seats >0) {
+                              if (seats > 0) {
                                 courseListingVM.setCourseId(course.id ?? "");
                                 RegistrationUserForm.show(
                                     context, course.courseName ?? "");

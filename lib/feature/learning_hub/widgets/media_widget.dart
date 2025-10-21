@@ -23,7 +23,7 @@ class MediaWidget extends StatefulWidget {
 
 class _MediaWidgetState extends State<MediaWidget> {
   VideoPlayerController? _controller;
-  bool _isPlaying = false;
+  bool isPlaying = false;
 
   bool get _isVideo {
     final lower = widget.name ?? "";
@@ -49,12 +49,12 @@ class _MediaWidgetState extends State<MediaWidget> {
     setState(() {
       if (_controller!.value.isPlaying) {
         _controller!.pause();
-        _isPlaying = false;
+        isPlaying = false;
       } else {
         _controller!.play();
         _controller!.setLooping(true);
         _controller!.setVolume(1.0);
-        _isPlaying = true;
+        isPlaying = true;
       }
     });
   }

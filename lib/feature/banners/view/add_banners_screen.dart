@@ -1,14 +1,13 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/banners/widgets/banners_schedule_date.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -31,20 +30,12 @@ class _AddBannersScreenState extends State<AddBannersScreen>
     final bannersVM = Provider.of<BannersViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        centerTitle: true,
-        leading: GestureDetector(
-            onTap: () => navigationService.goBack(),
-            child: const Icon(Icons.arrow_back_ios, color: AppColors.black)),
-        title: Text(
-            bannersVM.isRelistBanner
-                ? 'Re-List Banner'
-                : bannersVM.isEditBanner
-                    ? 'Edit Banner'
-                    : 'Add Banner',
-            style: TextStyles.medium2(color: AppColors.black)),
-      ),
+      appBar: AppbarTitleBackIconWidget(
+          title: bannersVM.isRelistBanner
+              ? 'Re-List Banner'
+              : bannersVM.isEditBanner
+                  ? 'Edit Banner'
+                  : 'Add Banner'),
       body: SingleChildScrollView(
         child: Form(
           key: formKey,
