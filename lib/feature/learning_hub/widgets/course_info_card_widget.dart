@@ -84,7 +84,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("PRESENTED BY",
-                              style: TextStyles.medium1(color: AppColors.black)),
+                              style:
+                                  TextStyles.medium1(color: AppColors.black)),
                           const SizedBox(height: 2),
                           Row(
                             children: [
@@ -96,14 +97,16 @@ class CourseInfoCardWidget extends StatelessWidget {
                                 radius: 20,
                                 child: profilePic.isEmpty
                                     ? const Icon(Icons.business,
-                                        size: 20, color: AppColors.lightGeryColor)
+                                        size: 20,
+                                        color: AppColors.lightGeryColor)
                                     : null,
                               ),
                               const SizedBox(width: 10),
                               Flexible(
                                 child: Text("${presentByName}".toUpperCase(),
-                                maxLines: 2,
-                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                    maxLines: 2,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               )
                             ],
                           ),
@@ -115,8 +118,10 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Icon(Icons.calendar_month_outlined,
                             color: AppColors.primaryColor, size: 20),
                         const SizedBox(width: 4),
-                        Text(DateFormatUtils.convertToddmmm(startDate)
-                            .toUpperCase()),
+                        Text(startDate.isEmpty
+                            ? ""
+                            : DateFormatUtils.convertToddmmm(startDate)
+                                .toUpperCase()),
                         const SizedBox(width: 4),
                         Text(DateFormatUtils.formatToHourAmPm(time))
                       ],

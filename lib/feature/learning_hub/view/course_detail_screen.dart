@@ -47,6 +47,14 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         .map((e) => e.url ?? "")
         .where((url) => url.isNotEmpty)
         .toList();
+    final bannerUrl = (courseDetails?.courseBannerVideo != null &&
+            courseDetails!.courseBannerVideo!.isNotEmpty)
+        ? courseDetails.courseBannerVideo?.first.url ?? ""
+        : "";
+    final bannerName = (courseDetails?.courseBannerVideo != null &&
+            courseDetails!.courseBannerVideo!.isNotEmpty)
+        ? courseDetails.courseBannerVideo?.first.name ?? ""
+        : "";
 
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
@@ -158,10 +166,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             courseDetails?.afterwardsPrice?.toString() ?? "0",
                         discountPrice:
                             courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                        bannerUrl:
-                            courseDetails?.courseBannerVideo?.first.url ?? "",
-                        bannerName:
-                            courseDetails?.courseBannerVideo?.first.name ?? "",
+                        bannerUrl: bannerUrl,
+                        bannerName: bannerName,
                       ),
                       const SizedBox(height: 12),
                       if (courseDetails?.description != "")
@@ -177,9 +183,9 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         style: TextStyles.bold2(color: AppColors.primaryColor),
                       ),
                       const SizedBox(height: 6),
-                      if ((courseDetails?.courseEventInfo?.isNotEmpty ??
-                          false)) ...[
-                        ...courseDetails!.courseEventInfo!
+                      if ((courseDetails?.courseEventInfo != null &&
+                          courseDetails!.courseEventInfo!.isNotEmpty)) ...[
+                        ...courseDetails.courseEventInfo!
                             .asMap()
                             .entries
                             .map((entry) {
@@ -194,7 +200,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               EventDayDataWidget(
-                                 // 👈 dynamic day title
+                                // 👈 dynamic day title
                                 descriptions: [eventInfo],
                                 images: images,
                               ),

@@ -179,6 +179,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void updateEvent(String? value) {
+    selectedEvent = value;
+
+    notifyListeners();
+  }
+
   void setSelectedCourseCategory(String? name) async {
     await fetchCourseCategory();
     selectedCategory = name;
@@ -516,9 +522,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setServerEventImgs(int index, List<String> files) {
     if (index >= 0 && index < sessions.length) {
-    sessions[index].serverImages = files;
-    notifyListeners();
-  }
+      sessions[index].serverImages = files;
+      notifyListeners();
+    }
   }
 
   /// Get session details as plain data (ready for API)
@@ -693,8 +699,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",
-              startTime: startTimeController.text,
-              endTime: endTimeController.text)
+              startTime: startTimeController.text == ""
+                  ? null
+                  : startTimeController.text,
+              endTime:
+                  endTimeController.text == "" ? null : endTimeController.text)
           .toJson(),
     });
 
@@ -740,64 +749,64 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final result = await repo.updateCourseListing({
       "id": courseId,
       "changes": CourseObject(
-              courseName: courseNameController.text,
-              courseCategoryId: selectedCategoryId,
-              rsvpDate: rsvpDate,
-              presentedByName: presenterNameController.text,
-              presentedByImage: PresentedByImage(url: presenter_image),
-              courseBannerImage: courseBannerImgList,
-              courseGallery: selectedGalleryList,
-              courseBannerVideo: courseBannerImageHeaderList,
-              description: courseDescController.text,
-              cpdPoints: (cpdPointsController.text.isEmpty)
-                  ? null
-                  : double.parse(cpdPointsController.text),
-              numberOfSeats: (numberOfSeatsController.text.isEmpty)
-                  ? null
-                  : int.parse(numberOfSeatsController.text),
-              priceInAud: 0,
-              priceInUsd: 0,
-              earlyBirdPrice: (birdPriceController.text.isEmpty)
-                  ? null
-                  : int.parse(birdPriceController.text),
-              earlyBirdEndDate: earlyBirdDateController.text,
-              topicsIncluded: topicsIncludedDescController.text,
-              learningObjectives: learningObjectivesDescController.text,
-              eventType: selectedEvent,
-              courseEventInfo: courseInfoList,
-              sponsorByImage: sponsoredByImgList,
-              terms: termsAndConditionsController.text,
-              refundPolicy: cancellationController.text,
-              contactName: nameController.text,
-              contactEmail: emailController.text,
-              contactPhone: phoneController.text,
-              contactWebsite: websiteUrlController.text,
-              afterwardsPrice: (totalPriceController.text.isEmpty)
-                  ? null
-                  : int.parse(totalPriceController.text),
-              registerLink: registerLinkController.text,
-              userRole: type,
-              startDate: startDate,
-              endDate: endDate,
-              isFeatured: false,
-              activeStatus: "ACTIVE",
-              address: addressController.text,
-              maxSubscribers: 1000,
-              createdById: userId,
-              companyName: name,
-              status: isDraft ? "DRAFT" : "PENDING",
-              type: (selectedCourseType == null) ? "" : selectedCourseType,
-              feedType: "LEARNHUB",
-              startTime: startTime,
-              endTime: endTime)
-          .toJson(),
+        courseName: courseNameController.text,
+        courseCategoryId: selectedCategoryId,
+        rsvpDate: rsvpDate,
+        presentedByName: presenterNameController.text,
+        presentedByImage: PresentedByImage(url: presenter_image),
+        courseBannerImage: courseBannerImgList,
+        courseGallery: selectedGalleryList,
+        courseBannerVideo: courseBannerImageHeaderList,
+        description: courseDescController.text,
+        cpdPoints: (cpdPointsController.text.isEmpty)
+            ? null
+            : double.parse(cpdPointsController.text),
+        numberOfSeats: (numberOfSeatsController.text.isEmpty)
+            ? null
+            : int.parse(numberOfSeatsController.text),
+        priceInAud: 0,
+        priceInUsd: 0,
+        earlyBirdPrice: (birdPriceController.text.isEmpty)
+            ? null
+            : int.parse(birdPriceController.text),
+        earlyBirdEndDate: earlyBirdDateController.text,
+        topicsIncluded: topicsIncludedDescController.text,
+        learningObjectives: learningObjectivesDescController.text,
+        eventType: selectedEvent,
+        courseEventInfo: courseInfoList,
+        sponsorByImage: sponsoredByImgList,
+        terms: termsAndConditionsController.text,
+        refundPolicy: cancellationController.text,
+        contactName: nameController.text,
+        contactEmail: emailController.text,
+        contactPhone: phoneController.text,
+        contactWebsite: websiteUrlController.text,
+        afterwardsPrice: (totalPriceController.text.isEmpty)
+            ? null
+            : int.parse(totalPriceController.text),
+        registerLink: registerLinkController.text,
+        userRole: type,
+        startDate: startDate,
+        endDate: endDate,
+        isFeatured: false,
+        activeStatus: "ACTIVE",
+        address: addressController.text,
+        maxSubscribers: 1000,
+        createdById: userId,
+        companyName: name,
+        status: isDraft ? "DRAFT" : "PENDING",
+        type: (selectedCourseType == null) ? "" : selectedCourseType,
+        feedType: "LEARNHUB",
+        startTime: startTime == "" ? null : startTime,
+        endTime: endTime == "" ? null : endTime,
+      ).toJson(),
     });
 
     if (result != null) {
-      scaffoldMessenger("Course is updated Successfully");
       navigationService.goBack();
-
       Loaders.circularHideLoader(context);
+      scaffoldMessenger("Course is updated Successfully");
+      
       resetForm();
     } else {
       Loaders.circularHideLoader(context);

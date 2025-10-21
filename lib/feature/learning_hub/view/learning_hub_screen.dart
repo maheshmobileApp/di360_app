@@ -373,7 +373,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.selectedCategoryId = course.courseCategoryId;
     await newCourseVM.setSelectedCourseCategoryName(course.courseCategoryId);
     newCourseVM.selectedCourseType = course.type;
-    newCourseVM.selectedEvent = course.eventType ?? "";
 
     // Text controllers
     newCourseVM.courseNameController.text = course.courseName ?? "";
@@ -461,8 +460,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   void loadCourseForEdit(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) {
-    newCourseVM.selectedEvent =
-        course.eventType; // "Single Day" or "Multiple Day"
+    newCourseVM.selectedEvent = course.eventType == "multiple"
+        ? "Multiple Day"
+        : "Single Day"; // "Single Day" or "Multiple Day"
 
     newCourseVM.sessions = course.courseEventInfo?.map((event) {
           return SessionModel(
