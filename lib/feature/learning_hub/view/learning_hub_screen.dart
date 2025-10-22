@@ -374,8 +374,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     // Dropdown / selections
     newCourseVM.selectedCategoryId = course.courseCategoryId;
-    await newCourseVM.setSelectedCourseCategoryName(course.courseCategoryId);
-    newCourseVM.selectedCourseType = course.type;
+    (course.courseCategoryId != null)
+        ? await newCourseVM
+            .setSelectedCourseCategoryName(course.courseCategoryId)
+        : await newCourseVM
+            .setSelectedCourseCategoryName("");
+    newCourseVM.selectedCourseType = course.type!=null?course.type:"";
 
     // Text controllers
     newCourseVM.courseNameController.text = course.courseName ?? "";
@@ -445,11 +449,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
     String start_time = startTime.split('+').first;
     String end_time = endTime.split('+').first;
 
-    newCourseVM.startTimeController.text =
-        DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(start_time));
+    newCourseVM.startTimeController.text = start_time != ""
+        ? DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(start_time))
+        : "";
 
-    newCourseVM.endTimeController.text =
-        DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(end_time));
+    newCourseVM.endTimeController.text = end_time != ""
+        ? DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(end_time))
+        : "";
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";

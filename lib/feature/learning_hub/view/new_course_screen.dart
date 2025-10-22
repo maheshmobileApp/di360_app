@@ -155,7 +155,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                 Loaders.circularHideLoader(context);
 
                 (courseListVM.editOptionEnable)
-                    ? await newCourseVM.updateCourseListing(
+                    ? 
+                    await newCourseVM.updateCourseListing(
                         context, courseListVM.courseId, true)
                     : await newCourseVM.createdCourseListing(context, true);
                 courseListVM.selectedStatus = "All";

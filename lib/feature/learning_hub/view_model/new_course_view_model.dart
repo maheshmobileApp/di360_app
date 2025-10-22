@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/filter_item.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
@@ -86,6 +87,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   List<CourseEventInfo> courseInfoList = [];
   List<String> courseTypeNames = [];
   List<String> courseCategory = [];
+  List<FilterItem> courseCategoryItems = [];
 
   String? selectedCategory;
   String? selectedCategoryId;
@@ -174,7 +176,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void setSelectedCourseType(String? value) {
+  void setSelectedCourseType(String value) {
     selectedCourseType = value;
     notifyListeners();
   }
@@ -617,6 +619,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     courseCategoryList = result.courseCategories ?? [];
     courseCategoryList.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
     courseCategory = courseCategoryList.map((e) => e.name ?? "").toList();
+    courseCategoryItems = courseCategoryList
+        .where((e) => e.id != null && e.name != null)
+        .map((e) => FilterItem(id: e.id!, name: e.name!))
+        .toList();
     notifyListeners();
   }
 
@@ -738,12 +744,16 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
             DateFormat("d/M/yyyy").parse(endDateController.text))
         : null;
 
-    final startTime = DateFormat("HH:mm:ss")
-            .format(DateFormat("h:mm a").parse(startTimeController.text)) +
-        "+00";
-    final endTime = DateFormat("HH:mm:ss")
-            .format(DateFormat("h:mm a").parse(endTimeController.text)) +
-        "+00";
+    final startTime = startTimeController.text != ""
+        ? DateFormat("HH:mm:ss")
+                .format(DateFormat("h:mm a").parse(startTimeController.text)) +
+            "+00"
+        : null;
+    final endTime = endTimeController.text != ""
+        ? DateFormat("HH:mm:ss")
+                .format(DateFormat("h:mm a").parse(endTimeController.text)) +
+            "+00"
+        : null;
 
     Loaders.circularShowLoader(context);
     final result = await repo.updateCourseListing({
@@ -806,7 +816,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       navigationService.goBack();
       Loaders.circularHideLoader(context);
       scaffoldMessenger("Course is updated Successfully");
-      
+
       resetForm();
     } else {
       Loaders.circularHideLoader(context);
@@ -856,6 +866,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     endTimeController.text = "";
     sessions = [];
     selectedEvent = "Single Day";
+    presenter_image = "";
+    courseBannerImgList = [];
+    selectedGalleryList = [];
+    courseBannerImageHeaderList = [];
+    sponsoredByImgList = [];
   }
 
   void serverImagesClear() {

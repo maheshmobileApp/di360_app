@@ -8,8 +8,6 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
-import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
-import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -43,7 +41,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
               courseListingVM.setSearchBar(!courseListingVM.searchBarOpen),
           filterWidget: GestureDetector(
             onTap: () => {
-              showModalBottomSheet(
+              navigationService.navigateTo(RouteList.learningHubFliterScreen)
+              /*showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
@@ -77,7 +76,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                     navigationService.goBack();
                   },
                 ),
-              )
+              )*/
             },
             child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
           )),

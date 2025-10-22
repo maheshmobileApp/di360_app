@@ -212,10 +212,22 @@ class LearningHubRepoImpl extends LearningHubRepository {
       String address) async {
     final List<Map<String, dynamic>> andConditions = [];
 
+    final List<String> typeList = type.isNotEmpty
+      ? type.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+      : [];
+
+    final List<String> categoryList = courseCategoryId.isNotEmpty
+      ? courseCategoryId
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList()
+      : [];
+
     if (type.isNotEmpty) {
       andConditions.add({
         "type": {
-          "_in": [type]
+          "_in": typeList
         }
       });
     }
@@ -223,7 +235,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
     if (courseCategoryId.isNotEmpty) {
       andConditions.add({
         "course_category_id": {
-          "_in": [courseCategoryId]
+          "_in": categoryList
         }
       });
     }

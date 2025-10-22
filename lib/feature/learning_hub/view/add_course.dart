@@ -386,26 +386,33 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCourseTypes(NewCourseViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: jobCreateVM.selectedCourseType,
-      title: "Course Format (Type)",
-      onChanged: (v) {
-        jobCreateVM.setSelectedCourseType(v as String);
-      },
-      items: jobCreateVM.courseTypeNames
-          .map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select Course Type",
-      validator: (value) => value == null || value.toString().isEmpty
-          ? 'Please select Course Type'
-          : null,
-    );
-  }
+  // Remove duplicates and sanitize data
+  final courseTypeList = jobCreateVM.courseTypeNames.toSet().toList();
+
+  // Ensure the selected value actually exists
+  final safeSelectedType = courseTypeList.contains(jobCreateVM.selectedCourseType)
+      ? jobCreateVM.selectedCourseType
+      : null;
+
+  return CustomDropDown(
+    isRequired: true,
+    value: safeSelectedType, // ✅ safe value
+    title: "Course Format (Type)",
+    onChanged: (v) {
+      jobCreateVM.setSelectedCourseType(v as String);
+    },
+    items: courseTypeList.map<DropdownMenuItem<Object>>((String value) {
+      return DropdownMenuItem<Object>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    hintText: "Select Course Type",
+    validator: (value) =>
+        value == null || value.toString().isEmpty ? 'Please select Course Type' : null,
+  );
+}
+
 
   DateTime? parseTime(String timeString) {
     try {
