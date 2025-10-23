@@ -28,6 +28,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
 
     final showAddress = ["Event", "Live Course", "Live Event"].contains(type);
 
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
@@ -191,25 +192,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 serverImageType: "image",
                 onServerFileRemoved: (value) {
                   jobCreateVM.setPresentedImg(null);
-                  Form.of(context).validate(); // 👈 force re-run validation
                 },
                 showPreview: true,
                 selectedFile: jobCreateVM.selectedPresentedImg,
-                onFilePicked: (file) {
-                  jobCreateVM.setPresentedImg(file);
-                  Form.of(context).validate();
-                },
-                validator: (value) {
-                  final hasLocalFile = jobCreateVM.selectedPresentedImg != null;
-                  final hasServerFile =
-                      jobCreateVM.serverPresentedImg != null &&
-                          jobCreateVM.serverPresentedImg!.isNotEmpty;
-
-                  if (!hasLocalFile && !hasServerFile) {
-                    return "Please upload the Presented By image";
-                  }
-                  return null; // ✅ validation passed
-                },
+                onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
               ),
               SizedBox(height: 8),
               _sectionHeader("Images/Video"),
@@ -222,24 +208,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 showPreview: true,
                 onServerFileRemoved: (value) {
                   jobCreateVM.setCourseHeaderBaner(null);
-                  Form.of(context).validate();
-                },
-                validator: (value) {
-                  final hasLocalFile =
-                      jobCreateVM.selectedCourseHeaderBanner != null;
-                  final hasServerFile =
-                      jobCreateVM.selectedCourseHeaderBanner != null;
-
-                  if (!hasLocalFile && !hasServerFile) {
-                    return "Please upload the Course Header";
-                  }
-                  return null; // ✅ validation passed
                 },
                 selectedFile: jobCreateVM.selectedCourseHeaderBanner,
-                onFilePicked: (file) {
-                  jobCreateVM.setCourseHeaderBaner(file);
-                  Form.of(context).validate();
-                },
+                onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
               ),
               SizedBox(height: 8),
               ImagePickerField(
@@ -249,25 +220,10 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 allowMultiple: true,
                 onServerFilesRemoved: (updatedList) {
                   jobCreateVM.setServerGallery(updatedList);
-                  Form.of(context).validate();
-                },
-                validator: (value) {
-                  final hasLocalFile = jobCreateVM.selectedGallery != null;
-                  final hasServerFile =
-                      jobCreateVM.serverGallery != null &&
-                          jobCreateVM.serverGallery!.isNotEmpty;
-
-                  if (!hasLocalFile && !hasServerFile) {
-                    return "Please upload the Presented By image";
-                  }
-                  return null; // ✅ validation passed
                 },
                 showPreview: true,
                 selectedFiles: jobCreateVM.selectedGallery,
-                onFilesPicked: (file) {
-                  jobCreateVM.setGallery(file);
-                  Form.of(context).validate();
-                },
+                onFilesPicked: (file) => jobCreateVM.setGallery(file),
               ),
               SizedBox(height: 8),
               ImagePickerField(
@@ -278,24 +234,9 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 showPreview: true,
                 onServerFilesRemoved: (updatedList) {
                   jobCreateVM.setServerCourseBannerImg(updatedList);
-                  Form.of(context).validate();
-                },
-                validator: (value) {
-                  final hasLocalFile = jobCreateVM.selectedCourseBannerImg != null;
-                  final hasServerFile =
-                      jobCreateVM.serverCourseBannerImg != null &&
-                          jobCreateVM.serverCourseBannerImg!.isNotEmpty;
-
-                  if (!hasLocalFile && !hasServerFile) {
-                    return "Please upload the Presented By image";
-                  }
-                  return null; // ✅ validation passed
                 },
                 selectedFiles: jobCreateVM.selectedCourseBannerImg,
-                onFilesPicked: (file) {
-                  jobCreateVM.setCourseBannerImg(file);
-                   Form.of(context).validate();
-                },
+                onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),
               ),
               SizedBox(height: 8),
               _sectionHeader("Price/Availability"),
@@ -445,34 +386,33 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCourseTypes(NewCourseViewModel jobCreateVM) {
-    // Remove duplicates and sanitize data
-    final courseTypeList = jobCreateVM.courseTypeNames.toSet().toList();
+  // Remove duplicates and sanitize data
+  final courseTypeList = jobCreateVM.courseTypeNames.toSet().toList();
 
-    // Ensure the selected value actually exists
-    final safeSelectedType =
-        courseTypeList.contains(jobCreateVM.selectedCourseType)
-            ? jobCreateVM.selectedCourseType
-            : null;
+  // Ensure the selected value actually exists
+  final safeSelectedType = courseTypeList.contains(jobCreateVM.selectedCourseType)
+      ? jobCreateVM.selectedCourseType
+      : null;
 
-    return CustomDropDown(
-      isRequired: true,
-      value: safeSelectedType, // ✅ safe value
-      title: "Course Format (Type)",
-      onChanged: (v) {
-        jobCreateVM.setSelectedCourseType(v as String);
-      },
-      items: courseTypeList.map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select Course Type",
-      validator: (value) => value == null || value.toString().isEmpty
-          ? 'Please select Course Type'
-          : null,
-    );
-  }
+  return CustomDropDown(
+    isRequired: true,
+    value: safeSelectedType, // ✅ safe value
+    title: "Course Format (Type)",
+    onChanged: (v) {
+      jobCreateVM.setSelectedCourseType(v as String);
+    },
+    items: courseTypeList.map<DropdownMenuItem<Object>>((String value) {
+      return DropdownMenuItem<Object>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    hintText: "Select Course Type",
+    validator: (value) =>
+        value == null || value.toString().isEmpty ? 'Please select Course Type' : null,
+  );
+}
+
 
   DateTime? parseTime(String timeString) {
     try {

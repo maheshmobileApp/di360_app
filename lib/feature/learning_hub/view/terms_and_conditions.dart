@@ -27,32 +27,17 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
               _sectionHeader("Terms And Conditions"),
               SizedBox(height: 16),
               ImagePickerField(
-                  title: "Sponsored By",
-                  isRequired: true,
-                  serverImages: newCourseVM.serverSponsoredByImg,
-                  showPreview: true,
-                  onServerFilesRemoved: (updatedList) {
-                    newCourseVM.setServerSponsorImg(updatedList);
-                    Form.of(context).validate();
-                  },
-                  validator: (value) {
-                    final hasLocalFile =
-                        newCourseVM.selectedsponsoredByImg != null;
-                    final hasServerFile =
-                        newCourseVM.serverSponsoredByImg != null &&
-                            newCourseVM.serverSponsoredByImg!.isNotEmpty;
-
-                    if (!hasLocalFile && !hasServerFile) {
-                      return "Please upload the Sponsors Images";
-                    }
-                    return null; // ✅ validation passed
-                  },
-                  allowMultiple: true,
-                  selectedFiles: newCourseVM.selectedsponsoredByImg,
-                  onFilesPicked: (file) {
-                    newCourseVM.setSponsoredBy(file);
-                    Form.of(context).validate();
-                  }),
+                title: "Sponsored By",
+                isRequired: true,
+                serverImages: newCourseVM.serverSponsoredByImg,
+                showPreview: true,
+                onServerFilesRemoved: (updatedList) {
+                  newCourseVM.setServerSponsorImg(updatedList);
+                },
+                allowMultiple: true,
+                selectedFiles: newCourseVM.selectedsponsoredByImg,
+                onFilesPicked: (file) => newCourseVM.setSponsoredBy(file),
+              ),
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter Terms & Conditions",
