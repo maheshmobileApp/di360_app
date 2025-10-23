@@ -154,17 +154,29 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
         ),
         SizedBox(height: 8),
         ImagePickerField(
-          title: "Event Image",
-          isRequired: true,
-          showPreview: true,
-          serverImages: day.serverImages,
-          onServerFilesRemoved: (updatedList) {
-            jobCreateVM.setServerEventImgs(0, updatedList);
-          },
-          allowMultiple: true,
-          selectedFiles: day.images,
-          onFilesPicked: (files) => jobCreateVM.setEventImgs(0, files),
-        ),
+            title: "Event Image",
+            isRequired: true,
+            showPreview: true,
+            serverImages: day.serverImages,
+            onServerFilesRemoved: (updatedList) {
+              jobCreateVM.setServerEventImgs(0, updatedList);
+              Form.of(context).validate();
+            },
+            validator: (value) {
+              final hasLocalFile = day.images != null;
+              final hasServerFile = day.serverImages.isNotEmpty;
+
+              if (!hasLocalFile && !hasServerFile) {
+                return "Please upload Event Image";
+              }
+              return null; // ✅ validation passed
+            },
+            allowMultiple: true,
+            selectedFiles: day.images,
+            onFilesPicked: (files) {
+              jobCreateVM.setEventImgs(0, files);
+              Form.of(context).validate();
+            }),
       ],
     );
   }
@@ -260,18 +272,29 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               ),
               SizedBox(height: 8),
               ImagePickerField(
-                title: "Event Image",
-                isRequired: true,
-                allowMultiple: true,
-                serverImages: day.serverImages,
-                onServerFilesRemoved: (updatedList) {
-                  jobCreateVM.setServerEventImgs(index, updatedList);
-                },
-                showPreview: true,
-                selectedFiles: day.images,
-                onFilesPicked: (files) =>
-                    jobCreateVM.setEventImgs(index, files),
-              ),
+                  title: "Event Image",
+                  isRequired: true,
+                  allowMultiple: true,
+                  serverImages: day.serverImages,
+                  onServerFilesRemoved: (updatedList) {
+                    jobCreateVM.setServerEventImgs(index, updatedList);
+                    Form.of(context).validate();
+                  },
+                  validator: (value) {
+                    final hasLocalFile = day.images != null;
+                    final hasServerFile = day.serverImages.isNotEmpty;
+
+                    if (!hasLocalFile && !hasServerFile) {
+                      return "Please upload Event Image";
+                    }
+                    return null; // ✅ validation passed
+                  },
+                  showPreview: true,
+                  selectedFiles: day.images,
+                  onFilesPicked: (files) {
+                    jobCreateVM.setEventImgs(index, files);
+                    Form.of(context).validate();
+                  }),
               SizedBox(height: 16),
               if (index > 0)
                 Align(
