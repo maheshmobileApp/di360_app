@@ -31,7 +31,6 @@ class ImagePickerField extends StatelessWidget {
 
   final ValueChanged<String?>? onServerFileRemoved;
   final ValueChanged<List<String>>? onServerFilesRemoved;
-  final String? Function(bool?)? validator;
 
   const ImagePickerField({
     super.key,
@@ -51,7 +50,6 @@ class ImagePickerField extends StatelessWidget {
     this.serverImageType,
     this.onServerFileRemoved,
     this.onServerFilesRemoved,
-    this.validator
   });
 
   Future<void> _pickFile(BuildContext context, ImageSource source) async {
@@ -220,8 +218,16 @@ class ImagePickerField extends StatelessWidget {
     final hasServerMultiple = serverImages != null && serverImages!.isNotEmpty;
 
     return FormField<bool>(
-      key: ValueKey('$serverImage-$selectedFile'), 
-      validator: validator,
+      validator: (value) {
+        if (isRequired &&
+            !hasSingleFile &&
+            !hasMultipleFiles &&
+            !hasServerSingle &&
+            !hasServerMultiple) {
+          return "Please upload ${title ?? "file"}";
+        }
+        return null;
+      },
       builder: (field) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
