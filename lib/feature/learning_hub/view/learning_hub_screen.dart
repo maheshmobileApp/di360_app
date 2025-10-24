@@ -253,6 +253,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         courseListingVM.setCourseId(course.id ?? "");
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
+                        newCourseVM.setEditMode(true);
                         Loaders.circularShowLoader(context);
                         await loadCourseData(
                             newCourseVM, courseListingVM.courseDetails.first);
