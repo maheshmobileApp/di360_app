@@ -45,6 +45,7 @@ const String showCourseById = r'''query ShowCourseById($id: uuid!) {
     course_banner_video
     course_banner_image
     register_link
+    meeting_link
     feed_type
     active_status_feed
     user_role

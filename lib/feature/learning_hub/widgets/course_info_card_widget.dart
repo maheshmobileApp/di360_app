@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -47,7 +48,6 @@ class CourseInfoCardWidget extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              
               Container(
                 height: 50,
                 width: 5,
@@ -58,9 +58,11 @@ class CourseInfoCardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("${courseName}",
-                  maxLines: 2,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis)),
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.ellipsis)),
                   const SizedBox(height: 4),
                   const Text("A Comprehensive Guide",
                       style: TextStyle(color: Colors.grey)),
@@ -69,35 +71,61 @@ class CourseInfoCardWidget extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Column(
               children: [
                 const Divider(),
                 const SizedBox(height: 4),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("PRESENTED BY",
-                        style: TextStyles.medium1(color: AppColors.black)),
-                    const SizedBox(height: 2),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("PRESENTED BY",
+                              style:
+                                  TextStyles.medium1(color: AppColors.black)),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: AppColors.geryColor,
+                                backgroundImage: profilePic.isNotEmpty
+                                    ? NetworkImage(profilePic)
+                                    : null,
+                                radius: 20,
+                                child: profilePic.isEmpty
+                                    ? const Icon(Icons.business,
+                                        size: 20,
+                                        color: AppColors.lightGeryColor)
+                                    : null,
+                              ),
+                              const SizedBox(width: 10),
+                              Flexible(
+                                child: Text("${presentByName}".toUpperCase(),
+                                    maxLines: 2,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                     Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: AppColors.geryColor,
-                          backgroundImage: profilePic.isNotEmpty
-                              ? NetworkImage(profilePic)
-                              : null,
-                          radius: 20,
-                          child: profilePic.isEmpty
-                              ? const Icon(Icons.business,
-                                  size: 20, color: AppColors.lightGeryColor)
-                              : null,
-                        ),
-                        const SizedBox(width: 10),
-                        Text("${presentByName}".toUpperCase(),
-                            style: TextStyle(fontWeight: FontWeight.bold))
+                        Icon(Icons.calendar_month_outlined,
+                            color: AppColors.primaryColor, size: 20),
+                        const SizedBox(width: 4),
+                        Text(startDate.isEmpty
+                            ? ""
+                            : DateFormatUtils.convertToddmmm(startDate)
+                                .toUpperCase()),
+                        const SizedBox(width: 4),
+                        Text(DateFormatUtils.formatToHourAmPm(time))
                       ],
-                    ),
+                    )
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -106,40 +134,54 @@ class CourseInfoCardWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _InfoTextWidget(
-                      label: "Date",
-                      value: (startDate.isEmpty && endDate.isEmpty)
-                          ? "--"
-                          : "${DateFormat("d MMM").format(DateTime.parse("${startDate}"))} - ${DateFormat("d MMM").format(DateTime.parse("${endDate}"))} ",
-                      first: true,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _InfoTextWidget(
+                          label: "CPD Hours",
+                          first: true,
+                          value: "${cpdHours}",
+                        ),
+                        const SizedBox(height: 6),
+                        _InfoTextWidget(
+                          label: "Price",
+                          first: true,
+                          value: "\$${totalPrice}",
+                        ),
+                      ],
                     ),
-                    _InfoTextWidget(
-                      label: "Platform",
-                      first: false,
-                      value: "${platform}",
+                    Container(
+                      width: 1, // thickness of the line
+                      height: 50, // adjust according to content height
+                      color: Colors.grey, // line color
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 12), // spacing around the line
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _InfoTextWidget(
-                      label: "CPD Hours",
-                      first: true,
-                      value: "${cpdHours}",
-                    ),
-                    /*_InfoTextWidget(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _InfoTextWidget(
+                          label: "Platform",
+                          first: false,
+                          value: "${platform}",
+                        ),
+                        const SizedBox(height: 6),
+                        _InfoTextWidget(
+                          label: "Where",
+                          first: false,
+                          value: "Online",
+                        ),
+
+                        /*_PriceTextWidget(
                       label: "Price",
-                      first: true,
-                      value: "\$${totalPrice}",
+                      first: false,
+                      originalPrice: "${totalPrice} ",
+                      discountedPrice: "${discountPrice}",
                     ),*/
-                     _PriceTextWidget(
-                label: "Price",
-                first: false,
-                originalPrice: "${totalPrice} ",
-                discountedPrice: "${discountPrice}",
-              ),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -183,7 +225,7 @@ class _InfoTextWidget extends StatelessWidget {
             )),
         const SizedBox(width: 4),
         Text(value,
-        maxLines: 2,
+            maxLines: 2,
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -231,13 +273,11 @@ class _PriceTextWidget extends StatelessWidget {
                 decoration: TextDecoration.lineThrough, // strike-through
               ),
             ),
-            Text(
-              "AUD \$${discountedPrice}",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.black)
-            ),
+            Text("AUD \$${discountedPrice}",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.black)),
           ],
         ),
       ],

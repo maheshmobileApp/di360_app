@@ -28,6 +28,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
 
     final showAddress = ["Event", "Live Course", "Live Event"].contains(type);
 
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
@@ -53,39 +54,39 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               ),
               SizedBox(height: 8),
               Row(
-  children: [
-    Expanded(
-      child: CustomTimePicker(
-        controller: jobCreateVM.startTimeController,
-        title: "Start Time",
-        isRequired: true,
-        validator: (value) {
-          if (value == null || value.isEmpty) return 'Please Select Start Time';
-          return null;
-        },
-      ),
-    ),
-    const SizedBox(width: 12),
-    Expanded(
-  child: CustomTimePicker(
-    controller: jobCreateVM.endTimeController,
-    title: "End Time",
-    isRequired: true,
-    validator: (value) {
-      if (value == null || value.isEmpty) return 'Please Select End Time';
-      if (jobCreateVM.startTimeController.text.isNotEmpty &&
-          !isEndTimeAfterStartTime(
-              jobCreateVM.startTimeController.text, value)) {
-        return 'End Time must be later than Start Time';
-      }
-      return null;
-    },
-  ),
-),
-
-  ],
-),
-
+                children: [
+                  Expanded(
+                    child: CustomTimePicker(
+                      controller: jobCreateVM.startTimeController,
+                      title: "Start Time",
+                      isRequired: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Please Select Start Time';
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomTimePicker(
+                      controller: jobCreateVM.endTimeController,
+                      title: "End Time",
+                      isRequired: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Please Select End Time';
+                        if (jobCreateVM.startTimeController.text.isNotEmpty &&
+                            !isEndTimeAfterStartTime(
+                                jobCreateVM.startTimeController.text, value)) {
+                          return 'End Time must be later than Start Time';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: 8),
               if (showStartEndDate) ...[
                 CustomDatePicker(
@@ -385,55 +386,61 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCourseTypes(NewCourseViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: jobCreateVM.selectedCourseType,
-      title: "Course Format (Type)",
-      onChanged: (v) {
-        jobCreateVM.setSelectedCourseType(v as String);
-      },
-      items: jobCreateVM.courseTypeNames
-          .map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select Course Type",
-      validator: (value) => value == null || value.toString().isEmpty
-          ? 'Please select Course Type'
-          : null,
-    );
-  }
+  // Remove duplicates and sanitize data
+  final courseTypeList = jobCreateVM.courseTypeNames.toSet().toList();
+
+  // Ensure the selected value actually exists
+  final safeSelectedType = courseTypeList.contains(jobCreateVM.selectedCourseType)
+      ? jobCreateVM.selectedCourseType
+      : null;
+
+  return CustomDropDown(
+    isRequired: true,
+    value: safeSelectedType, // ✅ safe value
+    title: "Course Format (Type)",
+    onChanged: (v) {
+      jobCreateVM.setSelectedCourseType(v as String);
+    },
+    items: courseTypeList.map<DropdownMenuItem<Object>>((String value) {
+      return DropdownMenuItem<Object>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    hintText: "Select Course Type",
+    validator: (value) =>
+        value == null || value.toString().isEmpty ? 'Please select Course Type' : null,
+  );
+}
+
 
   DateTime? parseTime(String timeString) {
-  try {
-    // Try 24-hour format first: "HH:mm"
-    final parts = timeString.split(':');
-    if (parts.length == 2) {
-      int hour = int.parse(parts[0]);
-      int minute = int.parse(parts[1].replaceAll(RegExp(r'[^0-9]'), '')); // remove AM/PM if any
+    try {
+      // Try 24-hour format first: "HH:mm"
+      final parts = timeString.split(':');
+      if (parts.length == 2) {
+        int hour = int.parse(parts[0]);
+        int minute = int.parse(
+            parts[1].replaceAll(RegExp(r'[^0-9]'), '')); // remove AM/PM if any
 
-      // If time has AM/PM
-      if (timeString.toLowerCase().contains('pm') && hour < 12) hour += 12;
-      if (timeString.toLowerCase().contains('am') && hour == 12) hour = 0;
+        // If time has AM/PM
+        if (timeString.toLowerCase().contains('pm') && hour < 12) hour += 12;
+        if (timeString.toLowerCase().contains('am') && hour == 12) hour = 0;
 
-      return DateTime(0, 1, 1, hour, minute);
+        return DateTime(0, 1, 1, hour, minute);
+      }
+    } catch (e) {
+      return null;
     }
-  } catch (e) {
     return null;
   }
-  return null;
-}
 
   bool isEndTimeAfterStartTime(String startTime, String endTime) {
-  final start = parseTime(startTime);
-  final end = parseTime(endTime);
+    final start = parseTime(startTime);
+    final end = parseTime(endTime);
 
-  if (start == null || end == null) return false;
+    if (start == null || end == null) return false;
 
-  return end.isAfter(start);
-}
-
-
+    return end.isAfter(start);
+  }
 }

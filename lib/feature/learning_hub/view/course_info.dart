@@ -100,7 +100,11 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
   Widget _buildSingleDayUI(
       NewCourseViewModel jobCreateVM, BuildContext context) {
     if (jobCreateVM.sessions.isEmpty) {
-      jobCreateVM.addNewDay();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        jobCreateVM.addNewDay();
+      });
+      // Optionally, return a placeholder widget here
+      return SizedBox.shrink();
     }
     final day = jobCreateVM.sessions.first;
     return Column(
@@ -155,7 +159,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           showPreview: true,
           serverImages: day.serverImages,
           onServerFilesRemoved: (updatedList) {
-            day.serverImages = updatedList;
+            jobCreateVM.setServerEventImgs(0, updatedList);
           },
           allowMultiple: true,
           selectedFiles: day.images,
@@ -197,12 +201,36 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 text: null,
                 hintText: "Date",
                 onTap: () async {
+                  DateTime initialDate = DateTime.now();
+                  DateTime firstDate = DateTime.now();
+
+                  if (index > 0) {
+                    final previousDateText = jobCreateVM
+                        .sessions[index - 1].eventDateController.text;
+                    if (previousDateText.isNotEmpty) {
+                      try {
+                        final parts = previousDateText.split('/');
+                        final previousDate = DateTime(
+                          int.parse(parts[2]),
+                          int.parse(parts[1]),
+                          int.parse(parts[0]),
+                        );
+                        initialDate = previousDate.add(const Duration(days: 1));
+                        firstDate = previousDate.add(const Duration(days: 1));
+                      } catch (_) {
+                        initialDate = DateTime.now();
+                        firstDate = DateTime.now();
+                      }
+                    }
+                  }
+
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
+                    initialDate: initialDate,
+                    firstDate: firstDate,
                     lastDate: DateTime(2100),
                   );
+
                   if (picked != null) {
                     day.eventDateController.text =
                         "${picked.day}/${picked.month}/${picked.year}";
