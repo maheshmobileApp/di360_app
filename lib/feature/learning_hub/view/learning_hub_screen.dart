@@ -214,7 +214,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         courseListingVM.setEditOption(true);
                         newCourseVM.setCurrentStep(0);
                         courseListingVM.setCourseId(course.id ?? "");
-
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
                         newCourseVM.setEditMode(true);
@@ -404,6 +403,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.emailController.text = course.contactEmail ?? "";
     newCourseVM.websiteUrlController.text = course.contactWebsite ?? "";
     newCourseVM.registerLinkController.text = course.registerLink ?? "";
+    newCourseVM.meetingLinkController.text = course.meetingLink ?? "";
     newCourseVM.termsAndConditionsController.text = course.terms ?? "";
     newCourseVM.cancellationController.text = course.refundPolicy ?? "";
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";

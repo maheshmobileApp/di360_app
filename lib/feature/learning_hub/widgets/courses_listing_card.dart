@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
@@ -214,8 +215,12 @@ class CouresListingCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            //_meetingLinkWidget(meetingLink)
+            SizedBox(
+              width: 10,
+            ),
+            (meetingLink != "")
+                ? _meetingLinkWidget(meetingLink)
+                : SizedBox.shrink(),
           ],
         );
       }).toList(),
@@ -224,20 +229,20 @@ class CouresListingCard extends StatelessWidget {
 
   Widget _meetingLinkWidget(String link) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: AppColors.borderColor)),
+          color: const Color.fromARGB(37, 255, 255, 255),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: AppColors.HINT_COLOR)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
         child: GestureDetector(
           onTap: () async {
             final url = Uri.parse(link);
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
-              // Handle if the URL can't be launched
-              debugPrint('Could not launch $url');
+              scaffoldMessenger("Invalid link !!");
             }
           },
           child: Text(

@@ -12,6 +12,7 @@ query ShowCourses($where: courses_bool_exp, $limit: Int, $offset: Int) { courses
   company_name 
   status 
   active_status 
-  created_by_id 
+  created_by_id
+  meeting_link 
   course_registered_users_aggregate { aggregate { count } } } }
 ''';

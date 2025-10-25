@@ -693,6 +693,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
                   ? null
                   : int.parse(totalPriceController.text),
               registerLink: registerLinkController.text,
+              meetingLink: meetingLinkController.text,
               userRole: type,
               startDate: startDate,
               endDate: endDate,
@@ -795,6 +796,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
             ? null
             : int.parse(totalPriceController.text),
         registerLink: registerLinkController.text,
+        meetingLink: meetingLinkController.text,
         userRole: type,
         startDate: startDate,
         endDate: endDate,

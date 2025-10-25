@@ -169,9 +169,9 @@ class CourseInfoCardWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         _InfoTextWidget(
-                          label: "Platform",
+                          label: "Where",
                           first: false,
-                          value: "${platform}",
+                          value: "Online",
                         ),
 
                         /*_PriceTextWidget(

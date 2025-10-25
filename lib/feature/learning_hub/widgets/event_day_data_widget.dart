@@ -26,37 +26,40 @@ class EventDayDataWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ...descriptions.map(
-              (desc) => Padding(
-                padding: const EdgeInsets.only(bottom: 6.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      color: AppColors.primaryColor.withOpacity(0.1),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(desc.name ?? "", style: TextStyles.bold2(color: AppColors.black),),
-                            Row(
-                              children: [
-                                Icon(Icons.calendar_month_outlined,
-                                    color: AppColors.primaryColor, size: 20),
-                                const SizedBox(width: 4),
-                                Text(desc.date ?? "", style: TextStyles.bold2(color: AppColors.black),)
-                                      
-                               
-                              ],
-                            ),
-                          ],
-                        ),
+              (desc) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                              child: Text(
+                            desc.name ?? "",
+                            style: TextStyles.bold2(color: AppColors.black),
+                          )),
+                          Row(
+                            children: [
+                              Icon(Icons.calendar_month_outlined,
+                                  color: AppColors.primaryColor, size: 20),
+                              const SizedBox(width: 4),
+                              Text(
+                                desc.date ?? "",
+                                style:
+                                    TextStyles.bold2(color: AppColors.black),
+                              )
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(desc.info??""),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(desc.info ?? ""),
+                ],
               ),
             ),
             GalleryImgWidget(
