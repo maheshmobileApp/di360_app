@@ -7,10 +7,12 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/register_course_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,7 +36,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
   Widget build(BuildContext context) {
     final myLearningHubVM = Provider.of<MyLearningHubViewModel>(context);
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
-    final newCourseVM = Provider.of<NewCourseViewModel>(context);
+    final filterVM = Provider.of<FilterViewModel>(context);
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -43,34 +45,28 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
             searchAction: () =>
                 myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen),
             filterWidget: GestureDetector(
-                onTap: () => {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => FilterBottomSheet(
-                          sections: [
-                            FilterSectionModel(
-                              title: "Filter by Type",
-                              options: newCourseVM.courseTypeNames,
-                            ),
-                            FilterSectionModel(
-                              title: "Category",
-                              options: newCourseVM.courseCategory,
-                            ),
-                          ],
-                          onApply: (selectedOptions) {
-                            final type = selectedOptions["Filter by Type"];
-                            final category = selectedOptions["Category"];
-                            myLearningHubVM.getCoursesWithFilters(
-                                context, type, category);
-                          },
-                          onClear: () {
-                            navigationService.goBack();
-                          },
-                        ),
-                      )
-                    },
+                onTap: () {
+                  filterVM.fetchCourseCategory(context);
+                  filterVM.fetchCourseType(context);
+
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => FilterBottomSheet(
+                      onApply: () {
+                        myLearningHubVM.getCoursesWithFilters(
+                            context,
+                            filterVM.selectedOptions['Filter by Type'],
+                            filterVM.selectedOptions['Category'], filterVM.selectedDate.toString());
+                        navigationService.goBack();
+                      },
+                      onClear: () {
+                        filterVM.clearAll();
+                      },
+                    ),
+                  );
+                },
                 child: SvgPicture.asset(ImageConst.filter,
                     color: AppColors.black))),
         body: Column(
@@ -87,7 +83,6 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                 onSearch: () {
                   myLearningHubVM.getCoursesWithMyRegistrations(context);
                 },
-                
               ),
             Expanded(
               child: myLearningHubVM.myRegisteredCourses.isEmpty
