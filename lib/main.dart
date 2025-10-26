@@ -24,7 +24,7 @@ import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comme
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
-import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';       
+import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
         ChangeNotifierProvider(create: (_) => BannersViewModel()),
         ChangeNotifierProvider(create: (_) => LearningHubMasterViewModel()),
-        ChangeNotifierProvider(create: (_)=> FilterViewModel())
+        ChangeNotifierProvider(create: (_) => FilterViewModel())
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,
