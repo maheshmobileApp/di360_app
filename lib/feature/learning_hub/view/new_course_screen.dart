@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dar
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/utils/create_course_enum.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -123,39 +124,50 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               height: 42,
               width: 160,
               onPressed: () async {
+                Loaders.circularShowLoader(context);
                 if (newCourseVM.selectedPresentedImg?.path.isNotEmpty ??
                     false) {
                   await newCourseVM.validatePresenterImg();
                 }
 
-                if (newCourseVM.selectedCourseHeaderBanner?.path.isNotEmpty ??
-                    false) {
+                if ((newCourseVM.selectedCourseHeaderBanner?.path.isNotEmpty ??
+                        false) ||
+                    (newCourseVM.serverCourseHeaderBanner?.url.isNotEmpty ??
+                        false)) {
                   await newCourseVM.validateCourseHeaderBanner();
                 }
-                if (newCourseVM.selectedGallery?.isNotEmpty ?? false) {
+                if ((newCourseVM.selectedGallery?.isNotEmpty ?? false) ||
+                    (newCourseVM.serverGallery?.isNotEmpty ?? false)) {
                   await newCourseVM.validateGallery();
                 }
 
-                if (newCourseVM.selectedCourseBannerImg?.isNotEmpty ?? false) {
+                if ((newCourseVM.selectedCourseBannerImg?.isNotEmpty ??
+                        false) ||
+                    (newCourseVM.serverCourseBannerImg?.isNotEmpty ?? false)) {
                   await newCourseVM.validateCourseBanner();
                 }
-                if ((newCourseVM.courseInfoList.isNotEmpty)) {
-                  await newCourseVM.buildCourseInfoList();
-                }
-                if (newCourseVM.selectedsponsoredByImg?.isNotEmpty ?? false) {
+                await newCourseVM.buildCourseInfoList();
+                
+                if ((newCourseVM.selectedsponsoredByImg?.isNotEmpty ?? false) ||
+                    (newCourseVM.serverSponsoredByImg?.isNotEmpty ?? false)) {
                   await newCourseVM.validateSponsoredByImg();
                 }
+                Loaders.circularHideLoader(context);
 
-                await newCourseVM.createdCourseListing(context, true);
+                (courseListVM.editOptionEnable)
+                    ? 
+                    await newCourseVM.updateCourseListing(
+                        context, courseListVM.courseId, true)
+                    : await newCourseVM.createdCourseListing(context, true);
                 courseListVM.selectedStatus = "All";
                 await courseListVM.getCoursesListingData(context);
               },
+              
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
             ),
           ),
           SizedBox(width: 16),
-
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep

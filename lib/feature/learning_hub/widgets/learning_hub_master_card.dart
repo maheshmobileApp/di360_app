@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -73,12 +74,16 @@ class ListingHubMasterCard extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(134, 255, 255, 255),
-                      border: Border.all(color: const Color.fromARGB(255, 139, 139, 139)),
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 139, 139, 139)),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       remainingOfSeats <= 0 ? "SOLD OUT" : "FILLING FAST !",
-                      style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -176,16 +181,15 @@ class ListingHubMasterCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.access_time, color: Colors.grey, size: 20),
+                          Icon(Icons.access_time,
+                              color: AppColors.primaryColor, size: 20),
                           const SizedBox(width: 6),
                           Text(
                             "CPD HOURS: ${cpdHours}",
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyles.medium2(
+                                color: AppColors.primaryColor),
                           ),
                         ],
                       ),
@@ -193,17 +197,15 @@ class ListingHubMasterCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.location_on_outlined,
-                              color: Colors.grey, size: 20),
+                              color: AppColors.primaryColor, size: 20),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               (location.isEmpty) ? "------" : "${location}",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: TextStyles.medium2(
+                                  color: AppColors.primaryColor),
                             ),
                           ),
                         ],
@@ -212,16 +214,14 @@ class ListingHubMasterCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.calendar_month_outlined,
-                              color: Colors.grey, size: 20),
+                              color: AppColors.primaryColor, size: 20),
                           const SizedBox(width: 6),
                           Text(
                             (date.isEmpty) ? "------" : date,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyles.medium2(
+                                color: AppColors.primaryColor),
                           ),
                         ],
                       ),

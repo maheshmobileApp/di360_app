@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -48,6 +49,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
         navigationService.navigateTo(RouteList.newCourseScreen);
         newCourseVM.fetchCourseType();
         newCourseVM.fetchCourseCategory();
+        newCourseVM.setEditMode(false);
       },
       child: SvgPicture.asset(ImageConst.addFeed),
     );
@@ -63,8 +65,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
               SearchWidget(
                 controller: courseListingVM.searchController,
                 hintText: "Search Course...",
-                onClear: () {},
-                onChanged: (value) {
+                onClear: () {
+                  courseListingVM.searchController.clear();
+                  courseListingVM.getCoursesListingData(context);
+                },
+                onSearch: () {
                   courseListingVM.getCoursesListingData(context);
                 },
               ),
@@ -74,6 +79,63 @@ class _JobListingScreenState extends State<LearningHubScreen>
           ],
         ),
         floatingActionButton: floatingActionButton);
+  }
+
+  AppBar appBarWidget(NotificationViewModel notificationVM,
+      CourseListingViewModel courseListingVM) {
+    return AppBar(
+      backgroundColor: AppColors.whiteColor,
+      title: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Text(
+            'Course Listing',
+            style: TextStyles.bold4(color: AppColors.black),
+          ),
+          Positioned(
+            top: -9,
+            right: -18,
+            child: SvgPicture.asset(
+              ImageConst.logo,
+              height: 20,
+              width: 20,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Builder(
+          builder: (context) => GestureDetector(
+              onTap: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  SvgPicture.asset(ImageConst.notification,
+                      color: AppColors.black),
+                  if (notificationVM.notificationCount != 0)
+                    Positioned(
+                        top: -16,
+                        right: -13,
+                        child: CircleAvatar(
+                            radius: 12,
+                            backgroundColor: AppColors.primaryColor,
+                            child: Text('${notificationVM.notificationCount}',
+                                style: TextStyles.medium1(
+                                    color: AppColors.whiteColor))))
+                ],
+              )),
+        ),
+        addHorizontal(30),
+        GestureDetector(
+            onTap: () {
+              courseListingVM.setSearchBar(!courseListingVM.searchBarOpen);
+            },
+            child: SvgPicture.asset(ImageConst.search, color: AppColors.black)),
+        addHorizontal(20),
+      ],
+    );
   }
 
   Expanded coursesListWidget(
@@ -152,9 +214,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         courseListingVM.setEditOption(true);
                         newCourseVM.setCurrentStep(0);
                         courseListingVM.setCourseId(course.id ?? "");
-
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
+                        newCourseVM.setEditMode(true);
                         Loaders.circularShowLoader(context);
                         await loadCourseData(
                             newCourseVM, courseListingVM.courseDetails.first);
@@ -190,6 +252,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         courseListingVM.setCourseId(course.id ?? "");
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
+                        newCourseVM.setEditMode(true);
                         Loaders.circularShowLoader(context);
                         await loadCourseData(
                             newCourseVM, courseListingVM.courseDetails.first);
@@ -311,9 +374,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     // Dropdown / selections
     newCourseVM.selectedCategoryId = course.courseCategoryId;
-    await newCourseVM.setSelectedCourseCategoryName(course.courseCategoryId);
-    newCourseVM.selectedCourseType = course.type;
-    newCourseVM.selectedEvent = course.eventType ?? "";
+    (course.courseCategoryId != null)
+        ? await newCourseVM
+            .setSelectedCourseCategoryName(course.courseCategoryId)
+        : await newCourseVM
+            .setSelectedCourseCategoryName("");
+    newCourseVM.selectedCourseType = course.type!=null?course.type:"";
 
     // Text controllers
     newCourseVM.courseNameController.text = course.courseName ?? "";
@@ -337,12 +403,19 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.emailController.text = course.contactEmail ?? "";
     newCourseVM.websiteUrlController.text = course.contactWebsite ?? "";
     newCourseVM.registerLinkController.text = course.registerLink ?? "";
+    newCourseVM.meetingLinkController.text = course.meetingLink ?? "";
     newCourseVM.termsAndConditionsController.text = course.terms ?? "";
     newCourseVM.cancellationController.text = course.refundPolicy ?? "";
-    newCourseVM.rsvpDateController.text = course.rsvpDate ?? "";
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
 
     // Dates (safe parse)
+
+    if (course.rsvpDate != null && course.rsvpDate!.isNotEmpty) {
+      newCourseVM.rsvpDateController.text =
+          DateFormat("d/M/yyyy").format(DateTime.parse(course.rsvpDate!));
+    } else {
+      newCourseVM.rsvpDateController.text = "";
+    }
     if (course.startDate != null && course.startDate!.isNotEmpty) {
       newCourseVM.startDateController.text =
           DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate!));
@@ -374,11 +447,16 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     String startTime = course.startTime ?? "";
     String endTime = course.endTime ?? "";
+    String start_time = startTime.split('+').first;
+    String end_time = endTime.split('+').first;
 
-    newCourseVM.startTimeController.text = DateFormat.jm()
-        .format(DateTime.parse("2025-10-04T${startTime}").toUtc());
-    newCourseVM.endTimeController.text =
-        DateFormat.jm().format(DateTime.parse("2025-10-04T${endTime}").toUtc());
+    newCourseVM.startTimeController.text = start_time != ""
+        ? DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(start_time))
+        : "";
+
+    newCourseVM.endTimeController.text = end_time != ""
+        ? DateFormat("h:mm a").format(DateFormat("HH:mm:ss").parse(end_time))
+        : "";
 
     // Images / files (from API)
     newCourseVM.presenter_image = course.presentedByImage?.url ?? "";
@@ -392,8 +470,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   void loadCourseForEdit(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) {
-    newCourseVM.selectedEvent =
-        course.eventType; // "Single Day" or "Multiple Day"
+    newCourseVM.selectedEvent = course.eventType == "multiple"
+        ? "Multiple Day"
+        : "Single Day"; // "Single Day" or "Multiple Day"
 
     newCourseVM.sessions = course.courseEventInfo?.map((event) {
           return SessionModel(

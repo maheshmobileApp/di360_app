@@ -48,11 +48,9 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
             },
             child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
           )),
-          body: Expanded(
-            child: jobSeekViewModel.selectedTabIndex == 0
-                ? _buildJobsList(jobSeekViewModel)
-                : const TalentsView(),
-          ),
+          body: jobSeekViewModel.selectedTabIndex == 0
+              ? _buildJobsList(jobSeekViewModel)
+              : const TalentsView(),
           floatingActionButton: jobSeekViewModel.isHidleFolatingButton == false
               ? const TabSwitch()
               : null,

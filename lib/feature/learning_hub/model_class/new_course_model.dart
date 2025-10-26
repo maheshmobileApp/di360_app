@@ -63,6 +63,7 @@ class CourseObject {
   List<CourseBannerImage>? courseBannerVideo;
   List<CourseBannerImage>? courseBannerImage;
   String? registerLink;
+  String? meetingLink;
   String? feedType;
   String? activeStatusFeed;
   String? userRole;
@@ -117,6 +118,7 @@ class CourseObject {
       this.courseBannerVideo,
       this.courseBannerImage,
       this.registerLink,
+      this.meetingLink,
       this.feedType,
       this.activeStatusFeed,
       this.userRole,
@@ -202,6 +204,7 @@ class CourseObject {
       });
     }
     registerLink = json['register_link'];
+    meetingLink = json['meeting_link'];
     feedType = json['feed_type'];
     activeStatusFeed = json['active_status_feed'];
     userRole = json['user_role'];
@@ -279,6 +282,7 @@ class CourseObject {
           this.courseBannerImage!.map((v) => v.toJson()).toList();
     }
     data['register_link'] = this.registerLink;
+    data['meeting_link'] = this.meetingLink;
     data['feed_type'] = this.feedType;
     data['active_status_feed'] = this.activeStatusFeed;
     data['user_role'] = this.userRole;

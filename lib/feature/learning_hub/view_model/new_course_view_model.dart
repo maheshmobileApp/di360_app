@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/filter_item.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
@@ -54,6 +55,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   bool showLocumDate = false;
 
+  ///edit
+  bool editMode = false;
+  List<File>? editGallery;
+
   //server
   String? serverPresentedImg;
   MediaInfo? serverCourseHeaderBanner;
@@ -82,6 +87,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   List<CourseEventInfo> courseInfoList = [];
   List<String> courseTypeNames = [];
   List<String> courseCategory = [];
+  List<FilterItem> courseCategoryItems = [];
 
   String? selectedCategory;
   String? selectedCategoryId;
@@ -132,7 +138,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setGallery(List<File>? value) {
     selectedGallery = value;
-    serverGallery = [];
+    notifyListeners();
+  }
+
+  void setEditMode(bool value) {
+    editMode = value;
     notifyListeners();
   }
 
@@ -147,13 +157,12 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setServerSponsorImg(List<String>? value) {
-    serverSponsoredByImg = [];
+    serverSponsoredByImg = value;
     notifyListeners();
   }
 
   void setCourseBannerImg(List<File>? value) {
     selectedCourseBannerImg = value;
-    serverCourseBannerImg = [];
     notifyListeners();
   }
 
@@ -164,12 +173,17 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void setSponsoredBy(List<File>? value) {
     selectedsponsoredByImg = value;
-    serverSponsoredByImg = [];
     notifyListeners();
   }
 
-  void setSelectedCourseType(String? value) {
+  void setSelectedCourseType(String value) {
     selectedCourseType = value;
+    notifyListeners();
+  }
+
+  void updateEvent(String? value) {
+    selectedEvent = value;
+
     notifyListeners();
   }
 
@@ -335,8 +349,26 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validateGallery() async {
-    if (serverGallery != null && serverGallery!.isNotEmpty) {
-      // If serverGallery already has values, just map them to CourseBannerImage
+    if (editMode) {
+      selectedGalleryList = await uploadFiles(
+        selectedGallery,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls = selectedGalleryList
+          .map((img) => img.url)
+          .whereType<String>()
+          .toList();
+      if (serverGallery == null) {
+        serverGallery = newUrls;
+      } else {
+        serverGallery = [...serverGallery!, ...newUrls];
+      }
+
       selectedGalleryList = serverGallery!
           .map(
             (url) => CourseBannerImage(
@@ -364,8 +396,25 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validateCourseBanner() async {
-    if (serverCourseBannerImg != null && serverCourseBannerImg!.isNotEmpty) {
-      // If serverGallery already has values, just map them to CourseBannerImage
+    if (editMode) {
+      courseBannerImgList = await uploadFiles(
+        selectedCourseBannerImg,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls = courseBannerImgList
+          .map((img) => img.url)
+          .whereType<String>()
+          .toList();
+      if (serverCourseBannerImg == null) {
+        serverCourseBannerImg = newUrls;
+      } else {
+        serverCourseBannerImg = [...serverCourseBannerImg!, ...newUrls];
+      }
       courseBannerImgList = serverCourseBannerImg!
           .map(
             (url) => CourseBannerImage(
@@ -393,8 +442,23 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> validateSponsoredByImg() async {
-    if (serverSponsoredByImg != null && serverSponsoredByImg!.isNotEmpty) {
-      // If serverGallery already has values, just map them to CourseBannerImage
+    if (editMode) {
+      sponsoredByImgList = await uploadFiles(
+        selectedsponsoredByImg,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls =
+          sponsoredByImgList.map((img) => img.url).whereType<String>().toList();
+      if (serverSponsoredByImg == null) {
+        serverSponsoredByImg = newUrls;
+      } else {
+        serverSponsoredByImg = [...serverSponsoredByImg!, ...newUrls];
+      }
       sponsoredByImgList = serverSponsoredByImg!
           .map(
             (url) => CourseBannerImage(
@@ -454,16 +518,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (index < sessions.length) {
       sessions[index].images = files;
       selectedEventImg = files;
-      sessions[index].serverImages = [];
-
       notifyListeners();
     }
   }
 
   void setServerEventImgs(int index, List<String> files) {
-    sessions[index].serverImages = files;
-
-    notifyListeners();
+    if (index >= 0 && index < sessions.length) {
+      sessions[index].serverImages = files;
+      notifyListeners();
+    }
   }
 
   /// Get session details as plain data (ready for API)
@@ -482,17 +545,35 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     courseInfoList.clear(); // in case you call this multiple times
 
     for (var session in sessions) {
-      // Decide whether to reuse serverImages or upload new ones
-      final images = session.serverImages.isNotEmpty
-          ? session.serverImages
-              .map((url) => Images(
-                    name: url.split('/').last,
-                    url: url,
-                    type: "image/jpeg", // adjust if you have type info
-                    size: 0, // unknown size for server-side images
-                  ))
-              .toList()
-          : await uploadSessionImages(session.images);
+      List<Images> images = [];
+
+      if (editMode) {
+        // 1. Upload new local images (if any)
+        final uploadedImages = await uploadSessionImages(session.images);
+
+        // 2. Collect new URLs from uploaded images
+        final newUrls =
+            uploadedImages.map((img) => img.url).whereType<String>().toList();
+
+        // 3. Combine serverImages and newUrls
+        final allUrls = [
+          ...(session.serverImages ?? []),
+          ...newUrls,
+        ];
+
+        // 4. Build Images list from all URLs
+        images = allUrls
+            .map((url) => Images(
+                  name: url.split('/').last,
+                  url: url,
+                  type: "image/jpeg", // adjust if you have type info
+                  size: 0, // unknown size for server-side images
+                ))
+            .toList();
+      } else {
+        // Otherwise upload the new images
+        images = await uploadSessionImages(session.images);
+      }
 
       courseInfoList.add(
         CourseEventInfo(
@@ -538,6 +619,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     courseCategoryList = result.courseCategories ?? [];
     courseCategoryList.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
     courseCategory = courseCategoryList.map((e) => e.name ?? "").toList();
+    courseCategoryItems = courseCategoryList
+        .where((e) => e.id != null && e.name != null)
+        .map((e) => FilterItem(id: e.id!, name: e.name!))
+        .toList();
     notifyListeners();
   }
 
@@ -608,6 +693,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
                   ? null
                   : int.parse(totalPriceController.text),
               registerLink: registerLinkController.text,
+              meetingLink: meetingLinkController.text,
               userRole: type,
               startDate: startDate,
               endDate: endDate,
@@ -620,8 +706,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",
-              startTime: startTimeController.text,
-              endTime: endTimeController.text)
+              startTime: startTimeController.text == ""
+                  ? null
+                  : startTimeController.text,
+              endTime:
+                  endTimeController.text == "" ? null : endTimeController.text)
           .toJson(),
     });
 
@@ -643,70 +732,94 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
+    final rsvpDate = rsvpDateController.text.isNotEmpty
+        ? DateFormatUtils.formatToYyyyMmDd(
+            DateFormat("d/M/yyyy").parse(rsvpDateController.text))
+        : null;
+    final startDate = startDateController.text.isNotEmpty
+        ? DateFormatUtils.formatToYyyyMmDd(
+            DateFormat("d/M/yyyy").parse(startDateController.text))
+        : null;
+    final endDate = endDateController.text.isNotEmpty
+        ? DateFormatUtils.formatToYyyyMmDd(
+            DateFormat("d/M/yyyy").parse(endDateController.text))
+        : null;
+
+    final startTime = startTimeController.text != ""
+        ? DateFormat("HH:mm:ss")
+                .format(DateFormat("h:mm a").parse(startTimeController.text)) +
+            "+00"
+        : null;
+    final endTime = endTimeController.text != ""
+        ? DateFormat("HH:mm:ss")
+                .format(DateFormat("h:mm a").parse(endTimeController.text)) +
+            "+00"
+        : null;
+
     Loaders.circularShowLoader(context);
     final result = await repo.updateCourseListing({
       "id": courseId,
       "changes": CourseObject(
-              courseName: courseNameController.text,
-              courseCategoryId: selectedCategoryId,
-              rsvpDate: rsvpDateController.text,
-              presentedByName: presenterNameController.text,
-              presentedByImage: PresentedByImage(url: presenter_image),
-              courseBannerImage: courseBannerImgList,
-              courseGallery: selectedGalleryList,
-              courseBannerVideo: courseBannerImageHeaderList,
-              description: courseDescController.text,
-              cpdPoints: (cpdPointsController.text.isEmpty)
-                  ? null
-                  : double.parse(cpdPointsController.text),
-              numberOfSeats: (numberOfSeatsController.text.isEmpty)
-                  ? null
-                  : int.parse(numberOfSeatsController.text),
-              priceInAud: 0,
-              priceInUsd: 0,
-              earlyBirdPrice: (birdPriceController.text.isEmpty)
-                  ? null
-                  : int.parse(birdPriceController.text),
-              earlyBirdEndDate: earlyBirdDateController.text,
-              topicsIncluded: topicsIncludedDescController.text,
-              learningObjectives: learningObjectivesDescController.text,
-              eventType: selectedEvent,
-              courseEventInfo: courseInfoList,
-              sponsorByImage: sponsoredByImgList,
-              terms: termsAndConditionsController.text,
-              refundPolicy: cancellationController.text,
-              contactName: nameController.text,
-              contactEmail: emailController.text,
-              contactPhone: phoneController.text,
-              contactWebsite: websiteUrlController.text,
-              afterwardsPrice: (totalPriceController.text.isEmpty)
-                  ? null
-                  : int.parse(totalPriceController.text),
-              registerLink: registerLinkController.text,
-              userRole: type,
-              startDate: startDateController.text,
-              endDate: endDateController.text,
-              isFeatured: false,
-              activeStatus: "ACTIVE",
-              address: addressController.text,
-              maxSubscribers: 1000,
-              createdById: userId,
-              companyName: name,
-              status: isDraft ? "DRAFT" : "PENDING",
-              type: (selectedCourseType == null) ? "" : selectedCourseType,
-              feedType: "LEARNHUB",
-              startTime:
-                  DateFormatUtils.convertTo24Hour(startTimeController.text),
-              endTime: DateFormatUtils.convertTo24Hour(endTimeController.text))
-          .toJson(),
+        courseName: courseNameController.text,
+        courseCategoryId: selectedCategoryId,
+        rsvpDate: rsvpDate,
+        presentedByName: presenterNameController.text,
+        presentedByImage: PresentedByImage(url: presenter_image),
+        courseBannerImage: courseBannerImgList,
+        courseGallery: selectedGalleryList,
+        courseBannerVideo: courseBannerImageHeaderList,
+        description: courseDescController.text,
+        cpdPoints: (cpdPointsController.text.isEmpty)
+            ? null
+            : double.parse(cpdPointsController.text),
+        numberOfSeats: (numberOfSeatsController.text.isEmpty)
+            ? null
+            : int.parse(numberOfSeatsController.text),
+        priceInAud: 0,
+        priceInUsd: 0,
+        earlyBirdPrice: (birdPriceController.text.isEmpty)
+            ? null
+            : int.parse(birdPriceController.text),
+        earlyBirdEndDate: earlyBirdDateController.text,
+        topicsIncluded: topicsIncludedDescController.text,
+        learningObjectives: learningObjectivesDescController.text,
+        eventType: selectedEvent,
+        courseEventInfo: courseInfoList,
+        sponsorByImage: sponsoredByImgList,
+        terms: termsAndConditionsController.text,
+        refundPolicy: cancellationController.text,
+        contactName: nameController.text,
+        contactEmail: emailController.text,
+        contactPhone: phoneController.text,
+        contactWebsite: websiteUrlController.text,
+        afterwardsPrice: (totalPriceController.text.isEmpty)
+            ? null
+            : int.parse(totalPriceController.text),
+        registerLink: registerLinkController.text,
+        meetingLink: meetingLinkController.text,
+        userRole: type,
+        startDate: startDate,
+        endDate: endDate,
+        isFeatured: false,
+        activeStatus: "ACTIVE",
+        address: addressController.text,
+        maxSubscribers: 1000,
+        createdById: userId,
+        companyName: name,
+        status: isDraft ? "DRAFT" : "PENDING",
+        type: (selectedCourseType == null) ? "" : selectedCourseType,
+        feedType: "LEARNHUB",
+        startTime: startTime == "" ? null : startTime,
+        endTime: endTime == "" ? null : endTime,
+      ).toJson(),
     });
 
     if (result != null) {
-      scaffoldMessenger("Course is updated Successfully");
       navigationService.goBack();
-
       Loaders.circularHideLoader(context);
-      //resetForm();
+      scaffoldMessenger("Course is updated Successfully");
+
+      resetForm();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -755,6 +868,11 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     endTimeController.text = "";
     sessions = [];
     selectedEvent = "Single Day";
+    presenter_image = "";
+    courseBannerImgList = [];
+    selectedGalleryList = [];
+    courseBannerImageHeaderList = [];
+    sponsoredByImgList = [];
   }
 
   void serverImagesClear() {

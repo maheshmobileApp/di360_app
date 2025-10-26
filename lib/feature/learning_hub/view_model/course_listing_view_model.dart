@@ -110,7 +110,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getCoursesListingData(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getCoursesListing(
-        listingStatus,activeStatus, userId, searchController.text);
+        listingStatus, activeStatus, userId, searchController.text);
 
     fetchCourseStatusCounts(context);
     if (res != null) {
@@ -147,6 +147,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.getCourseDetails(courseId);
     if (res != null) {
       courseDetails = res;
+      print("courseDetails: $res");
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -210,6 +211,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     if (res != null) {
       coursesListingList = res;
+      marketPlaceCoursesList = res;
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
