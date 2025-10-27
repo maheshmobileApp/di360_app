@@ -3,9 +3,11 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget.dart';
+import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,16 +23,9 @@ class JobListingScreen extends StatefulWidget {
 class _JobListingScreenState extends State<JobListingScreen>
     with BaseContextHelpers {
   @override
-  void initState() {
-    super.initState();
-    // final jobListingVM =
-    //     Provider.of<JobListingsViewModel>(context, listen: false);
-    // jobListingVM.fetchJobStatusCounts();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final jobListingVM = Provider.of<JobListingsViewModel>(context);
+    final jobCreateVM = Provider.of<JobCreateViewModel>(context);
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -119,6 +114,110 @@ class _JobListingScreenState extends State<JobListingScreen>
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
+                        return CouresListingCard(
+                          id: jobData.id ?? "",
+                          meetingLink: "",
+                          logoUrl: jobData.logo ?? '',
+                          companyName: jobData.title ?? '',
+                          courseTitle: jobData.companyName ?? '',
+                          status: jobData.status ?? '',
+                          activeStatus: jobData.activeStatus ?? "",
+                          description: jobData.description ?? '',
+                          types: jobData.typeofEmployment ?? [],
+                          createdAt: jobData.createdAt ?? '',
+                          registeredCount: jobData
+                                  .jobApplicantsAggregate?.aggregate?.count ??
+                              0,
+                          onDetailView: () async {
+                            await navigationService.navigateToWithParams(
+                              RouteList.jobdetailsScreen,
+                              params: jobListingVM.myJobListingList[index],
+                            );
+                          },
+                          onTapRegistered: () async {
+                            jobListingVM.jobId = jobData.id ?? '';
+                            await jobListingVM.getMyJobApplicantsgData(
+                                context, jobData.id ?? '');
+                            navigationService.navigateToWithParams(
+                                RouteList.JobListingApplicantscreen,
+                                params: jobData);
+                          },
+                          onMenuAction: (action, id) async {
+                            switch (action) {
+                              case "Preview":
+                                await navigationService.navigateToWithParams(
+                                  RouteList.jobdetailsScreen,
+                                  params: jobListingVM.myJobListingList[index],
+                                );
+
+                                break;
+                              case "Edit":
+                                jobCreateVM.setJobEditOption(true);
+                                jobCreateVM.setJobId(jobData.id ?? "");
+
+                                await jobListingVM.getEditJobIDData(
+                                    context, jobData.id ?? "");
+                                /*await jobCreateVM
+                                    .loadJobData(jobListingVM.jobDataById);*/
+
+                                navigationService.navigateToWithParams(
+                                  RouteList.jobCreate,
+                                  params: {
+                                    'isEdit': true,
+                                    'jobId': jobData.id,
+                                    'loadJobData': jobListingVM.myJobListingList[index]
+                                  },
+                                );
+
+                                break;
+
+                              case "Delete":
+                                showAlertMessage(context,
+                                    'Are you sure you want to delete this job?',
+                                    onBack: () {
+                                  navigationService.goBack();
+                                  jobListingVM.removeJobsListingData(
+                                      context, id);
+                                });
+
+                                break;
+                              /* case "Inactive":
+                                courseListingVM.updateCourseStatus(
+                                    context, course.id ?? "", "INACTIVE");
+                                break;
+                              case "Active":
+                                courseListingVM.updateCourseStatus(
+                                    context, course.id ?? "", "ACTIVE");
+                                break;
+                              case "Re-Listing":
+                                await courseListingVM.getCourseDetails(
+                                    context, course.id ?? "");
+                                courseListingVM.setEditOption(true);
+                                newCourseVM.setCurrentStep(0);
+                                courseListingVM.setCourseId(course.id ?? "");
+                                newCourseVM.fetchCourseCategory();
+                                newCourseVM.fetchCourseType();
+                                newCourseVM.setEditMode(true);
+                                Loaders.circularShowLoader(context);
+                                await loadCourseData(newCourseVM,
+                                    courseListingVM.courseDetails.first);
+                                newCourseVM.eraseDateFields();
+
+                                Loaders.circularHideLoader(context);
+                                navigationService.navigateTo(
+                                  RouteList.newCourseScreen,
+                                );*/
+                            }
+                          },
+                          chipTitle: 'Applicants',
+                        );
+                      },
+                    ),
+
+              /*ListView.builder(
+                      itemCount: jobListingVM.myJobListingList.length,
+                      itemBuilder: (context, index) {
+                        final jobData = jobListingVM.myJobListingList[index];
                         print(jobListingVM.myJobListingList.length);
                         return JobListingCard(
                           jobsListingData: jobData,
@@ -126,7 +225,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                           index: index,
                         );
                       },
-                    ),
+                    ),*/
             ),
           ],
         ),

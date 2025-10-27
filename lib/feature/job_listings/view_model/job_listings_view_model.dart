@@ -19,6 +19,7 @@ class JobListingsViewModel extends ChangeNotifier {
   String selectedStatus = 'All';
   String selectedstatusesforapplicatnts = 'All';
   String? jobId;
+  Jobs? jobDataById;
 
   final List<String> statuses = [
     'All',
@@ -39,7 +40,7 @@ class JobListingsViewModel extends ChangeNotifier {
     'Reject',
     'Declined'
   ];
-    
+
   int? allJobTalentCount = 0;
   int? draftTalentCount = 0;
   int? pendingApprovalCount = 0;
@@ -57,7 +58,6 @@ class JobListingsViewModel extends ChangeNotifier {
   int? rejectjobapplicnatsCount = 0;
   int? declinedjobapplicnatsCount = 0;
 
-
   Map<String, int?> get statusCountMap => {
         'All': allJobTalentCount,
         'Draft': draftTalentCount,
@@ -71,9 +71,9 @@ class JobListingsViewModel extends ChangeNotifier {
   Map<String, int?> get statusCountMapforapplicatnts => {
         'All': allJobapplicantCount,
         'Applied': appliedjobapplicnatsCount,
-         'Shortlisted': shortlistedjobapplicnatsCount,
+        'Shortlisted': shortlistedjobapplicnatsCount,
         'Interviews': interviewsjobapplicnatsCount,
-         'Accepted': acceptedjobapplicnatsCount,
+        'Accepted': acceptedjobapplicnatsCount,
         'Reject': rejectjobapplicnatsCount,
         'Declined': declinedjobapplicnatsCount
       };
@@ -203,6 +203,17 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getEditJobIDData(BuildContext context, String jobId) async {
+    final res = await repo.getEditJobIDData(jobId);
+    if (res != null){
+       jobDataById = res;
+
+    }
+   
+
+    notifyListeners();
+  }
+
   Future<void> fetchJobApplicantsCount(String jobId) async {
     try {
       isLoading = true;
@@ -263,25 +274,21 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
- Future<void> updateJobApplicantStatus(
+  Future<void> updateJobApplicantStatus(
       BuildContext context, String? id, String status) async {
     Loaders.circularShowLoader(context);
-    final res = await repo.updateJobAggrateStatus({
-       "id":id,
-      "status":status
- });
-  if (id == null || id.isEmpty) {
-    scaffoldMessenger("Invalid id: $id");
-    Loaders.circularHideLoader(context);
-    return;
-  }
+    final res = await repo.updateJobAggrateStatus({"id": id, "status": status});
+    if (id == null || id.isEmpty) {
+      scaffoldMessenger("Invalid id: $id");
+      Loaders.circularHideLoader(context);
+      return;
+    }
     print(res);
     if (res != null) {
       scaffoldMessenger('JobAggrateData update successfully');
       Loaders.circularHideLoader(context);
 
       getMyJobApplicantsgData(context, jobId ?? '');
-
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
@@ -289,7 +296,7 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-   Future<void> fetchApplicantMessages(String jobId) async {
+  Future<void> fetchApplicantMessages(String jobId) async {
     try {
       isLoading = true;
       notifyListeners();
@@ -305,6 +312,7 @@ class JobListingsViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> sendApplicantMessage(
       BuildContext context, String applicantId, String message) async {
     if (message.isEmpty) {
@@ -346,12 +354,12 @@ class JobListingsViewModel extends ChangeNotifier {
   }
 
   @override
-void dispose() {
-  messageController.dispose();
-  enquiryController.dispose();
+  void dispose() {
+    messageController.dispose();
+    enquiryController.dispose();
 
-  super.dispose();
-}
+    super.dispose();
+  }
 }
 
 

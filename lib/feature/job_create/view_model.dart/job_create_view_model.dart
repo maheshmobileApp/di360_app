@@ -3,6 +3,8 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
@@ -67,7 +69,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? userID;
   String? logoPath;
   dynamic banner_image;
-
+  bool jobEditOptionEnable = false;
+  String? jobId;
   // Date settings
   bool isStartDateEnabled = false;
   bool isEndDateEnabled = false;
@@ -206,6 +209,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   initializeTheData() {
     getCompanyName();
+  }
+
+  void setJobEditOption(bool value) {
+    jobEditOptionEnable = value;
+    notifyListeners();
+  }
+
+  void setJobId(String value) {
+    jobId = value;
+    notifyListeners();
   }
 
   getCompanyName() async {
@@ -627,6 +640,182 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       NavigationService().goBack();
     }
   }
+
+  Future<void> updateJobListing(
+      BuildContext context, bool isDraft, String jobId) async {
+    Loaders.circularShowLoader(context);
+    Map<String, String?> filePaths = {
+      'banner': bannerFile?.path,
+    };
+    final uploadedFiles = await uploadFiles(
+      filePaths,
+      clinicPhotos: clinicPhotos,
+    );
+    final result = await repo.updateJobListing({
+      "id": jobId,
+      "postjobObj": {
+        "title": jobTitleController.text, // String
+        "j_type": "", //
+        "j_role": selectedRole,
+        "roles_and_responsibilities": "",
+        "address": {}, //As per Api this is empty object
+        "days_of_week": {}, //As per Api this is empty object
+        "is_featured": false, // Default is false -> for now we are not using it
+        "number_of_positions": 1,
+        "description": jobDescController.text,
+        "closing_message": "",
+        "experience": "",
+        "skills": [],
+        "jobexperiences": [],
+        "upload_resume": [],
+        "current_company": "",
+        "job_location": "", //Need to discuss with backend
+        "job_designation": "", //Need to discuss with backend
+        "offered_supplement": "", //Need to discuss with backend
+        "TypeofEmployment": selectedEmploymentChips,
+        "availability_date": [
+          startLocumDateController.text,
+          endLocumDateController.text
+        ],
+        "years_of_experience": selectExperience,
+        "dental_supplier_id": supplierId,
+        "dental_practice_id": practiceId,
+        "location": locationSearchController.text,
+        "logo": logoPath,
+        "state": stateController.text,
+        "city": cityPostCodeController.text,
+        "salary": "Range", //Need to discuss with backend
+        "pay_min": minSalaryController.text,
+        "pay_max": maxSalaryController.text,
+        "company_name": companyNameController.text,
+        "pay_range":
+            selectedPayRange, //Getting fron Dropdown, this is static data for now
+        "education":
+            selectEducation, // Getting fron Dropdown, this is static data for now
+        "video": videoLinkController.text,
+        "banner_image": bannerFile != null
+            ? [
+                {
+                  "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
+                  "name": bannerFile!.path.split("/").last,
+                  "type": "image",
+                  "extension": "jpeg",
+                }
+              ]
+            : [],
+
+        "clinic_logo": clinicPhotos.isNotEmpty
+            ? clinicPhotos.asMap().entries.map((entry) {
+                final index = entry.key;
+                final file = entry.value;
+                final uploadedList = uploadedFiles['clinic_logo'];
+                return {
+                  "url": (uploadedList != null &&
+                          uploadedList.length > index &&
+                          uploadedList[index]?["url"] != null)
+                      ? uploadedList[index]["url"]
+                      : file.path,
+                  "name": file.path.split("/").last,
+                  "type": "image",
+                  "extension": "jpeg",
+                };
+              }).toList()
+            : [],
+
+        // {
+        //   "url":
+        //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
+        //   "type": "image",
+        //   "extension": "jpeg"
+        // }
+        //TODO: need to send array of object
+
+        "closed_at": endDate?.toUtc().toIso8601String(),
+        "status": isDraft
+            ? "DRAFT"
+            : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
+        "active_status":
+            "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
+        "website_url": websiteController.text,
+        "country": selectCountry,
+        "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
+        "offered_benefits": selectedBenefits,
+        //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
+        "hiring_period": selectHire,
+        "no_of_people": selectPositions,
+        "rate_billing": selectRate,
+        "facebook_url": facebookController.text,
+        "instagram_url": instgramController.text,
+        "linkedin_url": linkedInController.text,
+        "twitter_url": "", // No option from the UI for now this field is empty
+        "timings": startDate?.toUtc().toIso8601String(),
+        "timingtoggle": isStartDateEnabled == true ? "YES" : "NO",
+        //"auto_expiry_date": null,
+        "active_status_feed": isDraft ? null : "PENDING",
+        "feed_type": "JOBS"
+      }
+    });
+    if (result != null) {
+      navigationService.goBack();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger("Course is updated Successfully");
+
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+  }
+
+  Future<void> loadJobData(Jobs? jobData) async {
+    //print("printinnnnn $jobData");
+    jobTitleController.text = jobData?.title ?? "";
+    companyNameController.text = jobData?.companyName ?? "";
+    selectedRole = jobData?.jRole ?? "";
+    jobDescController.text = jobData?.description ?? "";
+    videoLinkController.text = jobData?.video ?? "";
+    countryController.text = jobData?.country ?? "";
+    //bannerFile = jobData?.bannerImage??"";
+    selectExperience = jobData?.yearsOfExperience ?? "";
+    websiteController.text = jobData?.websiteUrl ?? "";
+    facebookController.text = jobData?.facebookUrl ?? "";
+    instgramController.text = jobData?.instagramUrl ?? "";
+    linkedInController.text = jobData?.linkedinUrl ?? "";
+    locationSearchController.text = jobData?.location ?? "";
+    stateController.text = jobData?.state ?? "";
+    cityPostCodeController.text = jobData?.city ?? "";
+    minSalaryController.text = jobData?.payMin?.toString() ?? "";
+    maxSalaryController.text = jobData?.payMax?.toString() ?? "";
+
+    selectedEmploymentType = jobData?.typeofEmployment?.isNotEmpty == true
+        ? jobData?.typeofEmployment!.first
+        : null;
+    _selectedEmploymentChips
+      ..clear()
+      ..addAll(jobData?.typeofEmployment ?? []);
+    _updateLocumVisibility();
+
+    selectEducation = jobData?.education;
+    selectCountry = jobData?.country;
+    selectHire = jobData?.hiringPeriod;
+    selectPositions = jobData?.noOfPeople;
+    selectRate = jobData?.rateBilling;
+    selectedPayRange = jobData?.payRange;
+
+    // Benefits (if any)
+    _selectedBenefits
+      ..clear()
+      ..addAll(jobData?.offeredBenefits ?? []);
+
+    // Locum dates
+    if (jobData?.availabilityDate != null &&
+        jobData?.availabilityDate!.length == 2) {
+      startLocumDateController.text = jobData?.availabilityDate![0] ?? "";
+      endLocumDateController.text = jobData?.availabilityDate![1] ?? "";
+      updateLocumSummary();
+    }
+
+    notifyListeners();
+  }
+
   // #endregion
 
   @override
@@ -650,5 +839,4 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     pageController.dispose();
     super.dispose();
   }
-
 }

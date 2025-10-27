@@ -5,4 +5,5 @@ abstract class JobCreateRepository {
   Future<List<JobsRoleList>> getJobRoles();
   Future<List<JobTypes>> getEmpTypes();
   Future<dynamic> createJobListing(dynamic variables);
+  Future<dynamic> updateJobListing(dynamic variables);
 }
