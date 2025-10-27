@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/my_learning_hub/model/filter_section_model
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/register_course_card.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
+      endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'My Learning Hub',
             searchAction: () =>

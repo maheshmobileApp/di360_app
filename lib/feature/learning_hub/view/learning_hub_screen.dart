@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -55,6 +56,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     );
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
+      endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Course Listing',
             searchAction: () =>

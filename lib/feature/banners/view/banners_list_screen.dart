@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/banners/widgets/banners_card.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -26,6 +27,7 @@ class _BannersListScreenState extends State<BannersListScreen>
     final bannersVM = Provider.of<BannersViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
+      endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(),
         body: Column(
           children: [

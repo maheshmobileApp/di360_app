@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/catalogue_card_widget.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
     final myCatalogVM = Provider.of<AddCatalogueViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
+      endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             filterWidget: Row(children: [
           GestureDetector(

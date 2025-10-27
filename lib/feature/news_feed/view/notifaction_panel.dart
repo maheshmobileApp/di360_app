@@ -74,7 +74,7 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                                       color: AppColors.black)),
                             ),
                             addVertical(8),
-                            Padding(
+                          /*  Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                               child: Align(
@@ -101,7 +101,7 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                                   ),
                                 ),
                               ),
-                            ),
+                            ),*/
                             Divider(),
                           ],
                         );
@@ -114,3 +114,13 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
     );
   }
 }
+
+/*
+mutation update_dental_supplier_notifications {
+  update_dental_supplier_notifications(where: {}, _set: {mark_as_read: true}) {
+    affected_rows
+    __typename
+  }
+}
+
+*/

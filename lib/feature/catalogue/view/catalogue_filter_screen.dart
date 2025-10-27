@@ -103,6 +103,7 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
                     controller: filterProvider.searchController,
                     onFieldSubmitted: (value) async {
                       await filterProvider.fetchCatalogue(context);
+                      filterProvider.updateCatalogFilterApply(true);
                       navigationService.goBack();
                     },
                     decoration: InputDecoration(
