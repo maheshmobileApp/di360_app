@@ -265,7 +265,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           RouteList.newCourseScreen,
                         );
                     }
-                  },
+                  }, chipTitle: 'Registered',
                 );
               },
             ),

@@ -5,24 +5,24 @@ class ConstantData {
 
   static List<String> homeGridImgs = [
     ImageConst.newsFeed,
-    ImageConst.supplies,
-    ImageConst.usedSupplies,
+    //ImageConst.supplies,
+    //ImageConst.usedSupplies,
     ImageConst.learningHub,
     ImageConst.directory,
     ImageConst.jobSeek,
-    ImageConst.buy,
+    //  ImageConst.buy,
     ImageConst.catalogue,
     ImageConst.support
   ];
 
   static List<String> homeGridTitles = [
     'News Feed',
-    'Supplies',
-    'Used Supplies',
+    //'Supplies',
+    //'Used Supplies',
     'Learning Hub',
     "Directory",
     'Job Seek',
-    'Buy & Sell',
+    //'Buy & Sell',
     'Catalogue',
     'Support'
   ];

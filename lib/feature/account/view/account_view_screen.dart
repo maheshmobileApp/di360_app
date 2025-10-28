@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
@@ -223,7 +224,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'My Directory') {
                             await context
                                 .read<AddDirectoryViewModel>()
-                                .fetchTheDirectorData(navigatorKey.currentContext!);
+                                .fetchTheDirectorData(
+                                    navigatorKey.currentContext!);
                           } else if (item.title == 'Learning Hub') {
                             Loaders.circularShowLoader(context);
                             await context
@@ -244,6 +246,13 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             await context
                                 .read<MyLearningHubViewModel>()
                                 .getCoursesWithMyRegistrations(context);
+                            await context
+                                .read<FilterViewModel>()
+                                .fetchCourseCategory(context);
+                            await context
+                                .read<FilterViewModel>()
+                                .fetchCourseType(context);
+
                             Loaders.circularHideLoader(context);
                             context
                                 .read<MyLearningHubViewModel>()

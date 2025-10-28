@@ -160,26 +160,32 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildRoleTypes(JobCreateViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: jobCreateVM.selectedRole,
-      title: "Role",
-      onChanged: (v) {
-        jobCreateVM.setSelectedRole(v as String);
-      },
-      items:
-          jobCreateVM.roleOptions.map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select role type",
-      validator: (value) => value == null || value.toString().isEmpty
-          ? 'Please select role type'
-          : null,
-    );
-  }
+  final validRoles = jobCreateVM.roleOptions;
+
+  final selectedValue = validRoles.contains(jobCreateVM.selectedRole)
+      ? jobCreateVM.selectedRole
+      : null;
+
+  return CustomDropDown(
+    isRequired: true,
+    value: selectedValue,
+    title: "Role",
+    onChanged: (v) {
+      jobCreateVM.setSelectedRole(v as String);
+    },
+    items: validRoles.map<DropdownMenuItem<Object>>((String value) {
+      return DropdownMenuItem<Object>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    hintText: "Select role type",
+    validator: (value) => value == null || value.toString().isEmpty
+        ? 'Please select role type'
+        : null,
+  );
+}
+
 
   Widget _buildEmpTypes(JobCreateViewModel jobCreateVM) {
     return Column(

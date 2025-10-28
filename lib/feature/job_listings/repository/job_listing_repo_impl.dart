@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/job_listings/quary/applicant_messege_quary
 import 'package:di360_flutter/feature/job_listings/quary/delete_job_listing_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_count_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_quary.dart';
+import 'package:di360_flutter/feature/job_listings/quary/get_job_data_query.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_listing_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/job_applicants_messge_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/job_status_count_quary.dart';
@@ -158,5 +159,16 @@ Future<String?> sendApplicantMessage(Map<String, dynamic> variables) async {
     throw Exception("Failed to send message: $e");
   }
 }
+
+  @override
+  Future<Jobs> getEditJobIDData(String jobId) async {
+    final data =
+        await http.query(getJobDataQuery,
+        variables: {"Jobid": jobId});
+
+    final result = Jobs.fromJson(data);
+    return result;
+    
+  }
 
 }

@@ -120,7 +120,7 @@ class RegisterCourseCard extends StatelessWidget {
                   profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
               radius: 30,
               child: profilePic.isEmpty
-                  ? const Icon(Icons.business,
+                  ? const Icon(Icons.person,
                       size: 20, color: AppColors.lightGeryColor)
                   : null,
             ),

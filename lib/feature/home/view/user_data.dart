@@ -36,20 +36,29 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               top: 44,
               child: CircleAvatar(
                   radius: 25, child: SvgPicture.asset(ImageConst.logo))),
+          /*  Positioned(
+              right: 20,
+              top: 44,
+              child: CircleAvatar(
+                backgroundColor: AppColors.menuBGColor,
+                radius: 25,
+                child:
+                    Image.asset(ImageConst.menu, color: AppColors.whiteColor),
+              )),*/
           Positioned(
               right: 1,
               left: 1,
               bottom: -26,
               child: CircleAvatar(
                 backgroundColor: AppColors.whiteColor,
-                radius: 63,
+                radius: 52,
                 child: CircleAvatar(
                   backgroundColor: AppColors.primaryColor,
-                  radius: 60,
+                  radius: 50,
                   child: ClipOval(
                     child: SizedBox(
-                      height: 120,
-                      width: 120,
+                      height: 100,
+                      width: 100,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
                           fit: BoxFit.fill,
@@ -61,9 +70,9 @@ class UserData extends StatelessWidget with BaseContextHelpers {
         ],
       ),
       Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            /* Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('Welcome Back!',
                   style: TextStyles.dmsansLight(
                       color: AppColors.black, fontSize: 12)),
@@ -74,8 +83,8 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   SvgPicture.asset(ImageConst.search)
                 ],
               )
-            ]),
-            addVertical(12),
+            ]),*/
+            addVertical(30),
             Divider(color: AppColors.dividerColor),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
@@ -104,7 +113,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Text(title, style: TextStyles.regular1(color: AppColors.black)),
+          Text(title, style: TextStyles.regular2(color: AppColors.black)),
           addHorizontal(14),
           Text(
             val,

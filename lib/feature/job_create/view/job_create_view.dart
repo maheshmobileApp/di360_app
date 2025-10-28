@@ -24,8 +24,22 @@ class JobCreateView extends StatefulWidget {
 class _JobCreateViewState extends State<JobCreateView> {
   @override
   void initState() {
-    initilizeTheProfileData();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map?;
+      if (args != null && args['isEdit'] == true) {
+        final jobCreateVM =
+            Provider.of<JobCreateViewModel>(context, listen: false);
+        jobCreateVM.setJobEditOption(true);
+        if (args['jobId'] != null) {
+          jobCreateVM.setJobId(args['jobId']);
+        }
+        if (args['loadJobData'] != null) {
+          jobCreateVM.loadJobData(args['loadJobData']);
+        }
+      }
+      initilizeTheProfileData();
+    });
   }
 
   initilizeTheProfileData() async {
@@ -35,6 +49,8 @@ class _JobCreateViewState extends State<JobCreateView> {
 
   Widget build(BuildContext context) {
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+    final jobListingVM = Provider.of<JobListingsViewModel>(context);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -83,7 +99,7 @@ class _JobCreateViewState extends State<JobCreateView> {
               ),
             ),
           ),
-          _bottomButtons(context, jobCreateVM),
+          _bottomButtons(context, jobCreateVM, jobListingVM),
         ],
       ),
     );
@@ -123,7 +139,8 @@ class _JobCreateViewState extends State<JobCreateView> {
     }
   }
 
-  Widget _bottomButtons(BuildContext context, JobCreateViewModel jobCreateVM) {
+  Widget _bottomButtons(BuildContext context, JobCreateViewModel jobCreateVM,
+      JobListingsViewModel jobListingVM) {
     int currentStep = jobCreateVM.currentStep;
     bool isLastStep = currentStep == jobCreateVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;
@@ -183,18 +200,35 @@ class _JobCreateViewState extends State<JobCreateView> {
           SizedBox(width: 16),
           Expanded(
             child: CustomRoundedButton(
-              text: isLastStep ? 'Submit' : 'Next',
+              text: isLastStep
+                  ? (jobCreateVM.jobEditOptionEnable ? 'Update' : 'Submit')
+                  : 'Next',
               height: 42,
               fontSize: 12,
               onPressed: () async {
-                final currentFormKey =
-                    jobCreateVM.formKeys[jobCreateVM.currentStep];
-                if (currentFormKey.currentState?.validate() ?? false) {
-                  if (isLastStep) {
-                    await jobCreateVM.createdJobListing(context, false);
-                    navigationService.goBack();
-                  } else {
-                    jobCreateVM.goToNextStep();
+                if (jobCreateVM.jobEditOptionEnable) {
+                  final currentFormKey =
+                      jobCreateVM.formKeys[jobCreateVM.currentStep];
+                  if (currentFormKey.currentState?.validate() ?? false) {
+                    if (isLastStep) {
+                      await jobCreateVM.updateJobListing(
+                          context, false, jobCreateVM.jobId ?? "");
+                      jobListingVM.selectedStatus = "All";
+                      await jobListingVM.getMyJobListingData();
+                    } else {
+                      jobCreateVM.goToNextStep();
+                    }
+                  }
+                } else {
+                  final currentFormKey =
+                      jobCreateVM.formKeys[jobCreateVM.currentStep];
+                  if (currentFormKey.currentState?.validate() ?? false) {
+                    if (isLastStep) {
+                      await jobCreateVM.createdJobListing(context, false);
+                      navigationService.goBack();
+                    } else {
+                      jobCreateVM.goToNextStep();
+                    }
                   }
                 }
               },

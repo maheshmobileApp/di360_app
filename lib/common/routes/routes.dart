@@ -61,7 +61,6 @@ import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
 
-
 class Routes {
   static Map<String, WidgetBuilder> get routes {
     return {
@@ -101,8 +100,7 @@ class Routes {
       RouteList.directorQuickLinks: (context) => DirectorQuickLinks(),
       RouteList.TalentListingScreen: (context) => TalentListingScreen(),
       RouteList.TalentListingFilter: (context) => TalentListingFilter(),
-       RouteList.TalentFliterScreen: (context) => TalentsFilterScreen(),
-      
+      RouteList.TalentFliterScreen: (context) => TalentsFilterScreen(),
       RouteList.JobListingApplicantsMessege: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -161,8 +159,10 @@ class Routes {
       RouteList.myDirectorScreen: (context) => MyDirectorScreen(),
       RouteList.courseDetailScreen: (context) => CourseDetailScreen(),
       RouteList.myAppointment: (context) => AppoinmentScreen(),
-      RouteList.professionDirectorScreen: (context) => ProfessionalDirectorScreen(),
-      RouteList.professionAddDirectorView: (context) => ProfessionalAddDirectorView(),
+      RouteList.professionDirectorScreen: (context) =>
+          ProfessionalDirectorScreen(),
+      RouteList.professionAddDirectorView: (context) =>
+          ProfessionalAddDirectorView(),
       RouteList.bannersListView: (context) => BannersListScreen(),
       RouteList.addBanners: (context) => AddBannersScreen(),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
