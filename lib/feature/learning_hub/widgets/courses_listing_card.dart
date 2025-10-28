@@ -20,6 +20,7 @@ class CouresListingCard extends StatelessWidget {
   final String createdAt;
   final int registeredCount;
   final String meetingLink;
+  final String chipTitle;
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
@@ -40,7 +41,7 @@ class CouresListingCard extends StatelessWidget {
     this.onMenuAction,
     this.onDetailView,
     required this.meetingLink,
-    required this.activeStatus,
+    required this.activeStatus, required this.chipTitle,
   });
 
   @override
@@ -94,7 +95,7 @@ class CouresListingCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                         onTap: onTapRegistered,
-                        child: _registeredChip(registeredCount)),
+                        child: _registeredChip(registeredCount, chipTitle)),
                     GestureDetector(
                       onTap: onDetailView,
                       child: Row(
@@ -280,7 +281,7 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _registeredChip(int registeredCount) {
+  Widget _registeredChip(int registeredCount, String chipTitle) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
@@ -288,7 +289,7 @@ class CouresListingCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
-        "$registeredCount Registered",
+        "$registeredCount $chipTitle",
         style: TextStyles.semiBold(fontSize: 10, color: AppColors.black),
       ),
     );

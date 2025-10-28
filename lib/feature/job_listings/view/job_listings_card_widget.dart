@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 //import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
@@ -15,6 +16,7 @@ import 'package:provider/provider.dart';
 class JobListingCard extends StatelessWidget with BaseContextHelpers {
   final Jobs? jobsListingData;
   final JobListingsViewModel vm;
+  final JobCreateViewModel jobCreateVM;
   final dynamic parmas;
   final int? index;
 
@@ -24,6 +26,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     required this.vm,
     this.index,
     this.parmas,
+    required this.jobCreateVM,
   });
 
   @override
@@ -64,12 +67,11 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                         jobsListingData?.title ?? '',
                         jobsListingData?.companyName ?? '',
                         jobsListingData?.status ?? '',
-
                       ),
                     ),
                     Row(
                       children: [
-                       JobTimeChip(time: time),
+                        JobTimeChip(time: time),
                         addHorizontal(4),
                         menuWidget(
                           vm,
@@ -87,7 +89,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 addVertical(10),
                 _descriptionWidget(jobsListingData?.description ?? ''),
                 const Divider(),
-
               ],
             ),
           ),
@@ -114,9 +115,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 await viewModel.getMyJobApplicantsgData(
                     context, jobsListingData?.id ?? '');
                 navigationService.navigateToWithParams(
-                  RouteList.JobListingApplicantscreen,
-                  params: jobsListingData
-                );
+                    RouteList.JobListingApplicantscreen,
+                    params: jobsListingData);
               },
               child: Center(
                 child: Text(
@@ -137,7 +137,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     String company,
     String title,
     String status,
-
   ) {
     return Row(
       children: [
@@ -163,7 +162,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
                 child: Text(
-                   status,
+                  status,
                   style: TextStyles.medium1(
                     color: AppColors.greenColor,
                     fontSize: 10,
@@ -230,75 +229,89 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  
+  Widget menuWidget(
+    JobListingsViewModel vm,
+    BuildContext context,
+    int index,
+    String id,
+    String status,
+  ) {
+    return PopupMenuButton<String>(
+      iconColor: AppColors.bottomNavUnSelectedColor,
+      color: AppColors.whiteColor,
+      padding: EdgeInsets.all(0),
+      onSelected: (value) {
+        if (value == "Edit") {
+          // vm.getCatalogueView(context, id);
+          jobCreateVM.setJobEditOption(true);
+          jobCreateVM.setJobId(jobsListingData?.id ?? "");
 
- Widget menuWidget(
-  JobListingsViewModel vm,
-  BuildContext context,
-  int index,
-  String id,
-  String status,
-) {
-  return PopupMenuButton<String>(
-    iconColor: AppColors.bottomNavUnSelectedColor,
-    color: AppColors.whiteColor,
-    padding: EdgeInsets.all(0),
-    onSelected: (value) {
-      if (value == "Edit") {
-        // vm.getCatalogueView(context, id);
-      } else if (value == "Active") {
-        showAlertMessage(context, 'Do you really want to activate this job?',
-            onBack: () {
-          navigationService.goBack();
+          vm.getEditJobIDData(context, jobsListingData?.id ?? "");
+          /*await jobCreateVM
+                                    .loadJobData(jobListingVM.jobDataById);*/
+
+          navigationService.navigateToWithParams(
+            RouteList.jobCreate,
+            params: {
+              'isEdit': true,
+              'jobId': jobsListingData?.id,
+              'loadJobData': vm.myJobListingList[index]
+            },
+          );
+        } else if (value == "Active") {
+          showAlertMessage(context, 'Do you really want to activate this job?',
+              onBack: () {
+            navigationService.goBack();
             vm.updateJobListingStatus(context, id, "ACTIVE");
-        });
-      } else if (value == "Preview") {
-        navigationService.navigateToWithParams(
-          RouteList.jobdetailsScreen,
-          params: vm.myJobListingList[index],
-        );
-      } else if (value == "Inactive") {
-        showAlertMessage(context, 'Do you really want to deactivate this job?',
-            onBack: () {
-          navigationService.goBack();
-          vm.updateJobListingStatus(context, id, "INACTIVE");
-        });
-      } else if (value == "Delete") {
-        showAlertMessage(context, 'Are you sure you want to delete this job?',
-            onBack: () {
-          navigationService.goBack();
-          vm.removeJobsListingData(context, id);
-        });
-      }
-    },
-    itemBuilder: (context) => [
-      PopupMenuItem(
-        value: "Preview",
-        child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
-      ),
-      PopupMenuItem(
-        value: "Edit",
-        child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
-      ),
-      PopupMenuItem(
-        value: "Delete",
-        child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-      ),
-
-      if (status == "APPROVE" )
+          });
+        } else if (value == "Preview") {
+          navigationService.navigateToWithParams(
+            RouteList.jobdetailsScreen,
+            params: vm.myJobListingList[index],
+          );
+        } else if (value == "Inactive") {
+          showAlertMessage(
+              context, 'Do you really want to deactivate this job?',
+              onBack: () {
+            navigationService.goBack();
+            vm.updateJobListingStatus(context, id, "INACTIVE");
+          });
+        } else if (value == "Delete") {
+          showAlertMessage(context, 'Are you sure you want to delete this job?',
+              onBack: () {
+            navigationService.goBack();
+            vm.removeJobsListingData(context, id);
+          });
+        }
+      },
+      itemBuilder: (context) => [
         PopupMenuItem(
-          value: "Inactive",
-          child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+          value: "Preview",
+          child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
         ),
-      if (status == "REJECT")
         PopupMenuItem(
-          value: "Active",
-          child: _buildRow(Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
+          value: "Edit",
+          child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
         ),
-    ],
-  );
-}
-
+        PopupMenuItem(
+          value: "Delete",
+          child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+        ),
+        if (status == "APPROVE")
+          PopupMenuItem(
+            value: "Inactive",
+            child: _buildRow(
+                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
+          ),
+        if (status == "REJECT")
+          PopupMenuItem(
+            value: "Active",
+            child: _buildRow(
+                Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
+          ),
+      ],
+    );
+  }
 
   Widget _buildRow(IconData? icon, Color? color, String? title) {
     return Row(children: [

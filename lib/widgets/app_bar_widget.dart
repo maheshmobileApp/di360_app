@@ -12,8 +12,14 @@ class AppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
   final Widget? filterWidget;
   final String? title;
+  final bool searchWidget;
   final Function()? searchAction;
-  const AppBarWidget({super.key, this.filterWidget, this.title, this.searchAction});
+  const AppBarWidget(
+      {super.key,
+      this.filterWidget,
+      this.title,
+      this.searchAction,
+      this.searchWidget = true});
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +63,12 @@ class AppBarWidget extends StatelessWidget
               )),
         ),
         addHorizontal(15),
-        GestureDetector(
-            onTap: searchAction,
-            child: SvgPicture.asset(ImageConst.search, color: AppColors.black)),
+        (searchWidget)
+            ? GestureDetector(
+                onTap: searchAction,
+                child:
+                    SvgPicture.asset(ImageConst.search, color: AppColors.black))
+            : SizedBox.shrink(),
         addHorizontal(15),
         if (filterWidget != null) filterWidget!,
         addHorizontal(15)

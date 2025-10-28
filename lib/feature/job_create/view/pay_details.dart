@@ -80,20 +80,28 @@ class PayDetails extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildRateDetails(JobCreateViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: jobCreateVM.selectRate,
-      title: "Rate",
-      onChanged: (v) => jobCreateVM.setSelectedRateRange(v as String),
-      items: jobCreateVM.rateTypes.map((value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select rate",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select rate' : null,
-    );
-  }
+  final validRateTypes = jobCreateVM.rateTypes;
+
+  // ✅ Ensure the selected value exists in the current list
+  final selectedValue = validRateTypes.contains(jobCreateVM.selectRate)
+      ? jobCreateVM.selectRate
+      : null;
+
+  return CustomDropDown(
+    isRequired: true,
+    value: selectedValue,
+    title: "Rate",
+    onChanged: (v) => jobCreateVM.setSelectedRateRange(v as String),
+    items: validRateTypes.map((value) {
+      return DropdownMenuItem<Object>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    hintText: "Select rate",
+    validator: (value) =>
+        value == null || value.toString().isEmpty ? 'Please select rate' : null,
+  );
+}
+
 }

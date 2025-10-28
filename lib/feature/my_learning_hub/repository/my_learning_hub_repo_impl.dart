@@ -33,7 +33,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getCoursesWithFilters(
-      String? userId, String? type, String? category) async {
+      String? userId, String? type, String? category, String? date) async {
     final List<Map<String, dynamic>> andConditions = [
       {
         "course_registered_users": {
@@ -53,6 +53,18 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
         "course_category": {
           "name": {"_eq": category}
         }
+      });
+    }
+    if (date != "null" ) {
+      andConditions.add({
+        "_and": [
+          {
+            "startDate": {"_lte": date}
+          },
+          {
+            "endDate": {"_gte": date}
+          }
+        ]
       });
     }
 

@@ -122,18 +122,21 @@ class _CustomImageSelectionState extends State<CustomImageSelection> with BaseCo
           children: widget.images.map((file) {
             return Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    file,
-                    height: 80,
-                    width: 80,
-                    fit: BoxFit.cover,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      file,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Positioned(
-                  right: -8,
-                  top: -8,
+                  right: 1,
+                  top: 2,
                   child: GestureDetector(
                     onTap: () {
                       final newList = [...widget.images]..remove(file);
