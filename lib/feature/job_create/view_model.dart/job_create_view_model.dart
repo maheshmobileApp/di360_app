@@ -82,6 +82,17 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   File? bannerFile;
   List<File> clinicPhotos = [];
 
+  void setBannerImg(File? value) {
+    bannerFile = value;
+
+    notifyListeners();
+  }
+
+  void setClinicPhotos(List<File> value) {
+    clinicPhotos = value;
+    notifyListeners();
+  }
+
   // Form & PageView
   final GlobalKey<FormState> otherLinksFormKey = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
@@ -438,7 +449,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> pickClinicPhoto(ImageSource source) async {
+ /* Future<void> pickClinicPhoto(ImageSource source) async {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
@@ -455,7 +466,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   void clearClinicPhotos() {
     clinicPhotos.clear();
     notifyListeners();
-  }
+  }*/
 
   Future<Map<String, dynamic>> uploadFiles(
     Map<String, String?> filePaths, {
