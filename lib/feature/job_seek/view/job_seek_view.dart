@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_card.dart';
 import 'package:di360_flutter/feature/job_seek/view/tab_switch.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talents/views/talents_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -37,6 +38,7 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
       builder: (context, jobSeekViewModel, _) {
         return Scaffold(
           backgroundColor: Colors.white,
+          endDrawer: NotificationsPanel(),
           appBar: AppBarWidget(
               filterWidget: GestureDetector(
             onTap: () {

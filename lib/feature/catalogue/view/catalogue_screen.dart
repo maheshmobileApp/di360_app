@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -6,7 +7,9 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_like_widget.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -28,7 +31,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if (_scrollController.offset > 200) {
+      if (_scrollController.offset > 150) {
         if (!_showScrollToTop) {
           setState(() => _showScrollToTop = true);
         }
@@ -51,82 +54,26 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
     final vm = Provider.of<CatalogueViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
+      endDrawer: NotificationsPanel(),
+      appBar: AppBarWidget(
+          searchAction: () =>
+              navigationService.navigateTo(RouteList.catalogueFilterScreen),
+          filterWidget: Row(children: [
+            GestureDetector(
+                onTap: () => navigationService
+                    .navigateTo(RouteList.catalogueFilterScreen),
+                child: SvgPicture.asset(ImageConst.filter,
+                    color: AppColors.black)),
+            if (vm.catalogFilterApply == true)
+              GestureDetector(
+                  onTap: () => vm.clearSelections(context),
+                  child: Icon(Icons.close, color: AppColors.black))
+          ])),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            // Banner
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                ImageConst.catalogueBg,
-                fit: BoxFit.cover,
-              ),
-            ),
-            addVertical(16),
-
-            // Search Bar
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: AppColors.whiteColor,
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 23, vertical: 12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: vm.searchController,
-                        onFieldSubmitted: (value) {
-                          vm.fetchCatalogue(context);
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'What are you looking for?',
-                          hintStyle: TextStyles.dmsansLight(
-                              color: AppColors.black, fontSize: 18),
-                          suffixIcon: GestureDetector(
-                              onTap: () async {
-                                if (vm.searchController.text.isNotEmpty) {
-                                  await vm.fetchCatalogue(context);
-                                  navigationService.goBack();
-                                }
-                              },
-                              child:
-                                  Icon(Icons.search, color: AppColors.black)),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                    addHorizontal(12),
-                    GestureDetector(
-                      onTap: () => navigationService
-                          .navigateTo(RouteList.catalogueFilterScreen),
-                      child: CircleAvatar(
-                        radius: 23,
-                        backgroundColor: AppColors.HINT_COLOR,
-                        child: CircleAvatar(
-                          radius: 22,
-                          backgroundColor: AppColors.whiteColor,
-                          child: SvgPicture.asset(
-                            ImageConst.filter,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (vm.catalogFilterApply == true)
-                      GestureDetector(
-                        onTap: () => vm.clearSelections(context),
-                        child: Icon(Icons.close, color: AppColors.black),
-                      )
-                  ],
-                ),
-              ),
-            ),
-            addVertical(16),
-
+            ListBanner(),
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,
@@ -188,12 +135,13 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
           addVertical(18),
 
           // Clickable header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 23),
-            child: GestureDetector(
-              onTap: () {
-                vm.toggleExpanded(cat.name ?? '');
-              },
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              vm.toggleExpanded(cat.name ?? '');
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 23),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -210,10 +158,8 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                     child: CircleAvatar(
                       radius: 19,
                       backgroundColor: Colors.white,
-                      child: Icon(
-                        expanded ? Icons.remove : Icons.add,
-                        color: Colors.black,
-                      ),
+                      child: Icon(expanded ? Icons.remove : Icons.add,
+                          color: Colors.black),
                     ),
                   ),
                 ],

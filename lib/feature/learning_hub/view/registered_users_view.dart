@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/registered_user_card.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(title: 'Registered Users'),
       body: Column(
         children: [

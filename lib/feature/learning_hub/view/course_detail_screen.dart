@@ -189,7 +189,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             .asMap()
                             .entries
                             .map((entry) {
-                          final index = entry.key; // 0,1,2...
+                         // final index = entry.key; // 0,1,2...
                           final eventInfo = entry.value; // actual event
 
                           final images = (eventInfo.images ?? [])

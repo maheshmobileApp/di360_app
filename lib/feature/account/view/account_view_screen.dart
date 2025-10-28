@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -35,6 +36,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
+      endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {

@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_card.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           }
         },
       ),
+      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
           filterWidget: GestureDetector(
         onTap: () =>

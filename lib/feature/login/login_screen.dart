@@ -117,7 +117,7 @@ richText({Color? color1,Color? color2}) {
                 decoration: TextDecoration.underline),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                navigationService.navigateTo(RouteList.subscribePlan);
+                navigationService.navigateTo(RouteList.signup);
               })
       ]));
 }

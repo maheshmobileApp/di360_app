@@ -557,7 +557,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
         // 3. Combine serverImages and newUrls
         final allUrls = [
-          ...(session.serverImages ?? []),
+          ...(session.serverImages),
           ...newUrls,
         ];
 

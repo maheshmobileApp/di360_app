@@ -69,6 +69,7 @@ showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
 void showSignupSuccessDialog(
     BuildContext context, String email, Function()? onTap) {
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return Dialog(

@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class CourseInfoCardWidget extends StatelessWidget {
   final String courseName;
