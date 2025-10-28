@@ -234,7 +234,7 @@ class _JobListingScreenState extends State<JobListingScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
             await navigationService.navigateTo(RouteList.jobCreate);
-            jobListingVM.getMyJobListingData();
+            //jobListingVM.getMyJobListingData(context);
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));

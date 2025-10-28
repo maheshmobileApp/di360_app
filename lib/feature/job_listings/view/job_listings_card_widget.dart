@@ -79,6 +79,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                           index!,
                           jobsListingData?.id ?? '',
                           jobsListingData?.status ?? '',
+                          jobsListingData?.activeStatus ?? '',
                         ),
                       ],
                     ),
@@ -229,13 +230,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget menuWidget(
-    JobListingsViewModel vm,
-    BuildContext context,
-    int index,
-    String id,
-    String status,
-  ) {
+  Widget menuWidget(JobListingsViewModel vm, BuildContext context, int index,
+      String id, String status, String activeStatus) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
@@ -289,25 +285,34 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           value: "Preview",
           child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
         ),
-        PopupMenuItem(
-          value: "Edit",
-          child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
-        ),
-        PopupMenuItem(
-          value: "Delete",
-          child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-        ),
-        if (status == "APPROVE")
+        if (status != "EXPIRED")
+          PopupMenuItem(
+            value: "Edit",
+            child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
+          ),
+        if (status != "APPROVE")
+          PopupMenuItem(
+            value: "Delete",
+            child:
+                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
+          ),
+        if (activeStatus == "ACTIVE" && status == "APPROVE")
           PopupMenuItem(
             value: "Inactive",
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
           ),
-        if (status == "REJECT")
+        if (status == "INACTIVE")
           PopupMenuItem(
             value: "Active",
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
+          ),
+          if (status == "EXPIRED")
+          PopupMenuItem(
+            value: "Re-Listing",
+            child: _buildRow(
+                Icons.edit_outlined, AppColors.blueColor, "Re-Listing"),
           ),
       ],
     );

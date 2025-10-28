@@ -192,9 +192,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<JobListingsViewModel>()
-                                .getMyJobListingData();
-                            Loaders.circularHideLoader(context);
-
+                                .getMyJobListingData(context);
+                              Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);
                           } else if (item.title == 'JobProfile') {

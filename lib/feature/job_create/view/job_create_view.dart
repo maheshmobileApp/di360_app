@@ -186,7 +186,7 @@ class _JobCreateViewState extends State<JobCreateView> {
                     await jobCreateVM.createdJobListing(context, true);
                     await context
                         .read<JobListingsViewModel>()
-                        .getMyJobListingData();
+                        .getMyJobListingData(context);
                     navigationService.goBack();
                   } else {
                     jobCreateVM.goToNextStep();
@@ -214,7 +214,7 @@ class _JobCreateViewState extends State<JobCreateView> {
                       await jobCreateVM.updateJobListing(
                           context, false, jobCreateVM.jobId ?? "");
                       jobListingVM.selectedStatus = "All";
-                      await jobListingVM.getMyJobListingData();
+                      await jobListingVM.getMyJobListingData(context);
                     } else {
                       jobCreateVM.goToNextStep();
                     }
