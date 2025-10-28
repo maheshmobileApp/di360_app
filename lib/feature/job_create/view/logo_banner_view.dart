@@ -54,7 +54,7 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 addVertical(8),
-                /*LogoContainer(
+                LogoContainer(
                   title: "Banner",
                   imageFile: jobCreateVM.bannerFile,
                   onTap: () => _imagePickerSelection(
@@ -65,8 +65,8 @@ Widget build(BuildContext context) {
                   onRemove: () {
                     jobCreateVM.removeBanner();
                   },
-                ),*/
-                ImagePickerField(
+                ),
+               /* ImagePickerField(
                 title: "Banner",
                 //serverImage: jobCreateVM.bannerFile,
                 serverImageType: "image",
@@ -76,9 +76,9 @@ Widget build(BuildContext context) {
                 showPreview: true,
                 selectedFile: jobCreateVM.bannerFile,
                 onFilePicked: (file) => jobCreateVM.setBannerImg(file),
-              ),
+              ),*/
                 addVertical(16),
-                ImagePickerField(
+               /* ImagePickerField(
                 title: "Clinic Photos",
                 isRequired: true,
                 //serverImages: jobCreateVM.clinicPhotos,
@@ -89,15 +89,15 @@ Widget build(BuildContext context) {
                 showPreview: true,
                 selectedFiles: jobCreateVM.clinicPhotos,
                 onFilesPicked: (file) => jobCreateVM.setClinicPhotos(file),
-              ),
-                /*CustomImageSelection(
+              ),*/
+                CustomImageSelection(
                   title: 'Clinic Photo',
                   isRequired: true,
                   images: jobCreateVM.clinicPhotos,
                   onChanged: (newList) {
                     jobCreateVM.clinicPhotos = newList;
                   },
-                ),*/
+                ),
                 const SizedBox(height: 40),
               ],
             ),

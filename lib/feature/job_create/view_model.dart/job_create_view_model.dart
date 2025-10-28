@@ -805,7 +805,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     _updateLocumVisibility();
 
     selectEducation = jobData?.education;
-    selectCountry = jobData?.country;
+    selectCountry = jobData?.location;
     selectHire = jobData?.hiringPeriod;
     selectPositions = jobData?.noOfPeople;
     selectRate = jobData?.rateBilling;

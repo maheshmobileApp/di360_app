@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
+import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -110,7 +111,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                         ],
                       ),
                     )
-                  : ListView.builder(
+                  : /* ListView.builder(
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
@@ -181,7 +182,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                                 });
 
                                 break;
-                              /* case "Inactive":
+                               case "Inactive":
                                 courseListingVM.updateCourseStatus(
                                     context, course.id ?? "", "INACTIVE");
                                 break;
@@ -206,26 +207,26 @@ class _JobListingScreenState extends State<JobListingScreen>
                                 Loaders.circularHideLoader(context);
                                 navigationService.navigateTo(
                                   RouteList.newCourseScreen,
-                                );*/
+                                );
                             }
                           },
                           chipTitle: 'Applicants',
                         );
                       },
-                    ),
+                    ),*/
 
-              /*ListView.builder(
+                  ListView.builder(
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
                         print(jobListingVM.myJobListingList.length);
                         return JobListingCard(
-                          jobsListingData: jobData,
-                          vm: jobListingVM,
-                          index: index,
-                        );
+                            jobsListingData: jobData,
+                            vm: jobListingVM,
+                            index: index,
+                            jobCreateVM: jobCreateVM);
                       },
-                    ),*/
+                    ),
             ),
           ],
         ),
