@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view
 import 'package:di360_flutter/feature/job_create/widgets/Custom_image_selection.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -53,7 +54,7 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 addVertical(8),
-                LogoContainer(
+                /*LogoContainer(
                   title: "Banner",
                   imageFile: jobCreateVM.bannerFile,
                   onTap: () => _imagePickerSelection(
@@ -64,39 +65,39 @@ Widget build(BuildContext context) {
                   onRemove: () {
                     jobCreateVM.removeBanner();
                   },
-                ),
-               /* ImagePickerField(
+                ),*/
+                ImagePickerField(
                 title: "Banner",
-                //serverImage: jobCreateVM.bannerFile,
+                serverImage: jobCreateVM.serverBannerImg,
                 serverImageType: "image",
-                /*onServerFileRemoved: (value) {
-                  jobCreateVM.setPresentedImg(null);
-                },*/
+                onServerFileRemoved: (value) {
+                  jobCreateVM.setBannerImg(null);
+                },
                 showPreview: true,
                 selectedFile: jobCreateVM.bannerFile,
                 onFilePicked: (file) => jobCreateVM.setBannerImg(file),
-              ),*/
+              ),
                 addVertical(16),
-               /* ImagePickerField(
+                ImagePickerField(
                 title: "Clinic Photos",
                 isRequired: true,
-                //serverImages: jobCreateVM.clinicPhotos,
+                serverImages: jobCreateVM.serverClinicImgs,
                 allowMultiple: true,
-                /*onServerFilesRemoved: (updatedList) {
-                  jobCreateVM.setServerGallery(updatedList);
-                },*/
+                onServerFilesRemoved: (updatedList) {
+                  jobCreateVM.setServerClinic(updatedList);
+                },
                 showPreview: true,
                 selectedFiles: jobCreateVM.clinicPhotos,
                 onFilesPicked: (file) => jobCreateVM.setClinicPhotos(file),
-              ),*/
-                CustomImageSelection(
+              ),
+               /* CustomImageSelection(
                   title: 'Clinic Photo',
                   isRequired: true,
                   images: jobCreateVM.clinicPhotos,
                   onChanged: (newList) {
                     jobCreateVM.clinicPhotos = newList;
                   },
-                ),
+                ),*/
                 const SizedBox(height: 40),
               ],
             ),

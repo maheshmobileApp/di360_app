@@ -32,6 +32,7 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: AppColors.whiteColor,
         elevation: 0,
         title: _logoWithTitle(

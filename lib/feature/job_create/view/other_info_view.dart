@@ -41,7 +41,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             Row(
               children: [
                 Expanded(
-                  child: AbsorbPointer(
+                  child: /*AbsorbPointer(
                     absorbing: !jobCreateVM.isStartDateEnabled,
                     child: CustomDatePicker(
                       controller: TextEditingController(
@@ -57,31 +57,55 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                         jobCreateVM.startDate,
                       ),
                     ),
-                  ),
+                  ),*/
+                  Expanded(
+                  child: (jobCreateVM.isStartDateEnabled)
+                      ? CustomDatePicker(
+                          title: "",
+                          controller: jobCreateVM.startDateController,
+                          text: null,
+                          hintText: "Date",
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              jobCreateVM.startDateController.text =
+                                  "${picked.day}/${picked.month}/${picked.year}";
+                            }
+                          },
+                        )
+                      : SizedBox.shrink(),
+                ),
                 ),
                 addHorizontal(8),
                 Expanded(
-                  child: AbsorbPointer(
-                    absorbing: !jobCreateVM.isEndDateEnabled,
-                    child: CustomDatePicker(
-                      controller: TextEditingController(
-                        text: jobCreateVM.endDate != null
-                            ? "${jobCreateVM.endDate!.day}/${jobCreateVM.endDate!.month}/${jobCreateVM.endDate!.year}"
-                            : '',
-                      ),
-                      onTap: jobCreateVM.isEndDateEnabled
-                          ? () => pickAndSetDate(context, jobCreateVM.setEndDate)
-                          : null,
-                      validator: (_) => jobCreateVM.validateEndDate(
-                        jobCreateVM.isEndDateEnabled,
-                        jobCreateVM.endDate,
-                      ),
-                    ),
-                  ),
+                  child: (jobCreateVM.isEndDateEnabled)
+                      ? CustomDatePicker(
+                          title: "",
+                          controller: jobCreateVM.endDateController,
+                          text: null,
+                          hintText: "Date",
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              jobCreateVM.endDateController.text =
+                                  "${picked.day}/${picked.month}/${picked.year}";
+                            }
+                          },
+                        )
+                      : SizedBox.shrink(),
                 ),
               ],
             ),
-
             addVertical(16),
             _buildHireData(jobCreateVM),
             addVertical(8),
@@ -91,16 +115,18 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             addVertical(8),
             _buildEducation(jobCreateVM),
             addVertical(8),
-                 Text("Do you offer any of the following benefits?" ,
-             style: TextStyles.regular3(color: AppColors.black),
+            Text(
+              "Do you offer any of the following benefits?",
+              style: TextStyles.regular3(color: AppColors.black),
             ),
-           addVertical(4),
+            addVertical(4),
             _buildBenefits(jobCreateVM),
           ],
         ),
       ),
     );
   }
+
   Widget _checkBox(bool value, Function(bool?)? onChanged, String text) {
     return Row(
       children: [
@@ -137,8 +163,9 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Eg: immediate, 1 month, etc...",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select hiring time' : null,
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select hiring time'
+          : null,
     );
   }
 
@@ -157,17 +184,19 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Select 0-100",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select position count' : null,
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select position count'
+          : null,
     );
   }
 
   Widget _buildExperience(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.experienceOptions.contains(jobCreateVM.selectExperience)
-          ? jobCreateVM.selectExperience
-          : null,
+      value:
+          jobCreateVM.experienceOptions.contains(jobCreateVM.selectExperience)
+              ? jobCreateVM.selectExperience
+              : null,
       title: "Experience",
       onChanged: (v) => jobCreateVM.setSelectedExperience(v as String),
       items: jobCreateVM.experienceOptions.toSet().map((value) {
@@ -177,8 +206,9 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Select 0-20",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select experience' : null,
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select experience'
+          : null,
     );
   }
 
@@ -200,16 +230,17 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildBenefits(JobCreateViewModel jobCreateVM) {
-  return CustomMultiSelectDropDown<String>(
-     items: jobCreateVM.benefitsList.toSet().toList(),
-    selectedItems: jobCreateVM.selectedBenefits,  
-    itemLabel: (item) => item,
-    hintText: "Select Benefits",
-    onSelectionChanged: (selected) {
-      jobCreateVM.setSelectedBenefits(selected);
-    },
-  );
-}
+    return CustomMultiSelectDropDown<String>(
+      items: jobCreateVM.benefitsList.toSet().toList(),
+      selectedItems: jobCreateVM.selectedBenefits,
+      itemLabel: (item) => item,
+      hintText: "Select Benefits",
+      onSelectionChanged: (selected) {
+        jobCreateVM.setSelectedBenefits(selected);
+      },
+    );
+  }
+
   Future<void> pickAndSetDate(
     BuildContext context,
     void Function(DateTime) setDate,
