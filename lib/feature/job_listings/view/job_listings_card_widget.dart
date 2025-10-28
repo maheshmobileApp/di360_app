@@ -243,8 +243,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           jobCreateVM.setJobId(jobsListingData?.id ?? "");
 
           vm.getEditJobIDData(context, jobsListingData?.id ?? "");
-          /*await jobCreateVM
-                                    .loadJobData(jobListingVM.jobDataById);*/
 
           navigationService.navigateToWithParams(
             RouteList.jobCreate,
@@ -278,6 +276,21 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             navigationService.goBack();
             vm.removeJobsListingData(context, id);
           });
+        } else if (value == "Re-Listing") {
+          jobCreateVM.clearDateFields();
+          jobCreateVM.setJobEditOption(true);
+          jobCreateVM.setJobId(jobsListingData?.id ?? "");
+
+          vm.getEditJobIDData(context, jobsListingData?.id ?? "");
+
+          navigationService.navigateToWithParams(
+            RouteList.jobCreate,
+            params: {
+              'isEdit': true,
+              'jobId': jobsListingData?.id,
+              'loadJobData': vm.myJobListingList[index]
+            },
+          );
         }
       },
       itemBuilder: (context) => [
@@ -308,7 +321,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
           ),
-          if (status == "EXPIRED")
+        if (status == "EXPIRED")
           PopupMenuItem(
             value: "Re-Listing",
             child: _buildRow(
