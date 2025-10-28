@@ -31,11 +31,12 @@ class _JobListingScreenState extends State<JobListingScreen>
         backgroundColor: AppColors.whiteColor,
       endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
-            filterWidget: GestureDetector(
+          searchWidget:false
+            /*filterWidget: GestureDetector(
           onTap: () =>
               navigationService.navigateTo(RouteList.JobSeekFilterScreen),
           child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-        )),
+        )*/),
         body: Column(
           children: [
             SizedBox(

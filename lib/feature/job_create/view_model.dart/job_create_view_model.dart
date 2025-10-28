@@ -881,7 +881,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       endLocumDateController.text = jobData?.availabilityDate![1] ?? "";
       locumDateController.text =
           "${startLocumDateController.text} - ${endLocumDateController.text}";
-      updateLocumSummary();
+      //updateLocumSummary();
     }
 
     notifyListeners();
