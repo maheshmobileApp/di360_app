@@ -110,7 +110,7 @@ class SignupScreen extends StatelessWidget
                         onTap: () {
                           if (viewModel.formKey.currentState!.validate()) {
                             viewModel.selectedCategorys = null;
-                            viewModel.businessType();
+                            viewModel.signUp(context);
                           }
                         },
                         text: "Create new account",

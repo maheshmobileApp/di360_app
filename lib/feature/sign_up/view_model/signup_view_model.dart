@@ -121,7 +121,7 @@ class SignupViewModel extends ChangeNotifier {
           "password": passController.text,
           "phone": numberController.text,
           "postal_code": postalCodeController.text,
-          "type": selectedSubscriptionType,
+          "type": '',
           "state": stateController.text,
           "status": "PENDING",
           "subscription_plan_id": selectedPlanId,

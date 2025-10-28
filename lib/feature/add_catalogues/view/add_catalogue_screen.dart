@@ -1,5 +1,4 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
@@ -8,7 +7,6 @@ import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_t
 import 'package:di360_flutter/feature/add_catalogues/view/botted_border_widget.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/schedule_expiry_data_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
