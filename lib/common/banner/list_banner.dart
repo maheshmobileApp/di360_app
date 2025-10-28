@@ -1,13 +1,14 @@
 import 'dart:async';
 
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 
 const double _bannerHorizontalPadding = 24.0;
 const double _bannerHeight = 180.0;
-const double _bannerListHeight = 250.0;
-const int _bannerScrollDuration = 3;//Duration in Seconds
+const double _bannerListHeight = 190.0;
+const int _bannerScrollDuration = 3; //Duration in Seconds
 // const int _bannerVisibleItems = 2;
 
 class ListBanner extends StatefulWidget {
@@ -86,9 +87,9 @@ class _ListBannerState extends State<ListBanner> {
             height: _bannerHeight,
             child: Card(
               elevation: 4,
+              color: AppColors.whiteColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+                  borderRadius: BorderRadius.circular(12)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

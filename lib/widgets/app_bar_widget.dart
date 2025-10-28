@@ -26,6 +26,7 @@ class AppBarWidget extends StatelessWidget
     final notificationVM = Provider.of<NotificationViewModel>(context);
     return AppBar(
       backgroundColor: AppColors.whiteColor,
+      surfaceTintColor: AppColors.whiteColor,
       title: Stack(
         clipBehavior: Clip.none,
         children: [

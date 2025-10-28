@@ -36,8 +36,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-      endDrawer: NotificationsPanel(),
-        appBar: AppBarWidget(),
+        endDrawer: NotificationsPanel(),
+        appBar: AppBarWidget(searchWidget: false),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {
             if (vm.error != null) {
