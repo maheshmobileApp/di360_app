@@ -121,7 +121,9 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeStatus(String status, BuildContext context) {
+  void changeStatus(String status, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     selectedStatus = status;
     if (status == 'All') {
       listingStatus = [
@@ -146,7 +148,9 @@ class JobListingsViewModel extends ChangeNotifier {
       listingStatus = ['REJECT'];
     }
 
-    getMyJobListingData();
+    await getMyJobListingData(context);
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
     //INACTIVE
   }
@@ -168,11 +172,14 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getMyJobListingData() async {
+  Future<void> getMyJobListingData(BuildContext context) async {
     await fetchJobStatusCounts();
+    //Loaders.circularShowLoader(context);
+
     final res = await repo.getMyJobListing(listingStatus);
     if (res != null) {
       myJobListingList = res;
+      //Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -246,7 +253,7 @@ class JobListingsViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger('JobListingData removed successfully');
       Loaders.circularHideLoader(context);
-      getMyJobListingData();
+      getMyJobListingData(context);
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
@@ -261,7 +268,7 @@ class JobListingsViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger('JobListingData update successfully');
       Loaders.circularHideLoader(context);
-      getMyJobListingData();
+      getMyJobListingData(context);
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);

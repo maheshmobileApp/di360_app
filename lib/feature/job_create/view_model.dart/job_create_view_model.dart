@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/toast.dart';
@@ -40,6 +41,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final linkedInController = TextEditingController();
   final locationSearchController = TextEditingController();
   final stateController = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
   final cityPostCodeController = TextEditingController();
   final minSalaryController = TextEditingController();
   final maxSalaryController = TextEditingController();
@@ -53,6 +56,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   DateTime? startLocumDate;
   DateTime? endLocumDate;
   bool showLocumDate = false;
+
+  void clearDateFields() {
+    locumDateController.clear();
+    startLocumDateController.clear();
+    endLocumDateController.clear();
+  }
+
   // Selected dropdown values
   String? selectedRole;
   String? selectedEmploymentType;
@@ -80,7 +90,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   // Files
   File? logoFile;
   File? bannerFile;
-  List<File> clinicPhotos = [];
+  String? serverBannerImg;
+  List<File>? clinicPhotos = [];
+  List<String> serverClinicImgs = [];
+  bool editMode = false;
+  List<CourseBannerImage> selectedClinicImgList = [];
 
   void setBannerImg(File? value) {
     bannerFile = value;
@@ -90,6 +104,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   void setClinicPhotos(List<File> value) {
     clinicPhotos = value;
+    notifyListeners();
+  }
+
+  void setServerClinic(List<String> value) {
+    serverClinicImgs = value;
     notifyListeners();
   }
 
@@ -184,8 +203,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   // ───── Navigation Methods ─────
   void goToNextStep() {
     if (!validateCurrentStep()) return;
-    if (_currentStep == 1 && bannerFile != null) {
-      validateLogoAndBanner();
+    if (_currentStep == 1) {
+      (bannerFile != null) ? validateLogoAndBanner() : null;
+      (clinicPhotos != null) ? validateClinic() : null;
     }
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
@@ -224,6 +244,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   void setJobEditOption(bool value) {
     jobEditOptionEnable = value;
+    editMode = value;
     notifyListeners();
   }
 
@@ -245,10 +266,78 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void validateLogoAndBanner() async {
-    var value = await _http.uploadImage(bannerFile?.path);
-    banner_image = value['url'];
-    print(banner_image);
+    if (serverBannerImg == null) {
+      var value = await _http.uploadImage(bannerFile?.path);
+      banner_image = value['url'];
+      print(banner_image);
+      notifyListeners();
+    } else {
+      banner_image = serverBannerImg ?? "";
+      notifyListeners();
+    }
+  }
+
+  Future<void> validateClinic() async {
+    if (editMode) {
+      selectedClinicImgList = await uploadFiles(
+        clinicPhotos,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls = selectedClinicImgList
+          .map((img) => img.url)
+          .whereType<String>()
+          .toList();
+      if (serverClinicImgs == null) {
+        serverClinicImgs = newUrls;
+      } else {
+        serverClinicImgs = [...serverClinicImgs!, ...newUrls];
+      }
+
+      selectedClinicImgList = serverClinicImgs!
+          .map(
+            (url) => CourseBannerImage(
+              name: url.split('/').last,
+              url: url,
+              type: "image/jpeg", // you can adjust if you have type info
+              size: 0, // since we don’t know original file size
+            ),
+          )
+          .toList();
+    } else {
+      // Otherwise upload the new images
+      selectedClinicImgList = await uploadFiles(
+        clinicPhotos,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+    }
+
     notifyListeners();
+  }
+
+  Future<List<T>> uploadFiles<T>(
+    List<File>? files,
+    T Function(File, Map<String, dynamic>) builder,
+  ) async {
+    if (files == null || files.isEmpty) return [];
+
+    final List<T> uploaded = [];
+
+    for (var file in files) {
+      final response = await _http.uploadImage(file.path);
+
+      uploaded.add(builder(file, response));
+    }
+    return uploaded;
   }
 
   bool validateOtherLinksStep() {
@@ -449,7 +538,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
- /* Future<void> pickClinicPhoto(ImageSource source) async {
+  /* Future<void> pickClinicPhoto(ImageSource source) async {
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
@@ -468,7 +557,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }*/
 
-  Future<Map<String, dynamic>> uploadFiles(
+  /* Future<Map<String, dynamic>> uploadFiless(
     Map<String, String?> filePaths, {
     List<File>? clinicPhotos,
   }) async {
@@ -504,7 +593,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       responses['clinic_logo'] = [];
     }
     return responses;
-  }
+  }*/
 
   // ───── Data Fetching ─────
   Future<void> fetchJobRoles() async {
@@ -536,13 +625,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 // #region ... Create Job
   Future<void> createdJobListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
-    Map<String, String?> filePaths = {
+    /*Map<String, String?> filePaths = {
       'banner': bannerFile?.path,
     };
-    final uploadedFiles = await uploadFiles(
+    final uploadedFiles = await uploadFiless(
       filePaths,
       clinicPhotos: clinicPhotos,
-    );
+    );*/
     final result = await repo.createJobListing({
       "postjobObj": {
         "title": jobTitleController.text, // String
@@ -587,7 +676,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": bannerFile != null
             ? [
                 {
-                  "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
+                  "url": banner_image,
                   "name": bannerFile!.path.split("/").last,
                   "type": "image",
                   "extension": "jpeg",
@@ -595,23 +684,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
               ]
             : [],
 
-        "clinic_logo": clinicPhotos.isNotEmpty
-            ? clinicPhotos.asMap().entries.map((entry) {
-                final index = entry.key;
-                final file = entry.value;
-                final uploadedList = uploadedFiles['clinic_logo'];
-                return {
-                  "url": (uploadedList != null &&
-                          uploadedList.length > index &&
-                          uploadedList[index]?["url"] != null)
-                      ? uploadedList[index]["url"]
-                      : file.path,
-                  "name": file.path.split("/").last,
-                  "type": "image",
-                  "extension": "jpeg",
-                };
-              }).toList()
-            : [],
+        "clinic_logo": selectedClinicImgList,
 
         // {
         //   "url":
@@ -658,10 +731,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     Map<String, String?> filePaths = {
       'banner': bannerFile?.path,
     };
-    final uploadedFiles = await uploadFiles(
+    /* final uploadedFiles = await uploadFiles(
       filePaths,
       clinicPhotos: clinicPhotos,
-    );
+    );*/
     final result = await repo.updateJobListing({
       "id": jobId,
       "postjobObj": {
@@ -707,7 +780,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": bannerFile != null
             ? [
                 {
-                  "url": uploadedFiles['banner']?["url"] ?? bannerFile!.path,
+                  "url": banner_image,
                   "name": bannerFile!.path.split("/").last,
                   "type": "image",
                   "extension": "jpeg",
@@ -715,23 +788,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
               ]
             : [],
 
-        "clinic_logo": clinicPhotos.isNotEmpty
-            ? clinicPhotos.asMap().entries.map((entry) {
-                final index = entry.key;
-                final file = entry.value;
-                final uploadedList = uploadedFiles['clinic_logo'];
-                return {
-                  "url": (uploadedList != null &&
-                          uploadedList.length > index &&
-                          uploadedList[index]?["url"] != null)
-                      ? uploadedList[index]["url"]
-                      : file.path,
-                  "name": file.path.split("/").last,
-                  "type": "image",
-                  "extension": "jpeg",
-                };
-              }).toList()
-            : [],
+        "clinic_logo": selectedClinicImgList,
 
         // {
         //   "url":
@@ -770,7 +827,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       navigationService.goBack();
       Loaders.circularHideLoader(context);
       scaffoldMessenger("Course is updated Successfully");
-
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -784,7 +840,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     jobDescController.text = jobData?.description ?? "";
     videoLinkController.text = jobData?.video ?? "";
     countryController.text = jobData?.country ?? "";
-    //bannerFile = jobData?.bannerImage??"";
+    serverBannerImg = jobData?.bannerImage?.url;
+
+    serverClinicImgs =
+        jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
+            [];
     selectExperience = jobData?.yearsOfExperience ?? "";
     websiteController.text = jobData?.websiteUrl ?? "";
     facebookController.text = jobData?.facebookUrl ?? "";
@@ -821,7 +881,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         jobData?.availabilityDate!.length == 2) {
       startLocumDateController.text = jobData?.availabilityDate![0] ?? "";
       endLocumDateController.text = jobData?.availabilityDate![1] ?? "";
-      updateLocumSummary();
+      locumDateController.text =
+          "${startLocumDateController.text} - ${endLocumDateController.text}";
+      //updateLocumSummary();
     }
 
     notifyListeners();
