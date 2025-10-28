@@ -2,7 +2,6 @@ import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/ad
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
-import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import '../model/filter_section_model.dart';
 

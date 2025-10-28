@@ -1,7 +1,6 @@
 import 'package:di360_flutter/feature/home/view/grid_widget.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
-import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
