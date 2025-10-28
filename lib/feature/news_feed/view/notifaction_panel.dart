@@ -74,7 +74,7 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                                       color: AppColors.black)),
                             ),
                             addVertical(8),
-                          /*  Padding(
+                            /*  Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                               child: Align(

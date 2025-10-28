@@ -27,7 +27,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
     final categoryVM = Provider.of<AddNewsFeedViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     return Scaffold(
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: AppColors.whiteColor,
         endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
           filterWidget: Row(
@@ -94,7 +94,6 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         ),
         body: Column(
           children: [
-            Container(color: AppColors.whiteColor, child: Divider()),
             Expanded(
               child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
                   ? Center(

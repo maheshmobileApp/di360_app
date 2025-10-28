@@ -1,9 +1,12 @@
+import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,60 +18,54 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final filterProvider = Provider.of<DirectoryViewModel>(context);
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.buttomBarColor,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              Column(
+    return Scaffold(
+      backgroundColor: AppColors.buttomBarColor,
+      endDrawer: NotificationsPanel(),
+      appBar: AppBarWidget(searchWidget: false),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            Column(
+              children: [
+                ListBanner(),
+                addVertical(6),
+                buildSearchBar(filterProvider, context),
+                //  addVertical(16),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: buildFilters(filterProvider, context),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.asset(
-                      ImageConst.catalogueBg,
-                      fit: BoxFit.cover,
-                    ),
+                  AppButton(
+                    text: 'Clear',
+                    height: 40,
+                    width: 150,
+                    onTap: () async {
+                      filterProvider.clearFilter();
+                      navigationService.goBack();
+                    },
                   ),
-                  addVertical(16),
-                  buildSearchBar(filterProvider, context),
-                  //  addVertical(16),
+                  AppButton(
+                    text: 'Apply',
+                    height: 40,
+                    width: 150,
+                    onTap: () async {
+                      await filterProvider.getDirectorsList(context);
+                      navigationService.goBack();
+                    },
+                  ),
                 ],
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: buildFilters(filterProvider, context),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    AppButton(
-                      text: 'Clear',
-                      height: 40,
-                      width: 150,
-                      onTap: () async {
-                        filterProvider.clearFilter();
-                        navigationService.goBack();
-                      },
-                    ),
-                    AppButton(
-                      text: 'Apply',
-                      height: 40,
-                      width: 150,
-                      onTap: () async {
-                        await filterProvider.getDirectorsList(context);
-                        navigationService.goBack();
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

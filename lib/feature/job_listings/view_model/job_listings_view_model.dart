@@ -205,12 +205,7 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> getEditJobIDData(BuildContext context, String jobId) async {
     final res = await repo.getEditJobIDData(jobId);
-    if (res != null){
-       jobDataById = res;
-
-    }
-   
-
+     jobDataById = res;
     notifyListeners();
   }
 

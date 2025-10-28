@@ -26,6 +26,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
         physics: NeverScrollableScrollPhysics(),
         itemCount: ConstantData.homeGridImgs.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisSpacing: 50,
             crossAxisCount: 3, childAspectRatio: 4.4 / 3),
         itemBuilder: (context, index) {
           final img = ConstantData.homeGridImgs[index];
