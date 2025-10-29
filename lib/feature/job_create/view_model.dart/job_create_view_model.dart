@@ -204,8 +204,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   void goToNextStep() {
     if (!validateCurrentStep()) return;
     if (_currentStep == 1) {
-      (bannerFile != null) ? validateLogoAndBanner() : null;
-      (clinicPhotos != null) ? validateClinic() : null;
+      /*(bannerFile != null) ? validateLogoAndBanner() : null;
+      validateClinic();*/
     }
     if (_currentStep < totalSteps - 1) {
       _currentStep++;
@@ -265,7 +265,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     return formKeys[_currentStep].currentState?.validate() ?? false;
   }
 
-  void validateLogoAndBanner() async {
+  Future<void> validateLogoAndBanner() async {
     if (serverBannerImg == null) {
       var value = await _http.uploadImage(bannerFile?.path);
       banner_image = value['url'];
