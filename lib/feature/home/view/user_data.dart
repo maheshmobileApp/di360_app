@@ -57,16 +57,15 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(children: [
-            addVertical(60),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(userName ?? homeViewModel.userName ?? '',
-                  style: TextStyles.clashMedium(
-                      fontSize: 20, color: AppColors.black)),
-            ),
-            addVertical(10),
+            addVertical(50),
             Divider(color: AppColors.dividerColor),
-            addVertical(10),
+             addVertical(6),
+            Text(userName ?? homeViewModel.userName ?? '',
+                style: TextStyles.clashMedium(
+                    fontSize: 20, color: AppColors.black)),
+            addVertical(6),
+            Divider(color: AppColors.dividerColor),
+            addVertical(6),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               followerData(
                   'Followers',
@@ -77,7 +76,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   followingCount ??
                       '${homeViewModel.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}')
             ]),
-            addVertical(10),
+            addVertical(6),
             Divider(color: AppColors.dividerColor),
             addVertical(35)
           ]))

@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
@@ -93,32 +94,46 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromRGBO(116, 130, 148, 0.15),
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: InkWell(
-              onTap: () async {
+          GestureDetector(
+            onTap: () async {
+              final count =
+                  jobsListingData?.jobApplicantsAggregate?.aggregate?.count ??
+                      0;
+
+              if (count != 0) {
+                Loaders.circularShowLoader(context);
                 viewModel.jobId = jobsListingData?.id ?? '';
                 await viewModel.getMyJobApplicantsgData(
-                    context, jobsListingData?.id ?? '');
+                  context,
+                  jobsListingData?.id ?? '',
+                );
+                Loaders.circularHideLoader(context);
+
                 navigationService.navigateToWithParams(
-                    RouteList.JobListingApplicantscreen,
-                    params: jobsListingData);
-              },
+                  RouteList.JobListingApplicantscreen,
+                  params: jobsListingData,
+                );
+              } else {
+                scaffoldMessenger("0 Applicants Applied");
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color.fromRGBO(116, 130, 148, 0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Center(
                 child: Text(
                   "${jobsListingData?.jobApplicantsAggregate?.aggregate?.count ?? 0} Applicants applied for this role",
@@ -272,9 +287,10 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           });
         } else if (value == "Delete") {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
-              onBack: () {
-            navigationService.goBack();
-            vm.removeJobsListingData(context, id);
+              onBack: () async {
+            await vm.removeJobsListingData(context, id);
+                        navigationService.goBack();
+
           });
         } else if (value == "Re-Listing") {
           jobCreateVM.clearDateFields();

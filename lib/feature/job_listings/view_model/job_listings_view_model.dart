@@ -187,13 +187,13 @@ class JobListingsViewModel extends ChangeNotifier {
   Future<void> getMyJobApplicantsgData(
       BuildContext context, String jobId) async {
     await fetchJobApplicantsCount(jobId);
-    Loaders.circularShowLoader(context);
+    //Loaders.circularShowLoader(context);
     final res = await repo.getJobApplicants(listingStatusforapplicants, jobId);
     if (res != null) {
       myApplicantsList = res;
-      Loaders.circularHideLoader(context);
+      //Loaders.circularHideLoader(context);
     } else {
-      Loaders.circularShowLoader(context);
+      //Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -212,7 +212,7 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> getEditJobIDData(BuildContext context, String jobId) async {
     final res = await repo.getEditJobIDData(jobId);
-     jobDataById = res;
+    jobDataById = res;
     notifyListeners();
   }
 
@@ -251,9 +251,10 @@ class JobListingsViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.removeJobListing(id);
     if (res != null) {
-      scaffoldMessenger('JobListingData removed successfully');
+      
+      await getMyJobListingData(context);
       Loaders.circularHideLoader(context);
-      getMyJobListingData(context);
+      scaffoldMessenger('JobListingData removed successfully');
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);

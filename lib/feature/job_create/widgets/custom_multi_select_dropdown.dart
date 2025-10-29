@@ -61,61 +61,85 @@ class _CustomMultiSelectDropDownState<T>
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
+    
+  final screenHeight = MediaQuery.of(context).size.height;
+  const double dropdownMaxHeight = 300;
+
+  // Check if there’s enough space below; otherwise, show above
+  final bool showAbove = (offset.dy + size.height + dropdownMaxHeight) > screenHeight;
+
+
     return OverlayEntry(
-      builder: (context) => Positioned(
-        left: offset.dx,
-        width: size.width,
-        top: offset.dy + size.height,
-        child: CompositedTransformFollower(
-          link: _layerLink,
-          showWhenUnlinked: false,
-          offset: Offset(0, size.height),
-          child: Material(
-            elevation: 4,
-            borderRadius: BorderRadius.circular(8),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 250),
-              child: StatefulBuilder(
-                builder: (context, setStateOverlay) {
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemCount: widget.items.length,
-                    itemBuilder: (context, index) {
-                      final item = widget.items[index];
-                      final isSelected = _selected.contains(item);
-                      return CheckboxListTile(
-                        dense: true,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 8),
-                        activeColor: AppColors.primaryColor,
-                        value: isSelected,
-                        title: Text(
-                          widget.itemLabel(item),
-                          style: TextStyles.regular3(
-                            color: isSelected ? AppColors.primaryColor: AppColors.black,
+      builder: (context) => Stack(
+
+        children: [
+        // 🔹 This layer detects taps outside and closes dropdown
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: _closeDropdown,
+            behavior: HitTestBehavior.translucent,
+            child: Container(color: Colors.transparent),
+          ),
+        ), Positioned(
+          left: offset.dx,
+          width: size.width,
+          top: showAbove
+              ? offset.dy - dropdownMaxHeight // show above
+              : offset.dy + size.height,    
+          child: CompositedTransformFollower(
+            link: _layerLink,
+            showWhenUnlinked: false,
+            offset:  showAbove
+                ? Offset(0, -size.height - 8)
+                : Offset(0, size.height + 4),
+            child: Material(
+              color: AppColors.whiteColor,
+              elevation: 4,
+              borderRadius: BorderRadius.circular(8),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 500),
+                child: StatefulBuilder(
+                  builder: (context, setStateOverlay) {
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: widget.items.length,
+                      itemBuilder: (context, index) {
+                        final item = widget.items[index];
+                        final isSelected = _selected.contains(item);
+                        return CheckboxListTile(
+                          dense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
+                          activeColor: AppColors.primaryColor,
+                          value: isSelected,
+                          title: Text(
+                            widget.itemLabel(item),
+                            style: TextStyles.regular3(
+                              color: isSelected ? AppColors.primaryColor: AppColors.black,
+                            ),
                           ),
-                        ),
-                        onChanged: (checked) {
-                          setStateOverlay(() {
-                            if (checked == true) {
-                              _selected.add(item);
-                            } else {
-                              _selected.remove(item);
-                            }
-                          });
-                          setState(() {
-                            widget.onSelectionChanged(List<T>.from(_selected));
-                          });
-                        },
-                      );
-                    },
-                  );
-                },
+                          onChanged: (checked) {
+                            setStateOverlay(() {
+                              if (checked == true) {
+                                _selected.add(item);
+                              } else {
+                                _selected.remove(item);
+                              }
+                            });
+                            setState(() {
+                              widget.onSelectionChanged(List<T>.from(_selected));
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
+        ),]
       ),
     );
   }

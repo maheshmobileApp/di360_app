@@ -59,14 +59,9 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                 onTap: () {},
               ),
               addVertical(16),
-              Text(
-                " Start Locum Dates",
-                style: TextStyles.regular3(color: AppColors.black),
-              ),
-              addVertical(4),
               CustomDatePicker(
                 controller: jobCreateVM.startLocumDateController,
-                text: "",
+                title: "Start Locum Date",
                 hintText: "Select start date",
                 onTap: () async {
                   final picked = await showDatePicker(
@@ -83,14 +78,9 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                 },
               ),
               addVertical(16),
-              Text(
-                " End Locum Dates ",
-                style: TextStyles.regular3(color: AppColors.black),
-              ),
-              addVertical(4),
               CustomDatePicker(
                 controller: jobCreateVM.endLocumDateController,
-                text: "",
+                title: "End Locum Date",
                 hintText: "Select end date",
                 onTap: () async {
                   final picked = await showDatePicker(
@@ -109,7 +99,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                 },
               ),
               addVertical(10),
-              Row(
+              /*Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
@@ -131,7 +121,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                     child: const Text("Save"),
                   ),
                 ],
-              ),
+              ),*/
             ],
             _sectionHeader("Job Description"),
             addVertical(16),
@@ -160,32 +150,31 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildRoleTypes(JobCreateViewModel jobCreateVM) {
-  final validRoles = jobCreateVM.roleOptions;
+    final validRoles = jobCreateVM.roleOptions;
 
-  final selectedValue = validRoles.contains(jobCreateVM.selectedRole)
-      ? jobCreateVM.selectedRole
-      : null;
+    final selectedValue = validRoles.contains(jobCreateVM.selectedRole)
+        ? jobCreateVM.selectedRole
+        : null;
 
-  return CustomDropDown(
-    isRequired: true,
-    value: selectedValue,
-    title: "Role",
-    onChanged: (v) {
-      jobCreateVM.setSelectedRole(v as String);
-    },
-    items: validRoles.map<DropdownMenuItem<Object>>((String value) {
-      return DropdownMenuItem<Object>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-    hintText: "Select role type",
-    validator: (value) => value == null || value.toString().isEmpty
-        ? 'Please select role type'
-        : null,
-  );
-}
-
+    return CustomDropDown(
+      isRequired: true,
+      value: selectedValue,
+      title: "Role",
+      onChanged: (v) {
+        jobCreateVM.setSelectedRole(v as String);
+      },
+      items: validRoles.map<DropdownMenuItem<Object>>((String value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select role type",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select role type'
+          : null,
+    );
+  }
 
   Widget _buildEmpTypes(JobCreateViewModel jobCreateVM) {
     return Column(
