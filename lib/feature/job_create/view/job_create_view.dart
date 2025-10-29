@@ -179,19 +179,15 @@ class _JobCreateViewState extends State<JobCreateView> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
-                final currentFormKey =
-                    jobCreateVM.formKeys[jobCreateVM.currentStep];
-                if (currentFormKey.currentState?.validate() ?? false) {
-                  if (isLastStep) {
-                    await jobCreateVM.createdJobListing(context, true);
-                    await context
-                        .read<JobListingsViewModel>()
-                        .getMyJobListingData(context);
-                    navigationService.goBack();
-                  } else {
-                    jobCreateVM.goToNextStep();
-                  }
-                }
+                (jobCreateVM.bannerFile != null)
+                    ? jobCreateVM.validateLogoAndBanner()
+                    : null;
+                await jobCreateVM.validateClinic();
+                await jobCreateVM.createdJobListing(context, true);
+                navigationService.goBack();
+                await context
+                    .read<JobListingsViewModel>()
+                    .getMyJobListingData(context);
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -206,6 +202,10 @@ class _JobCreateViewState extends State<JobCreateView> {
               height: 42,
               fontSize: 12,
               onPressed: () async {
+                (jobCreateVM.bannerFile != null)
+                    ? jobCreateVM.validateLogoAndBanner()
+                    : null;
+                await jobCreateVM.validateClinic();
                 if (jobCreateVM.jobEditOptionEnable) {
                   final currentFormKey =
                       jobCreateVM.formKeys[jobCreateVM.currentStep];
