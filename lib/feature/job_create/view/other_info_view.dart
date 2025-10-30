@@ -41,46 +41,27 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             Row(
               children: [
                 Expanded(
-                  child: /*AbsorbPointer(
-                    absorbing: !jobCreateVM.isStartDateEnabled,
-                    child: CustomDatePicker(
-                      controller: TextEditingController(
-                        text: jobCreateVM.startDate != null
-                            ? "${jobCreateVM.startDate!.day}/${jobCreateVM.startDate!.month}/${jobCreateVM.startDate!.year}"
-                            : '',
-                      ),
-                      onTap: jobCreateVM.isStartDateEnabled
-                          ? () => pickAndSetDate(context, jobCreateVM.setStartDate)
-                          : null,
-                      validator: (_) => jobCreateVM.validateStartDate(
-                        jobCreateVM.isStartDateEnabled,
-                        jobCreateVM.startDate,
-                      ),
-                    ),
-                  ),*/
-                  Expanded(
-                  child: (jobCreateVM.isStartDateEnabled)
-                      ? CustomDatePicker(
-                          title: "",
-                          controller: jobCreateVM.startDateController,
-                          text: null,
-                          hintText: "Date",
-                          onTap: () async {
-                            final picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              jobCreateVM.startDateController.text =
-                                  "${picked.day}/${picked.month}/${picked.year}";
-                            }
-                          },
-                        )
-                      : SizedBox.shrink(),
-                ),
-                ),
+                child: (jobCreateVM.isStartDateEnabled)
+                    ? CustomDatePicker(
+                        title: "",
+                        controller: jobCreateVM.startDateController,
+                        text: null,
+                        hintText: "Date",
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            jobCreateVM.startDateController.text =
+                                "${picked.day}/${picked.month}/${picked.year}";
+                          }
+                        },
+                      )
+                    : SizedBox.shrink(),
+                                ),
                 addHorizontal(8),
                 Expanded(
                   child: (jobCreateVM.isEndDateEnabled)

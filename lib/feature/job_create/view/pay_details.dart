@@ -34,8 +34,9 @@ class PayDetails extends StatelessWidget with BaseContextHelpers {
               title: "Minimum",
               hintText: "000000",
               isRequired: true,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter minimum salary' : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter minimum salary'
+                  : null,
             ),
             addVertical(8),
             InputTextField(
@@ -45,8 +46,20 @@ class PayDetails extends StatelessWidget with BaseContextHelpers {
               title: "Maximum",
               hintText: "000000",
               isRequired: true,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter maximum salary' : null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter maximum salary';
+                }
+
+                final min = int.tryParse(vm.minSalaryController.text) ?? 0;
+                final max = int.tryParse(value) ?? 0;
+
+                if (max <= min) {
+                  return 'Should be greater than minimum salary';
+                }
+
+                return null;
+              },
             ),
           ],
         ),
@@ -74,34 +87,35 @@ class PayDetails extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Select pay range",
-      validator: (value) =>
-          value == null || value.toString().isEmpty ? 'Please select pay range' : null,
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select pay range'
+          : null,
     );
   }
 
   Widget _buildRateDetails(JobCreateViewModel jobCreateVM) {
-  final validRateTypes = jobCreateVM.rateTypes;
+    final validRateTypes = jobCreateVM.rateTypes;
 
-  // ✅ Ensure the selected value exists in the current list
-  final selectedValue = validRateTypes.contains(jobCreateVM.selectRate)
-      ? jobCreateVM.selectRate
-      : null;
+    // ✅ Ensure the selected value exists in the current list
+    final selectedValue = validRateTypes.contains(jobCreateVM.selectRate)
+        ? jobCreateVM.selectRate
+        : null;
 
-  return CustomDropDown(
-    isRequired: true,
-    value: selectedValue,
-    title: "Rate",
-    onChanged: (v) => jobCreateVM.setSelectedRateRange(v as String),
-    items: validRateTypes.map((value) {
-      return DropdownMenuItem<Object>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-    hintText: "Select rate",
-    validator: (value) =>
-        value == null || value.toString().isEmpty ? 'Please select rate' : null,
-  );
-}
-
+    return CustomDropDown(
+      isRequired: true,
+      value: selectedValue,
+      title: "Rate",
+      onChanged: (v) => jobCreateVM.setSelectedRateRange(v as String),
+      items: validRateTypes.map((value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select rate",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select rate'
+          : null,
+    );
+  }
 }

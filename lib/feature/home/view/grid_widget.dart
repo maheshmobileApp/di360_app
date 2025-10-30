@@ -19,32 +19,29 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final dashBoardVM = Provider.of<DashBoardViewModel>(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: ConstantData.homeGridImgs.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 50,
-            crossAxisCount: 3, childAspectRatio: 4.4 / 3),
-        itemBuilder: (context, index) {
-          final img = ConstantData.homeGridImgs[index];
-          final title = ConstantData.homeGridTitles[index];
-          return GestureDetector(
-            onTap: () {
-              gridOnTap(title, context, dashBoardVM);
-            },
-            child: Column(
-              children: [
-                SvgPicture.asset(img),
-                addVertical(10),
-                Text(title, style: TextStyles.regular2(color: AppColors.black))
-              ],
-            ),
-          );
-        },
-      ),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: ConstantData.homeGridImgs.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        mainAxisSpacing: 20,
+          crossAxisCount: 3, childAspectRatio: 4.4 / 3),
+      itemBuilder: (context, index) {
+        final img = ConstantData.homeGridImgs[index];
+        final title = ConstantData.homeGridTitles[index];
+        return GestureDetector(
+          onTap: () {
+            gridOnTap(title, context, dashBoardVM);
+          },
+          child: Column(
+            children: [
+              SvgPicture.asset(img),
+              addVertical(10),
+              Text(title, style: TextStyles.regular2(color: AppColors.black))
+            ],
+          ),
+        );
+      },
     );
   }
 

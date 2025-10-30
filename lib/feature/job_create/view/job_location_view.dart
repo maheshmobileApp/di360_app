@@ -9,7 +9,9 @@ import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/place_type.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:provider/provider.dart';
+
 const googleApiKey = "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70";
+
 class JobLocationView extends StatelessWidget {
   const JobLocationView({super.key});
 
@@ -45,7 +47,18 @@ class JobLocationView extends StatelessWidget {
                 GooglePlaceAutoCompleteTextField(
                   textEditingController: jobCreateVM.locationSearchController,
                   googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
-                  inputDecoration: InputDecoration(),
+                  inputDecoration: InputDecoration(
+                    hintText: "Search Location",
+                    hintStyle:
+                        TextStyles.regular4(color: AppColors.dropDownHint),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    isDense: true,
+                  ),
                   debounceTime: 800, // default 600 ms,
                   // countries: ["in", "fr"], // optional by default null is set
                   isLatLngRequired:
@@ -63,6 +76,7 @@ class JobLocationView extends StatelessWidget {
                   // if we want to make custom list item builder
                   itemBuilder: (context, index, Prediction prediction) {
                     return Container(
+                      color: AppColors.whiteColor,
                       padding: EdgeInsets.all(10),
                       child: Row(
                         children: [
@@ -76,8 +90,6 @@ class JobLocationView extends StatelessWidget {
                       ),
                     );
                   },
-                  // if you want to add seperator between list items
-                  seperatedBuilder: Divider(),
                   // want to show close icon
                   isCrossBtnShown: true,
                   // optional container padding
@@ -126,9 +138,7 @@ class JobLocationView extends StatelessWidget {
     );
   }
 
-
-
-Future<void> getPlaceDetails(
+  Future<void> getPlaceDetails(
       String placeId, JobCreateViewModel jobCreateVM) async {
     final String apiKey = googleApiKey;
     final String url =
@@ -183,7 +193,6 @@ Future<void> getPlaceDetails(
       print("Dio error: $e");
     }
   }
-
 
   Widget _sectionHeader(String title) {
     return Text(

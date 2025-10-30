@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_create/view/job_info.dart';
 import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
 import 'package:di360_flutter/feature/job_create/view/logo_banner_view.dart';
@@ -9,8 +10,11 @@ import 'package:di360_flutter/feature/job_create/view/pay_details.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_create_enum.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +58,7 @@ class _JobCreateViewState extends State<JobCreateView> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: IconButton(
             onPressed: () {
               NavigationService().goBack();
@@ -64,21 +69,28 @@ class _JobCreateViewState extends State<JobCreateView> {
           style: TextStyles.medium2(),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 5,
-                horizontal: 8,
-              ),
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(255, 241, 229, 1),
-                borderRadius: BorderRadius.circular(200),
-              ),
-              child: Text(
-                "Preview",
-                style:
-                    TextStyles.regular1(color: Color.fromRGBO(255, 112, 0, 1)),
+          GestureDetector(
+            onTap: () async {
+              await jobCreateVM.setJobPreviewData();
+              navigationService.navigateToWithParams(RouteList.jobdetailsScreen,
+                  params: jobCreateVM.createJobPreviewData);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(255, 241, 229, 1),
+                  borderRadius: BorderRadius.circular(200),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                  child: Text(
+                    "Preview",
+                    style: TextStyles.semiBold(
+                        color: Color.fromRGBO(255, 112, 0, 1)),
+                  ),
+                ),
               ),
             ),
           )
@@ -179,15 +191,16 @@ class _JobCreateViewState extends State<JobCreateView> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
-                (jobCreateVM.bannerFile != null)
-                    ? jobCreateVM.validateLogoAndBanner()
-                    : null;
-                await jobCreateVM.validateClinic();
-                await jobCreateVM.createdJobListing(context, true);
+                (jobCreateVM.jobEditOptionEnable)
+                    ? await jobCreateVM.updateJobListing(
+                        context, true, jobCreateVM.jobId ?? "")
+                    : await jobCreateVM.createdJobListing(context, true);
+                //jobListingVM.selectedStatus = "All";
+                await jobListingVM.getMyJobListingData(context);
+
                 navigationService.goBack();
-                await context
-                    .read<JobListingsViewModel>()
-                    .getMyJobListingData(context);
+                Loaders.circularHideLoader(context);
+                scaffoldMessenger("Course is Saved to Draft");
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -202,10 +215,6 @@ class _JobCreateViewState extends State<JobCreateView> {
               height: 42,
               fontSize: 12,
               onPressed: () async {
-                (jobCreateVM.bannerFile != null)
-                    ? jobCreateVM.validateLogoAndBanner()
-                    : null;
-                await jobCreateVM.validateClinic();
                 if (jobCreateVM.jobEditOptionEnable) {
                   final currentFormKey =
                       jobCreateVM.formKeys[jobCreateVM.currentStep];
@@ -213,8 +222,11 @@ class _JobCreateViewState extends State<JobCreateView> {
                     if (isLastStep) {
                       await jobCreateVM.updateJobListing(
                           context, false, jobCreateVM.jobId ?? "");
-                      jobListingVM.selectedStatus = "All";
+                      //jobListingVM.selectedStatus = "All";
                       await jobListingVM.getMyJobListingData(context);
+                      navigationService.goBack();
+                      Loaders.circularHideLoader(context);
+                      scaffoldMessenger("Course is Updated Successfully!");
                     } else {
                       jobCreateVM.goToNextStep();
                     }
@@ -225,7 +237,11 @@ class _JobCreateViewState extends State<JobCreateView> {
                   if (currentFormKey.currentState?.validate() ?? false) {
                     if (isLastStep) {
                       await jobCreateVM.createdJobListing(context, false);
+                      //jobListingVM.selectedStatus = "All";
+                      await jobListingVM.getMyJobListingData(context);
                       navigationService.goBack();
+                      Loaders.circularHideLoader(context);
+                      scaffoldMessenger("Course is Created Successfully!");
                     } else {
                       jobCreateVM.goToNextStep();
                     }

@@ -233,7 +233,13 @@ class ImagePickerField extends StatelessWidget {
               ),
             const SizedBox(height: 10),
             GestureDetector(
-              onTap: () => _showPickerSheet(context, field),
+              //onTap: () => _showPickerSheet(context, field),
+              onTap: (selectedFile == null &&
+                      (selectedFiles == null || selectedFiles!.isEmpty) &&
+                      (serverImage == null || serverImage!.isEmpty) &&
+                      (serverImages == null || serverImages!.isEmpty))
+                  ? () => _showPickerSheet(context, field)
+                  : null,
               child: DottedBorder(
                 color: field.hasError ? Colors.red : Colors.grey.shade400,
                 strokeWidth: 1.5,
