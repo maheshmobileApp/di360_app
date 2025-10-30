@@ -83,7 +83,8 @@ class _JobCreateViewState extends State<JobCreateView> {
                   borderRadius: BorderRadius.circular(200),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                   child: Text(
                     "Preview",
                     style: TextStyles.semiBold(
@@ -194,9 +195,11 @@ class _JobCreateViewState extends State<JobCreateView> {
                     ? await jobCreateVM.updateJobListing(
                         context, true, jobCreateVM.jobId ?? "")
                     : await jobCreateVM.createdJobListing(context, true);
-                await jobListingVM.changeStatus("All",context);
+                //jobListingVM.selectedStatus = "All";
+                await jobListingVM.getMyJobListingData(context);
+
                 navigationService.goBack();
-                //Loaders.circularHideLoader(context);
+                Loaders.circularHideLoader(context);
                 scaffoldMessenger("Course is Saved to Draft");
               },
               backgroundColor: AppColors.timeBgColor,
@@ -219,7 +222,7 @@ class _JobCreateViewState extends State<JobCreateView> {
                     if (isLastStep) {
                       await jobCreateVM.updateJobListing(
                           context, false, jobCreateVM.jobId ?? "");
-                      jobListingVM.selectedStatus = "All";
+                      //jobListingVM.selectedStatus = "All";
                       await jobListingVM.getMyJobListingData(context);
                       navigationService.goBack();
                       Loaders.circularHideLoader(context);
@@ -234,10 +237,10 @@ class _JobCreateViewState extends State<JobCreateView> {
                   if (currentFormKey.currentState?.validate() ?? false) {
                     if (isLastStep) {
                       await jobCreateVM.createdJobListing(context, false);
-                      await jobListingVM.changeStatus("All",context);
-                      //await jobListingVM.getMyJobListingData(context);
+                      //jobListingVM.selectedStatus = "All";
+                      await jobListingVM.getMyJobListingData(context);
                       navigationService.goBack();
-                      //Loaders.circularHideLoader(context);
+                      Loaders.circularHideLoader(context);
                       scaffoldMessenger("Course is Created Successfully!");
                     } else {
                       jobCreateVM.goToNextStep();

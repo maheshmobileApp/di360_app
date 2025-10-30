@@ -267,9 +267,11 @@ class JobListingsViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.updateJobListing(id, status);
     if (res != null) {
-      scaffoldMessenger('JobListingData update successfully');
+      
+      await getMyJobListingData(context);
       Loaders.circularHideLoader(context);
-      getMyJobListingData(context);
+      scaffoldMessenger('JobListingData update successfully');
+      
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
