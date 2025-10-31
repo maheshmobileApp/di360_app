@@ -70,7 +70,7 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
           ? Center(
               child: vm.isRefreshing
                   ? const CircularProgressIndicator()
-                  : const Text(""),
+                  : const Text("No Jobs Available"),
             )
           : GenericListViewWithBanners<Jobs>(
               items: vm.jobs,

@@ -25,8 +25,8 @@ class JobSeekViewModel extends ChangeNotifier {
     filterOptions = {
       'profession': [],
       'employment': [],
-      'experience': List.generate(10, (i) =>
-          FilterItem(name: "${i + 1} Years", id: "${i + 1}")),
+      'experience': List.generate(
+          10, (i) => FilterItem(name: "${i + 1} Years", id: "${i + 1}")),
       'availability': [],
     };
     // Then safely load real data
@@ -140,39 +140,43 @@ class JobSeekViewModel extends ChangeNotifier {
 
   Future<void> fetchJobsForSelectedTab(BuildContext context) async {
     if (_selectedTabIndex == 0) {
-      await fetchFilteredJobs();
+      await fetchFilteredJobs(context);
     }
   }
 
-  Future<void> fetchFilteredJobs() async {
-  isLoading = true;
-  notifyListeners();
-
-  try {
-    print("Selected Professions: $selectedProfessions");
-    print("Selected Employment Types: $selectedEmploymentTypes");
-    print("Selected Experiences: $selectedExperiences");
-    print("Selected Availability Dates: $selectedAvailability");
-
-    final result = await repo.fetchFilteredJobs(
-      selectedProfessions,
-      selectedEmploymentTypes,
-      selectedExperiences,
-      selectedAvailability,
-    );
-
-    filteredJobs = result;
-    print("Fetched ${filteredJobs.length} filtered jobs");
-  } catch (e) {
-    print("Error fetching filtered jobs: $e");
-    filteredJobs = [];
-  } finally {
-    isLoading = false;
+  Future<void> fetchFilteredJobs(BuildContext context) async {
+    isLoading = true;
     notifyListeners();
+
+    try {
+      print("Selected Professions: $selectedProfessions");
+      print("Selected Employment Types: $selectedEmploymentTypes");
+      print("Selected Experiences: $selectedExperiences");
+      print("Selected Availability Dates: $selectedAvailability");
+          Loaders.circularShowLoader(context);
+
+      final result = await repo.fetchFilteredJobs(
+        
+        selectedProfessions,
+        selectedEmploymentTypes,
+        selectedExperiences,
+        selectedAvailability,
+        locationController.text,
+      );
+      jobs = result;
+          Loaders.circularHideLoader(context);
+
+
+      filteredJobs = result;
+      print("Fetched ${filteredJobs.length} filtered jobs");
+    } catch (e) {
+      print("Error fetching filtered jobs: $e");
+      filteredJobs = [];
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
-}
-
-
 
   Future<bool> applyJob(ApplyJobRequest applyJobRequest) async {
     applyJobRequest.jobId = selectedJob?.id ?? '';
@@ -256,10 +260,13 @@ class JobSeekViewModel extends ChangeNotifier {
       final roles = await repo.getJobRoles();
       final types = await repo.getJobWorkTypes();
 
-      filterOptions['profession'] =
-          roles.map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? '')).toList();
-      filterOptions['employment'] =
-          types.map((e) => FilterItem(name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? '')).toList();
+      filterOptions['profession'] = roles
+          .map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? ''))
+          .toList();
+      filterOptions['employment'] = types
+          .map((e) => FilterItem(
+              name: e.employeeTypeName ?? '', id: e.employeeTypeName ?? ''))
+          .toList();
 
       notifyListeners();
     } catch (e) {
@@ -279,9 +286,11 @@ class JobSeekViewModel extends ChangeNotifier {
 
   List<T> applySorting<T>(List<T> list, String Function(T) getField) {
     if (selectedSort == 'A to Z') {
-      list.sort((a, b) => getField(a).toLowerCase().compareTo(getField(b).toLowerCase()));
+      list.sort((a, b) =>
+          getField(a).toLowerCase().compareTo(getField(b).toLowerCase()));
     } else if (selectedSort == 'Z to A') {
-      list.sort((a, b) => getField(b).toLowerCase().compareTo(getField(a).toLowerCase()));
+      list.sort((a, b) =>
+          getField(b).toLowerCase().compareTo(getField(a).toLowerCase()));
     }
     return list;
   }
@@ -367,8 +376,13 @@ class JobSeekViewModel extends ChangeNotifier {
     showLocumDate = false;
     locationController.clear();
     locumDateController.clear();
+    selectedProfessions = [];
+    selectedEmploymentTypes = [];
+    selectedExperiences = [];
+    selectedAvailability = [];
     notifyListeners();
   }
+  
 
   void printSelectedItems() {
     selectedProfessions = [];

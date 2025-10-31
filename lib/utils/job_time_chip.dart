@@ -36,7 +36,7 @@ class JobTimeChip extends StatelessWidget {
         textAlign: TextAlign.right,
         style: textStyle ??
             const TextStyle(
-              fontSize: 10,
+              fontSize:8,
               fontWeight: FontWeight.w600,
               color: Color.fromRGBO(255, 112, 0, 1),
             ),

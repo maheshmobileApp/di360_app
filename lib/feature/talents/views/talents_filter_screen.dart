@@ -20,7 +20,7 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
     final model = Provider.of<TalentsViewModel>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+        backgroundColor: AppColors.buttomBarColor,
       appBar: AppbarTitleBackIconWidget(title: 'Filter Talents'),
       body: SafeArea(
         child: Padding(
@@ -28,7 +28,7 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
           child: Column(
             children: [
               addVertical(10),
-              _buildLocationSearchBar(model),
+              _buildLocationSearchBar(context, model),
               addVertical(10),
               Expanded(
                 child: SingleChildScrollView(
@@ -147,7 +147,7 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
                       width: 150,
                       onTap: () async {
                         model.clearSelections();
-                        navigationService.goBack();
+                        await model.fetchFilteredJobs(context);
                       },
                     ),
                     AppButton(
@@ -201,7 +201,7 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildLocationSearchBar(TalentsViewModel model) {
+  Widget _buildLocationSearchBar(BuildContext context,TalentsViewModel model) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -222,6 +222,7 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
                   ),
                   suffixIcon: GestureDetector(
                     onTap: () async {
+                      await model.fetchFilteredJobs(context);
                       navigationService.goBack();
                     },
                     child: const Icon(Icons.search, color: AppColors.black),
@@ -230,13 +231,13 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
                 ),
               ),
             ),
-            addHorizontal(10),
+            /*addHorizontal(10),
             CircleAvatar(
               radius: 22,
               backgroundColor: AppColors.black,
               child: const Icon(Icons.filter_alt,
                   color: AppColors.whiteColor, size: 20),
-            ),
+            ),*/
           ],
         ),
       ),
