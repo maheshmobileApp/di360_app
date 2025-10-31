@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart'
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
@@ -193,10 +194,15 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             await context
                                 .read<JobListingsViewModel>()
                                 .getMyJobListingData(context);
-                              Loaders.circularHideLoader(context);
+                            Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);
                           } else if (item.title == 'JobProfile') {
+                            Loaders.circularShowLoader(context);
+                            await context
+                                .read<JobProfileListingViewModel>()
+                                .fetchJobProfiles();
+                            Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);
                           } else if (item.title == 'Applied Jobs') {

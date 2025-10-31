@@ -85,14 +85,18 @@ class Routes {
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) {
-        final args =
-            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        final profileData = args['profileData'] ?? null;
+        final args = ModalRoute.of(context)!.settings.arguments
+                as Map<String, dynamic>? ??
+            {};
+
+        final profileData = args['profileData'] as JobProfile?;
+        final isEdit = args['isEdit'] as bool? ?? false;
+
         return ChangeNotifierProvider(
-          create: (BuildContext context) => JobProfileCreateViewModel(),
+          create: (_) => JobProfileCreateViewModel(),
           child: JobProfileView(
             profile: profileData,
-            isEdit: null,
+            isEdit: isEdit,
           ),
         );
       },

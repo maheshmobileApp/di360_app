@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -78,7 +79,7 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
             _buildEmpTypes(jobProfileVM),
            addVertical(16),
             _sectionHeader("Basic Info"),
-            LogoContainer(
+            /*LogoContainer(
               title: "Profile Image",
               imageFile: jobProfileVM.profileFile,
               onTap: () => _imagePickerSelection(
@@ -86,7 +87,19 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
                 () => jobProfileVM.pickProfileImage(ImageSource.gallery),
                 () => jobProfileVM.pickProfileImage(ImageSource.camera),
               ),
-            ),
+            ),*/
+            ImagePickerField(
+                title: "Presented By (Image)",
+                isRequired: true,
+                serverImage: jobProfileVM.serverProfileFile,
+                serverImageType: "image",
+                /*onServerFileRemoved: (value) {
+                  jobCreateVM.setPresentedImg(null);
+                },*/
+                showPreview: true,
+                selectedFile: jobProfileVM.profileFile,
+                onFilePicked: (file) => jobProfileVM.setProfileImg(file),
+              ),
             addVertical(16),
             InputTextField(
               controller: jobProfileVM.aboutMeController,
