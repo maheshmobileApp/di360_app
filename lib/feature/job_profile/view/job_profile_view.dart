@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/job_profile/view/job_profile_pers_info.dar
 import 'package:di360_flutter/feature/job_profile/view/job_profile_profe_info.dart';
 import 'package:di360_flutter/feature/job_profile/view/job_profile_skills.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_profile_enum.dart';
@@ -16,8 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class JobProfileView extends StatefulWidget with BaseContextHelpers {
-  JobProfileView({super.key, required this.profile, required isEdit});
-  final JobProfile profile;
+  JobProfileView({super.key, this.profile, required isEdit});
+  final JobProfile? profile;
 
   @override
   State<JobProfileView> createState() => _JobProfileViewState();
@@ -33,19 +34,20 @@ class _JobProfileViewState extends State<JobProfileView> {
   initilizeTheProfileData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final jobProfileVM =
-        Provider.of<JobProfileCreateViewModel>(context, listen: false);
+          Provider.of<JobProfileCreateViewModel>(context, listen: false);
       await jobProfileVM.initializeTheData(
           profile: widget.profile, isEdit: true);
     });
- 
   }
-
 
   @override
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
+    final jobProfileListVM = Provider.of<JobProfileListingViewModel>(context);
     return Scaffold(
-     appBar: AppBar(
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: IconButton(
             onPressed: () {
               NavigationService().goBack();
@@ -71,23 +73,22 @@ class _JobProfileViewState extends State<JobProfileView> {
       body: Column(
         children: [
           _buildStepProgressBar(
-             jobProfileVM.currentStep, jobProfileVM.totalSteps, jobProfileVM),
+              jobProfileVM.currentStep, jobProfileVM.totalSteps, jobProfileVM),
           Expanded(
             child: PageView(
               controller: jobProfileVM.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-               jobProfileVM.totalSteps,
+                jobProfileVM.totalSteps,
                 (index) => _buildStep(
                     JobProfileStep.values[index], jobProfileVM.formKeys[index]),
               ),
             ),
           ),
-          _bottomButtons(context, jobProfileVM),
+          _bottomButtons(context, jobProfileVM, jobProfileListVM),
         ],
       ),
     );
-    
   }
 
   Widget _buildStepProgressBar(
@@ -99,31 +100,33 @@ class _JobProfileViewState extends State<JobProfileView> {
   }
 
   Widget _buildStep(JobProfileStep stepIndex, GlobalKey<FormState> key) {
-  return Form(
-    key: key,
-    child: _getStepWidget(stepIndex),
-  );
-}
-
-Widget _getStepWidget(JobProfileStep stepIndex) {
-  switch (stepIndex) {
-    case JobProfileStep.PERSONAL:
-      return  JobProfilePersInfo();
-    case JobProfileStep.PROFESSIONAL:
-      return JobProfileProfeInfo();
-    case JobProfileStep.SKILLS:
-      return JobProfileSkills();
-    case JobProfileStep.AVAILABILITY:
-      return JobProfileAvailability();
-    case JobProfileStep.LOCATION:
-      return JobProfileLocation();
-    default:
-      return Center(child: Text("Step ${stepIndex.value + 1}"));
+    return Form(
+      key: key,
+      child: _getStepWidget(stepIndex),
+    );
   }
-}
+
+  Widget _getStepWidget(JobProfileStep stepIndex) {
+    switch (stepIndex) {
+      case JobProfileStep.PERSONAL:
+        return JobProfilePersInfo();
+      case JobProfileStep.PROFESSIONAL:
+        return JobProfileProfeInfo();
+      case JobProfileStep.SKILLS:
+        return JobProfileSkills();
+      case JobProfileStep.AVAILABILITY:
+        return JobProfileAvailability();
+      case JobProfileStep.LOCATION:
+        return JobProfileLocation();
+      default:
+        return Center(child: Text("Step ${stepIndex.value + 1}"));
+    }
+  }
 
   Widget _bottomButtons(
-      BuildContext context, JobProfileCreateViewModel jobProfileVM) {
+      BuildContext context,
+      JobProfileCreateViewModel jobProfileVM,
+      JobProfileListingViewModel jobProfileListVM) {
     int currentStep = jobProfileVM.currentStep;
     bool isLastStep = currentStep == jobProfileVM.totalSteps - 1;
     bool isFirstStep = currentStep == 0;
@@ -146,9 +149,9 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
           if (!isFirstStep)
             Expanded(
               child: CustomRoundedButton(
-                  fontSize: 12,
+                fontSize: 12,
                 text: 'Previous',
-                height:42,
+                height: 42,
                 onPressed: () {
                   jobProfileVM.goToPreviousStep();
                 },
@@ -161,7 +164,7 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
             child: CustomRoundedButton(
               fontSize: 12,
               text: 'Save Draft',
-              height:42,
+              height: 42,
               onPressed: () {
                 print("Save Draft Clicked");
                 jobProfileVM.createJobProfile(context, true);
@@ -175,9 +178,9 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep ? 'Submit' : 'Next',
-              height:42,
-                fontSize: 12,
-              onPressed: () {
+              height: 42,
+              fontSize: 12,
+              onPressed: () async {
                 final currentFormKey =
                     jobProfileVM.formKeys[jobProfileVM.currentStep];
                 final isValid = currentFormKey.currentState!.validate();
@@ -185,8 +188,10 @@ Widget _getStepWidget(JobProfileStep stepIndex) {
                   if (isLastStep) {
                     print("Submit Clicked");
                     jobProfileVM.createJobProfile(context, false);
+                    await jobProfileListVM.fetchJobProfiles();
+                    navigationService.goBack();
                   } else {
-                   jobProfileVM.goToNextStep();
+                    jobProfileVM.goToNextStep();
                   }
                 }
               },

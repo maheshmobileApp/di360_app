@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/ad
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import '../../talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -19,10 +20,11 @@ class TalentsViewModel extends ChangeNotifier {
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
   bool isShowBottomeActions = false;
-  List<JobProfile> talentList = [];
-  List<JobProfile> filteredJobs = [];
+  List<JobProfiles> talentList = [];
+  List<JobProfiles> filteredJobs = [];
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController availabilityDateController = TextEditingController();  
+  final TextEditingController availabilityDateController =
+      TextEditingController();
   late Map<String, List<FilterItem>> filterOptions;
   List<String> selectedProfessions = [];
   List<String> selectedEmploymentTypes = [];
@@ -126,6 +128,7 @@ class TalentsViewModel extends ChangeNotifier {
     };
     notifyListeners();
   }
+
   Future<void> fetchTalentProfiles(BuildContext context) async {
     Loaders.circularShowLoader(context);
     try {
@@ -141,12 +144,16 @@ class TalentsViewModel extends ChangeNotifier {
     try {
       printSelectedItems();
       final result = await repo.getJobProfileFilterData(
-        where: {
-          'status': {'_eq': 'active'},
-        },
-        limit: 20,
-        offset: 0,
+        selectedProfessions,
+        selectedEmploymentTypes,
+        selectedExperiences,
+        selectedAvailability,
+        selectedDays,
       );
+      if (result != null) {
+        talentList = result;
+      }
+
       filteredJobs = result;
       print("Fetched ${filteredJobs.length} filtered talents");
     } catch (e) {
@@ -264,6 +271,7 @@ class TalentsViewModel extends ChangeNotifier {
     selectedEmploymentTypes = [];
     selectedExperiences = [];
     selectedAvailability = [];
+    selectedDays = [];
     selectedIndices.forEach((section, indices) {
       final items = filterOptions[section];
       if (items != null && indices.isNotEmpty) {

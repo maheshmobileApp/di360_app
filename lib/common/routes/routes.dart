@@ -54,6 +54,7 @@ import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
 import 'package:provider/provider.dart';
@@ -84,14 +85,18 @@ class Routes {
       RouteList.applyJob: (context) => ApplyJobsView(),
       RouteList.account: (context) => AccountScreen(),
       RouteList.JobProfileView: (context) {
-        final args =
-            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        final profileData = args['profileData'] ?? null;
+        final args = ModalRoute.of(context)!.settings.arguments
+                as Map<String, dynamic>? ??
+            {};
+
+        final profileData = args['profileData'] as JobProfile?;
+        final isEdit = args['isEdit'] as bool? ?? false;
+
         return ChangeNotifierProvider(
-          create: (BuildContext context) => JobProfileCreateViewModel(),
+          create: (_) => JobProfileCreateViewModel(),
           child: JobProfileView(
             profile: profileData,
-            isEdit: null,
+            isEdit: isEdit,
           ),
         );
       },
@@ -139,7 +144,7 @@ class Routes {
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return TalentsDetailsView(
-          talentList: args as JobProfile,
+          talentList: args as JobProfiles,
         );
       },
       RouteList.catalogueFilterScreen: (context) => CatalogueFilterScreen(),

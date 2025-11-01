@@ -200,6 +200,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
         final index = entry.key;
         final edu = entry.value;
         return Card(
+          color: AppColors.whiteColor,
           margin: const EdgeInsets.symmetric(vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -210,12 +211,12 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
               children: [
                 if (edu.qualification.isNotEmpty)
                   Text(edu.qualification,
-                      style: TextStyles.bold5(color: AppColors.black)),
+                      style: TextStyles.semiBold(fontSize: 16, color: AppColors.black)),
                 if (edu.qualification.isNotEmpty && edu.institution.isNotEmpty)
-                  Text(" at ", style: TextStyles.bold5(color: AppColors.black)),
+                  Text(" at ", style: TextStyles.semiBold(fontSize: 16,color: AppColors.black)),
                 if (edu.institution.isNotEmpty)
                   Text(edu.institution,
-                      style: TextStyles.bold5(color: AppColors.blueColor)),
+                      style: TextStyles.semiBold(fontSize: 16,color: AppColors.blueColor)),
               ],
             ),
             subtitle: Column(
@@ -241,7 +242,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             ),
             trailing: _buildPopupMenu(
               onEdit: () {
-                showDialog(
+                showDialog(  
                   context: context,
                   builder: (context) => AddEducationDialog(
                     jobProfileVM: vm,
@@ -266,29 +267,35 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
         final index = entry.key;
         final exp = entry.value;
         return Card(
+          color: AppColors.whiteColor,
           margin: const EdgeInsets.symmetric(vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
-            title: exp.jobTitle.isNotEmpty
-                ? Text(exp.jobTitle,
-                    style: TextStyles.bold5(color: AppColors.black))
-                : null,
+            title: Row(
+              children: [
+                if(exp.jobTitle!=null)
+                    Text(exp.jobTitle??"",
+                        style: TextStyles.semiBold(fontSize: 16, color: AppColors.black))
+                    ,
+                    Text(" at ", style: TextStyles.semiBold(fontSize: 16, color: AppColors.black)),
+                if (exp.companyName!=null)
+                  Text(exp.companyName??"",
+                      style: TextStyles.semiBold(fontSize: 16, color: AppColors.blueColor)),
+                
+              ],
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(" at ", style: TextStyles.bold5(color: AppColors.black)),
-                if (exp.company.isNotEmpty)
-                  Text(exp.company,
-                      style: TextStyles.bold5(color: AppColors.blueColor)),
                 if (exp.startMonth != null && exp.startYear != null)
                   RichText(
                     text: TextSpan(
                       style: TextStyles.regular2(color: AppColors.geryColor),
                       children: [
-                        if (exp.isStillWorking) ...[
+                        if (exp.stillInRole??false) ...[
                           TextSpan(
                             text:
                                 "Started: ${exp.startMonth} ${exp.startYear} • ",
@@ -311,9 +318,9 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                       ],
                     ),
                   ),
-                if (exp.description.isNotEmpty) ...[
+                if (exp.jobDescription!=null) ...[
                   addVertical(6),
-                  Text(exp.description,
+                  Text(exp.jobDescription??"",
                       style: TextStyles.regular2(color: AppColors.geryColor)),
                 ],
               ],

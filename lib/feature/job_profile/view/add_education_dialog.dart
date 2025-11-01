@@ -41,7 +41,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
       vm.FinishDateController.text = edu.finishDate ?? "";
       vm.ExpectedFinishDateController.text = edu.expectedFinishDate ?? "";
       vm.courseHighlightsController.text = edu.courseHighlights;
-      vm.selectedQualification = edu.selectedQualification;
+      vm.selectedQualification = edu.selectedQualification !=""?edu.selectedQualification : "No";
     } else {
       vm.QualificationController.clear();
       vm.InstitutionController.clear();

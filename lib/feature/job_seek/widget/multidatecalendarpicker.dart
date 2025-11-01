@@ -220,8 +220,7 @@ class _Dow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 36,
+    return Expanded(
       child: Center(
         child: Text(
           t,

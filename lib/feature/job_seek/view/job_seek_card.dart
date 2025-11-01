@@ -16,7 +16,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(10),
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -130,6 +130,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
       String role, String? time,String jobTitle) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CircleAvatar(
           backgroundColor: Colors.grey,
@@ -163,8 +164,9 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               width: getSize(context).width * 0.5,
               child: Text(
                 title,
+                maxLines: 2,
                 style:
-                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black,),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -183,7 +185,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               width: getSize(context).width * 0.5,
               child: Text(
                 role,
-                style: TextStyles.regular2(color: AppColors.black),
+                style: TextStyles.semiBold(color: AppColors.black),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

@@ -21,14 +21,14 @@ class AddSectionButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(35),
         ),
-        minimumSize: const Size(160, 45), 
+        minimumSize: const Size(140, 40), 
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        textStyle: TextStyles.clashMedium(color: AppColors.whiteColor),
+        textStyle: TextStyles.clashMedium(fontSize: 12, color: AppColors.whiteColor),
       ),
       onPressed: onPressed,
       child: Text(
         "+ $label",
-        style: TextStyles.clashMedium(color: AppColors.whiteColor),
+        style: TextStyles.clashMedium(fontSize: 14,color: AppColors.whiteColor),
       ),
     );
   }

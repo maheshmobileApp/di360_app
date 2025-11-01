@@ -2,12 +2,12 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class TalentsCard extends StatelessWidget with BaseContextHelpers {
-     final JobProfile? talentList;
+     final JobProfiles? talentList;
   TalentsCard({super.key,  this.talentList});
   @override
   Widget build(BuildContext context) {
@@ -15,38 +15,51 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
     if (talentList!.profileImage.isNotEmpty) {
       profleImage = talentList!.profileImage.first.url ?? '';
     } 
-    return Card(
-      color: AppColors.whiteColor,
-      shape: RoundedRectangleBorder(
-          // side: BorderSide(
-          //   color: AppColors.borderColor,
-          // ),
-          borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _logoWithTitle(
-                  context,
-                  profleImage,
-                talentList?.fullName??"",
-                  talentList?.professionType ??"",
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 8),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: Color.fromRGBO(220, 224, 228, 1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(116, 130, 148, 0.2),
+              blurRadius: 15,
+              offset: Offset(0, 2),
             ),
-            addVertical(4),
-            _descptionDate(
-               talentList?.jobDesignation??""),
-            addVertical(4),
-            Divider(),
-            addVertical(6),
-            _locationWidget(talentList?.location??""),
-            addVertical(4),
-            _experienceWidget(talentList?.yearOfExperience??"")
           ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _logoWithTitle(
+                    context,
+                    profleImage,
+                  talentList?.fullName??"",
+                    talentList?.professionType ??"",
+                  ),
+                ],
+              ),
+              addVertical(4),
+              _descptionDate(
+                 talentList?.jobDesignation??""),
+              addVertical(4),
+              Divider(),
+              addVertical(6),
+              _locationWidget(talentList?.location??""),
+              addVertical(4),
+              _experienceWidget(talentList?.yearOfExperience??"")
+            ],
+          ),
         ),
       ),
     );
@@ -122,7 +135,8 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
                         )))
                 : CircleAvatar(
                     radius: 24,
-                    // backgroundColor: Colors.grey,
+                    child:  const Icon(Icons.person,
+                      size: 20, color: AppColors.lightGeryColor),
                   ),
           )),
       addHorizontal(6),

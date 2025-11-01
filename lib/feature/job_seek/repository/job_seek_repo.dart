@@ -24,6 +24,7 @@ abstract class JobSeekRepository {
   List<String> employmentTypes,
   List<String> experiences,
   List<String> availability,
+  String? location
 );
 
 

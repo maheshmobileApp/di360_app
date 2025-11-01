@@ -14,25 +14,29 @@ class TalentsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
-    return GenericListViewWithBanners(
-      items: talentViewModel.talentList,
-      itemBuilder: (BuildContext context, int index) {
-        final talentData = talentViewModel.talentList[index];
-        return InkWell(
-            onTap: () {
-              navigationService.navigateToWithParams(
-                  RouteList.talentdetailsScreen,
-                  params: talentViewModel.talentList[index]);
-            },
-            child: TalentsCard(
-              talentList: talentData,
-            ));
-      },
-      bannerIndices:
-          BannerUtils.calculateBannerIndices(talentViewModel.talentList.length),
-      bannerBuilder: (BuildContext context, int bannerPosition) {
-        return ListBanner();
-      },
-    );
+    return (talentViewModel.talentList.isEmpty)
+        ? Center(
+            child: const Text("No Jobs Available"),
+          )
+        :  GenericListViewWithBanners(
+    items: talentViewModel.talentList,
+    itemBuilder: (BuildContext context, int index) {
+      final talentData = talentViewModel.talentList[index];
+      return InkWell(
+          onTap: () {
+            navigationService.navigateToWithParams(
+                RouteList.talentdetailsScreen,
+                params: talentViewModel.talentList[index]);
+          },
+          child: TalentsCard(
+            talentList: talentData
+          ));
+    },
+    bannerIndices:
+        BannerUtils.calculateBannerIndices(talentViewModel.talentList.length),
+    bannerBuilder: (BuildContext context, int bannerPosition) {
+      return ListBanner();
+    },
+        );
 }
 }

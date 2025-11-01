@@ -15,33 +15,32 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
 
     return SingleChildScrollView(
-  child: Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _sectionHeader("Professional Info"),
-          addVertical(16),
-
-        InputTextField(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _sectionHeader("Professional Info"),
+            addVertical(16),
+            InputTextField(
               controller: jobProfileVM.jobDesignationController,
-          hintText: "Enter Job Designation",
-          title: "Job Designation",
-        ),
-         addVertical(16),
-        InputTextField(
+              hintText: "Enter Job Designation",
+              title: "Job Designation",
+            ),
+            addVertical(16),
+            InputTextField(
               controller: jobProfileVM.currentCompanyController,
-          hintText: "Enter Current Company",
-          title: "Current Company",
+              hintText: "Enter Current Company",
+              title: "Current Company",
+            ),
+            addVertical(16),
+            _buildWorkRight(jobProfileVM),
+            addVertical(16),
+            _buildExperience(jobProfileVM),
+          ],
         ),
-        addVertical(16),
-        _buildWorkRight(jobProfileVM),
-        addVertical(16),
-        _buildExperience(jobProfileVM),
-      ],
-    ),
-  ),
-);
+      ),
+    );
   }
 
   Widget _sectionHeader(String title) {
@@ -52,38 +51,37 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildWorkRight(JobProfileCreateViewModel jobProfileVM) {
-    return CustomDropDown(
-      
-      value: jobProfileVM.selectworkRight,
-      title: "Work Rights",
-      onChanged: (v) =>
-        jobProfileVM. setSelectedWorkRight(v as String),
-      items: jobProfileVM.workRightList.map((value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      hintText: "Select role type",
-      
-    );
-  }
+  final validWorkRight = jobProfileVM.workRightList.contains(jobProfileVM.selectworkRight)
+      ? jobProfileVM.selectworkRight
+      : null;
+
+  return CustomDropDown<String>(
+    value: validWorkRight,
+    title: "Work Rights",
+    onChanged: (v) => jobProfileVM.setSelectedWorkRight(v ?? ""),
+    items: jobProfileVM.workRightList.map((value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    hintText: "Select role type",
+  );
+}
+
 
   Widget _buildExperience(JobProfileCreateViewModel jobProfileVM) {
-    return CustomDropDown(
+    return CustomDropDown<String>(
       value: jobProfileVM.selectExperience,
       title: "Experience",
-      onChanged: (v) => jobProfileVM.setSelectedExperience(v as String),
-      items: jobProfileVM.experienceOptions.map((value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      onChanged: (v) => jobProfileVM.setSelectedExperience(v ?? ""),
+      items: jobProfileVM.experienceOptions
+          .map((value) => DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              ))
+          .toList(),
       hintText: "Select 0-20",
-  
     );
   }
-
- 
 }

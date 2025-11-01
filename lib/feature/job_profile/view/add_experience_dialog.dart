@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_experience.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/widgets/custom_selected_fileds.dart';
+import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,7 @@ import 'package:flutter/material.dart';
 
 class AddExperienceDialog extends StatefulWidget {
   final JobProfileCreateViewModel jobProfileVM;
-  final Experience? experience;
+  final JobExperience? experience;
   final int? index;
 
   const AddExperienceDialog({
@@ -35,14 +36,14 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
     final vm = widget.jobProfileVM;
     final exp = widget.experience;
     if (exp != null) {
-      vm.jobTitleController.text = exp.jobTitle;
-      vm.companyController.text = exp.company;
-      vm.descriptionController.text = exp.description;
+      vm.jobTitleController.text = exp.jobTitle??"";
+      vm.companyController.text = exp.companyName??"";
+      vm.descriptionController.text = exp.jobDescription??"";
       vm.selectedStartMonth = exp.startMonth;
       vm.selectedStartYear = exp.startYear;
       vm.selectedEndMonth = exp.endMonth;
       vm.selectedEndYear = exp.endYear;
-      vm.isStillWorking = exp.isStillWorking;
+      vm.isStillWorking = exp.stillInRole??false;
     } else {
       vm.jobTitleController.clear();
       vm.companyController.clear();
@@ -212,15 +213,15 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
             final company = vm.companyController.text.trim();
             final desc = vm.descriptionController.text.trim();
 
-            final exp = Experience(
+            final exp = JobExperience(
               jobTitle: jobTitle,
-              company: company,
-              description: desc,
+              companyName: company,
+              jobDescription: desc,
               startMonth: vm.selectedStartMonth,
               startYear: vm.selectedStartYear,
               endMonth: vm.selectedEndMonth,
               endYear: vm.selectedEndYear,
-              isStillWorking: vm.isStillWorking,
+              stillInRole: vm.isStillWorking,
             );
 
             if (isEdit && widget.index != null) {

@@ -14,14 +14,12 @@ import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/repository/job_seek_repo.dart';
 import 'package:flutter/services.dart';
 
-
 class JobSeekRepoImpl extends JobSeekRepository {
   final HttpService _http = HttpService();
 
   @override
   Future<JobdList> getPopularJobs() async {
-    final jobsData =
-        await _http.query(job_list_request);
+    final jobsData = await _http.query(job_list_request);
     return JobdList.fromJson(jobsData);
   }
 
@@ -75,19 +73,19 @@ class JobSeekRepoImpl extends JobSeekRepository {
     );
     return JobApplicantsResponse.fromJson(jobApplyStatus);
   }
-    @override
- Future<List<JobsRoleList>> getJobRoles() async {
+
+  @override
+  Future<List<JobsRoleList>> getJobRoles() async {
     try {
       final response = await rootBundle.loadString('assets/getprofession.json');
       final data = json.decode(response);
       final model = JobSeekFilterProfessionModel.fromJson(data);
       return model.data?.jobsRoleList ?? [];
-      
     } catch (e) {
-     
       throw Exception('Failed to load job roles from local asset: $e');
     }
   }
+
   @override
   Future<List<JobTypes>> getJobWorkTypes() async {
     try {
@@ -99,42 +97,80 @@ class JobSeekRepoImpl extends JobSeekRepository {
       throw Exception('Failed to load work types from local asset: $e');
     }
   }
- @override
- Future<List<Jobs>> fetchFilteredJobs(
-  List<String>? professions,
-  List<String>? employmentTypes,
-  List<String>? experiences,
-  List<String>? availability,
-) async {
-  try {
-    final List<Map<String, dynamic>> andConditions = [];
-if (professions != null && professions.isNotEmpty) {
-  andConditions.add({"j_role": {"_in": professions}});
-}
-if (employmentTypes != null && employmentTypes.isNotEmpty) {
-  andConditions.add({"TypeofEmployment": {"_overlap": employmentTypes}});
-}
-if (experiences != null && experiences.isNotEmpty) {
-  andConditions.add({"years_of_experience": {"_in": experiences}});
-}
-if (availability != null && availability.isNotEmpty) {
-  andConditions.add({"availability_date": {"_overlap": availability}});
-}
-andConditions.add({"status": {"_eq": "APPROVE"}});
-    final variables = {
-      "where": {
-        "_and": andConditions,
-      },
-    };
-    print("Filter Variables: $variables");
-    final result = await _http.query(getAllJobsFilterQuery, variables: variables);
-    final jobsJson = result['jobs'] as List<dynamic>? ?? [];
-    print("{jobs: $jobsJson}");
-    print("Fetched ${jobsJson.length} filtered jobs");
-    return jobsJson.map((e) => Jobs.fromJson(e)).toList();
-  } catch (e) {
-    print("Error in fetchFilteredJobs repo: $e");
-    return [];
+
+  @override
+  Future<List<Jobs>> fetchFilteredJobs(
+    List<String>? professions,
+    List<String>? employmentTypes,
+    List<String>? experiences,
+    List<String>? availability,
+    String? location,
+  ) async {
+    try {
+      final Map<String, dynamic> whereConditions = {};
+     
+      if (employmentTypes != null && employmentTypes.isNotEmpty) {
+        whereConditions["TypeofEmployment"] = {"_contains": employmentTypes};
+      }
+
+      if (experiences != null && experiences.isNotEmpty) {
+        whereConditions["years_of_experience"] = {"_eq": experiences[0]};
+      }
+
+      if (professions != null && professions.isNotEmpty) {
+        whereConditions["j_role"] = {"_in": professions};
+      }
+
+      if (location != null && location.isNotEmpty) {
+        whereConditions["location"] = {"_eq": location};
+      }
+
+      final variables = {
+        "where": whereConditions,
+      };
+      print("Filter Variables: $variables");
+      final result =
+          await _http.query(getAllJobsFilterQuery, variables: variables);
+      final jobsJson = result['jobs'] as List<dynamic>? ?? [];
+      print("{jobs: $jobsJson}");
+      print("Fetched ${jobsJson.length} filtered jobs");
+      final response = jobsJson.map((e) => Jobs.fromJson(e)).toList();
+      print("Filtered Jobs $response");
+      return response;
+    } catch (e) {
+      print("Error in fetchFilteredJobs repo: $e");
+      return [];
+    }
   }
 }
-}
+ /*final List<Map<String, dynamic>> andConditions = [];
+      if (professions != null && professions.isNotEmpty) {
+        andConditions.add({
+          "j_role": {"_in": professions}
+        });
+      }
+      if (employmentTypes != null && employmentTypes.isNotEmpty) {
+        andConditions.add({
+          "TypeofEmployment": {"_overlap": employmentTypes}
+        });
+      }
+      if (experiences != null && experiences.isNotEmpty) {
+        andConditions.add({
+          "years_of_experience": {"_in": experiences}
+        });
+      }
+      if (availability != null && availability.isNotEmpty) {
+        andConditions.add({
+          "availability_date": {"_overlap": availability}
+        });
+      }
+      andConditions.add({
+        "status": {"_eq": "APPROVE"}
+      });
+      final variables = {
+        "where": {
+          "_and": andConditions,
+        },
+        "limit": 10,
+        "offset": 0
+      };*/

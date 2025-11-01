@@ -98,14 +98,17 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedRole;
   final TextEditingController AphraRegistrationNumberController =
       TextEditingController();
-  final List<String> _selectedEmploymentChips = [];
+  List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
   File? profileFile;
+  String? serverProfileFile;
+  String profile_img = "";
+  String profile_img_name = "";
   List<String> get selectedEmploymentChips =>
       List.unmodifiable(_selectedEmploymentChips);
 //Professional info Controllers
   String? selectworkRight;
-  String? selectExperience;
+  String? selectExperience = null;
   final TextEditingController jobDesignationController =
       TextEditingController();
   final TextEditingController currentCompanyController =
@@ -130,7 +133,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       TextEditingController();
   final TextEditingController courseHighlightsController =
       TextEditingController();
- 
+
   List<String> languages = [];
   List<String> expertise = [];
   List<String> selectskills = [];
@@ -172,7 +175,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
 
-  initializeTheData({required JobProfile profile, bool isEdit = false}) {
+  initializeTheData({required JobProfile? profile, bool isEdit = false}) {
     getUserFullName();
     if (isEdit) {
       setTheProfileUpdateData(profile);
@@ -221,7 +224,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "40+"
   ];
   final List<String> skillsList = ["Skill A", "Skill B", "Skill C"];
-  final List<String> workRightList = [
+  List<String> workRightList = [
     "Australian citizen",
     "Permanent resident",
     "Temporary resident",
@@ -490,7 +493,14 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     roleOptions = jobRoles.map((role) => role.roleName ?? "").toList();
     notifyListeners();
   }
-  
+
+  void setProfileImg(File? value) {
+    profileFile = value;
+    serverProfileFile = null;
+
+    notifyListeners();
+  }
+
   //imagepickers...
   Future<void> pickProfileImage(ImageSource source) async {
     final pickedFile =
@@ -501,6 +511,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
   Future<void> pickResumePdf() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -514,6 +525,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
   Future<void> pickCoverLetterPdf() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -527,6 +539,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
   Future<void> pickCertificatePdf() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -541,13 +554,13 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  final List<Experience> experiences = [];
-  void addExperience(Experience exp) {
+  List<JobExperience> experiences = [];
+  void addExperience(JobExperience exp) {
     experiences.add(exp);
     notifyListeners();
   }
 
-  void updateExperience(int index, Experience exp) {
+  void updateExperience(int index, JobExperience exp) {
     experiences[index] = exp;
     notifyListeners();
   }
@@ -557,7 +570,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  final List<Education> educations = [];
+  List<Education> educations = [];
 
   void addEducation(Education edu) {
     educations.add(edu);
@@ -606,14 +619,28 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
     return responses;
   }
-Future<void> createJobProfile(BuildContext context, bool isDraft) async {
+
+  Future<void> validateProfileImg() async {
+    if (serverProfileFile == null) {
+      var value = await _http.uploadImage(profileFile?.path);
+      profile_img = value['url'];
+      profile_img_name = value['name'];
+      print(profile_img);
+      notifyListeners();
+    } else {
+      profile_img = serverProfileFile ?? "";
+      notifyListeners();
+    }
+  }
+
+  Future<void> createJobProfile(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {
-      'profile': profileFile?.path,
       'resume': resumeFile?.path,
       'coverLetter': coverLetterFile?.path,
       'certificate': certificateFile?.path,
     };
+    await validateProfileImg();
     final uploadedFiles = await uploadFiles(filePaths);
     try {
       final String? dentalProfessionalId =
@@ -637,18 +664,12 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
             "city": cityPostCodeController.text,
             "radius": "0", //no option in mobile design, default to 0
             "availabilityType": selectedAvailabilityType,
-            "profile_image": profileFile != null
-                ? [
-                    {
-                      "url": uploadedFiles['profile'] != null
-                          ? uploadedFiles['profile']["url"]
-                          : profileFile!.path,
-                      "name": profileFile!.path.split("/").last,
-                      "type": "image",
-                      "extension": "jpeg",
-                    }
-                  ]
-                : [],
+            "profile_image": {
+              "url": profile_img,
+              "name": profile_img_name,
+              "type": "image",
+              "extension": "jpeg",
+            },
             "upload_resume": resumeFile != null
                 ? [
                     {
@@ -693,9 +714,9 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
             "admin_status": isDraft ? "DRAFT" : "PENDING",
             "jobexperiences": experiences
                 .map((e) => {
-                      "company_name": e.company,
+                      "company_name": e.companyName,
                       "job_title": e.jobTitle,
-                      "ejobdesp": e.description,
+                      "ejobdesp": e.jobDescription,
                       "startMonth": e.startMonth,
                       "startYear": e.startYear,
                       "isStillWorking": isStillWorking,
@@ -714,7 +735,7 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
                     })
                 .toList(),
             "work_rights": selectworkRight,
-            "languages_spoken":  languages,
+            "languages_spoken": languages,
             "areas_expertise": expertise,
             "skills": selectskills.map((toElement) => toElement).toList(),
             "salary_amount": 120000, // need to send dynamically
@@ -737,7 +758,6 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
       if (result != null) {
         clearAllData();
         ToastMessage.show('Job Profile Created Successfully!');
-        NavigationService().goBack();
       }
     } catch (e) {
       debugPrint("Error in jobProfileListing: $e");
@@ -749,11 +769,36 @@ Future<void> createJobProfile(BuildContext context, bool isDraft) async {
     }
   }
 
-  setTheProfileUpdateData(JobProfile profile) {
-    mobileNumberController.text = profile.mobileNumber ?? "";
-    emailAddressController.text = profile.emailAddress ?? "";
-    selectedRole = profile.professionType;
-    aboutMeController.text = profile.aboutYourself ?? "";
+  setTheProfileUpdateData(JobProfile? profile) {
+    mobileNumberController.text = profile?.mobileNumber ?? "";
+    emailAddressController.text = profile?.emailAddress ?? "";
+    selectedRole = profile?.professionType;
+    _selectedEmploymentChips = profile?.workType ?? [];
+    abnNumberController.text = profile?.abnNumber ?? "";
+    jobDesignationController.text = profile?.jobDesignation ?? "";
+    currentCompanyController.text = profile?.currentCompany ?? "";
+    selectworkRight = profile?.workRights ?? "";
+    selectExperience =
+        profile?.yearOfExperience != null ? profile?.yearOfExperience : "0";
+    languages = profile?.languagesSpoken ?? [];
+    expertise = profile?.areasExpertise ?? [];
+    selectskills = profile?.skills ?? [];
+    locationController.text = profile?.location ?? "";
+    countryController.text = profile?.country ?? "";
+    stateController.text = profile?.state ?? "";
+    cityPostCodeController.text = profile?.city ?? "";
+    experiences = profile?.jobExperiences ?? [];
+    educations = profile?.educations ?? [];
+    isWillingToTravel = profile?.willingToTravel ?? false;
+    DistanceController.text = profile?.travelDistance ?? "";
+    selectedAvailabilityType = profile?.availabilityType ?? "";
+    serverProfileFile = profile?.profileImage.first.url ?? "";
+    //availabilityDates = profile?.availabilityDate ?? [];
+
+    //isJoiningImmediate = profile?.i
+
+    aboutMeController.text = profile?.aboutYourself ?? "";
+
     notifyListeners();
   }
 

@@ -64,9 +64,15 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
             CustomDropDown<String>(
               title: '',
               hintText: 'Select Availability Type',
-              value: jobProfileVM.selectedAvailabilityType,
+              value: jobProfileVM.availabilityTypes
+                      .contains(jobProfileVM.selectedAvailabilityType)
+                  ? jobProfileVM.selectedAvailabilityType
+                  : null, // ✅ Only assign if valid
               items: jobProfileVM.availabilityTypes
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e,
+                        child: Text(e),
+                      ))
                   .toList(),
               onChanged: (val) {
                 jobProfileVM.setAvailabilityType(val ?? '');
@@ -75,7 +81,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
             addVertical(16),
             if (jobProfileVM.selectedAvailabilityType == 'Select Date') ...[
               Text("Select Availability Date", style: TextStyles.regular2()),
-                addVertical(6),
+              addVertical(6),
               MultiDateCalendarPicker(
                 selectedDates: jobProfileVM.availabilityDates,
                 controller: jobProfileVM.availabilityDateController,
@@ -107,7 +113,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
             ],
             if (jobProfileVM.selectedAvailabilityType == 'Select Day') ...[
               Text("Available Days *", style: TextStyles.regular2()),
-               addVertical(6),
+              addVertical(6),
               Wrap(
                 spacing: 16,
                 runSpacing: 6,
@@ -152,7 +158,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
           onChanged: onChanged,
         ),
         Text(label, style: TextStyles.regular2()),
-         addHorizontal(20),
+        addHorizontal(20),
       ],
     );
   }

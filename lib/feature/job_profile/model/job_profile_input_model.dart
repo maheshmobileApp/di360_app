@@ -146,9 +146,9 @@ class JobProfileInputModel {
         : [];
     jobExperiences = vm.experiences
         .map((e) => {
-              "company_name": e.company,
+              "company_name": e.companyName,
               "job_title": e.jobTitle,
-              "ejobdesp": e.description,
+              "ejobdesp": e.jobDescription,
               "startMonth": e.startMonth,
               "startYear": e.startYear,
               "isStillWorking": vm.isStillWorking,

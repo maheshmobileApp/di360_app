@@ -27,7 +27,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
             child: Column(
               children: [
                 addVertical(10),
-                _buildLocationSearchBar(model),
+                _buildLocationSearchBar(context,model),
                 addVertical(10),
                 Expanded(
                   child: SingleChildScrollView(
@@ -131,6 +131,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                         width: 150,
                         onTap: () async {
                           model.clearSelections();
+                           await model.fetchFilteredJobs(context);
                         },
                       ),
                       AppButton(
@@ -139,7 +140,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                         width: 150,
                         onTap: () async {
                           model.printSelectedItems();
-                          await model.fetchFilteredJobs();
+                          await model.fetchFilteredJobs(context);
                           navigationService.goBack();
                         },
                       ),
@@ -152,7 +153,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
         ));
   }
 
-  Widget _buildLocationSearchBar(JobSeekViewModel model) {
+  Widget _buildLocationSearchBar(BuildContext context, JobSeekViewModel model) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -166,7 +167,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
               child: TextFormField(
                 controller: model.locationController,
                 decoration: InputDecoration(
-                  hintText: 'Search Location',
+                  hintText: 'Search location',
                   hintStyle: TextStyles.dmsansLight(
                     color: AppColors.black,
                     fontSize: 18,
@@ -174,7 +175,7 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                   suffixIcon: GestureDetector(
                     onTap: () async {
                       model.printSelectedItems();
-                      await model.fetchFilteredJobs();
+                      await model.fetchFilteredJobs(context);
                       navigationService.goBack();
                     },
                     child: const Icon(Icons.search, color: AppColors.black),
@@ -183,13 +184,13 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
                 ),
               ),
             ),
-            addHorizontal(10),
+            /*addHorizontal(10),
             CircleAvatar(
               radius: 22,
               backgroundColor: AppColors.black,
               child: const Icon(Icons.filter_alt,
                   color: AppColors.whiteColor, size: 20),
-            ),
+            ),*/
           ],
         ),
       ),

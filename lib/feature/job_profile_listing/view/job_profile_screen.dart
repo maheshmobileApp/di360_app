@@ -24,13 +24,8 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchProfile();
+      //fetchProfile();
     });
-  }
-
-  void fetchProfile() {
-    final vm = Provider.of<JobProfileListingViewModel>(context, listen: false);
-    vm.fetchJobProfiles();
   }
 
   @override
@@ -52,9 +47,10 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           await vm.fetchJobProfiles();
           if (vm.filteredProfiles.isEmpty) {
             await navigationService.navigateTo(RouteList.JobProfileView);
-            await vm.fetchJobProfiles();
+            //await vm.fetchJobProfiles();
           } else {
             final profileData = vm.filteredProfiles.first;
+            print("Edit preload data: $profileData");
             await navigationService
                 .navigateToWithParams(RouteList.JobProfileView, params: {
               "profileData": profileData,
