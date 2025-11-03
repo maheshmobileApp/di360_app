@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/widget/availibility_caleder_card.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
@@ -13,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 class JobProfileCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfile jobsListingData;
+  final JobProfiles jobsListingData;
   final JobProfileListingViewModel vm;
   final dynamic parmas;
   final int? index;

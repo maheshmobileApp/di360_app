@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/job_profile/view/job_profile_skills.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_profile_enum.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -18,7 +19,7 @@ import 'package:provider/provider.dart';
 
 class JobProfileView extends StatefulWidget with BaseContextHelpers {
   JobProfileView({super.key, this.profile, required isEdit});
-  final JobProfile? profile;
+  final JobProfiles? profile;
 
   @override
   State<JobProfileView> createState() => _JobProfileViewState();
@@ -177,7 +178,11 @@ class _JobProfileViewState extends State<JobProfileView> {
 
           Expanded(
             child: CustomRoundedButton(
-              text: isLastStep ? 'Submit' : 'Next',
+              text: isLastStep
+                  ? (jobProfileListVM.editProfileEnable)
+                      ? "Update"
+                      : "Submit"
+                  : 'Next',
               height: 42,
               fontSize: 12,
               onPressed: () async {
@@ -187,9 +192,13 @@ class _JobProfileViewState extends State<JobProfileView> {
                 if (isValid) {
                   if (isLastStep) {
                     print("Submit Clicked");
-                    jobProfileVM.createJobProfile(context, false);
+                    (jobProfileListVM.editProfileEnable)
+                        ? await jobProfileVM.updateJobProfile(
+                            context, false, jobProfileListVM.jobProfileId ?? "")
+                        : await jobProfileVM.createJobProfile(context, false);
                     await jobProfileListVM.fetchJobProfiles();
                     navigationService.goBack();
+                    jobProfileVM.clearAllData();
                   } else {
                     jobProfileVM.goToNextStep();
                   }

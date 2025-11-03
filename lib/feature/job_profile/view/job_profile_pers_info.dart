@@ -173,7 +173,7 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
       if (jobProfileVM.selectedRole == "Dentist" ||
           jobProfileVM.selectedRole == "Dental Specialist")
         InputTextField(
-          controller: jobProfileVM.AphraRegistrationNumberController,
+          controller: jobProfileVM.aphraRegistrationNumberController,
           hintText: "Enter 10-digit  Aphra Registration Number",
           title: " Aphra Registration Number",
           isRequired: true,

@@ -36,21 +36,22 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primaryColor,
         icon: Icon(
-          vm.filteredProfiles.isEmpty ? Icons.add : Icons.edit,
+          vm.allJobProfiles.isEmpty ? Icons.add : Icons.edit,
           color: Colors.white,
         ),
         label: Text(
-          vm.filteredProfiles.isEmpty ? "Create Profile" : "Edit Profile",
+          vm.allJobProfiles.isEmpty ? "Create Profile" : "Edit Profile",
           style: const TextStyle(color: Colors.white),
         ),
         onPressed: () async {
-          await vm.fetchJobProfiles();
-          if (vm.filteredProfiles.isEmpty) {
+          //await vm.fetchJobProfiles();
+          if (vm.allJobProfiles.isEmpty) {
             await navigationService.navigateTo(RouteList.JobProfileView);
             //await vm.fetchJobProfiles();
           } else {
-            final profileData = vm.filteredProfiles.first;
+            final profileData = vm.allJobProfiles.first;
             print("Edit preload data: $profileData");
+            vm.setEditProfileEnable(true);
             await navigationService
                 .navigateToWithParams(RouteList.JobProfileView, params: {
               "profileData": profileData,
@@ -71,7 +72,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           Expanded(
             child: vm.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : vm.filteredProfiles.isEmpty
+                : vm.allJobProfiles.isEmpty
                     ? Center(
                         child: Text(
                           "No Profiles Found",
@@ -79,9 +80,9 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                         ),
                       )
                     : ListView.builder(
-                        itemCount: vm.filteredProfiles.length,
+                        itemCount: vm.allJobProfiles.length,
                         itemBuilder: (context, index) {
-                          final jobData = vm.filteredProfiles[index];
+                          final jobData = vm.allJobProfiles[index];
                           return JobProfileCard(
                             jobsListingData: jobData,
                             vm: vm,

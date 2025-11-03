@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_documents_dialog.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_education_dialog.dart';
@@ -145,13 +148,20 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _uploadedDocuments(JobProfileCreateViewModel vm) {
-    if (vm.documents.isEmpty) return const SizedBox.shrink();
+    final docs = vm.combinedDocuments;
+
+  if (docs.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: vm.documents.entries.map((entry) {
+      children: docs.entries.map((entry) {
         final title = entry.key;
-        final file = entry.value;
-        final fileName = file.path.split('/').last;
+        final val = entry.value;
+
+      // detect type
+      final isLocal = val is File;
+      final fileName = isLocal
+          ? val.path.split('/').last
+          : (val as FileUpload).url?.split('/').last;
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Column(
@@ -174,7 +184,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                         color: AppColors.buttonColor),
                     addHorizontal(8),
                     Expanded(
-                      child: Text(fileName,
+                      child: Text(fileName??"",
                           style: TextStyles.bold2(color: AppColors.black),
                           overflow: TextOverflow.ellipsis),
                     ),

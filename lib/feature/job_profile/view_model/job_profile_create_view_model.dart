@@ -1,15 +1,14 @@
 import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/job_profile/model/job_experience.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repo_impl.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repository.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
-// import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/toast.dart';
@@ -26,7 +25,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     mobileNumberController.clear();
     emailAddressController.clear();
     abnNumberController.clear();
-    AphraRegistrationNumberController.clear();
+    aphraRegistrationNumberController.clear();
     selectedRole = null;
     _selectedEmploymentChips.clear();
     aboutMeController.clear();
@@ -96,7 +95,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   final TextEditingController emailAddressController = TextEditingController();
   final TextEditingController abnNumberController = TextEditingController();
   String? selectedRole;
-  final TextEditingController AphraRegistrationNumberController =
+  final TextEditingController aphraRegistrationNumberController =
       TextEditingController();
   List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
@@ -146,6 +145,31 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   File? resumeFile;
   File? coverLetterFile;
   File? certificateFile;
+  List<FileUpload> serverResumeDocs = [];
+  List<FileUpload> serverCertDocs = [];
+  List<FileUpload> serverCoverLetter = [];
+  Map<String, FileUpload?> serverDocuments = {
+    "Resume": null,
+    "Certificate": null,
+    "Cover Letter": null,
+  };
+
+  Map<String, Object?> get combinedDocuments {
+    final result = <String, Object?>{};
+
+    // priority 1 → local uploaded
+    result.addAll(_documents);
+
+    // priority 2 → server
+    serverDocuments.forEach((key, value) {
+      if (!result.containsKey(key) && value != null) {
+        result[key] = value;
+      }
+    });
+
+    return result;
+  }
+
   final Map<String, File> _documents = {};
   Map<String, File> get documents => _documents;
   DateTime? finishedDate;
@@ -175,7 +199,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   int get currentStep => _currentStep;
   int get totalSteps => steps.length;
 
-  initializeTheData({required JobProfile? profile, bool isEdit = false}) {
+  initializeTheData({required JobProfiles? profile, bool isEdit = false}) {
     getUserFullName();
     if (isEdit) {
       setTheProfileUpdateData(profile);
@@ -587,11 +611,27 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void removeDocument(String title) {
+  /*void removeDocument(String title) {
     _documents.remove(title);
     if (title == "Resume") resumeFile = null;
     if (title == "Cover Letter") coverLetterFile = null;
     if (title == "Certificate") certificateFile = null;
+    notifyListeners();
+  }*/
+
+  void removeDocument(String title) {
+    /// remove if exists locally
+    if (_documents.containsKey(title)) {
+      _documents.remove(title);
+
+      if (title == "Resume") resumeFile = null;
+      if (title == "Cover Letter") coverLetterFile = null;
+      if (title == "Certificate") certificateFile = null;
+    } else if (serverDocuments.containsKey(title)) {
+      // server doc exists → set to null
+      serverDocuments[title] = null;
+    }
+
     notifyListeners();
   }
 
@@ -743,7 +783,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "travel_distance":
                 DistanceController.text, // need to send dynamically
             "percentage": "10",
-            "aphra_number": AphraRegistrationNumberController.text,
+            "aphra_number": aphraRegistrationNumberController.text,
             "willing_to_travel": isWillingToTravel,
             "about_yourself": aboutMeController.text,
             "availabilityDay": selectedDays,
@@ -769,7 +809,141 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  setTheProfileUpdateData(JobProfile? profile) {
+  Future<void> updateJobProfile(
+      BuildContext context, bool isDraft, String jobProfileId) async {
+    Loaders.circularShowLoader(context);
+    Map<String, String?> filePaths = {
+      'resume': resumeFile?.path,
+      'coverLetter': coverLetterFile?.path,
+      'certificate': certificateFile?.path,
+    };
+    await validateProfileImg();
+    final uploadedFiles = await uploadFiles(filePaths);
+    try {
+      final String? dentalProfessionalId =
+          await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final result = await repo.updateJobProfileListing({
+        "id": jobProfileId,
+        "postjobObj": {
+          "dental_professional_id": dentalProfessionalId,
+          "full_name": fullNameController.text,
+          "mobile_number": mobileNumberController.text,
+          "email_address": emailAddressController.text,
+          "profession_type": selectedRole,
+          "work_type":
+              selectedEmploymentChips.map((toElement) => toElement).toList(),
+          "current_company": currentCompanyController.text,
+          "job_designation": jobDesignationController.text,
+          "state": stateController.text,
+          "location": locationController.text,
+          "country": selectCountry,
+          // "Year_of_experience": selectExperience ?? "",
+          "city": cityPostCodeController.text,
+          "radius": "0", //no option in mobile design, default to 0
+          "availabilityType": selectedAvailabilityType,
+          "profile_image": {
+            "url": profile_img,
+            "name": profile_img_name,
+            "type": "image",
+            "extension": "jpeg",
+          },
+          "upload_resume": resumeFile != null
+              ? [
+                  {
+                    "url": uploadedFiles['resume'] != null
+                        ? uploadedFiles['resume']["url"]
+                        : resumeFile!.path,
+                    "name": resumeFile!.path.split("/").last,
+                    "type": "pdf",
+                    "extension": "pdf",
+                  }
+                ]
+              : [],
+          "certificate": certificateFile != null
+              ? [
+                  {
+                    "url": uploadedFiles['certificate'] != null
+                        ? uploadedFiles['certificate']["url"]
+                        : profileFile!.path,
+                    "name": profileFile!.path.split("/").last,
+                    "type": "document",
+                    "extension": "pdf",
+                  }
+                ]
+              : [],
+          "cover_letter": coverLetterFile != null
+              ? [
+                  {
+                    "url": uploadedFiles['coverLetter'] != null
+                        ? uploadedFiles['coverLetter']["url"]
+                        : profileFile!.path,
+                    "name": profileFile!.path.split("/").last,
+                    "type": "image",
+                    "extension": "jpeg",
+                  }
+                ]
+              : [],
+          "abn_number": abnNumberController.text,
+          "availabilityOption": selectedAvailabilityType,
+          "current_ctc": "100000",
+          "post_anonymously": false, // we need to send toggle value dynamically
+          "admin_status": isDraft ? "DRAFT" : "PENDING",
+          "jobexperiences": experiences
+              .map((e) => {
+                    "company_name": e.companyName,
+                    "job_title": e.jobTitle,
+                    "ejobdesp": e.jobDescription,
+                    "startMonth": e.startMonth,
+                    "startYear": e.startYear,
+                    "isStillWorking": isStillWorking,
+                    "endMonth": e.endMonth,
+                    "endYear": e.endYear
+                  })
+              .toList(),
+          "educations": educations
+              .map((e) => {
+                    "institution": e.institution,
+                    "qualification": e.qualification,
+                    "selectedQualification": e.selectedQualification,
+                    "finishDate": e.finishDate,
+                    "qualificationFinished": false,
+                    "courseHighlights": e.courseHighlights,
+                  })
+              .toList(),
+          "work_rights": selectworkRight,
+          "languages_spoken": languages,
+          "areas_expertise": expertise,
+          "skills": selectskills.map((toElement) => toElement).toList(),
+          "salary_amount": 120000, // need to send dynamically
+          "salary_type": "Per Year", // need to send dynamically
+          "travel_distance":
+              DistanceController.text, // need to send dynamically
+          "percentage": "10",
+          "aphra_number": aphraRegistrationNumberController.text,
+          "willing_to_travel": isWillingToTravel,
+          "about_yourself": aboutMeController.text,
+          "availabilityDay": selectedDays,
+          "availabilityDate":
+              availabilityDates.map((d) => d.toIso8601String()).toList(),
+          "fromDate":
+              joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+        }
+      });
+
+      if (result != null) {
+        ToastMessage.show('Job Profile Updated Successfully!');
+      }
+    } catch (e) {
+      debugPrint("Error in jobProfileListing: $e");
+      ToastMessage.show('Job Profile Creation error $e ');
+      NavigationService().goBack();
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
+  }
+
+  setTheProfileUpdateData(JobProfiles? profile) {
     mobileNumberController.text = profile?.mobileNumber ?? "";
     emailAddressController.text = profile?.emailAddress ?? "";
     selectedRole = profile?.professionType;
@@ -788,11 +962,27 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     stateController.text = profile?.state ?? "";
     cityPostCodeController.text = profile?.city ?? "";
     experiences = profile?.jobExperiences ?? [];
-    educations = profile?.educations ?? [];
+    aphraRegistrationNumberController.text = profile?.aphraNumber ?? "";
+    educations = []; //profile?.educations ?? [];
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
     selectedAvailabilityType = profile?.availabilityType ?? "";
-    serverProfileFile = profile?.profileImage.first.url ?? "";
+    serverProfileFile = profile?.profileImage.length != 0
+        ? profile?.profileImage.first.url
+        : "";
+    serverResumeDocs = profile?.uploadResume ?? [];
+    serverCertDocs = profile?.certificate ?? [];
+    serverCoverLetter = profile?.coverLetter ?? [];
+
+    serverDocuments = {
+      "Resume": serverResumeDocs.isNotEmpty ? serverResumeDocs.first : null,
+      "Certificate": serverCertDocs.isNotEmpty ? serverCertDocs.first : null,
+      "Cover Letter":
+          serverCoverLetter.isNotEmpty ? serverCoverLetter.first : null,
+    };
+    selectedAvailabilityType = profile?.availabilityType ?? "";
+    
+
     //availabilityDates = profile?.availabilityDate ?? [];
 
     //isJoiningImmediate = profile?.i
@@ -807,7 +997,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     mobileNumberController.dispose();
     emailAddressController.dispose();
     abnNumberController.dispose();
-    AphraRegistrationNumberController.dispose();
+    aphraRegistrationNumberController.dispose();
     aboutMeController.dispose();
     jobDesignationController.dispose();
     currentCompanyController.dispose();

@@ -56,6 +56,7 @@ class PdfPickerChip extends StatelessWidget {
                   Expanded(
                     child: Text(
                       fileName,
+                      maxLines: 2,
                       style: hasFile
                           ? const TextStyle(fontSize: 14, color: Colors.black)
                           : TextStyle(fontSize: 14, color: Colors.grey.shade500),
@@ -76,7 +77,7 @@ class PdfPickerChip extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(fileName, style: const TextStyle(fontSize: 13, color: Colors.black87)),
+              Expanded(child: Text(fileName, style: const TextStyle(fontSize: 13, color: Colors.black87))),
               IconButton(
                 icon: const Icon(Icons.close, color: Colors.red, size: 20),
                 onPressed: onRemove,
