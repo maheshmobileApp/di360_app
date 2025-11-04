@@ -675,11 +675,13 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> validateProfileImg() async {
     if (serverProfileFile == null) {
-      var value = await _http.uploadImage(profileFile?.path);
-      profile_img = value['url'];
-      profile_img_name = value['name'];
-      print(profile_img);
-      notifyListeners();
+      if (profileFile?.path != null) {
+        var value = await _http.uploadImage(profileFile?.path);
+        profile_img = value['url'];
+        profile_img_name = value['name'];
+        print(profile_img);
+        notifyListeners();
+      }
     } else {
       profile_img = serverProfileFile ?? "";
       notifyListeners();
@@ -800,6 +802,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "willing_to_travel": isWillingToTravel,
             "about_yourself": aboutMeController.text,
             "availabilityDay": selectedDays,
+            "Year_of_experiance": selectExperience,
             "availabilityDate":
                 availabilityDates.map((d) => d.toIso8601String()).toList(),
             "fromDate":
@@ -809,16 +812,14 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       });
 
       if (result != null) {
-        
         ToastMessage.show('Job Profile Created Successfully!');
-       
       }
     } catch (e) {
       debugPrint("Error in jobProfileListing: $e");
       ToastMessage.show('Job Profile Creation error $e ');
       NavigationService().goBack();
     } finally {
-      Loaders.circularHideLoader(context);
+      //Loaders.circularHideLoader(context);
       notifyListeners();
     }
   }
@@ -874,40 +875,36 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           },
           "upload_resume": [
             {
-              "url": serverDocuments["Resume"]?.url != null
-                  ? serverDocuments["Resume"]?.url
-                  : uploadedFiles["Resume"]["url"],
-              "name": serverDocuments["Resume"]?.name != null
-                  ? serverDocuments["Resume"]?.name
-                  : uploadedFiles["Resume"]["name"],
+              "url": serverDocuments["Resume"]?.url ??
+                  uploadedFiles["Resume"]?["url"],
+              "name": serverDocuments["Resume"]?.name ??
+                  uploadedFiles["Resume"]?["name"],
               "type": "pdf",
               "extension": "pdf",
             }
           ],
           "certificate": [
             {
-              "url": serverDocuments["Certificate"]?.url != null
-                  ? serverDocuments["Certificate"]?.url
-                  : uploadedFiles["Certificate"]["url"],
-              "name": serverDocuments["Certificate"]?.name != null
-                  ? serverDocuments["Certificate"]?.name
-                  : uploadedFiles["Certificate"]["name"],
+              "url": serverDocuments["Certificate"]?.url ??
+                  uploadedFiles["Certificate"]?["url"],
+              "name": serverDocuments["Certificate"]?.name ??
+                  uploadedFiles["Certificate"]?["name"],
               "type": "document",
               "extension": "pdf",
             }
           ],
           "cover_letter": [
             {
-              "url": serverDocuments["Cover Letter"]?.url != null
-                  ? serverDocuments["Cover Letter"]?.url
-                  : uploadedFiles["Cover Letter"]["url"],
-              "name":serverDocuments["Cover Letter"]?.name != null
-                  ? serverDocuments["Cover Letter"]?.name
-                  : uploadedFiles["Cover Letter"]["name"],
+              "url": serverDocuments["Cover Letter"]?.url ??
+                  uploadedFiles["Cover Letter"]?["url"],
+              "name": serverDocuments["Cover Letter"]?.name ??
+                  uploadedFiles["Cover Letter"]?["name"],
               "type": "image",
               "extension": "jpeg",
             }
           ],
+          "Year_of_experiance": selectExperience,
+
           "abn_number": abnNumberController.text,
           "availabilityOption": selectedAvailabilityType,
           "current_ctc": "100000",
@@ -963,7 +960,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       ToastMessage.show('Job Profile Creation error $e ');
       NavigationService().goBack();
     } finally {
-      Loaders.circularHideLoader(context);
+      //Loaders.circularHideLoader(context);
       notifyListeners();
     }
   }
@@ -997,7 +994,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     serverResumeDocs = profile?.uploadResume ?? [];
     serverCertDocs = profile?.certificate ?? [];
     serverCoverLetter = profile?.coverLetter ?? [];
-
     serverDocuments = {
       "Resume": serverResumeDocs.isNotEmpty ? serverResumeDocs.first : null,
       "Certificate": serverCertDocs.isNotEmpty ? serverCertDocs.first : null,
@@ -1007,11 +1003,120 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     selectedAvailabilityType = profile?.availabilityType ?? "";
     selectedDays = profile?.availabilityDay ?? [];
 
-
     //availabilityDates = profile?.availabilityDate ?? [];
     //isJoiningImmediate = profile?.i
 
     aboutMeController.text = profile?.aboutYourself ?? "";
+
+    notifyListeners();
+  }
+
+  JobProfiles? jobProfilePreviewData;
+
+  Future<void> setJobProfilePreviewData() async {
+    Map<String, String?> filePaths = {};
+
+    if (serverDocuments["Resume"]?.url == null && resumeFile?.path != null) {
+      filePaths['Resume'] = resumeFile!.path;
+    }
+
+    if (serverDocuments["Cover Letter"]?.url == null &&
+        coverLetterFile?.path != null) {
+      filePaths['Cover Letter'] = coverLetterFile!.path;
+    }
+
+    if (serverDocuments["Certificate"]?.url == null &&
+        certificateFile?.path != null) {
+      filePaths['Certificate'] = certificateFile!.path;
+    }
+
+    await validateProfileImg();
+    final uploadedFiles = await uploadFiles(filePaths);
+    jobProfilePreviewData = JobProfiles(
+        id: "",
+        fullName: fullNameController.text,
+        mobileNumber: mobileNumberController.text,
+        emailAddress: emailAddressController.text,
+        professionType: selectedRole,
+        workType:
+            selectedEmploymentChips.map((toElement) => toElement).toList(),
+        currentCompany: currentCompanyController.text,
+        jobDesignation: jobDesignationController.text,
+        state: stateController.text,
+        location: locationController.text,
+        country: selectCountry,
+        city: cityPostCodeController.text,
+        radius: "0",
+        availabilityType: selectedAvailabilityType,
+        profileImage: [
+          FileUpload(
+              url: profile_img,
+              name: profile_img_name,
+              type: "image",
+              extension: "jpeg")
+        ],
+        uploadResume: [
+          FileUpload(
+              url: serverDocuments["Resume"]?.url ??
+                  uploadedFiles["Resume"]?["url"],
+              name: serverDocuments["Resume"]?.name ??
+                  uploadedFiles["Resume"]?["name"],
+              type: "pdf",
+              extension: "pdf")
+        ],
+        certificate: [
+          FileUpload(
+              url: serverDocuments["Certificate"]?.url ??
+                  uploadedFiles["Certificate"]?["url"],
+              name: serverDocuments["Certificate"]?.name ??
+                  uploadedFiles["Certificate"]?["name"],
+              type: "pdf",
+              extension: "pdf")
+        ],
+        coverLetter: [
+          FileUpload(
+              url: serverDocuments["Cover Letter"]?.url ??
+                  uploadedFiles["Cover Letter"]?["url"],
+              name: serverDocuments["Cover Letter"]?.name ??
+                  uploadedFiles["Cover Letter"]?["name"],
+              type: "pdf",
+              extension: "pdf")
+        ],
+        yearOfExperience: selectExperience,
+        abnNumber: abnNumberController.text,
+        availabilityOption: selectedAvailabilityType,
+        currentCtc: "100000",
+        postAnonymously: false,
+        adminStatus: "",
+        jobExperiences: experiences
+            .map((e) => JobExperience(
+                companyName: e.companyName,
+                jobTitle: e.jobTitle,
+                jobDescription: e.jobDescription,
+                startMonth: e.startMonth,
+                startYear: e.startYear,
+                stillInRole: isStillWorking,
+                endMonth: e.endMonth,
+                endYear: e.endYear))
+            .toList(),
+        educations:[],
+        workRights: selectworkRight,
+        languagesSpoken: languages,
+        areasExpertise: expertise,
+        skills: selectskills.map((toElement) => toElement).toList(),
+        salaryAmount: 0,
+        salaryType: "Per Year",
+        travelDistance: DistanceController.text,
+        percentage: "10",
+        aphraNumber: aphraRegistrationNumberController.text,
+        willingToTravel: isWillingToTravel,
+        aboutYourself: aboutMeController.text,
+        availabilityDay: selectedDays,
+        availabilityDate:
+            availabilityDates.map((d) => d.toIso8601String()).toList(),
+        fromDate: joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+        unavailabilityDate: [],
+        jobHirings: []);
 
     notifyListeners();
   }

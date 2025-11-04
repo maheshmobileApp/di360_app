@@ -307,6 +307,15 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             RouteList.talentdetailsScreen,
             params: jobsListingData,
           );
+        } else if (value == "Edit") {
+          final profileData = vm.allJobProfiles.first;
+          print("Edit preload data: $profileData");
+          vm.setEditProfileEnable(true);
+          navigationService
+              .navigateToWithParams(RouteList.JobProfileView, params: {
+            "profileData": profileData,
+            "isEdit": true,
+          });
         }
       },
       itemBuilder: (context) {

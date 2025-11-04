@@ -58,6 +58,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
     final isEdit = widget.education != null;
 
     return AlertDialog(
+      backgroundColor: AppColors.whiteColor,
       contentPadding: const EdgeInsets.all(16),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -97,18 +98,19 @@ class _AddEducationDialogState extends State<AddEducationDialog>
                 ),
                 addVertical(16),
                 _buildQualificationTypes(vm),
-                if (vm.selectedQualification == null)
+                /*if (vm.selectedQualification == null)
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       'Please select Qualification Finished',
                       style: TextStyle(color: AppColors.primaryColor, fontSize: 12),
                     ),
-                  ),
+                  ),*/
                 addVertical(16),
                 if (vm.selectedQualification == "Yes") ...[
-                  const Text("Finished Date"),
+                 
                   CustomDatePicker(
+                    title: "Finished Date",
                     controller: vm.FinishDateController,
                     hintText: "Date",
                     onTap: () async {
@@ -236,7 +238,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
   }
 
   Widget _buildQualificationTypes(JobProfileCreateViewModel jobProfileVM) {
-    return CustomDropDown(
+    return /*CustomDropDown(
       value: jobProfileVM.selectedQualification,
       title: "Qualification Finished",
       onChanged: (v) => setState(() {
@@ -247,6 +249,23 @@ class _AddEducationDialogState extends State<AddEducationDialog>
               DropdownMenuItem<Object>(value: value, child: Text(value)))
           .toList(),
       hintText: "Select Qualification",
+    );*/
+     CustomDropDown(
+      isRequired: true,
+      value:  jobProfileVM.selectedQualification,
+      title: "Qualification Finished",
+      onChanged: (v) => setState(() {
+        jobProfileVM.selectedQualification = v.toString();
+      }),
+      items: jobProfileVM.QualificationTypes
+          .map<DropdownMenuItem<Object>>((String value) =>
+              DropdownMenuItem<Object>(value: value, child: Text(value)))
+          .toList(),
+     
+       hintText: "Select Qualification",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select Qualification'
+          : null,
     );
   }
 }
