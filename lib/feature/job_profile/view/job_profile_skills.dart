@@ -21,96 +21,102 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader("Skills"),
-           addVertical(16),
-              Text("Languages Spoken",  
-              style: TextStyles.regular3(color: AppColors.black),),
-              addVertical( 8),
-            ChipTextField(
-              chips: jobProfileVM.languages,
-              hintText: "Enter multiple languages",
-              onChanged: (chips) {
-              },
-            ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      behavior: HitTestBehavior.translucent,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader("Skills"),
+             addVertical(16),
+                Text("Languages Spoken",  
+                style: TextStyles.regular3(color: AppColors.black),),
+                addVertical( 8),
+              ChipTextField(
+                chips: jobProfileVM.languages,
+                hintText: "Enter multiple languages",
+                onChanged: (chips) {
+                },
+              ),
+                addVertical(16),
+                Text("Areas of Expertise",
+                 style: TextStyles.regular3(color: AppColors.black),
+                 ),
+                addVertical(8),
+              ChipTextField(
+                chips: jobProfileVM.expertise,
+                hintText: "Enter areas of expertise",
+                onChanged: (chips) {
+                },),
+      
               addVertical(16),
-              Text("Areas of Expertise",
-               style: TextStyles.regular3(color: AppColors.black),
-               ),
-              addVertical(8),
-            ChipTextField(
-              chips: jobProfileVM.expertise,
-              hintText: "Enter areas of expertise",
-              onChanged: (chips) {
-              },),
-
-            addVertical(16),
-            Text(
-              "Skills",
-              style: TextStyles.regular3(color: AppColors.black),
-            ),
-            addVertical(4),
-            _buildSkills(jobProfileVM),
-            addVertical(24),
-            _buildSectionRow(
-              title: "Experience",
-              button: AddSectionButton(
-                label: "Add Experience",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddExperienceDialog(jobProfileVM: jobProfileVM),
-                  );
-                },
+              Text(
+                "Skills",
+                style: TextStyles.regular3(color: AppColors.black),
               ),
-            ),
-            addVertical(16),
-            Consumer<JobProfileCreateViewModel>(
-              builder: (context, vm, _) => _uploadedExperience(vm, context),
-            ),
-            addVertical(24),
-            _buildSectionRow(
-              title: "Education",
-              button: AddSectionButton(
-                label: "Add Education",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddEducationDialog(jobProfileVM: jobProfileVM),
-                  );
-                },
+              addVertical(4),
+              _buildSkills(jobProfileVM),
+              addVertical(24),
+              _buildSectionRow(
+                title: "Experience",
+                button: AddSectionButton(
+                  label: "Add Experience",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AddExperienceDialog(jobProfileVM: jobProfileVM),
+                    );
+                  },
+                ),
               ),
-            ),
-            addVertical(16),
-            Consumer<JobProfileCreateViewModel>(
-              builder: (context, vm, _) => _uploadedEducation(vm, context),
-            ),
-            addVertical(24),
-            _buildSectionRow(
-              title: "Documents",
-              button: AddSectionButton(
-                label: "Add Documents",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddDocumentsDialog(jobProfileVM: jobProfileVM),
-                  );
-                },
+              addVertical(16),
+              Consumer<JobProfileCreateViewModel>(
+                builder: (context, vm, _) => _uploadedExperience(vm, context),
               ),
-            ),
-            addVertical(16),
-            Consumer<JobProfileCreateViewModel>(
-              builder: (context, vm, _) => _uploadedDocuments(vm),
-            ),
-          ],
+              addVertical(24),
+              _buildSectionRow(
+                title: "Education",
+                button: AddSectionButton(
+                  label: "Add Education",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AddEducationDialog(jobProfileVM: jobProfileVM),
+                    );
+                  },
+                ),
+              ),
+              addVertical(16),
+              Consumer<JobProfileCreateViewModel>(
+                builder: (context, vm, _) => _uploadedEducation(vm, context),
+              ),
+              addVertical(24),
+              _buildSectionRow(
+                title: "Documents",
+                button: AddSectionButton(
+                  label: "Add Documents",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AddDocumentsDialog(jobProfileVM: jobProfileVM),
+                    );
+                  },
+                ),
+              ),
+              addVertical(16),
+              Consumer<JobProfileCreateViewModel>(
+                builder: (context, vm, _) => _uploadedDocuments(vm),
+              ),
+            ],
+          ),
         ),
       ),
     );

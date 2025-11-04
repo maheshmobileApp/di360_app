@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_card.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_request_card.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,5 @@
 //import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -31,6 +30,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
   bool editProfileEnable = false;
 
   bool isLoading = false;
+
+
   Future<void> fetchJobProfiles() async {
     isLoading = true;
     final response = await repo.getJobProfiles();
@@ -100,7 +101,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
     if (res != null) {
       await fetchJobProfiles();
       Loaders.circularHideLoader(context);
-      scaffoldMessenger('JobListingData removed successfully');
+      scaffoldMessenger('Profile is removed successfully');
     } else {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Failed to remove JobListingData');
