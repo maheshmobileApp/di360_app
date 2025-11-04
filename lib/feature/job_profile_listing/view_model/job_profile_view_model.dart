@@ -28,16 +28,16 @@ class JobProfileListingViewModel extends ChangeNotifier {
   String? selectedStatus;
   List<JobProfiles> allJobProfiles = [];
   String? jobProfileId;
-    bool editProfileEnable = false;
+  bool editProfileEnable = false;
 
   bool isLoading = false;
   Future<void> fetchJobProfiles() async {
     isLoading = true;
     final response = await repo.getJobProfiles();
-    if (response.isNotEmpty){
-      allJobProfiles = response;
-    setJobProfileId(response.first.id ?? "");
-
+    allJobProfiles = response;
+    if (response.isNotEmpty) {
+      //allJobProfiles = response;
+      setJobProfileId(response.first.id ?? "");
     }
     /*try {
       final response = await repo.getJobProfiles();
@@ -98,12 +98,14 @@ class JobProfileListingViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.removeJobProfile(jobProfileId: jobProfileId);
     if (res != null) {
-      scaffoldMessenger('JobListingData removed successfully');
       await fetchJobProfiles();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('JobListingData removed successfully');
     } else {
+      Loaders.circularHideLoader(context);
       scaffoldMessenger('Failed to remove JobListingData');
     }
-    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 }

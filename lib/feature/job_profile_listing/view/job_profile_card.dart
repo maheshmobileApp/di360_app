@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/widget/availibility_caleder_card.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -53,10 +52,20 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: const Color.fromRGBO(220, 224, 228, 1)),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              border: Border(
+                left: BorderSide(
+                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
+                right: BorderSide(
+                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
+                top: BorderSide(
+                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,30 +137,30 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromRGBO(116, 130, 148, 0.15),
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
+          GestureDetector(
+            onTap: () {
+              navigationService.navigateToWithParams(
+                RouteList.MyJobProfileScreen,
+                params: jobsListingData,
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
                 ),
-              ],
-            ),
-            child: InkWell(
-              onTap: () async {
-                navigationService.navigateToWithParams(
-                  RouteList.MyJobProfileScreen,
-                  params: jobsListingData,
-                );
-              },
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color.fromRGBO(116, 130, 148, 0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Center(
                 child: Text(
                   "${jobsListingData.jobHirings.length} requests, "
@@ -271,9 +280,9 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
       onSelected: (value) {
         if (value == "Delete") {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
-              onBack: () {
+              onBack: () async {
+            await vm.removeJobsProfileData(context, jobProfileId: id);
             navigationService.goBack();
-            vm.removeJobsProfileData(context, jobProfileId: id);
           });
         } else if (value == "Active") {
           showAlertMessage(

@@ -61,6 +61,7 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
     final isEdit = widget.experience != null;
 
     return AlertDialog(
+      backgroundColor: AppColors.whiteColor,
       contentPadding: const EdgeInsets.all(16),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

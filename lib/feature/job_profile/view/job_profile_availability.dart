@@ -154,6 +154,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
         Radio<bool>(
           visualDensity: VisualDensity.compact,
           value: value,
+          activeColor: AppColors.primaryColor,
           groupValue: groupValue,
           onChanged: onChanged,
         ),

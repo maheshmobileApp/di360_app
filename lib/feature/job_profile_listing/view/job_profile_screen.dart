@@ -46,6 +46,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
         onPressed: () async {
           //await vm.fetchJobProfiles();
           if (vm.allJobProfiles.isEmpty) {
+            vm.setEditProfileEnable(false);
             await navigationService.navigateTo(RouteList.JobProfileView);
             //await vm.fetchJobProfiles();
           } else {

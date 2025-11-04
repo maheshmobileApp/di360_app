@@ -276,11 +276,12 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
       children: vm.experiences.asMap().entries.map((entry) {
         final index = entry.key;
         final exp = entry.value;
-        return Card(
-          color: AppColors.whiteColor,
+        return Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.borderColor),
+            borderRadius: BorderRadius.circular(10)
+            
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
@@ -359,6 +360,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
     required Function() onDelete,
   }) {
     return PopupMenuButton<String>(
+      color: AppColors.whiteColor,
       onSelected: (value) {
         if (value == 'edit') {
           onEdit();

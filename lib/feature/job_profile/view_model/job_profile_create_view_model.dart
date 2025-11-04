@@ -154,6 +154,19 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Cover Letter": null,
   };
 
+  List<String> removedServerDocKeys = [];
+
+  void removeDocument(String key) {
+    if (localDocs.containsKey(key)) {
+      localDocs.remove(key);
+    } else if (serverDocuments.containsKey(key) &&
+        serverDocuments[key] != null) {
+      serverDocuments[key] = null; // remove from UI
+      removedServerDocKeys.add(key); // store for API
+    }
+    notifyListeners();
+  }
+
   Map<String, Object?> get combinedDocuments {
     final result = <String, Object?>{};
 
@@ -171,7 +184,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   final Map<String, File> _documents = {};
-  Map<String, File> get documents => _documents;
+  Map<String, File> get localDocs => _documents;
   DateTime? finishedDate;
   DateTime? expectedFinishDate;
 
@@ -619,7 +632,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }*/
 
-  void removeDocument(String title) {
+  /*void removeDocument(String title) {
     /// remove if exists locally
     if (_documents.containsKey(title)) {
       _documents.remove(title);
@@ -633,7 +646,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
 
     notifyListeners();
-  }
+  }*/
 
   void addOrUpdateDocument(String title, File file) {
     _documents[title] = file;
@@ -796,8 +809,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       });
 
       if (result != null) {
-        clearAllData();
+        
         ToastMessage.show('Job Profile Created Successfully!');
+       
       }
     } catch (e) {
       debugPrint("Error in jobProfileListing: $e");
@@ -812,11 +826,22 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> updateJobProfile(
       BuildContext context, bool isDraft, String jobProfileId) async {
     Loaders.circularShowLoader(context);
-    Map<String, String?> filePaths = {
-      'resume': resumeFile?.path,
-      'coverLetter': coverLetterFile?.path,
-      'certificate': certificateFile?.path,
-    };
+    Map<String, String?> filePaths = {};
+
+    if (serverDocuments["Resume"]?.url == null && resumeFile?.path != null) {
+      filePaths['Resume'] = resumeFile!.path;
+    }
+
+    if (serverDocuments["Cover Letter"]?.url == null &&
+        coverLetterFile?.path != null) {
+      filePaths['Cover Letter'] = coverLetterFile!.path;
+    }
+
+    if (serverDocuments["Certificate"]?.url == null &&
+        certificateFile?.path != null) {
+      filePaths['Certificate'] = certificateFile!.path;
+    }
+
     await validateProfileImg();
     final uploadedFiles = await uploadFiles(filePaths);
     try {
@@ -847,42 +872,42 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "type": "image",
             "extension": "jpeg",
           },
-          "upload_resume": resumeFile != null
-              ? [
-                  {
-                    "url": uploadedFiles['resume'] != null
-                        ? uploadedFiles['resume']["url"]
-                        : resumeFile!.path,
-                    "name": resumeFile!.path.split("/").last,
-                    "type": "pdf",
-                    "extension": "pdf",
-                  }
-                ]
-              : [],
-          "certificate": certificateFile != null
-              ? [
-                  {
-                    "url": uploadedFiles['certificate'] != null
-                        ? uploadedFiles['certificate']["url"]
-                        : profileFile!.path,
-                    "name": profileFile!.path.split("/").last,
-                    "type": "document",
-                    "extension": "pdf",
-                  }
-                ]
-              : [],
-          "cover_letter": coverLetterFile != null
-              ? [
-                  {
-                    "url": uploadedFiles['coverLetter'] != null
-                        ? uploadedFiles['coverLetter']["url"]
-                        : profileFile!.path,
-                    "name": profileFile!.path.split("/").last,
-                    "type": "image",
-                    "extension": "jpeg",
-                  }
-                ]
-              : [],
+          "upload_resume": [
+            {
+              "url": serverDocuments["Resume"]?.url != null
+                  ? serverDocuments["Resume"]?.url
+                  : uploadedFiles["Resume"]["url"],
+              "name": serverDocuments["Resume"]?.name != null
+                  ? serverDocuments["Resume"]?.name
+                  : uploadedFiles["Resume"]["name"],
+              "type": "pdf",
+              "extension": "pdf",
+            }
+          ],
+          "certificate": [
+            {
+              "url": serverDocuments["Certificate"]?.url != null
+                  ? serverDocuments["Certificate"]?.url
+                  : uploadedFiles["Certificate"]["url"],
+              "name": serverDocuments["Certificate"]?.name != null
+                  ? serverDocuments["Certificate"]?.name
+                  : uploadedFiles["Certificate"]["name"],
+              "type": "document",
+              "extension": "pdf",
+            }
+          ],
+          "cover_letter": [
+            {
+              "url": serverDocuments["Cover Letter"]?.url != null
+                  ? serverDocuments["Cover Letter"]?.url
+                  : uploadedFiles["Cover Letter"]["url"],
+              "name":serverDocuments["Cover Letter"]?.name != null
+                  ? serverDocuments["Cover Letter"]?.name
+                  : uploadedFiles["Cover Letter"]["name"],
+              "type": "image",
+              "extension": "jpeg",
+            }
+          ],
           "abn_number": abnNumberController.text,
           "availabilityOption": selectedAvailabilityType,
           "current_ctc": "100000",
@@ -966,7 +991,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     educations = []; //profile?.educations ?? [];
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
-    selectedAvailabilityType = profile?.availabilityType ?? "";
     serverProfileFile = profile?.profileImage.length != 0
         ? profile?.profileImage.first.url
         : "";
@@ -981,10 +1005,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           serverCoverLetter.isNotEmpty ? serverCoverLetter.first : null,
     };
     selectedAvailabilityType = profile?.availabilityType ?? "";
-    
+    selectedDays = profile?.availabilityDay ?? [];
+
 
     //availabilityDates = profile?.availabilityDate ?? [];
-
     //isJoiningImmediate = profile?.i
 
     aboutMeController.text = profile?.aboutYourself ?? "";
