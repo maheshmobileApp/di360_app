@@ -57,6 +57,7 @@ import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
+import 'package:di360_flutter/feature/view_profile/view/view_profile_view.dart';
 import 'package:provider/provider.dart';
 import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
@@ -172,7 +173,8 @@ class Routes {
       RouteList.addBanners: (context) => AddBannersScreen(),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
-      RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen()
+      RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
+      RouteList.viewProfileScreen: (context) => ViewProfileView()
     };
   }
 }

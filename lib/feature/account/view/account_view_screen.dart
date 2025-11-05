@@ -18,6 +18,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_mod
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -189,6 +190,16 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           if (item.title == 'Catalogues') {
                             await navigationService
                                 .navigateTo(RouteList.myCatalogueScreen);
+                          } else if (item.title == 'View Profile') {
+                            Loaders.circularShowLoader(context);
+
+                            await context
+                                .read<ViewProfileViewModel>()
+                                .getViewProfileData(context);
+
+                            Loaders.circularHideLoader(context);
+                            navigationService
+                                .navigateTo(RouteList.viewProfileScreen);
                           } else if (item.title == 'Job Listings') {
                             Loaders.circularShowLoader(context);
                             await context
