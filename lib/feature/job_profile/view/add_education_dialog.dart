@@ -1,9 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +36,11 @@ class _AddEducationDialogState extends State<AddEducationDialog>
     final vm = widget.jobProfileVM;
     final edu = widget.education;
     if (edu != null) {
-      vm.QualificationController.text = edu.qualification;
-      vm.InstitutionController.text = edu.institution;
+      vm.QualificationController.text = edu.qualification??"";
+      vm.InstitutionController.text = edu.institution??"";
       vm.FinishDateController.text = edu.finishDate ?? "";
       vm.ExpectedFinishDateController.text = edu.expectedFinishDate ?? "";
-      vm.courseHighlightsController.text = edu.courseHighlights;
+      vm.courseHighlightsController.text = edu.courseHighlights??"";
       vm.selectedQualification = edu.selectedQualification !=""?edu.selectedQualification : "No";
     } else {
       vm.QualificationController.clear();

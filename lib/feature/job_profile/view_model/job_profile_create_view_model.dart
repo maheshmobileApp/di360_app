@@ -4,7 +4,7 @@ import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repo_impl.dart';
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repository.dart';
@@ -985,7 +985,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     cityPostCodeController.text = profile?.city ?? "";
     experiences = profile?.jobExperiences ?? [];
     aphraRegistrationNumberController.text = profile?.aphraNumber ?? "";
-    educations = []; //profile?.educations ?? [];
+    educations = profile?.educations ?? [];
+
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
     serverProfileFile = profile?.profileImage.length != 0
@@ -1099,7 +1100,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                 endMonth: e.endMonth,
                 endYear: e.endYear))
             .toList(),
-        educations:[],
+        educations: [],
         workRights: selectworkRight,
         languagesSpoken: languages,
         areasExpertise: expertise,
