@@ -25,8 +25,7 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
       body: Column(
         children: [
           profileStepsWidget(viewProfileVM),
-
-          Expanded( // <<< this is critical fix
+          Expanded( 
             child: PageView(
               controller: viewProfileVM.pageController,
               physics: NeverScrollableScrollPhysics(),
