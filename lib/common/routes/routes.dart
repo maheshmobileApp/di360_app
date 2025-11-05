@@ -89,7 +89,7 @@ class Routes {
                 as Map<String, dynamic>? ??
             {};
 
-        final profileData = args['profileData'] as JobProfile?;
+        final profileData = args['profileData'] as JobProfiles?;
         final isEdit = args['isEdit'] as bool? ?? false;
 
         return ChangeNotifierProvider(
@@ -130,7 +130,7 @@ class Routes {
         );
       },
       RouteList.MyJobProfileScreen: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments as JobProfile;
+        final args = ModalRoute.of(context)!.settings.arguments as JobProfiles;
         return MyJobProfileScreen(jobsListingData: args);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
