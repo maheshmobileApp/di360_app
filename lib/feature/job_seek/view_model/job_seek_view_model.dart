@@ -259,7 +259,6 @@ class JobSeekViewModel extends ChangeNotifier {
     try {
       final roles = await repo.getJobRoles();
       final types = await repo.getJobWorkTypes();
-
       filterOptions['profession'] = roles
           .map((e) => FilterItem(name: e.roleName ?? '', id: e.roleName ?? ''))
           .toList();
@@ -318,7 +317,7 @@ class JobSeekViewModel extends ChangeNotifier {
         }
       }
     }
-
+    
     selectedIndices[section] = currentSet;
     notifyListeners();
   }
@@ -382,7 +381,6 @@ class JobSeekViewModel extends ChangeNotifier {
     selectedAvailability = [];
     notifyListeners();
   }
-  
 
   void printSelectedItems() {
     selectedProfessions = [];

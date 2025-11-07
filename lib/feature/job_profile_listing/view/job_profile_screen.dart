@@ -63,11 +63,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
       ),
       endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
-          filterWidget: GestureDetector(
-        onTap: () =>
-            navigationService.navigateTo(RouteList.TalentListingFilter),
-        child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-      )),
+          searchWidget: false,),
       body: Column(
         children: [
           Expanded(

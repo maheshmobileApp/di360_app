@@ -253,22 +253,20 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
-            subtitle:
-                '${widget.job.noOfPeople ?? 0}'),
+            subtitle: '${widget.job.noOfPeople ?? 0}'),
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
-            subtitle: '${widget.job.rateBilling}  ${widget.job.payMin} - ${widget.job.payMax}'),
-        Divider(height: 30),
+            subtitle:
+                '${widget.job.rateBilling}  ${widget.job.payMin} - ${widget.job.payMax}'),
+        Divider(height: 10),
         _sectionHeader('Job Description'),
         _sectionText('${widget.job.description ?? ''}'),
         SizedBox(height: 10),
-         _sectionHeader(
-            "Skills"
-          ),
-            SizedBox(height:6),
-          CustomChipView(typesList: widget.job.offeredBenefits ?? []),
-            SizedBox(height: 16),
+        if (widget.job.offeredBenefits?.length != 0) _sectionHeader("Skills"),
+        SizedBox(height: 6),
+        CustomChipView(typesList: widget.job.offeredBenefits ?? []),
+        SizedBox(height: 16),
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
@@ -279,7 +277,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     PostImage(url: e.url, type: e.type, extension: e.extension))
                 .toList(),
             imageUrls: widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
-        _sectionHeader('Social Media Handles'),
+        if (widget.job.facebookUrl!.isNotEmpty ||
+            widget.job.instagramUrl!.isNotEmpty ||
+            widget.job.linkedinUrl!.isNotEmpty)
+          _sectionHeader('Social Media Handles'),
         Row(
           children: [
             if (widget.job.facebookUrl!.isNotEmpty)
