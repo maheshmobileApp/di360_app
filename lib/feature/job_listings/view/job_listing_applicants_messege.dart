@@ -86,6 +86,7 @@ class _JobListingApplicantsMessegeState
     return Consumer<JobListingsViewModel>(
       builder: (context, vm, child) {
         return Scaffold(
+          backgroundColor: AppColors.whiteColor,
           appBar: AppbarTitleBackIconWidget(title: 'Messages'),
           body: Column(
             children: [
