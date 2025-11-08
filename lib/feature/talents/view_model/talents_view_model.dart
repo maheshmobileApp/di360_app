@@ -132,7 +132,9 @@ class TalentsViewModel extends ChangeNotifier {
   Future<void> fetchTalentProfiles(BuildContext context) async {
     Loaders.circularShowLoader(context);
     try {
-      talentList = await repo.getTalentDetails();
+      final res = await repo.getTalentDetails();
+      talentList = res;
+      print("Fetched ${talentList.length} talents");
     } finally {
       Loaders.circularHideLoader(context);
       notifyListeners();

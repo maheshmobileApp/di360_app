@@ -261,15 +261,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         Divider(height: 10),
         _sectionHeader('Job Description'),
         _sectionText('${widget.job.description ?? ''}'),
-        SizedBox(height: 10),
         if (widget.job.offeredBenefits?.length != 0)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _sectionHeader("Skills"),
-              SizedBox(height: 6),
               CustomChipView(typesList: widget.job.offeredBenefits ?? []),
-              SizedBox(height: 16),
             ],
           ),
         _sectionHeader('Job Location'),
