@@ -174,7 +174,7 @@ class JobProfileInputModel {
     salaryType = "Per Year";
     travelDistance = vm.DistanceController.text;
     percentage = "10";
-    aphraNumber = vm.AphraRegistrationNumberController.text;
+    aphraNumber = vm.aphraRegistrationNumberController.text;
     willingToTravel = vm.isWillingToTravel;
     aboutYourself = vm.aboutMeController.text;
     availabilityDay = vm.selectedDays;
@@ -188,7 +188,7 @@ class JobProfileInputModel {
     vm.mobileNumberController.text = mobileNumber ?? "";
     vm.emailAddressController.text = emailAddress ?? "";
     vm.abnNumberController.text = abnNumber ?? "";
-    vm.AphraRegistrationNumberController.text = aphraNumber ?? "";
+    vm.aphraRegistrationNumberController.text = aphraNumber ?? "";
     vm.currentCompanyController.text = currentCompany ?? "";
     vm.jobDesignationController.text = jobDesignation ?? "";
     vm.stateController.text = state ?? "";

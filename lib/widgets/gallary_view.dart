@@ -15,7 +15,7 @@ class GalleryView extends StatelessWidget {
   const GalleryView({
     super.key,
     required this.imageUrls,
-    this.imageSize = 50,
+    this.imageSize = 100,
     required this.mediaList,
     this.direction = Axis.horizontal,
     this.spacing = const EdgeInsets.all(4),

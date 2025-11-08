@@ -42,4 +42,3 @@ class Education {
         'qualificationFinished': qualificationFinished,
       };
 }
-

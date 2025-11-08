@@ -72,7 +72,7 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
         addHorizontal(4),
         Flexible(
             child: Text(
-          experience,
+          "$experience of Experience",
           style: TextStyles.regular1(
               fontSize: 14, color: AppColors.locationTextColor),
           overflow: TextOverflow.ellipsis,
