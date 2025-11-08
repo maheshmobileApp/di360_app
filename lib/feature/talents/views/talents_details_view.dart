@@ -72,6 +72,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               if ((widget.talentList?.uploadResume.isNotEmpty ?? false))
                 CustomRoundedButton(
                   height: 36,
+                  width: 90,
                   text: 'View CV',
                   onPressed: () {
                     navigationService.push(HorizantalPdf(
@@ -128,7 +129,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           Divider(
             color: AppColors.geryColor,
           ),
-          addVertical(16),
+          //addVertical(16),
           //EducationDataWithIcon(
           //iconPath: ImageConst.graduationSvg,
           //title: 'Education',
@@ -386,6 +387,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
           contentPadding: EdgeInsets.all(16),
           insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           actions: [
