@@ -1,9 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -50,6 +52,27 @@ class SignupScreen extends StatelessWidget
                     Text("Create your account to start your journey.",
                         style: TextStyles.regular3(color: AppColors.black)),
                     addVertical(25),
+                    CustomDropDown<Map<String, String>>(
+                      isRequired: true,
+                      value: viewModel.selectedType,
+                      title: "Subscription Type",
+                      onChanged: (v) {
+                        viewModel.setSelectedType(v);
+                      },
+                      items: ConstantData.planTypes
+                          .map((country) => DropdownMenuItem<Map<String, String>>(
+                                value: country,
+                                child: Text(
+                                    "${country['name']}"),
+                              ))
+                          .toList(),
+                      hintText: "Select subscription type",
+                      validator: (value) =>
+                          value == null
+                              ? 'Please select type'
+                              : null,
+                    ),
+                    addVertical(16),
                     InputTextField(
                         title: 'Full name',
                         controller: viewModel.nameController,

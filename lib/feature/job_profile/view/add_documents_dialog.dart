@@ -15,12 +15,14 @@ class AddDocumentsDialog extends StatefulWidget with BaseContextHelpers {
   @override
   State<AddDocumentsDialog> createState() => _AddDocumentsDialogState();
 }
+
 class _AddDocumentsDialogState extends State<AddDocumentsDialog>
     with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final jobProfileVM = widget.jobProfileVM;
     return AlertDialog(
+      backgroundColor: AppColors.whiteColor,
       contentPadding: const EdgeInsets.all(16),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -47,7 +49,9 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Resume",
+                      isRequired: true,
                       file: vm.resumeFile,
+                      serverFileName:  vm.serverDocuments["Resume"]?.name,
                       onTap: () => vm.pickResumePdf(),
                       onRemove: () => vm.removeDocument("Resume"),
                     );
@@ -58,6 +62,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Cover Letter",
+                      serverFileName:  vm.serverDocuments["Cover Letter"]?.name,
                       file: vm.coverLetterFile,
                       onTap: () => vm.pickCoverLetterPdf(),
                       onRemove: () => vm.removeDocument("Cover Letter"),
@@ -69,6 +74,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Certificate",
+                      serverFileName:  vm.serverDocuments["Certificate"]?.name,
                       file: vm.certificateFile,
                       onTap: () => vm.pickCertificatePdf(),
                       onRemove: () => vm.removeDocument("Certificate"),
@@ -87,8 +93,10 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
             backgroundColor: AppColors.pendingprimary,
             foregroundColor: AppColors.pendingsendary,
           ),
-          child:  Text("Cancel"  ,
-          style: TextStyles.regular3(),),
+          child: Text(
+            "Cancel",
+            style: TextStyles.regular3(),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -125,8 +133,10 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
             backgroundColor: AppColors.buttonColor,
             foregroundColor: AppColors.whiteColor,
           ),
-          child:  Text("Save" ,
-           style: TextStyles.regular3(),),
+          child: Text(
+            "Save",
+            style: TextStyles.regular3(),
+          ),
         ),
       ],
     );
@@ -135,7 +145,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
   Widget _sectionHeader(String title) {
     return Text(
       title,
-     style: TextStyles.clashMedium(color: AppColors.buttonColor),
+      style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
 }

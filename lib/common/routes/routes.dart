@@ -57,8 +57,8 @@ import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
+import 'package:di360_flutter/feature/view_profile/view/view_profile_view.dart';
 import 'package:provider/provider.dart';
-import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
 
@@ -70,9 +70,7 @@ class Routes {
       RouteList.login: (context) => ChangeNotifierProvider(
           create: (_) => LoginViewModel(), child: LoginScreen()),
       RouteList.dashBoard: (context) => ChangeNotifierProvider(
-            create: (context) => DashBoardViewModel(),
-            child: DashBoard(),
-          ),
+          create: (context) => DashBoardViewModel(), child: DashBoard()),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
       RouteList.subscribePlan: (context) => SubscriptionPlanScreen(),
       RouteList.signup: (context) => SignupScreen(),
@@ -89,7 +87,7 @@ class Routes {
                 as Map<String, dynamic>? ??
             {};
 
-        final profileData = args['profileData'] as JobProfile?;
+        final profileData = args['profileData'] as JobProfiles?;
         final isEdit = args['isEdit'] as bool? ?? false;
 
         return ChangeNotifierProvider(
@@ -130,7 +128,7 @@ class Routes {
         );
       },
       RouteList.MyJobProfileScreen: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments as JobProfile;
+        final args = ModalRoute.of(context)!.settings.arguments as JobProfiles;
         return MyJobProfileScreen(jobsListingData: args);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
@@ -172,7 +170,8 @@ class Routes {
       RouteList.addBanners: (context) => AddBannersScreen(),
       RouteList.registeredUsersView: (context) => RegisteredUsersView(),
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
-      RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen()
+      RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
+      RouteList.viewProfileScreen: (context) => ViewProfileView()
     };
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/model/certificates.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_documents_dialog.dart';
 import 'package:di360_flutter/feature/job_profile/view/add_education_dialog.dart';
@@ -18,96 +21,102 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader("Skills"),
-           addVertical(16),
-              Text("Languages Spoken",  
-              style: TextStyles.regular3(color: AppColors.black),),
-              addVertical( 8),
-            ChipTextField(
-              chips: jobProfileVM.languages,
-              hintText: "Enter multiple languages",
-              onChanged: (chips) {
-              },
-            ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      behavior: HitTestBehavior.translucent,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader("Skills"),
+             addVertical(16),
+                Text("Languages Spoken",  
+                style: TextStyles.regular3(color: AppColors.black),),
+                addVertical( 8),
+              ChipTextField(
+                chips: jobProfileVM.languages,
+                hintText: "Enter multiple languages",
+                onChanged: (chips) {
+                },
+              ),
+                addVertical(16),
+                Text("Areas of Expertise",
+                 style: TextStyles.regular3(color: AppColors.black),
+                 ),
+                addVertical(8),
+              ChipTextField(
+                chips: jobProfileVM.expertise,
+                hintText: "Enter areas of expertise",
+                onChanged: (chips) {
+                },),
+      
               addVertical(16),
-              Text("Areas of Expertise",
-               style: TextStyles.regular3(color: AppColors.black),
-               ),
-              addVertical(8),
-            ChipTextField(
-              chips: jobProfileVM.expertise,
-              hintText: "Enter areas of expertise",
-              onChanged: (chips) {
-              },),
-
-            addVertical(16),
-            Text(
-              "Skills",
-              style: TextStyles.regular3(color: AppColors.black),
-            ),
-            addVertical(4),
-            _buildSkills(jobProfileVM),
-            addVertical(24),
-            _buildSectionRow(
-              title: "Experience",
-              button: AddSectionButton(
-                label: "Add Experience",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddExperienceDialog(jobProfileVM: jobProfileVM),
-                  );
-                },
+              Text(
+                "Skills",
+                style: TextStyles.regular3(color: AppColors.black),
               ),
-            ),
-            addVertical(16),
-            Consumer<JobProfileCreateViewModel>(
-              builder: (context, vm, _) => _uploadedExperience(vm, context),
-            ),
-            addVertical(24),
-            _buildSectionRow(
-              title: "Education",
-              button: AddSectionButton(
-                label: "Add Education",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddEducationDialog(jobProfileVM: jobProfileVM),
-                  );
-                },
+              addVertical(4),
+              _buildSkills(jobProfileVM),
+              addVertical(24),
+              _buildSectionRow(
+                title: "Experience",
+                button: AddSectionButton(
+                  label: "Add Experience",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AddExperienceDialog(jobProfileVM: jobProfileVM),
+                    );
+                  },
+                ),
               ),
-            ),
-            addVertical(16),
-            Consumer<JobProfileCreateViewModel>(
-              builder: (context, vm, _) => _uploadedEducation(vm, context),
-            ),
-            addVertical(24),
-            _buildSectionRow(
-              title: "Documents",
-              button: AddSectionButton(
-                label: "Add Documents",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddDocumentsDialog(jobProfileVM: jobProfileVM),
-                  );
-                },
+              addVertical(16),
+              Consumer<JobProfileCreateViewModel>(
+                builder: (context, vm, _) => _uploadedExperience(vm, context),
               ),
-            ),
-            addVertical(16),
-            Consumer<JobProfileCreateViewModel>(
-              builder: (context, vm, _) => _uploadedDocuments(vm),
-            ),
-          ],
+              addVertical(24),
+              _buildSectionRow(
+                title: "Education",
+                button: AddSectionButton(
+                  label: "Add Education",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AddEducationDialog(jobProfileVM: jobProfileVM),
+                    );
+                  },
+                ),
+              ),
+              addVertical(16),
+              Consumer<JobProfileCreateViewModel>(
+                builder: (context, vm, _) => _uploadedEducation(vm, context),
+              ),
+              addVertical(24),
+              _buildSectionRow(
+                title: "Documents",
+                button: AddSectionButton(
+                  label: "Add Documents",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AddDocumentsDialog(jobProfileVM: jobProfileVM),
+                    );
+                  },
+                ),
+              ),
+              addVertical(16),
+              Consumer<JobProfileCreateViewModel>(
+                builder: (context, vm, _) => _uploadedDocuments(vm),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -145,13 +154,20 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _uploadedDocuments(JobProfileCreateViewModel vm) {
-    if (vm.documents.isEmpty) return const SizedBox.shrink();
+    final docs = vm.combinedDocuments;
+
+  if (docs.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: vm.documents.entries.map((entry) {
+      children: docs.entries.map((entry) {
         final title = entry.key;
-        final file = entry.value;
-        final fileName = file.path.split('/').last;
+        final val = entry.value;
+
+      // detect type
+      final isLocal = val is File;
+      final fileName = isLocal
+          ? val.path.split('/').last
+          : (val as FileUpload).url?.split('/').last;
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Column(
@@ -174,7 +190,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                         color: AppColors.buttonColor),
                     addHorizontal(8),
                     Expanded(
-                      child: Text(fileName,
+                      child: Text(fileName??"",
                           style: TextStyles.bold2(color: AppColors.black),
                           overflow: TextOverflow.ellipsis),
                     ),
@@ -266,11 +282,12 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
       children: vm.experiences.asMap().entries.map((entry) {
         final index = entry.key;
         final exp = entry.value;
-        return Card(
-          color: AppColors.whiteColor,
+        return Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.borderColor),
+            borderRadius: BorderRadius.circular(10)
+            
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
@@ -349,6 +366,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
     required Function() onDelete,
   }) {
     return PopupMenuButton<String>(
+      color: AppColors.whiteColor,
       onSelected: (value) {
         if (value == 'edit') {
           onEdit();

@@ -117,7 +117,7 @@ class ImagePickerField extends StatelessWidget {
 
       if (source == ImageSource.gallery) {
         final pickedList = await picker.pickMultiImage(imageQuality: 80);
-        if (pickedList != null && pickedList.isNotEmpty) {
+        if (pickedList != [] && pickedList.isNotEmpty) {
           newFiles = pickedList.map((e) => File(e.path)).toList();
         }
       } else {

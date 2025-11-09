@@ -26,6 +26,7 @@ import 'package:di360_flutter/feature/professional_add_director/view_model/profe
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,7 +76,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LearningHubMasterViewModel()),
         ChangeNotifierProvider(create: (_) => FilterViewModel()),
         ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
-        
+        ChangeNotifierProvider(create: (_) => ViewProfileViewModel())
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,

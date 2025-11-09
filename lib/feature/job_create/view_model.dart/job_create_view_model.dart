@@ -4,8 +4,6 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/constants/job_create_constants.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:flutter/material.dart';
@@ -339,13 +337,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           .map((img) => img.url)
           .whereType<String>()
           .toList();
-      if (serverClinicImgs == null) {
+      if (serverClinicImgs == []) {
         serverClinicImgs = newUrls;
       } else {
-        serverClinicImgs = [...serverClinicImgs!, ...newUrls];
+        serverClinicImgs = [...serverClinicImgs, ...newUrls];
       }
 
-      selectedClinicImgList = serverClinicImgs!
+      selectedClinicImgList = serverClinicImgs
           .map(
             (url) => ClinicLogo(url: url, type: "image", extension: "jpeg"),
           )

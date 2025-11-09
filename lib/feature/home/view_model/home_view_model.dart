@@ -14,6 +14,7 @@ class HomeViewModel extends ChangeNotifier {
   String? userName;
   String? profilePic;
   String? userID;
+  String? userType;
 
   getFollowersCount(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -46,18 +47,23 @@ class HomeViewModel extends ChangeNotifier {
       } else {
         Loaders.circularHideLoader(context);
       }
-    } catch (e) {}
+    } catch (e) {
+      allNewsFeedsData = null;
+      Loaders.circularHideLoader(context);
+    }
     notifyListeners();
   }
 
   getUserDetails() async {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final user_id =
         await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     this.userName = name;
     this.profilePic = img;
     this.userID = user_id;
+    this.userType = type;
     notifyListeners();
   }
 }

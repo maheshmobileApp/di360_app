@@ -43,9 +43,18 @@ class NewsFeedsComments {
     commenterName = json['commenter_name'];
     if (json['comments_attachments'] != null) {
       commentsAttachments = <CommentsAttachments>[];
-      json['comments_attachments'].forEach((v) {
-        commentsAttachments!.add(new CommentsAttachments.fromJson(v));
-      });
+      final data = json['comments_attachments'];
+      if (data is List) {
+        for (var v in data) {
+          commentsAttachments!.add(
+            CommentsAttachments.fromJson(Map<String, dynamic>.from(v)),
+          );
+        }
+      } else if (data is Map) {
+        commentsAttachments!.add(
+          CommentsAttachments.fromJson(Map<String, dynamic>.from(data)),
+        );
+      }
     }
     if (json['comment_reply'] != null) {
       commentReply = <CommentReply>[];
@@ -70,7 +79,7 @@ class NewsFeedsComments {
         : null;
     sTypename = json['__typename'];
   }
-  
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
