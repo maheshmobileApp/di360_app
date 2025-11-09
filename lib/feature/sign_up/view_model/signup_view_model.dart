@@ -45,6 +45,12 @@ class SignupViewModel extends ChangeNotifier {
   String? selectedSubscriptionType;
   String? selectedPlanId;
   String? selectedPlanName;
+  Map<String, String>? selectedType;
+
+  void setSelectedType(Map<String, String>? type) {
+    selectedType = type;
+    notifyListeners();
+  }
 
   void setSelectedSubscriptionType(
       String? type, String? planId, String? planName) {
@@ -121,7 +127,7 @@ class SignupViewModel extends ChangeNotifier {
           "password": passController.text,
           "phone": numberController.text,
           "postal_code": postalCodeController.text,
-          "type": '',
+          "type": selectedType?['type'],
           "state": stateController.text,
           "status": "PENDING",
           "subscription_plan_id": selectedPlanId,

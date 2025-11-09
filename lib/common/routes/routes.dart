@@ -59,7 +59,6 @@ import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
 import 'package:di360_flutter/feature/view_profile/view/view_profile_view.dart';
 import 'package:provider/provider.dart';
-import '../../feature/talents/model/job_profile.dart';
 import 'route_list.dart';
 import 'package:flutter/material.dart';
 
@@ -71,9 +70,7 @@ class Routes {
       RouteList.login: (context) => ChangeNotifierProvider(
           create: (_) => LoginViewModel(), child: LoginScreen()),
       RouteList.dashBoard: (context) => ChangeNotifierProvider(
-            create: (context) => DashBoardViewModel(),
-            child: DashBoard(),
-          ),
+          create: (context) => DashBoardViewModel(), child: DashBoard()),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
       RouteList.subscribePlan: (context) => SubscriptionPlanScreen(),
       RouteList.signup: (context) => SignupScreen(),

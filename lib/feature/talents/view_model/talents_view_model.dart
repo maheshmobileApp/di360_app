@@ -5,7 +5,6 @@ import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
-import '../../talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -150,7 +149,7 @@ class TalentsViewModel extends ChangeNotifier {
         selectedAvailability,
         selectedDays,
       );
-      if (result != null) {
+      if (result != []) {
         talentList = result;
       }
 

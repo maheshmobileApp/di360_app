@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/account/account_view_model/account_view_mo
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
@@ -23,6 +24,7 @@ import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +35,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
+    final homeViewModel = Provider.of<HomeViewModel>(context);
     return ChangeNotifierProvider(
       create: (_) =>
           ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
@@ -53,7 +56,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildProfileHeader(),
+                _buildProfileHeader(homeViewModel),
                 addVertical(16),
                 ...vm.visibleSections
                     .map((section) =>
@@ -69,73 +72,31 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildProfileHeader() {
-    return Column(
-      children: [
-        addVertical(20),
-        CircleAvatar(
-          radius: 42,
-          backgroundColor: AppColors.geryColor.withOpacity(0.2),
-          child: SvgPicture.asset(
-            ImageConst.accountProfile,
-            width: 50,
-            height: 50,
-          ),
-        ),
-        addVertical(8),
-        Text(
-          "Profile Name",
-          style: TextStyles.medium3(color: AppColors.black, fontSize: 15),
-        ),
-        Text(
-          "Job Designation",
-          style: TextStyles.regular1(
-            color: AppColors.bottomNavUnSelectedColor,
-            fontSize: 12,
-          ),
-        ),
-        addVertical(12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.timeBgColor,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    "200",
-                    style: TextStyles.bold3(color: AppColors.black),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    "Followers",
-                    style: TextStyles.regular2(color: AppColors.primaryColor),
-                  ),
-                ],
-              ),
-              Container(width: 1, height: 20, color: AppColors.geryColor),
-              Row(
-                children: [
-                  Text(
-                    "150",
-                    style: TextStyles.bold3(color: AppColors.black),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    "Following",
-                    style: TextStyles.regular2(color: AppColors.primaryColor),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+  Widget _buildProfileHeader(HomeViewModel vm) {
+    return Column(children: [
+      addVertical(20),
+      CircleAvatar(
+          backgroundColor: AppColors.whiteColor,
+          radius: 52,
+          child: CircleAvatar(
+              backgroundColor: AppColors.primaryColor,
+              radius: 50,
+              child: ClipOval(
+                  child: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: CachedNetworkImageWidget(
+                          imageUrl: vm.profilePic ?? '',
+                          fit: BoxFit.fill,
+                          errorWidget: Image.asset(ImageConst.prfImg)))))),
+      addVertical(8),
+      Text(vm.userName ?? "Profile Name",
+          style: TextStyles.medium3(color: AppColors.black, fontSize: 15)),
+      Text(vm.userType ?? "Job Designation",
+          style:
+              TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor)),
+      addVertical(12)
+    ]);
   }
 
   Widget _buildSection(

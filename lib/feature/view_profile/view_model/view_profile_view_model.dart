@@ -4,38 +4,10 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
 import 'package:di360_flutter/feature/view_profile/repository/view_profile_repo_impl.dart';
 import 'package:flutter/material.dart';
-import 'package:di360_flutter/utils/view_profile_enum.dart';
 
 class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final ViewProfileRepoImpl repo = ViewProfileRepoImpl();
-  final List<String> statuses = [
-    'Basic Info',
-    'Personal Details',
-    'Contact Information',
-    'Professional Details',
-    'Other Info',
-  ];
 
-  bool isSuupliesSell = false;
-   bool isSecondHandSuupliesSell = false;
-
-  void toggleSupplies(bool value) {
-    isSuupliesSell = value;
-    notifyListeners();
-  }
-
-  void toggleSecondHandSupplies(bool value) {
-    isSecondHandSuupliesSell = value;
-    notifyListeners();
-  }
-
-  /// MUST MATCH enum length
-  final List<GlobalKey<FormState>> formKeys = List.generate(
-      ViewProfileSteps.values.length, (_) => GlobalKey<FormState>());
-
-  String selectedStatus = "Basic Info";
-
-  final PageController pageController = PageController();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneNoController = TextEditingController();
@@ -57,29 +29,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final countryController = TextEditingController();
   final stateController = TextEditingController();
   final zipCodeController = TextEditingController();
-  final secondaryNameController = TextEditingController();
-  final secondaryEmailController = TextEditingController();
-  final secondaryPhoneNoController = TextEditingController();
   final professionTypeController = TextEditingController();
-  final tgaController = TextEditingController();
-  final bankNameController = TextEditingController();
-  final accountHolderNameController = TextEditingController();
-  final accountNumberController = TextEditingController();
-  final bsbController = TextEditingController();
   String? logoUrl;
-
-  int _currentStep = 0;
-  int get currentStep => _currentStep;
-
-  int get totalSteps => ViewProfileSteps.values.length;
-
-  void changeStatus(String value) {
-    selectedStatus = value;
-    _currentStep = statuses.indexOf(value);
-    pageController.jumpToPage(_currentStep);
-
-    notifyListeners();
-  }
 
   DentalSuppliersByPk? viewProfile;
 
@@ -91,7 +42,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     if (res != null) {
       viewProfile = res;
       loadViewProfileData(viewProfile);
-      selectedStatus = "Basic Info";
       print(viewProfile);
     }
     notifyListeners();
@@ -119,20 +69,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     countryController.text = "";
     stateController.text = "";
     zipCodeController.text = "";
-    secondaryNameController.text = viewProfile?.secondaryContact?.name ?? "";
-    secondaryEmailController.text = viewProfile?.secondaryContact?.email ?? "";
-    secondaryPhoneNoController.text =
-        viewProfile?.secondaryContact?.phone ?? "";
     professionTypeController.text = viewProfile?.professionType ?? "";
-    tgaController.text = viewProfile?.tgaNumber ?? "";
-    bankNameController.text = viewProfile?.bankDetails?.bankName ?? "";
-    accountHolderNameController.text =
-        viewProfile?.bankDetails?.accountHolderName ?? "";
-    accountNumberController.text =
-        viewProfile?.bankDetails?.accountNumber ?? "";
-    bsbController.text = "";
     logoUrl = viewProfile?.logo?.url ?? "";
-
     notifyListeners();
   }
 }
