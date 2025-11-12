@@ -1,19 +1,21 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
+/*import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
+import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
+import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
-  final AppliedJob appliedJob;
+  final JobEnquiries appliedJob;
   final int? index;
 
   const EnquiriesCard({
@@ -24,8 +26,9 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final Jobs? job = appliedJob.job;
+    /*final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
+    final vm = Provider.of<EnquiriesViewModel>(context);*/
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -57,7 +60,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     Row(
                       children: [
-                       JobTimeChip(time: time),
+                        JobTimeChip(time: time),
                         addHorizontal(4),
                         _EnquiriesMenu(),
                       ],
@@ -93,8 +96,8 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       return;
                     }
 
-                    final userId =
-                        await LocalStorage.getStringVal(LocalStorageConst.userId);
+                    final userId = await LocalStorage.getStringVal(
+                        LocalStorageConst.userId);
 
                     navigationService.navigateToWithParams(
                       RouteList.JobListingApplicantsMessege,
@@ -108,7 +111,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                   child: _roundedButton("Message"),
                 ),
                 addHorizontal(10),
-               /*InkWell(
+                /*GestureDetector(
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
@@ -116,13 +119,14 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(20)),
                       ),
-                      builder: (context) => JobListingApplicantsEnquiry(
-                        applicant: applicant,
+                      builder: (context) => EnquiriesListView(
+                        applicant: vm.enquiriesListData,
+                        profileImageUrl: job?.logo,
                       ),
                     );
                   },
-                  child:*/ _roundedButton("Enquiry"),
-              // ),
+                  child: _roundedButton("Enquiry"),
+                ),*/
               ],
             ),
           ],
@@ -130,7 +134,6 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-
 
   Widget _logoWithTitle(BuildContext context, String imageUrl, String title,
       String role, String companyName) {
@@ -207,7 +210,6 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  
   Widget _chipWidget(List<String> types) {
     return Wrap(
       spacing: 6,
@@ -308,3 +310,4 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     }
   }
 }
+*/

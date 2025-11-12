@@ -143,6 +143,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                 RouteList.MyJobProfileScreen,
                 params: jobsListingData,
               );
+              
             },
             child: Container(
               width: double.infinity,

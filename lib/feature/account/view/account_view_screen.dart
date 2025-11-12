@@ -201,7 +201,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<JobProfileListingViewModel>()
-                                .fetchJobProfiles();
+                                .fetchJobProfiles(context);
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);

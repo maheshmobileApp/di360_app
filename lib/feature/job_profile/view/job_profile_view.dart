@@ -190,7 +190,7 @@ class _JobProfileViewState extends State<JobProfileView> {
                     ? await jobProfileVM.updateJobProfile(
                         context, true, jobProfileListVM.jobProfileId ?? "")
                     : await jobProfileVM.createJobProfile(context, true);
-                await jobProfileListVM.fetchJobProfiles();
+                await jobProfileListVM.fetchJobProfiles(context);
                 Loaders.circularHideLoader(context);
 
                 navigationService.goBack();
@@ -222,7 +222,7 @@ class _JobProfileViewState extends State<JobProfileView> {
                         ? await jobProfileVM.updateJobProfile(
                             context, false, jobProfileListVM.jobProfileId ?? "")
                         : await jobProfileVM.createJobProfile(context, false);
-                    await jobProfileListVM.fetchJobProfiles();
+                    await jobProfileListVM.fetchJobProfiles(context);
                     Loaders.circularHideLoader(context);
 
                     navigationService.goBack();

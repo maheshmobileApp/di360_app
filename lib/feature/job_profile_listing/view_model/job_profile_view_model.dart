@@ -1,4 +1,5 @@
 //import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -31,14 +32,14 @@ class JobProfileListingViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-
-  Future<void> fetchJobProfiles() async {
+  Future<void> fetchJobProfiles(BuildContext context) async {
     isLoading = true;
     final response = await repo.getJobProfiles();
     allJobProfiles = response;
     if (response.isNotEmpty) {
       //allJobProfiles = response;
       setJobProfileId(response.first.id ?? "");
+      getMyEnquiryJobData(context, id: response.first.id ?? "");
     }
     /*try {
       final response = await repo.getJobProfiles();
@@ -83,8 +84,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
     final res = await repo.updateJobProfile(id, status);
     if (!context.mounted) return;
     if (res != null) {
-      scaffoldMessenger('JobListingData updated successfully');
-      await fetchJobProfiles();
+      scaffoldMessenger('Job is updated successfully');
+      await fetchJobProfiles(context);
     } else {
       scaffoldMessenger('Failed to update JobListingData');
     }
@@ -99,7 +100,7 @@ class JobProfileListingViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.removeJobProfile(jobProfileId: jobProfileId);
     if (res != null) {
-      await fetchJobProfiles();
+      await fetchJobProfiles(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Profile is removed successfully');
     } else {
@@ -108,5 +109,33 @@ class JobProfileListingViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  JobProfileEnquiriesResList? myEnquiryJobData;
+  JobProfileEnquiriesResList? jobPrilfeEnquiryData;
+
+  Future<JobProfileEnquiriesResList?> getMyEnquiryJobData(BuildContext context,
+      {required String id}) async {
+    final res = await repo.getMyEnquiryJobData(id);
+    if (res != null) {
+      myEnquiryJobData = res;
+    } else {}
+
+    notifyListeners();
+    return res;
+  }
+
+  Future<JobProfileEnquiriesResList?> getJobProfileEnquiry(
+      BuildContext context, String profileId, String enquiryId) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.getJobProfileEnquiry(profileId, enquiryId);
+    if (res != null) {
+      jobPrilfeEnquiryData = res;
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+    return res;
   }
 }

@@ -13,12 +13,10 @@ import 'package:provider/provider.dart';
 
 class MyJobProfileScreen extends StatefulWidget {
   final JobProfiles jobsListingData;
-  
 
   const MyJobProfileScreen({
     super.key,
     required this.jobsListingData,
-    
   });
 
   @override
@@ -33,7 +31,15 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-  }
+     }
+
+  /*
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = Provider.of<JobProfileListingViewModel>(context, listen: false);
+    vm.getMyEnquiryJobData(context, id: widget.jobsListingData.id ?? "");
+  }*/
 
   @override
   void dispose() {
@@ -50,9 +56,12 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
             : null;
 
     final int requestCount = widget.jobsListingData.jobHirings.length;
-    final int enquiryCount =
-        widget.jobsListingData.talentEnquiries?.length ?? 0;
-        final vm = Provider.of<JobProfileListingViewModel>(context);
+   
+    final vm = Provider.of<JobProfileListingViewModel>(context);
+        final talentEnquiries = vm.myEnquiryJobData?.talentEnquiries ?? [];
+         final int enquiryCount =
+         vm.myEnquiryJobData?.talentEnquiries?.length ?? 0;
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -67,7 +76,6 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
           menuWidget(
             vm,
             context,
-           
             widget.jobsListingData.id ?? '',
             widget.jobsListingData.activeStatus ?? '',
           ),
@@ -171,7 +179,7 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
                         itemCount: enquiryCount,
                         itemBuilder: (context, index) {
                           return JobProfileEnquiriesCard(
-                            jobsListingData: widget.jobsListingData,
+                            jobsListingData: talentEnquiries[index],
                             index: index,
                           );
                         },
