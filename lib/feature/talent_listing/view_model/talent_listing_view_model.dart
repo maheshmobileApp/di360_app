@@ -3,6 +3,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:flutter/material.dart';
 
 
@@ -75,7 +76,7 @@ class TalentListingViewModel extends ChangeNotifier {
       };
 
   List<String> listingStatus = [];
-  List<JobProfile> myTalentListingList = [];
+  List<JobProfiles> myTalentListingList = [];
   void changeStatus(String status) {
     selectedStatus = status;
     switch (status) {

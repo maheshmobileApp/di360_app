@@ -1,17 +1,24 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_card.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_request_card.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyJobProfileScreen extends StatefulWidget {
   final JobProfiles jobsListingData;
+  
 
   const MyJobProfileScreen({
     super.key,
     required this.jobsListingData,
+    
   });
 
   @override
@@ -45,6 +52,7 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
     final int requestCount = widget.jobsListingData.jobHirings.length;
     final int enquiryCount =
         widget.jobsListingData.talentEnquiries?.length ?? 0;
+        final vm = Provider.of<JobProfileListingViewModel>(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -56,7 +64,13 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          menuWidget(),
+          menuWidget(
+            vm,
+            context,
+           
+            widget.jobsListingData.id ?? '',
+            widget.jobsListingData.activeStatus ?? '',
+          ),
         ],
       ),
       body: Column(
@@ -197,16 +211,56 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
     );
   }
 
-  Widget menuWidget() {
+  Widget menuWidget(
+    JobProfileListingViewModel vm,
+    BuildContext context,
+    String id,
+    String activeStatus,
+  ) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       onSelected: (value) {
         if (value == "Delete") {
+          showAlertMessage(context, 'Are you sure you want to delete this job?',
+              onBack: () async {
+            await vm.removeJobsProfileData(context, jobProfileId: id);
+            navigationService.goBack();
+          });
         } else if (value == "Active") {
+          showAlertMessage(
+            context,
+            'Do you really want to activate this job?',
+            onBack: () {
+              navigationService.goBack();
+              vm.updateJobProfileStatus(context, id, "ACTIVE");
+            },
+          );
         } else if (value == "Inactive") {
-        } else if (value == "Preview") {}
+          showAlertMessage(
+            context,
+            'Do you really want to deactivate this job?',
+            onBack: () {
+              navigationService.goBack();
+              vm.updateJobProfileStatus(context, id, "INACTIVE");
+            },
+          );
+        } else if (value == "Preview") {
+          navigationService.navigateToWithParams(
+            RouteList.talentdetailsScreen,
+            params: widget.jobsListingData,
+          );
+        } else if (value == "Edit") {
+          final profileData = vm.allJobProfiles.first;
+          print("Edit preload data: $profileData");
+          vm.setEditProfileEnable(true);
+          navigationService
+              .navigateToWithParams(RouteList.JobProfileView, params: {
+            "profileData": profileData,
+            "isEdit": true,
+          });
+        }
       },
       itemBuilder: (context) {
         final items = <PopupMenuEntry<String>>[

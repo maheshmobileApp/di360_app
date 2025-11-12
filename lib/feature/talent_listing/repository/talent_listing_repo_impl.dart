@@ -6,11 +6,12 @@ import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import '../../talents/model/job_profile.dart';
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
   @override
-  Future<List<JobProfile>> getMyTalentListing(
+  Future<List<JobProfiles>> getMyTalentListing(
       List<String>? listingStatus) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final adminStatusList = (listingStatus == null || listingStatus.isEmpty)
@@ -34,13 +35,14 @@ class TalentListingRepoImpl implements TalentListingRepository {
           }
         },
       );
-      final enquiries = response['talent_enquiries'] as List<dynamic>;
+    final result = response['talent_enquiries'] as List<dynamic>;
+      /*final enquiries = response['talent_enquiries'] as List<dynamic>;
       final profiles = enquiries
           .map((e) => TalentEnquiry.fromJson(e))
           .map((enquiry) => enquiry.jobProfile)
           .whereType<JobProfile>()
-          .toList();
-      return profiles;
+          .toList();*/
+      return result.map((e) => JobProfiles.fromJson(e['job_profiles'] as Map<String, dynamic>)).toList();
     } catch (e, st) {
       print("Error in getMyTalentListing: $e\n$st");
       return [];

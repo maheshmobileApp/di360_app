@@ -6,14 +6,14 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import '../../talents/model/job_profile.dart';
 
 class TalentListingCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfile? jobProfiles;
+  final JobProfiles? jobProfiles;
   final TalentListingViewModel vm;
   final int? index;
 
@@ -31,7 +31,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         (jobProfiles?.profileImage.isNotEmpty == true)
             ? jobProfiles!.profileImage.first.url
             : null;
-          
+
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Container(
@@ -70,7 +70,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _statusChip(jobProfiles?.adminStatus ?? ''),
-                        addHorizontal(4),
                         _TalentMenu(jobProfiles?.adminStatus ?? ''),
                       ],
                     ),
@@ -80,18 +79,17 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             ),
             addVertical(8),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(child: _chipWidget(jobProfiles?.workType ?? [])),
-                const SizedBox(width: 200),
-               JobTimeChip(time: time),
-
+                Expanded(child: _chipWidget(jobProfiles?.workType ?? [])),
+                JobTimeChip(time: time),
               ],
             ),
             addVertical(10),
             const Divider(),
             Row(
               children: [
-               InkWell(
+                InkWell(
                   onTap: () async {
                     final profileId = jobProfiles?.id;
                     final jobId = jobProfiles?.jobDesignation;
@@ -155,24 +153,20 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
           child: ClipOval(child: avatarChild),
         ),
         addHorizontal(6),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: getSize(context).width * 0.5,
-              child: Text(title,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
                   style:
                       TextStyles.semiBold(fontSize: 16, color: AppColors.black),
-                  overflow: TextOverflow.ellipsis),
-            ),
-            addVertical(4),
-            SizedBox(
-              width: getSize(context).width * 0.5,
-              child: Text(role,
+                  overflow: TextOverflow.ellipsis,maxLines: 2,),
+              addVertical(4),
+              Text(role,
                   style: TextStyles.regular2(color: AppColors.black),
                   overflow: TextOverflow.ellipsis),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -192,9 +186,13 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   color: AppColors.secondaryBlueColor,
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text(type,
-                    style: TextStyles.regular1(
-                        fontSize: 12, color: AppColors.primaryBlueColor)),
+                child: Text(
+                  type,
+                  style: TextStyles.regular1(
+                      fontSize: 12, color: AppColors.primaryBlueColor),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ))
           .toList(),
     );
@@ -235,8 +233,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  
-
   Widget _roundedButton(String label) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         height: 30,
@@ -266,7 +262,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             RouteList.talentdetailsScreen,
             params: jobProfiles,
           );
-        } else if (value == "Cancel") {}
+        } else if (value == "Cancel") {
+
+        }
       },
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -286,8 +284,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         addHorizontal(8),
         Text(title, style: TextStyles.semiBold(fontSize: 14, color: color))
       ]);
-      
-       String? _getShortTime(String createdAt) {
+
+  String? _getShortTime(String createdAt) {
     return Jiffy.parse(createdAt).fromNow();
   }
 }

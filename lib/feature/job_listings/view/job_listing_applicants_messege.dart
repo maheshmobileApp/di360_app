@@ -85,6 +85,7 @@ class _JobListingApplicantsMessegeState
   Widget build(BuildContext context) {
     return Consumer<JobListingsViewModel>(
       builder: (context, vm, child) {
+        final vm = Provider.of<JobListingsViewModel>(context);
         return Scaffold(
           backgroundColor: AppColors.whiteColor,
           appBar: AppbarTitleBackIconWidget(title: 'Messages'),
@@ -126,26 +127,47 @@ class _JobListingApplicantsMessegeState
                                     ),
                                     if (isMe) const SizedBox(width: 6),
                                     if (isMe) avatarWidget,
-                                    if (isMe) _MessegeMenu(),
+                                    if (isMe)
+                                      _MessegeMenu(
+                                          context,
+                                          vm,
+                                          msg.id ?? "",
+                                          widget.applicantId,
+                                          vm.messageController.text,
+                                          msg.message ?? ""),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    left: isMe ? 40 : 0,
-                                    right: isMe ? 0 : 40,
-                                  ),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: isMe
-                                        ? Colors.orange[100]
-                                        : Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    msg.message ?? "",
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        left: isMe ? 40 : 0,
+                                        right: isMe ? 0 : 40,
+                                      ),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: isMe
+                                            ? Colors.orange[100]
+                                            : Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        msg.message ?? "",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    if (msg.updatedAt != msg.createdAt)
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 2),
+                                        child: Text(
+                                          "Edited",
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.grey),
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -177,19 +199,25 @@ class _JobListingApplicantsMessegeState
                         onPressed: () {
                           final text = vm.messageController.text.trim();
                           if (text.isNotEmpty) {
-                            vm.sendApplicantMessage(
-                                context, widget.applicantId, text);
-                            vm.messageController.clear();
-                            Future.delayed(const Duration(milliseconds: 200),
-                                () {
-                              if (scrollController.hasClients) {
-                                scrollController.animateTo(
-                                  scrollController.position.maxScrollExtent,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOut,
-                                );
-                              }
-                            });
+                            if (vm.editMessage) {
+                              vm.updateApplicantMessage(
+                                  context, widget.applicantId);
+                              vm.messageController.clear();
+                            } else {
+                              vm.sendApplicantMessage(
+                                  context, widget.applicantId, text);
+                              vm.messageController.clear();
+                              Future.delayed(const Duration(milliseconds: 200),
+                                  () {
+                                if (scrollController.hasClients) {
+                                  scrollController.animateTo(
+                                    scrollController.position.maxScrollExtent,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeOut,
+                                  );
+                                }
+                              });
+                            }
                           }
                         },
                       ),
@@ -204,7 +232,8 @@ class _JobListingApplicantsMessegeState
     );
   }
 
-  Widget _MessegeMenu() {
+  Widget _MessegeMenu(BuildContext context, JobListingsViewModel vm, String id,
+      String applicantId, String message, String oldMessage) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -212,7 +241,13 @@ class _JobListingApplicantsMessegeState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-        } else if (value == "Edit") {}
+          vm.deleteapplicantMessage(context, id, applicantId, true);
+        } else if (value == "Edit") {
+          vm.setEditMessage(true);
+          vm.setEditMessageDetails(id, vm.messageController.text);
+          vm.messageController.text = oldMessage;
+          //vm.updateApplicantMessage(context, id, applicantId, message);
+        }
       },
       itemBuilder: (context) => [
         PopupMenuItem(

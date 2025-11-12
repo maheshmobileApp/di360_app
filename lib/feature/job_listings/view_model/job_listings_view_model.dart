@@ -20,6 +20,7 @@ class JobListingsViewModel extends ChangeNotifier {
   String selectedstatusesforapplicatnts = 'All';
   String? jobId;
   Jobs? jobDataById;
+  bool editMessage = false;
 
   final List<String> statuses = [
     'All',
@@ -172,6 +173,11 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setEditMessage(bool value) {
+    editMessage = value;
+    notifyListeners();
+  }
+
   Future<void> getMyJobListingData(BuildContext context) async {
     await fetchJobStatusCounts();
     //Loaders.circularShowLoader(context);
@@ -251,10 +257,9 @@ class JobListingsViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.removeJobListing(id);
     if (res != null) {
-      
       await getMyJobListingData(context);
       Loaders.circularHideLoader(context);
-      scaffoldMessenger('JobListingData removed successfully');
+      scaffoldMessenger('Job is removed successfully');
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
@@ -267,11 +272,9 @@ class JobListingsViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.updateJobListing(id, status);
     if (res != null) {
-      
       await getMyJobListingData(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('JobListingData update successfully');
-      
     } else {
       scaffoldMessenger(res);
       Loaders.circularHideLoader(context);
@@ -304,11 +307,53 @@ class JobListingsViewModel extends ChangeNotifier {
   Future<void> fetchApplicantMessages(String jobId) async {
     try {
       isLoading = true;
-      notifyListeners();
 
       final res = await repo.fetchApplicantMessages(jobId);
       if (res.messages != null) {
         messages = res.messages!;
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteapplicantMessage(BuildContext context, String Id,
+      String applicantId, bool deletedStatus) async {
+    try {
+      isLoading = true;
+
+      final res = await repo.deleteApplicantMessage(Id, deletedStatus);
+      await fetchApplicantMessages(applicantId);
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  String newmessage = "";
+  String editMessageId = "";
+
+  void setEditMessageDetails(String id, String message) {
+    editMessageId = id;
+    newmessage = message;
+    notifyListeners();
+  }
+
+  Future<void> updateApplicantMessage(
+      BuildContext context, String applicantId) async {
+    try {
+      isLoading = true;
+
+      final res = await repo.updateApplicantMessage(editMessageId, messageController.text);
+      if (res != null) {
+        setEditMessage(false);
+        await fetchApplicantMessages(applicantId);
+        scaffoldMessenger("Message updated successfully");
       }
     } catch (e) {
       errorMessage = e.toString();
@@ -338,7 +383,7 @@ class JobListingsViewModel extends ChangeNotifier {
       if (res != null) {
         scaffoldMessenger("Message sent successfully");
         messageController.clear();
-        messages.add(
+        /*messages.add(
           JobApplicantMessage(
             id: res, // backend ID
             jobApplicantId: applicantId,
@@ -346,7 +391,8 @@ class JobListingsViewModel extends ChangeNotifier {
             messageFrom: "me", // mark current user
             createdAt: DateTime.now().toIso8601String(),
           ),
-        );
+        );*/
+        fetchApplicantMessages(applicantId);
       } else {
         scaffoldMessenger("Failed to send message");
       }
