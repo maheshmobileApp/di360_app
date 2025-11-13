@@ -17,6 +17,7 @@ class JobListingApplicantsMessege extends StatefulWidget
   final String userId;
   final String profilePic;
   final JobApplicants? applicant;
+  final String? typeName;
 
   const JobListingApplicantsMessege({
     super.key,
@@ -25,6 +26,7 @@ class JobListingApplicantsMessege extends StatefulWidget
     required this.userId,
     required this.profilePic,
     this.applicant,
+    required this.typeName,
   });
 
   @override
@@ -205,7 +207,7 @@ class _JobListingApplicantsMessegeState
                               vm.messageController.clear();
                             } else {
                               vm.sendApplicantMessage(
-                                  context, widget.applicantId, text);
+                                  context, widget.applicantId, text,  widget.typeName != null ? widget.typeName : "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {

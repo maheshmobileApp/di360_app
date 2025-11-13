@@ -86,6 +86,7 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                         "jobId": jobId,
                         "applicantId": profileId,
                         "userId": userId,
+                        "type":"job_profile"
                       },
                     );
                   },
@@ -94,7 +95,7 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 addHorizontal(10),
                 InkWell(
                     onTap: () async {
-                      await vm.getJobProfileEnquiry(context,"","");
+                      await vm.getJobProfileEnquiry(context,vm.jobProfileId??"",jobsListingData.enquiryFrom??"");
                       if (vm.jobPrilfeEnquiryData == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

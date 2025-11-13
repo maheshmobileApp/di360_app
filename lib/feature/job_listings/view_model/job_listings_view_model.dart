@@ -349,7 +349,8 @@ class JobListingsViewModel extends ChangeNotifier {
     try {
       isLoading = true;
 
-      final res = await repo.updateApplicantMessage(editMessageId, messageController.text);
+      final res = await repo.updateApplicantMessage(
+          editMessageId, messageController.text);
       if (res != null) {
         setEditMessage(false);
         await fetchApplicantMessages(applicantId);
@@ -364,7 +365,8 @@ class JobListingsViewModel extends ChangeNotifier {
   }
 
   Future<void> sendApplicantMessage(
-      BuildContext context, String applicantId, String message) async {
+      BuildContext context, String applicantId, String message,
+       String? typeName) async {
     if (message.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
@@ -377,8 +379,8 @@ class JobListingsViewModel extends ChangeNotifier {
       final res = await repo.sendApplicantMessage({
         "job_applicant_id": applicantId,
         "message": message,
-        "message_from": userId
-      });
+        "message_from": userId,
+      }, typeName ?? "");
 
       if (res != null) {
         scaffoldMessenger("Message sent successfully");

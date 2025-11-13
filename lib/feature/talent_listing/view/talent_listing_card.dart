@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_view.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -109,13 +110,36 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                         "jobId": jobId,
                         "applicantId": profileId,
                         "userId": userId,
+
                       },
                     );
                   },
                   child: _roundedButton("Message"),
                 ),
                 addHorizontal(10),
-                _roundedButton("Enquiry"),
+                InkWell(
+                    onTap: () async {
+                      await vm.getTalentEnquiry(context,jobProfiles?.id??"");
+                      if (vm.talentEnquiryData == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Applicant data not available")),
+                        );
+                        return;
+                      }
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        builder: (context) => JobProfileEnquiriesView(
+                          applicant: vm.talentEnquiryData,   
+                          profileImageUrl: profileImageUrl,// safe now
+                        ),
+                      );
+                    },
+                    child: _roundedButton("Enquiry")),
               ],
             ),
           ],

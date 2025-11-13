@@ -1,9 +1,10 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 
@@ -27,6 +28,8 @@ class TalentListingViewModel extends ChangeNotifier {
   String? selectedRole;
   String? selectedEmploymentType;
   String? selectedState;
+  JobProfileEnquiriesResList? talentEnquiryData;
+
   void setRole(String val) {
     selectedRole = val;
     notifyListeners();
@@ -157,5 +160,19 @@ class TalentListingViewModel extends ChangeNotifier {
     debugPrint("Selected Role: $selectedRole");
     debugPrint("Selected Employment Type: $selectedEmploymentType");
     debugPrint("Selected Status: $selectedStatus");
+  }
+
+  Future<JobProfileEnquiriesResList?> getTalentEnquiry(
+      BuildContext context, String talentId) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.getTalentEnquiry(talentId);
+    if (res != null) {
+      talentEnquiryData = res;
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+    return res;
   }
 }

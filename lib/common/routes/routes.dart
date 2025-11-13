@@ -115,6 +115,7 @@ class Routes {
           userId: args['userId'],
           profilePic: args['profilePic'] ?? "",
           applicant: args['applicant'],
+          typeName: args['type'],
         );
       },
       RouteList.AppliedJobScreen: (context) {

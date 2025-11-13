@@ -64,8 +64,8 @@ class JobProfileRepoImpl implements JobProfileRepository {
       String profileId, String enquiryId) async {
     final variables = {
       "where": {
-        "talent_id": {"_eq": "533c9a34-9c34-44d0-9f94-70ccb9dfdfed"},
-        "enquiry_from": {"_eq": "b19dd6cb-8fb7-42fc-8b74-6bcbed418399"}
+        "talent_id": {"_eq": profileId},
+        "enquiry_from": {"_eq": enquiryId}
       }
     };
 

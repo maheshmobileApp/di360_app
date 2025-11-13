@@ -1,13 +1,14 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/talent_listing/model/talent_enquiry_listing_response.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
-import '../../talents/model/job_profile.dart';
+
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
   @override
@@ -69,4 +70,21 @@ class TalentListingRepoImpl implements TalentListingRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<JobProfileEnquiriesResList> getTalentEnquiry(String talentId) async {
+     
+    final variables = {
+      "where": {
+        "talent_id": {"_eq": talentId},
+      }
+    };
+
+    final response =
+        await _http.query(getTalentEnquiryQuery, variables: variables);
+    final output = JobProfileEnquiriesResList.fromJson(response);
+    return output;
+  }
+    
+  
 }

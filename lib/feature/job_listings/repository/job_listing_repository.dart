@@ -16,7 +16,7 @@ abstract class JobListingRepository {
   Future<void> updateJobAggrateStatus(dynamic variables);
   Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(
       String jobId);
-  Future<String?> sendApplicantMessage(Map<String, dynamic> variables);
+  Future<String?> sendApplicantMessage(Map<String, dynamic> variables,String typeName);
   Future<Jobs> getEditJobIDData(String jobId);
   Future<dynamic> deleteApplicantMessage(String Id, bool deleteStatus);
   Future<dynamic> updateApplicantMessage(String Id, String message);

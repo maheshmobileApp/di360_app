@@ -289,6 +289,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Preview") {
+          if(appliedJob.job!= null)
           navigationService.navigateToWithParams(
             RouteList.jobdetailsScreen,
             params: appliedJob.job,

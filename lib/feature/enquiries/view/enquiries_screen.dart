@@ -5,32 +5,29 @@ import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class EnquiriesScreen extends StatefulWidget {
+class EnquiriesScreen extends StatelessWidget {
   const EnquiriesScreen({
     super.key,
   });
 
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }
+  
 
   Widget build(BuildContext context) {
     final vm = Provider.of<EnquiriesViewModel>(context);
+    final count = vm.enquiriesListData?.jobEnquiries?.length ?? 0;  
     return Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppbarTitleBackIconWidget(title: 'Enquiries'),
         body: ListView.builder(
+          
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          itemCount: vm.enquiriesListData?.jobEnquiries?.length,
+          itemCount: count,
           itemBuilder: (_, index) {
             final job = vm.enquiriesListData?.jobEnquiries?[index];
-            return Text(
-                "Pending"); /*EnquiriesCard(
-              appliedJob: job,
+            return EnquiriesCard(
+              enquiry: job,
               index: index,
-            );*/
+            );
           },
         ));
   }

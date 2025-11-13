@@ -1,13 +1,14 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:flutter/material.dart';
-
 
 class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
   final JobProfileEnquiriesResList? applicant;
   final String? profileImageUrl;
 
-  const JobProfileEnquiriesView({super.key, required this.applicant, this.profileImageUrl});
+  const JobProfileEnquiriesView(
+      {super.key, required this.applicant, this.profileImageUrl, });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
         minChildSize: 0.5,
         builder: (context, scrollController) {
           return SingleChildScrollView(
+            
             controller: scrollController,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -34,7 +36,7 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                       child: Text(
                         "Enquiry",
                         style: TextStyle(
-                          fontSize: 18, 
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -45,7 +47,6 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                     )
                   ],
                 ),
-
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   shape: RoundedRectangleBorder(
@@ -62,21 +63,19 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: applicant?.talentEnquiries!.length,
                             itemBuilder: (context, index) {
-                              
-
                               return ListTile(
                                 leading: CircleAvatar(
                                   radius: 24,
-                                  backgroundImage: profileImageUrl!=
-                                          null
+                                  backgroundImage: profileImageUrl != null
                                       ? NetworkImage(profileImageUrl!)
                                       : null,
-                                  child: profileImageUrl ==
-                                          null
+                                  child: profileImageUrl == null
                                       ? const Icon(Icons.person, size: 24)
                                       : null,
                                 ),
-                                title: Text( applicant?.talentEnquiries![index].enquiryDescription ?? ''),
+                                title: Text(applicant?.talentEnquiries![index]
+                                        .enquiryDescription ??
+                                    ''),
                               );
                             },
                           )
