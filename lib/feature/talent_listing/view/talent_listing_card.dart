@@ -71,7 +71,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _statusChip(jobProfiles?.adminStatus ?? ''),
-                        _TalentMenu(jobProfiles?.adminStatus ?? ''),
+                        _TalentMenu(jobProfiles?.hi ?? ''),
                       ],
                     ),
                   ],
@@ -297,7 +297,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         ),
         PopupMenuItem(
           value: "Cancel",
-          child: _buildRow(Icons.cancel, AppColors.redColor, "Delete"),
+          child: _buildRow(Icons.cancel, AppColors.redColor, "Cancel"),
         ),
       ],
     );

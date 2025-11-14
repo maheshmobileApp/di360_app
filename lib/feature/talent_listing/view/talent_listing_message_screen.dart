@@ -161,7 +161,7 @@ class _TalentListingMessageScreenState
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                    //if (msg?.updatedAt != msg?.createdAt)
+                                    /*if (msg?.updatedAt != msg?.createdAt)
                                       const Padding(
                                         padding: EdgeInsets.only(top: 2),
                                         child: Text(
@@ -169,7 +169,7 @@ class _TalentListingMessageScreenState
                                           style: TextStyle(
                                               fontSize: 12, color: Colors.grey),
                                         ),
-                                      ),
+                                      ),*/
                                   ],
                                 ),
                               ],
@@ -203,11 +203,11 @@ class _TalentListingMessageScreenState
                           final text = vm.messageController.text.trim();
                           if (text.isNotEmpty) {
                             if (vm.editMessage) {
-                             /* vm.updateApplicantMessage(
+                              vm.updateTalentMessage(
                                   context, widget.applicantId);
                               vm.messageController.clear();
                             } else {
-                              vm.sendApplicantMessage(
+                              vm.sendTalentMessage(
                                   context, widget.applicantId, text,  widget.typeName != null ? widget.typeName : "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
@@ -219,7 +219,7 @@ class _TalentListingMessageScreenState
                                     curve: Curves.easeOut,
                                   );
                                 }
-                              });*/
+                              });
                             }
                           }
                         },
@@ -235,7 +235,7 @@ class _TalentListingMessageScreenState
     );
   }
 
-  Widget _MessegeMenu(BuildContext context, TalentListingViewModel vm, String id,
+  Widget _MessegeMenu(BuildContext context, TalentListingViewModel vm, String messageId,
       String applicantId, String message, String oldMessage) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
@@ -244,12 +244,11 @@ class _TalentListingMessageScreenState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-          //vm.deleteapplicantMessage(context, id, applicantId, true);
+          vm.deleteTalentMessage(context, messageId,applicantId);
         } else if (value == "Edit") {
           vm.setEditMessage(true);
-          //vm.setEditMessageDetails(id, vm.messageController.text);
+          vm.setEditMessageDetails(messageId, vm.messageController.text);
           vm.messageController.text = oldMessage;
-          //vm.updateApplicantMessage(context, id, applicantId, message);
         }
       },
       itemBuilder: (context) => [

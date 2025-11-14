@@ -4,7 +4,9 @@ class TalentsMessageRes {
   TalentsMessageRes({this.data});
 
   TalentsMessageRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new TalentsMessageResData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new TalentsMessageResData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +45,7 @@ class TalentsMessageResData {
 class TalentsMessage {
   String? id;
   String? createdAt;
+  String? updatedAt;
   String? message;
   String? messageFrom;
   Null? attachments;
@@ -50,6 +53,7 @@ class TalentsMessage {
   TalentsMessage(
       {this.id,
       this.createdAt,
+      this.updatedAt,
       this.message,
       this.messageFrom,
       this.attachments});
@@ -57,6 +61,7 @@ class TalentsMessage {
   TalentsMessage.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
     message = json['message'];
     messageFrom = json['message_from'];
     attachments = json['attachments'];
@@ -66,6 +71,7 @@ class TalentsMessage {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     data['message'] = this.message;
     data['message_from'] = this.messageFrom;
     data['attachments'] = this.attachments;

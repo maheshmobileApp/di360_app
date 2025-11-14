@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.d
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -199,6 +200,88 @@ class TalentListingViewModel extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
       return talentMessages;
+    }
+  }
+
+  String newmessage = "";
+  String editMessageId = "";
+
+  void setEditMessageDetails(String id, String message) {
+    editMessageId = id;
+    newmessage = message;
+    notifyListeners();
+  }
+
+  Future<void> updateTalentMessage(
+      BuildContext context, String talentId) async {
+    try {
+      isLoading = true;
+
+      final res = await repo.updateTalentMessage(
+          editMessageId, messageController.text);
+      if (res != null) {
+        setEditMessage(false);
+        await fetchTalentMessages(talentId);
+        scaffoldMessenger("Message updated successfully");
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteTalentMessage(
+      BuildContext context, String talentId,String applicantId) async {
+    try {
+      isLoading = true;
+
+      final res = await repo.deleteTalentMessage(
+          talentId, true);
+      if (res != null) {
+        setEditMessage(false);
+        await fetchTalentMessages(applicantId);
+        scaffoldMessenger("Message deleted successfully");
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<dynamic> sendTalentMessage(
+      BuildContext context, String talentId, String message,
+       String? typeName) async {
+    if (message.isEmpty) {
+      scaffoldMessenger("Message cannot be empty");
+      return;
+    }
+
+    try {
+      Loaders.circularShowLoader(context);
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+      final res = await repo.sendTalentMessage({
+        "talent_message_id_to": talentId,
+        "message": message,
+        "message_from": userId,
+      }, typeName ?? "");
+      
+
+      if (res != null) {
+        scaffoldMessenger("Message sent successfully");
+        messageController.clear();
+        
+        fetchTalentMessages(talentId);
+      } else {
+        scaffoldMessenger("Failed to send message");
+      }
+    } catch (e) {
+      scaffoldMessenger("Error: $e");
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
     }
   }
 }

@@ -5,7 +5,12 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 
 abstract class TalentListingRepository {
   Future<List<JobProfiles>> getMyTalentListing(List<String>? listingStatus);
-  Future<TalentListingtCountResponse> getTalentEnquiryCounts(Map<String, dynamic> variables);
+  Future<TalentListingtCountResponse> getTalentEnquiryCounts(
+      Map<String, dynamic> variables);
   Future<JobProfileEnquiriesResList> getTalentEnquiry(String talentId);
   Future<TalentsMessageResData> fetchTalentMessages(String talentId);
+  Future<dynamic> sendTalentMessage(
+      Map<String, dynamic> variables, String typeName);
+  Future<dynamic> updateTalentMessage(String Id, String message);
+  Future<dynamic> deleteTalentMessage(String Id, bool deletedStatus);
 }
