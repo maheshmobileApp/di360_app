@@ -105,7 +105,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     final userId = await LocalStorage.getStringVal(
                         LocalStorageConst.userId);
                     navigationService.navigateToWithParams(
-                      RouteList.JobListingApplicantsMessege,
+                      RouteList.TalentListingMessageScreen,
                       params: {
                         "jobId": jobId,
                         "applicantId": profileId,

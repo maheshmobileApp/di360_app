@@ -1,12 +1,12 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-
 
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
@@ -29,6 +29,16 @@ class TalentListingViewModel extends ChangeNotifier {
   String? selectedEmploymentType;
   String? selectedState;
   JobProfileEnquiriesResList? talentEnquiryData;
+  bool isLoading = false;
+  TalentsMessageResData? talentMessages;
+  TextEditingController messageController = TextEditingController();
+
+  bool editMessage = false;
+
+  void setEditMessage(bool value) {
+    editMessage = value;
+    notifyListeners();
+  }
 
   void setRole(String val) {
     selectedRole = val;
@@ -39,6 +49,7 @@ class TalentListingViewModel extends ChangeNotifier {
     selectedEmploymentType = val;
     notifyListeners();
   }
+
   void setState(String val) {
     selectedState = val;
     notifyListeners();
@@ -174,5 +185,20 @@ class TalentListingViewModel extends ChangeNotifier {
     }
     notifyListeners();
     return res;
+  }
+
+  Future<TalentsMessageResData?> fetchTalentMessages(String talentId) async {
+    try {
+      isLoading = true;
+      final res = await repo.fetchTalentMessages(talentId);
+      if (res != null) {
+        talentMessages = res;
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+      return talentMessages;
+    }
   }
 }

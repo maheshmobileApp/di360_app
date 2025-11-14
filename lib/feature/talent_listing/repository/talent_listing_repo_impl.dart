@@ -3,8 +3,10 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/talent_listing_messages_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -84,6 +86,19 @@ class TalentListingRepoImpl implements TalentListingRepository {
         await _http.query(getTalentEnquiryQuery, variables: variables);
     final output = JobProfileEnquiriesResList.fromJson(response);
     return output;
+  }
+
+  
+
+  
+  @override
+  Future<TalentsMessageResData> fetchTalentMessages(
+      String talentId) async {
+    final data = await _http.query(talentListingMessagesQuery,
+        variables: {"talent_id": talentId});
+
+    final result = TalentsMessageResData.fromJson(data);
+    return result;
   }
     
   
