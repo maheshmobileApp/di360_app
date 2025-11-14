@@ -149,7 +149,7 @@ class JobListingRepoImpl extends JobListingRepository {
   @override
   Future<String?> sendApplicantMessage(Map<String, dynamic> variables,String typeName) async {
     try {
-      final data = await http.mutation(typeName!="appliedJob"? talentMessge:applicantMessge, {
+      final data = await http.mutation(typeName!="applicant"? talentMessge:applicantMessge, {
         "object": variables,
       });
 
