@@ -156,8 +156,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
 
                             await context
                                 .read<ViewProfileViewModel>()
-                                .getViewProfileData(context);
-
+                                .getBusinessTypes();
+                            await context
+                                .read<ViewProfileViewModel>()
+                                .getViewProfileData();
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.viewProfileScreen);
