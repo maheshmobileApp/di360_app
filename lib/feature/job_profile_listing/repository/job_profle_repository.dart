@@ -1,4 +1,3 @@
-//import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 

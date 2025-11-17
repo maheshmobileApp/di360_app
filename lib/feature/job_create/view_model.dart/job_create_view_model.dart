@@ -337,13 +337,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           .map((img) => img.url)
           .whereType<String>()
           .toList();
-      if (serverClinicImgs == null) {
+      if (serverClinicImgs == []) {
         serverClinicImgs = newUrls;
       } else {
-        serverClinicImgs = [...serverClinicImgs!, ...newUrls];
+        serverClinicImgs = [...serverClinicImgs, ...newUrls];
       }
 
-      selectedClinicImgList = serverClinicImgs!
+      selectedClinicImgList = serverClinicImgs
           .map(
             (url) => ClinicLogo(url: url, type: "image", extension: "jpeg"),
           )

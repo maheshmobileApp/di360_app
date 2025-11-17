@@ -4,7 +4,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_my_enquiry_job_data.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/get_profile_enquiry_query.dart';
-//import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_deleted_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_updated.dart';

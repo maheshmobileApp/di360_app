@@ -95,7 +95,6 @@ class CatalogueViewModel extends ChangeNotifier {
 
   Future<void> fetchCatalogue(BuildContext context) async {
     cataloguesLoading = true;
-    await Future.delayed(const Duration(seconds: 1));
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(
         searchController.text,type, catagroies, suppliers, selectedUserId ?? '');

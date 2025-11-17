@@ -75,4 +75,10 @@ class ConstantData {
     'Testimonials',
     'OtherInformation',
   ];
+
+  static List<Map<String, String>> planTypes = [
+    {"name": "Dental Professional", "type": "PROFESSIONAL"},
+    {"name": "Dental Business Owner", "type": "SUPPLIER"},
+    {"name": "Dental Practice Owner", "type": "PRACTICE"}
+  ];
 }
