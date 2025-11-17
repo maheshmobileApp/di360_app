@@ -71,7 +71,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _statusChip(jobProfiles?.adminStatus ?? ''),
-                        _TalentMenu(jobProfiles?.hi ?? ''),
+                        _TalentMenu(jobProfiles?.adminStatus ?? ''),
                       ],
                     ),
                   ],

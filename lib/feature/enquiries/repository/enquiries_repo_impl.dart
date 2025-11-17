@@ -12,7 +12,7 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
       "limit": 5,
       "offset": 0,
       "where": {
-        "enquiry_userid": {"_eq": "a8bcb5cc-5bee-4513-864d-43b0223f6b2f"}
+        "enquiry_userid": {"_eq":enquiryId}
       }
     };
     final res = await http.query(enquiriesListQuery, variables: variables);
