@@ -133,7 +133,9 @@ class _ApplyJobsViewState extends State<ApplyJobsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         title: Text(
           "Apply for Job",
           style: TextStyle(

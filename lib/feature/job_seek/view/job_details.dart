@@ -6,7 +6,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_info_item.dart';
-
 import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
@@ -52,7 +51,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          contentPadding: EdgeInsets.all(16),
+          backgroundColor: AppColors.whiteColor,
           insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           actions: [
             CustomRoundedButton(
@@ -253,33 +252,44 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         InfoItem(
             iconPath: ImageConst.peopleSvg,
             title: 'No. Positions',
-            subtitle:
-                '${widget.job.noOfPeople ?? 0}'),
+            subtitle: '${widget.job.noOfPeople ?? 0}'),
         InfoItem(
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
-            subtitle: '${widget.job.rateBilling}  ${widget.job.payMin} - ${widget.job.payMax}'),
-        Divider(height: 30),
+            subtitle:
+                '${widget.job.rateBilling}  ${widget.job.payMin} - ${widget.job.payMax}'),
+        Divider(height: 10),
         _sectionHeader('Job Description'),
         _sectionText('${widget.job.description ?? ''}'),
-        SizedBox(height: 10),
-         _sectionHeader(
-            "Skills"
+        if (widget.job.offeredBenefits?.length != 0)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader("Skills"),
+              CustomChipView(typesList: widget.job.offeredBenefits ?? []),
+            ],
           ),
-            SizedBox(height:6),
-          CustomChipView(typesList: widget.job.offeredBenefits ?? []),
-            SizedBox(height: 16),
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
-        _sectionHeader('Gallery'),
-        GalleryView(
-            mediaList: widget.job.clinicLogo!
-                .map((e) =>
-                    PostImage(url: e.url, type: e.type, extension: e.extension))
-                .toList(),
-            imageUrls: widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
-        _sectionHeader('Social Media Handles'),
+        if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader('Gallery'),
+              GalleryView(
+                  mediaList: widget.job.clinicLogo!
+                      .map((e) => PostImage(
+                          url: e.url, type: e.type, extension: e.extension))
+                      .toList(),
+                  imageUrls:
+                      widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
+            ],
+          ),
+        if (widget.job.facebookUrl!.isNotEmpty ||
+            widget.job.instagramUrl!.isNotEmpty ||
+            widget.job.linkedinUrl!.isNotEmpty)
+          _sectionHeader('Social Media Handles'),
         Row(
           children: [
             if (widget.job.facebookUrl!.isNotEmpty)

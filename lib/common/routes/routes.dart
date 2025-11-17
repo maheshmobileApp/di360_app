@@ -53,6 +53,7 @@ import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
+import 'package:di360_flutter/feature/talent_listing/view/talent_listing_message_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
@@ -113,6 +114,19 @@ class Routes {
           userId: args['userId'],
           profilePic: args['profilePic'] ?? "",
           applicant: args['applicant'],
+          typeName: args['type'],
+        );
+      },
+      RouteList.TalentListingMessageScreen: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return TalentListingMessageScreen(
+           jobId: args['jobId'],
+          applicantId: args['applicantId'],
+          userId: args['userId'],
+          profilePic: args['profilePic'] ?? "",
+          applicant: args['applicant'],
+          typeName: args['type'],
         );
       },
       RouteList.AppliedJobScreen: (context) {

@@ -4,15 +4,19 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_view.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfiles jobsListingData;
+  final TalentEnquiriesData jobsListingData;
 
   final int? index;
   const JobProfileEnquiriesCard({
@@ -24,9 +28,8 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobsListingData.createdAt ?? '');
-    final String? profileImageUrl = jobsListingData.profileImage.isNotEmpty
-        ? jobsListingData.profileImage.first.url
-        : '';
+    final String? profileImageUrl = jobsListingData.dentalSuppliers?.logo?.url ?? '';
+    final vm = Provider.of<JobProfileListingViewModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Container(
@@ -44,10 +47,12 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 Expanded(
                   child: _logoWithTitle(
-                    profileImageUrl ?? "",
-                    jobsListingData.fullName ?? '',
-                    jobsListingData.emailAddress ?? '',
-                    jobsListingData.mobileNumber ??'' ,
+                    jobsListingData.dentalSuppliers?.logo?.url ?? "",
+                    jobsListingData.dentalSuppliers?.name ?? '',
+                    jobsListingData.dentalSuppliers?.directories?.first.email ??
+                        "",
+                    jobsListingData.dentalSuppliers?.directories?.first.phone ??
+                        "",
                   ),
                 ),
                 Row(
@@ -57,14 +62,14 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 ),
               ],
             ),
-             addVertical(10),
-              const Divider(),
+            addVertical(10),
+            const Divider(),
             Row(
               children: [
-               InkWell(
+                InkWell(
                   onTap: () async {
                     final profileId = jobsListingData.id;
-                    final jobId = jobsListingData.jobDesignation;
+                    final jobId = jobsListingData.id;
                     if (profileId == null || jobId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -81,13 +86,36 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                         "jobId": jobId,
                         "applicantId": profileId,
                         "userId": userId,
+                        "type":"job_profile"
                       },
                     );
                   },
                   child: _roundedButton("Message"),
                 ),
                 addHorizontal(10),
-                _roundedButton("Enquiry"),
+                InkWell(
+                    onTap: () async {
+                      await vm.getJobProfileEnquiry(context,vm.jobProfileId??"",jobsListingData.enquiryFrom??"");
+                      if (vm.jobPrilfeEnquiryData == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Applicant data not available")),
+                        );
+                        return;
+                      }
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        builder: (context) => JobProfileEnquiriesView(
+                          applicant: vm.jobPrilfeEnquiryData,   
+                          profileImageUrl: profileImageUrl,// safe now
+                        ),
+                      );
+                    },
+                    child: _roundedButton("Enquiry")),
               ],
             ),
           ],
@@ -129,14 +157,15 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                   ),
           ),
         ),
-          addHorizontal( 6),
+        addHorizontal(6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 name,
-                style: TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -147,9 +176,8 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-               phonenumber,
-                style:
-                    TextStyles.regular1(color: AppColors.lightGeryColor),
+                phonenumber,
+                style: TextStyles.regular1(color: AppColors.lightGeryColor),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -159,6 +187,7 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
       ],
     );
   }
+
   String _getShortTime(String? createdAt) {
     if (createdAt == null || createdAt.isEmpty) return '';
     try {
@@ -167,7 +196,7 @@ class JobProfileEnquiriesCard extends StatelessWidget with BaseContextHelpers {
       return '';
     }
   }
-  
+
   Widget _roundedButton(String label) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         height: 30,

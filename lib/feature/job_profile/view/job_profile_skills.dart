@@ -225,13 +225,13 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             contentPadding: const EdgeInsets.all(12),
             title: Row(
               children: [
-                if (edu.qualification.isNotEmpty)
-                  Text(edu.qualification,
+                if (edu.qualification!.isNotEmpty)
+                  Text(edu.qualification??"",
                       style: TextStyles.semiBold(fontSize: 16, color: AppColors.black)),
-                if (edu.qualification.isNotEmpty && edu.institution.isNotEmpty)
+                if (edu.qualification!.isNotEmpty && edu.institution!.isNotEmpty)
                   Text(" at ", style: TextStyles.semiBold(fontSize: 16,color: AppColors.black)),
-                if (edu.institution.isNotEmpty)
-                  Text(edu.institution,
+                if (edu.institution!.isNotEmpty)
+                  Text(edu.institution??"",
                       style: TextStyles.semiBold(fontSize: 16,color: AppColors.blueColor)),
               ],
             ),
@@ -248,9 +248,9 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                   Text("Expected Finish Date: ${edu.expectedFinishDate}",
                       style:
                           TextStyles.regular2(color: AppColors.lightGeryColor)),
-                if (edu.courseHighlights.isNotEmpty) ...[
+                if (edu.courseHighlights!.isNotEmpty) ...[
                   addVertical(6),
-                  Text(edu.courseHighlights,
+                  Text(edu.courseHighlights??"",
                       style:
                           TextStyles.regular2(color: AppColors.lightGeryColor)),
                 ],

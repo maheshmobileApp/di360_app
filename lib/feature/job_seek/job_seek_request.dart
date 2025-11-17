@@ -37,6 +37,7 @@ String job_list_request = '''query getAllJobs {
     facebook_url
     hiring_period
     instagram_url
+    linkedin_url
     is_featured
     closing_message
     closed_at
@@ -47,6 +48,7 @@ String job_list_request = '''query getAllJobs {
     active_status
     pay_min
     pay_max
+    offered_benefits
   }
 }
 ''';

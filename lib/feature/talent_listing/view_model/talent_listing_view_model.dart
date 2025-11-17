@@ -1,10 +1,13 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-
 
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
@@ -26,6 +29,18 @@ class TalentListingViewModel extends ChangeNotifier {
   String? selectedRole;
   String? selectedEmploymentType;
   String? selectedState;
+  JobProfileEnquiriesResList? talentEnquiryData;
+  bool isLoading = false;
+  TalentsMessageResData? talentMessages;
+  TextEditingController messageController = TextEditingController();
+
+  bool editMessage = false;
+
+  void setEditMessage(bool value) {
+    editMessage = value;
+    notifyListeners();
+  }
+
   void setRole(String val) {
     selectedRole = val;
     notifyListeners();
@@ -35,6 +50,7 @@ class TalentListingViewModel extends ChangeNotifier {
     selectedEmploymentType = val;
     notifyListeners();
   }
+
   void setState(String val) {
     selectedState = val;
     notifyListeners();
@@ -75,7 +91,7 @@ class TalentListingViewModel extends ChangeNotifier {
       };
 
   List<String> listingStatus = [];
-  List<JobProfile> myTalentListingList = [];
+  List<JobProfiles> myTalentListingList = [];
   void changeStatus(String status) {
     selectedStatus = status;
     switch (status) {
@@ -156,5 +172,116 @@ class TalentListingViewModel extends ChangeNotifier {
     debugPrint("Selected Role: $selectedRole");
     debugPrint("Selected Employment Type: $selectedEmploymentType");
     debugPrint("Selected Status: $selectedStatus");
+  }
+
+  Future<JobProfileEnquiriesResList?> getTalentEnquiry(
+      BuildContext context, String talentId) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.getTalentEnquiry(talentId);
+    if (res != null) {
+      talentEnquiryData = res;
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+    return res;
+  }
+
+  Future<TalentsMessageResData?> fetchTalentMessages(String talentId) async {
+    try {
+      isLoading = true;
+      final res = await repo.fetchTalentMessages(talentId);
+      if (res != null) {
+        talentMessages = res;
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+      return talentMessages;
+    }
+  }
+
+  String newmessage = "";
+  String editMessageId = "";
+
+  void setEditMessageDetails(String id, String message) {
+    editMessageId = id;
+    newmessage = message;
+    notifyListeners();
+  }
+
+  Future<void> updateTalentMessage(
+      BuildContext context, String talentId) async {
+    try {
+      isLoading = true;
+
+      final res = await repo.updateTalentMessage(
+          editMessageId, messageController.text);
+      if (res != null) {
+        setEditMessage(false);
+        await fetchTalentMessages(talentId);
+        scaffoldMessenger("Message updated successfully");
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteTalentMessage(
+      BuildContext context, String talentId,String applicantId) async {
+    try {
+      isLoading = true;
+
+      final res = await repo.deleteTalentMessage(
+          talentId, true);
+      if (res != null) {
+        setEditMessage(false);
+        await fetchTalentMessages(applicantId);
+        scaffoldMessenger("Message deleted successfully");
+      }
+    } catch (e) {
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<dynamic> sendTalentMessage(
+      BuildContext context, String talentId, String message,
+       String? typeName) async {
+    if (message.isEmpty) {
+      scaffoldMessenger("Message cannot be empty");
+      return;
+    }
+
+    try {
+      Loaders.circularShowLoader(context);
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+      final res = await repo.sendTalentMessage({
+        "talent_message_id_to": talentId,
+        "message": message,
+        "message_from": userId,
+      }, typeName ?? "");
+      
+
+      if (res != null) {
+        scaffoldMessenger("Message sent successfully");
+        messageController.clear();
+        
+        fetchTalentMessages(talentId);
+      } else {
+        scaffoldMessenger("Failed to send message");
+      }
+    } catch (e) {
+      scaffoldMessenger("Error: $e");
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
   }
 }

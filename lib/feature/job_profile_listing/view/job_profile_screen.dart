@@ -1,5 +1,4 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
@@ -9,7 +8,6 @@ import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class JobProfileScreen extends StatefulWidget {
@@ -63,11 +61,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
       ),
       endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
-          filterWidget: GestureDetector(
-        onTap: () =>
-            navigationService.navigateTo(RouteList.TalentListingFilter),
-        child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-      )),
+          searchWidget: false,),
       body: Column(
         children: [
           Expanded(
