@@ -79,3 +79,4 @@ query getTalentEnquiryList($where: talent_enquiries_bool_exp) {
   }
 }
 ''';
+

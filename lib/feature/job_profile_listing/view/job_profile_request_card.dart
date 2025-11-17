@@ -4,7 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/talents/model/job_profile.dart';
+import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfile jobsListingData;
+  final JobProfiles jobsListingData;
   final dynamic parmas;
   final int index; 
 

@@ -126,19 +126,19 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void loadEducation(List<Education> list) {
     educationCntr =
-        list.map((h) => TextEditingController(text: h.name ?? "")).toList();
+        list.map((h) => TextEditingController(text: h.qualification ?? "")).toList();
     notifyListeners();
   }
 
   void updateEducation(BuildContext context, int index, String value) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education?[index].name = value;
+    addDirectorVM.getBasicInfoData.first.education?[index].qualification = value;
     notifyListeners();
   }
 
   void addEducation(BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education?.add(Education(name: null));
+    addDirectorVM.getBasicInfoData.first.education?.add(Education(qualification: ""));
     educationCntr.add(TextEditingController());
     notifyListeners();
   }
@@ -287,7 +287,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     designationCntr.text = data.designation ?? '';
     loadHobbies(data.hobbies ?? []);
     loadUniversities(data.universitySchool ?? []);
-    loadEducation(data.education ?? []);
+    //loadEducation(data.education ?? []);
     loadWorkAt(data.workingAt ?? []);
     notifyListeners();
   }

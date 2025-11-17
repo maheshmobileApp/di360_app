@@ -164,6 +164,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                           "jobId": applicant.jobId ?? "",
                           "applicantId": applicant.id ?? "",
                           "userId": userId,
+                          "type": "applicant"
                         },
                       );
                     },

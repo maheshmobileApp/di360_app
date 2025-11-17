@@ -14,30 +14,36 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader("Professional Info"),
-            addVertical(16),
-            InputTextField(
-              controller: jobProfileVM.jobDesignationController,
-              hintText: "Enter Job Designation",
-              title: "Job Designation",
-            ),
-            addVertical(16),
-            InputTextField(
-              controller: jobProfileVM.currentCompanyController,
-              hintText: "Enter Current Company",
-              title: "Current Company",
-            ),
-            addVertical(16),
-            _buildWorkRight(jobProfileVM),
-            addVertical(16),
-            _buildExperience(jobProfileVM),
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      behavior: HitTestBehavior.translucent,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _sectionHeader("Professional Info"),
+              addVertical(16),
+              InputTextField(
+                controller: jobProfileVM.jobDesignationController,
+                hintText: "Enter Job Designation",
+                title: "Job Designation",
+              ),
+              addVertical(16),
+              InputTextField(
+                controller: jobProfileVM.currentCompanyController,
+                hintText: "Enter Current Company",
+                title: "Current Company",
+              ),
+              addVertical(16),
+              _buildWorkRight(jobProfileVM),
+              addVertical(16),
+              _buildExperience(jobProfileVM),
+            ],
+          ),
         ),
       ),
     );
@@ -51,24 +57,24 @@ class JobProfileProfeInfo extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildWorkRight(JobProfileCreateViewModel jobProfileVM) {
-  final validWorkRight = jobProfileVM.workRightList.contains(jobProfileVM.selectworkRight)
-      ? jobProfileVM.selectworkRight
-      : null;
+    final validWorkRight =
+        jobProfileVM.workRightList.contains(jobProfileVM.selectworkRight)
+            ? jobProfileVM.selectworkRight
+            : null;
 
-  return CustomDropDown<String>(
-    value: validWorkRight,
-    title: "Work Rights",
-    onChanged: (v) => jobProfileVM.setSelectedWorkRight(v ?? ""),
-    items: jobProfileVM.workRightList.map((value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-    hintText: "Select role type",
-  );
-}
-
+    return CustomDropDown<String>(
+      value: validWorkRight,
+      title: "Work Rights",
+      onChanged: (v) => jobProfileVM.setSelectedWorkRight(v ?? ""),
+      items: jobProfileVM.workRightList.map((value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select role type",
+    );
+  }
 
   Widget _buildExperience(JobProfileCreateViewModel jobProfileVM) {
     return CustomDropDown<String>(

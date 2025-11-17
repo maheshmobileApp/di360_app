@@ -1,9 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_profile/model/job_education.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +36,11 @@ class _AddEducationDialogState extends State<AddEducationDialog>
     final vm = widget.jobProfileVM;
     final edu = widget.education;
     if (edu != null) {
-      vm.QualificationController.text = edu.qualification;
-      vm.InstitutionController.text = edu.institution;
+      vm.QualificationController.text = edu.qualification??"";
+      vm.InstitutionController.text = edu.institution??"";
       vm.FinishDateController.text = edu.finishDate ?? "";
       vm.ExpectedFinishDateController.text = edu.expectedFinishDate ?? "";
-      vm.courseHighlightsController.text = edu.courseHighlights;
+      vm.courseHighlightsController.text = edu.courseHighlights??"";
       vm.selectedQualification = edu.selectedQualification !=""?edu.selectedQualification : "No";
     } else {
       vm.QualificationController.clear();
@@ -58,6 +58,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
     final isEdit = widget.education != null;
 
     return AlertDialog(
+      backgroundColor: AppColors.whiteColor,
       contentPadding: const EdgeInsets.all(16),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -97,18 +98,19 @@ class _AddEducationDialogState extends State<AddEducationDialog>
                 ),
                 addVertical(16),
                 _buildQualificationTypes(vm),
-                if (vm.selectedQualification == null)
+                /*if (vm.selectedQualification == null)
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       'Please select Qualification Finished',
                       style: TextStyle(color: AppColors.primaryColor, fontSize: 12),
                     ),
-                  ),
+                  ),*/
                 addVertical(16),
                 if (vm.selectedQualification == "Yes") ...[
-                  const Text("Finished Date"),
+                 
                   CustomDatePicker(
+                    title: "Finished Date",
                     controller: vm.FinishDateController,
                     hintText: "Date",
                     onTap: () async {
@@ -236,7 +238,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
   }
 
   Widget _buildQualificationTypes(JobProfileCreateViewModel jobProfileVM) {
-    return CustomDropDown(
+    return /*CustomDropDown(
       value: jobProfileVM.selectedQualification,
       title: "Qualification Finished",
       onChanged: (v) => setState(() {
@@ -247,6 +249,23 @@ class _AddEducationDialogState extends State<AddEducationDialog>
               DropdownMenuItem<Object>(value: value, child: Text(value)))
           .toList(),
       hintText: "Select Qualification",
+    );*/
+     CustomDropDown(
+      isRequired: true,
+      value:  jobProfileVM.selectedQualification,
+      title: "Qualification Finished",
+      onChanged: (v) => setState(() {
+        jobProfileVM.selectedQualification = v.toString();
+      }),
+      items: jobProfileVM.QualificationTypes
+          .map<DropdownMenuItem<Object>>((String value) =>
+              DropdownMenuItem<Object>(value: value, child: Text(value)))
+          .toList(),
+     
+       hintText: "Select Qualification",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select Qualification'
+          : null,
     );
   }
 }
