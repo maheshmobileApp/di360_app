@@ -49,7 +49,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter Description",
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: 5,
                 title: "Topics Included",
                 controller: jobCreateVM.topicsIncludedDescController,
@@ -57,7 +57,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter Description",
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: 5,
                 title: "Learning Objectives",
                 controller: jobCreateVM.learningObjectivesDescController,
@@ -113,6 +113,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           controller: day.sessionNameController,
           hintText: "Enter Session Name",
           title: "Session Name",
+          maxLength: 25,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter Session name'
@@ -145,7 +146,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           controller: day.sessionInfoController,
           hintText: "Enter Information",
           title: "Session Info",
-          maxLength: 500,
+          maxLength: 1000,
           maxLines: 5,
           isRequired: true,
           validator: (value) => value == null || value.isEmpty
@@ -188,6 +189,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 controller: day.sessionNameController,
                 hintText: "Enter Session Name",
                 title: "Session Name",
+                  maxLength: 25,
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please enter Session name'
@@ -250,7 +252,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               InputTextField(
                 controller: day.sessionInfoController,
                 hintText: "Enter Information",
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: 5,
                 title: "Session Info",
                 isRequired: true,

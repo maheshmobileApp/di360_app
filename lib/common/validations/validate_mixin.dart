@@ -7,6 +7,12 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) return "Please enter your Mobile Number";
+    if (!phoneNoValid(value)) return 'Enter valid mobile number';
+    return null;
+  }
+
   String? validateFirstName(String? value) {
     if (value == null || value.isEmpty) return "Please enter first name";
     return null;

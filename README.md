@@ -363,3 +363,19 @@ Profile Create -> Admin approve-> market palce -> hire me / enquiry
 */
 
 */
+## Testing Credentials
+ADMIN
+    kaminof457@ffuqzt.com
+    123456
+
+ PRACTICE
+    dentalpractice1@yopmail.com
+    123456
+
+PROFESSIONAL
+  paded85578@lodores.com
+  sandeep
+
+SUPPLIER
+  dentalbusiness1@yopmail.com
+  123456

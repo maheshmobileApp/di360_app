@@ -41,7 +41,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter Terms & Conditions",
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: 5,
                 isRequired: true,
                 title: "Terms & Conditions",
@@ -53,7 +53,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter Cancellation & Refund Policy",
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: 5,
                 isRequired: true,
                 title: "Cancellation & Refund Policy",

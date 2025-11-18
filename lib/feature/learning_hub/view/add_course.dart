@@ -28,7 +28,6 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
 
     final showAddress = ["Event", "Live Course", "Live Event"].contains(type);
 
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
@@ -47,6 +46,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 controller: jobCreateVM.courseNameController,
                 hintText: "Enter Course Name",
                 title: "Course Name",
+                maxLength: 100,
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please enter Course name'
@@ -155,7 +155,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                       : null,
                 ),
               ],
-              SizedBox(height: 8),
+              /*SizedBox(height: 8),
               CustomDatePicker(
                 title: "RSVP Date",
                 controller: jobCreateVM.rsvpDateController,
@@ -173,12 +173,13 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                         "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },
-              ),
+              ),*/
               SizedBox(height: 8),
               InputTextField(
                 controller: jobCreateVM.presenterNameController,
                 hintText: "Enter Presenter Name",
                 title: "Presented By (Name)",
+                maxLength: 75,
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please enter Presenter name'
@@ -243,7 +244,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter your text here",
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: 5,
                 isRequired: true,
                 title: "Course Description",
@@ -257,6 +258,7 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 controller: jobCreateVM.cpdPointsController,
                 keyboardType: TextInputType.number,
                 hintText: "Enter CPD Points",
+                maxLength: 4,
                 title: "CPD Points (Hours)",
                 isRequired: true,
                 validator: (value) => value == null || value.isEmpty
@@ -317,11 +319,21 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
                 text: null,
                 hintText: "Date",
                 onTap: () async {
+                  DateTime startDate =
+                      jobCreateVM.startDateController.text.isNotEmpty
+                          ? DateFormat("dd/MM/yyyy")
+                              .parse(jobCreateVM.startDateController.text)
+                          : DateTime.now();
+                  DateTime endDate =
+                      jobCreateVM.endDateController.text.isNotEmpty
+                          ? DateFormat("dd/MM/yyyy")
+                              .parse(jobCreateVM.endDateController.text)
+                          : DateTime.now();
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
+                    initialDate: startDate,
+                    firstDate: startDate,
+                    lastDate: endDate,
                   );
                   if (picked != null) {
                     jobCreateVM.earlyBirdDateController.text =
@@ -386,33 +398,34 @@ class AddCourse extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCourseTypes(NewCourseViewModel jobCreateVM) {
-  // Remove duplicates and sanitize data
-  final courseTypeList = jobCreateVM.courseTypeNames.toSet().toList();
+    // Remove duplicates and sanitize data
+    final courseTypeList = jobCreateVM.courseTypeNames.toSet().toList();
 
-  // Ensure the selected value actually exists
-  final safeSelectedType = courseTypeList.contains(jobCreateVM.selectedCourseType)
-      ? jobCreateVM.selectedCourseType
-      : null;
+    // Ensure the selected value actually exists
+    final safeSelectedType =
+        courseTypeList.contains(jobCreateVM.selectedCourseType)
+            ? jobCreateVM.selectedCourseType
+            : null;
 
-  return CustomDropDown(
-    isRequired: true,
-    value: safeSelectedType, // ✅ safe value
-    title: "Course Format (Type)",
-    onChanged: (v) {
-      jobCreateVM.setSelectedCourseType(v as String);
-    },
-    items: courseTypeList.map<DropdownMenuItem<Object>>((String value) {
-      return DropdownMenuItem<Object>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-    hintText: "Select Course Type",
-    validator: (value) =>
-        value == null || value.toString().isEmpty ? 'Please select Course Type' : null,
-  );
-}
-
+    return CustomDropDown(
+      isRequired: true,
+      value: safeSelectedType, // ✅ safe value
+      title: "Course Format (Type)",
+      onChanged: (v) {
+        jobCreateVM.setSelectedCourseType(v as String);
+      },
+      items: courseTypeList.map<DropdownMenuItem<Object>>((String value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select Course Type",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select Course Type'
+          : null,
+    );
+  }
 
   DateTime? parseTime(String timeString) {
     try {

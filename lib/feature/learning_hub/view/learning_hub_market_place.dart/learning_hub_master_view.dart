@@ -94,7 +94,6 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                 onSearch: () {
                   courseListingVM.getAllListingData(context);
                 },
-               
               ),
             Expanded(
                 child: courseListingVM.marketPlaceCoursesList.isEmpty
@@ -136,19 +135,31 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 course.cpdPoints?.toStringAsFixed(0) ?? "0",
                             location: course.address ?? "",
                             onTap: () async {
-                              await courseListingVM.getCourseDetails(
-                                context,
-                                course.id ?? "",
-                              );
-                              navigationService.navigateTo(
-                                RouteList.courseDetailScreen,
-                              );
+                              if (seats > 0) {
+                                await courseListingVM.getCourseDetails(
+                                  context,
+                                  course.id ?? "",
+                                );
+
+                                await courseListingVM.getCourseRegisteredUsers(
+                                    context, course.id ?? "");
+
+                                await courseListingVM.registerCourseHandler(
+                                    context, course.createdById ?? "");
+                                navigationService.navigateTo(
+                                  RouteList.courseDetailScreen,
+                                );
+                              } else {
+                                scaffoldMessenger('Seats are sold out!');
+                              }
                             },
                             registerTap: () async {
                               if (seats > 0) {
                                 courseListingVM.setCourseId(course.id ?? "");
                                 RegistrationUserForm.show(
-                                    context, course.courseName ?? "");
+                                    context,
+                                    course.courseName ?? "",
+                                    course.createdById ?? "");
                               } else {
                                 scaffoldMessenger('Seats are sold out!');
                               }

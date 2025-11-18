@@ -66,16 +66,22 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: RegisterNowWidget(
+                    earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
+                    registerStatus: courseListingVM.courseRegistered,
                     currentPrice:
                         courseDetails?.earlyBirdPrice?.toString() ?? "0",
                     oldPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
-                    onPressed: () {
-                      courseListingVM.setCourseId(courseDetails?.id ?? "");
-                      RegistrationUserForm.show(
-                        context,
-                        courseDetails?.courseName ?? "",
-                      );
-                    },
+                    onPressed: courseListingVM.courseRegistered
+                        ? null
+                        : () {
+                            courseListingVM
+                                .setCourseId(courseDetails?.id ?? "");
+                            RegistrationUserForm.show(
+                              context,
+                              courseDetails?.courseName ?? "",
+                              courseDetails?.createdById ?? "",
+                            );
+                          },
                   ),
                 ),
               ],
@@ -189,7 +195,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             .asMap()
                             .entries
                             .map((entry) {
-                         // final index = entry.key; // 0,1,2...
+                          // final index = entry.key; // 0,1,2...
                           final eventInfo = entry.value; // actual event
 
                           final images = (eventInfo.images ?? [])

@@ -34,5 +34,5 @@ bool checkPostalCode(String code) {
 
 bool isValidAustralianPhoneNumber(String phone) {
   final pattern = RegExp(r'^(\+61|0)[23478]\d{8}$');
-  return pattern.hasMatch(phone) && phone.length == 12;
+  return pattern.hasMatch(phone) && phone.length == 10;
 }

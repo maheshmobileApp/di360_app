@@ -41,7 +41,8 @@ class CouresListingCard extends StatelessWidget {
     this.onMenuAction,
     this.onDetailView,
     required this.meetingLink,
-    required this.activeStatus, required this.chipTitle,
+    required this.activeStatus,
+    required this.chipTitle,
   });
 
   @override
@@ -219,7 +220,7 @@ class CouresListingCard extends StatelessWidget {
             SizedBox(
               width: 10,
             ),
-            (meetingLink != "")
+            (meetingLink != "" && types.first == "Webinar")
                 ? _meetingLinkWidget(meetingLink)
                 : SizedBox.shrink(),
           ],

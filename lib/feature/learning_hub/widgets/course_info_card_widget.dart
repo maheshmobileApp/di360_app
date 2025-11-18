@@ -11,8 +11,8 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String platform;
   final String webinar;
   final String profilePic;
-  final String totalPrice;
-  final String discountPrice;
+  final String? totalPrice;
+  final String? discountPrice;
   final String startDate;
   final String endDate;
   final String time;
@@ -146,7 +146,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                         _InfoTextWidget(
                           label: "Price",
                           first: true,
-                          value: "\$${totalPrice}",
+                          value: "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}",
                         ),
                       ],
                     ),
