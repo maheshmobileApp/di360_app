@@ -391,3 +391,6 @@ Qa
 flutter run --dart-define-from-file=.env/dev.json
 
 flutter run --dart-define-from-file=.env/prod.json
+
+flutter build ipa --release --export-method app-store \
+  --dart-define-from-file=.env/production.json
