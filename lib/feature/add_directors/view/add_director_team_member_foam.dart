@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 
 class AddDirectorTeamMemberFoam extends StatelessWidget
-    with BaseContextHelpers {
+    with BaseContextHelpers, ValidationMixins {
   final String? hinttext;
   AddDirectorTeamMemberFoam({super.key, this.hinttext});
 
@@ -60,9 +61,7 @@ class AddDirectorTeamMemberFoam extends StatelessWidget
           controller: AddDirectorVM.teamNumberCntr,
           isRequired: true,
           keyboardType: TextInputType.number,
-          validator: (value) => value == null || value.isEmpty
-              ? 'Please enter Phone Number'
-              : null,
+           validator: validatePhoneNumber
         ),
         addVertical(12),
         InputTextField(

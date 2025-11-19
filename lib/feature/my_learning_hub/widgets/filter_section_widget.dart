@@ -53,7 +53,7 @@ class FilterBottomSheet extends StatelessWidget {
                     "Filter",
                     style: TextStyles.bold4(color: AppColors.primaryColor),
                   ),
-                  TextButton(
+                  /*TextButton(
                     onPressed: () {
                       vm.clearAll();
                       onClear();
@@ -63,7 +63,7 @@ class FilterBottomSheet extends StatelessWidget {
                       style:
                           TextStyles.regular3(color: AppColors.lightGeryColor),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
               const SizedBox(height: 8),
@@ -113,13 +113,11 @@ class FilterBottomSheet extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CustomRoundedButton(
-                      text: 'Cancel',
+                      text: 'Clear',
                       height: 40,
                       backgroundColor: AppColors.timeBgColor,
                       textColor: AppColors.primaryColor,
-                      onPressed: () {
-                        navigationService.goBack();
-                      },
+                      onPressed: onClear,
                     ),
                   ),
                   const SizedBox(width: 12),

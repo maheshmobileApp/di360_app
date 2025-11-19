@@ -56,7 +56,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     );
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-      endDrawer: NotificationsPanel(),
+        endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Course Listing',
             searchAction: () =>
@@ -176,6 +176,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       course.courseRegisteredUsersAggregate?.aggregate?.count ??
                           0,
                   onDetailView: () async {
+                    await courseListingVM.getCourseRegisteredUsers(
+                        context, course.id ?? "");
+
+                    await courseListingVM.registerCourseHandler(
+                        context, course.createdById ?? "");
+
                     await courseListingVM.getCourseDetails(
                       context,
                       course.id ?? "",
@@ -265,7 +271,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
                           RouteList.newCourseScreen,
                         );
                     }
-                  }, chipTitle: 'Registered',
+                  },
+                  chipTitle: 'Registered',
                 );
               },
             ),
@@ -379,9 +386,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
     (course.courseCategoryId != null)
         ? await newCourseVM
             .setSelectedCourseCategoryName(course.courseCategoryId)
-        : await newCourseVM
-            .setSelectedCourseCategoryName("");
-    newCourseVM.selectedCourseType = course.type!=null?course.type:"";
+        : await newCourseVM.setSelectedCourseCategoryName("");
+    newCourseVM.selectedCourseType = course.type != null ? course.type : "";
 
     // Text controllers
     newCourseVM.courseNameController.text = course.courseName ?? "";

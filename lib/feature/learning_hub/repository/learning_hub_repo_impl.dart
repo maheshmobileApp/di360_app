@@ -22,6 +22,7 @@ import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.d
 import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class LearningHubRepoImpl extends LearningHubRepository {
   final HttpService http = HttpService();
@@ -224,6 +225,9 @@ class LearningHubRepoImpl extends LearningHubRepository {
           .toList()
       : [];
 
+      String startDateFormatted = DateFormat("yyyy-MM-dd").format(DateFormat("dd/MM/yyyy").parse(startDate));
+
+
     if (type.isNotEmpty) {
       andConditions.add({
         "type": {
@@ -240,9 +244,9 @@ class LearningHubRepoImpl extends LearningHubRepository {
       });
     }
 
-    if (startDate.isNotEmpty) {
+    if (startDateFormatted.isNotEmpty) {
       andConditions.add({
-        "startDate": {"_eq": startDate}
+        "startDate": {"_eq": startDateFormatted}
       });
     }
 
@@ -291,3 +295,99 @@ class LearningHubRepoImpl extends LearningHubRepository {
     return jobListingStatusData;
   }*/
 }
+/*
+{
+  "limit": 10,
+  "offset": 0,
+  "where": {
+    "_or": [
+      {
+        "_or": [
+          {
+            "_and": [
+              {
+                "created_by_id": {
+                  "_eq": "b19dd6cb-8fb7-42fc-8b74-6bcbed418399"
+                }
+              },
+              {
+                "community_user_type": {
+                  "_in": [
+                    "COMMUNITY_USER",
+                    "BOTH"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "_and": [
+              {
+                "created_by_id": {
+                  "_eq": "b19dd6cb-8fb7-42fc-8b74-6bcbed418399"
+                }
+              },
+              {
+                "community_user_type": {
+                  "_is_null": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "_or": [
+          {
+            "_and": [
+              {
+                "created_by_id": {
+                  "_neq": "b19dd6cb-8fb7-42fc-8b74-6bcbed418399"
+                }
+              },
+              {
+                "community_user_type": {
+                  "_eq": "BOTH"
+                }
+              }
+            ]
+          },
+          {
+            "_and": [
+              {
+                "created_by_id": {
+                  "_neq": "b19dd6cb-8fb7-42fc-8b74-6bcbed418399"
+                }
+              },
+              {
+                "community_user_type": {
+                  "_is_null": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type": {
+      "_in": [
+        "Event"
+      ]
+    },
+    "course_category_id": {
+      "_in": [
+        "a426a774-ea77-44a8-9560-0e057286df80"
+      ]
+    },
+    "startDate": {
+      "_eq": "2025-11-18"
+    },
+    "address": {
+      "_cast": {
+        "String": {
+          "_ilike": "%hyderabad%"
+        }
+      }
+    }
+  }
+}*/

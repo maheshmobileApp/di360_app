@@ -254,10 +254,12 @@ class ListingHubMasterCard extends StatelessWidget {
               ),
             ),
             //Spacer(),
-            RegisterButton(
-              text: 'Register Now',
-              onTap: registerTap,
-            )
+            (remainingOfSeats > 0)
+                ? RegisterButton(
+                    text: 'Register Now',
+                    onTap: registerTap,
+                  )
+                : SizedBox.shrink(),
           ],
         ),
       ),

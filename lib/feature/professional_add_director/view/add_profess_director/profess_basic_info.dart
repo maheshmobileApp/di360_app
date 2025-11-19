@@ -62,9 +62,7 @@ class ProfessBasicInfo extends StatelessWidget
             controller: professDirectorVM.mobileNumberCntr,
             isRequired: true,
             keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter Phone Number'
-                : null,
+             validator: validatePhoneNumber
           ),
           addVertical(20),
           InputTextField(

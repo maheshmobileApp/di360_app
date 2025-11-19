@@ -3,7 +3,13 @@ import 'package:di360_flutter/common/validations/reg_exp.dart';
 mixin ValidationMixins {
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty) return "Please enter your Mobile Number";
-    if (!isValidAustralianPhoneNumber(value)) return 'Enter valid mobile number';
+    if (!isValidAustralianPhoneNumber(value)) return 'Please enter a valid 10-digit mobile number';
+    return null;
+  }
+
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) return "Please enter your Mobile Number";
+    if (!phoneNoValid(value)) return 'Please enter a valid 10-digit mobile number';
     return null;
   }
 
@@ -128,6 +134,23 @@ mixin ValidationMixins {
   }
    String? validateUrl(String? value) {
     if (value == null || value.isEmpty) return 'Please enter URL';
+    return null;
+  }
+
+  String? validatePositiveNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a value";
+    }
+
+    final numValue = num.tryParse(value);
+    if (numValue == null) {
+      return "Invalid number";
+    }
+
+    if (numValue < 0) {
+      return "Number cannot be negative";
+    }
+
     return null;
   }
 }

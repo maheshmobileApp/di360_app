@@ -48,6 +48,15 @@ class JobListingRepoImpl extends JobListingRepository {
         "dental_practice_id": {"_eq": userId}
       });
     }
+    /*{
+  "limit": 10,
+  "offset": 0,
+  "where": {
+    "dental_practice_id": {
+      "_eq": "7306adc6-1efa-4a52-8c82-7e4e1922a5c5"
+    }
+  }
+} */
 
     final listingData =
         await http.query(getJobListingQuary, variables: {"andList": andList});

@@ -29,6 +29,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                 controller: jobCreateVM.nameController,
                 hintText: "Enter Name",
                 title: "Name",
+                maxLength: 25,
                 isRequired: true,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Please enter Name' : null,
@@ -41,9 +42,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                 keyboardType: TextInputType.number,
                 maxLength: 10,
                 isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Phone'
-                    : null,
+                validator: jobCreateVM.validatePhoneNumber,
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -73,9 +72,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter Website Url",
                 title: "Website Url",
                 isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Website url'
-                    : null,
+                validator: jobCreateVM.validateWebsite,
               ),
               SizedBox(height: 8),
               InputTextField(
@@ -83,9 +80,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter Register Link",
                 title: "Register Link",
                 isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Register link'
-                    : null,
+                validator: jobCreateVM.validateRegister,
               ),
               SizedBox(height: 8),
               jobCreateVM.selectedCourseType == "Webinar"
@@ -94,9 +89,7 @@ class Contacts extends StatelessWidget with BaseContextHelpers {
                       hintText: "Enter Meeting Link",
                       title: "Meeting Link",
                       isRequired: true,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter Meeting link'
-                          : null,
+                      validator: jobCreateVM.validateMeetingLink,
                     )
                   : const SizedBox.shrink(),
             ],

@@ -11,18 +11,19 @@ class DateFormatUtils {
     return DateFormat('d MMM yyyy').format(date);
   }
 
-static String convertTo24Hour(String time) {
-  // Replace all Unicode whitespace (including non-breaking spaces) with a normal space and trim
-  final cleaned = time.replaceAll(RegExp(r'\s+'), ' ').replaceAll('\u00A0', ' ').trim();
-  try {
-    final dateFormat = DateFormat.jm();
-    final dateTime = dateFormat.parse(cleaned);
-    return DateFormat('HH:mm').format(dateTime);
-  } catch (e) {
-    // Optionally log or handle the error, then return the original string or a fallback
-    return time;
+  static String convertTo24Hour(String time) {
+    // Replace all Unicode whitespace (including non-breaking spaces) with a normal space and trim
+    final cleaned =
+        time.replaceAll(RegExp(r'\s+'), ' ').replaceAll('\u00A0', ' ').trim();
+    try {
+      final dateFormat = DateFormat.jm();
+      final dateTime = dateFormat.parse(cleaned);
+      return DateFormat('HH:mm').format(dateTime);
+    } catch (e) {
+      // Optionally log or handle the error, then return the original string or a fallback
+      return time;
+    }
   }
-}
 
   static String convertToddmmm(String date) {
     final dateTime = DateTime.parse(date);
@@ -44,4 +45,13 @@ static String convertTo24Hour(String time) {
       return timeStr; // fallback
     }
   }
+
+  static String formatToAmPm(String timeString) {
+  // Add a dummy date to make it a valid ISO format
+  String withDate = "1970-01-01T$timeString";
+
+  DateTime dt = DateTime.parse(withDate);
+  return DateFormat('hh:mm a').format(dt);
+}
+
 }

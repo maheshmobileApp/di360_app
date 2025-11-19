@@ -62,6 +62,10 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                       },
                       onClear: () {
                         filterVM.clearAll();
+                         myLearningHubVM.getCoursesWithFilters(
+                            context,
+                            filterVM.selectedOptions['Filter by Type'],
+                            filterVM.selectedOptions['Category'], filterVM.selectedDate.toString());
                       },
                     ),
                   );
