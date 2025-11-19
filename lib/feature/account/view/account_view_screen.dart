@@ -154,16 +154,20 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .navigateTo(RouteList.myCatalogueScreen);
                           } else if (item.title == 'View Profile') {
                             Loaders.circularShowLoader(context);
-
+                            final type = await LocalStorage.getStringVal(
+                                LocalStorageConst.type);
                             await context
                                 .read<ViewProfileViewModel>()
                                 .getBusinessTypes();
                             await context
                                 .read<ViewProfileViewModel>()
-                                .getViewProfileData();
+                                .getTheViewProfileData();
                             Loaders.circularHideLoader(context);
-                            navigationService
-                                .navigateTo(RouteList.viewProfileScreen);
+                            type == 'PROFESSIONAL'
+                                ? await navigationService.navigateTo(
+                                    RouteList.professionalViewProfileScreen)
+                                : await navigationService
+                                    .navigateTo(RouteList.viewProfileScreen);
                           } else if (item.title == 'Job Listings') {
                             Loaders.circularShowLoader(context);
                             await context
@@ -192,7 +196,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .read<EnquiriesViewModel>()
                                 .getMyEnquiryJobData(context);
                             Loaders.circularHideLoader(context);
-                            
+
                             Navigator.pushNamed(
                               context,
                               RouteList.EnquiriesScreen,

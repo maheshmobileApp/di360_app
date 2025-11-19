@@ -1,17 +1,20 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/view_profile/view/basic_info.dart';
-import 'package:di360_flutter/feature/view_profile/view/contact_info.dart';
+import 'package:di360_flutter/feature/view_profile/view/professinoal_basic_info.dart';
+import 'package:di360_flutter/feature/view_profile/view/professional_contact_info.dart';
+import 'package:di360_flutter/feature/view_profile/view/professional_detail_info.dart';
+import 'package:di360_flutter/feature/view_profile/view/professional_personal_details.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ViewProfileView extends StatelessWidget with BaseContextHelpers {
-  const ViewProfileView({super.key});
-
+class ProfessionalViewProfileScreen extends StatelessWidget
+    with BaseContextHelpers {
+  ProfessionalViewProfileScreen({super.key});
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ViewProfileViewModel>(context);
@@ -19,19 +22,27 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
         backgroundColor: AppColors.whiteColor,
         appBar: AppbarTitleBackIconWidget(title: 'View Profile'),
         body: SingleChildScrollView(
-            child: Column(children: [
-          _sectionTitle('Basic Info', BasicInfo()),
-          _sectionTitle('Contact Information', ContactInfo()),
-          addVertical(20),
-          Padding(
+            child: Form(
+          key: formKey,
+          child: Column(children: [
+            _sectionTitle('Basic Info', ProfessinoalBasicInfo()),
+            _sectionTitle('Personal Details', ProfessionalPersonalDetails()),
+            _sectionTitle('Contact Information', ProfessionalContactInfo()),
+            _sectionTitle('Professional Details', ProfessionalDetailInfo()),
+            addVertical(20),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: AppButton(
                   text: 'Save & Update',
                   height: 45,
                   onTap: () {
-                    provider.updateViewProfile(context);
-                  }))
-        ])));
+                    if (formKey.currentState!.validate()) {
+                      provider.updateViewProfile(context);
+                    }
+                  }),
+            )
+          ]),
+        )));
   }
 
   Widget _sectionTitle(String title, Widget? child) {

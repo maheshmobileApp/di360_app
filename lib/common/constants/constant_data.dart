@@ -53,6 +53,19 @@ class ConstantData {
     'Web url'
   ];
 
+  static List<String> salutationList = [
+    'Mr',
+    'Mrs',
+    'Ms',
+    'Dr'
+  ];
+
+  static List<String> genderList = [
+    'Male',
+    'Female',
+    'Other'
+  ];
+
   static List<String> steps = [
     'Basic',
     'Services',
