@@ -73,6 +73,7 @@ class CouresListingCard extends StatelessWidget {
                         companyName,
                         courseTitle,
                         status,
+                        activeStatus
                       ),
                     ),
                     Row(
@@ -102,7 +103,7 @@ class CouresListingCard extends StatelessWidget {
                       child: Row(
                         children: [
                           Text(
-                            "Details",
+                            "View Details",
                             style: TextStyles.medium1(
                                 color: AppColors.primaryColor),
                           ),
@@ -129,6 +130,7 @@ class CouresListingCard extends StatelessWidget {
     String company,
     String title,
     String status,
+    String activeStatus,
   ) {
     return Row(
       children: [
@@ -154,7 +156,7 @@ class CouresListingCard extends StatelessWidget {
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
                 child: Text(
-                  status,
+                  status == "APPROVE" ? activeStatus : status ,
                   style: TextStyles.bold4(
                     color: StatusColors.getColor(status),
                     fontSize: 10,
@@ -314,7 +316,7 @@ class CouresListingCard extends StatelessWidget {
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
         if (status != "EXPIRED")
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
-        if (status != "APPROVE")
+        if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
         if (activeStatus == "ACTIVE" && status == "APPROVE")
           _popupItem(

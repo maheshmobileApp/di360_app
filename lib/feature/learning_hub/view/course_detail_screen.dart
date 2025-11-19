@@ -158,7 +158,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CourseInfoCardWidget(
-                        time: courseDetails?.startTime ?? "",
+                        startTime: courseDetails?.startTime ?? "",
+                        endTime: courseDetails?.endTime ?? "",
                         startDate: courseDetails?.startDate ?? "",
                         endDate: courseDetails?.endDate ?? "",
                         courseName: courseDetails?.courseName ?? "",

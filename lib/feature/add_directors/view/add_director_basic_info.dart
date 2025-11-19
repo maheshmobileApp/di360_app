@@ -71,9 +71,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             controller: addDirectorVM.MobileNumberController,
             isRequired: true,
             keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter Phone Number'
-                : null,
+             validator: validatePhoneNumber
           ),
           addVertical(20),
           InputTextField(
