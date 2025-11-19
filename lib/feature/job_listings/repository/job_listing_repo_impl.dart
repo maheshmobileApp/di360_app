@@ -87,7 +87,7 @@ class JobListingRepoImpl extends JobListingRepository {
       variables["supplierId"] = userId;
     }
     if (type == "PRACTICE") {
-      variables["dental_practice_id"] = userId;
+      variables["supplierId"] = userId;
     }
     final data = await http.query(getJobStatusCount, variables: variables);
     final result = JobStatusCountData.fromJson(data);

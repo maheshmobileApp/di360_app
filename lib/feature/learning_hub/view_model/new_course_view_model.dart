@@ -135,8 +135,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       validateOptionalUrl(registerLinkController.text);
   String? validateMeetingLink(String? _) =>
       validateOptionalUrl(meetingLinkController.text);
-      String? validatePhoneNumber(String? _) =>
-      validatePhone(phoneController.text);
+  String? validatePhoneNumber(String? _) => validatePhone(phoneController.text);
 
   void setPresentedImg(File? value) {
     selectedPresentedImg = value;
@@ -192,7 +191,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void updateEvent(String? value) {
     selectedEvent = value;
-
     notifyListeners();
   }
 
@@ -209,7 +207,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     } else {
       selectedCategoryId = null;
     }
-
     notifyListeners();
   }
 
@@ -236,6 +233,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     // Step-specific validations
     if (_currentStep == 0) {
+      updateEvent(startDateController.text != endDateController.text
+          ? "Multiple Day"
+          : "Single Day");
+
       validatePresenterImg();
       validateCourseHeaderBanner();
       validateGallery();

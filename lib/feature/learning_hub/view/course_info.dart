@@ -32,7 +32,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               CustomRadioGroup<String>(
                 title: "Course Event Info",
                 isRequired: true,
-                options: const ["Single Day", "Multiple Day"],
+                options: jobCreateVM.startDateController.text == jobCreateVM.endDateController.text ? ["Single Day"] : ["Multiple Day"],
                 selectedValue: jobCreateVM.selectedEvent,
                 labelBuilder: (value) => value,
                 direction: Axis.vertical, // try Axis.vertical also

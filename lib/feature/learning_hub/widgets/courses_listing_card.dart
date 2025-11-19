@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -68,13 +69,8 @@ class CouresListingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: _logoWithTitle(
-                        logoUrl,
-                        companyName,
-                        courseTitle,
-                        status,
-                        activeStatus
-                      ),
+                      child: _logoWithTitle(logoUrl, companyName, courseTitle,
+                          status, activeStatus),
                     ),
                     Row(
                       children: [
@@ -138,13 +134,29 @@ class CouresListingCard extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             CircleAvatar(
-              backgroundColor: AppColors.geryColor,
-              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
               radius: 30,
-              child: logo.isEmpty
-                  ? const Icon(Icons.business,
-                      size: 20, color: AppColors.lightGeryColor)
-                  : null,
+              backgroundColor: AppColors.geryColor,
+              child: ClipOval(
+                child: logo.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: logo,
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                        // No placeholder → uses default placeholder
+                        placeholderFadeInDuration: Duration(milliseconds: 300),
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.person_2_rounded,
+                          size: 30,
+                          color: AppColors.lightGeryColor,
+                        ),
+                      )
+                    : Icon(
+                        Icons.person_2_rounded,
+                        size: 30,
+                        color: AppColors.lightGeryColor,
+                      ),
+              ),
             ),
             Positioned(
               bottom: 0,
@@ -156,7 +168,7 @@ class CouresListingCard extends StatelessWidget {
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
                 child: Text(
-                  status == "APPROVE" ? activeStatus : status ,
+                  status == "APPROVE" ? activeStatus : status,
                   style: TextStyles.bold4(
                     color: StatusColors.getColor(status),
                     fontSize: 10,
