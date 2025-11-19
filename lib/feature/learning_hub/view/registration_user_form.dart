@@ -2,13 +2,15 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegistrationUserForm {
-  static void show(BuildContext context, String courseName) {
+  static void show(BuildContext context, String courseName,String createdById) {
     final formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
@@ -69,6 +71,7 @@ class RegistrationUserForm {
                         controller: courseVM.userFirstNameController,
                         hintText: "Enter First Name",
                         title: "First Name",
+                        maxLength: 75,
                         isRequired: true,
                         validator: (value) => value == null || value.isEmpty
                             ? 'Please enter First Name'
@@ -80,6 +83,7 @@ class RegistrationUserForm {
                         controller: courseVM.userLastNameController,
                         hintText: "Enter Last Name",
                         title: "Last Name",
+                        maxLength: 75,
                         isRequired: true,
                         validator: (value) => value == null || value.isEmpty
                             ? 'Please enter Last Name'
@@ -88,42 +92,26 @@ class RegistrationUserForm {
                       const SizedBox(height: 8),
 
                       InputTextField(
-                        controller: courseVM.userPhoneNumberController,
-                        hintText: "Enter Phone Number",
-                        title: "Phone Number",
-                        keyboardType: TextInputType.number,
-                        maxLength: 10,
-                        isRequired: true,
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter Phone Number'
-                            : null,
-                      ),
+                          controller: courseVM.userPhoneNumberController,
+                          hintText: "Enter Phone Number",
+                          title: "Phone Number",
+                          maxLength: 10,
+                          keyboardType: TextInputType.number,
+                          isRequired: true,
+                          validator: courseVM.validatePhoneNumber),
                       const SizedBox(height: 8),
 
                       InputTextField(
-                        controller: courseVM.userEmailController,
-                        hintText: "Enter Email Id",
-                        title: "Email Id",
-                        isRequired: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Email';
-                          }
-
-                          final emailRegex =
-                              RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-
-                          if (!emailRegex.hasMatch(value)) {
-                            return 'Please enter a valid Email';
-                          }
-                          return null;
-                        },
-                      ),
+                          controller: courseVM.userEmailController,
+                          hintText: "Enter Email Id",
+                          title: "Email Id",
+                          isRequired: true,
+                          validator: courseVM.validateEmailField),
                       const SizedBox(height: 8),
 
                       InputTextField(
                         hintText: "Give us more details",
-                        maxLength: 500,
+                        maxLength: 1000,
                         maxLines: 5,
                         title: "Description",
                         controller: courseVM.userDescriptionController,
@@ -139,8 +127,23 @@ class RegistrationUserForm {
                               await courseVM.userRegisterToCourse(context);
                               navigationService.goBack();
                               courseVM.clearAll();
+                              await courseVM.registerCourseHandler(context,createdById);
+                              alertPopup(
+                                context,
+                                "You are being redirected to the registration link",
+                                onBack: () async {
+                                  final url = Uri.parse(
+                                    "https://docs.google.com/forms/d/1j__p12VOITVXFpxTYQVr8XCMhzp-b5QqaJo5Pc_mdW8/viewform?edit_requested=true",
+                                  );
+                                  if (!await launchUrl(url,
+                                      mode: LaunchMode.externalApplication)) {
+                                    throw "Could not launch $url";
+                                  }
+                                },
+                              );
+                               
+
                               await courseVM.getCoursesListingData(context);
-                              
                             }
                           },
                           backgroundColor: AppColors.primaryColor,

@@ -1,0 +1,13 @@
+{
+  "NG_APP_PRODUCTION": false,
+  "NG_APP_LS_KEY": "tZJaq7zy3buBxQAPTPv4",
+  "NG_APP_SERVER_BASE_PATH": "https://dental-360-int-dev.hasura.app",
+  "NG_APP_HASURA_EXTERNAL_HTTP_URL": "https://dental-interface-dev.hasura.app/v1/graphql",
+  "NG_APP_HASURA_EXTERNAL_WSS_URL": "wss://dental-interface-dev.hasura.app/v1/graphql",
+  "NG_APP_SITE_URL": "https://localhost:4200",
+  "NG_APP_OTHER_ID": "666d85af-62a7-4c5d-9dba-c30f7c589b4d",
+  "NG_APP_FRONTEND_PATH": "https://qa.dentalinterface360.com",
+   "NG_APP_HASURA_ADMIN_SECRET": "ZfEloN3LsZMG8ooRJCdToQQhMhALea6s0i2VwzhvV76XuDxuwGc9A25kRLDghYwO",
+  "NG_APP_SERVER_PATH": "https://qa-api.dentalinterface360.com",
+  "NG_APP_HASURA_INTERNAL_URL": "https://dental-interface-dev.hasura.app/v1/graphql"
+}

@@ -24,6 +24,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   List<CourseCategories> courseCategoryList = [];
   String? selectedCategoryId;
   bool editOptionEnable = false;
+  bool courseRegistered = false;
 
   /********************************** */
   final userFirstNameController = TextEditingController();
@@ -31,6 +32,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final userPhoneNumberController = TextEditingController();
   final userEmailController = TextEditingController();
   final userDescriptionController = TextEditingController();
+
+  String? validateEmailField(String? _) =>
+      validateEmail(userEmailController.text);
+      String? validatePhoneNumber(String? _) =>
+      validatePhone(userPhoneNumberController.text);
 
   void setSearchBar(bool value) {
     searchBarOpen = value;
@@ -161,6 +167,23 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       registeredUsers = res;
       Loaders.circularHideLoader(context);
     }
+    notifyListeners();
+  }
+
+  Future<void> registerCourseHandler(
+  BuildContext context,
+  String createdById,
+) async {
+  final isAlreadyRegistered = registeredUsers.any(
+    (user) => user.fromId == createdById,
+  );
+
+  validateRegisterCourse(isAlreadyRegistered);
+}
+
+
+  void validateRegisterCourse(bool value){
+    courseRegistered = value;
     notifyListeners();
   }
 

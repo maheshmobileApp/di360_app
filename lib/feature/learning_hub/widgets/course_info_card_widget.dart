@@ -11,11 +11,12 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String platform;
   final String webinar;
   final String profilePic;
-  final String totalPrice;
-  final String discountPrice;
+  final String? totalPrice;
+  final String? discountPrice;
   final String startDate;
   final String endDate;
-  final String time;
+  final String startTime;
+  final String endTime;
   final String bannerUrl;
   final String bannerName;
 
@@ -31,9 +32,10 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.discountPrice,
       required this.startDate,
       required this.endDate,
-      required this.time,
       required this.bannerUrl,
-      required this.bannerName});
+      required this.bannerName,
+      required this.startTime,
+      required this.endTime});
 
   @override
   Widget build(BuildContext context) {
@@ -112,17 +114,34 @@ class CourseInfoCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Row(
+                    Column(
                       children: [
-                        Icon(Icons.calendar_month_outlined,
-                            color: AppColors.primaryColor, size: 20),
-                        const SizedBox(width: 4),
-                        Text(startDate.isEmpty
-                            ? ""
-                            : DateFormatUtils.convertToddmmm(startDate)
-                                .toUpperCase()),
-                        const SizedBox(width: 4),
-                        Text(DateFormatUtils.formatToHourAmPm(time))
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_month_outlined,
+                                color: AppColors.primaryColor, size: 20),
+                            const SizedBox(width: 4),
+                            Text(startDate.isEmpty
+                                ? ""
+                                : DateFormatUtils.convertToddmmm(startDate)
+                                    .toUpperCase()),
+                            Text(" - "),
+                            Text(endDate.isEmpty
+                                ? ""
+                                : DateFormatUtils.convertToddmmm(endDate)
+                                    .toUpperCase()),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time_rounded,
+                                color: AppColors.primaryColor, size: 20),
+                            const SizedBox(width: 4),
+                            Text(DateFormatUtils.formatToAmPm(startTime)),
+                            Text(" - "),
+                            Text(DateFormatUtils.formatToAmPm(endTime))
+                          ],
+                        ),
                       ],
                     )
                   ],
@@ -146,7 +165,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                         _InfoTextWidget(
                           label: "Price",
                           first: true,
-                          value: "\$${totalPrice}",
+                          value:
+                              "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}",
                         ),
                       ],
                     ),

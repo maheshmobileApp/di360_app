@@ -129,6 +129,15 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  String? validateWebsite(String? _) =>
+      validateOptionalUrl(websiteUrlController.text);
+  String? validateRegister(String? _) =>
+      validateOptionalUrl(registerLinkController.text);
+  String? validateMeetingLink(String? _) =>
+      validateOptionalUrl(meetingLinkController.text);
+      String? validatePhoneNumber(String? _) =>
+      validatePhone(phoneController.text);
+
   void setPresentedImg(File? value) {
     selectedPresentedImg = value;
     serverPresentedImg = null;

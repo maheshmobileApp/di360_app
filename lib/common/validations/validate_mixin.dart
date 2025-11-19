@@ -150,4 +150,21 @@ mixin ValidationMixins {
     if (value == null || value.isEmpty) return 'Please enter URL';
     return null;
   }
+
+  String? validatePositiveNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a value";
+    }
+
+    final numValue = num.tryParse(value);
+    if (numValue == null) {
+      return "Invalid number";
+    }
+
+    if (numValue < 0) {
+      return "Number cannot be negative";
+    }
+
+    return null;
+  }
 }
