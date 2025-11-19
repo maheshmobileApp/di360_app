@@ -379,3 +379,15 @@ PROFESSIONAL
 SUPPLIER
   dentalbusiness1@yopmail.com
   123456
+
+
+
+Dev -> url 
+Prod -> url 
+Stag
+Qa
+
+
+flutter run --dart-define-from-file=.env/dev.json
+
+flutter run --dart-define-from-file=.env/prod.json
