@@ -61,4 +61,5 @@ class RouteList {
   static const String TalentFliterScreen = '/TalentFliterScreen';
   static const String learningHubFliterScreen = '/learningHubFliterScreen';
   static const String viewProfileScreen = '/viewProfileScreen';
+  static const String professionalViewProfileScreen = '/professionalViewProfileScreen';
 }

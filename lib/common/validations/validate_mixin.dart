@@ -2,14 +2,17 @@ import 'package:di360_flutter/common/validations/reg_exp.dart';
 
 mixin ValidationMixins {
   String? validatePhoneNumber(String? value) {
-    if (value == null || value.isEmpty) return "Please enter your Mobile Number";
-    if (!isValidAustralianPhoneNumber(value)) return 'Please enter a valid 10-digit mobile number';
+    if (value == null || value.isEmpty)
+      return "Please enter your Mobile Number";
+    if (!isValidAustralianPhoneNumber(value))
+      return 'Enter valid mobile number';
     return null;
   }
 
-  String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) return "Please enter your Mobile Number";
-    if (!phoneNoValid(value)) return 'Please enter a valid 10-digit mobile number';
+  String? validateEmptyPhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter your Mobile Number";
+    }
     return null;
   }
 
@@ -56,7 +59,7 @@ mixin ValidationMixins {
 
   String? validatePostalCode(String? value) {
     if (value == null || value.isEmpty) return "Please enter postal code";
-   // if (!checkPostalCode(value)) return 'Enter valid postal code';
+    // if (!checkPostalCode(value)) return 'Enter valid postal code';
     return null;
   }
 
@@ -74,7 +77,10 @@ mixin ValidationMixins {
     if (value == null || value.trim().isEmpty) return null;
     final trimmed = value.trim();
     final uri = Uri.tryParse(trimmed);
-    if (uri == null || !(uri.isAbsolute && uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https'))) {
+    if (uri == null ||
+        !(uri.isAbsolute &&
+            uri.hasScheme &&
+            (uri.scheme == 'http' || uri.scheme == 'https'))) {
       return 'Please enter a valid URL';
     }
     return null;
@@ -86,8 +92,10 @@ mixin ValidationMixins {
   }
 
   String? validateSalaryField(String? value, {required String field}) {
-    if (value == null || value.trim().isEmpty) return 'Please enter $field salary';
-    if (double.tryParse(value.trim()) == null) return 'Please enter a valid number';
+    if (value == null || value.trim().isEmpty)
+      return 'Please enter $field salary';
+    if (double.tryParse(value.trim()) == null)
+      return 'Please enter a valid number';
     return null;
   }
 
@@ -100,39 +108,45 @@ mixin ValidationMixins {
     if (isEnabled && endDate == null) return 'Please select an end date';
     return null;
   }
-  String? validateServiceStartTimeDate(bool isEnabled, DateTime? ServiceStartTimeDate) {
+
+  String? validateServiceStartTimeDate(
+      bool isEnabled, DateTime? ServiceStartTimeDate) {
     if (isEnabled && ServiceStartTimeDate == null)
-     return 'Please select a  Service start time';
+      return 'Please select a  Service start time';
     return null;
   }
 
-  String? validateServiceEndTimeDate(bool isEnabled, DateTime? ServiceEndTimeDate) {
-    if (isEnabled && ServiceEndTimeDate == null) 
-    return 'Please select an  Service end time';
-    return null;
-  }
-  String? validateBreakStartTimeDate(bool isEnabled, DateTime? BreakStartTimeDate) {
-    if (isEnabled && BreakStartTimeDate == null) 
-    return 'Please select a Break start time';
+  String? validateServiceEndTimeDate(
+      bool isEnabled, DateTime? ServiceEndTimeDate) {
+    if (isEnabled && ServiceEndTimeDate == null)
+      return 'Please select an  Service end time';
     return null;
   }
 
-  String?validateBreakEndTimeDate (bool isEnabled, DateTime? BreakEndTimeDate) {
-    if (isEnabled && BreakEndTimeDate == null) 
-    return 'Please select an Break end time';
+  String? validateBreakStartTimeDate(
+      bool isEnabled, DateTime? BreakStartTimeDate) {
+    if (isEnabled && BreakStartTimeDate == null)
+      return 'Please select a Break start time';
     return null;
   }
-  
+
+  String? validateBreakEndTimeDate(bool isEnabled, DateTime? BreakEndTimeDate) {
+    if (isEnabled && BreakEndTimeDate == null)
+      return 'Please select an Break end time';
+    return null;
+  }
+
   String? validateCatagoryName(String? value) {
     if (value == null || value.isEmpty) return 'Please select category name';
     return null;
   }
-    
-    String? validateBannerName(String? value) {
+
+  String? validateBannerName(String? value) {
     if (value == null || value.isEmpty) return 'Please enter banner name';
     return null;
   }
-   String? validateUrl(String? value) {
+
+  String? validateUrl(String? value) {
     if (value == null || value.isEmpty) return 'Please enter URL';
     return null;
   }

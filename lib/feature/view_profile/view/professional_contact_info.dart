@@ -4,7 +4,9 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ContactInfo extends StatelessWidget with BaseContextHelpers {
+class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
+  const ProfessionalContactInfo({super.key});
+
   @override
   Widget build(BuildContext context) {
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
@@ -13,44 +15,16 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
         padding: const EdgeInsets.all(16.0),
         child: Column(children: [
           InputTextField(
-              controller: viewProfileVM.firstNameController,
-              hintText: "First Name",
-              title: "first Name"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.middleNameController,
-              hintText: "Middle Name",
-              title: "Middle Name"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.lastNameController,
-              hintText: "Last Name",
-              title: "Last Name"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.businessEmailController,
-              hintText: "Business Email",
-              title: "Business Email"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.faxNumberController,
-              hintText: "Fax Number",
-              title: "Fax Number"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.alternateEmailController,
-              hintText: "Alternate Email",
-              title: "Alternate Email"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.alternatePhoneNoController,
-              hintText: "Alternate Phone Number",
-              title: "Alternate Phone NUmber"),
-          addVertical(10),
-          InputTextField(
               controller: viewProfileVM.addressController,
               hintText: "Address",
-              title: "Address"),
+              title: "Address",
+              validator:(v) {
+                if (v!.isEmpty) {
+                  return "Please enter address";
+                } else {
+                  return null;
+                }
+              },),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.addressLineOneController,
