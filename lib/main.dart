@@ -1,6 +1,8 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/configuration/app_config.dart';
+import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
@@ -51,49 +53,63 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => HomeViewModel()),
-        ChangeNotifierProvider(create: (_) => NewsFeedViewModel()),
-        ChangeNotifierProvider(create: (_) => CommentViewModel()),
-        ChangeNotifierProvider(create: (_) => AddNewsFeedViewModel()),
-        ChangeNotifierProvider(create: (_) => SignupViewModel()),
-        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
-        ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
-        ChangeNotifierProvider(create: (_) => TalentsViewModel()),
-        ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
-        ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
-        ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
-        ChangeNotifierProvider(create: (_) => DirectoryViewModel()),
-        ChangeNotifierProvider(create: (_) => TalentListingViewModel()),
-        ChangeNotifierProvider(create: (_) => AddDirectoryViewModel()),
-        ChangeNotifierProvider(create: (_) => AppliedJobViewModel()),
-        ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
-        ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
-        ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
-        ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfessionalAddDirectorVm()),
-        ChangeNotifierProvider(create: (_) => MyLearningHubViewModel()),
-        ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
-        ChangeNotifierProvider(create: (_) => BannersViewModel()),
-        ChangeNotifierProvider(create: (_) => LearningHubMasterViewModel()),
-        ChangeNotifierProvider(create: (_) => FilterViewModel()),
-        ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
-        ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
-        ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
+    return StreamBuilder<ConnectivityResult>(
+      stream: Connectivity().onConnectivityChanged,
+      builder: (context, snapshot) {
+        final hasConnection = snapshot.data != null && snapshot.data != ConnectivityResult.none;
         
-      ],
-      child: MaterialApp(
-          navigatorKey: navigatorKey,
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            fontFamily: 'dmSans',
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
+        if (snapshot.hasData && !hasConnection) {
+          return const MaterialApp(
+            home: NoInternetView(),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+        
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => HomeViewModel()),
+            ChangeNotifierProvider(create: (_) => NewsFeedViewModel()),
+            ChangeNotifierProvider(create: (_) => CommentViewModel()),
+            ChangeNotifierProvider(create: (_) => AddNewsFeedViewModel()),
+            ChangeNotifierProvider(create: (_) => SignupViewModel()),
+            ChangeNotifierProvider(create: (_) => NotificationViewModel()),
+            ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
+            ChangeNotifierProvider(create: (_) => TalentsViewModel()),
+            ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
+            ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
+            ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
+            ChangeNotifierProvider(create: (_) => DirectoryViewModel()),
+            ChangeNotifierProvider(create: (_) => TalentListingViewModel()),
+            ChangeNotifierProvider(create: (_) => AddDirectoryViewModel()),
+            ChangeNotifierProvider(create: (_) => AppliedJobViewModel()),
+            ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
+            ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
+            ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
+            ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
+            ChangeNotifierProvider(create: (_) => ProfessionalAddDirectorVm()),
+            ChangeNotifierProvider(create: (_) => MyLearningHubViewModel()),
+            ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
+            ChangeNotifierProvider(create: (_) => BannersViewModel()),
+            ChangeNotifierProvider(create: (_) => LearningHubMasterViewModel()),
+            ChangeNotifierProvider(create: (_) => FilterViewModel()),
+            ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
+            ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
+            ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
+          ],
+          child: MaterialApp(
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              fontFamily: 'dmSans',
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            navigatorObservers: [navigationService],
+            initialRoute: RouteList.initial,
+            routes: Routes.routes,
           ),
-          navigatorObservers: [navigationService],
-          initialRoute: RouteList.initial,
-          routes: Routes.routes),
+        );
+      },
     );
   }
 }

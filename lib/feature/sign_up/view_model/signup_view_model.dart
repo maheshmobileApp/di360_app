@@ -120,6 +120,7 @@ class SignupViewModel extends ChangeNotifier {
   signUp(BuildContext context) async {
     Loaders.circularShowLoader(context);
     try {
+      
       final res = await _http.mutation(singUpQuery, {
         "signUpObj": {
           "name": nameController.text,
