@@ -64,4 +64,5 @@ class RouteList {
   static const String professionalViewProfileScreen = '/professionalViewProfileScreen';
   static const String supportScreen = '/supportScreen';
   static const String supportChatScreen = '/supportChatScreen';
+  static const String joinRequestView = '/joinRequestView'; 
 }

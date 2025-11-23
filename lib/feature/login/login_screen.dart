@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -83,9 +84,9 @@ class LoginScreen extends StatelessWidget
               Spacer(),
               Center(
                 child: AppButton(
-                  onTap: () {
+                  onTap: () async {
                     if (viewModel.formKey.currentState!.validate()) {
-                      viewModel.submit(context);
+                      await viewModel.submit(context);
                     }
                   },
                   text: "Login",

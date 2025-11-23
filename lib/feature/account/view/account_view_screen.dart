@@ -268,6 +268,9 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == "Support Request") {
                             navigationService
                                 .navigateTo(RouteList.supportScreen);
+                          }else if (item.title == "Join Request") {
+                            navigationService
+                                .navigateTo(RouteList.joinRequestView);
                           }
                         },
                       ),

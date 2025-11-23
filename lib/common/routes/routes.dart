@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
+import 'package:di360_flutter/feature/community/view/join_request_view.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_details_screen.dart';
@@ -193,6 +194,7 @@ class Routes {
           ProfessionalViewProfileScreen(),
       RouteList.supportScreen: (context) => SupportView(),
       RouteList.supportChatScreen: (context) => SupportMessengerView(),
+      RouteList.joinRequestView: (context) => JoinRequestView(),
       
     };
   }

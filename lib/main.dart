@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add
 import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -83,6 +84,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
         ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
         ChangeNotifierProvider(create: (_) => SupportViewModel()),
+        ChangeNotifierProvider(create: (_) => CommunityViewModel()),
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,

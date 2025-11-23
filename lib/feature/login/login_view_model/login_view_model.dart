@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
+import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
+import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -11,6 +16,7 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final LoginRepoImpl repo = LoginRepoImpl();
   final HttpService _http = HttpService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
@@ -48,10 +54,11 @@ class LoginViewModel extends ChangeNotifier {
     // Check connectivity first
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      BotToast.showSimpleNotification(title: "No internet connection. Please check your network.");
+      BotToast.showSimpleNotification(
+          title: "No internet connection. Please check your network.");
       return "";
     }
-    
+
     _variables['details']['emailOrPhone'] = emailController.text;
     _variables['details']['password'] = passController.text;
     if (Map.from(_variables['details']).containsValue("")) {
@@ -65,6 +72,8 @@ class LoginViewModel extends ChangeNotifier {
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
+          await getSuppliers(result.loginApi?.id ?? '');
+          (result.loginApi?.type == "SUPPLIER") ?await getSupplierCommunityOwner(result.loginApi?.id ?? ''):(){};
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
           await LocalStorage.setStringVal(
@@ -102,7 +111,7 @@ class LoginViewModel extends ChangeNotifier {
     if (connectivityResult == ConnectivityResult.none) {
       return;
     }
-    
+
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     var res = await _http.query(
@@ -125,6 +134,32 @@ class LoginViewModel extends ChangeNotifier {
                       ? res['dental_professionals_by_pk']['profile_image']
                       : '');
     } else {}
+    notifyListeners();
+  }
+
+  GetSupplierData? supplerData;
+  GetSupplierCommunityOwnerData? supplerCommunityOwner;
+
+  Future<void> getSuppliers(String id) async {
+    final res = await repo.getSuppliers(id);
+    if (res != null) {
+      supplerData = res;
+      print('****************supplerData ${supplerData}');
+    }
+    notifyListeners();
+  }
+
+  Future<void> getSupplierCommunityOwner(String id) async {
+    final res = await repo.getSupplierCommunityOwner(id);
+    if (res != null) {
+      supplerCommunityOwner = res;
+
+      final supplier = supplerCommunityOwner?.dentalSuppliers?.first;
+
+      if (supplier?.communityStatus == "YES") {
+        print("***** Updating JSON (Need to update account.json) *****");
+      }
+    }
     notifyListeners();
   }
 }
