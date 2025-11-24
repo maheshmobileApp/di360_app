@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/add_directors/model/get_appts_res.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_partners_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -14,12 +15,14 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   bool isEditAchieve = false;
   bool isEditDocu = false;
   bool isEditOurTeam = false;
+  bool isEditPartner = false;
   bool isEditGallery = false;
   bool isEditFAQ = false;
   bool isEditTestimonal = false;
   bool isEditTimings = false;
   bool isEditSocialMed = false;
   List<DirectoryApptsSlots>? appointmentsList = [];
+  List<DirectoriesPartnersMembers>? partnersList = [];
 
   void updateShowCertifiForm(bool val) {
     showCertifiForm = val;
@@ -38,6 +41,11 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   void updateIsEditOurTeam(bool val) {
     isEditOurTeam = val;
+    notifyListeners();
+  }
+
+  void updateIsEditPartner(bool val) {
+    isEditPartner = val;
     notifyListeners();
   }
 
@@ -535,8 +543,100 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     final res = await addDirectorRepositoryImpl
         .getAppts(addDirectorVM.getBasicInfoData.first.id ?? '');
     if (res != null) {
+      await getPartnersData(context);
       appointmentsList = res;
       Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> getPartnersData(BuildContext context) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
+    final res = await addDirectorRepositoryImpl
+        .getPartners(addDirectorVM.getBasicInfoData.first.id ?? '');
+    if (res != null) {
+      partnersList = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> addPartners(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
+    var img = await addDirectorRepositoryImpl.http
+        .uploadImage(addDirectorVM.partnerImgFile?.path);
+    // dynamic msgPic;
+    // if (testimonialsPicFile != null) {
+    //   msgPic = await addDirectorRepositoryImpl.http
+    //       .uploadImage(testimonialsPicFile?.path);
+    // }
+    final res = await addDirectorRepositoryImpl.addPartners({
+      "partnershipObj": {
+        "name": addDirectorVM.partnerNameCntr.text,
+        "image": img,
+        "description": addDirectorVM.descriptionCntr.text,
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "show_community_user": false,
+        "attachments": []
+      }
+    });
+    if (res != null) {
+      getPartnersData(context);
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Partners added successfully');
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    addDirectorVM.partnerNameCntr.clear();
+    addDirectorVM.descriptionCntr.clear();
+    addDirectorVM.partnerImgFile = null;
+    notifyListeners();
+  }
+
+  Future<void> updatePartner(
+      BuildContext context, String id, dynamic img) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
+    Loaders.circularShowLoader(context);
+    dynamic image;
+    if (addDirectorVM.partnerImgFile != null) {
+      image = await addDirectorRepositoryImpl.http
+          .uploadImage(addDirectorVM.partnerImgFile?.path);
+    }
+    final res = await addDirectorRepositoryImpl.updatePartners({
+      "partnershipObj": {
+        "name": addDirectorVM.partnerNameCntr.text,
+        "image": image ?? img,
+        "description": addDirectorVM.descriptionCntr.text,
+        "directory_id": addDirectorVM.getBasicInfoData.first.id,
+        "show_community_user": false,
+        "attachments": []
+      },
+      "id": id
+    });
+    if (res != null) {
+      getPartnersData(context);
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Updated partner successfully');
+      updateIsEditPartner(false);
+      addDirectorVM.partnerNameCntr.clear();
+      addDirectorVM.descriptionCntr.clear();
+      addDirectorVM.partnerImgFile = null;
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deletePartner(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final res = await addDirectorRepositoryImpl.deletePartner({"id": id});
+    if (res != null) {
+      getPartnersData(context);
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Partner deleted successfully');
     } else {
       Loaders.circularHideLoader(context);
     }

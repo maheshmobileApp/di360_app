@@ -35,7 +35,7 @@ class HttpService {
   Future<dynamic> uploadImage(filePath) async {
     MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
     var _data = {"file": _uploadImage, "directory": 'project'};
-    return await post('api/v1/file-upload/upload-s3', FormData.fromMap(_data));
+    return await post('/api/v1/file-upload/upload-s3', FormData.fromMap(_data));
   }
 
   Future post(url, _data, {showLoading = true}) async {
