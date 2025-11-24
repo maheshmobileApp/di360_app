@@ -157,7 +157,16 @@ class LoginViewModel extends ChangeNotifier {
       final supplier = supplerCommunityOwner?.dentalSuppliers?.first;
 
       if (supplier?.communityStatus == "YES") {
+         await LocalStorage.setStringVal(
+              LocalStorageConst.communityName, supplier?.businessName?? '');
+        await LocalStorage.setStringVal(
+              LocalStorageConst.communityId, supplier?.communityId?? '');
+        await LocalStorage.setStringVal(
+              LocalStorageConst.communityStatus, 'true');
         print("***** Updating JSON (Need to update account.json) *****");
+      } else {
+        await LocalStorage.setStringVal(
+              LocalStorageConst.communityStatus, 'false');
       }
     }
     notifyListeners();

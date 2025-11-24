@@ -1,29 +1,24 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class JoinRequestCard extends StatelessWidget {
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String phone;
-  final String status;
-  final String membership;
+class NewsFeedCategoryCard extends StatelessWidget {
+  final String categoryName;
+  final String createdAt;
+  final String updatedAt;
   final VoidCallback? onApprove;
   final Function(String action)? onMenuAction;
   final VoidCallback? onReject;
 
-  const JoinRequestCard({
+  const NewsFeedCategoryCard({
     super.key,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.phone,
-    required this.status,
-    required this.membership,
+    required this.categoryName,
     this.onApprove,
     this.onReject,
     this.onMenuAction,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   @override
@@ -44,9 +39,10 @@ class JoinRequestCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "$firstName $lastName",
+                  "$categoryName",
                   style: const TextStyle(
                     fontSize: 14,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -58,10 +54,10 @@ class JoinRequestCard extends StatelessWidget {
                   icon: const Icon(Icons.more_vert),
                   onSelected: (value) => onMenuAction?.call(value),
                   itemBuilder: (context) => [
-                    (status == "APPROVED")
-                        ? _popupItem("Reject", Icons.close, AppColors.redColor)
-                        : _popupItem(
-                            "Approve", Icons.check, AppColors.greenColor),
+                    
+                         _popupItem("Edit", Icons.edit, AppColors.blueColor),
+                         _popupItem(
+                            "Delete", Icons.delete, AppColors.redColor),
                   ],
                 ),
               ],
@@ -69,10 +65,9 @@ class JoinRequestCard extends StatelessWidget {
 
             const SizedBox(height: 2),
 
-            _infoRow("Email", email),
-            _infoRow("Phone", phone),
-            _infoRow("Status", status),
-            _infoRow("Membership", membership),
+            _infoRow("Created At", createdAt),
+            _infoRow("UpdatedAt", updatedAt),
+           
           ],
         ),
       ),
@@ -93,6 +88,7 @@ class JoinRequestCard extends StatelessWidget {
   }
 
   Widget _infoRow(String title, String value) {
+    String formattedValue = _formatDateTime(value);
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -103,12 +99,21 @@ class JoinRequestCard extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              value,
+              formattedValue,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
     );
+  }
+  
+  String _formatDateTime(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      return DateFormat('dd-MM-yyyy HH:mm:ss').format(dateTime);
+    } catch (e) {
+      return dateTimeString; // Return original if parsing fails
+    }
   }
 }

@@ -6,43 +6,43 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JoinRequestView extends StatelessWidget {
+class PartnershipRequestView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);
-    final joinRequests = viewModel.communityMembers?.communityMembers;
+    final partnershipRequests = viewModel.partnershipMembers?.partnershipMembers;
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-        title: "Join Requests",
+        title: "Partnership Requests",
         searchWidget: false,
       ),
       body: Column(
         children: [
           statusWidget(viewModel),
-          (joinRequests?.length != 0 && joinRequests != null)?
+          (partnershipRequests?.length != 0 && partnershipRequests != null)?
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.all(10),
-              itemCount: joinRequests.length,
+              itemCount: partnershipRequests.length,
               itemBuilder: (context, index) {
                 return JoinRequestCard(
-                    firstName: joinRequests[index].firstName ?? "",
-                    lastName: joinRequests[index].lastName ?? "",
-                    email: joinRequests[index].email ?? "",
-                    phone: joinRequests[index].phone ?? "",
-                    status: joinRequests[index].status ?? "",
-                    membership: joinRequests[index].membershipNumber ?? "",
+                    firstName: partnershipRequests[index].firstName ?? "",
+                    lastName: partnershipRequests[index].lastName ?? "",
+                    email: partnershipRequests[index].email ?? "",
+                    phone: partnershipRequests[index].phone ?? "",
+                    status: partnershipRequests[index].status ?? "",
+                    membership: partnershipRequests[index].membershipNumber ?? "",
                     onMenuAction: (action) async {
                       switch (action) {
                         case "Approve":
                           await viewModel.approveJoinRequest(
-                              joinRequests[index].id ?? "", "APPROVED",context);
+                              partnershipRequests[index].id ?? "", "APPROVED",context);
 
                           break;
                         case "Reject":
                           await viewModel.approveJoinRequest(
-                              joinRequests[index].id ?? "", "REJECTED",context);
+                              partnershipRequests[index].id ?? "", "REJECTED",context);
 
                           break;
                       }
@@ -52,7 +52,7 @@ class JoinRequestView extends StatelessWidget {
           ) : Expanded(
             child: Center(
               child: Text(
-                "No Join Requests",
+                "No Partnership Requests",
                 style: TextStyles.medium3(color: AppColors.black, fontSize: 16),
               ),
             ),

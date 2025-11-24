@@ -21,6 +21,11 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateCategoryName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter category name";
+    return null;
+  }
+
   String? validateLastName(String? value) {
     if (value == null || value.isEmpty) return "Please enter last name";
     return null;
