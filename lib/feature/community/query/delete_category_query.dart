@@ -6,4 +6,3 @@ const String deleteCategoryQuery = r'''mutation deleteRecord($id: uuid!) {
 }
 
 ''';
-

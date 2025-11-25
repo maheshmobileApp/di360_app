@@ -271,65 +271,28 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.supportScreen);
                           } else if (item.title == "Join Request") {
-                            Loaders.circularShowLoader(context);
-                            context
-                                .read<CommunityViewModel>()
-                                .changeStatus("All", context);
-
-                            await context
-                                .read<CommunityViewModel>()
-                                .getJoinRequest();
-
-                            Loaders.circularHideLoader(context);
+                            
                             navigationService
                                 .navigateTo(RouteList.joinRequestView);
                           } else if (item.title == "Partnership Request") {
-                            Loaders.circularShowLoader(context);
-                            context
-                                .read<CommunityViewModel>()
-                                .changeStatus("All", context);
-
-                            await context
-                                .read<CommunityViewModel>()
-                                .getJoinRequest();
-
-                            Loaders.circularHideLoader(context);
+                           
                             navigationService
                                 .navigateTo(RouteList.partnershipRequestView);
                           } else if (item.title == "Membership Registration") {
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<CommunityViewModel>()
-                                .getMembershipLink();
-                            await context
-                                .read<CommunityViewModel>()
-                                .getDirectory();
-
-                            Loaders.circularHideLoader(context);
+                           
                             navigationService.navigateTo(
                                 RouteList.membershipRegistrationView);
                           } else if (item.title == "Partnership Registration") {
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<CommunityViewModel>()
-                                .getPartnershipLink();
-                            await context
-                                .read<CommunityViewModel>()
-                                .getDirectory();
-
-                            Loaders.circularHideLoader(context);
+                            
                             navigationService.navigateTo(
                                 RouteList.partnershipRegistrationView);
                           } else if (item.title == "News Feed Categories") {
-                            Loaders.circularShowLoader(context);
-                            await context
-                                .read<CommunityViewModel>()
-                                .getNewsFeedCategories();
-                            
-
-                            Loaders.circularHideLoader(context);
+                           
                             navigationService.navigateTo(
                                 RouteList.newsFeedCategoriesView);
+                          } else if (item.title.contains("Community")) {
+                            navigationService.navigateTo(
+                                RouteList.newsFeedCommunityView);
                           }
                         },
                       ),

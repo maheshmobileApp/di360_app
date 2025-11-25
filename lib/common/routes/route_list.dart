@@ -73,4 +73,6 @@ class RouteList {
       'partnershipRegistrationView';
   static const String newsFeedCategoriesView = 'newsFeedCategoriesView';
   static const String createCategoryView = 'createCategoryView';
+  static const String newsFeedScreen = 'newsFeedScreen';
+  static const String newsFeedCommunityView = 'newsFeedCommunityView';
 }

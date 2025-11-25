@@ -6,11 +6,29 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PartnershipRequestView extends StatelessWidget {
+class PartnershipRequestView extends StatefulWidget {
+  @override
+  State<PartnershipRequestView> createState() => _PartnershipRequestViewState();
+}
+
+class _PartnershipRequestViewState extends State<PartnershipRequestView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+
+      viewModel.changeStatus("All", context);
+
+      viewModel.getPartnershipRequest();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);
-    final partnershipRequests = viewModel.partnershipMembers?.partnershipMembers;
+    final partnershipRequests =
+        viewModel.partnershipMembers?.partnershipMembers;
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
@@ -20,43 +38,50 @@ class PartnershipRequestView extends StatelessWidget {
       body: Column(
         children: [
           statusWidget(viewModel),
-          (partnershipRequests?.length != 0 && partnershipRequests != null)?
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(10),
-              itemCount: partnershipRequests.length,
-              itemBuilder: (context, index) {
-                return JoinRequestCard(
-                    firstName: partnershipRequests[index].firstName ?? "",
-                    lastName: partnershipRequests[index].lastName ?? "",
-                    email: partnershipRequests[index].email ?? "",
-                    phone: partnershipRequests[index].phone ?? "",
-                    status: partnershipRequests[index].status ?? "",
-                    membership: partnershipRequests[index].membershipNumber ?? "",
-                    onMenuAction: (action) async {
-                      switch (action) {
-                        case "Approve":
-                          await viewModel.approveJoinRequest(
-                              partnershipRequests[index].id ?? "", "APPROVED",context);
+          (partnershipRequests?.length != 0 && partnershipRequests != null)
+              ? Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: partnershipRequests.length,
+                    itemBuilder: (context, index) {
+                      return JoinRequestCard(
+                          firstName: partnershipRequests[index].firstName ?? "",
+                          lastName: partnershipRequests[index].lastName ?? "",
+                          email: partnershipRequests[index].email ?? "",
+                          phone: partnershipRequests[index].phone ?? "",
+                          status: partnershipRequests[index].status ?? "",
+                          membership:
+                              partnershipRequests[index].membershipNumber ?? "",
+                          onMenuAction: (action) async {
+                            switch (action) {
+                              case "Approve":
+                                await viewModel.approveJoinRequest(
+                                    partnershipRequests[index].id ?? "",
+                                    "APPROVED",
+                                    context);
 
-                          break;
-                        case "Reject":
-                          await viewModel.approveJoinRequest(
-                              partnershipRequests[index].id ?? "", "REJECTED",context);
+                                break;
+                              case "Reject":
+                                await viewModel.approveJoinRequest(
+                                    partnershipRequests[index].id ?? "",
+                                    "REJECTED",
+                                    context);
 
-                          break;
-                      }
-                    });
-              },
-            ),
-          ) : Expanded(
-            child: Center(
-              child: Text(
-                "No Partnership Requests",
-                style: TextStyles.medium3(color: AppColors.black, fontSize: 16),
-              ),
-            ),
-          ),
+                                break;
+                            }
+                          });
+                    },
+                  ),
+                )
+              : Expanded(
+                  child: Center(
+                    child: Text(
+                      "No Partnership Requests",
+                      style: TextStyles.medium3(
+                          color: AppColors.black, fontSize: 16),
+                    ),
+                  ),
+                ),
         ],
       ),
     );

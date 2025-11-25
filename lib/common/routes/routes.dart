@@ -50,6 +50,8 @@ import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
+import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
+import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
@@ -204,7 +206,9 @@ class Routes {
       RouteList.membershipRegistrationView: (context) => MembershipRegistrationView(),
       RouteList.partnershipRegistrationView: (context) => PartnershipRegistrationView(),
       RouteList.newsFeedCategoriesView: (context) => NewsFeedCategoriesView(),
-      RouteList.createCategoryView: (context) => CreateCategoryView()
+      RouteList.createCategoryView: (context) => CreateCategoryView(),
+      RouteList.newsFeedScreen: (context) => NewsFeedScreen(),
+      RouteList.newsFeedCommunityView: (context) => NewsFeedCommunityView()
       
     };
   }

@@ -83,6 +83,21 @@ class ProfileViewModel extends ChangeNotifier {
                 subTitle: section.subTitle,
               );
             }
+
+            if (section.title == "News Feed") {
+              return ProfileCategory(
+                title: section.title,
+                subTitle: section.subTitle.map((subItem) {
+                  if (subItem.title.toLowerCase().contains("community")) {
+                    return SubTitle(
+                      title: "$communityName Community",
+                      asset: subItem.asset,
+                    );
+                  }
+                  return subItem;
+                }).toList(),
+              );
+            }
             return section;
           }).toList()
         :

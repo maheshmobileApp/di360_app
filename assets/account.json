@@ -152,6 +152,19 @@
           ]
         },
         {
+          "title": "News Feed",
+          "subTitle": [
+            {
+              "title": "News Feed",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Community",
+              "asset": "assets/profile/account/profile.svg"
+            }
+          ]
+        },
+        {
           "title": "My Directory",
           "subTitle": [
             {

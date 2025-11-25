@@ -129,6 +129,7 @@ class CommunityViewModel extends ChangeNotifier {
         "community_id": communityId
       }
     };
+    print("*********************variables: ${variables}");
     final res = await repo.updateCategory(variables);
     if (res != null) {
       scaffoldMessenger("Category updated Sucessfully");

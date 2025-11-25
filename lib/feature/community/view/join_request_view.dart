@@ -6,7 +6,23 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JoinRequestView extends StatelessWidget {
+class JoinRequestView extends StatefulWidget {
+  @override
+  State<JoinRequestView> createState() => _JoinRequestViewState();
+}
+
+
+
+class _JoinRequestViewState extends State<JoinRequestView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+      viewModel.changeStatus("All", context);
+      viewModel.getJoinRequest();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);

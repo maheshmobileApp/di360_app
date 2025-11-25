@@ -11,7 +11,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MembershipRegistrationView extends StatelessWidget with ValidationMixins {
+class MembershipRegistrationView extends StatefulWidget {
+  @override
+  State<MembershipRegistrationView> createState() => _MembershipRegistrationViewState();
+}
+
+class _MembershipRegistrationViewState extends State<MembershipRegistrationView> with ValidationMixins  {
+   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+
+      viewModel.getMembershipLink();
+
+      viewModel.getDirectory();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);
@@ -82,7 +98,7 @@ class MembershipRegistrationView extends StatelessWidget with ValidationMixins {
                       }
                     },
                     child: Text(
-                      "Click Here",
+                      viewModel.membershipLink,
                       maxLines: 3,
                       style: TextStyles.bold3(color: AppColors.primaryColor),
                     ),

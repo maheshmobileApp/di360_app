@@ -12,12 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class NewsFeedCategoriesView extends StatefulWidget {
+class NewsFeedCommunityView extends StatefulWidget {
   @override
   _NewsFeedCategoriesViewState createState() => _NewsFeedCategoriesViewState();
 }
 
-class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
+class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     with ValidationMixins {
 
   @override
@@ -39,7 +39,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-        title: "News Feed Categories",
+        title: "Community",
         searchWidget: false,
       ),
       body: Column(
