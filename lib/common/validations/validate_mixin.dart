@@ -4,7 +4,7 @@ mixin ValidationMixins {
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Mobile Number";
-    if (!isValidAustralianPhoneNumber(value))
+    if (isValidAustralianPhoneNumber(value))
       return 'Enter valid mobile number';
     return null;
   }

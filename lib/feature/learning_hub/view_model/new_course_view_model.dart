@@ -53,11 +53,22 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   final endDateController = TextEditingController();
   final addressController = TextEditingController();
 
+  final youtubeController = TextEditingController();
+  final facebookController = TextEditingController();
+  final instagramController = TextEditingController();
+  final linkedinController = TextEditingController();
+
   bool showLocumDate = false;
 
   ///edit
   bool editMode = false;
   List<File>? editGallery;
+  String? selectedCommunityType;
+
+  void setCommunityType(String value) {
+    selectedCommunityType = value;
+    notifyListeners();
+  }
 
   //server
   String? serverPresentedImg;
@@ -109,7 +120,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     'Add Course',
     'Course Info',
     'Terms & Conditions',
-    'Contacts'
+    'Contacts',
+    'Social Media Links'
   ];
 
   final PageController pageController = PageController();
@@ -119,6 +131,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   List<JobsRoleList> category = [];
   List<String> roleOptions = [];
+  List<String> communityTypes = [
+    "Both","Community User"
+  ];
 
   List<JobTypes> EmpTypes = [];
   List<String> empOptions = [];
@@ -135,7 +150,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       validateOptionalUrl(registerLinkController.text);
   String? validateMeetingLink(String? _) =>
       validateOptionalUrl(meetingLinkController.text);
-     /* String? validatePhoneNumber(String? _) =>
+  /* String? validatePhoneNumber(String? _) =>
       validatePhone(phoneController.text);*/
 
   void setPresentedImg(File? value) {
@@ -712,6 +727,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               maxSubscribers: 1000,
               createdById: userId,
               companyName: name,
+              communityUserType: selectedCommunityType=="Community User"?"COMMUNITY_USER":"BOTH",
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",
