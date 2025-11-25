@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -88,7 +89,7 @@ class NewsFeedCategoryCard extends StatelessWidget {
   }
 
   Widget _infoRow(String title, String value) {
-    String formattedValue = _formatDateTime(value);
+    String formattedValue = DateFormatUtils.formatDateTime(value);
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -108,12 +109,5 @@ class NewsFeedCategoryCard extends StatelessWidget {
     );
   }
   
-  String _formatDateTime(String dateTimeString) {
-    try {
-      final dateTime = DateTime.parse(dateTimeString);
-      return DateFormat('dd-MM-yyyy HH:mm:ss').format(dateTime);
-    } catch (e) {
-      return dateTimeString; // Return original if parsing fails
-    }
-  }
+  
 }
