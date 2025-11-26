@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/add_directors/repository/add_director_repo
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,32 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   bool isEditSocialMed = false;
   List<DirectoryApptsSlots>? appointmentsList = [];
   List<DirectoriesPartnersMembers>? partnersList = [];
+
+  List existingImages = [];
+  List<PlatformFile> selectedFiles = [];
+  List uploadedFiles = [];
+
+  Future<void> pickFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'png', 'jpeg', 'pdf']);
+
+    if (result != null) {
+      selectedFiles.addAll(result.files);
+      notifyListeners();
+    }
+  }
+
+  void removeFile(int index) {
+    selectedFiles.removeAt(index);
+    notifyListeners();
+  }
+
+  void removeExistingFile(int index) {
+    existingImages.removeAt(index);
+    notifyListeners();
+  }
 
   void updateShowCertifiForm(bool val) {
     showCertifiForm = val;
@@ -568,11 +595,14 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     var img = await addDirectorRepositoryImpl.http
         .uploadImage(addDirectorVM.partnerImgFile?.path);
-    // dynamic msgPic;
-    // if (testimonialsPicFile != null) {
-    //   msgPic = await addDirectorRepositoryImpl.http
-    //       .uploadImage(testimonialsPicFile?.path);
-    // }
+    for (var element in selectedFiles) {
+      var value =
+          await addDirectorRepositoryImpl.http.uploadImage(element.path);
+      print("resp from upload $value");
+      if (value != null) {
+        uploadedFiles.add(value);
+      }
+    }
     final res = await addDirectorRepositoryImpl.addPartners({
       "partnershipObj": {
         "name": addDirectorVM.partnerNameCntr.text,
@@ -580,7 +610,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
         "description": addDirectorVM.descriptionCntr.text,
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
         "show_community_user": false,
-        "attachments": []
+        "attachments": uploadedFiles
       }
     });
     if (res != null) {
@@ -593,6 +623,8 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     addDirectorVM.partnerNameCntr.clear();
     addDirectorVM.descriptionCntr.clear();
     addDirectorVM.partnerImgFile = null;
+    selectedFiles.clear();
+    uploadedFiles.clear();
     notifyListeners();
   }
 
@@ -605,6 +637,17 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       image = await addDirectorRepositoryImpl.http
           .uploadImage(addDirectorVM.partnerImgFile?.path);
     }
+    for (var element in selectedFiles) {
+      var value =
+          await addDirectorRepositoryImpl.http.uploadImage(element.path);
+      print("resp from upload $value");
+      if (value != null) {
+        uploadedFiles.add(value);
+      }
+    }
+    if (isEditPartner == true) {
+      uploadedFiles.addAll(existingImages);
+    }
     final res = await addDirectorRepositoryImpl.updatePartners({
       "partnershipObj": {
         "name": addDirectorVM.partnerNameCntr.text,
@@ -612,7 +655,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
         "description": addDirectorVM.descriptionCntr.text,
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
         "show_community_user": false,
-        "attachments": []
+        "attachments": uploadedFiles
       },
       "id": id
     });
@@ -624,6 +667,9 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       addDirectorVM.partnerNameCntr.clear();
       addDirectorVM.descriptionCntr.clear();
       addDirectorVM.partnerImgFile = null;
+      selectedFiles.clear();
+      existingImages.clear();
+      uploadedFiles.clear();
     } else {
       Loaders.circularHideLoader(context);
     }

@@ -32,6 +32,8 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
               CustomAddButton(
                 label: 'Add +',
                 onPressed: () {
+                  editVM.selectedFiles.clear();
+                  editVM.existingImages.clear();
                   showNewPartnerBottomSheet(context, editVM);
                 },
               ),
@@ -72,6 +74,10 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
                               partnerData?.name ?? '';
                           addDirectorVM.descriptionCntr.text =
                               partnerData?.description ?? '';
+                          editVM.selectedFiles.clear();
+                          editVM.existingImages.clear();
+                          editVM.existingImages =
+                              partnerData?.attachments ?? [];
                           showNewPartnerBottomSheet(context, editVM,
                               hintText: partnerData?.image?.name,
                               id: partnerData?.id,

@@ -3,6 +3,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/director_partner_multi_images_widget.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -65,17 +66,18 @@ class AddPartners extends StatelessWidget with BaseContextHelpers {
               : null,
         ),
         addVertical(12),
-        ImagePickerInputField(
-          title: 'Add Partners Promotion ',
-          isRequired: false,
-          imageFile: AddDirectorVM.partnerImgFile,
-          onTap: () => imagePickerSelection(
-            context,
-            () => AddDirectorVM.pickPartnerImage(picker.ImageSource.gallery),
-            () => AddDirectorVM.pickPartnerImage(picker.ImageSource.camera),
-          ),
-          hintText: 'Choose an image or drag',
-        ),
+        DirectorPartnerMultiImagesWidget()
+        // ImagePickerInputField(
+        //   title: 'Add Partners Promotion ',
+        //   isRequired: false,
+        //   imageFile: AddDirectorVM.partnerImgFile,
+        //   onTap: () => imagePickerSelection(
+        //     context,
+        //     () => AddDirectorVM.pickPartnerImage(picker.ImageSource.gallery),
+        //     () => AddDirectorVM.pickPartnerImage(picker.ImageSource.camera),
+        //   ),
+        //   hintText: 'Choose an image or drag',
+        // ),
       ]),
     );
   }

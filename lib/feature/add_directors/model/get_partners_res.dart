@@ -4,7 +4,8 @@ class GetDirectoriesPartnersRes {
   GetDirectoriesPartnersRes({this.data});
 
   GetDirectoriesPartnersRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new PartnersData.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? new PartnersData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -44,8 +45,8 @@ class PartnersData {
 class DirectoriesPartnersMembers {
   String? id;
   String? name;
-  Image? image;
-  List<Attachments>? attachments;
+  Images? image;
+  List<PartnerAttachments>? attachments;
   String? description;
   bool? showCommunityUser;
   String? directoryId;
@@ -64,11 +65,11 @@ class DirectoriesPartnersMembers {
   DirectoriesPartnersMembers.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    image = json['image'] != null ? new Image.fromJson(json['image']) : null;
+    image = json['image'] != null ? new Images.fromJson(json['image']) : null;
     if (json['attachments'] != null) {
-      attachments = <Attachments>[];
+      attachments = <PartnerAttachments>[];
       json['attachments'].forEach((v) {
-        attachments!.add(new Attachments.fromJson(v));
+        attachments!.add(new PartnerAttachments.fromJson(v));
       });
     }
     description = json['description'];
@@ -95,7 +96,7 @@ class DirectoriesPartnersMembers {
   }
 }
 
-class Image {
+class Images {
   String? url;
   String? name;
   int? size;
@@ -106,7 +107,7 @@ class Image {
   String? extension;
   String? mimeType;
 
-  Image(
+  Images(
       {this.url,
       this.name,
       this.size,
@@ -117,7 +118,7 @@ class Image {
       this.extension,
       this.mimeType});
 
-  Image.fromJson(Map<String, dynamic> json) {
+  Images.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     size = json['size'];
@@ -144,7 +145,7 @@ class Image {
   }
 }
 
-class Attachments {
+class PartnerAttachments {
   String? url;
   String? name;
   int? size;
@@ -154,8 +155,9 @@ class Attachments {
   String? directory;
   String? extension;
   String? mimeType;
+  String? type;
 
-  Attachments(
+  PartnerAttachments(
       {this.url,
       this.name,
       this.size,
@@ -164,9 +166,10 @@ class Attachments {
       this.isPublic,
       this.directory,
       this.extension,
-      this.mimeType});
+      this.mimeType,
+      this.type});
 
-  Attachments.fromJson(Map<String, dynamic> json) {
+  PartnerAttachments.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     size = json['size'];
@@ -176,6 +179,7 @@ class Attachments {
     directory = json['directory'];
     extension = json['extension'];
     mimeType = json['mime_type'];
+    type = json['type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -189,6 +193,7 @@ class Attachments {
     data['directory'] = this.directory;
     data['extension'] = this.extension;
     data['mime_type'] = this.mimeType;
+    data['type'] = this.type;
     return data;
   }
 }
