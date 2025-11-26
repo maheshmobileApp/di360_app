@@ -75,4 +75,5 @@ class RouteList {
   static const String createCategoryView = 'createCategoryView';
   static const String newsFeedScreen = 'newsFeedScreen';
   static const String newsFeedCommunityView = 'newsFeedCommunityView';
+  static const String addNewsFeedCommunityView = 'addNewsFeedCommunityView';
 }

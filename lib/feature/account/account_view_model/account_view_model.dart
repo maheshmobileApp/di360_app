@@ -79,7 +79,7 @@ class ProfileViewModel extends ChangeNotifier {
         ? _visibleSections = _visibleSections.map((section) {
             if (section.title == "Community") {
               return ProfileCategory(
-                title: "$communityName Community", // new title
+                title: "${communityName}Community", // new title
                 subTitle: section.subTitle,
               );
             }
@@ -90,7 +90,7 @@ class ProfileViewModel extends ChangeNotifier {
                 subTitle: section.subTitle.map((subItem) {
                   if (subItem.title.toLowerCase().contains("community")) {
                     return SubTitle(
-                      title: "$communityName Community",
+                      title: "${communityName}Community",
                       asset: subItem.asset,
                     );
                   }

@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -271,28 +272,38 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.supportScreen);
                           } else if (item.title == "Join Request") {
-                            
                             navigationService
                                 .navigateTo(RouteList.joinRequestView);
                           } else if (item.title == "Partnership Request") {
-                           
                             navigationService
                                 .navigateTo(RouteList.partnershipRequestView);
                           } else if (item.title == "Membership Registration") {
-                           
                             navigationService.navigateTo(
                                 RouteList.membershipRegistrationView);
                           } else if (item.title == "Partnership Registration") {
-                            
                             navigationService.navigateTo(
                                 RouteList.partnershipRegistrationView);
                           } else if (item.title == "News Feed Categories") {
-                           
-                            navigationService.navigateTo(
-                                RouteList.newsFeedCategoriesView);
+                            navigationService
+                                .navigateTo(RouteList.newsFeedCategoriesView);
                           } else if (item.title.contains("Community")) {
-                            navigationService.navigateTo(
-                                RouteList.newsFeedCommunityView);
+                            final viewModel = Provider.of<CommunityViewModel>(
+                                context,
+                                listen: false);
+                            final newsFeedVM =
+                                Provider.of<NewsFeedCommunityViewModel>(context,
+                                    listen: false);
+                            await viewModel.getNewsFeedCategories();
+                            newsFeedVM.newsFeedCategoriesData =
+                                viewModel.newsFeedCategoriesData;
+
+                            newsFeedVM.newsFeedCategory = viewModel
+                                    .newsFeedCategoriesData?.newsfeedCategories
+                                    ?.map((e) => e.categoryName ?? "")
+                                    .toList() ??
+                                [];
+                            navigationService
+                                .navigateTo(RouteList.newsFeedCommunityView);
                           }
                         },
                       ),

@@ -26,6 +26,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
   final VoidCallback? onCommentTap;
   final int likes;
   final int comments;
+  final bool isLiked;
 
   const NewsFeedCommunityCard({
     super.key,
@@ -42,11 +43,12 @@ class NewsFeedCommunityCard extends StatelessWidget {
     this.onTapRegistered,
     this.onMenuAction,
     this.onDetailView,
-   
-   
-   
-   
-    required this.chipTitle, this.onLikeTap, this.onShareTap, this.onCommentTap, required this.likes,
+    required this.chipTitle,
+    this.onLikeTap,
+    this.onShareTap,
+    this.onCommentTap,
+    required this.likes,
+    this.isLiked = false,
   });
 
   @override
@@ -101,8 +103,12 @@ class NewsFeedCommunityCard extends StatelessWidget {
                       child: Row(
                         children: [
                           _circleIcon(
-                            child: Icon(Icons.favorite,
-                                color: Colors.orangeAccent, size: 20),
+                            child: Icon(
+                              isLiked ? Icons.favorite : Icons.favorite_border,
+                              color:
+                                  isLiked ? Colors.orangeAccent : Colors.grey,
+                              size: 20,
+                            ),
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -330,13 +336,10 @@ class NewsFeedCommunityCard extends StatelessWidget {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (status != "EXPIRED")
-          _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
-        if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
-          _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
-        if (status == "EXPIRED")
-          _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),
+        if (status == "UNPUBLISHED" || status == "PENDING")
+          _popupItem("Publish", Icons.send, AppColors.blueColor),
+        if (status == "PUBLISHED" || status == "PENDING")
+          _popupItem("Unpublish", Icons.send, AppColors.redColor),
       ],
     );
   }

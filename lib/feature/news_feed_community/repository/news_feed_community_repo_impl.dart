@@ -1,6 +1,12 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/update_news_feed_status.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/add_need_feed.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/community_like_query.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/community_unlike_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_all_news_feeds_query.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/get_supplier_feed_count_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repository.dart';
 
 class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
@@ -13,5 +19,36 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
     final data = NewsFeedCommunityData.fromJson(res);
 
     return data;
+  }
+
+  @override
+  Future communityLike(variables) async {
+    final res = await http.mutation(communityLikeQuery, variables);
+    return res;
+  }
+
+  @override
+  Future communityUnLike(variables) async {
+    final res = await http.mutation(communityUnlikeQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<FeedCountData> feedCount(variables) async {
+    final res = await http.query(getSupplierFeedCount, variables: variables);
+    final data = FeedCountData.fromJson(res);
+    return data;
+  }
+  
+  @override
+  Future updateNewsFeedStatus(variables) async {
+    final res = await http.mutation(updateFeedStatusQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future addNewsFeed(variables) async {
+    final res = await http.mutation(addNeedFeedQuery, variables);
+    return res;
   }
 }

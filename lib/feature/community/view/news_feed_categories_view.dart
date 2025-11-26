@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/community/widgets/news_feed_category_card.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -23,10 +24,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+      final newsFeedVM = Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
 
-      viewModel.getNewsFeedCategories();
+      await viewModel.getNewsFeedCategories();
+      
 
       viewModel.getDirectory();
     });
