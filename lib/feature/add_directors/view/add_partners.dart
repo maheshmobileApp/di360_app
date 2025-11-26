@@ -66,18 +66,9 @@ class AddPartners extends StatelessWidget with BaseContextHelpers {
               : null,
         ),
         addVertical(12),
-        DirectorPartnerMultiImagesWidget()
-        // ImagePickerInputField(
-        //   title: 'Add Partners Promotion ',
-        //   isRequired: false,
-        //   imageFile: AddDirectorVM.partnerImgFile,
-        //   onTap: () => imagePickerSelection(
-        //     context,
-        //     () => AddDirectorVM.pickPartnerImage(picker.ImageSource.gallery),
-        //     () => AddDirectorVM.pickPartnerImage(picker.ImageSource.camera),
-        //   ),
-        //   hintText: 'Choose an image or drag',
-        // ),
+        DirectorPartnerMultiImagesWidget(
+          key: ValueKey('partner_images_${editVM.isEditPartner}_${editVM.existingImages.length}'),
+        )
       ]),
     );
   }

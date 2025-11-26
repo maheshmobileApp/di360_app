@@ -7,9 +7,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class DirectorPartnerMultiImagesWidget extends StatelessWidget {
+class DirectorPartnerMultiImagesWidget extends StatefulWidget {
   const DirectorPartnerMultiImagesWidget({super.key});
 
+  @override
+  State<DirectorPartnerMultiImagesWidget> createState() => _DirectorPartnerMultiImagesWidgetState();
+}
+
+class _DirectorPartnerMultiImagesWidgetState extends State<DirectorPartnerMultiImagesWidget> {
   Widget _fileCard(
       Widget child, int index, EditDeleteDirectorViewModel viewModel,
       {bool isExisting = false}) {

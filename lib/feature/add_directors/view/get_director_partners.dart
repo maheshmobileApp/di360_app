@@ -32,8 +32,11 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
               CustomAddButton(
                 label: 'Add +',
                 onPressed: () {
+                  addDirectorVM.partnerNameCntr.clear();
+                  addDirectorVM.descriptionCntr.clear();
                   editVM.selectedFiles.clear();
                   editVM.existingImages.clear();
+                  editVM.updateIsEditPartner(false);
                   showNewPartnerBottomSheet(context, editVM);
                 },
               ),
@@ -68,21 +71,15 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
                     top: 2,
                     child: CircleAvatar(
                       backgroundColor: AppColors.whiteColor,
-                      child: MenuWidget(onSelected: (val) {
+                      child: MenuWidget(onSelected: (val) async {
                         if (val == 'Edit') {
-                          addDirectorVM.partnerNameCntr.text =
-                              partnerData?.name ?? '';
-                          addDirectorVM.descriptionCntr.text =
-                              partnerData?.description ?? '';
-                          editVM.selectedFiles.clear();
-                          editVM.existingImages.clear();
-                          editVM.existingImages =
-                              partnerData?.attachments ?? [];
+                          editVM.updateIsEditPartner(true);
+                          await editVM.assignThePartnerData(
+                              context, partnerData);
                           showNewPartnerBottomSheet(context, editVM,
                               hintText: partnerData?.image?.name,
                               id: partnerData?.id,
                               imag: partnerData?.image?.toJson());
-                          editVM.updateIsEditPartner(true);
                         } else if (val == 'Delete') {
                           editVM.deletePartner(context, partnerData?.id ?? '');
                         }
