@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button
 import 'package:di360_flutter/feature/add_directors/widgets/menu_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -143,10 +144,12 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
                                   false || imag == null) {
                                 showTopMessage(context, 'Select image');
                               } else {
+                                Loaders.circularShowLoader(context);
                                 editVM.isEditPartner
                                     ? editVM.updatePartner(
                                         context, id ?? '', imag)
                                     : editVM.addPartners(context);
+                                Loaders.circularHideLoader(context);
                                 navigationService.goBack();
                               }
                             }
