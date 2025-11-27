@@ -279,3 +279,5 @@ const String getAllNewsFeedQuery =
   }
 }
 ''';
+
+

@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 class NewsFeedCommunityCard extends StatelessWidget {
   final String id;
   final String logoUrl;
+  final String feedUserRole;
   final String companyName;
   final String courseTitle;
   final String description;
@@ -32,6 +35,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
     super.key,
     required this.id,
     required this.logoUrl,
+    required this.feedUserRole,
     required this.comments,
     required this.companyName,
     required this.courseTitle,
@@ -55,104 +59,116 @@ class NewsFeedCommunityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final String time = _getShortTime(createdAt) ?? '';
 
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        children: [
-          // 🔹 Top Card
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.borderColor)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Logo + Title + Menu
-                Row(
+    return FutureBuilder<String>(
+      future: LocalStorage.getStringVal(LocalStorageConst.type),
+      builder: (context, snapshot) {
+        final type = snapshot.data ?? '';
+
+        return Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: [
+              // 🔹 Top Card
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.borderColor)),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: _logoWithTitle(
-                        logoUrl,
-                        companyName,
-                        createdAt,
-                      ),
-                    ),
+                    /// Logo + Title + Menu
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _menuWidget(context),
+                        Expanded(
+                          child: _logoWithTitle(
+                            logoUrl,
+                            companyName,
+                            createdAt,
+                          ),
+                        ),
+                        if (type == "SUPPLIER" || (type == "PROFESSIONAL" && feedUserRole != "SUPPLIER"))
+                          Row(
+                            children: [
+                              _menuWidget(context, type),
+                            ],
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    const SizedBox(height: 8),
+
+                    _descriptionWidget(description),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        /// ❤️ Like Button + Count
+                        GestureDetector(
+                          onTap: onLikeTap,
+                          child: Row(
+                            children: [
+                              _circleIcon(
+                                child: Icon(
+                                  isLiked
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isLiked
+                                      ? Colors.orangeAccent
+                                      : Colors.grey,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                likes.toString(),
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 15),
+
+                        /// 🔗 Share Button
+                        GestureDetector(
+                          onTap: onShareTap,
+                          child: _circleIcon(
+                            child: Icon(Icons.share,
+                                size: 20, color: Colors.black),
+                          ),
+                        ),
+
+                        const Spacer(),
+
+                        /// 💬 Comment Icon + Count
+                        GestureDetector(
+                          onTap: onCommentTap,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.comment,
+                                  color: Colors.black, size: 20),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${comments.toString()} Comments",
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 8),
-
-                const SizedBox(height: 8),
-
-                _descriptionWidget(description),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    /// ❤️ Like Button + Count
-                    GestureDetector(
-                      onTap: onLikeTap,
-                      child: Row(
-                        children: [
-                          _circleIcon(
-                            child: Icon(
-                              isLiked ? Icons.favorite : Icons.favorite_border,
-                              color:
-                                  isLiked ? Colors.orangeAccent : Colors.grey,
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            likes.toString(),
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 15),
-
-                    /// 🔗 Share Button
-                    GestureDetector(
-                      onTap: onShareTap,
-                      child: _circleIcon(
-                        child: Icon(Icons.share, size: 20, color: Colors.black),
-                      ),
-                    ),
-
-                    const Spacer(),
-
-                    /// 💬 Comment Icon + Count
-                    GestureDetector(
-                      onTap: onCommentTap,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.comment,
-                              color: Colors.black, size: 20),
-                          const SizedBox(width: 4),
-                          Text(
-                            "${comments.toString()} Comments",
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -321,7 +337,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
     );
   }
 
-  Widget _menuWidget(BuildContext context) {
+  Widget _menuWidget(BuildContext context, String type) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -336,10 +352,21 @@ class NewsFeedCommunityCard extends StatelessWidget {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (status == "UNPUBLISHED" || status == "PENDING")
-          _popupItem("Publish", Icons.send, AppColors.blueColor),
-        if (status == "PUBLISHED" || status == "PENDING")
-          _popupItem("Unpublish", Icons.send, AppColors.redColor),
+        if (type == "PROFESSIONAL" || (type == "SUPPLIER" && feedUserRole == "SUPPLIER")) ...[
+          _popupItem("Edit", Icons.edit, AppColors.blueColor),
+          _popupItem("Delete", Icons.delete, AppColors.redColor)
+        ],
+        if (type == "SUPPLIER" && feedUserRole == "SUPPLIER") ...[
+          if (status == "UNPUBLISHED" || status == "PENDING")
+            _popupItem("Publish", Icons.send, AppColors.blueColor),
+          if (status == "PUBLISHED" || status == "PENDING")
+            _popupItem("Unpublish", Icons.send, AppColors.redColor),
+        ] else if (type != "PROFESSIONAL") ...[
+          if (status == "UNPUBLISHED" || status == "PENDING")
+            _popupItem("Publish", Icons.send, AppColors.blueColor),
+          if (status == "PUBLISHED" || status == "PENDING")
+            _popupItem("Unpublish", Icons.send, AppColors.redColor),
+        ]
       ],
     );
   }

@@ -64,9 +64,14 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       listingStatus = 'UNPUBLISHED';
     }
 
-    getAllNewsFeeds();
+    getAllNewsFeeds(context);
     notifyListeners();
     //INACTIVE
+  }
+
+  void setEditNewsFeed(bool value) {
+    isEditNewsFeed = value;
+    notifyListeners();
   }
 
   void setServerNewsFeedGallery(List<String>? value) {
@@ -110,8 +115,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String profCommunityId = "";
+  void setProfCommunityId(String value) {
+    profCommunityId = value;
+    notifyListeners();
+  }
+
   //GET JOIN REQUEST
-  Future<void> getAllNewsFeeds() async {
+  Future<void> getAllNewsFeeds(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    print("*************************************GetAllNewsFeeds Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -120,17 +133,23 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final variables = {
       "where": {
         "status": {"_eq": listingStatus},
-        "community_id": {"_eq": communityId}
+        "community_id": {
+          "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
+        }
       },
-      "limit": 3,
+      "limit": 100,
       "offset": 0,
       "userId": userId,
       "roleType": type
     };
+    print("************get all news feed variables: $variables");
+
     final res = await repo.getAllNewsFeeds(variables);
     if (res != null) {
       print("*************************************data fetched successfully");
       newsFeedCommunityData = res;
+
+      Loaders.circularHideLoader(context);
     }
 
     notifyListeners();
@@ -174,7 +193,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   //LIKE
-  Future<void> communityLike([String? newsFeedId]) async {
+  Future<void> communityLike(BuildContext context, [String? newsFeedId]) async {
     print("*************************************CommunityLike Calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -189,16 +208,17 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Liked Successfully");
     }
-    getAllNewsFeeds();
+    getAllNewsFeeds(context);
     notifyListeners();
   }
 
   List uploadedFiles = [];
   //Add news feed
-  Future<void> addNewsFeed(BuildContext context) async {
+  Future<void> addNewsFeed(
+      BuildContext context, String dentalSupplierId) async {
     Loaders.circularShowLoader(context);
     await validateNewsFeedGallery();
-    print("*************************************CommunityLike Calling");
+    print("*************************************add feed Calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -216,23 +236,27 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         "user_role": type,
         "user_id": userId,
         "status": "PUBLISHED",
-        "dental_supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "dental_supplier_id": (type == "SUPPLIER")
+            ? userId
+            : dentalSupplierId, //"5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
         "feed_type": "NEWSFEED",
         "community_id": communityId
       }
     };
+
     print(
         "***************************************************variables: $variables");
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
       uploadedFiles.clear();
       scaffoldMessenger('Newsfeed submitted successfully');
-      clearAddNewsFeedData();
+
       navigationService.goBack();
     }
 
-    getAllNewsFeeds();
+    getAllNewsFeeds(context);
     Loaders.circularHideLoader(context);
+    clearAddNewsFeedData();
 
     notifyListeners();
   }
@@ -242,23 +266,26 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     videoLinkController.clear();
     websiteLinkController.clear();
     selectedFiles.clear();
+    serverNewsFeedGallery = null;
+    selectedNewsFeedGallery = null;
     selectedCategory = null;
   }
 
   // UN LIKE
-  Future<void> communityUnLike([String? likeId]) async {
+  Future<void> communityUnLike(BuildContext context, [String? likeId]) async {
     print("*************************************CommunityUnLike Calling");
     final variables = {"id": likeId ?? "42543249-80cc-4c4a-b878-e871023e3944"};
     final res = await repo.communityUnLike(variables);
     if (res != null) {
       scaffoldMessenger("Unliked Successfully");
     }
-    getAllNewsFeeds();
+    getAllNewsFeeds(context);
     notifyListeners();
   }
 
   // Update news feed status
-  Future<void> updateNewsFeedStatus(String id, String status) async {
+  Future<void> updateNewsFeedStatus(
+      BuildContext context, String id, String status) async {
     print("***************************updateNewsFeedStatus Calling");
     final variables = {"id": id, "status": status};
     print("***************************variavles $variables");
@@ -269,7 +296,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           ? scaffoldMessenger("News Feed Published Successfully")
           : scaffoldMessenger("News Feed Un-Published Successfully");
     }
-    getAllNewsFeeds();
+    getAllNewsFeeds(context);
     //getAllStatusCounts();
     notifyListeners();
   }
@@ -315,6 +342,55 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       selectedCategoryId = null;
     }
 
+    notifyListeners();
+  }
+
+  /*********************Update & Delete Community */
+
+  Future<void> updateNewsFeedCommunity(BuildContext context, String id,
+      String communityId, String dentalProfessionalId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final variables = {
+      "id": id,
+      "fields": {
+        "description": descriptionController.text,
+        "category_type": selectedCategoryId,
+        "video_url": videoLinkController.text,
+        "post_image": selectedNewsFeedGalleryList,
+        "web_url": websiteLinkController.text,
+        "user_role": type,
+        "user_id": userId,
+        "status": "PUBLISHED",
+        "dental_professional_id": dentalProfessionalId,
+        "feed_type": "NEWSFEED",
+        "community_id": communityId
+      }
+    };
+
+    print("***************************variavles $variables");
+
+    final res = await repo.updateNewsFeedCommunity(variables);
+    if (res != null) {
+      scaffoldMessenger("News Feed Updated Successfully");
+    }
+    getAllNewsFeeds(context);
+    //getAllStatusCounts();
+    notifyListeners();
+  }
+
+  Future<void> deleteNewsFeedCommunity(BuildContext context, String id) async {
+    final variables = {"id": id};
+
+    print("***************************variavles $variables");
+
+    final res = await repo.deleteNewsFeedCommunity(variables);
+    if (res != null) {
+      scaffoldMessenger("News Feed Deleted Successfully");
+    }
+    getAllNewsFeeds(context);
+    //getAllStatusCounts();
     notifyListeners();
   }
 }

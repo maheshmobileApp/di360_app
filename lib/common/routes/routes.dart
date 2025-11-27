@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
+import 'package:di360_flutter/feature/community/view/community_market_view.dart';
 import 'package:di360_flutter/feature/community/view/create_category_view.dart';
 import 'package:di360_flutter/feature/community/view/join_request_view.dart';
 import 'package:di360_flutter/feature/community/view/membership_registration_view.dart';
@@ -210,7 +211,8 @@ class Routes {
       RouteList.createCategoryView: (context) => CreateCategoryView(),
       RouteList.newsFeedScreen: (context) => NewsFeedScreen(),
       RouteList.newsFeedCommunityView: (context) => NewsFeedCommunityView(),
-      RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView()
+      RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView(),
+      RouteList.communitMarketView: (context) => CommunityMarketView()
       
     };
   }

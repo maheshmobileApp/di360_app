@@ -1,6 +1,7 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_directory_res.dart';
+import 'package:di360_flutter/feature/community/model/get_joined_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_membership_link.dart';
 import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
 import 'package:di360_flutter/feature/community/model/get_partnership_link.dart';
@@ -10,6 +11,7 @@ import 'package:di360_flutter/feature/community/query/approve_query.dart';
 import 'package:di360_flutter/feature/community/query/delete_category_query.dart';
 import 'package:di360_flutter/feature/community/query/get_directory_query.dart';
 import 'package:di360_flutter/feature/community/query/get_join_requests_query.dart';
+import 'package:di360_flutter/feature/community/query/get_joined_community_members.dart';
 import 'package:di360_flutter/feature/community/query/get_membership_link_query.dart';
 import 'package:di360_flutter/feature/community/query/get_news_feed_categories_query.dart';
 import 'package:di360_flutter/feature/community/query/get_partnership_link_query.dart';
@@ -126,51 +128,57 @@ class CommunityRepoImpl extends CommunityRepository {
     final data = PartnershipLinkData.fromJson(res);
     return data;
   }
-  
+
   @override
   Future updateMembershipLink(variables) async {
-    final res = await http.mutation(updateMembershipLinkQuery,variables);
+    final res = await http.mutation(updateMembershipLinkQuery, variables);
     return res;
   }
 
   @override
   Future updatePartnershipLink(variables) async {
-    final res = await http.mutation(updateMembershipLinkQuery,variables);
+    final res = await http.mutation(updateMembershipLinkQuery, variables);
     return res;
   }
-  
+
   @override
-  Future<DirectoryData> getDirectory(variables)  async {
-    final res = await http.query(getDirectoryQuery,variables:variables);
+  Future<DirectoryData> getDirectory(variables) async {
+    final res = await http.query(getDirectoryQuery, variables: variables);
     final data = DirectoryData.fromJson(res);
     return data;
-    
   }
 
   @override
   Future<NewsFeedCategoriesData> getNewsFeedCategories(variables) async {
-    final res = await http.query(getNewsFeedCategoriesQuery,variables:variables);
+    final res =
+        await http.query(getNewsFeedCategoriesQuery, variables: variables);
     final data = NewsFeedCategoriesData.fromJson(res);
     return data;
-    
   }
-  
+
   @override
   Future addCategory(variables) async {
-    final res = await http.mutation(addCategoryQuery,variables);
+    final res = await http.mutation(addCategoryQuery, variables);
     return res;
   }
 
-  
   @override
   Future deleteCategory(variables) async {
-    final res = await http.mutation(deleteCategoryQuery,variables);
+    final res = await http.mutation(deleteCategoryQuery, variables);
     return res;
   }
 
   @override
   Future updateCategory(variables) async {
-    final res = await http.mutation(updateCategoryQuery,variables);
+    final res = await http.mutation(updateCategoryQuery, variables);
     return res;
+  }
+
+  @override
+  Future<GetJoinedCommunityMembersData> getJoinedCommunityMembers(
+      variables) async {
+    final res = await http.query(getJoinedCommunityQuery, variables: variables);
+    final data = GetJoinedCommunityMembersData.fromJson(res);
+    return data;
   }
 }

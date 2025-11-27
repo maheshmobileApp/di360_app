@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_directory_res.dart';
+import 'package:di360_flutter/feature/community/model/get_joined_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
 import 'package:di360_flutter/feature/community/model/get_partnership_members.dart';
 import 'package:di360_flutter/feature/community/repository/community_repo_impl.dart';
@@ -259,6 +260,29 @@ class CommunityViewModel extends ChangeNotifier {
     getJoinRequest();
     Loaders.circularHideLoader(context);
     print("*********************All Reuqests calling");
+    notifyListeners();
+  }
+
+  //get joined community members
+
+  GetJoinedCommunityMembersData? getJoinedCommunityMembersData;
+  bool professionalMode = false;
+  void changeProfessionalMode(bool value) {
+    professionalMode = value;
+    notifyListeners();
+  }
+  Future<void> getJoinedCommunityMembersRes(
+      BuildContext context) async {
+        final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+
+    final variables = {"member_id": id};
+    final res = await repo.getJoinedCommunityMembers(variables);
+    if (res != null) {
+      getJoinedCommunityMembersData = res;
+          Loaders.circularHideLoader(context);
+
+    }
     notifyListeners();
   }
 }
