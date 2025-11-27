@@ -60,6 +60,11 @@ class ImageConst {
   static const String Inactive = "assets/pngs/inactive.png";
   static const String _svgBasePath = 'assets/svgs/';
   static const String noImage = 'assets/pngs/noImage.jpg';
+  static const String noSupport = 'assets/svgs/supportHome.svg';
+  static const String createSupport = 'assets/svgs/createSupport.svg';
+  static const String download = 'assets/svgs/Download.svg';
+  static const String send = 'assets/svgs/sendIcon.svg';
+  static const String attachment = 'assets/svgs/attachmentIcon.svg';
 
   // Job related SVG icons
   static const String briefcaseSvg = '${_svgBasePath}briefcase.svg';

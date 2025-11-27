@@ -415,6 +415,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.termsAndConditionsController.text = course.terms ?? "";
     newCourseVM.cancellationController.text = course.refundPolicy ?? "";
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
+     newCourseVM.selectedCommunityType = course.earlyBirdEndDate ?? "";
 
     // Dates (safe parse)
 

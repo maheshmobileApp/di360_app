@@ -35,8 +35,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   String? validateEmailField(String? _) =>
       validateEmail(userEmailController.text);
-      String? validatePhoneNumber(String? _) =>
-      validatePhone(userPhoneNumberController.text);
+      /*String? validatePhoneNumber(String? _) =>
+      validatePhone(userPhoneNumberController.text);*/
 
   void setSearchBar(bool value) {
     searchBarOpen = value;
@@ -144,7 +144,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
-
     notifyListeners();
   }
 
