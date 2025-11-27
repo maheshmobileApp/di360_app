@@ -40,30 +40,67 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       appBar: AppBarWidget(
           title: "Community",
           searchWidget: true,
-          filterWidget: PopupMenuButton<String>(
-            icon: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-            onSelected: (String value) {
-              // Handle filter selection
-            },
-            itemBuilder: (BuildContext context) => [
-              PopupMenuItem<String>(
-                value: 'all',
-                child: Text('All Posts'),
-              ),
-              PopupMenuItem<String>(
-                value: 'recent',
-                child: Text('Recent Posts'),
-              ),
-              PopupMenuItem<String>(
-                value: 'popular',
-                child: Text('Popular Posts'),
-              ),
-              PopupMenuItem<String>(
-                value: 'my_posts',
-                child: Text('My Posts'),
-              ),
+          /*filterWidget: Row(
+            children: [
+              GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    final offset = details.globalPosition;
+                    showMenu(
+                      context: context,
+                      position:
+                          RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      items: newsFeedVM.newsfeedCategories
+                              ?.map((v) => PopupMenuItem(
+                                    value: v,
+                                    child: Text(
+                                      v.categoryName ?? '',
+                                      style: TextStyles.semiBold(
+                                          color:
+                                              newsFeedVM.selectedCategoryId ==
+                                                      v.id
+                                                  ? AppColors.primaryColor
+                                                  : AppColors.black,
+                                          fontSize: 14,
+                                          decoration:
+                                              newsFeedVM.selectedCategoryId ==
+                                                      v.id
+                                                  ? TextDecoration.underline
+                                                  : TextDecoration.none,
+                                          decorationColor:
+                                              AppColors.primaryColor),
+                                    ),
+                                  ))
+                              .toList() ??
+                          [],
+                    ).then((value) {
+                      newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
+                      if ((value as dynamic)?.categoryName == 'Catalog') {
+                        newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
+                      } else {
+                        newsFeedVM.basedOnCategoriesGetFeeds(
+                            context, false, value?.id ?? '');
+                      }
+                    });
+                  },
+                  child: SvgPicture.asset(ImageConst.filter,
+                      color: AppColors.black)),
+              if (newsFeedVM.applyCatageories)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        homeViewModel.getAllNewsfeeds(context);
+                        newsFeedVM.updateApplyCatageories(false);
+                        newsFeedVM.updateSelectedCategory(null);
+                      },
+                      child: Icon(Icons.close, color: AppColors.black)),
+                )
             ],
-          )),
+          ),*/),
       body: Column(
         children: [
           communityStatusWidget(viewModel),

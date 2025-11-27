@@ -286,7 +286,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == "News Feed Categories") {
                             navigationService
                                 .navigateTo(RouteList.newsFeedCategoriesView);
-                          } else if (item.title.contains("Community")) {
+                          } else if (item.title == "News Feed") {
+                             context
+                                .read<DashBoardViewModel>()
+                                .setIndex(1,context);
+                          }  
+                          else if (item.title.contains("Community")) {
                             final viewModel = Provider.of<CommunityViewModel>(
                                 context,
                                 listen: false);
