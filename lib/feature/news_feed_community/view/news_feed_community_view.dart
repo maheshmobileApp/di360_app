@@ -180,31 +180,43 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     break;
                                   case "Edit":
                                     viewModel.setEditNewsFeed(true);
+                                    viewModel
+                                        .setEditNewsFeedId(newsItem.id ?? "");
                                     viewModel.descriptionController.text =
                                         newsItem.description ?? "";
                                     viewModel.videoLinkController.text =
                                         newsItem.videoUrl ?? "";
                                     viewModel.websiteLinkController.text =
                                         newsItem.webUrl ?? "";
-                                    /*viewModel.selectedCategory =
-                                        newsItem.categoryType;*/
-                                    navigationService.navigateTo(
-                                        RouteList.addNewsFeedCommunityView);
+
+                                    viewModel.setSelectedCourseCategoryName(
+                                        newsItem.categoryType ?? "");
+
+                                    print(
+                                        "***************** ${newsItem.categoryType ?? ""}");
+                                    viewModel.newsFeedCategory = communityVM
+                                            .newsFeedCategoriesData
+                                            ?.newsfeedCategories
+                                            ?.map((e) => e.categoryName ?? "")
+                                            .toList() ??
+                                        [];
                                     viewModel.serverNewsFeedGallery =
                                         (newsItem.postImage ?? [])
                                             .map((item) => item.url ?? "")
                                             .where((url) => url.isNotEmpty)
                                             .toList();
+                                    navigationService.navigateTo(
+                                        RouteList.addNewsFeedCommunityView);
 
                                     break;
                                   case "Delete":
-                                  showAlertMessage(context,
-                                    'Are you sure you want to delete this Category?',
-                                    onBack: () async {
-                                  viewModel.deleteNewsFeedCommunity(
-                                        context, newsItem.id ?? "");
-                                });
-                                    
+                                    showAlertMessage(context,
+                                        'Are you sure you want to delete this Category?',
+                                        onBack: () async {
+                                      viewModel.deleteNewsFeedCommunity(
+                                          context, newsItem.id ?? "");
+                                    });
+
                                     break;
                                 }
                               });
@@ -226,10 +238,11 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               onTap: () {
                 viewModel.setEditNewsFeed(false);
                 viewModel.clearAddNewsFeedData();
-                viewModel.newsFeedCategory = communityVM.newsFeedCategoriesData?.newsfeedCategories
-                                    ?.map((e) => e.categoryName ?? "")
-                                    .toList() ??
-                                [];
+                viewModel.newsFeedCategory = communityVM
+                        .newsFeedCategoriesData?.newsfeedCategories
+                        ?.map((e) => e.categoryName ?? "")
+                        .toList() ??
+                    [];
                 navigationService
                     .navigateTo(RouteList.addNewsFeedCommunityView);
               },
@@ -238,6 +251,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       },
     );
   }
+
   SizedBox communityStatusWidget(NewsFeedCommunityViewModel courseListingVM) {
     return SizedBox(
       height: 60,

@@ -93,7 +93,17 @@ class AddNewsFeedCommunityView extends StatelessWidget
                     height: 50,
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
-                      viewModel.addNewsFeed(context,viewModel.newsFeedCommunityData?.newsfeeds?.first.dentalSupplier?.id??"");
+                      (viewModel.isEditNewsFeed == true)
+                          ? viewModel.updateNewsFeedCommunity(
+                              context,
+                              viewModel.newsFeedCommunityData?.newsfeeds?.first
+                                      .dentalSupplier?.id ??
+                                  "")
+                          : viewModel.addNewsFeed(
+                              context,
+                              viewModel.newsFeedCommunityData?.newsfeeds?.first
+                                      .dentalSupplier?.id ??
+                                  "");
                     }),
               ],
             ),

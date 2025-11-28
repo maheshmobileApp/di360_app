@@ -351,28 +351,62 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setSelectedCourseCategoryName(String? id) async {
+    selectedCategoryId = id;
+
+    if (id != null && newsFeedCategoriesData?.newsfeedCategories != null) {
+      final match = newsFeedCategoriesData!.newsfeedCategories!.firstWhere(
+        (category) => category.id == id,
+        orElse: () => NewsfeedCategories(),
+      );
+      selectedCategory = match.categoryName;
+      print("********selected Id $selectedCategory");
+    } else {
+      selectedCategory = null;
+    }
+
+    notifyListeners();
+  }
+
   /*********************Update & Delete Community */
 
-  Future<void> updateNewsFeedCommunity(BuildContext context, String id,
-      String communityId, String dentalProfessionalId) async {
+  String editNewsFeedId = "";
+  void setEditNewsFeedId(String value) {
+    editNewsFeedId = value;
+    notifyListeners();
+  }
+
+  Future<void> updateNewsFeedCommunity(
+    BuildContext context,
+    String dentalSupplierId,
+  ) async {
+    print("**************edit news feed id calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
+    final Map<String, dynamic> fields = {
+      "description": descriptionController.text,
+      "category_type": selectedCategoryId,
+      "video_url": videoLinkController.text,
+      "post_image": selectedNewsFeedGalleryList,
+      "web_url": websiteLinkController.text,
+      "user_role": type,
+      "user_id": userId,
+      "status": "PUBLISHED",
+      "feed_type": "NEWSFEED",
+      "community_id": (type == "PROFESSIONAL") ? profCommunityId : communityId,
+    };
+
+    if (type == "PROFESSIONAL") {
+      fields["dental_professional_id"] = userId;
+    } else {
+      fields["dental_supplier_id"] = dentalSupplierId;
+    }
     final variables = {
-      "id": id,
-      "fields": {
-        "description": descriptionController.text,
-        "category_type": selectedCategoryId,
-        "video_url": videoLinkController.text,
-        "post_image": selectedNewsFeedGalleryList,
-        "web_url": websiteLinkController.text,
-        "user_role": type,
-        "user_id": userId,
-        "status": "PUBLISHED",
-        "dental_professional_id": dentalProfessionalId,
-        "feed_type": "NEWSFEED",
-        "community_id": communityId
-      }
+      "id": editNewsFeedId,
+      "fields": fields,
     };
 
     print("***************************variavles $variables");
