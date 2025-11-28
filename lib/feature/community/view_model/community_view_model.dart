@@ -226,13 +226,17 @@ class CommunityViewModel extends ChangeNotifier {
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
 
-  Future<void> getNewsFeedCategories() async {
+  Future<void> getNewsFeedCategories([String? newsFeedId]) async {
+    print("*********************All category calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final variables = {"communityId": communityId};
-    final res = await repo.getNewsFeedCategories(variables);
+    final type =
+        await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {"communityId": (type=="PROFESSIONAL")?newsFeedId:communityId};
+    print("*********************variables: ${variables}");    final res = await repo.getNewsFeedCategories(variables);
     if (res != null) {
       newsFeedCategoriesData = res;
+      print("*********************All category fetched successfully");
     }
 
     notifyListeners();

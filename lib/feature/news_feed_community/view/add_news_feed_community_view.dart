@@ -62,17 +62,17 @@ class AddNewsFeedCommunityView extends StatelessWidget
                 _buildCategoryTypes(viewModel),
                 addVertical(16),
                 ImagePickerField(
-                title: "Upload Photos",
-                isRequired: true,
-                serverImages: viewModel.serverNewsFeedGallery,
-                allowMultiple: true,
-                onServerFilesRemoved: (updatedList) {
-                  viewModel.setServerNewsFeedGallery(updatedList);
-                },
-                showPreview: true,
-                selectedFiles: viewModel.selectedNewsFeedGallery,
-                onFilesPicked: (file) => viewModel.setNewsFeedGallery(file),
-              ),
+                  title: "Upload Photos",
+                  isRequired: true,
+                  serverImages: viewModel.serverNewsFeedGallery,
+                  allowMultiple: true,
+                  onServerFilesRemoved: (updatedList) {
+                    viewModel.setServerNewsFeedGallery(updatedList);
+                  },
+                  showPreview: true,
+                  selectedFiles: viewModel.selectedNewsFeedGallery,
+                  onFilesPicked: (file) => viewModel.setNewsFeedGallery(file),
+                ),
                 //UploadFileWidget(),
                 addVertical(16),
                 InputTextField(

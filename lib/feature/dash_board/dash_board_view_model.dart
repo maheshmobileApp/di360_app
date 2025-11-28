@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -58,8 +59,18 @@ class DashBoardViewModel extends ChangeNotifier {
       case 4:
         break;
       case 5:
-      context.read<CommunityViewModel>().getJoinedCommunityMembersRes(context);
-      context.read<CommunityViewModel>().changeProfessionalMode(true);
+        context
+            .read<CommunityViewModel>()
+            .getJoinedCommunityMembersRes(context);
+        context.read<CommunityViewModel>().changeProfessionalMode(true);
+        /*await context.read<CommunityViewModel>().getNewsFeedCategories();
+         context.read<NewsFeedCommunityViewModel>().newsFeedCategory = context
+                .read<CommunityViewModel>()
+                .newsFeedCategoriesData
+                ?.newsfeedCategories
+                ?.map((e) => e.categoryName ?? "")
+                .toList() ??
+            [];*/
         break;
       default:
     }

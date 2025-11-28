@@ -54,7 +54,6 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
     return res;
   }
 
-   
   @override
   Future updateNewsFeedCommunity(variables) async {
     final res = await http.mutation(updateNewsFeedCommunityQuery, variables);

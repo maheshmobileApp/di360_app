@@ -215,7 +215,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   List uploadedFiles = [];
   //Add news feed
   Future<void> addNewsFeed(
-      BuildContext context, String dentalSupplierId) async {
+    BuildContext context,
+    String dentalSupplierId,
+  ) async {
     Loaders.circularShowLoader(context);
     await validateNewsFeedGallery();
     print("*************************************add feed Calling");
@@ -225,24 +227,26 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
-    final variables = {
-      "fields": {
-        "description": descriptionController.text,
-        "category_type":
-            selectedCategoryId, //"890535a3-83eb-4d6e-ad5b-606aeaeaa205",
-        "video_url": videoLinkController.text,
-        "post_image": selectedNewsFeedGalleryList,
-        "web_url": websiteLinkController.text,
-        "user_role": type,
-        "user_id": userId,
-        "status": "PUBLISHED",
-        "dental_supplier_id": (type == "SUPPLIER")
-            ? userId
-            : dentalSupplierId, //"5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
-        "feed_type": "NEWSFEED",
-        "community_id": communityId
-      }
+    final Map<String, dynamic> fields = {
+      "description": descriptionController.text,
+      "category_type": selectedCategoryId,
+      "video_url": videoLinkController.text,
+      "post_image": selectedNewsFeedGalleryList,
+      "web_url": websiteLinkController.text,
+      "user_role": type,
+      "user_id": userId,
+      "status": (type == "PROFESSIONAL") ? "PENDING" : "PUBLISHED",
+      "feed_type": "NEWSFEED",
+      "community_id": (type == "PROFESSIONAL") ? profCommunityId : communityId,
     };
+
+    if (type == "PROFESSIONAL") {
+      fields["dental_professional_id"] = userId;
+    } else {
+      fields["dental_supplier_id"] = dentalSupplierId;
+    }
+
+    final variables = {"fields": fields};
 
     print(
         "***************************************************variables: $variables");
@@ -330,6 +334,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   NewsFeedCategoriesData? newsFeedCategoriesData;
 
   void setSelectedNewsFeedCategory(String? name) {
+    print("****************Calling name to Id $name");
     selectedCategory = name;
 
     if (name != null && newsFeedCategoriesData?.newsfeedCategories != null) {
@@ -338,6 +343,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         orElse: () => NewsfeedCategories(),
       );
       selectedCategoryId = match.id;
+      print("********selected Id $selectedCategoryId");
     } else {
       selectedCategoryId = null;
     }

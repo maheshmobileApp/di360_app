@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -197,8 +198,13 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
 
                                     break;
                                   case "Delete":
-                                    viewModel.deleteNewsFeedCommunity(
+                                  showAlertMessage(context,
+                                    'Are you sure you want to delete this Category?',
+                                    onBack: () async {
+                                  viewModel.deleteNewsFeedCommunity(
                                         context, newsItem.id ?? "");
+                                });
+                                    
                                     break;
                                 }
                               });
@@ -220,6 +226,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               onTap: () {
                 viewModel.setEditNewsFeed(false);
                 viewModel.clearAddNewsFeedData();
+                viewModel.newsFeedCategory = communityVM.newsFeedCategoriesData?.newsfeedCategories
+                                    ?.map((e) => e.categoryName ?? "")
+                                    .toList() ??
+                                [];
                 navigationService
                     .navigateTo(RouteList.addNewsFeedCommunityView);
               },
@@ -228,7 +238,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       },
     );
   }
-
   SizedBox communityStatusWidget(NewsFeedCommunityViewModel courseListingVM) {
     return SizedBox(
       height: 60,
