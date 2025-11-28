@@ -1,6 +1,9 @@
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/configuration/app_config.dart';
+import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
+import 'package:di360_flutter/feature/account/repository/account_repository.dart';
+import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
@@ -8,6 +11,7 @@ import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add
 import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_job_view_model.dart';
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -24,6 +28,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
@@ -83,6 +88,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
         ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
         ChangeNotifierProvider(create: (_) => SupportViewModel()),
+        ChangeNotifierProvider(create: (_) => CommunityViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
+        ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel())
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,

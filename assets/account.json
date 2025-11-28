@@ -98,7 +98,6 @@
         {
           "title": "Learning Hub",
           "subTitle": [
-         
             {
               "title": "My Learning Hub",
               "asset": "assets/profile/payments&others/call-center 1.svg"
@@ -123,6 +122,44 @@
           "subTitle": [
             {
               "title": "View Profile",
+              "asset": "assets/profile/account/profile.svg"
+            }
+          ]
+        },
+        {
+          "title": "Community",
+          "subTitle": [
+            {
+              "title": "Join Request",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Partnership Request",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Membership Registration",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Partnership Registration",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "News Feed Categories",
+              "asset": "assets/profile/account/profile.svg"
+            }
+          ]
+        },
+        {
+          "title": "News Feed",
+          "subTitle": [
+            {
+              "title": "News Feed",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Community",
               "asset": "assets/profile/account/profile.svg"
             }
           ]

@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/social_media_links.dart';
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -75,6 +76,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
         return TermsAndConditions();
       case CourseCreateSteps.CONTACTS:
         return Contacts();
+      case CourseCreateSteps.SOCIALMEDIALINKS:
+        return SocialMediaLinks();
 
       default:
         return Center(child: Text("Step \${stepIndex.value + 1}"));

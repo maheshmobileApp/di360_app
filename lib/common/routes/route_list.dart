@@ -38,7 +38,8 @@ class RouteList {
   static const String adddirectorview = 'adddirectorview';
   static const String JobListingApplicantsMessege =
       '/JobListingApplicantsMessege';
-      static const String TalentListingMessageScreen = '/TalentListingMessageScreen';
+  static const String TalentListingMessageScreen =
+      '/TalentListingMessageScreen';
   static const String AppliedJobScreen = '/AppliedJobScreen';
   static const String EnquiriesScreen = '/EnquiriesScreen';
   static const String JobProfileScreen = '/ JobProfileScreen';
@@ -61,7 +62,19 @@ class RouteList {
   static const String TalentFliterScreen = '/TalentFliterScreen';
   static const String learningHubFliterScreen = '/learningHubFliterScreen';
   static const String viewProfileScreen = '/viewProfileScreen';
-  static const String professionalViewProfileScreen = '/professionalViewProfileScreen';
+  static const String professionalViewProfileScreen =
+      '/professionalViewProfileScreen';
   static const String supportScreen = '/supportScreen';
   static const String supportChatScreen = '/supportChatScreen';
+  static const String joinRequestView = '/joinRequestView';
+  static const String partnershipRequestView = '/partnershipRequestView';
+  static const String membershipRegistrationView = 'membershipRegistrationView';
+  static const String partnershipRegistrationView =
+      'partnershipRegistrationView';
+  static const String newsFeedCategoriesView = 'newsFeedCategoriesView';
+  static const String createCategoryView = 'createCategoryView';
+  static const String newsFeedScreen = 'newsFeedScreen';
+  static const String newsFeedCommunityView = 'newsFeedCommunityView';
+  static const String addNewsFeedCommunityView = 'addNewsFeedCommunityView';
+  static const String communitMarketView = 'communityMarketView';
 }
