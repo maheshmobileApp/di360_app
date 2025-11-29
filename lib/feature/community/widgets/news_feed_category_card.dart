@@ -33,42 +33,56 @@ class NewsFeedCategoryCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top row: Name + Menu
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "$categoryName",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  
+                  child: Row(
+                    children: [
+                      Text(
+                        "Category Name: ",
+                        style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "$categoryName",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-
-                /// 3 Dots Menu
-                PopupMenuButton<String>(
+                 PopupMenuButton<String>(
                   color: AppColors.whiteColor,
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.more_vert),
                   onSelected: (value) => onMenuAction?.call(value),
                   itemBuilder: (context) => [
-                    
-                         _popupItem("Edit", Icons.edit, AppColors.blueColor),
-                         _popupItem(
-                            "Delete", Icons.delete, AppColors.redColor),
+                    _popupItem("Edit", Icons.edit, AppColors.blueColor),
+                    _popupItem("Delete", Icons.delete, AppColors.redColor),
                   ],
                 ),
+                
+
+                /// 3 Dots Menu
+               
               ],
             ),
 
-            const SizedBox(height: 2),
 
             _infoRow("Created At", createdAt),
             _infoRow("UpdatedAt", updatedAt),
-           
           ],
         ),
       ),
@@ -108,6 +122,4 @@ class NewsFeedCategoryCard extends StatelessWidget {
       ),
     );
   }
-  
-  
 }

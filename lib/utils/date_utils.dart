@@ -55,12 +55,12 @@ class DateFormatUtils {
 }
 
 static String formatDateTime(String dateTimeString) {
-    try {
-      final dateTime = DateTime.parse(dateTimeString);
-      return DateFormat('dd-MM-yyyy hh:mm a').format(dateTime);
-    } catch (e) {
-      return dateTimeString; // Return original if parsing fails
-    }
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final updatedDateTime = dateTime.add(Duration(hours: 5, minutes: 30));
+    return DateFormat('dd-MM-yyyy hh:mm a').format(updatedDateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
   }
-
+}
 }

@@ -64,7 +64,6 @@ class AddNewsFeedCommunityView extends StatelessWidget
                 addVertical(16),
                 ImagePickerField(
                   title: "Upload Photos",
-                  isRequired: true,
                   serverImages: viewModel.serverNewsFeedGallery,
                   allowMultiple: true,
                   onServerFilesRemoved: (updatedList) {
