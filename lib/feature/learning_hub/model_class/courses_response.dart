@@ -97,6 +97,7 @@ class CoursesListingDetails {
   String? endTime;
   String? meetingLink;
   CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
+  String? communityUserType;
 
   CoursesListingDetails(
       {this.id,
@@ -155,7 +156,8 @@ class CoursesListingDetails {
       this.startTime,
       this.endTime,
       this.meetingLink,
-      this.courseRegisteredUsersAggregate});
+      this.courseRegisteredUsersAggregate,
+      this.communityUserType});
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -245,6 +247,7 @@ class CoursesListingDetails {
     startTime = json['startTime'];
     endTime = json['endTime'];
     meetingLink = json['meeting_link'];
+    communityUserType = json['community_user_type'];
     courseRegisteredUsersAggregate =
         json['course_registered_users_aggregate'] != null
             ? new CourseRegisteredUsersAggregate.fromJson(
@@ -330,6 +333,7 @@ class CoursesListingDetails {
     data['endDate'] = this.endDate;
     data['startTime'] = this.startTime;
     data['endTime'] = this.endTime;
+    data['community_user_type'] = this.communityUserType;
     data['meeting_link'] = this.meetingLink;
     if (this.courseRegisteredUsersAggregate != null) {
       data['course_registered_users_aggregate'] =

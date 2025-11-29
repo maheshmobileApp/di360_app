@@ -6,7 +6,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
-import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -143,7 +142,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               comments: newsItem.newsFeedsComments?.length ?? 0,
                               likes: newsItem.newsfeedsLikes?.length ?? 0,
                               isLiked: newsItem.myLike?.isNotEmpty ?? false,
-                              onCommentTap: () {},
+                              onCommentTap: () {
+                                
+                              },
                               onLikeTap: () {
                                 print(
                                     "*************///////////**********${newsItem.myLike?.isNotEmpty}");

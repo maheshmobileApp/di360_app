@@ -71,9 +71,13 @@ class SocialMediaLinks extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCommunityTypes(NewCourseViewModel jobCreateVM) {
+    final selectedValue = jobCreateVM.communityTypes.contains(jobCreateVM.selectedCommunityType) 
+        ? jobCreateVM.selectedCommunityType 
+        : null;
+        
     return CustomDropDown(
       isRequired: true,
-      value: jobCreateVM.selectedCommunityType,
+      value: selectedValue,
       title: "Community User Type",
       onChanged: (v) {
         jobCreateVM.setCommunityType(v as String);

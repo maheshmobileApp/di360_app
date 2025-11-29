@@ -35,6 +35,22 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   List<String>? serverNewsFeedGallery;
   List<File>? selectedNewsFeedGallery;
   List<CourseBannerImage> selectedNewsFeedGalleryList = [];
+  /************************************** */
+  TextEditingController commentController = TextEditingController();
+  final FocusNode replyFocusNode = FocusNode();
+
+  bool isReply = false;
+  String? commentId;
+  String? commenterName;
+  bool replyCommentUpdate = false;
+  bool commentUpdate = false;
+  bool removeReplyFeild = false;
+  String? hintText;
+  void updateHintText(String? hinttext, {bool? removeReplyVal}) {
+    hintText = hinttext;
+    removeReplyFeild = removeReplyVal ?? false;
+    notifyListeners();
+  }
 
   String selectedStatus = "Published";
   String listingStatus = "PUBLISHED";

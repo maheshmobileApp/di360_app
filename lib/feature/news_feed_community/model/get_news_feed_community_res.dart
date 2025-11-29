@@ -271,7 +271,7 @@ class MyLike {
 
 class DentalSupplier {
   String? id;
-  Null? logo;
+  Logo? logo;
   String? businessName;
   String? professionType;
   String? email;
@@ -295,7 +295,7 @@ class DentalSupplier {
 
   DentalSupplier.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    logo = json['logo'];
+    logo = json['logo'] != null ? Logo.fromJson(json['logo']) : null;
     businessName = json['business_name'];
     professionType = json['profession_type'];
     email = json['email'];
@@ -314,7 +314,9 @@ class DentalSupplier {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['logo'] = this.logo;
+    if (this.logo != null) {
+      data['logo'] = this.logo!.toJson();
+    }
     data['business_name'] = this.businessName;
     data['profession_type'] = this.professionType;
     data['email'] = this.email;
@@ -657,21 +659,21 @@ class NewsFeedsComments {
   String? comments;
   String? createdAt;
   String? updatedAt;
-  Null? dentalAdminId;
-  Null? commentProImg;
+  String? dentalAdminId;
+  String? commentProImg;
   String? commenterName;
-  List<Null>? commentsAttachments;
+  List<dynamic>? commentsAttachments;
   List<CommentReply>? commentReply;
-  Null? dentalPracticeId;
-  Null? dentalProfessionalId;
+  String? dentalPracticeId;
+  String? dentalProfessionalId;
   String? dentalSupplierId;
   DentalSupplier? dentalSupplier;
-  Null? dentalPractice;
-  Null? dentalProfessional;
-  Null? adminUser;
+  dynamic dentalPractice;
+  dynamic dentalProfessional;
+  dynamic adminUser;
   Directories? newsfeed;
-  Null? jobs;
-  Null? courses;
+  dynamic jobs;
+  dynamic courses;
   String? sTypename;
 
   NewsFeedsComments(

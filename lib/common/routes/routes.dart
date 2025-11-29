@@ -212,8 +212,7 @@ class Routes {
       RouteList.newsFeedScreen: (context) => NewsFeedScreen(),
       RouteList.newsFeedCommunityView: (context) => NewsFeedCommunityView(),
       RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView(),
-      RouteList.communitMarketView: (context) => CommunityMarketView()
-      
+      RouteList.communitMarketView: (context) => CommunityMarketView()    
     };
   }
 }
