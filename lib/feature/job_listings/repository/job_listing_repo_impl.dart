@@ -87,9 +87,15 @@ class JobListingRepoImpl extends JobListingRepository {
       variables["supplierId"] = userId;
     }
     if (type == "PRACTICE") {
-      variables["dental_practice_id"] = userId;
+      variables["where"] = {
+        "dental_practice_id": {"_eq": userId}
+      };
     }
-    final data = await http.query(getJobStatusCount, variables: variables);
+    final String query =
+        (type == "SUPPLIER") ? getJobStatusCount : getJobStatusCountPractice;
+
+    print("************************variables $variables");
+    final data = await http.query(query, variables: variables);
     final result = JobStatusCountData.fromJson(data);
     print(result);
     return result;
@@ -156,9 +162,11 @@ class JobListingRepoImpl extends JobListingRepository {
   }
 
   @override
-  Future<String?> sendApplicantMessage(Map<String, dynamic> variables,String typeName) async {
+  Future<String?> sendApplicantMessage(
+      Map<String, dynamic> variables, String typeName) async {
     try {
-      final data = await http.mutation(typeName!="applicant"? talentMessge:applicantMessge, {
+      final data = await http
+          .mutation(typeName != "applicant" ? talentMessge : applicantMessge, {
         "object": variables,
       });
 
@@ -184,10 +192,10 @@ class JobListingRepoImpl extends JobListingRepository {
 
     return data;
   }
-  
+
   @override
-  Future updateApplicantMessage(String Id, String message) async{
-     final variables = {"id": Id, "message": message};
+  Future updateApplicantMessage(String Id, String message) async {
+    final variables = {"id": Id, "message": message};
     final data = await http.mutation(updateMessageQuery, variables);
 
     return data;

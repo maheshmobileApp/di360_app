@@ -202,7 +202,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               RouteList.EnquiriesScreen,
                               arguments: userId,
                             );
-                          } else if (item.title == 'Talent Request') {
+                          } else if (item.title == 'Talent Listing') {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<TalentListingViewModel>()
