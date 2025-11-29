@@ -73,7 +73,7 @@ class LoginViewModel extends ChangeNotifier {
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
-          (result.loginApi?.type == "SUPPLIER") ?await getSupplierCommunityOwner(result.loginApi?.id ?? ''):(){};
+          (result.loginApi?.type == "SUPPLIER") ? await getSupplierCommunityOwner(result.loginApi?.id ?? ''):(){};
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
           await LocalStorage.setStringVal(

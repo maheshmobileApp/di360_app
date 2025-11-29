@@ -17,36 +17,48 @@ class FeedCountRes {
 }
 
 class FeedCountData {
-  NewsfeedsAggregate? newsfeedsAggregate;
+  Published? published;
+  Published? pending;
+  Published? unpublished;
 
-  FeedCountData({this.newsfeedsAggregate});
+  FeedCountData({this.published, this.pending, this.unpublished});
 
   FeedCountData.fromJson(Map<String, dynamic> json) {
-    newsfeedsAggregate = json['newsfeeds_aggregate'] != null
-        ? new NewsfeedsAggregate.fromJson(json['newsfeeds_aggregate'])
+    published = json['published'] != null
+        ? new Published.fromJson(json['published'])
+        : null;
+    pending = json['pending'] != null
+        ? new Published.fromJson(json['pending'])
+        : null;
+    unpublished = json['unpublished'] != null
+        ? new Published.fromJson(json['unpublished'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.newsfeedsAggregate != null) {
-      data['newsfeeds_aggregate'] = this.newsfeedsAggregate!.toJson();
+    if (this.published != null) {
+      data['published'] = this.published!.toJson();
+    }
+    if (this.pending != null) {
+      data['pending'] = this.pending!.toJson();
+    }
+    if (this.unpublished != null) {
+      data['unpublished'] = this.unpublished!.toJson();
     }
     return data;
   }
 }
 
-class NewsfeedsAggregate {
+class Published {
   Aggregate? aggregate;
-  String? sTypename;
 
-  NewsfeedsAggregate({this.aggregate, this.sTypename});
+  Published({this.aggregate});
 
-  NewsfeedsAggregate.fromJson(Map<String, dynamic> json) {
+  Published.fromJson(Map<String, dynamic> json) {
     aggregate = json['aggregate'] != null
         ? new Aggregate.fromJson(json['aggregate'])
         : null;
-    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
@@ -54,26 +66,22 @@ class NewsfeedsAggregate {
     if (this.aggregate != null) {
       data['aggregate'] = this.aggregate!.toJson();
     }
-    data['__typename'] = this.sTypename;
     return data;
   }
 }
 
 class Aggregate {
   int? count;
-  String? sTypename;
 
-  Aggregate({this.count, this.sTypename});
+  Aggregate({this.count});
 
   Aggregate.fromJson(Map<String, dynamic> json) {
     count = json['count'];
-    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['count'] = this.count;
-    data['__typename'] = this.sTypename;
     return data;
   }
 }

@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -49,9 +50,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   int? unPublishedCount = 0;
 
   Map<String, int?> get statusCountMap => {
-        'PUBLISHED': publishedCount,
-        'UNPUBLISHED': unPublishedCount,
-        'PENDING': pendingCount,
+        'Published': publishedCount,
+        'Unpublished': unPublishedCount,
+        'Pending Approval': pendingCount,
       };
 
   void changeStatus(String status, BuildContext context) {
@@ -148,48 +149,32 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (res != null) {
       print("*************************************data fetched successfully");
       newsFeedCommunityData = res;
-
-      Loaders.circularHideLoader(context);
     }
-
+    getAllStatusCounts();
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> stausCount(String status) async {
+  FeedCountData? feedCountData;
+
+  Future<void> getAllStatusCounts() async {
+    print("*************************************GetAllStatusCounts Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {
-      "where": {
-        "community_id": {"_eq": communityId},
-        "status": {"_eq": status}
-      }
+      "community_id": communityId,
     };
-    print("variables: $variables");
+    print("************get all status counts variables: $variables");
     final res = await repo.feedCount(variables);
     if (res != null) {
-      final count = res.newsfeedsAggregate?.aggregate?.count ?? 0;
-
-      switch (status) {
-        case "PENDING":
-          pendingCount = count;
-          break;
-        case "PUBLISHED":
-          publishedCount = count;
-          break;
-        case "UNPUBLISHED":
-          unPublishedCount = count;
-          break;
-      }
+      feedCountData = res;
+      print("*************************************Counts fetched successfully");
+      pendingCount = feedCountData?.pending?.aggregate?.count;
+      publishedCount = feedCountData?.published?.aggregate?.count;
+      unPublishedCount = feedCountData?.unpublished?.aggregate?.count;
+      print("****************$pendingCount $publishedCount $unPublishedCount");
     }
     notifyListeners();
-  }
-
-  //Get all status counts
-  Future<void> getAllStatusCounts() async {
-    print("*************************************Status count Calling");
-    await stausCount("PENDING");
-    await stausCount("PUBLISHED");
-    await stausCount("UNPUBLISHED");
   }
 
   //LIKE
@@ -197,13 +182,20 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     print("*************************************CommunityLike Calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final variables = {
-      "fields": {
-        "news_feeds_id": newsFeedId,
-        "role_type": type,
-        "dental_supplier_id": userId
-      }
+
+    final Map<String, dynamic> fields = {
+      "news_feeds_id": newsFeedId,
+      "role_type": type,
     };
+
+    if (type == "PROFESSIONAL") {
+      fields["dental_professional_id"] = userId;
+    } else {
+      fields["dental_supplier_id"] = userId;
+    }
+
+    final variables = {"fields": fields};
+
     final res = await repo.communityLike(variables);
     if (res != null) {
       scaffoldMessenger("Liked Successfully");
@@ -301,7 +293,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           : scaffoldMessenger("News Feed Un-Published Successfully");
     }
     getAllNewsFeeds(context);
-    //getAllStatusCounts();
+    getAllStatusCounts();
     notifyListeners();
   }
   /******************News Feed Upload ************************ */
@@ -381,6 +373,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     String dentalSupplierId,
   ) async {
     print("**************edit news feed id calling");
+    Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityId =
@@ -414,22 +407,28 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final res = await repo.updateNewsFeedCommunity(variables);
     if (res != null) {
       scaffoldMessenger("News Feed Updated Successfully");
+      await getAllNewsFeeds(context);
+      //await getAllStatusCounts();
+      Loaders.circularHideLoader(context);
+      navigationService.goBack();
     }
-    getAllNewsFeeds(context);
-    //getAllStatusCounts();
+
     notifyListeners();
   }
 
   Future<void> deleteNewsFeedCommunity(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
     final variables = {"id": id};
 
     print("***************************variavles $variables");
 
     final res = await repo.deleteNewsFeedCommunity(variables);
     if (res != null) {
+      await getAllNewsFeeds(context);
+      Loaders.circularHideLoader(context);
       scaffoldMessenger("News Feed Deleted Successfully");
     }
-    getAllNewsFeeds(context);
+
     //getAllStatusCounts();
     notifyListeners();
   }

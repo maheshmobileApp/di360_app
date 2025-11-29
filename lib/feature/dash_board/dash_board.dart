@@ -37,42 +37,47 @@ class DashBoard extends StatelessWidget {
                   type: BottomNavigationBarType.fixed,
                   selectedItemColor: AppColors.primaryColor,
                   unselectedItemColor: AppColors.bottomNavUnSelectedColor,
-                  selectedLabelStyle: TextStyles.medium1(),
-                  unselectedLabelStyle: TextStyles.regular1(),
+                  selectedLabelStyle: TextStyles.regular1(fontSize: 10),
+                  unselectedLabelStyle: TextStyles.regular1(fontSize: 10),
                   items: [
                     BottomNavigationBarItem(
                         icon: SvgPicture.asset(ImageConst.home,
+                            height: 24, width: 24,
                             color: AppColors.bottomNavUnSelectedColor),
                         activeIcon: SvgPicture.asset(ImageConst.home,
+                            height: 24, width: 24,
                             color: AppColors.primaryColor),
                         label: 'Home'),
                     BottomNavigationBarItem(
                         icon: Image.asset(ImageConst.feed,
+                            height: 24, width: 24,
                             color: AppColors.bottomNavUnSelectedColor),
                         activeIcon: Image.asset(ImageConst.feed,
+                            height: 24, width: 24,
                             color: AppColors.primaryColor),
                         label: 'Feeds'),
                     BottomNavigationBarItem(
                         icon: SvgPicture.asset(ImageConst.jobSeek,
+                            height: 24, width: 24,
                             color: AppColors.bottomNavUnSelectedColor),
                         activeIcon: SvgPicture.asset(ImageConst.jobSeek,
+                            height: 24, width: 24,
                             color: AppColors.primaryColor),
                         label: 'Job Seek'),
+                        if (type == "PROFESSIONAL")
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.group, size: 24), label: 'Community'),
                     BottomNavigationBarItem(
                         icon: SvgPicture.asset(ImageConst.catalogue,
-                            height: 25,
-                            width: 25,
+                            height: 24, width: 24,
                             color: AppColors.bottomNavUnSelectedColor),
                         activeIcon: SvgPicture.asset(ImageConst.catalogue,
-                            height: 25,
-                            width: 25,
+                            height: 24, width: 24,
                             color: AppColors.primaryColor),
                         label: 'Catalogue'),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.person), label: 'Profile'),
-                    if (type == "PROFESSIONAL")
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.group), label: 'Community'),
+                        icon: Icon(Icons.person, size: 24), label: 'Profile'),
+                    
                   ],
                 ),
               ),

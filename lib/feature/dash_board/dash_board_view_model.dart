@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
@@ -21,19 +22,39 @@ import 'package:provider/provider.dart';
 
 class DashBoardViewModel extends ChangeNotifier {
   int _currentIndex = 0;
+  List<Widget> _pages = [];
+  String _userType = '';
 
   int get currentIndex => _currentIndex;
+  List<Widget> get pages => _pages;
 
-  final pages = [
-    HomeScreen(),
-    NewsFeedScreen(),
-    JobSeekView(),
-    CataloguePage(),
-    AccountScreen(),
-    CommunityMarketView(),
-  ];
   DashBoardViewModel() {
+    _initializePages();
     BannerServices.instance.fetchListViewBanners({});
+  }
+
+  void _initializePages() async {
+    _userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    if (_userType == "SUPPLIER") {
+      _pages = [
+        HomeScreen(),
+        NewsFeedScreen(),
+        JobSeekView(),
+        CataloguePage(),
+        AccountScreen(),
+      ];
+    } else {
+      _pages = [
+        HomeScreen(),
+        NewsFeedScreen(),
+        JobSeekView(),
+        CommunityMarketView(),
+        CataloguePage(),
+        AccountScreen(),
+      ];
+    }
+    notifyListeners();
   }
 
   void setIndex(int index, BuildContext context) {
@@ -43,36 +64,47 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   updateIndex(int index, BuildContext context) async {
-    switch (index) {
-      case 0:
-        break;
-      case 1:
-        context.read<HomeViewModel>().getAllNewsfeeds(context);
-        context.read<NewsFeedViewModel>().updateApplyCatageories(false);
-        break;
-      case 2:
-        context.read<JobSeekViewModel>().fetchJobs(context);
-        break;
-      case 3:
-        context.read<CatalogueViewModel>().fetchCatalogue(context);
-        break;
-      case 4:
-        break;
-      case 5:
-        context
-            .read<CommunityViewModel>()
-            .getJoinedCommunityMembersRes(context);
-        context.read<CommunityViewModel>().changeProfessionalMode(true);
-        /*await context.read<CommunityViewModel>().getNewsFeedCategories();
-         context.read<NewsFeedCommunityViewModel>().newsFeedCategory = context
-                .read<CommunityViewModel>()
-                .newsFeedCategoriesData
-                ?.newsfeedCategories
-                ?.map((e) => e.categoryName ?? "")
-                .toList() ??
-            [];*/
-        break;
-      default:
+    if (_userType == "SUPPLIER") {
+      switch (index) {
+        case 0: // Home
+          break;
+        case 1: // Job Seek
+          context.read<HomeViewModel>().getAllNewsfeeds(context);
+          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+
+          break;
+        case 2: // Catalogue
+          context.read<JobSeekViewModel>().fetchJobs(context);
+          break;
+        case 3:
+          context.read<CatalogueViewModel>().fetchCatalogue(context);
+          break;
+        case 4:
+          break;
+      }
+    } else {
+      switch (index) {
+        case 0: // Home
+          break;
+        case 1: // News Feed
+          context.read<HomeViewModel>().getAllNewsfeeds(context);
+          context.read<NewsFeedViewModel>().updateApplyCatageories(false);
+          break;
+        case 2: // Job Seek
+          context.read<JobSeekViewModel>().fetchJobs(context);
+          break;
+        case 3: // Community
+          context
+              .read<CommunityViewModel>()
+              .getJoinedCommunityMembersRes(context);
+          context.read<CommunityViewModel>().changeProfessionalMode(true);
+          break;
+        case 4: // Catalogue
+          context.read<CatalogueViewModel>().fetchCatalogue(context);
+          break;
+        case 5: // Account
+          break;
+      }
     }
     notifyListeners();
   }

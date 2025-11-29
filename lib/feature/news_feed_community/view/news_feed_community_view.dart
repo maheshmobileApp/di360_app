@@ -32,7 +32,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       await viewModel.getAllNewsFeeds(context);
-      //await viewModel.getAllStatusCounts();
     });
   }
 
@@ -213,8 +212,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     showAlertMessage(context,
                                         'Are you sure you want to delete this Category?',
                                         onBack: () async {
-                                      viewModel.deleteNewsFeedCommunity(
+                                      await viewModel.deleteNewsFeedCommunity(
                                           context, newsItem.id ?? "");
+                                      navigationService.goBack();
                                     });
 
                                     break;

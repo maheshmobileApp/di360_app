@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_c
 import 'package:di360_flutter/feature/news_feed_community/widgets/upload_file_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
@@ -93,6 +94,7 @@ class AddNewsFeedCommunityView extends StatelessWidget
                     height: 50,
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
+                      
                       (viewModel.isEditNewsFeed == true)
                           ? viewModel.updateNewsFeedCommunity(
                               context,
