@@ -561,6 +561,97 @@ class Aggregate {
   }
 }
 
+
+class CommentReply {
+  String? id;
+  String? replyText;
+  String? commentId;
+  String? createdAt;
+  String? replyId;
+  List<Null>? replyAttachments;
+  Null? dentalAdminId;
+  Null? dentalPracticeId;
+  Null? dentalProfessionalId;
+  String? dentalSupplierId;
+  DentalSupplier? dentalSupplier;
+  Null? dentalPractice;
+  Null? dentalProfessional;
+  Null? adminUser;
+  Null? newsfeeds;
+  Null? jobs;
+  Null? courses;
+  String? sTypename;
+
+  CommentReply(
+      {this.id,
+      this.replyText,
+      this.commentId,
+      this.createdAt,
+      this.replyId,
+      this.replyAttachments,
+      this.dentalAdminId,
+      this.dentalPracticeId,
+      this.dentalProfessionalId,
+      this.dentalSupplierId,
+      this.dentalSupplier,
+      this.dentalPractice,
+      this.dentalProfessional,
+      this.adminUser,
+      this.newsfeeds,
+      this.jobs,
+      this.courses,
+      this.sTypename});
+
+  CommentReply.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    replyText = json['reply_text'];
+    commentId = json['comment_id'];
+    createdAt = json['created_at'];
+    replyId = json['reply_id'];
+    // replyAttachments = json['reply_attachments']; // Handle as needed
+    dentalAdminId = json['dental_admin_id'];
+    dentalPracticeId = json['dental_practice_id'];
+    dentalProfessionalId = json['dental_professional_id'];
+    dentalSupplierId = json['dental_supplier_id'];
+    dentalSupplier = json['dental_supplier'] != null
+        ? new DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
+    dentalPractice = json['dental_practice'];
+    dentalProfessional = json['dental_professional'];
+    adminUser = json['admin_user'];
+    newsfeeds = json['newsfeeds'];
+    jobs = json['jobs'];
+    courses = json['courses'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['reply_text'] = this.replyText;
+    data['comment_id'] = this.commentId;
+    data['created_at'] = this.createdAt;
+    data['reply_id'] = this.replyId;
+    data['reply_attachments'] = this.replyAttachments;
+    data['dental_admin_id'] = this.dentalAdminId;
+    data['dental_practice_id'] = this.dentalPracticeId;
+    data['dental_professional_id'] = this.dentalProfessionalId;
+    data['dental_supplier_id'] = this.dentalSupplierId;
+    if (this.dentalSupplier != null) {
+      data['dental_supplier'] = this.dentalSupplier!.toJson();
+    }
+    data['dental_practice'] = this.dentalPractice;
+    data['dental_professional'] = this.dentalProfessional;
+    data['admin_user'] = this.adminUser;
+    data['newsfeeds'] = this.newsfeeds;
+    data['jobs'] = this.jobs;
+    data['courses'] = this.courses;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+
 class NewsFeedsComments {
   String? id;
   String? comments;
@@ -570,13 +661,13 @@ class NewsFeedsComments {
   Null? commentProImg;
   String? commenterName;
   List<Null>? commentsAttachments;
-  List<Null>? commentReply;
+  List<CommentReply>? commentReply;
   Null? dentalPracticeId;
-  String? dentalProfessionalId;
-  Null? dentalSupplierId;
-  Null? dentalSupplier;
+  Null? dentalProfessionalId;
+  String? dentalSupplierId;
+  DentalSupplier? dentalSupplier;
   Null? dentalPractice;
-  DentalProfessional? dentalProfessional;
+  Null? dentalProfessional;
   Null? adminUser;
   Directories? newsfeed;
   Null? jobs;
@@ -614,15 +705,20 @@ class NewsFeedsComments {
     commentProImg = json['comment_Pro_Img'];
     commenterName = json['commenter_name'];
     // commentsAttachments = json['comments_attachments']; // Handle as needed
-    // commentReply = json['comment_reply']; // Handle as needed
+    if (json['comment_reply'] != null) {
+      commentReply = <CommentReply>[];
+      json['comment_reply'].forEach((v) {
+        commentReply!.add(new CommentReply.fromJson(v));
+      });
+    }
     dentalPracticeId = json['dental_practice_id'];
     dentalProfessionalId = json['dental_professional_id'];
     dentalSupplierId = json['dental_supplier_id'];
-    dentalSupplier = json['dental_supplier'];
-    dentalPractice = json['dental_practice'];
-    dentalProfessional = json['dental_professional'] != null
-        ? new DentalProfessional.fromJson(json['dental_professional'])
+    dentalSupplier = json['dental_supplier'] != null
+        ? new DentalSupplier.fromJson(json['dental_supplier'])
         : null;
+    dentalPractice = json['dental_practice'];
+    dentalProfessional = json['dental_professional'];
     adminUser = json['admin_user'];
     newsfeed = json['newsfeed'] != null
         ? new Directories.fromJson(json['newsfeed'])
@@ -641,16 +737,21 @@ class NewsFeedsComments {
     data['dental_admin_id'] = this.dentalAdminId;
     data['comment_Pro_Img'] = this.commentProImg;
     data['commenter_name'] = this.commenterName;
-    data['comments_attachments'] = this.commentsAttachments;
-    data['comment_reply'] = this.commentReply;
+    if (this.commentsAttachments != null) {
+      data['comments_attachments'] = this.commentsAttachments;
+    }
+    if (this.commentReply != null) {
+      data['comment_reply'] =
+          this.commentReply!.map((v) => v.toJson()).toList();
+    }
     data['dental_practice_id'] = this.dentalPracticeId;
     data['dental_professional_id'] = this.dentalProfessionalId;
     data['dental_supplier_id'] = this.dentalSupplierId;
-    data['dental_supplier'] = this.dentalSupplier;
-    data['dental_practice'] = this.dentalPractice;
-    if (this.dentalProfessional != null) {
-      data['dental_professional'] = this.dentalProfessional!.toJson();
+    if (this.dentalSupplier != null) {
+      data['dental_supplier'] = this.dentalSupplier!.toJson();
     }
+    data['dental_practice'] = this.dentalPractice;
+    data['dental_professional'] = this.dentalProfessional;
     data['admin_user'] = this.adminUser;
     if (this.newsfeed != null) {
       data['newsfeed'] = this.newsfeed!.toJson();
@@ -661,4 +762,6 @@ class NewsFeedsComments {
     return data;
   }
 }
+
+
 
