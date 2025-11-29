@@ -17,13 +17,15 @@ class MembershipRegistrationView extends StatefulWidget {
 }
 
 class _MembershipRegistrationViewState extends State<MembershipRegistrationView> with ValidationMixins  {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
    @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
 
-      viewModel.getMembershipLink();
+      viewModel.getMembershipLink(context);
 
       viewModel.getDirectory();
     });
@@ -39,9 +41,11 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
         ),
         body: Padding(
           padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
               InputTextField(
                 controller: viewModel.membershipLinkController,
                 hintText: "Enter Registration link",
@@ -60,9 +64,11 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
                       text:
                           (viewModel.membershipLink != "") ? "Update" : "Save",
                       onTap: () {
-                        viewModel.updateMembershipLink(
-                            viewModel.directoryData?.directories?.first.id ??
-                                "");
+                        if (_formKey.currentState?.validate() ?? false) {
+                          viewModel.updateMembershipLink(context,
+                              viewModel.directoryData?.directories?.first.id ??
+                                  "");
+                        }
                       },
                     ),
                   ),
@@ -105,7 +111,8 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
                   )
                 ],
               ),
-            ],
+              ],
+            ),
           ),
         ));
   }

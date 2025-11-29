@@ -86,7 +86,9 @@ class CommunityViewModel extends ChangeNotifier {
   String membershipLink = "";
 
   //GET MEMBERSHIP LINK---------------------------------------------------------------
-  Future<void> getMembershipLink() async {
+  Future<void> getMembershipLink(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
@@ -96,6 +98,7 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.getMembershipLink(variables);
     if (res != null) {
       membershipLink = res.directories?.first.membershipLink ?? "";
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -103,7 +106,8 @@ class CommunityViewModel extends ChangeNotifier {
   String partnershipLink = "";
 
   //GET PARTNERSHIP LINK---------------------------------------------------------------
-  Future<void> getPartnershipLink() async {
+  Future<void> getPartnershipLink(BuildContext context) async {
+     Loaders.circularShowLoader(context);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {
@@ -112,6 +116,7 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.getPartnershipLink(variables);
     if (res != null) {
       partnershipLink = res.directories?.first.partnershipLink ?? "";
+       Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -195,7 +200,7 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //UPDATE MEMBERSHIP LINK
-  Future<void> updateMembershipLink(String id) async {
+  Future<void> updateMembershipLink(BuildContext context, String id) async {
     final variables = {
       "id": id,
       "fields": {"membership_link": membershipLinkController.text}
@@ -205,12 +210,12 @@ class CommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Registration link updated Sucessfully");
     }
     membershipLinkController.text = "";
-    getMembershipLink();
+    getMembershipLink(context);
     notifyListeners();
   }
 
   //UPDATE MEMBERSHIP LINK
-  Future<void> updatePartnershipLink(String id) async {
+  Future<void> updatePartnershipLink(BuildContext context,String id) async {
     final variables = {
       "id": id,
       "fields": {"partnership_link": partnershipLinkController.text}
@@ -220,7 +225,7 @@ class CommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Registration link updated Sucessfully");
     }
     partnershipLinkController.text = "";
-    getPartnershipLink();
+    getPartnershipLink(context);
     notifyListeners();
   }
 
@@ -230,10 +235,12 @@ class CommunityViewModel extends ChangeNotifier {
     print("*********************All category calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final type =
-        await LocalStorage.getStringVal(LocalStorageConst.type);
-    final variables = {"communityId": (type=="PROFESSIONAL")?newsFeedId:communityId};
-    print("*********************variables: ${variables}");    final res = await repo.getNewsFeedCategories(variables);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {
+      "communityId": (type == "PROFESSIONAL") ? newsFeedId : communityId
+    };
+    print("*********************variables: ${variables}");
+    final res = await repo.getNewsFeedCategories(variables);
     if (res != null) {
       newsFeedCategoriesData = res;
       print("*********************All category fetched successfully");
@@ -275,17 +282,16 @@ class CommunityViewModel extends ChangeNotifier {
     professionalMode = value;
     notifyListeners();
   }
-  Future<void> getJoinedCommunityMembersRes(
-      BuildContext context) async {
-        final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+  Future<void> getJoinedCommunityMembersRes(BuildContext context) async {
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
 
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
     if (res != null) {
       getJoinedCommunityMembersData = res;
-          Loaders.circularHideLoader(context);
-
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

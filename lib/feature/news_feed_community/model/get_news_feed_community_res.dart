@@ -1,3 +1,5 @@
+import '../../home/model_class/get_all_news_feeds.dart';
+
 class GetNewsFeedCommunityRes {
   NewsFeedCommunityData? data;
 
@@ -38,7 +40,7 @@ class NewsFeedCommunityData {
     return data;
   }
 }
-
+/*
 class Newsfeeds {
   String? id;
   String? createdAt;
@@ -228,7 +230,7 @@ class Newsfeeds {
     data['__typename'] = this.sTypename;
     return data;
   }
-}
+}*/
 
 class PostImage {
   String? url;
@@ -266,8 +268,6 @@ class MyLike {
 
   Map<String, dynamic> toJson() => {'id': id};
 }
-
-
 
 class DentalSupplier {
   String? id;

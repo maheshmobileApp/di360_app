@@ -25,7 +25,7 @@ class _PartnershipRegistrationViewState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
 
-      viewModel.getPartnershipLink();
+      viewModel.getPartnershipLink(context);
 
       viewModel.getDirectory();
     });
@@ -63,7 +63,7 @@ class _PartnershipRegistrationViewState
                       text:
                           (viewModel.partnershipLink != "") ? "Update" : "Save",
                       onTap: () {
-                        viewModel.updatePartnershipLink(
+                        viewModel.updatePartnershipLink(context,
                             viewModel.directoryData?.directories?.first.id ??
                                 "");
                       },

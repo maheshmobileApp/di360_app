@@ -134,6 +134,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   String profCommunityId = "";
   void setProfCommunityId(String value) {
+    print("*************************************SetProfCommunityId Calling");
     profCommunityId = value;
     notifyListeners();
   }
@@ -226,9 +227,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     BuildContext context,
     String dentalSupplierId,
   ) async {
+     print("*************************************add feed Calling");
     Loaders.circularShowLoader(context);
     await validateNewsFeedGallery();
-    print("*************************************add feed Calling");
+   
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -251,7 +253,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (type == "PROFESSIONAL") {
       fields["dental_professional_id"] = userId;
     } else {
-      fields["dental_supplier_id"] = dentalSupplierId;
+      fields["dental_supplier_id"] = userId;
     }
 
     final variables = {"fields": fields};
@@ -260,13 +262,14 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         "***************************************************variables: $variables");
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
-      uploadedFiles.clear();
+      
       scaffoldMessenger('Newsfeed submitted successfully');
 
       navigationService.goBack();
+      uploadedFiles.clear();
     }
 
-    getAllNewsFeeds(context);
+    await getAllNewsFeeds(context);
     Loaders.circularHideLoader(context);
     clearAddNewsFeedData();
 
@@ -411,7 +414,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (type == "PROFESSIONAL") {
       fields["dental_professional_id"] = userId;
     } else {
-      fields["dental_supplier_id"] = dentalSupplierId;
+      fields["dental_supplier_id"] = userId;
     }
     final variables = {
       "id": editNewsFeedId,
