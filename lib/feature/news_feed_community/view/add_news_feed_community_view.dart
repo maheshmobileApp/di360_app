@@ -2,16 +2,10 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
-import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
-import 'package:di360_flutter/feature/add_news_feed/view/upload_file_preview.dart';
+
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_profile/view/add_documents_dialog.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
-import 'package:di360_flutter/feature/news_feed_community/widgets/upload_file_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
-import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
@@ -96,15 +90,10 @@ class AddNewsFeedCommunityView extends StatelessWidget
                       
                       (viewModel.isEditNewsFeed == true)
                           ? viewModel.updateNewsFeedCommunity(
-                              context,
-                              viewModel.newsFeedCommunityData?.newsfeeds?.first
-                                      .dentalSupplier?.id ??
-                                  "")
+                              context)
                           : viewModel.addNewsFeed(
-                              context,
-                              viewModel.newsFeedCommunityData?.newsfeeds?.first
-                                      .dentalSupplier?.id ??
-                                  "");
+                              context
+                              );
                     }),
               ],
             ),

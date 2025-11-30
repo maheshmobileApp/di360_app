@@ -223,14 +223,11 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   List uploadedFiles = [];
   //Add news feed
-  Future<void> addNewsFeed(
-    BuildContext context,
-    String dentalSupplierId,
-  ) async {
-     print("*************************************add feed Calling");
+  Future<void> addNewsFeed(BuildContext context) async {
+    print("*************************************add feed Calling");
     Loaders.circularShowLoader(context);
     await validateNewsFeedGallery();
-   
+
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -262,15 +259,15 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         "***************************************************variables: $variables");
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
-      
+      await getAllNewsFeeds(context);
+      Loaders.circularHideLoader(context);
+
       scaffoldMessenger('Newsfeed submitted successfully');
 
       navigationService.goBack();
       uploadedFiles.clear();
     }
 
-    await getAllNewsFeeds(context);
-    Loaders.circularHideLoader(context);
     clearAddNewsFeedData();
 
     notifyListeners();
@@ -387,10 +384,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateNewsFeedCommunity(
-    BuildContext context,
-    String dentalSupplierId,
-  ) async {
+  Future<void> updateNewsFeedCommunity(BuildContext context) async {
     print("**************edit news feed id calling");
     Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -425,10 +419,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     final res = await repo.updateNewsFeedCommunity(variables);
     if (res != null) {
-      scaffoldMessenger("News Feed Updated Successfully");
       await getAllNewsFeeds(context);
       //await getAllStatusCounts();
       Loaders.circularHideLoader(context);
+      scaffoldMessenger("News Feed Updated Successfully");
       navigationService.goBack();
     }
 
