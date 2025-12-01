@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.da
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/community_supplier_market_view.dart';
+import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -42,7 +43,7 @@ class DashBoardViewModel extends ChangeNotifier {
         HomeScreen(),
         NewsFeedScreen(),
         JobSeekView(),
-        CommunitySupplierMarketView(),
+        NewsFeedCommunityView(),
         CataloguePage(),
         AccountScreen(),
       ];

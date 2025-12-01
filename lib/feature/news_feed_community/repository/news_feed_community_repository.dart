@@ -13,4 +13,5 @@ abstract class NewsFeedCommunityRepository {
   Future<dynamic> deleteNewsFeedCommunity(dynamic variables);
   Future<BannerUrlData> getBannerUrl(dynamic variables);
   Future<dynamic> leaveCommunity(dynamic variables);
+  Future<NewsFeedCommunityData> filterNewsFeed(dynamic variables);
 }

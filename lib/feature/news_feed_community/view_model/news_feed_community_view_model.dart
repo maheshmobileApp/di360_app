@@ -31,6 +31,11 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String? selectedCategory;
   String? selectedCategoryId;
 
+  void setSelectedCategoryId(String value) {
+    selectedCategoryId = value;
+    notifyListeners();
+  }
+
   List<NewsfeedCategories>? newsfeedCategories;
 
   List<String>? serverNewsFeedGallery;
@@ -172,6 +177,37 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
     getAllStatusCounts();
     Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> filterNewsFeeds(BuildContext context) async {
+    print("*************************************filter NewsFeeds Calling");
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final variables = {
+      "where": {
+        "status": {"_eq": listingStatus},
+        "category_type": {
+          "_in": [selectedCategoryId]
+        },
+        "community_id": {"_eq": communityId}
+      },
+      "limit": 3,
+      "offset": 0,
+      "userId":userId,
+      "roleType": type
+    };
+    print("************get all news feed variables: $variables");
+
+    final res = await repo.filterNewsFeed(variables);
+    if (res != null) {
+      print("*************************************data fetched successfully");
+      newsFeedCommunityData = res;
+    }
+    await getAllStatusCounts();
     notifyListeners();
   }
 

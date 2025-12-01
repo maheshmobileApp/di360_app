@@ -7,7 +7,6 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
@@ -35,16 +34,31 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       await viewModel.getAllNewsFeeds(context);
+      final communityVM = Provider.of<CommunityViewModel>(
+                                context,
+                                listen: false);
+                            final newsFeedVM =
+                                Provider.of<NewsFeedCommunityViewModel>(context,
+                                    listen: false);
+                            await communityVM.getNewsFeedCategories(context);
+                            newsFeedVM.newsFeedCategoriesData =
+                                communityVM.newsFeedCategoriesData;
+
+                            newsFeedVM.newsFeedCategory = communityVM
+                                    .newsFeedCategoriesData?.newsfeedCategories
+                                    ?.map((e) => e.categoryName ?? "")
+                                    .toList() ??
+                                [];
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<NewsFeedCommunityViewModel>(context);
-    final communityVM = Provider.of<CommunityViewModel>(context);
-    final homeVM = Provider.of<HomeViewModel>(context);
-    final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
-    final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
+    return Consumer<NewsFeedCommunityViewModel>(
+      builder: (context, viewModel, child) {
+        final communityVM = Provider.of<CommunityViewModel>(context);
+        final homeVM = Provider.of<HomeViewModel>(context);
+        final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -55,67 +69,70 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           appBar: AppBarWidget(
             title: "Community",
             searchWidget: true,
-            /*filterWidget: Row(
-            children: [
-              GestureDetector(
-                  onTapDown: (TapDownDetails details) {
-                    final offset = details.globalPosition;
-                    showMenu(
-                      context: context,
-                      position:
-                          RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      items: newsFeedVM.newsfeedCategories
-                              ?.map((v) => PopupMenuItem(
-                                    value: v,
-                                    child: Text(
-                                      v.categoryName ?? '',
-                                      style: TextStyles.semiBold(
-                                          color:
-                                              newsFeedVM.selectedCategoryId ==
-                                                      v.id
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.black,
-                                          fontSize: 14,
-                                          decoration:
-                                              newsFeedVM.selectedCategoryId ==
-                                                      v.id
-                                                  ? TextDecoration.underline
-                                                  : TextDecoration.none,
-                                          decorationColor:
-                                              AppColors.primaryColor),
-                                    ),
-                                  ))
-                              .toList() ??
-                          [],
-                    ).then((value) {
-                      newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
-                      if ((value as dynamic)?.categoryName == 'Catalog') {
+            filterWidget: Row(
+              children: [
+                GestureDetector(
+                    onTapDown: (TapDownDetails details) {
+                      final offset = details.globalPosition;
+                      showMenu(
+                        context: context,
+                        position:
+                            RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        items: communityVM
+                                .newsFeedCategoriesData?.newsfeedCategories
+                                ?.map((v) => PopupMenuItem(
+                                      value: v,
+                                      child: Text(
+                                        v.categoryName ?? '',
+                                        style: TextStyles.semiBold(
+                                            color:
+                                                viewModel.selectedCategoryId ==
+                                                        v.id
+                                                    ? AppColors.primaryColor
+                                                    : AppColors.black,
+                                            fontSize: 14,
+                                            decoration:
+                                                viewModel.selectedCategoryId ==
+                                                        v.id
+                                                    ? TextDecoration.underline
+                                                    : TextDecoration.none,
+                                            decorationColor:
+                                                AppColors.primaryColor),
+                                      ),
+                                    ))
+                                .toList() ??
+                            [],
+                      ).then((value) {
+                        if (value != null) {
+                          viewModel.setSelectedCategoryId((value as dynamic)?.id);
+                          viewModel.filterNewsFeeds(context);
+                        }
+
+                        /*if ((value as dynamic)?.categoryName == 'Catalog') {
                         newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
                       } else {
                         newsFeedVM.basedOnCategoriesGetFeeds(
                             context, false, value?.id ?? '');
-                      }
-                    });
-                  },
-                  child: SvgPicture.asset(ImageConst.filter,
-                      color: AppColors.black)),
-              if (newsFeedVM.applyCatageories)
+                      }*/
+                      });
+                    },
+                    child: SvgPicture.asset(ImageConst.filter,
+                        color: AppColors.black)),
+                /*if (newsFeedVM.applyCatageories)
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: GestureDetector(
                       onTap: () {
-                        homeViewModel.getAllNewsfeeds(context);
-                        newsFeedVM.updateApplyCatageories(false);
-                        newsFeedVM.updateSelectedCategory(null);
+                       
                       },
                       child: Icon(Icons.close, color: AppColors.black)),
-                )
-            ],
-          ),*/
+                )*/
+              ],
+            ),
           ),
           body: Column(
             children: [
@@ -274,6 +291,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               },
               child: SvgPicture.asset(ImageConst.createSupport)),
         );
+      },
+    );
       },
     );
   }

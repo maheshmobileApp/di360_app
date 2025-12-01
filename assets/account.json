@@ -127,14 +127,26 @@
           ]
         },
         {
-          "title": "News Feed",
+          "title": "Community",
           "subTitle": [
             {
-              "title": "News Feed",
+              "title": "Join Request",
               "asset": "assets/profile/account/profile.svg"
             },
             {
-              "title": "Community",
+              "title": "Partnership Request",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Membership Registration",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "Partnership Registration",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
+              "title": "News Feed Categories",
               "asset": "assets/profile/account/profile.svg"
             }
           ]
