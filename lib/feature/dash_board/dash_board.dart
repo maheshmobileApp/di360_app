@@ -64,7 +64,7 @@ class DashBoard extends StatelessWidget {
                             height: 24, width: 24,
                             color: AppColors.primaryColor),
                         label: 'Job Seek'),
-                        if (type == "PROFESSIONAL")
+                        if (type == "PROFESSIONAL" || type =="SUPPLIER")
                       BottomNavigationBarItem(
                           icon: Icon(Icons.group, size: 24), label: 'Community'),
                     BottomNavigationBarItem(

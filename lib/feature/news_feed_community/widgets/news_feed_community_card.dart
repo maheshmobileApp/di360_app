@@ -1,6 +1,8 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -20,6 +22,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
   final String createdAt;
   final int registeredCount;
   final String chipTitle;
+  final List<String> imageUrls;
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
@@ -42,6 +45,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
     required this.description,
     required this.status,
     required this.types,
+    required this.imageUrls,
     required this.createdAt,
     required this.registeredCount,
     this.onTapRegistered,
@@ -89,7 +93,9 @@ class NewsFeedCommunityCard extends StatelessWidget {
                             createdAt,
                           ),
                         ),
-                        if (type == "SUPPLIER" || (type == "PROFESSIONAL" && feedUserRole != "SUPPLIER"))
+                        if (type == "SUPPLIER" ||
+                            (type == "PROFESSIONAL" &&
+                                feedUserRole != "SUPPLIER"))
                           Row(
                             children: [
                               _menuWidget(context, type),
@@ -103,6 +109,9 @@ class NewsFeedCommunityCard extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     _descriptionWidget(description),
+                    (imageUrls.isNotEmpty)
+                        ? GalleryImgWidget(imageUrls:imageUrls)
+                        : SizedBox.shrink(),
                     const Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -232,6 +241,38 @@ class NewsFeedCommunityCard extends StatelessWidget {
     );
   }
 
+  Widget _imagesWidget(List<String> urls) {
+    return Container(
+      height: 150,
+      width: 300,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: urls.length,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 100,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.borderColor),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImageWidget(
+                imageUrl: urls[index],
+                fit: BoxFit.cover,
+                errorWidget: Container(
+                  color: Colors.grey.shade200,
+                  child: Icon(Icons.image, color: Colors.grey),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _chipWidget(List<String> types, String meetingLink) {
     return Wrap(
       spacing: 10,
@@ -352,7 +393,8 @@ class NewsFeedCommunityCard extends StatelessWidget {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (type == "PROFESSIONAL" || (type == "SUPPLIER" && feedUserRole == "SUPPLIER")) ...[
+        if (type == "PROFESSIONAL" ||
+            (type == "SUPPLIER" && feedUserRole == "SUPPLIER")) ...[
           _popupItem("Edit", Icons.edit, AppColors.blueColor),
           _popupItem("Delete", Icons.delete, AppColors.redColor)
         ],

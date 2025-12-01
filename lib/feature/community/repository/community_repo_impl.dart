@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/community/model/get_new_feed_categories.da
 import 'package:di360_flutter/feature/community/model/get_partnership_link.dart';
 import 'package:di360_flutter/feature/community/model/get_partnership_members.dart';
 import 'package:di360_flutter/feature/community/query/add_category_query.dart';
+import 'package:di360_flutter/feature/community/query/approve_partnership_request_query.dart';
 import 'package:di360_flutter/feature/community/query/approve_query.dart';
 import 'package:di360_flutter/feature/community/query/delete_category_query.dart';
 import 'package:di360_flutter/feature/community/query/get_directory_query.dart';
@@ -68,6 +69,12 @@ class CommunityRepoImpl extends CommunityRepository {
   @override
   Future approveJoinRequest(dynamic variables) async {
     final res = await http.mutation(approveQuery, variables);
+    return res;
+  }
+
+   @override
+  Future approvePartnershipRequest(dynamic variables) async {
+    final res = await http.mutation(approvePartnershipQuery, variables);
     return res;
   }
 

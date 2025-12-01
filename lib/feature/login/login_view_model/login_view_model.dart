@@ -73,7 +73,9 @@ class LoginViewModel extends ChangeNotifier {
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
-          (result.loginApi?.type == "SUPPLIER") ? await getSupplierCommunityOwner(result.loginApi?.id ?? ''):(){};
+          (result.loginApi?.type == "SUPPLIER")
+              ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
+              : () {};
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
           await LocalStorage.setStringVal(
@@ -153,20 +155,23 @@ class LoginViewModel extends ChangeNotifier {
     final res = await repo.getSupplierCommunityOwner(id);
     if (res != null) {
       supplerCommunityOwner = res;
+      print("***************$supplerCommunityOwner");
 
       final supplier = supplerCommunityOwner?.dentalSuppliers?.first;
 
       if (supplier?.communityStatus == "YES") {
-         await LocalStorage.setStringVal(
-              LocalStorageConst.communityName, supplier?.businessName?? '');
         await LocalStorage.setStringVal(
-              LocalStorageConst.communityId, supplier?.communityId?? '');
+            LocalStorageConst.communityName, supplier?.businessName ?? '');
         await LocalStorage.setStringVal(
-              LocalStorageConst.communityStatus, 'true');
+            LocalStorageConst.communityId, supplier?.communityId ?? '');
+        await LocalStorage.setStringVal(
+            LocalStorageConst.communityStatus, 'true');
+        await LocalStorage.setStringVal(
+            LocalStorageConst.businessName, supplier?.businessName??"");
         print("***** Updating JSON (Need to update account.json) *****");
       } else {
         await LocalStorage.setStringVal(
-              LocalStorageConst.communityStatus, 'false');
+            LocalStorageConst.communityStatus, 'false');
       }
     }
     notifyListeners();

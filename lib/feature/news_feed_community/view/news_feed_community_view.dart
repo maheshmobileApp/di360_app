@@ -6,8 +6,11 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
+import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -39,6 +42,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityViewModel>(context);
     final communityVM = Provider.of<CommunityViewModel>(context);
+    final homeVM = Provider.of<HomeViewModel>(context);
+    final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
 
     return FutureBuilder<String>(
@@ -114,6 +119,18 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           ),
           body: Column(
             children: [
+              CommunityHeaderCard(
+                imageUrl:
+                    viewModel.bannerData?.directories!.first.bannerImage?.url ??
+                        "",
+                title: "${viewModel.profCommunityName} Community",
+                leaveButton: type == "PROFESSIONAL",
+                onLeaveTap: () async {
+                  await viewModel.leaveCommunity(context);
+                  await communityVM.getJoinedCommunityMembersRes(context);
+                  navigationService.goBack();
+                },
+              ),
               (type == 'PROFESSIONAL')
                   ? SizedBox.shrink()
                   : communityStatusWidget(viewModel),
@@ -127,10 +144,16 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                           return NewsFeedCommunityCard(
                               createdAt: newsItem.createdAt ?? "",
                               feedUserRole: newsItem.userRole ?? "",
+                              imageUrls: newsItem.postImage
+                                      ?.map((item) => item.url ?? '')
+                                      .toList() ??
+                                  [],
                               id: newsItem.id ?? '',
-                              logoUrl: newsItem
-                                      .dentalProfessional?.profileImage?.url ??
-                                  '',
+                              logoUrl: (newsItem.userRole == "PROFESSIONAL")
+                                  ? newsItem.dentalProfessional?.profileImage
+                                          ?.url ??
+                                      ''
+                                  : homeVM.profilePic ?? "",
                               companyName: (newsItem.userRole == "PROFESSIONAL")
                                   ? newsItem.dentalProfessional?.name ?? ''
                                   : newsItem.dentalSupplier?.businessName ?? "",
@@ -144,8 +167,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               likes: newsItem.newsfeedsLikes?.length ?? 0,
                               isLiked: newsItem.myLike?.isNotEmpty ?? false,
                               onCommentTap: () {
-                                navigationService.push(CommentScreen(newsfeeds: newsItem));
-                                
+                                navigationService
+                                    .push(CommentScreen(newsfeeds: newsItem));
                               },
                               onLikeTap: () {
                                 print(

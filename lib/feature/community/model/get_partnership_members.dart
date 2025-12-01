@@ -42,60 +42,56 @@ class PartnershipMembersData {
 
 class PartnershipMembers {
   String? id;
-  String? firstName;
-  String? lastName;
-  String? membershipNumber;
-  String? status;
+  String? companyName;
+  String? contactName;
   String? email;
   String? phone;
-  String? supplierId;
-  String? communityId;
-  Null? registerLink;
+  String? status;
   bool? isRegistered;
+  String? communityId;
+  String? supplierId;
+  Null? registerLink;
   String? sTypename;
 
   PartnershipMembers(
       {this.id,
-      this.firstName,
-      this.lastName,
-      this.membershipNumber,
-      this.status,
+      this.companyName,
+      this.contactName,
       this.email,
       this.phone,
-      this.supplierId,
-      this.communityId,
-      this.registerLink,
+      this.status,
       this.isRegistered,
+      this.communityId,
+      this.supplierId,
+      this.registerLink,
       this.sTypename});
 
   PartnershipMembers.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    membershipNumber = json['membership_number'];
-    status = json['status'];
+    companyName = json['company_name'];
+    contactName = json['contact_name'];
     email = json['email'];
     phone = json['phone'];
-    supplierId = json['supplier_id'];
-    communityId = json['community_id'];
-    registerLink = json['register_link'];
+    status = json['status'];
     isRegistered = json['is_registered'];
+    communityId = json['community_id'];
+    supplierId = json['supplier_id'];
+    registerLink = json['register_link'];
     sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['membership_number'] = this.membershipNumber;
-    data['status'] = this.status;
+    data['company_name'] = this.companyName;
+    data['contact_name'] = this.contactName;
     data['email'] = this.email;
     data['phone'] = this.phone;
-    data['supplier_id'] = this.supplierId;
-    data['community_id'] = this.communityId;
-    data['register_link'] = this.registerLink;
+    data['status'] = this.status;
     data['is_registered'] = this.isRegistered;
+    data['community_id'] = this.communityId;
+    data['supplier_id'] = this.supplierId;
+    data['register_link'] = this.registerLink;
     data['__typename'] = this.sTypename;
     return data;
   }

@@ -127,31 +127,6 @@
           ]
         },
         {
-          "title": "Community",
-          "subTitle": [
-            {
-              "title": "Join Request",
-              "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "Partnership Request",
-              "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "Membership Registration",
-              "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "Partnership Registration",
-              "asset": "assets/profile/account/profile.svg"
-            },
-            {
-              "title": "News Feed Categories",
-              "asset": "assets/profile/account/profile.svg"
-            }
-          ]
-        },
-        {
           "title": "News Feed",
           "subTitle": [
             {

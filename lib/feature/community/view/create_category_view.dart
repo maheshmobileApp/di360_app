@@ -62,7 +62,7 @@ class _CreateCategoryViewState extends State<CreateCategoryView>
                         text: (viewModel.editMode) ? "Update" : "Add",
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
-                           (viewModel.editMode) ?await viewModel.updateCategory(viewModel.editCategoryId): await viewModel.addCategory();
+                           (viewModel.editMode) ?await viewModel.updateCategory(context,viewModel.editCategoryId): await viewModel.addCategory(context);
                             navigationService.goBack();
                           }
                         },

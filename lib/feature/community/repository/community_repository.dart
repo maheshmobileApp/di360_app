@@ -12,6 +12,7 @@ abstract class CommunityRepository {
   Future<PartnershipMembersData> getPartnershipRequest(
       String supplierId, String listingStatus);
   Future<dynamic> approveJoinRequest(dynamic variables);
+   Future<dynamic> approvePartnershipRequest(dynamic variables);
   Future<MembershipLinkData> getMembershipLink(dynamic variables);
   Future<PartnershipLinkData> getPartnershipLink(dynamic variables);
   Future<dynamic> updateMembershipLink(dynamic variables);

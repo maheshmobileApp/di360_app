@@ -35,7 +35,7 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllNewsfeeds(BuildContext context) async {
-    //Loaders.circularShowLoader(context);
+    Loaders.circularShowLoader(context);
     try {
       var res = await _http.query(getAllNewsfeedsQuery, variables: {
         'status': 'PUBLISHED',
@@ -43,13 +43,13 @@ class HomeViewModel extends ChangeNotifier {
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         allNewsFeedsData = result;
-        //Loaders.circularHideLoader(context);
+        Loaders.circularHideLoader(context);
       } else {
-        //Loaders.circularHideLoader(context);
+        Loaders.circularHideLoader(context);
       }
     } catch (e) {
       allNewsFeedsData = null;
-      //Loaders.circularHideLoader(context);
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

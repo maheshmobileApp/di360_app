@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/community/widgets/join_request_card.dart';
+import 'package:di360_flutter/feature/community/widgets/partnership_request_card.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,25 +45,24 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
                     padding: EdgeInsets.all(10),
                     itemCount: partnershipRequests.length,
                     itemBuilder: (context, index) {
-                      return JoinRequestCard(
-                          firstName: partnershipRequests[index].firstName ?? "",
-                          lastName: partnershipRequests[index].lastName ?? "",
+                      return PartnershipRequestCard(
+                        contactName: partnershipRequests[index].contactName??"",
+                          firstName: partnershipRequests[index].companyName ?? "",
                           email: partnershipRequests[index].email ?? "",
                           phone: partnershipRequests[index].phone ?? "",
                           status: partnershipRequests[index].status ?? "",
-                          membership:
-                              partnershipRequests[index].membershipNumber ?? "",
+                         
                           onMenuAction: (action) async {
                             switch (action) {
                               case "Approve":
-                                await viewModel.approveJoinRequest(
+                                await viewModel.approvePartnershipRequest(
                                     partnershipRequests[index].id ?? "",
                                     "APPROVED",
                                     context);
 
                                 break;
                               case "Reject":
-                                await viewModel.approveJoinRequest(
+                                await viewModel.approvePartnershipRequest(
                                     partnershipRequests[index].id ?? "",
                                     "REJECTED",
                                     context);

@@ -42,9 +42,12 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                           onTap: () async {
                             newsCommunityVM.listingStatus = "PUBLISHED";
                             newsCommunityVM.setProfCommunityId(
+                                list[index].communityId ?? "",list[index].communityName ?? "");
+                            await viewModel.getNewsFeedCategories(context,
                                 list[index].communityId ?? "");
-                            await viewModel.getNewsFeedCategories(list[index].communityId ?? "");
-                            newsCommunityVM.newsFeedCategoriesData=viewModel.newsFeedCategoriesData;
+                            newsCommunityVM.getBannerUrl(context);
+                            newsCommunityVM.newsFeedCategoriesData =
+                                viewModel.newsFeedCategoriesData;
                             navigationService
                                 .navigateTo(RouteList.newsFeedCommunityView);
                           },

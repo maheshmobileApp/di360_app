@@ -24,10 +24,10 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
-
+      viewModel.getDirectory();
       viewModel.getMembershipLink(context);
 
-      viewModel.getDirectory();
+      
     });
   }
   @override

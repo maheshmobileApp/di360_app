@@ -298,7 +298,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             final newsFeedVM =
                                 Provider.of<NewsFeedCommunityViewModel>(context,
                                     listen: false);
-                            await viewModel.getNewsFeedCategories();
+                            await viewModel.getNewsFeedCategories(context);
                             newsFeedVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;
 

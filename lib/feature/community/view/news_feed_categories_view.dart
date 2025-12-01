@@ -28,7 +28,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
       final newsFeedVM = Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
 
-      await viewModel.getNewsFeedCategories();
+      await viewModel.getNewsFeedCategories(context);
       
 
       viewModel.getDirectory();
@@ -75,8 +75,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
                                 showAlertMessage(context,
                                     'Are you sure you want to delete this Category?',
                                     onBack: () async {
-                                  viewModel.deleteCategory(
+                                  await viewModel.deleteCategory(context,
                                       joinRequests[index].id ?? "");
+                                      navigationService.goBack();
                                 });
 
                                 break;

@@ -6,6 +6,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
@@ -74,6 +75,7 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   hintText: "Enter Video URL",
                   title: "Video URL",
                   maxLength: 100,
+                  validator: validateOptionalUrl,
                 ),
                 addVertical(16),
                 InputTextField(
@@ -81,19 +83,16 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   hintText: "Enter Website URL",
                   title: "Website URL",
                   maxLength: 100,
+                  validator: validateOptionalUrl,
                 ),
                 addVertical(30),
                 AppButton(
                     height: 50,
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
-                      
                       (viewModel.isEditNewsFeed == true)
-                          ? viewModel.updateNewsFeedCommunity(
-                              context)
-                          : viewModel.addNewsFeed(
-                              context
-                              );
+                          ? viewModel.updateNewsFeedCommunity(context)
+                          : viewModel.addNewsFeed(context);
                     }),
               ],
             ),
@@ -109,6 +108,10 @@ class AddNewsFeedCommunityView extends StatelessWidget
       value: jobCreateVM.selectedCategory,
       title: "Category",
       onChanged: (v) {
+        if (jobCreateVM.newsFeedCategory.isEmpty) {
+          scaffoldMessenger('Create category');
+          return;
+        }
         jobCreateVM.setSelectedNewsFeedCategory(v as String);
       },
       items: jobCreateVM.newsFeedCategory

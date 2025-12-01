@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repo_impl.dart';
@@ -133,9 +134,11 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   String profCommunityId = "";
-  void setProfCommunityId(String value) {
+  String profCommunityName = "";
+  void setProfCommunityId(String id, String name) {
     print("*************************************SetProfCommunityId Calling");
-    profCommunityId = value;
+    profCommunityId = id;
+    profCommunityName = name;
     notifyListeners();
   }
 
@@ -443,6 +446,42 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
 
     //getAllStatusCounts();
+    notifyListeners();
+  }
+
+  BannerUrlData? bannerData;
+
+  Future<void> getBannerUrl(BuildContext context) async {
+    final variables = {"value": profCommunityId};
+    final res = await repo.getBannerUrl(variables);
+    if (res != null) {
+      bannerData = res;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> leaveCommunity(BuildContext context) async {
+    print("********************leave community calling");
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_eq": profCommunityId}
+          },
+          {
+            "member_id": {"_eq": userId}
+          }
+        ]
+      }
+    };
+    final res = await repo.leaveCommunity(variables);
+    if (res != null) {
+      scaffoldMessenger("Community leaved Successfully");
+    }
+
     notifyListeners();
   }
 }

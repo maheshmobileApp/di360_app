@@ -6,3 +6,4 @@ const String approveQuery =
   }
 }
 ''';
+

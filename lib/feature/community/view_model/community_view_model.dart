@@ -47,6 +47,7 @@ class CommunityViewModel extends ChangeNotifier {
     }
 
     getJoinRequest();
+    getPartnershipRequest();
     notifyListeners();
     //INACTIVE
   }
@@ -89,39 +90,72 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getMembershipLink(BuildContext context) async {
     Loaders.circularShowLoader(context);
 
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    try {
+      final communityId =
+          await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
-    final variables = {
-      "value": communityId,
-    };
-    final res = await repo.getMembershipLink(variables);
-    if (res != null) {
-      membershipLink = res.directories?.first.membershipLink ?? "";
+      final variables = {
+        "value": communityId,
+      };
+      print("📌 variables: $variables");
+
+      final res = await repo.getMembershipLink(variables);
+
+      final directoryList = res.directories ?? [];
+
+      if (directoryList.isNotEmpty) {
+        membershipLink = directoryList.first.membershipLink ?? "";
+      } else {
+        membershipLink = "";
+      }
+    } catch (e, s) {
+      print("❌ Error while fetching membership link: $e");
+      print(s);
+
+      membershipLink = "";
+    } finally {
       Loaders.circularHideLoader(context);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   String partnershipLink = "";
 
   //GET PARTNERSHIP LINK---------------------------------------------------------------
+
   Future<void> getPartnershipLink(BuildContext context) async {
-     Loaders.circularShowLoader(context);
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final variables = {
-      "value": communityId,
-    };
-    final res = await repo.getPartnershipLink(variables);
-    if (res != null) {
-      partnershipLink = res.directories?.first.partnershipLink ?? "";
-       Loaders.circularHideLoader(context);
+    Loaders.circularShowLoader(context);
+
+    try {
+      final communityId =
+          await LocalStorage.getStringVal(LocalStorageConst.communityId);
+
+      final variables = {
+        "value": communityId,
+      };
+      print("📌 variables: $variables");
+
+      final res = await repo.getPartnershipLink(variables);
+
+      final directoryList = res.directories ?? [];
+
+      if (directoryList.isNotEmpty) {
+        partnershipLink = directoryList.first.partnershipLink ?? "";
+      } else {
+        partnershipLink = "";
+      }
+    } catch (e, s) {
+      print("❌ Error while fetching membership link: $e");
+      print(s);
+
+      partnershipLink = "";
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  Future<void> updateCategory(String id) async {
+  Future<void> updateCategory(BuildContext context,String id) async {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -141,11 +175,11 @@ class CommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Category updated Sucessfully");
     }
     categoryController.text = "";
-    getNewsFeedCategories();
+    getNewsFeedCategories(context);
     notifyListeners();
   }
 
-  Future<void> addCategory() async {
+  Future<void> addCategory(BuildContext context) async {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -163,7 +197,7 @@ class CommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Category added Sucessfully");
     }
     categoryController.text = "";
-    getNewsFeedCategories();
+    getNewsFeedCategories(context);
     notifyListeners();
   }
 
@@ -171,6 +205,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   //GET DIRECTORY---------------------------------------------------------------
   Future<void> getDirectory() async {
+    print("*********************Directory calling");
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     final variables = {
@@ -181,26 +216,30 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.getDirectory(variables);
     if (res != null) {
       directoryData = res;
+      print(res);
     }
     notifyListeners();
   }
 
   //Delete Category---------------------------------------------------------------
 
-  Future<void> deleteCategory(String id) async {
+  Future<void> deleteCategory(BuildContext context,String id) async {
+    Loaders.circularShowLoader(context);
     print("*********************Delete Category calling");
     final variables = {"id": id};
     print("*********************variables: ${variables}");
     final res = await repo.deleteCategory(variables);
     if (res != null) {
+      await getNewsFeedCategories(context);
+      Loaders.circularHideLoader(context);
       scaffoldMessenger("Category deleted Sucessfully");
     }
-    getNewsFeedCategories();
     notifyListeners();
   }
 
   //UPDATE MEMBERSHIP LINK
   Future<void> updateMembershipLink(BuildContext context, String id) async {
+    print("*********************Update Membership Link calling");
     final variables = {
       "id": id,
       "fields": {"membership_link": membershipLinkController.text}
@@ -215,7 +254,7 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //UPDATE MEMBERSHIP LINK
-  Future<void> updatePartnershipLink(BuildContext context,String id) async {
+  Future<void> updatePartnershipLink(BuildContext context, String id) async {
     final variables = {
       "id": id,
       "fields": {"partnership_link": partnershipLinkController.text}
@@ -229,10 +268,24 @@ class CommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? selectedCategoryId;
+
+  void updateSelectedCategory(String? categoryId) {
+  selectedCategoryId = categoryId;
+  notifyListeners();
+}
+
+bool applyCatageories = false;
+
+  void updateApplyCatageories(bool val) {
+    applyCatageories = val;
+    notifyListeners();
+  }
+
   NewsFeedCategoriesData? newsFeedCategoriesData;
 
-  Future<void> getNewsFeedCategories([String? newsFeedId]) async {
-    print("*********************All category calling");
+  Future<void> getNewsFeedCategories(BuildContext context,[String? newsFeedId]) async {
+    Loaders.circularShowLoader(context);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -245,6 +298,7 @@ class CommunityViewModel extends ChangeNotifier {
       newsFeedCategoriesData = res;
       print("*********************All category fetched successfully");
     }
+    Loaders.circularHideLoader(context);
 
     notifyListeners();
   }
@@ -269,6 +323,30 @@ class CommunityViewModel extends ChangeNotifier {
           : scaffoldMessenger("Member has been Rejected Sucessfully");
     }
     getJoinRequest();
+    Loaders.circularHideLoader(context);
+    print("*********************All Reuqests calling");
+    notifyListeners();
+  }
+
+  Future<void> approvePartnershipRequest(
+      String id, String status, BuildContext context) async {
+    print("*********************APPROVE calling");
+    Loaders.circularShowLoader(context);
+
+    final variables = {
+      "id": id,
+      "fields": {"status": status}
+    };
+
+    print("*********************variables: ${variables}");
+    final res = await repo.approvePartnershipRequest(variables);
+    print("*********************res: ${res}");
+    if (res != null) {
+      (status == "APPROVED")
+          ? scaffoldMessenger("Member has been Approved Sucessfully")
+          : scaffoldMessenger("Member has been Rejected Sucessfully");
+    }
+    getPartnershipRequest();
     Loaders.circularHideLoader(context);
     print("*********************All Reuqests calling");
     notifyListeners();

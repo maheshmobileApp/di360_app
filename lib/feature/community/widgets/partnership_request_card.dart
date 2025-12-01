@@ -2,25 +2,23 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 
-class JoinRequestCard extends StatelessWidget {
+class PartnershipRequestCard extends StatelessWidget {
   final String firstName;
-  final String lastName;
   final String email;
   final String phone;
   final String status;
-  final String membership;
   final VoidCallback? onApprove;
   final Function(String action)? onMenuAction;
   final VoidCallback? onReject;
+  final String contactName;
 
-  const JoinRequestCard({
+  const PartnershipRequestCard({
     super.key,
     required this.firstName,
-    required this.lastName,
     required this.email,
     required this.phone,
     required this.status,
-    required this.membership,
+    required this.contactName,
     this.onApprove,
     this.onReject,
     this.onMenuAction,
@@ -43,15 +41,22 @@ class JoinRequestCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "$firstName $lastName",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Company Name: ",
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      "$firstName",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-
-                /// 3 Dots Menu
                 PopupMenuButton<String>(
                   color: AppColors.whiteColor,
                   padding: EdgeInsets.zero,
@@ -71,11 +76,10 @@ class JoinRequestCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 2),
-
+            _infoRow("Contact Name", contactName),
             _infoRow("Email", email),
             _infoRow("Phone", phone),
             _infoRow("Status", status),
-            _infoRow("Membership", membership),
           ],
         ),
       ),

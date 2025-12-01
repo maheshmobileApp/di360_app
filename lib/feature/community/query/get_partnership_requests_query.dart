@@ -20,3 +20,5 @@ const String getPartnershipRequestsQuery =
   }
 }
 ''';
+
+

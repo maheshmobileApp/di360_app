@@ -19,6 +19,7 @@ class PartnershipRegistrationView extends StatefulWidget {
 
 class _PartnershipRegistrationViewState
     extends State<PartnershipRegistrationView> with ValidationMixins {
+       final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -42,73 +43,76 @@ class _PartnershipRegistrationViewState
         ),
         body: Padding(
           padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              InputTextField(
-                controller: viewModel.partnershipLinkController,
-                hintText: "Enter Registration link",
-                title: "Registration Link",
-                maxLength: 75,
-                validator: validateUrl,
-                isRequired: true,
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: AppButton(
+          child: Form(
+             key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                InputTextField(
+                  controller: viewModel.partnershipLinkController,
+                  hintText: "Enter Registration link",
+                  title: "Registration Link",
+                  maxLength: 75,
+                  validator: validateOptionalUrl,
+                  isRequired: true,
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 42,
+                        text:
+                            (viewModel.partnershipLink != "") ? "Update" : "Save",
+                        onTap: () {
+                          viewModel.updatePartnershipLink(context,
+                              viewModel.directoryData?.directories?.first.id ??
+                                  "");
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                        child: CustomRoundedButton(
+                      fontSize: 16,
+                      backgroundColor: AppColors.timeBgColor,
+                      textColor: AppColors.primaryColor,
+                      text: 'Cancel',
                       height: 42,
-                      text:
-                          (viewModel.partnershipLink != "") ? "Update" : "Save",
-                      onTap: () {
-                        viewModel.updatePartnershipLink(context,
-                            viewModel.directoryData?.directories?.first.id ??
-                                "");
+                      width: 160,
+                      onPressed: () {},
+                    )),
+                  ],
+                ),
+                SizedBox(height: 40),
+                Row(
+                  children: [
+                    Text(
+                      "Registration Link :",
+                      style: TextStyles.regular3(color: AppColors.black),
+                    ),
+                    SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () async {
+                        final url = Uri.parse(viewModel.partnershipLink);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url,
+                              mode: LaunchMode.externalApplication);
+                        } else {
+                          scaffoldMessenger("Invalid link !!");
+                        }
                       },
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                      child: CustomRoundedButton(
-                    fontSize: 16,
-                    backgroundColor: AppColors.timeBgColor,
-                    textColor: AppColors.primaryColor,
-                    text: 'Cancel',
-                    height: 42,
-                    width: 160,
-                    onPressed: () {},
-                  )),
-                ],
-              ),
-              SizedBox(height: 40),
-              Row(
-                children: [
-                  Text(
-                    "Registration Link :",
-                    style: TextStyles.regular3(color: AppColors.black),
-                  ),
-                  SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () async {
-                      final url = Uri.parse(viewModel.partnershipLink);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url,
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        scaffoldMessenger("Invalid link !!");
-                      }
-                    },
-                    child: Text(
-                      viewModel.partnershipLink,
-                      maxLines: 3,
-                      style: TextStyles.bold3(color: AppColors.primaryColor),
-                    ),
-                  )
-                ],
-              ),
-            ],
+                      child: Text(
+                        viewModel.partnershipLink,
+                        maxLines: 3,
+                        style: TextStyles.bold3(color: AppColors.primaryColor),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ));
   }
