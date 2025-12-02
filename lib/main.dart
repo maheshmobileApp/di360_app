@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/applied_job.dart/view_model.dart/applied_j
 import 'package:di360_flutter/feature/banners/view_model/banners_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -90,7 +91,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SupportViewModel()),
         ChangeNotifierProvider(create: (_) => CommunityViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
-        ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel())
+        ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel()),
+        ChangeNotifierProvider(create: (_) => DashBoardViewModel()) 
+        
       ],
       child: MaterialApp(
           navigatorKey: navigatorKey,

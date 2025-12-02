@@ -175,12 +175,14 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       print("*************************************data fetched successfully");
       newsFeedCommunityData = res;
     }
-    getAllStatusCounts();
     Loaders.circularHideLoader(context);
+    getAllStatusCounts();
+
     notifyListeners();
   }
 
   Future<void> filterNewsFeeds(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     print("*************************************filter NewsFeeds Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
@@ -193,22 +195,26 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         "category_type": {
           "_in": [selectedCategoryId]
         },
-        "community_id": {"_eq": communityId}
+        "community_id": {
+          "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
+        }
       },
-      "limit": 3,
+      "limit": 100,
       "offset": 0,
-      "userId":userId,
+      "userId": userId,
       "roleType": type
     };
-    print("************get all news feed variables: $variables");
+    print("************filter news feed variables: $variables");
 
     final res = await repo.filterNewsFeed(variables);
     if (res != null) {
-      print("*************************************data fetched successfully");
+      print(
+          "*************************************filtered data fetched successfully");
       newsFeedCommunityData = res;
+      (type == "SUPPLIER") ? getAllStatusCounts() : () {};
+      notifyListeners();
     }
-    await getAllStatusCounts();
-    notifyListeners();
+    Loaders.circularHideLoader(context);
   }
 
   FeedCountData? feedCountData;
@@ -499,6 +505,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   Future<void> leaveCommunity(BuildContext context) async {
     print("********************leave community calling");
+
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     final variables = {

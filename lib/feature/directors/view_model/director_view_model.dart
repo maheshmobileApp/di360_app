@@ -1,8 +1,11 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_community_status_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
@@ -43,7 +46,14 @@ class DirectoryViewModel extends ChangeNotifier {
   final List<String> serviceList = ['Test'];
 
   List<QuickLinkItem> quickLinkItems = [];
- 
+
+  String? selectedMembership;
+
+  void setSelectedMembership(String? value) {
+    if (value == null) return;
+    selectedMembership = value;
+  }
+
   final Map<String, GlobalKey> sectionKeys = {
     'Basic Info': GlobalKey(),
     'Services': GlobalKey(),
@@ -163,6 +173,51 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  CommunityStatusData? communityStatusData;
+
+  Future<void> getCommunityStatus(String memberId, String communityId) async {
+    print("*************************get community status calling");
+    final variables = {"member_id": memberId, "community_id": communityId};
+    final res = await repository.getCommunityStatus(variables);
+    if (res != null) {
+      communityStatusData = res;
+      print("*************************data fected $communityStatusData");
+    }
+    notifyListeners();
+  }
+
+  Future<void> communityRegsiter(BuildContext context) async {
+    print("*************************get community status calling");
+    final communityName =
+        await LocalStorage.getStringVal(LocalStorageConst.communityName);
+        final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+        final userId =
+        await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "fields": {
+        "community_id":communityId,
+        "community_name": communityName,
+        "supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "member_id": userId,
+        "first_name": firstNameController.text,
+        "last_name": lastNameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "membership_number": "",
+        "status": "PENDING",
+        "type": "COMMUNITY",
+        "is_registered": true
+      }
+    };
+    print("*************************variables $variables");
+    final res = await repository.communityRegister(variables);
+    if (res != null) {
+      
+    }
+    notifyListeners();
+  }
+
   updateTheRemoveIcon(bool val) {
     _removeIcon = val;
     notifyListeners();
@@ -181,6 +236,7 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
+      print("*************************Directord data fected $directorDetails");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -199,12 +255,12 @@ class DirectoryViewModel extends ChangeNotifier {
           QuickLinkItem(label: 'Certifications', icon: Icons.verified),
         if (directorDetails?.directoryAppointmentSlots?.length != 0)
           QuickLinkItem(label: 'Book Appointment', icon: Icons.calendar_today),
-          if (directorDetails?.directoryTestimonials?.length != 0)
-        QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
+        if (directorDetails?.directoryTestimonials?.length != 0)
+          QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
         if (directorDetails?.directoryFaqs?.length != 0)
-        QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
+          QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
         if (directorDetails?.directoryLocations?.length != 0)
-        QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
+          QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
       ];
       getFollowersCount(directorDetails?.id ?? '');
       getAppointmentSlots(id);

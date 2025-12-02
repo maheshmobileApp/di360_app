@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
@@ -17,6 +19,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final userId = LocalStorage.getStringVal(LocalStorageConst.userId);
     return Consumer<DirectoryViewModel>(builder: (context, value, child) {
       return SingleChildScrollView(
         controller: controller,
@@ -56,6 +59,9 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                   print(director.id);
                                   await value.GetDirectorDetails(
                                       director.id ?? '');
+                                  final userIdString = await userId;
+                                  value.getCommunityStatus(
+                                      userIdString ?? "", director.id ?? "");
                                 },
                                 child: Column(
                                   children: [

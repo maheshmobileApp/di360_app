@@ -80,7 +80,7 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
               : Expanded(
                   child: Center(
                     child: Text(
-                      "No Partnership Requests",
+                      "No Communities",
                       style: TextStyles.medium3(
                           color: AppColors.black, fontSize: 16),
                     ),

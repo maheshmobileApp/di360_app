@@ -57,8 +57,8 @@ class DateFormatUtils {
 static String formatDateTime(String dateTimeString) {
   try {
     final dateTime = DateTime.parse(dateTimeString);
-    final updatedDateTime = dateTime.add(Duration(hours: 5, minutes: 30));
-    return DateFormat('dd-MM-yyyy hh:mm a').format(updatedDateTime);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('dd-MM-yyyy hh:mm a').format(localDateTime);
   } catch (e) {
     return dateTimeString; // Return original if parsing fails
   }

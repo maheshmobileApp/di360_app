@@ -285,7 +285,7 @@ bool applyCatageories = false;
   NewsFeedCategoriesData? newsFeedCategoriesData;
 
   Future<void> getNewsFeedCategories(BuildContext context,[String? newsFeedId]) async {
-    Loaders.circularShowLoader(context);
+    //Loaders.circularShowLoader(context);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -298,7 +298,7 @@ bool applyCatageories = false;
       newsFeedCategoriesData = res;
       print("*********************All category fetched successfully");
     }
-    Loaders.circularHideLoader(context);
+    //Loaders.circularHideLoader(context);
 
     notifyListeners();
   }
@@ -363,13 +363,12 @@ bool applyCatageories = false;
 
   Future<void> getJoinedCommunityMembersRes(BuildContext context) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    Loaders.circularShowLoader(context);
+    
 
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
     if (res != null) {
       getJoinedCommunityMembersData = res;
-      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
