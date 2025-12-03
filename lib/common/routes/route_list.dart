@@ -77,4 +77,5 @@ class RouteList {
   static const String newsFeedCommunityView = 'newsFeedCommunityView';
   static const String addNewsFeedCommunityView = 'addNewsFeedCommunityView';
   static const String communitMarketView = 'communityMarketView';
+  static const String joinCommunityView = 'joinCommunityView';
 }

@@ -77,6 +77,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => ConstantData.steps.length;
+  String selectedShowPromotion = "All Users";
+
+  void setSelectedShowPromotion(String value){
+    selectedShowPromotion = value;
+    notifyListeners();
+  }
 
   updateCurrentStep() {
     _currentStep = 0;

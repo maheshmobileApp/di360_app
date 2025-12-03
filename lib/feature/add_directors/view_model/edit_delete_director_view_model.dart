@@ -30,6 +30,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   List existingImages = [];
   List<PlatformFile> selectedFiles = [];
   List uploadedFiles = [];
+  bool communityStatus = false;
 
   Future<void> pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -45,6 +46,11 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   void removeFile(int index) {
     selectedFiles.removeAt(index);
+    notifyListeners();
+  }
+
+  void setCommunityStatus(bool value) {
+    communityStatus = value;
     notifyListeners();
   }
 
@@ -621,7 +627,8 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
         "image": img,
         "description": addDirectorVM.descriptionCntr.text,
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
-        "show_community_user": false,
+        "show_community_user":
+            addDirectorVM.selectedShowPromotion == "All User" ? false : true,
         "attachments": uploadedFiles
       }
     });

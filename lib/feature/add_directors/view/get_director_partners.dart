@@ -1,6 +1,8 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_partners.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -32,7 +34,11 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
               sectionHeader('Add Partners'),
               CustomAddButton(
                 label: 'Add +',
-                onPressed: () {
+                onPressed: () async {
+                  final communityStatus = await LocalStorage.getStringVal(
+                      LocalStorageConst.communityStatus);
+                  editVM.setCommunityStatus(
+                      communityStatus == "true" ? true : false);
                   addDirectorVM.partnerNameCntr.clear();
                   addDirectorVM.descriptionCntr.clear();
                   editVM.selectedFiles.clear();
