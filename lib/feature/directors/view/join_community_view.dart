@@ -22,80 +22,82 @@ class JoinCommunityView extends StatelessWidget
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Join Community",
-                style: TextStyles.clashMedium(color: AppColors.buttonColor),
-              ),
-              SizedBox(height: 8),
-              InputTextField(
-                controller: directorVM.firstNameController,
-                hintText: "Enter First Name",
-                title: "First Name",
-                maxLength: 100,
-              ),
-              SizedBox(height: 8),
-              InputTextField(
-                controller: directorVM.lastNameController,
-                hintText: "Enter Last Name",
-                title: "Last Name",
-                maxLength: 100,
-              ),
-              SizedBox(height: 8),
-              InputTextField(
-                controller: directorVM.emailController,
-                hintText: "Enter Email",
-                title: "Email",
-                maxLength: 100,
-              ),
-              SizedBox(height: 8),
-              InputTextField(
-                controller: directorVM.phoneController,
-                hintText: "Enter Phone Number",
-                title: "Phone",
-                maxLength: 100,
-              ),
-              SizedBox(height: 8),
-              CustomRadioGroup<String>(
-                title: "Do you have a membership number?",
-                options: const ["Yes", "No"],
-                selectedValue: directorVM.selectedMembership,
-                labelBuilder: (value) => value,
-                direction: Axis.vertical, // try Axis.vertical also
-                onChanged: (value) {
-                  directorVM.setSelectedMembership(value);
-                },
-              ),
-              Spacer(),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomRoundedButton(
-                      text: 'Clear',
-                      height: 40,
-                      backgroundColor: AppColors.timeBgColor,
-                      textColor: AppColors.primaryColor,
-                      onPressed: () {
-                        navigationService.goBack();
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: AppButton(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Join Community",
+                  style: TextStyles.clashMedium(color: AppColors.buttonColor),
+                ),
+                SizedBox(height: 8),
+                InputTextField(
+                  controller: directorVM.firstNameController,
+                  hintText: "Enter First Name",
+                  title: "First Name",
+                  maxLength: 100,
+                ),
+                SizedBox(height: 8),
+                InputTextField(
+                  controller: directorVM.lastNameController,
+                  hintText: "Enter Last Name",
+                  title: "Last Name",
+                  maxLength: 100,
+                ),
+                SizedBox(height: 8),
+                InputTextField(
+                  controller: directorVM.emailController,
+                  hintText: "Enter Email",
+                  title: "Email",
+                  maxLength: 100,
+                ),
+                SizedBox(height: 8),
+                InputTextField(
+                  controller: directorVM.phoneController,
+                  hintText: "Enter Phone Number",
+                  title: "Phone",
+                  maxLength: 100,
+                ),
+                SizedBox(height: 8),
+                CustomRadioGroup<String>(
+                  title: "Do you have a membership number?",
+                  options: const ["Yes", "No"],
+                  selectedValue: directorVM.selectedMembership,
+                  labelBuilder: (value) => value,
+                  direction: Axis.vertical, // try Axis.vertical also
+                  onChanged: (value) {
+                    directorVM.setSelectedMembership(value);
+                  },
+                ),
+                   SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomRoundedButton(
+                        text: 'Clear',
                         height: 40,
-                        text: 'Register Now',
-                        onTap: () {
-                          //directorVM.communityRegsiter(context);
-                        }),
-                  ),
-                ],
-              ),
-            ],
+                        backgroundColor: AppColors.timeBgColor,
+                        textColor: AppColors.primaryColor,
+                        onPressed: () {
+                          navigationService.goBack();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: AppButton(
+                          height: 40,
+                          text: 'Register Now',
+                          onTap: () {
+                            //directorVM.communityRegsiter(context);
+                          }),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ));
   }

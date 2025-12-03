@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/directors/model_class/directories_catagory
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_business_details_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_community_status_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
@@ -217,6 +218,36 @@ class DirectoryViewModel extends ChangeNotifier {
     if (res != null) {
       
     }
+    notifyListeners();
+  }
+
+  Future<void> partnershipRegsiter(BuildContext context) async {
+    print("*get community status calling");
+    final communityName =
+        await LocalStorage.getStringVal(LocalStorageConst.communityName);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    // need clarity on community id, 
+    final variables = {
+      "fields": {
+        "community_id": communityId,
+        "community_name": communityName,
+        "supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "member_id": userId,
+        "company_name": "Mahesh Business ",
+        "contact_name": "test",
+        "email": "test@gmail.com",
+        "phone": "123456789",
+        "type": "PARTNERSHIP",
+        "status": "PENDING",
+        "is_registered": false
+      }
+    };
+    {}
+    print("*variables $variables");
+    final res = await repository.partnershipRegister(variables);
+    if (res != null) {}
     notifyListeners();
   }
 

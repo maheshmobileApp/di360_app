@@ -81,7 +81,7 @@ class PartnershipCommunityRequestView extends StatelessWidget
                           height: 40,
                           text: 'Register Now',
                           onTap: () {
-                            //directorVM.communityRegsiter(context);
+                            directorVM.partnershipRegsiter(context);
                           }),
                     ),
                   ],
