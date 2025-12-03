@@ -30,6 +30,7 @@ import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_v
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
@@ -92,7 +93,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CommunityViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
         ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel()),
-        ChangeNotifierProvider(create: (_) => DashBoardViewModel()) 
+        ChangeNotifierProvider(create: (_) => DashBoardViewModel()),
+        ChangeNotifierProvider(create: (_) => NewsFeedCommunityCommentViewModel())
         
       ],
       child: MaterialApp(

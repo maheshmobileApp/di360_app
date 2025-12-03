@@ -2,16 +2,17 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/query/add_news_feed_comment_query.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CommentViewModel extends ChangeNotifier {
+class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
 
-  CommentViewModel() {
+  NewsFeedCommunityCommentViewModel() {
     getUserId();
   }
 
@@ -61,7 +62,7 @@ class CommentViewModel extends ChangeNotifier {
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     Loaders.circularShowLoader(context);
     try {
-      var res = await _http.mutation(commentQuery, {
+      var res = await _http.mutation(addNewsFeedCommentQuery, {
         "addCommentsData": {
           "dental_practice_id": practiceId ?? null,
           "dental_professional_id": professionId ?? null,
@@ -130,7 +131,7 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
-    print("*****************getNewsfeedComment");
+    print("*****************getNewsfeedComment$feedId");
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
@@ -165,16 +166,17 @@ class CommentViewModel extends ChangeNotifier {
 
   Future<void> updateTheCommentObject(BuildContext context, String feedId,
       List<dynamic>? newsFeeds, dynamic count) async {
-        
-    final homeVM = context.read<HomeViewModel>();
+    print("*****************updateTheCommentObject$newsFeeds");
+    final homeVM = context.read<NewsFeedCommunityViewModel>();
     final feed =
-        homeVM.allNewsFeedsData?.newsfeeds?.firstWhere((v) => v.id == feedId);
+        homeVM.newsFeedCommunityData?.newsfeeds?.firstWhere((v) => v.id == feedId);
     feed?.newsFeedsComments?.clear();
     feed?.newsFeedsComments =
         newsFeeds?.map((e) => NewsFeedsComments.fromJson(e)).toList();
     feed?.newsFeedsCommentsAggregate?.aggregate?.count = count;
     updateIsReply(false, '', '', isedit: false, commentupdate: false);
     homeVM.notifyListeners();
+    print("******************************${feed?.newsFeedsComments}");
     notifyListeners();
   }
 

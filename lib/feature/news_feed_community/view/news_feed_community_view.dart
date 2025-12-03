@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_screen.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -199,7 +200,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   isLiked: newsItem.myLike?.isNotEmpty ?? false,
                                   onCommentTap: () {
                                     navigationService.push(
-                                        CommentScreen(newsfeeds: newsItem));
+                                        CommunityCommentScreen(newsfeeds: newsItem));
                                   },
                                   onLikeTap: () {
                                     print(
