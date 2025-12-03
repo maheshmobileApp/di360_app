@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/radio_button_group.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -66,7 +65,7 @@ class PartnershipCommunityRequestView extends StatelessWidget
                   children: [
                     Expanded(
                       child: CustomRoundedButton(
-                        text: 'Clear',
+                        text: 'Cancel',
                         height: 40,
                         backgroundColor: AppColors.timeBgColor,
                         textColor: AppColors.primaryColor,

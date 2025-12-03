@@ -76,7 +76,7 @@ class JoinCommunityView extends StatelessWidget
                   children: [
                     Expanded(
                       child: CustomRoundedButton(
-                        text: 'Clear',
+                        text: 'Cancel',
                         height: 40,
                         backgroundColor: AppColors.timeBgColor,
                         textColor: AppColors.primaryColor,
