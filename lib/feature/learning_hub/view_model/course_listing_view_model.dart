@@ -35,8 +35,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   String? validateEmailField(String? _) =>
       validateEmail(userEmailController.text);
-      /*String? validatePhoneNumber(String? _) =>
-      validatePhone(userPhoneNumberController.text);*/
+      String? validatePhoneNum(String? _) =>
+      validatePhoneNumber(userPhoneNumberController.text);
 
   void setSearchBar(bool value) {
     searchBarOpen = value;
