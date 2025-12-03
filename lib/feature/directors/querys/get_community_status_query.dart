@@ -8,3 +8,4 @@ const String getCommunityStatusQuery =
     __typename
   }
 }''';
+

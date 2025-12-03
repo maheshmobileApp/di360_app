@@ -5,6 +5,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_business_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_community_status_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
@@ -32,6 +33,8 @@ class DirectoryViewModel extends ChangeNotifier {
 
   // Controllers
   final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
+  final TextEditingController contactNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -177,17 +180,20 @@ class DirectoryViewModel extends ChangeNotifier {
 
   Future<void> getCommunityStatus(String memberId, String communityId) async {
     print("*************************get community status calling");
+    print("*get community status calling");
     final variables = {"member_id": memberId, "community_id": communityId};
     final res = await repository.getCommunityStatus(variables);
     if (res != null) {
       communityStatusData = res;
       print("*************************data fected $communityStatusData");
+      print("*data fected $communityStatusData");
     }
     notifyListeners();
   }
 
   Future<void> communityRegsiter(BuildContext context) async {
     print("*************************get community status calling");
+    print("*get community status calling");
     final communityName =
         await LocalStorage.getStringVal(LocalStorageConst.communityName);
         final communityId =
@@ -211,10 +217,41 @@ class DirectoryViewModel extends ChangeNotifier {
       }
     };
     print("*************************variables $variables");
+    print("*variables $variables");
     final res = await repository.communityRegister(variables);
     if (res != null) {
       
     }
+    notifyListeners();
+  }
+
+  Future<void> partnershipRegsiter(BuildContext context) async {
+    print("*get community status calling");
+    final communityName =
+        await LocalStorage.getStringVal(LocalStorageConst.communityName);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    // need clarity on community id, 
+    final variables = {
+      "fields": {
+        "community_id": communityId,
+        "community_name": communityName,
+        "supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "member_id": userId,
+        "company_name": "Mahesh Business ",
+        "contact_name": "test",
+        "email": "test@gmail.com",
+        "phone": "123456789",
+        "type": "PARTNERSHIP",
+        "status": "PENDING",
+        "is_registered": false
+      }
+    };
+    {}
+    print("*variables $variables");
+    final res = await repository.partnershipRegister(variables);
+    if (res != null) {}
     notifyListeners();
   }
 
@@ -237,6 +274,7 @@ class DirectoryViewModel extends ChangeNotifier {
     if (res != null) {
       directorDetails = res;
       print("*************************Directord data fected $directorDetails");
+      print("*Directord data fected $directorDetails");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -335,6 +373,22 @@ class DirectoryViewModel extends ChangeNotifier {
     if (res["insert_directory_appointments_one"] != null) {
       scaffoldMessenger('Appointment Booked Successfully');
       disposeControllers();
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  GetBusinessDetailsData? businessDetails;
+  Future<void> getBusinessDetails(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+    final variables = {"id": userId};
+    final res = await repository.getBusinessDetails(variables);
+    if (res.dentalSuppliersByPk != null) {
+      businessDetails = res;
+
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);

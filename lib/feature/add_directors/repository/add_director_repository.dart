@@ -1,6 +1,7 @@
 import 'package:di360_flutter/feature/add_directors/model/get_appts_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_partners_res.dart';
 
 abstract class AddDirectorRepository {
   Future<BusinessTypeData?> getBusinessTypes();
@@ -37,4 +38,8 @@ abstract class AddDirectorRepository {
   Future<dynamic> addAppointment(dynamic variables);
   Future<dynamic> deleteAppointment(dynamic variables);
   Future<List<DirectoryApptsSlots>?> getAppts(String id);
+  Future<List<DirectoriesPartnersMembers>?> getPartners(String id);
+  Future<dynamic> addPartners(dynamic variables);
+  Future<dynamic> deletePartner(dynamic variables);
+  Future<dynamic> updatePartners(dynamic variables);
 }

@@ -24,6 +24,7 @@ import 'package:di360_flutter/feature/directors/view/director_details/director_q
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
 import 'package:di360_flutter/feature/directors/view/join_community_view.dart';
+import 'package:di360_flutter/feature/directors/view/partnership_community_request_view.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
@@ -214,7 +215,9 @@ class Routes {
       RouteList.newsFeedCommunityView: (context) => NewsFeedCommunityView(),
       RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView(),
       RouteList.communitMarketView: (context) => CommunityMarketView(),
-      RouteList.joinCommunityView: (context) => JoinCommunityView()   
+      RouteList.joinCommunityView: (context) => JoinCommunityView(),
+      RouteList.partnershipCommunityRequestView: (context) => PartnershipCommunityRequestView()
+      
     };
   }
 }

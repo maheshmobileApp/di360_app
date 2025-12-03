@@ -73,6 +73,7 @@ class ConstantData {
     'Achievements',
     'Documents',
     'OurTeam',
+    'Partners',
     'Gallery',
     'Appointments',
     'Faqs',

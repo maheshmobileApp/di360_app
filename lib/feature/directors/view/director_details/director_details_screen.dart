@@ -76,9 +76,13 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                 ),
               ],
             ),
-            (directionalVM.directorDetails?.professionType ==
+            /*(directionalVM.directorDetails?.professionType ==
                         "Dental  Community" &&
-                    type == "PROFESSIONAL")
+                    type == "PROFESSIONAL")*/
+            /*(directionalVM.directorDetails?.professionType ==
+                        "Dental  Community" &&
+                    type == "PROFESSIONAL")*/
+            (type == "PROFESSIONAL" || type == "SUPPLIER")
                 ? Positioned(
                     top: 20,
                     right: 20,
@@ -92,6 +96,14 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
 
                         navigationService
                             .navigateTo(RouteList.joinCommunityView);
+                        directionalVM.companyNameController.text = directionalVM
+                                .businessDetails?.dentalSuppliersByPk?.businessName ??
+                            "";
+                        (type == "PROFESSIONAL")
+                            ? navigationService
+                                .navigateTo(RouteList.joinCommunityView)
+                            : navigationService.navigateTo(
+                                RouteList.partnershipCommunityRequestView);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -100,7 +112,10 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("Join Community",
+                          child: Text(
+                              type == "PROFESSIONAL"
+                                  ? "Join Community"
+                                  : "Partnership Request",
                               style: TextStyles.semiBold(
                                   color: AppColors.whiteColor, fontSize: 14)),
                         ),
