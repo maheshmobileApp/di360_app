@@ -33,14 +33,14 @@ class PartnershipCommunityRequestView extends StatelessWidget
                 ),
                 SizedBox(height: 8),
                 InputTextField(
-                  controller: directorVM.firstNameController,
+                  controller: directorVM.companyNameController,
                   hintText: "Enter Company Name",
                   title: "Company Name",
                   maxLength: 100,
                 ),
                 SizedBox(height: 8),
                 InputTextField(
-                  controller: directorVM.lastNameController,
+                  controller: directorVM.contactNameController,
                   hintText: "Enter Contact Name",
                   title: "Contact Name",
                   maxLength: 100,

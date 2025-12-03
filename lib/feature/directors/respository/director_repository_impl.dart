@@ -2,10 +2,12 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_business_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/querys/book_appointment_query.dart';
+import 'package:di360_flutter/feature/directors/querys/get_dental_business_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_time_slots_query.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_details_query.dart';
@@ -91,6 +93,13 @@ class DirectorRepositoryImpl extends DirectorRepository {
   Future<dynamic> bookAppointmentDirector(variables) async {
     final data = await http.mutation(bookAppointmentQuery, variables);
     print(variables);
+    return data;
+  }
+
+  @override
+  Future<GetBusinessDetailsData> getBusinessDetails(variables) async {
+    final res = await http.query(getDentalBusinessDetailsQuery, variables: variables);
+    final data = GetBusinessDetailsData.fromJson(res);
     return data;
   }
 }

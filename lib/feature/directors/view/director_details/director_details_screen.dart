@@ -90,11 +90,14 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         directionalVM.firstNameController.text =
                             userNameString ?? "";
                         directionalVM.lastNameController.text = "";
+                        directionalVM.companyNameController.text = directionalVM
+                                .businessDetails?.dentalSuppliersByPk?.businessName ??
+                            "";
                         (type == "PROFESSIONAL")
                             ? navigationService
                                 .navigateTo(RouteList.joinCommunityView)
-                            : navigationService
-                                .navigateTo(RouteList.partnershipCommunityRequestView);
+                            : navigationService.navigateTo(
+                                RouteList.partnershipCommunityRequestView);
                       },
                       child: Container(
                         decoration: BoxDecoration(

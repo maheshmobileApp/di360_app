@@ -53,6 +53,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                   borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
                                 onTap: () async {
+                                  value.getBusinessDetails(context);
                                   print(director.id);
                                   await value.GetDirectorDetails(
                                       director.id ?? '');
