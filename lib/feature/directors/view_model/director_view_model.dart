@@ -209,13 +209,15 @@ class DirectoryViewModel extends ChangeNotifier {
     if (res.directoriesByPk != []) {
       getDirectoryData = res;
       directorCommunityID = getDirectoryData?.directoriesByPk?.communityId;
+      print(
+          "***/////////////////////////////*********community id $directorCommunityID");
       directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
       directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
-      (type == "PROFESSIONAL")
-          ? getCommunityStatus(
-              getDirectoryData?.directoriesByPk?.communityId ?? "")
-          : getPartnershipStatus(
-              getDirectoryData?.directoriesByPk?.communityId ?? "");
+      if (directorCommunityID != null) {
+        (type == "PROFESSIONAL")
+            ? getCommunityStatus(directorCommunityID ?? "")
+            : getPartnershipStatus(directorCommunityID ?? "");
+      }
     }
     notifyListeners();
   }

@@ -82,7 +82,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
             /*(directionalVM.directorDetails?.professionType ==
                         "Dental  Community" &&
                     type == "PROFESSIONAL")*/
-            (type == "PROFESSIONAL" || type == "SUPPLIER")
+           
+            (type == "PROFESSIONAL" || type == "SUPPLIER") && (directionalVM.directorCommunityID != null)
                 ? Positioned(
                     top: 20,
                     right: 20,
