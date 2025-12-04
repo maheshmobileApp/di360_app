@@ -67,6 +67,7 @@ class CommunityCommentReplyWidget extends StatelessWidget with BaseContextHelper
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(

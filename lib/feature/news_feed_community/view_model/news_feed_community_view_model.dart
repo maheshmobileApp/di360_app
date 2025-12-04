@@ -30,9 +30,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   String? selectedCategory;
   String? selectedCategoryId;
+  bool searchBarOpen = false;
+  TextEditingController searchController = TextEditingController();
 
   void setSelectedCategoryId(String value) {
     selectedCategoryId = value;
+    notifyListeners();
+  }
+
+   void setSearchBar(bool value) {
+    searchBarOpen = value;
     notifyListeners();
   }
 
@@ -155,6 +162,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+  
 
     final variables = {
       "where": {
@@ -162,6 +170,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         "community_id": {
           "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
         }
+        
       },
       "limit": 100,
       "offset": 0,

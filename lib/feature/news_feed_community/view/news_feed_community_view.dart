@@ -8,6 +8,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
@@ -68,7 +69,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               backgroundColor: AppColors.whiteColor,
               appBar: AppBarWidget(
                 title: "Community",
-                searchWidget: true,
+                searchAction: () =>
+                viewModel.setSearchBar(!viewModel.searchBarOpen),
+                
+                
                 filterWidget: Row(
                   children: [
                     GestureDetector(
@@ -152,13 +156,25 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         await viewModel.leaveCommunity(context);
                         await communityVM.getJoinedCommunityMembersRes(context);
                         Loaders.circularHideLoader(context);
-                        
-                        Navigator.of(context).pop(); 
+
+                        Navigator.of(context).pop();
                         Navigator.of(context).pop();
                         dashboardVM.setIndex(3, context);
                       });
                     },
                   ),
+                  if (viewModel.searchBarOpen)
+                    SearchWidget(
+                      controller: viewModel.searchController,
+                      hintText: "Search News Feed...",
+                      onClear: () {
+                        viewModel.searchController.clear();
+                        //viewModel.getCoursesListingData(context);
+                      },
+                      onSearch: () {
+                        //viewModel.getCoursesListingData(context);
+                      },
+                    ),
                   (type == 'PROFESSIONAL')
                       ? SizedBox.shrink()
                       : communityStatusWidget(viewModel),
@@ -199,7 +215,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   isLiked: newsItem.myLike?.isNotEmpty ?? false,
                                   onCommentTap: () {
                                     navigationService.push(
-                                        CommunityCommentScreen(newsfeeds: newsItem));
+                                        CommunityCommentScreen(
+                                            newsfeeds: newsItem));
                                   },
                                   onLikeTap: () {
                                     print(

@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dar
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_reply_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/main.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
       // Create a deep copy to ensure we have a fresh list
       _sortedComments = List.from(widget.newsfeeds!.newsFeedsComments!);
       _sortedComments!.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-      
+
       // Pre-create GlobalKeys to avoid duplicates
       for (var comment in _sortedComments!) {
         if (comment.id != null && !_replyKeys.containsKey(comment.id)) {
@@ -51,20 +52,22 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
   @override
   void didUpdateWidget(CommunityCommentSheet oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Always reinitialize when widget updates to ensure fresh data
-    if (oldWidget.newsfeeds != widget.newsfeeds || 
-        _hasCommentsChanged(oldWidget.newsfeeds?.newsFeedsComments, widget.newsfeeds?.newsFeedsComments)) {
+    if (oldWidget.newsfeeds != widget.newsfeeds ||
+        _hasCommentsChanged(oldWidget.newsfeeds?.newsFeedsComments,
+            widget.newsfeeds?.newsFeedsComments)) {
       _initializeSortedComments();
     }
   }
 
   // Helper method to check if comments have actually changed
-  bool _hasCommentsChanged(List<NewsFeedsComments>? oldComments, List<NewsFeedsComments>? newComments) {
+  bool _hasCommentsChanged(List<NewsFeedsComments>? oldComments,
+      List<NewsFeedsComments>? newComments) {
     if (oldComments == null && newComments == null) return false;
     if (oldComments == null || newComments == null) return true;
     if (oldComments.length != newComments.length) return true;
-    
+
     // Check if any comment content has changed
     for (int i = 0; i < oldComments.length; i++) {
       if (oldComments[i].id != newComments[i].id ||
@@ -79,13 +82,14 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityCommentViewModel>(context);
-    
+
     // Always use the latest data from widget.newsfeeds
     final currentComments = widget.newsfeeds?.newsFeedsComments;
-    
+
     // Update sorted comments if the source data has changed
-    if (currentComments != null && 
-        (_sortedComments == null || _hasCommentsChanged(_sortedComments, currentComments))) {
+    if (currentComments != null &&
+        (_sortedComments == null ||
+            _hasCommentsChanged(_sortedComments, currentComments))) {
       _initializeSortedComments();
     }
 
@@ -109,15 +113,14 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  Widget _buildCommentTile(
-      NewsFeedsComments? comments, NewsFeedCommunityCommentViewModel viewModel, String feedId) {
-    
+  Widget _buildCommentTile(NewsFeedsComments? comments,
+      NewsFeedCommunityCommentViewModel viewModel, String feedId) {
     if (comments?.id == null) {
       return const SizedBox.shrink();
     }
 
     final replyKey = _replyKeys[comments!.id!];
-    
+
     if (replyKey == null) {
       return const SizedBox.shrink();
     }
@@ -174,28 +177,33 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(comments.commenterName ?? '',
                               style: TextStyles.semiBold(
                                   color: AppColors.black, fontSize: 14)),
                           addHorizontal(20),
-                          Expanded(
-                            child: Text(
-                              jiffyDataWidget(comments.createdAt ?? '',
-                                  format: 'dd MMMM yyyy'),
-                              style: TextStyles.regular2(
-                                  color: AppColors.lightGeryColor),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                DateFormatUtils.formatDateTime(
+                                  comments.createdAt ?? '',
+                                ),
+                                style: TextStyles.regular1(
+                                    fontSize: 10,
+                                    color: AppColors.lightGeryColor),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              addHorizontal(15),
+                              if (comments.dentalAdminId == viewModel.userID ||
+                                  comments.dentalPracticeId ==
+                                      viewModel.userID ||
+                                  comments.dentalProfessionalId ==
+                                      viewModel.userID ||
+                                  comments.dentalSupplierId == viewModel.userID)
+                                _buildCommentMenu(comments, viewModel, feedId),
+                            ],
                           ),
-                          addHorizontal(15),
-                          if (comments.dentalAdminId == viewModel.userID ||
-                              comments.dentalPracticeId == viewModel.userID ||
-                              comments.dentalProfessionalId ==
-                                  viewModel.userID ||
-                              comments.dentalSupplierId == viewModel.userID)
-                            _buildCommentMenu(comments, viewModel, feedId),
                         ],
                       ),
                       addVertical(6),
@@ -225,7 +233,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  Widget _buildCommentMenu(NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel, String feedId) {
+  Widget _buildCommentMenu(NewsFeedsComments comments,
+      NewsFeedCommunityCommentViewModel viewModel, String feedId) {
     return GestureDetector(
       onTapDown: (TapDownDetails details) {
         final offset = details.globalPosition;
@@ -245,7 +254,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                   const SizedBox(width: 8),
                   Text(
                     'Edit',
-                    style: TextStyles.semiBold(color: Colors.blue, fontSize: 14),
+                    style:
+                        TextStyles.semiBold(color: Colors.blue, fontSize: 14),
                   ),
                 ],
               ),
@@ -276,7 +286,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     );
   }
 
-  void _handleEditComment(NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) {
+  void _handleEditComment(
+      NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) {
     FocusScope.of(navigatorKey.currentContext!)
         .requestFocus(viewModel.replyFocusNode);
     final comment = comments.comments ?? '';
@@ -284,15 +295,19 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
     viewModel.updateIsReply(false, comments.id ?? '', '', commentupdate: true);
   }
 
-  void _handleReplyTap(NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) {
-    viewModel.updateHintText('Reply to @${comments.commenterName}', removeReplyVal: true);
+  void _handleReplyTap(
+      NewsFeedsComments comments, NewsFeedCommunityCommentViewModel viewModel) {
+    viewModel.updateHintText('Reply to @${comments.commenterName}',
+        removeReplyVal: true);
     viewModel.commentController.clear();
-    viewModel.updateIsReply(true, comments.id ?? '', comments.commenterName ?? '');
+    viewModel.updateIsReply(
+        true, comments.id ?? '', comments.commenterName ?? '');
     FocusScope.of(navigatorKey.currentContext!)
         .requestFocus(viewModel.replyFocusNode);
   }
 
-  Widget _buildRepliesSection(NewsFeedsComments comments, String feedId, GlobalKey replyKey) {
+  Widget _buildRepliesSection(
+      NewsFeedsComments comments, String feedId, GlobalKey replyKey) {
     return MeasureSize(
       onChange: (size) {
         final newHeight = size.height - 35;
@@ -314,7 +329,8 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final commentReply = comments.commentReply?[index];
-            return CommunityCommentReplyWidget(comments: commentReply, feedId: feedId);
+            return CommunityCommentReplyWidget(
+                comments: commentReply, feedId: feedId);
           },
         ),
       ),
