@@ -54,25 +54,25 @@ class Newsfeeds {
   String? communityId;
   String? description;
   String? categoryType;
-  Null? attachments;
+  dynamic attachments;
   String? feedType;
-  Null? payload;
+  dynamic payload;
   String? userRole;
   String? videoUrl;
   String? webUrl;
   String? userId;
   String? status;
-  Null? title;
-  Null? dentalPracticeId;
+  String? title;
+  String? dentalPracticeId;
   String? dentalProfessionalId;
   String? dentalSupplierId;
-  Null? dentalAdminId;
+  String? dentalAdminId;
   DentalSupplier? dentalSupplier;
   DentalProfessional? dentalProfessional;
-  Null? dentalPractice;
-  Null? adminUser;
-  List<Null>? courses;
-  List<Null>? jobs;
+  dynamic dentalPractice;
+  dynamic adminUser;
+  List<dynamic>? courses;
+  List<dynamic>? jobs;
   List<NewsfeedsLikes>? newsfeedsLikes;
   List<MyLike>? myLike;
   NewsfeedsLikesAggregate? newsfeedsLikesAggregate;
@@ -148,8 +148,8 @@ class Newsfeeds {
         : null;
     dentalPractice = json['dental_practice'];
     adminUser = json['admin_user'];
-    // courses = json['courses']; // Handle as needed
-    // jobs = json['jobs']; // Handle as needed
+    courses = json['courses']?.cast<dynamic>();
+    jobs = json['jobs']?.cast<dynamic>();
     if (json['newsfeeds_likes'] != null) {
       newsfeedsLikes = <NewsfeedsLikes>[];
       json['newsfeeds_likes'].forEach((v) {

@@ -88,8 +88,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                     right: 20,
                     child: GestureDetector(
                       onTap: () async {
+                        directionalVM.clearCommunityFields();
 
-                      
                         (type == "PROFESSIONAL")
                             ? ((directionalVM.communityStatusString ==
                                     "Join Community")
@@ -97,8 +97,10 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                                     .navigateTo(RouteList.joinCommunityView)
                                 : null)
                             : ((directionalVM.partnershipStatusString ==
-                                    "Partnership Request")? navigationService.navigateTo(
-                                RouteList.partnershipCommunityRequestView):null);
+                                    "Partnership Request")
+                                ? navigationService.navigateTo(
+                                    RouteList.partnershipCommunityRequestView)
+                                : null);
                       },
                       child: Container(
                         decoration: BoxDecoration(

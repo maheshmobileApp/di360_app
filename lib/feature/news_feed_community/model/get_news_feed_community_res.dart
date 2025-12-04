@@ -474,9 +474,9 @@ class DentalProfessional {
 
 class NewsfeedsLikes {
   String? id;
-  Null? dentalAdminId;
-  Null? adminUser;
-  Null? dentalPractice;
+  String? dentalAdminId;
+  dynamic adminUser;
+  dynamic dentalPractice;
   DentalSupplier? dentalSupplier;
   DentalProfessional? dentalProfessional;
   String? sTypename;
@@ -570,18 +570,18 @@ class CommentReply {
   String? commentId;
   String? createdAt;
   String? replyId;
-  List<Null>? replyAttachments;
-  Null? dentalAdminId;
-  Null? dentalPracticeId;
-  Null? dentalProfessionalId;
+  List<dynamic>? replyAttachments;
+  String? dentalAdminId;
+  String? dentalPracticeId;
+  String? dentalProfessionalId;
   String? dentalSupplierId;
   DentalSupplier? dentalSupplier;
-  Null? dentalPractice;
-  Null? dentalProfessional;
-  Null? adminUser;
-  Null? newsfeeds;
-  Null? jobs;
-  Null? courses;
+  dynamic dentalPractice;
+  dynamic dentalProfessional;
+  dynamic adminUser;
+  dynamic newsfeeds;
+  dynamic jobs;
+  dynamic courses;
   String? sTypename;
 
   CommentReply(
