@@ -9,4 +9,5 @@ const String getPartnershipStatusQuery =
     __typename
   }
 }
+
 ''';

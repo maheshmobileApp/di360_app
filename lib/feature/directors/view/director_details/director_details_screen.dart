@@ -88,22 +88,17 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                     right: 20,
                     child: GestureDetector(
                       onTap: () async {
-                        final userNameString = await LocalStorage.getStringVal(
-                            LocalStorageConst.name);
-                        directionalVM.firstNameController.text =
-                            userNameString ?? "";
-                        directionalVM.lastNameController.text = "";
 
-                        navigationService
-                            .navigateTo(RouteList.joinCommunityView);
-                        directionalVM.companyNameController.text = directionalVM
-                                .businessDetails?.dentalSuppliersByPk?.businessName ??
-                            "";
+                      
                         (type == "PROFESSIONAL")
-                            ? navigationService
-                                .navigateTo(RouteList.joinCommunityView)
-                            : navigationService.navigateTo(
-                                RouteList.partnershipCommunityRequestView);
+                            ? ((directionalVM.communityStatusString ==
+                                    "Join Community")
+                                ? navigationService
+                                    .navigateTo(RouteList.joinCommunityView)
+                                : null)
+                            : ((directionalVM.partnershipStatusString ==
+                                    "Partnership Request")? navigationService.navigateTo(
+                                RouteList.partnershipCommunityRequestView):null);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -114,8 +109,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                               type == "PROFESSIONAL"
-                                  ? "Join Community"
-                                  : "Partnership Request",
+                                  ? directionalVM.communityStatusString
+                                  : directionalVM.partnershipStatusString,
                               style: TextStyles.semiBold(
                                   color: AppColors.whiteColor, fontSize: 14)),
                         ),

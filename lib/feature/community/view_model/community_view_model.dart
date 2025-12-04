@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/community/repository/community_repo_impl.d
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-
 class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
 

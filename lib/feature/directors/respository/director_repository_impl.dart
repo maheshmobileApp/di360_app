@@ -3,9 +3,12 @@ import 'package:di360_flutter/feature/directors/model_class/directories_catagory
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_business_details_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_business_professional_details.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_community_status_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directory_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_partnership_status.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/querys/book_appointment_query.dart';
 import 'package:di360_flutter/feature/directors/querys/community_register_query.dart';
@@ -16,6 +19,8 @@ import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.
 import 'package:di360_flutter/feature/directors/querys/get_all_banners.dart';
 import 'package:di360_flutter/feature/directors/querys/get_director_based_on_catagory.dart';
 import 'package:di360_flutter/feature/directors/querys/get_directors_query.dart';
+import 'package:di360_flutter/feature/directors/querys/get_directory_query.dart';
+import 'package:di360_flutter/feature/directors/querys/get_partnership_status_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_team_members.dart';
 import 'package:di360_flutter/feature/directors/querys/get_time_slots_query.dart';
 import 'package:di360_flutter/feature/directors/querys/partnership_request_query.dart';
@@ -101,9 +106,18 @@ class DirectorRepositoryImpl extends DirectorRepository {
   }
 
   @override
-  Future<GetBusinessDetailsData> getBusinessDetails(variables) async {
-    final res = await http.query(getDentalBusinessDetailsQuery, variables: variables);
+  Future<GetBusinessDetailsData> getBusinessSupplierDetails(variables) async {
+    final res = await http.query(getDentalBusinessDetailsSupplierQuery,
+        variables: variables);
     final data = GetBusinessDetailsData.fromJson(res);
+    return data;
+  }
+
+  @override
+  Future<GetBusinessProfDetailsData> getBusinessProfessionalDetails(variables) async {
+    final res = await http.query(getDentalBusinessDetailsProfessionalQuery,
+        variables: variables);
+    final data = GetBusinessProfDetailsData.fromJson(res);
     return data;
   }
 
@@ -116,9 +130,16 @@ class DirectorRepositoryImpl extends DirectorRepository {
   }
 
   @override
+  Future<GetPartnershipStatusData> getPartnershipStatus(variables) async {
+    final res = await http.query(getPartnershipStatusQuery, variables: variables);
+    final data = GetPartnershipStatusData.fromJson(res);
+    return data;
+  }
+
+  @override
   Future<dynamic> partnershipRegister(variables) async {
-    final res = await http.query(partnershipRequestQuery, variables: variables);
-    
+    final res = await http.mutation(partnershipRequestQuery, variables);
+
     return res;
   }
 
@@ -126,5 +147,13 @@ class DirectorRepositoryImpl extends DirectorRepository {
   Future communityRegister(variables) async {
     final res = await http.mutation(communityRegisterQuery, variables);
     return res;
+  }
+
+  @override
+  Future<GetDirectoryData> getDirectory(variables) async {
+    final res = await http.query(getDirectoryQuery, variables: variables);
+    final data = GetDirectoryData.fromJson(res);
+
+    return data;
   }
 }

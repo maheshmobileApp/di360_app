@@ -36,6 +36,7 @@ class PartnershipCommunityRequestView extends StatelessWidget
                   hintText: "Enter Company Name",
                   title: "Company Name",
                   maxLength: 100,
+                  readOnly: true,
                 ),
                 SizedBox(height: 8),
                 InputTextField(
@@ -60,7 +61,9 @@ class PartnershipCommunityRequestView extends StatelessWidget
                   maxLength: 100,
                   validator: validatePhoneNumber,
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -71,6 +74,7 @@ class PartnershipCommunityRequestView extends StatelessWidget
                         textColor: AppColors.primaryColor,
                         onPressed: () {
                           navigationService.goBack();
+                          directorVM.clearCommunityFields();
                         },
                       ),
                     ),
@@ -80,7 +84,11 @@ class PartnershipCommunityRequestView extends StatelessWidget
                           height: 40,
                           text: 'Register Now',
                           onTap: () {
-                            directorVM.partnershipRegsiter(context);
+                            directorVM.partnershipRegsiter(
+                                context,
+                                directorVM.directorCommunityID ?? "",
+                                directorVM.directorCommunityName ?? "",
+                                directorVM.directorSupplierID ?? "");
                           }),
                     ),
                   ],

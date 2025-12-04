@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
+import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -22,7 +27,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
   final String createdAt;
   final int registeredCount;
   final String chipTitle;
-  final List<String> imageUrls;
+  final List<PostImage>? imageUrls;
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
@@ -109,8 +114,8 @@ class NewsFeedCommunityCard extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     _descriptionWidget(description),
-                    (imageUrls.isNotEmpty)
-                        ? GalleryImgWidget(imageUrls:imageUrls)
+                    (imageUrls?.isNotEmpty??false)
+                        ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
                     const Divider(),
                     Row(
@@ -178,6 +183,174 @@ class NewsFeedCommunityCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildImageRow(List<PostImage>? allMediaList) {
+    final mediaList = allMediaList ?? [];
+    if (mediaList.isEmpty) return SizedBox();
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: mediaList.length == 1
+          ? _buildSingleMedia(mediaList.first, mediaList)
+          : _buildMultipleMedia(mediaList),
+    );
+  }
+
+  Widget _buildSingleMedia(PostImage media, List<PostImage> allMedia) {
+    return GestureDetector(
+      onTap: () => navigationService.push(ImageViewerScreen(postImage: allMedia as List<PostImage>?)),
+      child: Container(
+        width: double.infinity,
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[100],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: _buildMediaWidget(media, isFullSize: true),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMultipleMedia(List<PostImage> mediaList) {
+    return SizedBox(
+      height: 200,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: mediaList.length,
+        separatorBuilder: (_, __) => SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final media = mediaList[index];
+          return GestureDetector(
+            onTap: () => navigationService.push(ImageViewerScreen(postImage: mediaList as List<PostImage>?)),
+            child: Container(
+              width: 250,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey[100],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: _buildMediaWidget(media),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildMediaWidget(PostImage media, {bool isFullSize = false}) {
+    final type = media.type ?? media.mimeType ?? '';
+    final url = media.url ?? '';
+    final name = media.name ?? '';
+
+    // Video handling
+    if (type.contains('video') || name.endsWith('.mp4')) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          InlineVideoPlayer(videoUrl: url),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Icon(Icons.play_arrow, color: Colors.white, size: 16),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // PDF handling
+    if (type.contains('pdf') || name.endsWith('.pdf')) {
+      return Container(
+        color: Colors.red[50],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.picture_as_pdf, size: isFullSize ? 60 : 40, color: Colors.red),
+            SizedBox(height: 8),
+            if (isFullSize)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  name.isNotEmpty ? name : 'PDF Document',
+                  style: TextStyles.medium3(color: Colors.red[700]!),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Word document handling
+    if (type.contains('msword') || name.endsWith('.doc') || name.endsWith('.docx')) {
+      return Container(
+        color: Colors.blue[50],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.description, size: isFullSize ? 60 : 40, color: Colors.blue),
+            SizedBox(height: 8),
+            if (isFullSize)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  name.isNotEmpty ? name : 'Word Document',
+                  style: TextStyles.medium3(color: Colors.blue[700]!),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Image handling (default)
+    return CachedNetworkImageWidget(
+      imageUrl: url,
+      fit: BoxFit.contain,
+      errorWidget: Container(
+        color: Colors.grey[200],
+        child: Icon(Icons.broken_image, color: Colors.grey[400]),
+      ),
+    );
+  }
+
+   Widget _mediaCard({
+    required Widget child,
+    VoidCallback? onTap,
+    bool isFullWidth = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: onTap,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: isFullWidth ? double.infinity : 300,
+            height: 300,
+            color: Colors.grey[200],
+            child: child,
+          ),
+        ),
+      ),
     );
   }
 

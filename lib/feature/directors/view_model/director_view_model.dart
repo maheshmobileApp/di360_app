@@ -6,9 +6,12 @@ import 'package:di360_flutter/feature/directors/model_class/directories_catagory
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_business_details_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_business_professional_details.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_community_status_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directory_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_partnership_status.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
@@ -33,6 +36,8 @@ class DirectoryViewModel extends ChangeNotifier {
 
   // Controllers
   final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController membershipNumberController =
+      TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController contactNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
@@ -53,8 +58,8 @@ class DirectoryViewModel extends ChangeNotifier {
   String? selectedMembership;
 
   void setSelectedMembership(String? value) {
-    if (value == null) return;
     selectedMembership = value;
+    notifyListeners();
   }
 
   final Map<String, GlobalKey> sectionKeys = {
@@ -177,81 +182,159 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   CommunityStatusData? communityStatusData;
+  GetPartnershipStatusData? partnershipStatusData;
 
-  Future<void> getCommunityStatus(String memberId, String communityId) async {
-    print("*************************get community status calling");
-    print("*get community status calling");
-    final variables = {"member_id": memberId, "community_id": communityId};
-    final res = await repository.getCommunityStatus(variables);
-    if (res != null) {
-      communityStatusData = res;
-      print("*************************data fected $communityStatusData");
-      print("*data fected $communityStatusData");
+  GetDirectoryData? getDirectoryData;
+  String communityStatusString = "Join Community";
+  String partnershipStatusString = "Partnership Request";
+  String? directorCommunityID;
+  String? directorCommunityName;
+  String? directorSupplierID;
+
+  void setCommunityStatusString(String value) {
+    communityStatusString = value;
+    notifyListeners();
+  }
+
+  void setPartnershipStatusString(String value) {
+    partnershipStatusString = value;
+    notifyListeners();
+  }
+
+  Future<void> getDirectory(String directorId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {"id": directorId};
+    print("*************************variables $variables");
+    final res = await repository.getDirectory(variables);
+    if (res.directoriesByPk != []) {
+      getDirectoryData = res;
+      directorCommunityID = getDirectoryData?.directoriesByPk?.communityId;
+      directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
+      directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
+      (type == "PROFESSIONAL")
+          ? getCommunityStatus(
+              getDirectoryData?.directoriesByPk?.communityId ?? "")
+          : getPartnershipStatus(
+              getDirectoryData?.directoriesByPk?.communityId ?? "");
     }
     notifyListeners();
   }
 
-  Future<void> communityRegsiter(BuildContext context) async {
+  Future<void> getCommunityStatus(String communityId) async {
     print("*************************get community status calling");
-    print("*get community status calling");
-    final communityName =
-        await LocalStorage.getStringVal(LocalStorageConst.communityName);
-        final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
-        final userId =
-        await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final memberId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {"member_id": memberId, "community_id": communityId};
+    final res = await repository.getCommunityStatus(variables);
+    if (res.communityMembers != null && res.communityMembers!.isNotEmpty) {
+      communityStatusData = res;
+      final status = communityStatusData?.communityMembers?.first.status ?? "";
+      if (status == "APPROVED") {
+        setCommunityStatusString("Community Joined");
+      } else if (status == "REJECTED") {
+        setCommunityStatusString("Join Community Rejected");
+      } else if (status == "PENDING") {
+        setCommunityStatusString("Join Community Pending");
+      }
+      notifyListeners();
+    } else {
+      setCommunityStatusString("Join Community");
+    }
+    notifyListeners();
+  }
+
+  Future<void> getPartnershipStatus(String communityId) async {
+    print("*************************get partner status calling");
+    final memberId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {"member_id": memberId, "community_id": communityId};
+    final res = await repository.getPartnershipStatus(variables);
+    if (res.partnershipMembers != null && res.partnershipMembers!.isNotEmpty) {
+      partnershipStatusData = res;
+      final status =
+          partnershipStatusData?.partnershipMembers?.first.status ?? "";
+      if (status == "APPROVED") {
+        setPartnershipStatusString("Partnership Request Approved");
+      } else if (status == "REJECTED") {
+        setPartnershipStatusString("Partnership Request Rejected");
+      } else if (status == "PENDING") {
+        setPartnershipStatusString("Partnership Request Pending");
+      }
+      notifyListeners();
+    } else {
+      setPartnershipStatusString("Partnership Request");
+    }
+    notifyListeners();
+  }
+
+  Future<void> communityRegsiter(BuildContext context, String communityId,
+      String communityName, String supplierId) async {
+    Loaders.circularShowLoader(context);
+
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "fields": {
-        "community_id":communityId,
+        "community_id": communityId,
         "community_name": communityName,
-        "supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "supplier_id": supplierId,
         "member_id": userId,
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "email": emailController.text,
         "phone": phoneController.text,
-        "membership_number": "",
+        "membership_number": membershipNumberController.text,
         "status": "PENDING",
         "type": "COMMUNITY",
-        "is_registered": true
+        "is_registered": false
       }
     };
     print("*************************variables $variables");
     print("*variables $variables");
     final res = await repository.communityRegister(variables);
     if (res != null) {
-      
+      scaffoldMessenger("Successfully Registered");
+      setCommunityStatusString("Join Community Pending");
+      navigationService.goBack();
     }
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
-  Future<void> partnershipRegsiter(BuildContext context) async {
-    print("*get community status calling");
-    final communityName =
-        await LocalStorage.getStringVal(LocalStorageConst.communityName);
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+  clearCommunityFields() {
+    contactNameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    membershipNumberController.clear();
+  }
+
+  Future<void> partnershipRegsiter(BuildContext context, String communityId,
+      String communityName, String supplierId) async {
+    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    // need clarity on community id, 
+    // need clarity on community id,
     final variables = {
       "fields": {
         "community_id": communityId,
         "community_name": communityName,
-        "supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "supplier_id": supplierId,
         "member_id": userId,
-        "company_name": "Mahesh Business ",
-        "contact_name": "test",
-        "email": "test@gmail.com",
-        "phone": "123456789",
+        "company_name": communityName,
+        "contact_name": contactNameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
         "type": "PARTNERSHIP",
         "status": "PENDING",
         "is_registered": false
       }
     };
-    {}
-    print("*variables $variables");
+    print("*************************variables $variables");
     final res = await repository.partnershipRegister(variables);
-    if (res != null) {}
+    if (res != null) {
+      scaffoldMessenger("Successfully Registered");
+      setPartnershipStatusString("Partnership Request Pending");
+      navigationService.goBack();
+    }
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
@@ -269,7 +352,6 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   Future<void> GetDirectorDetails(String id) async {
-    Loaders.circularShowLoader(navigatorKey.currentContext!);
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
@@ -303,11 +385,7 @@ class DirectoryViewModel extends ChangeNotifier {
       getFollowersCount(directorDetails?.id ?? '');
       getAppointmentSlots(id);
       getTeamMembersData(id);
-      Loaders.circularHideLoader(navigatorKey.currentContext!);
-      navigationService.navigateTo(RouteList.directoryDetailsScreen);
-    } else {
-      Loaders.circularHideLoader(navigatorKey.currentContext!);
-    }
+    } else {}
     notifyListeners();
   }
 
@@ -381,17 +459,37 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   GetBusinessDetailsData? businessDetails;
-  Future<void> getBusinessDetails(BuildContext context) async {
+  Future<void> getBusinessSupplierDetails(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    Loaders.circularShowLoader(context);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final variables = {"id": userId};
-    final res = await repository.getBusinessDetails(variables);
+    final res = await repository.getBusinessSupplierDetails(variables);
     if (res.dentalSuppliersByPk != null) {
       businessDetails = res;
+      print("****************Business********************$businessDetails");
+      firstNameController.text =
+          businessDetails?.dentalSuppliersByPk?.firstName ?? "";
+      lastNameController.text =
+          businessDetails?.dentalSuppliersByPk?.lastName ?? "";
 
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
+      companyNameController.text =
+          businessDetails?.dentalSuppliersByPk?.businessName ?? "";
+    }
+    notifyListeners();
+  }
+
+  GetBusinessProfDetailsData? businessProfDetails;
+  Future<void> getBusinessProfessionalDetails(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {"id": userId};
+    final res = await repository.getBusinessProfessionalDetails(variables);
+    if (res.dentalProfessionalsByPk != null) {
+      businessProfDetails = res;
+      firstNameController.text =
+          businessProfDetails?.dentalProfessionalsByPk?.firstName ?? "";
+      lastNameController.text =
+          businessProfDetails?.dentalProfessionalsByPk?.lastName ?? "";
     }
     notifyListeners();
   }

@@ -38,7 +38,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-   void setSearchBar(bool value) {
+  void setSearchBar(bool value) {
     searchBarOpen = value;
     notifyListeners();
   }
@@ -162,7 +162,6 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  
 
     final variables = {
       "where": {
@@ -170,7 +169,6 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         "community_id": {
           "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
         }
-        
       },
       "limit": 100,
       "offset": 0,
@@ -185,7 +183,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       newsFeedCommunityData = res;
     }
     Loaders.circularHideLoader(context);
-    getAllStatusCounts();
+    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
 
     notifyListeners();
   }
@@ -287,12 +285,19 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    for (var element in selectedFiles) {
+      var value = await _http.uploadImage(element.path);
+      print("resp from upload $value");
+      if (value != null) {
+        uploadedFiles.add(value);
+      }
+    }
 
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
       "category_type": selectedCategoryId,
       "video_url": videoLinkController.text,
-      "post_image": selectedNewsFeedGalleryList,
+      "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
       "user_role": type,
       "user_id": userId,
@@ -300,6 +305,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id": (type == "PROFESSIONAL") ? profCommunityId : communityId,
     };
+   
 
     if (type == "PROFESSIONAL") {
       fields["dental_professional_id"] = userId;
@@ -308,6 +314,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
 
     final variables = {"fields": fields};
+     print("*************************************add feed fields: $variables");
 
     print(
         "***************************************************variables: $variables");
@@ -352,6 +359,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   // Update news feed status
   Future<void> updateNewsFeedStatus(
       BuildContext context, String id, String status) async {
+        final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     print("***************************updateNewsFeedStatus Calling");
     final variables = {"id": id, "status": status};
     print("***************************variavles $variables");
@@ -363,7 +371,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           : scaffoldMessenger("News Feed Un-Published Successfully");
     }
     getAllNewsFeeds(context);
-    getAllStatusCounts();
+    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
     notifyListeners();
   }
   /******************News Feed Upload ************************ */
@@ -446,11 +454,23 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
+    for (var element in selectedFiles) {
+        var value = await _http.uploadImage(element.path);
+        print("resp from upload $value");
+        if (value != null) {
+          uploadedFiles.add(value);
+        }
+      }
+
+      if (isEditNewsFeed == true) {
+        uploadedFiles.addAll(existingImages);
+      }
+
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
       "category_type": selectedCategoryId,
       "video_url": videoLinkController.text,
-      "post_image": selectedNewsFeedGalleryList,
+      "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
       "user_role": type,
       "user_id": userId,

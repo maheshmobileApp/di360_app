@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community/widgets/upload_file_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -57,7 +58,7 @@ class AddNewsFeedCommunityView extends StatelessWidget
                 addVertical(16),
                 _buildCategoryTypes(viewModel),
                 addVertical(16),
-                ImagePickerField(
+                /*ImagePickerField(
                   title: "Upload Photos",
                   serverImages: viewModel.serverNewsFeedGallery,
                   allowMultiple: true,
@@ -67,8 +68,8 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   showPreview: true,
                   selectedFiles: viewModel.selectedNewsFeedGallery,
                   onFilesPicked: (file) => viewModel.setNewsFeedGallery(file),
-                ),
-                //UploadFileWidget(),
+                ),*/
+                UploadFileWidget(),
                 addVertical(16),
                 InputTextField(
                   controller: viewModel.videoLinkController,

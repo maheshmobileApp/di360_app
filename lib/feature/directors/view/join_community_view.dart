@@ -5,7 +5,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/radio_button_group.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -18,9 +17,9 @@ class JoinCommunityView extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final directorVM = Provider.of<DirectoryViewModel>(context);
-
-    return Scaffold(
+    return Consumer<DirectoryViewModel>(
+      builder: (context, directorVM, child) {
+        return Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: SingleChildScrollView(
           child: Padding(
@@ -37,6 +36,7 @@ class JoinCommunityView extends StatelessWidget
                   controller: directorVM.firstNameController,
                   hintText: "Enter First Name",
                   title: "First Name",
+                  readOnly: true,
                   maxLength: 100,
                 ),
                 SizedBox(height: 8),
@@ -44,6 +44,7 @@ class JoinCommunityView extends StatelessWidget
                   controller: directorVM.lastNameController,
                   hintText: "Enter Last Name",
                   title: "Last Name",
+                   readOnly: true,
                   maxLength: 100,
                 ),
                 SizedBox(height: 8),
@@ -52,6 +53,7 @@ class JoinCommunityView extends StatelessWidget
                   hintText: "Enter Email",
                   title: "Email",
                   maxLength: 100,
+                  validator: validateEmail,
                 ),
                 SizedBox(height: 8),
                 InputTextField(
@@ -59,6 +61,7 @@ class JoinCommunityView extends StatelessWidget
                   hintText: "Enter Phone Number",
                   title: "Phone",
                   maxLength: 100,
+                  validator: validatePhoneNumber,
                 ),
                 SizedBox(height: 8),
                 CustomRadioGroup<String>(
@@ -71,7 +74,16 @@ class JoinCommunityView extends StatelessWidget
                     directorVM.setSelectedMembership(value);
                   },
                 ),
-                   SizedBox(height: 30),
+                SizedBox(height: 8),
+                (directorVM.selectedMembership == "Yes")
+                    ? InputTextField(
+                        controller: directorVM.membershipNumberController,
+                        hintText: "Enter membership number",
+                        title: "Membership Number",
+                        maxLength: 100,
+                      )
+                    : SizedBox.shrink(),
+                SizedBox(height: 30),
                 Row(
                   children: [
                     Expanded(
@@ -81,7 +93,9 @@ class JoinCommunityView extends StatelessWidget
                         backgroundColor: AppColors.timeBgColor,
                         textColor: AppColors.primaryColor,
                         onPressed: () {
+                         
                           navigationService.goBack();
+                           directorVM.clearCommunityFields();
                         },
                       ),
                     ),
@@ -91,7 +105,7 @@ class JoinCommunityView extends StatelessWidget
                           height: 40,
                           text: 'Register Now',
                           onTap: () {
-                            //directorVM.communityRegsiter(context);
+                            directorVM.communityRegsiter(context,directorVM.directorCommunityID??"",directorVM.directorCommunityName??"",directorVM.directorSupplierID??"");
                           }),
                     ),
                   ],
@@ -100,5 +114,7 @@ class JoinCommunityView extends StatelessWidget
             ),
           ),
         ));
+      },
+    );
   }
 }

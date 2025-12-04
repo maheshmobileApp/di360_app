@@ -34,6 +34,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       await viewModel.getAllNewsFeeds(context);
@@ -41,7 +42,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           Provider.of<CommunityViewModel>(context, listen: false);
       final newsFeedVM =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      await communityVM.getNewsFeedCategories(context);
+      (type == 'SUPPLIER')
+          ? await communityVM.getNewsFeedCategories(context)
+          : null;
       newsFeedVM.newsFeedCategoriesData = communityVM.newsFeedCategoriesData;
 
       newsFeedVM.newsFeedCategory = communityVM
@@ -70,9 +73,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               appBar: AppBarWidget(
                 title: "Community",
                 searchAction: () =>
-                viewModel.setSearchBar(!viewModel.searchBarOpen),
-                
-                
+                    viewModel.setSearchBar(!viewModel.searchBarOpen),
                 filterWidget: Row(
                   children: [
                     GestureDetector(
@@ -188,10 +189,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               return NewsFeedCommunityCard(
                                   createdAt: newsItem.createdAt ?? "",
                                   feedUserRole: newsItem.userRole ?? "",
-                                  imageUrls: newsItem.postImage
-                                          ?.map((item) => item.url ?? '')
-                                          .toList() ??
-                                      [],
+                                  imageUrls: newsItem.postImage ?? [],
                                   id: newsItem.id ?? '',
                                   logoUrl: (newsItem.userRole == "PROFESSIONAL")
                                       ? newsItem.dentalProfessional
