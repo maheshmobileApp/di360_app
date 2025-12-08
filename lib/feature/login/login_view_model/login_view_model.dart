@@ -166,7 +166,7 @@ class LoginViewModel extends ChangeNotifier {
             LocalStorageConst.communityId, supplier?.communityId ?? '');
         await LocalStorage.setStringVal(
             LocalStorageConst.communityStatus, 'true');
-        await LocalStorage.setStringVal(
+        await LocalStorage.setStringVal(  
             LocalStorageConst.businessName, supplier?.businessName??"");
         print("***** Updating JSON (Need to update account.json) *****");
       } else {

@@ -278,14 +278,14 @@ class NewsFeedCommunityCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.picture_as_pdf, size: isFullSize ? 60 : 40, color: Colors.red),
+            Icon(Icons.picture_as_pdf, size: isFullSize ? 40 : 40, color: Colors.red),
             SizedBox(height: 8),
             if (isFullSize)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   name.isNotEmpty ? name : 'PDF Document',
-                  style: TextStyles.medium3(color: Colors.red[700]!),
+                  style: TextStyles.medium3(fontSize: 12, color: Colors.red[700]!),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

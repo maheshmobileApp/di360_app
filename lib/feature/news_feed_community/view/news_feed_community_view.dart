@@ -63,11 +63,14 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         final homeVM = Provider.of<HomeViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
         final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
-
-        return FutureBuilder<String>(
-          future: LocalStorage.getStringVal(LocalStorageConst.type),
+        return FutureBuilder<List<String>>(
+          future: Future.wait([
+            LocalStorage.getStringVal(LocalStorageConst.type),
+            LocalStorage.getStringVal(LocalStorageConst.communityName)
+          ]),
           builder: (context, snapshot) {
-            final type = snapshot.data ?? '';
+            final type = snapshot.data?[0] ?? '';
+            final businessname = snapshot.data?[1] ?? 'Community';
             return Scaffold(
               backgroundColor: AppColors.whiteColor,
               appBar: AppBarWidget(
@@ -128,15 +131,17 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         },
                         child: SvgPicture.asset(ImageConst.filter,
                             color: AppColors.black)),
-                    /*if (newsFeedVM.applyCatageories)
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: GestureDetector(
-                      onTap: () {
-                       
-                      },
-                      child: Icon(Icons.close, color: AppColors.black)),
-                )*/
+                    if (viewModel.applyFilter)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: GestureDetector(
+                            onTap: () {
+                              viewModel.updateApplyFilter(false);
+                              viewModel.getAllNewsFeeds(context);
+                              viewModel.setSelectedCategoryId("");
+                            },
+                            child: Icon(Icons.close, color: AppColors.black)),
+                      )
                   ],
                 ),
               ),
@@ -146,7 +151,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                     imageUrl: viewModel
                             .bannerData?.directories!.first.bannerImage?.url ??
                         "",
-                    title: "${viewModel.profCommunityName} Community",
+                    title: type == "PROFESSIONAL"
+                        ? "${viewModel.profCommunityName} Community"
+                        : "${businessname}Community",
                     leaveButton: type == "PROFESSIONAL",
                     onLeaveTap: () async {
                       showAlertMessage(context,
@@ -170,10 +177,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                       hintText: "Search News Feed...",
                       onClear: () {
                         viewModel.searchController.clear();
-                        //viewModel.getCoursesListingData(context);
+                        viewModel.getAllNewsFeeds(context);
                       },
                       onSearch: () {
-                        //viewModel.getCoursesListingData(context);
+                         viewModel.getAllNewsFeeds(context);
                       },
                     ),
                   (type == 'PROFESSIONAL')
