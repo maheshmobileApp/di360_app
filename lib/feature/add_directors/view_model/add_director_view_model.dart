@@ -61,9 +61,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   TextEditingController breakEndTimeCntr = TextEditingController();
   TextEditingController serviceTimemInCntr = TextEditingController();
 
+  TextEditingController partnerNameCntr = TextEditingController();
+  TextEditingController descriptionCntr = TextEditingController();
+
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(11, (_) => GlobalKey<FormState>());
+      List.generate(12, (_) => GlobalKey<FormState>());
 
   final List<int> stepsWithValidation = [0];
   List<DirectoryBusinessTypes> directoryBusinessTypes = [];
@@ -74,6 +77,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   int _currentStep = 0;
   int get currentStep => _currentStep;
   int get totalSteps => ConstantData.steps.length;
+  String selectedShowPromotion = "All Users";
+
+  void setSelectedShowPromotion(String value){
+    selectedShowPromotion = value;
+    notifyListeners();
+  }
 
   updateCurrentStep() {
     _currentStep = 0;
@@ -91,6 +100,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   File? testimonialsFile;
   File? testimonialsPicFile;
   File? galleryFile;
+  File? partnerImgFile;
   //
   // Selected dropdowns
   String? selectedDays;
@@ -98,7 +108,6 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   DirectoryCategories? selectedBusineestype;
   List<GetDirectories> getBasicInfoData = [];
 
-  
   final List<String> _selectedTeamMemberList = [];
   List<String> get selectedTeamMemberList =>
       List.unmodifiable(_selectedTeamMemberList);
@@ -106,10 +115,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   List<String> get selectedServiceList =>
       List.unmodifiable(_selectedServiceList);
   final List<String> _selectedDaysList = [];
-  List<String> get selectedDaysList =>
-      List.unmodifiable(_selectedDaysList);
+  List<String> get selectedDaysList => List.unmodifiable(_selectedDaysList);
 
-      
   void addTeamMemberList(String teamMember) {
     if (!_selectedTeamMemberList.contains(teamMember)) {
       _selectedTeamMemberList.add(teamMember);
@@ -123,7 +130,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void clearTeamMemberList() {
     _selectedTeamMemberList.clear();
   }
-      
+
   void addServicesList(String services) {
     if (!_selectedServiceList.contains(services)) {
       _selectedServiceList.add(services);
@@ -137,7 +144,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void clearServicesList() {
     _selectedServiceList.clear();
   }
-    
+
   void addDaysList(String days) {
     if (!_selectedDaysList.contains(days)) {
       _selectedDaysList.add(days);
@@ -157,19 +164,6 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   bool isEditService = false;
   bool appointmentShowVal = false;
   bool ourTeamShowVal = false;
-
- /* DirectoryTeamMembers? selectedTeamMember;
-  DirectoryServices? selectdService;
-
-  void setSelectedTeamMember(DirectoryTeamMembers? members) {
-    selectedTeamMember = members;
-    notifyListeners();
-  }
-
-  void setSelectedServices(DirectoryServices? ser) {
-    selectdService = ser;
-    notifyListeners();
-  }*/
 
   void toggleService(bool value) {
     serviceShowApmt = value;
@@ -775,6 +769,16 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
       teamMemberFile = File(pickedFile.path);
+      NavigationService().goBack();
+      notifyListeners();
+    }
+  }
+
+  Future<void> pickPartnerImage(ImageSource source) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (pickedFile != null) {
+      partnerImgFile = File(pickedFile.path);
       NavigationService().goBack();
       notifyListeners();
     }

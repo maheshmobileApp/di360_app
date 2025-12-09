@@ -38,7 +38,7 @@ class CommentViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  void updateHintText(String? hinttext,{bool? removeReplyVal}) {
+  void updateHintText(String? hinttext, {bool? removeReplyVal}) {
     hintText = hinttext;
     removeReplyFeild = removeReplyVal ?? false;
     notifyListeners();
@@ -55,6 +55,7 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   addCommentTheFeed(BuildContext context, String feedId) async {
+    print("*****************addCommentfee");
     await getUserId();
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
@@ -129,12 +130,13 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
+    print("*****************getNewsfeedComment");
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
         final newsFeed = res['newsfeeds'].first['news_feeds_comments'];
-        final commentCount = res['newsfeeds'].first['news_feeds_comments_aggregate']
-            ['aggregate']['count'];
+        final commentCount = res['newsfeeds']
+            .first['news_feeds_comments_aggregate']['aggregate']['count'];
         updateTheCommentObject(context, feedId, newsFeed, commentCount);
       }
       Loaders.circularHideLoader(context);
@@ -163,9 +165,10 @@ class CommentViewModel extends ChangeNotifier {
 
   Future<void> updateTheCommentObject(BuildContext context, String feedId,
       List<dynamic>? newsFeeds, dynamic count) async {
-    final homeVM =
-        context.read<HomeViewModel>();
-    final feed = homeVM.allNewsFeedsData?.newsfeeds?.firstWhere((v) => v.id == feedId);
+        
+    final homeVM = context.read<HomeViewModel>();
+    final feed =
+        homeVM.allNewsFeedsData?.newsfeeds?.firstWhere((v) => v.id == feedId);
     feed?.newsFeedsComments?.clear();
     feed?.newsFeedsComments =
         newsFeeds?.map((e) => NewsFeedsComments.fromJson(e)).toList();
@@ -193,6 +196,7 @@ class CommentViewModel extends ChangeNotifier {
           "reply_attachments": []
         }
       });
+      print("***************************************$res");
 
       if (res.isNotEmpty) {
         commentController.clear();

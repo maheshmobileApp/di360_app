@@ -1,10 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +22,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+    final userId = LocalStorage.getStringVal(LocalStorageConst.userId);
     return Consumer<DirectoryViewModel>(builder: (context, value, child) {
       return SingleChildScrollView(
         controller: controller,
@@ -53,9 +59,21 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                   borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
                                 onTap: () async {
+                                  final type = await LocalStorage.getStringVal(
+                                      LocalStorageConst.type);
+                                  Loaders.circularShowLoader(context);
+                                  await (type == "SUPPLIER")
+                                      ? value
+                                          .getBusinessSupplierDetails(context)
+                                      : value.getBusinessProfessionalDetails(
+                                          context);
                                   print(director.id);
                                   await value.GetDirectorDetails(
                                       director.id ?? '');
+                                  await value.getDirectory(director.id ?? "");
+                                  Loaders.circularHideLoader(context);
+                                  navigationService.navigateTo(
+                                      RouteList.directoryDetailsScreen);
                                 },
                                 child: Column(
                                   children: [

@@ -1,10 +1,17 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_business_details_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_business_professional_details.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_community_status_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_directory_res.dart';
+import 'package:di360_flutter/feature/directors/model_class/get_partnership_status.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
@@ -29,6 +36,10 @@ class DirectoryViewModel extends ChangeNotifier {
 
   // Controllers
   final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController membershipNumberController =
+      TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
+  final TextEditingController contactNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -43,7 +54,14 @@ class DirectoryViewModel extends ChangeNotifier {
   final List<String> serviceList = ['Test'];
 
   List<QuickLinkItem> quickLinkItems = [];
- 
+
+  String? selectedMembership;
+
+  void setSelectedMembership(String? value) {
+    selectedMembership = value;
+    notifyListeners();
+  }
+
   final Map<String, GlobalKey> sectionKeys = {
     'Basic Info': GlobalKey(),
     'Services': GlobalKey(),
@@ -163,6 +181,165 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  CommunityStatusData? communityStatusData;
+  GetPartnershipStatusData? partnershipStatusData;
+
+  GetDirectoryData? getDirectoryData;
+  String communityStatusString = "Join Community";
+  String partnershipStatusString = "Partnership Request";
+  String? directorCommunityID;
+  String? directorCommunityName;
+  String? directorSupplierID;
+
+  void setCommunityStatusString(String value) {
+    communityStatusString = value;
+    notifyListeners();
+  }
+
+  void setPartnershipStatusString(String value) {
+    partnershipStatusString = value;
+    notifyListeners();
+  }
+
+  Future<void> getDirectory(String directorId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {"id": directorId};
+    print("*************************variables $variables");
+    final res = await repository.getDirectory(variables);
+    if (res.directoriesByPk != []) {
+      getDirectoryData = res;
+      directorCommunityID = getDirectoryData?.directoriesByPk?.communityId;
+      print(
+          "***/////////////////////////////*********community id $directorCommunityID");
+      directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
+      directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
+      if (directorCommunityID != null) {
+        (type == "PROFESSIONAL")
+            ? getCommunityStatus(directorCommunityID ?? "")
+            : getPartnershipStatus(directorCommunityID ?? "");
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> getCommunityStatus(String communityId) async {
+    print("*************************get community status calling");
+    final memberId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {"member_id": memberId, "community_id": communityId};
+    final res = await repository.getCommunityStatus(variables);
+    if (res.communityMembers != null && res.communityMembers!.isNotEmpty) {
+      communityStatusData = res;
+      final status = communityStatusData?.communityMembers?.first.status ?? "";
+      if (status == "APPROVED") {
+        setCommunityStatusString("Community Joined");
+      } else if (status == "REJECTED") {
+        setCommunityStatusString("Join Community Rejected");
+      } else if (status == "PENDING") {
+        setCommunityStatusString("Join Community Pending");
+      }
+      notifyListeners();
+    } else {
+      setCommunityStatusString("Join Community");
+    }
+    notifyListeners();
+  }
+
+  Future<void> getPartnershipStatus(String communityId) async {
+    print("*************************get partner status calling");
+    final memberId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {"member_id": memberId, "community_id": communityId};
+    final res = await repository.getPartnershipStatus(variables);
+    if (res.partnershipMembers != null && res.partnershipMembers!.isNotEmpty) {
+      partnershipStatusData = res;
+      final status =
+          partnershipStatusData?.partnershipMembers?.first.status ?? "";
+      if (status == "APPROVED") {
+        setPartnershipStatusString("Partnership Request Approved");
+      } else if (status == "REJECTED") {
+        setPartnershipStatusString("Partnership Request Rejected");
+      } else if (status == "PENDING") {
+        setPartnershipStatusString("Partnership Request Pending");
+      }
+      notifyListeners();
+    } else {
+      setPartnershipStatusString("Partnership Request");
+    }
+    notifyListeners();
+  }
+
+  Future<void> communityRegsiter(BuildContext context, String communityId,
+      String communityName, String supplierId) async {
+    Loaders.circularShowLoader(context);
+
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "fields": {
+        "community_id": communityId,
+        "community_name": communityName,
+        "supplier_id": supplierId,
+        "member_id": userId,
+        "first_name": firstNameController.text,
+        "last_name": lastNameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "membership_number": membershipNumberController.text,
+        "status": "PENDING",
+        "type": "COMMUNITY",
+        "is_registered": false
+      }
+    };
+    print("*************************variables $variables");
+    print("*variables $variables");
+    final res = await repository.communityRegister(variables);
+    if (res != null) {
+      scaffoldMessenger("Successfully Registered");
+      setCommunityStatusString("Join Community Pending");
+      navigationService.goBack();
+    }
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
+  clearCommunityFields() {
+    contactNameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    membershipNumberController.clear();
+  }
+
+  Future<void> partnershipRegsiter(BuildContext context, String communityId,
+      String communityName, String supplierId) async {
+    Loaders.circularShowLoader(context);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    // need clarity on community id,
+    final variables = {
+      "fields": {
+        "community_id": communityId,
+        "community_name": communityName,
+        "supplier_id": supplierId,
+        "member_id": userId,
+        "company_name": communityName,
+        "contact_name": contactNameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "type": "PARTNERSHIP",
+        "status": "PENDING",
+        "is_registered": false
+      }
+    };
+    print("*************************variables $variables");
+    final res = await repository.partnershipRegister(variables);
+    if (res != null) {
+      scaffoldMessenger("Successfully Registered");
+      setPartnershipStatusString("Partnership Request Pending");
+      navigationService.goBack();
+    }
+    Loaders.circularHideLoader(context);
+
+    notifyListeners();
+  }
+
   updateTheRemoveIcon(bool val) {
     _removeIcon = val;
     notifyListeners();
@@ -177,10 +354,11 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   Future<void> GetDirectorDetails(String id) async {
-    Loaders.circularShowLoader(navigatorKey.currentContext!);
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
+      print("*************************Directord data fected $directorDetails");
+      print("*Directord data fected $directorDetails");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -199,21 +377,17 @@ class DirectoryViewModel extends ChangeNotifier {
           QuickLinkItem(label: 'Certifications', icon: Icons.verified),
         if (directorDetails?.directoryAppointmentSlots?.length != 0)
           QuickLinkItem(label: 'Book Appointment', icon: Icons.calendar_today),
-          if (directorDetails?.directoryTestimonials?.length != 0)
-        QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
+        if (directorDetails?.directoryTestimonials?.length != 0)
+          QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
         if (directorDetails?.directoryFaqs?.length != 0)
-        QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
+          QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
         if (directorDetails?.directoryLocations?.length != 0)
-        QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
+          QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
       ];
       getFollowersCount(directorDetails?.id ?? '');
       getAppointmentSlots(id);
       getTeamMembersData(id);
-      Loaders.circularHideLoader(navigatorKey.currentContext!);
-      navigationService.navigateTo(RouteList.directoryDetailsScreen);
-    } else {
-      Loaders.circularHideLoader(navigatorKey.currentContext!);
-    }
+    } else {}
     notifyListeners();
   }
 
@@ -282,6 +456,42 @@ class DirectoryViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  GetBusinessDetailsData? businessDetails;
+  Future<void> getBusinessSupplierDetails(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {"id": userId};
+    final res = await repository.getBusinessSupplierDetails(variables);
+    if (res.dentalSuppliersByPk != null) {
+      businessDetails = res;
+      print("****************Business********************$businessDetails");
+      firstNameController.text =
+          businessDetails?.dentalSuppliersByPk?.firstName ?? "";
+      lastNameController.text =
+          businessDetails?.dentalSuppliersByPk?.lastName ?? "";
+
+      companyNameController.text =
+          businessDetails?.dentalSuppliersByPk?.businessName ?? "";
+    }
+    notifyListeners();
+  }
+
+  GetBusinessProfDetailsData? businessProfDetails;
+  Future<void> getBusinessProfessionalDetails(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {"id": userId};
+    final res = await repository.getBusinessProfessionalDetails(variables);
+    if (res.dentalProfessionalsByPk != null) {
+      businessProfDetails = res;
+      firstNameController.text =
+          businessProfDetails?.dentalProfessionalsByPk?.firstName ?? "";
+      lastNameController.text =
+          businessProfDetails?.dentalProfessionalsByPk?.lastName ?? "";
     }
     notifyListeners();
   }

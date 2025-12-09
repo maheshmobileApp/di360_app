@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 
 class CommentScreen extends StatefulWidget {
   final Newsfeeds? newsfeeds;
-  const CommentScreen({super.key, this.newsfeeds});
+  const CommentScreen({super.key,  required this.newsfeeds});
 
   @override
   State<CommentScreen> createState() => _CommentScreenState();

@@ -10,8 +10,8 @@ class HttpService {
   static BaseOptions _options = new BaseOptions(
     baseUrl: dioUrl,
     responseType: ResponseType.json,
-    connectTimeout: Duration(milliseconds: 4000),
-    receiveTimeout: Duration(milliseconds: 6000),
+    connectTimeout: Duration(seconds: 20),
+    receiveTimeout: Duration(seconds: 30),
   );
   Dio _dio = new Dio(_options);
   setToken(token) {
@@ -35,7 +35,7 @@ class HttpService {
   Future<dynamic> uploadImage(filePath) async {
     MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
     var _data = {"file": _uploadImage, "directory": 'project'};
-    return await post('api/v1/file-upload/upload-s3', FormData.fromMap(_data));
+    return await post('/api/v1/file-upload/upload-s3', FormData.fromMap(_data));
   }
 
   Future post(url, _data, {showLoading = true}) async {
@@ -66,23 +66,31 @@ class HttpService {
     } catch (e, s) {
       print("$e , $s");
       showHasuraError(e);
+      return {};
     }
-    return response;
+    return response ?? {};
   }
 
   showHasuraError(e) {
-    if (e.message.toString().contains("http")) {
+    String errorMessage = "";
+    if (e is DioException) {
+      errorMessage = e.message ?? "Network error";
+    } else {
+      errorMessage = e.toString();
+    }
+    
+    if (errorMessage.contains("http")) {
       // _utils.showErrorSnackBar(
       //     msg:
       //         "We regret the inconvience, something is wrong at our end. please try again after sometime.",
       //     title: "Server Error");
-    } else if (e.message.toString().contains("SocketException")) {
+    } else if (errorMessage.contains("SocketException")) {
       // _utils.showErrorSnackBar(
       //     msg:
       //         'Seems to be slow internet connection, Please connect to a different source for better experience',
       //     title: "Slow Internet");
     } else {
-      //  _utils.showToast(e.message ?? "Server error");
+      //  _utils.showToast(errorMessage);
     }
   }
 

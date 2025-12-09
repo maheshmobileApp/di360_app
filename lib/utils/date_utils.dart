@@ -54,4 +54,13 @@ class DateFormatUtils {
   return DateFormat('hh:mm a').format(dt);
 }
 
+static String formatDateTime(String dateTimeString) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('dd-MM-yyyy hh:mm a').format(localDateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
 }
