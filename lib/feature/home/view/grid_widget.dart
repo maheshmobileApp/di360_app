@@ -24,8 +24,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       physics: NeverScrollableScrollPhysics(),
       itemCount: ConstantData.homeGridImgs.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        mainAxisSpacing: 20,
-          crossAxisCount: 3, childAspectRatio: 4.4 / 3),
+          mainAxisSpacing: 20, crossAxisCount: 3, childAspectRatio: 4.4 / 3),
       itemBuilder: (context, index) {
         final img = ConstantData.homeGridImgs[index];
         final title = ConstantData.homeGridTitles[index];
@@ -55,6 +54,8 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       dashBoardVM.setIndex(3, navigatorKey.currentContext!);
     } else if (title == 'Directory') {
       await navigationService.navigateTo(RouteList.directory);
+    } else if (title == 'Support') {
+      await navigationService.navigateTo(RouteList.supportView);
     } else if (title == 'Learning Hub') {
       Loaders.circularShowLoader(context);
       context.read<CourseListingViewModel>().searchBarOpen = false;

@@ -19,16 +19,19 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
+import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/account_memu_items_enum.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+
 
 class AccountScreen extends StatelessWidget with BaseContextHelpers {
   const AccountScreen({super.key});
@@ -149,10 +152,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           final userId = await LocalStorage.getStringVal(
                               LocalStorageConst.userId);
 
-                          if (item.title == 'Catalogues') {
+                          if (item.title == AccountMenuItem.catalogues.title) {
                             await navigationService
                                 .navigateTo(RouteList.myCatalogueScreen);
-                          } else if (item.title == 'View Profile') {
+                          } else if (item.title == AccountMenuItem.viewProfile.title) {
                             Loaders.circularShowLoader(context);
                             final type = await LocalStorage.getStringVal(
                                 LocalStorageConst.type);
@@ -168,7 +171,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                     RouteList.professionalViewProfileScreen)
                                 : await navigationService
                                     .navigateTo(RouteList.viewProfileScreen);
-                          } else if (item.title == 'Job Listings') {
+                          } else if (item.title == AccountMenuItem.jobListings.title) {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<JobListingsViewModel>()
@@ -176,7 +179,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);
-                          } else if (item.title == 'JobProfile') {
+                          } else if (item.title == AccountMenuItem.jobProfile.title) {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<JobProfileListingViewModel>()
@@ -184,13 +187,13 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobProfileScreen);
-                          } else if (item.title == 'Applied Jobs') {
+                          } else if (item.title == AccountMenuItem.appliedJobs.title) {
                             Navigator.pushNamed(
                               context,
                               RouteList.AppliedJobScreen,
                               arguments: userId,
                             );
-                          } else if (item.title == 'Enquiries') {
+                          } else if (item.title == AccountMenuItem.enquiries.title) {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<EnquiriesViewModel>()
@@ -202,7 +205,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               RouteList.EnquiriesScreen,
                               arguments: userId,
                             );
-                          } else if (item.title == 'Talent Listing') {
+                          } else if (item.title == AccountMenuItem.talentListing.title) {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<TalentListingViewModel>()
@@ -211,12 +214,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
 
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
-                          } else if (item.title == 'My Directory') {
+                          } else if (item.title == AccountMenuItem.myDirectory.title) {
                             await context
                                 .read<AddDirectoryViewModel>()
                                 .fetchTheDirectorData(
                                     navigatorKey.currentContext!);
-                          } else if (item.title == 'Learning Hub') {
+                          } else if (item.title == AccountMenuItem.learningHub.title) {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<CourseListingViewModel>()
@@ -231,7 +234,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .text = "";
                             navigationService
                                 .navigateTo(RouteList.learningHubScreen);
-                          } else if (item.title == 'My Learning Hub') {
+                          } else if (item.title == AccountMenuItem.myLearningHub.title) {
                             Loaders.circularShowLoader(context);
                             await context
                                 .read<MyLearningHubViewModel>()
@@ -259,12 +262,19 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .fetchCourseType();
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
-                          } else if (item.title == "Banners") {
+                          } else if (item.title == AccountMenuItem.banners.title) {
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
-                          } else if (item.title == "Appointments") {
+                          } else if (item.title == AccountMenuItem.appointments.title) {
                             navigationService
                                 .navigateTo(RouteList.myAppointment);
+                          } else if (item.title == AccountMenuItem.supportRequest.title) {
+                            
+                            context
+                                .read<SupportViewModel>()
+                                .getSupportRequests(context);
+                            navigationService
+                                .navigateTo(RouteList.supportView);
                           }
                         },
                       ),

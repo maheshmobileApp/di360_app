@@ -52,6 +52,8 @@ import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
+import 'package:di360_flutter/feature/support/view/support_view.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_message_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
@@ -187,7 +189,9 @@ class Routes {
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
       RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
       RouteList.viewProfileScreen: (context) => ViewProfileView(),
-      RouteList.professionalViewProfileScreen: (context) => ProfessionalViewProfileScreen()
+      RouteList.professionalViewProfileScreen: (context) => ProfessionalViewProfileScreen(),
+      RouteList.supportView: (context) => SupportView(),
+      RouteList.supportChatScreen: (context) => SupportMessengerView(),
     };
   }
 }
