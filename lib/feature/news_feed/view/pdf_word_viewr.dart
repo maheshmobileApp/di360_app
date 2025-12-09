@@ -164,28 +164,31 @@ class _PdfViewrWidgetState extends State<PdfViewrWidget> {
 Widget webSiteText(String url) {
   final validUrl = url.startsWith('http') ? url : 'https://$url';
 
-  return GestureDetector(
-    onTap: () async {
-      final uri = Uri.parse(validUrl);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        print("Could not launch $validUrl");
-      }
-    },
-    child: RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: 'Website Url : ',
-            style: TextStyles.medium2(color: AppColors.black),
+  return RichText(
+    text: TextSpan(
+      children: [
+        TextSpan(
+          text: 'Website Url : ',
+          style: TextStyles.medium2(color: AppColors.black),
+        ),
+        WidgetSpan(
+          child: InkWell(
+            onTap: () async {
+              final uri = Uri.parse(validUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                // Handle gracefully if can't launch
+                print("Could not launch $validUrl");
+              }
+            },
+            child: Text(
+              validUrl,
+              style: TextStyles.semiBold(color: Colors.blue, fontSize: 16),
+            ),
           ),
-          TextSpan(
-            text: validUrl,
-            style: TextStyles.semiBold(color: AppColors.primaryColor, fontSize: 16),
-          ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

@@ -10,21 +10,12 @@ import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
-import 'package:di360_flutter/feature/community/view/community_market_view.dart';
-import 'package:di360_flutter/feature/community/view/create_category_view.dart';
-import 'package:di360_flutter/feature/community/view/join_request_view.dart';
-import 'package:di360_flutter/feature/community/view/membership_registration_view.dart';
-import 'package:di360_flutter/feature/community/view/news_feed_categories_view.dart';
-import 'package:di360_flutter/feature/community/view/partnership_registration_view.dart';
-import 'package:di360_flutter/feature/community/view/partnership_request_view.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_details_screen.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_quicklincks.dart';
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
 import 'package:di360_flutter/feature/directors/view/directories_filter_screen.dart';
-import 'package:di360_flutter/feature/directors/view/join_community_view.dart';
-import 'package:di360_flutter/feature/directors/view/partnership_community_request_view.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_screen.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
@@ -53,9 +44,6 @@ import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
-import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
-import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
-import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
@@ -64,8 +52,6 @@ import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
-import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
-import 'package:di360_flutter/feature/support/view/support_view.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_message_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
@@ -136,7 +122,7 @@ class Routes {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return TalentListingMessageScreen(
-          jobId: args['jobId'],
+           jobId: args['jobId'],
           applicantId: args['applicantId'],
           userId: args['userId'],
           profilePic: args['profilePic'] ?? "",
@@ -201,23 +187,7 @@ class Routes {
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
       RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
       RouteList.viewProfileScreen: (context) => ViewProfileView(),
-      RouteList.professionalViewProfileScreen: (context) =>
-          ProfessionalViewProfileScreen(),
-      RouteList.supportScreen: (context) => SupportView(),
-      RouteList.supportChatScreen: (context) => SupportMessengerView(),
-      RouteList.joinRequestView: (context) => JoinRequestView(),
-      RouteList.partnershipRequestView: (context) => PartnershipRequestView(),
-      RouteList.membershipRegistrationView: (context) => MembershipRegistrationView(),
-      RouteList.partnershipRegistrationView: (context) => PartnershipRegistrationView(),
-      RouteList.newsFeedCategoriesView: (context) => NewsFeedCategoriesView(),
-      RouteList.createCategoryView: (context) => CreateCategoryView(),
-      RouteList.newsFeedScreen: (context) => NewsFeedScreen(),
-      RouteList.newsFeedCommunityView: (context) => NewsFeedCommunityView(),
-      RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView(),
-      RouteList.communitMarketView: (context) => CommunityMarketView(),
-      RouteList.joinCommunityView: (context) => JoinCommunityView(),
-      RouteList.partnershipCommunityRequestView: (context) => PartnershipCommunityRequestView()
-      
+      RouteList.professionalViewProfileScreen: (context) => ProfessionalViewProfileScreen()
     };
   }
 }

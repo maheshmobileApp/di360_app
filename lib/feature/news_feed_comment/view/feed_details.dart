@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 
 class FeedDetails extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
-  const FeedDetails({super.key, required this.newsfeeds});
+  const FeedDetails({super.key, this.newsfeeds});
 
   @override
   Widget build(BuildContext context) {

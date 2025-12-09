@@ -13,7 +13,7 @@ class ImageViewerScreen extends StatefulWidget {
   final int? initialIndex;
 
   const ImageViewerScreen({
-    required this.postImage,
+    this.postImage,
     this.initialIndex = 0,
   });
 

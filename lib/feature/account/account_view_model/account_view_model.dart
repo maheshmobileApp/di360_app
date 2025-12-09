@@ -5,6 +5,8 @@ import 'package:di360_flutter/feature/account/repository/account_repository.dart
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/foundation.dart';
 
+
+
 class ProfileViewModel extends ChangeNotifier {
   final ProfileRepository _repository;
 
@@ -12,26 +14,12 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileSection? _profileSection;
   List<ProfileCategory> _visibleSections = [];
-  bool communityStatus = false;
-
-  void updateCommunityStatus(bool status) {
-    print("updatedStatus**********************$status");
-    communityStatus = status;
-    notifyListeners();
-  }
-
-  String communityName = "";
-
-  void updateCommunityName(String? name) {
-    communityName = name ?? "";
-    notifyListeners();
-  }
 
   String? _error;
   ProfileSection? get profileSection => _profileSection;
   List<ProfileCategory> get visibleSections => _visibleSections;
   String? get error => _error;
-  Future<void> fetchProfileSections(bool communityStatus) async {
+  Future<void> fetchProfileSections() async {
     _error = null;
     try {
       _profileSection = await _repository.getProfileSections();
@@ -44,10 +32,6 @@ class ProfileViewModel extends ChangeNotifier {
 
   Future<void> _filterSectionsByRole() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final communityStatusString =
-        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
-    final bool communityStatus = communityStatusString == "true";
-
     final userRole = UserRole.fromString(type);
 
     switch (userRole) {
@@ -59,7 +43,6 @@ class ProfileViewModel extends ChangeNotifier {
         break;
       case UserRole.supplier:
         _visibleSections = _profileSection?.roles["SUPPLIER"]?.data ?? [];
-        _updateSupplierOptions(communityStatus);
         break;
       case UserRole.admin:
         _visibleSections = _profileSection?.roles["ADMIN"]?.data ?? [];
@@ -67,43 +50,5 @@ class ProfileViewModel extends ChangeNotifier {
       default:
         _visibleSections = [];
     }
-  }
-
-  void _updateSupplierOptions(bool communityStatus) async {
-    final communityName =
-        await LocalStorage.getStringVal(LocalStorageConst.communityName);
-    print(
-        "*********************************************************************************************");
-    print("communityStatus : $communityStatus");
-    (communityStatus)
-        ? _visibleSections = _visibleSections.map((section) {
-            if (section.title == "Community") {
-              return ProfileCategory(
-                title: "${communityName}Community", // new title
-                subTitle: section.subTitle,
-              );
-            }
-
-            if (section.title == "News Feed") {
-              return ProfileCategory(
-                title: section.title,
-                subTitle: section.subTitle.map((subItem) {
-                  if (subItem.title.toLowerCase().contains("community")) {
-                    return SubTitle(
-                      title: "${communityName}Community",
-                      asset: subItem.asset,
-                    );
-                  }
-                  return subItem;
-                }).toList(),
-              );
-            }
-            return section;
-          }).toList()
-        :
-        // ❌ Remove when FALSE
-        _visibleSections.removeWhere((section) => section.title == "Community");
-
-    notifyListeners();
   }
 }

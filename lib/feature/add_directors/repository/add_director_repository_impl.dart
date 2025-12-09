@@ -4,7 +4,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_appts_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
-import 'package:di360_flutter/feature/add_directors/model/get_partners_res.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_basic_info_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_certificate_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/add_services_query.dart';
@@ -12,7 +11,6 @@ import 'package:di360_flutter/feature/add_directors/querys/add_team_member_query
 import 'package:di360_flutter/feature/add_directors/querys/appoinment_timings_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/get_business_type_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/get_director_info_query.dart';
-import 'package:di360_flutter/feature/add_directors/querys/partners_querys.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository.dart';
 import 'package:di360_flutter/feature/professional_add_director/querys/get_profess_director_query.dart';
 
@@ -234,31 +232,5 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
     final res = await http.query(getApptsQuery, variables: {"id": id});
     final response = AppointmentsData.fromJson(res);
     return response.directoryAppointmentSlots;
-  }
-
-  @override
-  Future<List<DirectoriesPartnersMembers>?> getPartners(String id) async {
-    final res =
-        await http.query(getPartnersQuery, variables: {"directory_id": id});
-    final response = PartnersData.fromJson(res);
-    return response.directoriesPartnersMembers;
-  }
-
-  @override
-  Future addPartners(dynamic variables) async {
-    final res = await http.mutation(addPartnersQuery, variables);
-    return res;
-  }
-  
-  @override
-  Future deletePartner(variables) async{
-    final res = await http.mutation(deletePartnersQuery, variables);
-    return res;
-  }
-  
-  @override
-  Future updatePartners(variables) async{
-    final res = await http.mutation(updatePartnersQuery, variables);
-    return res;
   }
 }

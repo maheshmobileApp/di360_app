@@ -144,6 +144,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
+
     notifyListeners();
   }
 

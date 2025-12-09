@@ -46,17 +46,16 @@ class AllNewsFeedData {
     return data;
   }
 }
+
 class Newsfeeds {
   String? id;
   String? createdAt;
-  String? updatedAt;
   List<PostImage>? postImage;
-  String? communityId;
   String? description;
   String? categoryType;
   dynamic attachments;
   String? feedType;
-  dynamic payload;
+  Payload? payload;
   String? userRole;
   String? videoUrl;
   String? webUrl;
@@ -69,23 +68,18 @@ class Newsfeeds {
   String? dentalAdminId;
   DentalSupplier? dentalSupplier;
   DentalProfessional? dentalProfessional;
-  dynamic dentalPractice;
-  dynamic adminUser;
-  List<dynamic>? courses;
-  List<dynamic>? jobs;
+  DentalPractice? dentalPractice;
+  AdminUser? adminUser;
   List<NewsfeedsLikes>? newsfeedsLikes;
-  List<MyLike>? myLike;
   NewsfeedsLikesAggregate? newsfeedsLikesAggregate;
   List<NewsFeedsComments>? newsFeedsComments;
-  NewsfeedsLikesAggregate? newsFeedsCommentsAggregate;
+  NewsfeedsCommentAggregate? newsFeedsCommentsAggregate;
   String? sTypename;
 
   Newsfeeds(
       {this.id,
       this.createdAt,
-      this.updatedAt,
       this.postImage,
-      this.communityId,
       this.description,
       this.categoryType,
       this.attachments,
@@ -105,10 +99,7 @@ class Newsfeeds {
       this.dentalProfessional,
       this.dentalPractice,
       this.adminUser,
-      this.courses,
-      this.jobs,
       this.newsfeedsLikes,
-      this.myLike,
       this.newsfeedsLikesAggregate,
       this.newsFeedsComments,
       this.newsFeedsCommentsAggregate,
@@ -117,19 +108,21 @@ class Newsfeeds {
   Newsfeeds.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
     if (json['post_image'] != null) {
-      postImage = <PostImage>[];
-      json['post_image'].forEach((v) {
-        postImage!.add(new PostImage.fromJson(v));
-      });
+      if (json['post_image'] is List) {
+        postImage = (json['post_image'] as List)
+            .map((item) => PostImage.fromJson(item))
+            .toList();
+      } else if (json['post_image'] is Map) {
+        postImage = [PostImage.fromJson(json['post_image'])];
+      }
     }
-    communityId = json['community_id'];
     description = json['description'];
     categoryType = json['category_type'];
     attachments = json['attachments'];
     feedType = json['feed_type'];
-    payload = json['payload'];
+    payload =
+        json['payload'] != null ? new Payload.fromJson(json['payload']) : null;
     userRole = json['user_role'];
     videoUrl = json['video_url'];
     webUrl = json['web_url'];
@@ -146,20 +139,16 @@ class Newsfeeds {
     dentalProfessional = json['dental_professional'] != null
         ? new DentalProfessional.fromJson(json['dental_professional'])
         : null;
-    dentalPractice = json['dental_practice'];
-    adminUser = json['admin_user'];
-    courses = json['courses']?.cast<dynamic>();
-    jobs = json['jobs']?.cast<dynamic>();
+    dentalPractice = json['dental_practice'] != null
+        ? new DentalPractice.fromJson(json['dental_practice'])
+        : null;
+    adminUser = json['admin_user'] != null
+        ? new AdminUser.fromJson(json['admin_user'])
+        : null;
     if (json['newsfeeds_likes'] != null) {
       newsfeedsLikes = <NewsfeedsLikes>[];
       json['newsfeeds_likes'].forEach((v) {
         newsfeedsLikes!.add(new NewsfeedsLikes.fromJson(v));
-      });
-    }
-    if (json['my_like'] != null) {
-      myLike = <MyLike>[];
-      json['my_like'].forEach((v) {
-        myLike!.add(new MyLike.fromJson(v));
       });
     }
     newsfeedsLikesAggregate = json['newsfeeds_likes_aggregate'] != null
@@ -173,7 +162,7 @@ class Newsfeeds {
       });
     }
     newsFeedsCommentsAggregate = json['news_feeds_comments_aggregate'] != null
-        ? new NewsfeedsLikesAggregate.fromJson(
+        ? new NewsfeedsCommentAggregate.fromJson(
             json['news_feeds_comments_aggregate'])
         : null;
     sTypename = json['__typename'];
@@ -183,16 +172,16 @@ class Newsfeeds {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
     if (this.postImage != null) {
       data['post_image'] = this.postImage!.map((v) => v.toJson()).toList();
     }
-    data['community_id'] = this.communityId;
     data['description'] = this.description;
     data['category_type'] = this.categoryType;
     data['attachments'] = this.attachments;
     data['feed_type'] = this.feedType;
-    data['payload'] = this.payload;
+    if (this.payload != null) {
+      data['payload'] = this.payload!.toJson();
+    }
     data['user_role'] = this.userRole;
     data['video_url'] = this.videoUrl;
     data['web_url'] = this.webUrl;
@@ -209,16 +198,15 @@ class Newsfeeds {
     if (this.dentalProfessional != null) {
       data['dental_professional'] = this.dentalProfessional!.toJson();
     }
-    data['dental_practice'] = this.dentalPractice;
-    data['admin_user'] = this.adminUser;
-    data['courses'] = this.courses;
-    data['jobs'] = this.jobs;
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
+    if (this.adminUser != null) {
+      data['admin_user'] = this.adminUser!.toJson();
+    }
     if (this.newsfeedsLikes != null) {
       data['newsfeeds_likes'] =
           this.newsfeedsLikes!.map((v) => v.toJson()).toList();
-    }
-    if (this.myLike != null) {
-      data['my_like'] = this.myLike!.map((v) => v.toJson()).toList();
     }
     if (this.newsfeedsLikesAggregate != null) {
       data['newsfeeds_likes_aggregate'] =
@@ -236,15 +224,7 @@ class Newsfeeds {
     return data;
   }
 }
-class MyLike {
-  String? id;
 
-  MyLike.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-  }
-
-  Map<String, dynamic> toJson() => {'id': id};
-}
 class PostImage {
   String? id;
   String? url;

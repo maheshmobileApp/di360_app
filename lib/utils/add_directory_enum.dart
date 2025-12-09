@@ -5,12 +5,11 @@ enum AddDirectoryStep {
   Achievements(3),
   Documents(4),
   OurTeam(5),
-  Partners(6),
-  Gallery(7),
-  Appointments(8),
-  Faqs(9),
-  Testimonials(10),
-  OtherInformation(11);
+  Gallery(6),
+  Appointments(7),
+  Faqs(8),
+  Testimonials(9),
+  OtherInformation(10);
   final int value;
   const AddDirectoryStep(this.value);
 }

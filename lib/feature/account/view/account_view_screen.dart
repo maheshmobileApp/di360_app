@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/account/account_model/account_model.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
-import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
@@ -20,7 +19,6 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
-import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -39,10 +37,9 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final homeViewModel = Provider.of<HomeViewModel>(context);
-    final profileVM = Provider.of<ProfileViewModel>(context);
     return ChangeNotifierProvider(
-      create: (_) => ProfileViewModel(ProfileRepositoryImpl())
-        ..fetchProfileSections(profileVM.communityStatus),
+      create: (_) =>
+          ProfileViewModel(ProfileRepositoryImpl())..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
         endDrawer: NotificationsPanel(),
@@ -268,47 +265,6 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == "Appointments") {
                             navigationService
                                 .navigateTo(RouteList.myAppointment);
-                          } else if (item.title == "Support Request") {
-                            navigationService
-                                .navigateTo(RouteList.supportScreen);
-                          } else if (item.title == "Join Request") {
-                            navigationService
-                                .navigateTo(RouteList.joinRequestView);
-                          } else if (item.title == "Partnership Request") {
-                            navigationService
-                                .navigateTo(RouteList.partnershipRequestView);
-                          } else if (item.title == "Membership Registration") {
-                            navigationService.navigateTo(
-                                RouteList.membershipRegistrationView);
-                          } else if (item.title == "Partnership Registration") {
-                            navigationService.navigateTo(
-                                RouteList.partnershipRegistrationView);
-                          } else if (item.title == "News Feed Categories") {
-                            navigationService
-                                .navigateTo(RouteList.newsFeedCategoriesView);
-                          } else if (item.title == "News Feed") {
-                             context
-                                .read<DashBoardViewModel>()
-                                .setIndex(1,context);
-                          }  
-                          else if (item.title.contains("Community")) {
-                            final viewModel = Provider.of<CommunityViewModel>(
-                                context,
-                                listen: false);
-                            final newsFeedVM =
-                                Provider.of<NewsFeedCommunityViewModel>(context,
-                                    listen: false);
-                            await viewModel.getNewsFeedCategories(context);
-                            newsFeedVM.newsFeedCategoriesData =
-                                viewModel.newsFeedCategoriesData;
-
-                            newsFeedVM.newsFeedCategory = viewModel
-                                    .newsFeedCategoriesData?.newsfeedCategories
-                                    ?.map((e) => e.categoryName ?? "")
-                                    .toList() ??
-                                [];
-                            navigationService
-                                .navigateTo(RouteList.newsFeedCommunityView);
                           }
                         },
                       ),

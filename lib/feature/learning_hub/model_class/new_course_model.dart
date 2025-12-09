@@ -72,7 +72,6 @@ class CourseObject {
   String? endDate;
   String? startTime;
   String? endTime;
-  String? communityUserType;
 
   CourseObject(
       {this.courseCategoryId,
@@ -127,8 +126,7 @@ class CourseObject {
       this.startDate,
       this.endDate,
       this.startTime,
-      this.endTime,
-      this.communityUserType});
+      this.endTime});
 
   CourseObject.fromJson(Map<String, dynamic> json) {
     courseCategoryId = json['course_category_id'];
@@ -215,7 +213,6 @@ class CourseObject {
     endDate = json['endDate'];
     startTime = json['startTime'];
     endTime = json['endTime'];
-    communityUserType = json['community_user_type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -294,7 +291,6 @@ class CourseObject {
     data['endDate'] = this.endDate;
     data['startTime'] = this.startTime;
     data['endTime'] = this.endTime;
-    data['community_user_type'] = this.communityUserType;
     return data;
   }
 }

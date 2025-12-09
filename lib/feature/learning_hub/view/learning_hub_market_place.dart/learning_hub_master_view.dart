@@ -41,7 +41,41 @@ class _JobListingScreenState extends State<LearningHubMasterView>
           filterWidget: GestureDetector(
             onTap: () => {
               navigationService.navigateTo(RouteList.learningHubFliterScreen)
-              
+              /*showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => FilterBottomSheet(
+                  sections: [
+                    FilterSectionModel(
+                      title: "Filter by Type",
+                      options: newCourseVM.courseTypeNames,
+                    ),
+                    FilterSectionModel(
+                      title: "Category",
+                      options: newCourseVM.courseCategory,
+                    ),
+                  ],
+                  onApply: (selectedOptions) {
+                    final type = selectedOptions["Filter by Type"];
+                    final category = selectedOptions["Category"];
+                    final date = selectedOptions["Filter by Date"];
+                    final location = selectedOptions["Filter by Location"];
+                    courseListingVM.setSelectedCourseCategory(category);
+                    courseListingVM.getMarketPlaceCoursesWithFilters(
+                        context,
+                        type ?? "",
+                        courseListingVM.selectedCategoryId ?? "",
+                        date ?? "",
+                        location ?? "");
+                  },
+                  onClear: () {
+                    courseListingVM.getMarketPlaceCoursesWithFilters(
+                        context, "", "", "", "");
+                    navigationService.goBack();
+                  },
+                ),
+              )*/
             },
             child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
           )),

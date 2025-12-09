@@ -4,8 +4,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
-import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -22,7 +20,6 @@ class LoginScreen extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<LoginViewModel>(context);
-    final profileVM = Provider.of<ProfileViewModel>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Form(
@@ -86,16 +83,9 @@ class LoginScreen extends StatelessWidget
               Spacer(),
               Center(
                 child: AppButton(
-                  onTap: () async {
+                  onTap: () {
                     if (viewModel.formKey.currentState!.validate()) {
-                      await viewModel.submit(context);
-                      final supplier = viewModel
-                          .supplerCommunityOwner?.dentalSuppliers?.first;
-                      print(
-                          "Status***************************${supplier?.communityStatus}");
-                      (supplier?.communityStatus == "YES")
-                          ? profileVM.updateCommunityStatus(true)
-                          : profileVM.updateCommunityStatus(false);
+                      viewModel.submit(context);
                     }
                   },
                   text: "Login",
@@ -112,7 +102,7 @@ class LoginScreen extends StatelessWidget
   }
 }
 
-richText({Color? color1, Color? color2}) {
+richText({Color? color1,Color? color2}) {
   return RichText(
       text: TextSpan(
           text: 'Don’t have an account? ',

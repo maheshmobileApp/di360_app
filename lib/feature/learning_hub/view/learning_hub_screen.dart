@@ -340,7 +340,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
     // Reset image/file selections
     newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
-    newCourseVM.selectedCommunityType = course.communityUserType??"Both";
 
     newCourseVM.serverCourseHeaderBanner =
         course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty
@@ -416,7 +415,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.termsAndConditionsController.text = course.terms ?? "";
     newCourseVM.cancellationController.text = course.refundPolicy ?? "";
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    newCourseVM.selectedCommunityType = course.earlyBirdEndDate ?? "";
 
     // Dates (safe parse)
 

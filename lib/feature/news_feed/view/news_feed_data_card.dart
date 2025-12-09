@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 
 class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
-  const NewsFeedDataCard({super.key, required this.newsfeeds});
+  const NewsFeedDataCard({super.key, this.newsfeeds});
 
   @override
   Widget build(BuildContext context) {

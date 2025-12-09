@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_certificat
 import 'package:di360_flutter/feature/add_directors/view/add_director_document.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_fqs.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_gallery.dart';
-import 'package:di360_flutter/feature/add_directors/view/get_director_partners.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_services.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_team_member.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_testmonal.dart';
@@ -29,7 +28,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
-      appBar: AppbarTitleBackIconWidget(title: 'Add New Directory'),
+      appBar: AppbarTitleBackIconWidget(title: 'Add New Directory'), 
       body: Column(
         children: [
           _buildStepProgressBar(addDirectorVM.currentStep,
@@ -79,8 +78,6 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         return AddDirectorDocument();
       case AddDirectoryStep.OurTeam:
         return AddDirectorTeamMember();
-      case AddDirectoryStep.Partners:
-        return GetDirectorPartners();
       case AddDirectoryStep.Gallery:
         return AddDirectorGallery();
       case AddDirectoryStep.Appointments:
@@ -131,14 +128,15 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
           if (!isFirstStep) const SizedBox(width: 16),
           Expanded(
             child: CustomRoundedButton(
-                fontSize: 12,
-                text: 'Skip',
-                height: 42,
-                onPressed: () {
-                  addDirectorVM.goToNextStep();
-                },
-                backgroundColor: AppColors.timeBgColor,
-                textColor: AppColors.primaryColor),
+              fontSize: 12,
+              text: 'Skip',
+              height: 42,
+              onPressed: () {
+                addDirectorVM.goToNextStep();
+              },
+              backgroundColor: AppColors.timeBgColor,
+              textColor: AppColors.primaryColor
+            ),
           ),
           addHorizontal(16),
           Expanded(
