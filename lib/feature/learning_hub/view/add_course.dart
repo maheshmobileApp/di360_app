@@ -257,6 +257,7 @@ class AddCourse extends StatelessWidget
                 onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
               ),
               SizedBox(height: 8),
+              
               ImagePickerField(
                 title: "Gallery",
                 isRequired: true,
