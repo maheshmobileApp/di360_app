@@ -164,7 +164,8 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                                 dateTime: ticket.createdAt ?? "",
                                 reason: ticket.reason ?? "",
                                 onTap: () async {
-                                  await supportVM.getSupportMessages(ticket.id ?? "");
+                                  await supportVM
+                                      .getSupportMessages(ticket.id ?? "");
                                   navigationService.push(SupportMessengerView(
                                       supportRequest: ticket));
                                 },
@@ -177,6 +178,7 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
             ),
             floatingActionButton: GestureDetector(
                 onTap: () {
+                  supportVM.getSupportRequestsReasons();
                   supportVM.clearData();
                   showModalBottomSheet(
                     backgroundColor: AppColors.whiteColor,
@@ -240,7 +242,7 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
 
   Widget _buildRequestReasons(SupportViewModel supportVM) {
     return CustomDropDown(
-      //isRequired: true,
+      isRequired: true,
       value: supportVM.selectedReason,
       title: "Reason Type",
       onChanged: (v) {
@@ -254,9 +256,9 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
         );
       }).toList(),
       hintText: "Select Reason",
-      /*validator: (value) => value == null || value.toString().isEmpty
+      validator: (value) => value == null || value.toString().isEmpty
           ? 'Please select reason'
-          : null,*/
+          : null,
     );
   }
 }
