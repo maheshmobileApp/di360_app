@@ -36,6 +36,11 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateMessage(String? value) {
+    if (value == null || value.isEmpty) return "Please enter message";
+    return null;
+  }
+
   String? validateName(String? value) {
     if (value == null || value.isEmpty) return "Please enter your name";
     return null;

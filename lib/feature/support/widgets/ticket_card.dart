@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 
 class TicketCard extends StatelessWidget {
@@ -75,7 +76,7 @@ class TicketCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Text(
-                    dateTime,
+                    DateFormatUtils.formatDateTime(dateTime),
                     style: TextStyle(
                       fontSize: 10,
                       color: Colors.deepOrange,

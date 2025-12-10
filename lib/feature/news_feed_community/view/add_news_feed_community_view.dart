@@ -10,7 +10,6 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
-import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -58,17 +57,6 @@ class AddNewsFeedCommunityView extends StatelessWidget
                 addVertical(16),
                 _buildCategoryTypes(viewModel),
                 addVertical(16),
-                /*ImagePickerField(
-                  title: "Upload Photos",
-                  serverImages: viewModel.serverNewsFeedGallery,
-                  allowMultiple: true,
-                  onServerFilesRemoved: (updatedList) {
-                    viewModel.setServerNewsFeedGallery(updatedList);
-                  },
-                  showPreview: true,
-                  selectedFiles: viewModel.selectedNewsFeedGallery,
-                  onFilesPicked: (file) => viewModel.setNewsFeedGallery(file),
-                ),*/
                 UploadFileWidget(),
                 addVertical(16),
                 InputTextField(
