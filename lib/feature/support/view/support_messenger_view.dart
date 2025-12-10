@@ -3,9 +3,11 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/support/model/chat_message_model.dart';
+import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
 import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/support/widgets/attachment_picker.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,7 +23,6 @@ class SupportMessengerView extends StatefulWidget {
 }
 
 class _TicketChatScreenState extends State<SupportMessengerView> {
-  
   final ScrollController _scrollController = ScrollController();
 
   String _formatTime(DateTime dt) => DateFormat('hh:mm a').format(dt);
@@ -72,9 +73,13 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text((type == "SUPPLIER")?
-                        widget.supportRequest?.dentalSupplier?.businessName ??
-                            "": widget.supportRequest?.dentalProfessional?.name ?? "",
+                      Text(
+                        (type == "SUPPLIER")
+                            ? widget.supportRequest?.dentalSupplier
+                                    ?.businessName ??
+                                ""
+                            : widget.supportRequest?.dentalProfessional?.name ??
+                                "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -97,23 +102,22 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
             body: SafeArea(
               child: Column(
                 children: [
-                  Text(
-                    _formatDate(DateTime.now()),
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
                   Expanded(
                     child: ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
-                      itemCount: supportVM.messages.length,
+                      itemCount: supportVM.supportMessagesData
+                          ?.supportRequestsConversations?.length,
                       itemBuilder: (context, index) {
-                        final msg = supportVM.messages[index];
-                        if (msg.type == ChatMessageType.text) {
+                        final msg = supportVM.supportMessagesData
+                            ?.supportRequestsConversations?[index];
+                        return _buildTextBubble(msg);
+                        /*if (msg.type == ChatMessageType.text) {
                           return _buildTextBubble(msg);
                         } else {
                           return _buildFileBubble(msg);
-                        }
+                        }*/
                       },
                     ),
                   ),
@@ -178,12 +182,14 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
         });
   }
 
-  Widget _buildTextBubble(ChatMessage msg) {
+  Widget _buildTextBubble(SupportRequestsConversations? msg) {
+    final isMine = msg?.senderType != "ADMIN";
+
     final alignment =
-        msg.isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+      isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final bubbleColor =
-        msg.isMine ? const Color(0xFFFFF1E6) : Colors.grey.shade200;
-    final radius = msg.isMine
+        isMine ? const Color(0xFFFFF1E6) : Colors.grey.shade200;
+    final radius = isMine
         ? const BorderRadius.only(
             topLeft: Radius.circular(14),
             topRight: Radius.circular(14),
@@ -200,12 +206,12 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment:
-            msg.isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+            isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!msg.isMine) const SizedBox(width: 4),
-          if (!msg.isMine)
+          if (!isMine) const SizedBox(width: 4),
+          if (!isMine)
             CircleAvatar(radius: 20, backgroundColor: Colors.grey.shade300),
-          if (!msg.isMine) const SizedBox(width: 8),
+          if (!isMine) const SizedBox(width: 8),
           Flexible(
             child: Column(
               crossAxisAlignment: alignment,
@@ -221,7 +227,7 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                     crossAxisAlignment: alignment,
                     children: [
                       Text(
-                        msg.text ?? '',
+                        msg?.message ?? '',
                         style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 8),
@@ -229,13 +235,10 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(_formatTime(msg.timestamp),
+                          Text(DateFormatUtils.formatToTime(msg?.createdAt??""),
                               style: TextStyle(
                                   fontSize: 11, color: Colors.grey[600])),
-                          const SizedBox(width: 6),
-                          if (msg.isMine)
-                            const Icon(Icons.done_all,
-                                size: 16, color: Colors.orange),
+                          
                         ],
                       ),
                     ],

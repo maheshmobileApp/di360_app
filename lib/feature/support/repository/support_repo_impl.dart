@@ -1,6 +1,8 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
 import 'package:di360_flutter/feature/support/model/get_support_request_reasons_res.dart';
 import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
+import 'package:di360_flutter/feature/support/query/get_support_messages_res.dart';
 import 'package:di360_flutter/feature/support/query/get_support_request_query.dart';
 import 'package:di360_flutter/feature/support/query/get_support_request_reasons_query.dart';
 import 'package:di360_flutter/feature/support/query/insert_message_query.dart';
@@ -33,6 +35,13 @@ class SupportRepoImpl extends SupportRepository {
   Future insertMessage(variables) async {
     final res = await http.mutation(insertMessageQuery,variables);
     return res;
+  }
+
+  @override
+  Future<SupportMessagesData> getSupportMessages(variables)  async {
+    final res = await http.query(getSupportMessagesQuery, variables: variables);
+    final data = SupportMessagesData.fromJson(res ?? {});
+    return data;
   }
 
 }

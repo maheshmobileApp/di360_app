@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/support/model/chat_message_model.dart';
+import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
 import 'package:di360_flutter/feature/support/model/get_support_request_reasons_res.dart';
 import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/feature/support/repository/support_repo_impl.dart';
@@ -56,6 +57,7 @@ class SupportViewModel extends ChangeNotifier {
 
   SupportRequestsData? supportRequestsData;
   GetSupportRequestReasonData? supportRequestReasonsData;
+  SupportMessagesData? supportMessagesData;
 
   Future<void> getSupportRequests(BuildContext context) async {
     Loaders.circularShowLoader(context);
@@ -101,6 +103,16 @@ class SupportViewModel extends ChangeNotifier {
 
     if (res.supportRequestReasons != null) {
       supportRequestReasonsData = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> getSupportMessages(String requestId) async {
+    final variables = {"supportRequestId": requestId};
+    final res = await repo.getSupportMessages(variables);
+
+    if (res.supportRequestsConversations != null) {
+      supportMessagesData = res;
     }
     notifyListeners();
   }

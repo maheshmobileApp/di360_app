@@ -163,7 +163,8 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                                     ticket.supportRequestNumber.toString(),
                                 dateTime: ticket.createdAt ?? "",
                                 reason: ticket.reason ?? "",
-                                onTap: () {
+                                onTap: () async {
+                                  await supportVM.getSupportMessages(ticket.id ?? "");
                                   navigationService.push(SupportMessengerView(
                                       supportRequest: ticket));
                                 },
