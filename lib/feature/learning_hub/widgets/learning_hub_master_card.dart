@@ -16,6 +16,7 @@ class ListingHubMasterCard extends StatelessWidget {
   final String profilePic;
   final String presenterName;
   final VoidCallback registerTap;
+  final VoidCallback onShareTap;
   final dynamic remainingOfSeats;
 
   const ListingHubMasterCard(
@@ -31,6 +32,7 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.profilePic,
       required this.presenterName,
       required this.registerTap,
+      required this.onShareTap,
       required this.remainingOfSeats});
 
   @override
@@ -132,38 +134,41 @@ class ListingHubMasterCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Placeholder for Logo
-                      CircleAvatar(
-                        backgroundColor: AppColors.geryColor,
-                        backgroundImage: profilePic.isNotEmpty
-                            ? NetworkImage(profilePic)
-                            : null,
-                        radius: 15,
-                        child: profilePic.isEmpty
-                            ? const Icon(Icons.business,
-                                size: 20, color: AppColors.lightGeryColor)
-                            : null,
-                      ),
-                      const SizedBox(width: 12),
-                      // Company Info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              presenterName.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Placeholder for Logo
+                          CircleAvatar(
+                            backgroundColor: AppColors.geryColor,
+                            backgroundImage: profilePic.isNotEmpty
+                                ? NetworkImage(profilePic)
+                                : null,
+                            radius: 15,
+                            child: profilePic.isEmpty
+                                ? const Icon(Icons.business,
+                                    size: 20, color: AppColors.lightGeryColor)
+                                : null,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(presenterName.toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
-                            const SizedBox(height: 4),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 4),
+                        ],
                       ),
+                      GestureDetector(
+                          onTap: onShareTap,
+                          child: _circleIcon(
+                            child: Icon(Icons.share,
+                                size: 20, color: Colors.black),
+                          ),
+                        ),
                     ],
                   ),
                   const Divider(),
@@ -263,6 +268,16 @@ class ListingHubMasterCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+  Widget _circleIcon({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        shape: BoxShape.circle,
+      ),
+      child: child,
     );
   }
 }

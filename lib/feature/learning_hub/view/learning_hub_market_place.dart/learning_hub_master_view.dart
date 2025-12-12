@@ -14,6 +14,7 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class LearningHubMasterView extends StatefulWidget {
   const LearningHubMasterView({super.key});
@@ -41,7 +42,6 @@ class _JobListingScreenState extends State<LearningHubMasterView>
           filterWidget: GestureDetector(
             onTap: () => {
               navigationService.navigateTo(RouteList.learningHubFliterScreen)
-              
             },
             child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
           )),
@@ -129,6 +129,12 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               } else {
                                 scaffoldMessenger('Seats are sold out!');
                               }
+                            },
+                            onShareTap: () {
+                              SharePlus.instance.share(ShareParams(
+                                  uri: Uri(
+                                      path:
+                                          'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
                             },
                           );
                         },

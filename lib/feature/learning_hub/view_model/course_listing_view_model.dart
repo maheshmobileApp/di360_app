@@ -35,7 +35,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   String? validateEmailField(String? _) =>
       validateEmail(userEmailController.text);
-      String? validatePhoneNum(String? _) =>
+  String? validatePhoneNum(String? _) =>
       validatePhoneNumber(userPhoneNumberController.text);
 
   void setSearchBar(bool value) {
@@ -130,6 +130,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     if (res != null) {
       marketPlaceCoursesList = res;
+      print(
+          "*************************marketPlaceCoursesList: ${marketPlaceCoursesList.length}");
     }
     notifyListeners();
   }
@@ -170,18 +172,17 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> registerCourseHandler(
-  BuildContext context,
-  String createdById,
-) async {
-  final isAlreadyRegistered = registeredUsers.any(
-    (user) => user.fromId == createdById,
-  );
+    BuildContext context,
+    String createdById,
+  ) async {
+    final isAlreadyRegistered = registeredUsers.any(
+      (user) => user.fromId == createdById,
+    );
 
-  validateRegisterCourse(isAlreadyRegistered);
-}
+    validateRegisterCourse(isAlreadyRegistered);
+  }
 
-
-  void validateRegisterCourse(bool value){
+  void validateRegisterCourse(bool value) {
     courseRegistered = value;
     notifyListeners();
   }
