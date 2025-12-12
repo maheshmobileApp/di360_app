@@ -207,7 +207,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
   void updateEvent(String? value) {
     selectedEvent = value;
-
     notifyListeners();
   }
 
@@ -224,7 +223,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     } else {
       selectedCategoryId = null;
     }
-
     notifyListeners();
   }
 
@@ -251,6 +249,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
 
     // Step-specific validations
     if (_currentStep == 0) {
+      updateEvent(startDateController.text != endDateController.text
+          ? "Multiple Day"
+          : "Single Day");
+
       validatePresenterImg();
       validateCourseHeaderBanner();
       validateGallery();
