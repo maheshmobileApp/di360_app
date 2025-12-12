@@ -276,6 +276,7 @@ class AddCourse extends StatelessWidget
                 isRequired: true,
                 serverImages: jobCreateVM.serverCourseBannerImg,
                 showPreview: true,
+                allowMultiple: true,
                 onServerFilesRemoved: (updatedList) {
                   jobCreateVM.setServerCourseBannerImg(updatedList);
                 },

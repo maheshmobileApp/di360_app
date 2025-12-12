@@ -1,4 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
@@ -7,6 +9,7 @@ import 'package:di360_flutter/feature/learning_hub/view/social_media_links.dart'
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/create_course_enum.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
@@ -29,7 +32,44 @@ class _JobCreateViewState extends State<NewCourseScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppbarTitleBackIconWidget(title: 'Create New Course'),
+      appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
+        leading: IconButton(
+            onPressed: () {
+              navigationService.goBack();
+            },
+            icon: Icon(Icons.arrow_back_ios)),
+        title: Text(
+          "Create New Course",
+          style: TextStyles.medium2(),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              //await jobCreateVM.setJobPreviewData();
+              //navigationService.navigateTo(RouteList.courseDetailScreen);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(255, 241, 229, 1),
+                  borderRadius: BorderRadius.circular(200),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                  child: Text(
+                    "Preview",
+                    style: TextStyles.semiBold(
+                        color: Color.fromRGBO(255, 112, 0, 1)),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
       body: Column(
         children: [
           _buildStepProgressBar(

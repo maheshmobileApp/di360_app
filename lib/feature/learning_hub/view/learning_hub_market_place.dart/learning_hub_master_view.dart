@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
@@ -27,7 +28,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
     with BaseContextHelpers {
   @override
   void initState() {
-    super.initState();
+    super.initState(); 
+    final viewModel = Provider.of<LearningHubMasterViewModel>(context, listen: false);
+    viewModel.clearFilterOptions();
   }
 
   @override

@@ -6,7 +6,8 @@ import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repos
 import 'package:flutter/material.dart';
 
 class LearningHubMasterViewModel extends ChangeNotifier with ValidationMixins {
-   final LearningHubRepository repo = LearningHubRepoImpl();
+  final LearningHubRepository repo = LearningHubRepoImpl();
+
   /// Holds available filter options by section (type/category)
   Map<String, List<String>> filterOptions = {};
 
@@ -22,6 +23,16 @@ class LearningHubMasterViewModel extends ChangeNotifier with ValidationMixins {
   List<String> selectedType = [];
   List<String> selectedCategory = [];
   List<String> selectedCategoryIds = [];
+
+  clearFilterOptions() {
+    selectedIndices = {'type': {}, 'category': {}};
+    selectedType = [];
+    selectedCategory = [];
+    selectedCategoryIds = [];
+    filterDateController.clear();
+    locationController.clear();
+    notifyListeners();
+  }
 
   /// Selected checkbox indices for each section
   Map<String, Set<int>> selectedIndices = {
@@ -80,54 +91,51 @@ class LearningHubMasterViewModel extends ChangeNotifier with ValidationMixins {
 
   /// Clears all filters
   void clearSelections() {
-  selectedIndices = {'type': {}, 'category': {}};
-  selectedType = [];
-  selectedCategory = [];
-  filterDateController.clear();
-  locationController.clear();
-  notifyListeners();
-}
-
-
-  Future<void> setSelectedCourseCategories(List<String> selectedNames) async {
-  // Make sure you have latest categories
-  await fetchCourseCategory();
-
-  // Clear existing selections
-  selectedCategoryIds = [];
-
-  // Map each selected name to its ID
-  for (final name in selectedNames) {
-    final match = courseCategoryList.firstWhere(
-      (course) => course.name == name,
-      orElse: () => CourseCategories(),
-    );
-
-    if (match.id != null && match.id!.isNotEmpty) {
-      selectedCategoryIds.add(match.id!);
-    }
+    selectedIndices = {'type': {}, 'category': {}};
+    selectedType = [];
+    selectedCategory = [];
+    filterDateController.clear();
+    locationController.clear();
+    notifyListeners();
   }
 
-  // Optionally keep selected names if you still need them for UI
-  //selectedCategoryNames = selectedNames;
+  Future<void> setSelectedCourseCategories(List<String> selectedNames) async {
+    // Make sure you have latest categories
+    await fetchCourseCategory();
 
-  notifyListeners();
-}
-List<CourseCategories> courseCategoryList = [];
-List<String> courseCategory = [];
+    // Clear existing selections
+    selectedCategoryIds = [];
+
+    // Map each selected name to its ID
+    for (final name in selectedNames) {
+      final match = courseCategoryList.firstWhere(
+        (course) => course.name == name,
+        orElse: () => CourseCategories(),
+      );
+
+      if (match.id != null && match.id!.isNotEmpty) {
+        selectedCategoryIds.add(match.id!);
+      }
+    }
+
+    // Optionally keep selected names if you still need them for UI
+    //selectedCategoryNames = selectedNames;
+
+    notifyListeners();
+  }
+
+  List<CourseCategories> courseCategoryList = [];
+  List<String> courseCategory = [];
   List<FilterItem> courseCategoryItems = [];
-Future<void> fetchCourseCategory() async {
-      final result = await repo.getCourseCategory();
-      courseCategoryList = result.courseCategories ?? [];
-      courseCategoryList.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
-      courseCategory = courseCategoryList.map((e) => e.name ?? "").toList();
-      courseCategoryItems = courseCategoryList
+  Future<void> fetchCourseCategory() async {
+    final result = await repo.getCourseCategory();
+    courseCategoryList = result.courseCategories ?? [];
+    courseCategoryList.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
+    courseCategory = courseCategoryList.map((e) => e.name ?? "").toList();
+    courseCategoryItems = courseCategoryList
         .where((e) => e.id != null && e.name != null)
         .map((e) => FilterItem(id: e.id!, name: e.name!))
         .toList();
-      notifyListeners();
+    notifyListeners();
   }
-
-
-  
 }
