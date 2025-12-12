@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dar
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/create_course_enum.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -116,24 +117,48 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       List.generate(6, (_) => GlobalKey<FormState>());
 
   final List<int> stepsWithValidation = [0, 2, 4];
-  final List<String> steps = [
+  /*final List<String> steps = [
     'Add Course',
     'Course Info',
     'Terms & Conditions',
     'Contacts',
     'Social Media Links'
-  ];
+  ];*/
+
+  List<CourseCreateSteps> get visibleSteps {
+  // If webinar, hide Course Info step
+  if (selectedCourseType != null && selectedCourseType == "Webinar") {
+    return [
+      CourseCreateSteps.ADDCOURSE,
+      CourseCreateSteps.TERMSANDCONDITIONS,
+      CourseCreateSteps.CONTACTS,
+      CourseCreateSteps.SOCIALMEDIALINKS,
+    ];
+  }
+  // default: all steps
+  return CourseCreateSteps.values.toList();
+}
+
+  List<String> get stepTitles {
+    final map = {
+      CourseCreateSteps.ADDCOURSE: 'Add Course',
+      CourseCreateSteps.COURSEINFO: 'Course Info',
+      CourseCreateSteps.TERMSANDCONDITIONS: 'Terms & Conditions',
+      CourseCreateSteps.CONTACTS: 'Contacts',
+      CourseCreateSteps.SOCIALMEDIALINKS: 'Social Media Links',
+    };
+    return visibleSteps.map((s) => map[s] ?? '').toList();
+  }
+
 
   final PageController pageController = PageController();
   int _currentStep = 0;
   int get currentStep => _currentStep;
-  int get totalSteps => steps.length;
+  int get totalSteps => visibleSteps.length;
 
   List<JobsRoleList> category = [];
   List<String> roleOptions = [];
-  List<String> communityTypes = [
-    "Both","Community User"
-  ];
+  List<String> communityTypes = ["Both", "Community User"];
 
   List<JobTypes> EmpTypes = [];
   List<String> empOptions = [];
@@ -150,7 +175,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       validateOptionalUrl(registerLinkController.text);
   String? validateMeetingLink(String? _) =>
       validateOptionalUrl(meetingLinkController.text);
-      String? validatePhoneNum(String? _) =>
+  String? validatePhoneNum(String? _) =>
       validatePhoneNumber(phoneController.text);
 
   void setPresentedImg(File? value) {
@@ -729,7 +754,9 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               maxSubscribers: 1000,
               createdById: userId,
               companyName: name,
-              communityUserType: selectedCommunityType=="Community User"?"COMMUNITY_USER":"BOTH",
+              communityUserType: selectedCommunityType == "Community User"
+                  ? "COMMUNITY_USER"
+                  : "BOTH",
               status: isDraft ? "DRAFT" : "PENDING",
               type: (selectedCourseType == null) ? "" : selectedCourseType,
               feedType: "LEARNHUB",

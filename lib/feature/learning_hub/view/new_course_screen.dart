@@ -40,7 +40,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
                 newCourseVM.totalSteps,
-                (index) => _buildStep(CourseCreateSteps.values[index],
+                (index) => _buildStep(newCourseVM.visibleSteps[index],
                     newCourseVM.formKeys[index]),
               ),
             ),
@@ -56,7 +56,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
     return StepsView(
         currentStep: newCourseVM.currentStep,
         totalSteps: newCourseVM.totalSteps,
-        stepTitles: newCourseVM.steps);
+        stepTitles: newCourseVM.stepTitles);
   }
 
   Widget _buildStep(CourseCreateSteps stepIndex, GlobalKey<FormState> key) {
@@ -150,7 +150,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                   await newCourseVM.validateCourseBanner();
                 }
                 await newCourseVM.buildCourseInfoList();
-                
+
                 if ((newCourseVM.selectedsponsoredByImg?.isNotEmpty ?? false) ||
                     (newCourseVM.serverSponsoredByImg?.isNotEmpty ?? false)) {
                   await newCourseVM.validateSponsoredByImg();
@@ -158,14 +158,12 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                 Loaders.circularHideLoader(context);
 
                 (courseListVM.editOptionEnable)
-                    ? 
-                    await newCourseVM.updateCourseListing(
+                    ? await newCourseVM.updateCourseListing(
                         context, courseListVM.courseId, true)
                     : await newCourseVM.createdCourseListing(context, true);
                 courseListVM.selectedStatus = "All";
                 await courseListVM.getCoursesListingData(context);
               },
-              
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
             ),
