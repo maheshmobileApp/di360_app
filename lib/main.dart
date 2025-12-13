@@ -61,10 +61,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {   
      
-    return StreamBuilder<ConnectivityResult>(
+    return StreamBuilder<List<ConnectivityResult>>(
       stream: Connectivity().onConnectivityChanged,
       builder: (context, snapshot) {
-        final hasConnection = snapshot.data != null && snapshot.data != ConnectivityResult.none;
+        final hasConnection = snapshot.data != null &&
+            !snapshot.data!.contains(ConnectivityResult.none);
         
         if (snapshot.hasData && !hasConnection) {
           return const MaterialApp(
