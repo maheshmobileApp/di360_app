@@ -22,7 +22,9 @@ class DashBoard extends StatelessWidget {
         final type = snapshot.data ?? '';
 
         return Scaffold(
-            body: dashBoardVM.pages[currentIndex],
+            body: dashBoardVM.pages.isEmpty 
+                ? const Center(child: CircularProgressIndicator())
+                : dashBoardVM.pages[currentIndex],
             bottomNavigationBar: ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
@@ -32,8 +34,8 @@ class DashBoard extends StatelessWidget {
                 // height: 80,
                 child: BottomNavigationBar(
                   backgroundColor: AppColors.backgroundColor,
-                  currentIndex: dashBoardVM.currentIndex,
-                  onTap: (index) => dashBoardVM.setIndex(index, context),
+                  currentIndex: dashBoardVM.pages.isEmpty ? 0 : dashBoardVM.currentIndex,
+                  onTap: dashBoardVM.pages.isEmpty ? null : (index) => dashBoardVM.setIndex(index, context),
                   type: BottomNavigationBarType.fixed,
                   selectedItemColor: AppColors.primaryColor,
                   unselectedItemColor: AppColors.bottomNavUnSelectedColor,
