@@ -210,7 +210,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                Jiffy.parse(widget.job.createdAt ?? '').fromNow(),
+                widget.job.createdAt?.isNotEmpty == true
+                    ? Jiffy.parse(widget.job.createdAt!).fromNow()
+                    : 'Recently posted',
                 style: TextStyle(
                   color: Colors.orange,
                   fontSize: 12,
@@ -257,7 +259,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
             subtitle:
-                '${widget.job.rateBilling}  ${widget.job.payMin} - ${widget.job.payMax}'),
+                '${widget.job.rateBilling}  ${widget.job.payMin}\$ - ${widget.job.payMax}\$'),
+        Divider(height: 4),
+        _sectionHeader('Benefits'),
+        _sectionText('${widget.job.offeredBenefits?.isNotEmpty == true ? widget.job.offeredBenefits!.first : 'No benefits listed'}'),
         Divider(height: 10),
         _sectionHeader('Job Description'),
         _sectionText('${widget.job.description ?? ''}'),
@@ -272,6 +277,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
+        Divider(height: 4),
+        _sectionHeader('About Compnay'),
+        _sectionText('${widget.job.description ?? ''}'),
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,13 +294,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
             ],
           ),
-        if (widget.job.facebookUrl!.isNotEmpty ||
-            widget.job.instagramUrl!.isNotEmpty ||
-            widget.job.linkedinUrl!.isNotEmpty)
+        if ((widget.job.facebookUrl?.isNotEmpty == true) ||
+            (widget.job.instagramUrl?.isNotEmpty == true) ||
+            (widget.job.linkedinUrl?.isNotEmpty == true))
           _sectionHeader('Social Media Handles'),
         Row(
           children: [
-            if (widget.job.facebookUrl!.isNotEmpty)
+            if (widget.job.facebookUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.facebookSvg),
                   onPressed: () async {
@@ -303,7 +311,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       return;
                     }
                   }),
-            if (widget.job.instagramUrl!.isNotEmpty)
+            if (widget.job.instagramUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
                   onPressed: () async {
@@ -314,7 +322,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       return;
                     }
                   }),
-            if (widget.job.linkedinUrl!.isNotEmpty)
+            if (widget.job.linkedinUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.linkedinSvg),
                   onPressed: () async {

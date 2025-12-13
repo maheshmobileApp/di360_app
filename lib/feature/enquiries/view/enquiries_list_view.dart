@@ -1,10 +1,10 @@
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
+import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart';
 import 'package:flutter/material.dart';
 
 
 class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
-  final EnquiriesListResData? applicant;
+  final ApplicantEnquiryData? applicant;
   final String? profileImageUrl;
 
   const EnquiriesListView({super.key, required this.applicant, this.profileImageUrl});
@@ -76,7 +76,7 @@ class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
                                       ? const Icon(Icons.person, size: 24)
                                       : null,
                                 ),
-                                title: Text( applicant?.jobEnquiries![index].jobId ?? ''),
+                                title: Text(applicant?.jobEnquiries?[index].enquiryDescription??""),
                               );
                             },
                           )

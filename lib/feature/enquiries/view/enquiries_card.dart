@@ -5,11 +5,15 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
+import 'package:di360_flutter/feature/enquiries/view/enquiries_list_view.dart';
+import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
   final JobEnquiries? enquiry;
@@ -23,9 +27,9 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    /*final Jobs? job = appliedJob.job;
-    final String time = _getShortTime(job?.createdAt ?? '') ?? '';
-    final vm = Provider.of<EnquiriesViewModel>(context);*/
+    final Jobs? job = enquiry?.jobs;
+    final String time = _getShortTime(enquiry?.createdAt ?? '') ?? '';
+    final vm = Provider.of<EnquiriesViewModel>(context);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -46,11 +50,10 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     context,
-                    enquiry?.dentalProfessional?.profileImage?.url ?? '',
-                    /*job?.title ?? '',
-                    job?.jRole ?? '',
-                    job?.companyName ?? '',*/
-                    "","",""
+                    enquiry?.jobs?.logo ?? '',
+                    enquiry?.jobs?.title ?? '',
+                    enquiry?.jobs?.jRole ?? '',
+                    enquiry?.jobs?.companyName ?? '',
                   ),
                 ),
                 Column(
@@ -58,7 +61,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     Row(
                       children: [
-                        JobTimeChip(time: ""),
+                        JobTimeChip(time: time),
                         addHorizontal(4),
                         _EnquiriesMenu(),
                       ],
@@ -72,19 +75,21 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
             if (enquiry != null)
               Row(
                 children: [
-                  //Expanded(child: _chipWidget(enquiry)),
+                  Expanded(
+                      child:
+                          _chipWidget(enquiry?.jobs?.typeofEmployment ?? [])),
                 ],
               ),
-            addVertical(10),
+            //addVertical(10),
             // Description
-            _descriptionWidget(''),
+            //_descriptionWidget(''),
             const Divider(),
             // Actions
             Row(
               children: [
                 InkWell(
                   onTap: () async {
-                   /* if (appliedJob.id == null || appliedJob.jobId == null) {
+                    /* if (appliedJob.id == null || appliedJob.jobId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Applicant or Job ID not available"),
@@ -96,7 +101,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                     final userId = await LocalStorage.getStringVal(
                         LocalStorageConst.userId);
 
-                   /* navigationService.navigateToWithParams(
+                    /* navigationService.navigateToWithParams(
                       RouteList.JobListingApplicantsMessege,
                       params: {
                         "jobId": appliedJob.jobId ?? "",
@@ -108,8 +113,12 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                   child: _roundedButton("Message"),
                 ),
                 addHorizontal(10),
-                /*GestureDetector(
-                  onTap: () {
+                GestureDetector(
+                  onTap: () async {
+                    await vm.getApplicantEnquiryData(
+                      context,
+                      enquiry?.jobs?.id ?? '',
+                    );
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -117,13 +126,15 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                             BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       builder: (context) => EnquiriesListView(
-                        applicant: vm.enquiriesListData,
-                        profileImageUrl: job?.logo,
+                        applicant: vm.applicantEnquiriesListData,
+                        profileImageUrl:
+                            enquiry?.dentalProfessional?.profileImage?.url ??
+                                '',
                       ),
                     );
                   },
                   child: _roundedButton("Enquiry"),
-                ),*/
+                ),
               ],
             ),
           ],
@@ -268,12 +279,12 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Preview") {
-          /*if (appliedJob.job != null) {
+          if (enquiry?.jobs != null) {
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
-              params: appliedJob.job,
+              params: enquiry?.jobs,
             );
-          }*/
+          }
         }
       },
       itemBuilder: (context) => [
@@ -300,10 +311,9 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
 
   String? _getShortTime(String createdAt) {
     try {
-      if (createdAt.isEmpty) return null;
       return Jiffy.parse(createdAt).fromNow();
     } catch (_) {
-      return null;
+      return '';
     }
   }
 }

@@ -769,7 +769,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     });
 
     if (result != null) {
-      scaffoldMessenger("Course is successfully added");
+      scaffoldMessenger("“Course submitted successfully.");
       navigationService.goBack();
 
       Loaders.circularHideLoader(context);
