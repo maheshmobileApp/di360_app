@@ -63,4 +63,14 @@ static String formatDateTime(String dateTimeString) {
     return dateTimeString; // Return original if parsing fails
   }
 }
+
+static String formatToTime(String dateTimeString) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('hh:mm a').format(localDateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
 }

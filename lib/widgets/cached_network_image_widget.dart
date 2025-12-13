@@ -20,6 +20,10 @@ class CachedNetworkImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl.isEmpty) {
+      return errorWidget ?? Icon(Icons.error);
+    }
+    
     return CachedNetworkImage(
       width: width,
       height: height,

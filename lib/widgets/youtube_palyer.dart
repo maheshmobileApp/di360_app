@@ -14,23 +14,25 @@ class LazyYoutubePlayer extends StatefulWidget {
 
 class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   bool _isPlayerVisible = false;
-  late YoutubePlayerController _controller;
+  YoutubePlayerController? _controller;
   late String _videoId;
 
   @override
   void initState() {
     super.initState();
     _videoId = YoutubePlayer.convertUrlToId(widget.youtubeUrl) ?? '';
-    _controller = YoutubePlayerController(
-      initialVideoId: _videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: true,
-      ),
-    )..addListener(_fullScreenListener);
+    if (_videoId.isNotEmpty) {
+      _controller = YoutubePlayerController(
+        initialVideoId: _videoId,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+        ),
+      )..addListener(_fullScreenListener);
+    }
   }
 
   void _fullScreenListener() {
-    if (_controller.value.isFullScreen) {
+    if (_controller?.value.isFullScreen == true) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
@@ -44,8 +46,10 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
 
   @override
   void dispose() {
-    _controller.removeListener(_fullScreenListener);
-    _controller.dispose();
+    if (_videoId.isNotEmpty && _controller != null) {
+      _controller!.removeListener(_fullScreenListener);
+      _controller!.dispose();
+    }
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -58,27 +62,31 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return _isPlayerVisible
+    if (_videoId.isEmpty || widget.youtubeUrl.isEmpty) {
+      return Container(
+        width: double.infinity,
+        height: 200,
+        color: Colors.grey[300],
+        child: const Center(
+          child: Icon(Icons.error, size: 48, color: Colors.grey),
+        ),
+      );
+    }
+
+    return _isPlayerVisible && _controller != null
         ? YoutubePlayer(
-            controller: _controller,
+            controller: _controller!,
             showVideoProgressIndicator: true,
           )
-        : GestureDetector(
-            onTap: _loadPlayer,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // YouTube thumbnail
-                Image.network(
-                  'https://img.youtube.com/vi/$_videoId/0.jpg',
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-                // Play icon
-                const Icon(Icons.play_circle_fill,
-                    size: 64, color: Colors.white),
-              ],
+        : Container(
+            width: double.infinity,
+            height: 200,
+            color: Colors.grey[300],
+            child: GestureDetector(
+              onTap: _loadPlayer,
+              child: const Center(
+                child: Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
+              ),
             ),
           );
   }
