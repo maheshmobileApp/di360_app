@@ -247,6 +247,7 @@ class AddCourse extends StatelessWidget
               ImagePickerField(
                 title: "Course Header Banner / Video",
                 isRequired: true,
+                acceptVideo: true,
                 serverImage: jobCreateVM.serverCourseHeaderBanner?.url,
                 serverImageType: jobCreateVM.serverCourseHeaderBanner?.type,
                 showPreview: true,
@@ -257,7 +258,6 @@ class AddCourse extends StatelessWidget
                 onFilePicked: (file) => jobCreateVM.setCourseHeaderBaner(file),
               ),
               SizedBox(height: 8),
-              
               ImagePickerField(
                 title: "Gallery",
                 isRequired: true,

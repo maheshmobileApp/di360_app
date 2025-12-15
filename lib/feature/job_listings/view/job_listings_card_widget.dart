@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
@@ -11,6 +12,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -40,21 +42,10 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
-              border: Border(
-                left: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-                right: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-                top: BorderSide(
-                    color: Color.fromRGBO(220, 224, 228, 1), width: 1),
-              ),
-            ),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.borderColor)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -91,10 +82,65 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 addVertical(10),
                 _descriptionWidget(jobsListingData?.description ?? ''),
                 const Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                        onTap: () async {
+                          final count = jobsListingData
+                                  ?.jobApplicantsAggregate?.aggregate?.count ??
+                              0;
+
+                          if (count != 0) {
+                            Loaders.circularShowLoader(context);
+                            viewModel.jobId = jobsListingData?.id ?? '';
+                            await viewModel.getMyJobApplicantsgData(
+                              context,
+                              jobsListingData?.id ?? '',
+                            );
+                            Loaders.circularHideLoader(context);
+
+                            navigationService.navigateToWithParams(
+                              RouteList.JobListingApplicantscreen,
+                              params: jobsListingData,
+                            );
+                          } else {
+                            scaffoldMessenger("0 Applicants Applied");
+                          }
+                        },
+                        child: _registeredChip(
+                            jobsListingData?.jobApplicantsAggregate?.aggregate
+                                    ?.count ??
+                                0,
+                            "Applicants")),
+                    GestureDetector(
+                      onTap: () {
+                        navigationService.navigateToWithParams(
+                          RouteList.jobdetailsScreen,
+                          params: vm.myJobListingList[index!],
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            "View Details",
+                            style: TextStyles.medium1(
+                                color: AppColors.primaryColor),
+                          ),
+                          SvgPicture.asset(
+                            ImageConst.nextArrow,
+                            width: 26,
+                            height: 26,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          GestureDetector(
+          /*GestureDetector(
             onTap: () async {
               final count =
                   jobsListingData?.jobApplicantsAggregate?.aggregate?.count ??
@@ -141,8 +187,22 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 ),
               ),
             ),
-          ),
+          ),*/
         ],
+      ),
+    );
+  }
+
+  Widget _registeredChip(int registeredCount, String chipTitle) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.greyLight,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        "$registeredCount $chipTitle",
+        style: TextStyles.semiBold(fontSize: 10, color: AppColors.black),
       ),
     );
   }
@@ -269,8 +329,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           );
         } else if (value == "Active") {
           showAlertMessage(context, 'Do you really want to activate this job?',
-              onBack: () async{
-            
+              onBack: () async {
             await vm.updateJobListingStatus(context, id, "ACTIVE");
             navigationService.goBack();
           });
@@ -282,8 +341,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
         } else if (value == "Inactive") {
           showAlertMessage(
               context, 'Do you really want to deactivate this job?',
-              onBack: () async{
-            
+              onBack: () async {
             await vm.updateJobListingStatus(context, id, "INACTIVE");
             navigationService.goBack();
           });
@@ -291,8 +349,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           showAlertMessage(context, 'Are you sure you want to delete this job?',
               onBack: () async {
             await vm.removeJobsListingData(context, id);
-                        navigationService.goBack();
-
+            navigationService.goBack();
           });
         } else if (value == "Re-Listing") {
           jobCreateVM.clearDateFields();

@@ -97,6 +97,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedRole;
   final TextEditingController aphraRegistrationNumberController =
       TextEditingController();
+  final TextEditingController percentageController =
+      TextEditingController();
   List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
   File? profileFile;
@@ -290,8 +292,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "November",
     "December"
   ];
-  final List<String> years =
-      List.generate(30, (index) => (2000 + index).toString());
+  final List<String> years = List.generate(
+      DateTime.now().year - 2000 + 1, 
+      (index) => (2000 + index).toString()
+    ).reversed.toList();
 
   List<String> availabilityTypes = ["Select Day", "Select Date"];
   List<String> QualificationTypes = ["Yes", "No"];
@@ -370,9 +374,15 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void setSelectedEmploymentTypes(List<String> selected) {
-    _selectedEmploymentChips
-      ..clear()
-      ..addAll(selected);
+    if (selected.contains("Locum")) {
+      // If Locum is selected, clear all and keep only Locum
+      _selectedEmploymentChips.clear();
+      _selectedEmploymentChips.add("Locum");
+    } else {
+      // If other types are selected, clear all and add only non-Locum types
+      _selectedEmploymentChips.clear();
+      _selectedEmploymentChips.addAll(selected);
+    }
 
     if (!shouldShowABNField) {
       abnNumberController.clear();
@@ -673,10 +683,37 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     return responses;
   }
 
+  Map<String, String> _getFileTypeAndExtension(String filePath) {
+    final extension = filePath.split('.').last.toLowerCase();
+    String type;
+    
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        type = 'image';
+        break;
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+        type = 'video';
+        break;
+      case 'pdf':
+        type = 'document';
+        break;
+      default:
+        type = 'file';
+    }
+    
+    return {'type': type, 'extension': extension};
+  }
+
   Future<void> validateProfileImg() async {
     if (serverProfileFile == null) {
       if (profileFile?.path != null) {
         var value = await _http.uploadImage(profileFile?.path);
+        print("***********Profile Image Upload Response: $value");
         profile_img = value['url'];
         profile_img_name = value['name'];
         print(profile_img);
@@ -686,6 +723,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       profile_img = serverProfileFile ?? "";
       notifyListeners();
     }
+    print("***********************Profile Image URL: $profile_img");
   }
 
   Future<void> createJobProfile(BuildContext context, bool isDraft) async {
@@ -722,8 +760,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "profile_image": {
               "url": profile_img,
               "name": profile_img_name,
-              "type": "image",
-              "extension": "jpeg",
+              ..._getFileTypeAndExtension(profileFile?.path ?? profile_img),
             },
             "upload_resume": resumeFile != null
                 ? [
@@ -870,8 +907,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "profile_image": {
             "url": profile_img,
             "name": profile_img_name,
-            "type": "image",
-            "extension": "jpeg",
+            ..._getFileTypeAndExtension(profileFile?.path ?? profile_img),
           },
           "upload_resume": [
             {
@@ -1004,7 +1040,14 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     selectedAvailabilityType = profile?.availabilityType ?? "";
     selectedDays = profile?.availabilityDay ?? [];
 
-    //availabilityDates = profile?.availabilityDate ?? [];
+    availabilityDates = profile?.availabilityDate
+            ?.map((dateStr) => DateTime.parse(dateStr))
+            .toList() ??
+        [];
+    availabilityDateController.text = availabilityDates
+        .map((d) => DateFormat('MMM d, yyyy').format(d))
+        .toList()
+        .join(", ");
     //isJoiningImmediate = profile?.i
 
     aboutMeController.text = profile?.aboutYourself ?? "";

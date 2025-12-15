@@ -300,6 +300,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           _sectionHeader('Social Media Handles'),
         Row(
           children: [
+            if (widget.job.websiteUrl?.isNotEmpty == true)
+              IconButton(
+                  icon: SvgPicture.asset(ImageConst.webSvg, width: 30, height: 46),
+                  onPressed: () async {
+                    final Uri appUri = Uri.parse(widget.job.websiteUrl!);
+                    if (await canLaunchUrl(appUri)) {
+                      await launchUrl(appUri,
+                          mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }),
             if (widget.job.facebookUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.facebookSvg),

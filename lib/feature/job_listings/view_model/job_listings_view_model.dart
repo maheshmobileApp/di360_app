@@ -36,10 +36,10 @@ class JobListingsViewModel extends ChangeNotifier {
     'All',
     'Applied',
     'Shortlisted',
-    'Interviews',
+    'Organize Interview',
     'Accepted',
-    'Reject',
-    'Declined'
+    'Declined',
+    'Enquiry'
   ];
 
   int? allJobTalentCount = 0;
@@ -73,10 +73,10 @@ class JobListingsViewModel extends ChangeNotifier {
         'All': allJobapplicantCount,
         'Applied': appliedjobapplicnatsCount,
         'Shortlisted': shortlistedjobapplicnatsCount,
-        'Interviews': interviewsjobapplicnatsCount,
+        'Organize Interview': interviewsjobapplicnatsCount,
         'Accepted': acceptedjobapplicnatsCount,
-        'Reject': rejectjobapplicnatsCount,
-        'Declined': declinedjobapplicnatsCount
+        'Declined': declinedjobapplicnatsCount,
+        'Enquiry': 0
       };
 
   List<String>? listingStatus = [];
@@ -293,7 +293,24 @@ class JobListingsViewModel extends ChangeNotifier {
     }
     print(res);
     if (res != null) {
-      scaffoldMessenger('JobAggrateData update successfully');
+      String message;
+      switch (status.toUpperCase()) {
+        case 'ACCEPTED':
+          message = 'Applicant accepted successfully';
+          break;
+        case 'REJECTED':
+          message = 'Applicant rejected successfully';
+          break;
+        case 'SHORTLISTED':
+          message = 'Applicant shortlisted successfully';
+          break;
+        case 'INTERVIEWS':
+          message = 'Interview organized successfully';
+          break;
+        default:
+          message = 'Applicant status updated successfully';
+      }
+      scaffoldMessenger(message);
       Loaders.circularHideLoader(context);
 
       getMyJobApplicantsgData(context, jobId ?? '');

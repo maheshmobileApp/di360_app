@@ -130,8 +130,19 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
                         hint: "Year",
                         value: vm.selectedStartYear,
                         items: vm.years,
-                        onChanged: (v) =>
-                            setState(() => vm.selectedStartYear = v),
+                        onChanged: (v) {
+                          setState(() {
+                            vm.selectedStartYear = v;
+                            // Clear end year if it's before the new start year
+                            if (vm.selectedEndYear != null && v != null) {
+                              final startYear = int.parse(v);
+                              final endYear = int.parse(vm.selectedEndYear!);
+                              if (endYear < startYear) {
+                                vm.selectedEndYear = null;
+                              }
+                            }
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -175,7 +186,7 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
                       child: CustomSelectField(
                         hint: "Year",
                         value: vm.selectedEndYear,
-                        items: vm.years,
+                        items: _getFilteredEndYears(vm),
                         enabled: !vm.isStillWorking,
                         onChanged: (v) =>
                             setState(() => vm.selectedEndYear = v),
@@ -239,6 +250,15 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
         ),
       ],
     );
+  }
+
+  List<String> _getFilteredEndYears(JobProfileCreateViewModel vm) {
+    if (vm.selectedStartYear == null) {
+      return vm.years;
+    }
+    
+    final startYear = int.parse(vm.selectedStartYear!);
+    return vm.years.where((year) => int.parse(year) >= startYear).toList();
   }
 
   Widget _sectionHeader(String title) {

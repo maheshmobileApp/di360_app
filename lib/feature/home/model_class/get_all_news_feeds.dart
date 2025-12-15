@@ -1,4 +1,3 @@
-import 'package:di360_flutter/feature/home/model_class/dental_practice_res.dart';
 import 'package:di360_flutter/feature/home/model_class/dental_professional_res.dart';
 import 'package:di360_flutter/feature/home/model_class/dental_supplier_res.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
@@ -46,6 +45,7 @@ class AllNewsFeedData {
     return data;
   }
 }
+
 class Newsfeeds {
   String? id;
   String? createdAt;

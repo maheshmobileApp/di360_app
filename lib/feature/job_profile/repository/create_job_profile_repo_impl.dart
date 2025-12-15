@@ -11,14 +11,14 @@ class CreateJobProfileRepoImpl extends CreateJobProfileRepository {
   @override
   Future<dynamic> createJobProfileListing(dynamic variables) async {
     final res = await http.mutation(addJobProfileQuery, variables);
-    print("varibles: $variables");
+    print("*****************************varibles: $variables");
     return res;
   }
 
   @override
   Future<dynamic> updateJobProfileListing(dynamic variables) async {
     final res = await http.mutation(updateJobProfileQuery, variables);
-    print("varibles: $variables");
+    print("******************************varibles: $variables");
     return res;
   }
 

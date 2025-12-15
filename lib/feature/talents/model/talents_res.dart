@@ -7,7 +7,8 @@ class TalentsRes {
   TalentsRes({this.data});
 
   TalentsRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new TalentsResData.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? new TalentsResData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -375,7 +376,7 @@ class JobHiring {
         typeName: json['__typename'],
       );
 
-  Map<String, dynamic> toJson() => {'id': id, '__typename': typeName};
+  Map<String, dynamic> toJson() => {'id': id, '__typename': typeName,};
 }
 
 class TalentEnquiries {

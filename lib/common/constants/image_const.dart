@@ -65,6 +65,7 @@ class ImageConst {
   static const String download = 'assets/svgs/Download.svg';
   static const String send = 'assets/svgs/sendIcon.svg';
   static const String attachment = 'assets/svgs/attachmentIcon.svg';
+  static const String webSvg = 'assets/svgs/web.svg';
 
   // Job related SVG icons
   static const String briefcaseSvg = '${_svgBasePath}briefcase.svg';

@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 
 const googleApiKey = "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70";
 
-class JobProfileLocation extends StatelessWidget with BaseContextHelpers {
+class JobProfileLocation extends StatelessWidget with BaseContextHelpers,ValidationMixins {
   const JobProfileLocation({super.key});
 
   @override
@@ -49,47 +50,70 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers {
                     ],
                   ),
                   addVertical(10),
-                  GooglePlaceAutoCompleteTextField(
-                    textEditingController: jobProfileVM.locationController,
-                    googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
-                    inputDecoration: InputDecoration(
-                      hintText: "Search Location",
-                      hintStyle:
-                          TextStyles.regular4(color: AppColors.dropDownHint),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      isDense: true,
-                    ),
-                    debounceTime: 800,
-                    isLatLngRequired: true,
-                    getPlaceDetailWithLatLng: (Prediction prediction) {},
-                    itemClick: (Prediction prediction) async {
-                      final placeId = prediction.placeId;
-                      if (placeId != null) {
-                        await getPlaceDetails(placeId, jobProfileVM);
+                  FormField<String>(
+                    validator: (value) {
+                      if (jobProfileVM.locationController.text.isEmpty) {
+                        return 'Please select a location';
                       }
+                      return null;
                     },
-                    itemBuilder: (context, index, Prediction prediction) {
-                      return Container(
-                        color: AppColors.whiteColor,
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on),
-                            addHorizontal(7),
-                            Expanded(
-                                child: Text("${prediction.description ?? ""}"))
+                    builder: (field) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GooglePlaceAutoCompleteTextField(
+                            textEditingController: jobProfileVM.locationController,
+                            googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+                            inputDecoration: InputDecoration(
+                              hintText: "Search Location",
+                              hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              isDense: true,
+                            ),
+                            debounceTime: 800,
+                            isLatLngRequired: true,
+                            getPlaceDetailWithLatLng: (Prediction prediction) {},
+                            itemClick: (Prediction prediction) async {
+                              final placeId = prediction.placeId;
+                              if (placeId != null) {
+                                await getPlaceDetails(placeId, jobProfileVM);
+                                field.didChange(jobProfileVM.locationController.text);
+                                field.validate();
+                              }
+                            },
+                            itemBuilder: (context, index, Prediction prediction) {
+                              return Container(
+                                color: AppColors.whiteColor,
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.location_on),
+                                    addHorizontal(7),
+                                    Expanded(
+                                        child: Text("${prediction.description ?? ""}"))
+                                  ],
+                                ),
+                              );
+                            },
+                            isCrossBtnShown: true,
+                            containerHorizontalPadding: 10,
+                            placeType: PlaceType.geocode,
+                          ),
+                          if (field.hasError) ...[
+                            const SizedBox(height: 5),
+                            Text(
+                              field.errorText ?? '',
+                              style: const TextStyle(color: Colors.red, fontSize: 12),
+                            ),
                           ],
-                        ),
+                        ],
                       );
                     },
-                    isCrossBtnShown: true,
-                    containerHorizontalPadding: 10,
-                    placeType: PlaceType.geocode,
                   ),
                 ],
               ),
@@ -118,6 +142,8 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter city / Post code",
                 title: "City / Post Code",
                 keyboardType: TextInputType.number,
+                maxLength: 4,
+                validator: validatePostalCode,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                 ],

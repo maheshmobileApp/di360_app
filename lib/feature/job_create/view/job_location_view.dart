@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 
 const googleApiKey = "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70";
 
-class JobLocationView extends StatelessWidget {
+class JobLocationView extends StatelessWidget with ValidationMixins {
   const JobLocationView({super.key});
 
   @override
@@ -126,10 +127,9 @@ class JobLocationView extends StatelessWidget {
               controller: jobCreateVM.cityPostCodeController,
               hintText: "Enter city / Post code",
               title: "City / Post Code",
+              maxLength: 4,
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter city or post code'
-                  : null,
+              validator: validatePostalCode,
             ),
             const SizedBox(height: 8),
           ],

@@ -156,6 +156,7 @@ class TalentListingViewModel extends ChangeNotifier {
   }
 
   Future<void> getMyTalentListingData() async {
+    print("talents calling");
     try {
       await fetchTalentStatusCounts();
       final res = await repo.getMyTalentListing(listingStatus);
@@ -217,8 +218,8 @@ class TalentListingViewModel extends ChangeNotifier {
     try {
       isLoading = true;
 
-      final res = await repo.updateTalentMessage(
-          editMessageId, messageController.text);
+      final res =
+          await repo.updateTalentMessage(editMessageId, messageController.text);
       if (res != null) {
         setEditMessage(false);
         await fetchTalentMessages(talentId);
@@ -232,12 +233,11 @@ class TalentListingViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTalentMessage(
-      BuildContext context, String talentId,String applicantId) async {
+      BuildContext context, String talentId, String applicantId) async {
     try {
       isLoading = true;
 
-      final res = await repo.deleteTalentMessage(
-          talentId, true);
+      final res = await repo.deleteTalentMessage(talentId, true);
       if (res != null) {
         setEditMessage(false);
         await fetchTalentMessages(applicantId);
@@ -250,9 +250,8 @@ class TalentListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<dynamic> sendTalentMessage(
-      BuildContext context, String talentId, String message,
-       String? typeName) async {
+  Future<dynamic> sendTalentMessage(BuildContext context, String talentId,
+      String message, String? typeName) async {
     if (message.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
@@ -267,12 +266,11 @@ class TalentListingViewModel extends ChangeNotifier {
         "message": message,
         "message_from": userId,
       }, typeName ?? "");
-      
 
       if (res != null) {
         scaffoldMessenger("Message sent successfully");
         messageController.clear();
-        
+
         fetchTalentMessages(talentId);
       } else {
         scaffoldMessenger("Failed to send message");

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/reg_exp.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
@@ -11,14 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
-class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
+class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins {
   JobProfilePersInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+        backgroundColor: AppColors.whiteColor,
         body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SingleChildScrollView(
@@ -42,17 +43,10 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
                         controller: jobProfileVM.mobileNumberController,
                         hintText: "Enter Mobile Number",
                         title: "Mobile Number",
+                        maxLength: 10,
                         keyboardType: TextInputType.number,
                         isRequired: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Mobile Number';
-                          }
-                          if (!phoneNoValid(value)) {
-                            return 'Please enter a valid Mobile Number';
-                          }
-                          return null;
-                        },
+                        validator: validatePhoneNumber,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                         ],
@@ -94,13 +88,13 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
                 ),
               ),*/
                       ImagePickerField(
-                        title: "Presented By (Image)",
+                        title: "Profile Image",
                         isRequired: true,
                         serverImage: jobProfileVM.serverProfileFile,
                         serverImageType: "image",
-                        /*onServerFileRemoved: (value) {
-                    jobCreateVM.setPresentedImg(null);
-                  },*/
+                        onServerFileRemoved: (value) {
+                          jobProfileVM.setProfileImg(null);
+                        },
                         showPreview: true,
                         selectedFile: jobProfileVM.profileFile,
                         onFilePicked: (file) =>
@@ -184,13 +178,8 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
             hintText: "Enter 10-digit  Aphra Registration Number",
             title: " Aphra Registration Number",
             isRequired: true,
-            keyboardType: TextInputType.number,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter  Aphra Registration Number';
-              }
-              return null;
-            },
+            maxLength: 13,
+            validator: validateAphraNumber,
           ),
       ],
     );
@@ -217,11 +206,10 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
             controller: jobProfileVM.abnNumberController,
             hintText: "Enter 10-digit ABN Number",
             title: "ABN Number",
+            maxLength: 10,
             isRequired: true,
             keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter ABN Number'
-                : null,
+            validator: validateABNNumber,
           ),
         ],
       ],

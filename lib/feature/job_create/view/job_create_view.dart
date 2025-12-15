@@ -225,7 +225,7 @@ class _JobCreateViewState extends State<JobCreateView> {
                       await jobListingVM.getMyJobListingData(context);
                       navigationService.goBack();
                       Loaders.circularHideLoader(context);
-                      scaffoldMessenger("Course is Updated Successfully!");
+                      scaffoldMessenger("Job updated successfully");
                     } else {
                       jobCreateVM.goToNextStep();
                     }
@@ -240,7 +240,7 @@ class _JobCreateViewState extends State<JobCreateView> {
                       await jobListingVM.getMyJobListingData(context);
                       navigationService.goBack();
                       Loaders.circularHideLoader(context);
-                      scaffoldMessenger("Course is Created Successfully!");
+                      scaffoldMessenger("Job submitted successfully");
                     } else {
                       jobCreateVM.goToNextStep();
                     }
