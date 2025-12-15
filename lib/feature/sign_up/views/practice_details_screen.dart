@@ -52,10 +52,10 @@ class PracticeDetailsScreen extends StatelessWidget
                           addVertical(25),
                           InputTextField(
                               title: 'Business Name',
-                              controller: viewModel.businessController,
+                              controller: viewModel.companyNameController,
                               hintText: "Enter Business Name",
                               keyboardType: TextInputType.text,
-                              validator: validateBusiness),
+                              validator: validateCompanyName),
                           addVertical(16),
                           InputTextField(
                               title: 'Phone No',

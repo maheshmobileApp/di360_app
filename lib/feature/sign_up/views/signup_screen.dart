@@ -13,6 +13,7 @@ import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -60,19 +61,26 @@ class SignupScreen extends StatelessWidget
                         viewModel.setSelectedType(v);
                       },
                       items: ConstantData.planTypes
-                          .map((country) => DropdownMenuItem<Map<String, String>>(
+                          .map((country) =>
+                              DropdownMenuItem<Map<String, String>>(
                                 value: country,
-                                child: Text(
-                                    "${country['name']}"),
+                                child: Text("${country['name']}"),
                               ))
                           .toList(),
                       hintText: "Select subscription type",
                       validator: (value) =>
-                          value == null
-                              ? 'Please select type'
-                              : null,
+                          value == null ? 'Please select type' : null,
                     ),
                     addVertical(16),
+                    if (viewModel.selectedType?['type'] == 'SUPPLIER') ...[
+                      InputTextField(
+                          title: 'Company Name',
+                          controller: viewModel.companyNameController,
+                          hintText: "Enter company name",
+                          keyboardType: TextInputType.text,
+                          validator: validateCompanyName),
+                      addVertical(16)
+                    ],
                     InputTextField(
                         title: 'Full name',
                         controller: viewModel.nameController,
@@ -80,12 +88,33 @@ class SignupScreen extends StatelessWidget
                         keyboardType: TextInputType.emailAddress,
                         validator: validateName),
                     addVertical(16),
+                    if (viewModel.selectedType?['type'] == 'PRACTICE') ...[
+                      InputTextField(
+                          title: 'Dental Practice Name',
+                          controller: viewModel.companyNameController,
+                          hintText: "Enter dental practice name",
+                          keyboardType: TextInputType.text,
+                          validator: validatePracticeName),
+                      addVertical(16)
+                    ],
                     InputTextField(
                         title: 'Email Id',
                         controller: viewModel.emailController,
                         hintText: "Email Id",
                         keyboardType: TextInputType.emailAddress,
                         validator: validateEmail),
+                    addVertical(16),
+                    InputTextField(
+                        title: 'Phone Number',
+                        controller: viewModel.numberController,
+                        hintText: "Enter Phone number",
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\+?[0-9]*$')),
+                        ],
+                        maxLength: 10,
+                        validator: validateEmptyPhoneNumber),
                     addVertical(16),
                     InputTextField(
                       title: 'Password',

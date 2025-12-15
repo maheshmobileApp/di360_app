@@ -19,13 +19,15 @@ class ProfessinoalBasicInfo extends StatelessWidget
             InputTextField(
                 controller: viewProfileVM.nameController,
                 hintText: "Name",
-                title: "Contact Name",
+                title: "Name",
+                isRequired: true,
                 validator: validateName),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.emailController,
                 hintText: "Email",
                 readOnly: true,
+                isRequired: true,
                 title: "Email",
                 validator: validateEmail),
             addVertical(10),
@@ -33,6 +35,7 @@ class ProfessinoalBasicInfo extends StatelessWidget
                 controller: viewProfileVM.phoneNoController,
                 hintText: "Phone Number",
                 title: "Phone Number",
+                isRequired: true,
                 validator: validateEmptyPhoneNumber),
           ],
         ));

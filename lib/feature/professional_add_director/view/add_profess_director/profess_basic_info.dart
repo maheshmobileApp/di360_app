@@ -115,7 +115,7 @@ class ProfessBasicInfo extends StatelessWidget
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.first.hobbies?.length,
+            itemCount: addDirectorVM.getBasicInfoData.isNotEmpty ? addDirectorVM.getBasicInfoData.first.hobbies?.length ?? 0 : 0,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -150,8 +150,7 @@ class ProfessBasicInfo extends StatelessWidget
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount:
-                addDirectorVM.getBasicInfoData.first.universitySchool?.length,
+            itemCount: addDirectorVM.getBasicInfoData.isNotEmpty ? addDirectorVM.getBasicInfoData.first.universitySchool?.length ?? 0 : 0,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10),

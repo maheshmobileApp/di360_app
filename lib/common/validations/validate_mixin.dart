@@ -57,8 +57,13 @@ mixin ValidationMixins {
     return null;
   }
 
-  String? validateBusiness(String? value) {
-    if (value == null || value.isEmpty) return "Please enter business name";
+  String? validateCompanyName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter company name";
+    return null;
+  }
+
+String? validatePracticeName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter practice name";
     return null;
   }
 

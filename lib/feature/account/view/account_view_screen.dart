@@ -23,7 +23,6 @@ import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -217,8 +216,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == 'My Directory') {
                             await context
                                 .read<AddDirectoryViewModel>()
-                                .fetchTheDirectorData(
-                                    navigatorKey.currentContext!);
+                                .fetchTheDirectorData(context);
                           } else if (item.title == 'Learning Hub') {
                             Loaders.circularShowLoader(context);
                             await context
@@ -269,8 +267,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myAppointment);
                           } else if (item.title == "Support Request") {
-                          
-                            navigationService
+                            await navigationService
                                 .navigateTo(RouteList.supportScreen);
                           } else if (item.title == "Join Request") {
                             navigationService
