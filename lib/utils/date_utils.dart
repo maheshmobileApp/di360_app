@@ -67,8 +67,8 @@ static String formatDateTime(String dateTimeString) {
 static String formatToTime(String dateTimeString) {
   try {
     final dateTime = DateTime.parse(dateTimeString);
-    final localDateTime = dateTime.toLocal();
-    return DateFormat('hh:mm a').format(localDateTime);
+    final originalTime = dateTime.add(dateTime.timeZoneOffset);
+    return DateFormat('hh:mm a').format(originalTime);
   } catch (e) {
     return dateTimeString; // Return original if parsing fails
   }

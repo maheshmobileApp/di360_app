@@ -33,7 +33,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<JobListingsViewModel>(context);
-    final String time = _getShortTime(jobsListingData?.createdAt ?? '') ?? '';
+    final String time = _getShortTime(jobsListingData?.updatedAt ?? '') ?? '';
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(

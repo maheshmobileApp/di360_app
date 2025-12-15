@@ -48,13 +48,13 @@ class PreLoginScreen extends StatelessWidget with BaseContextHelpers {
                   bottom: getSize(context).height * 0.04,
                   child: Column(
                     children: [
-                      SigninButton(
+                      /*SigninButton(
                         text: 'Sign in with Google',
                         img: ImageConst.googleSvg,
                         onTap: () {
                           signInWithGoogle();
                         },
-                      ),
+                      ),*/
                       addVertical(23),
                       SigninButton(
                         text: 'Sign in with Email',

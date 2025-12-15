@@ -67,7 +67,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                   final picked = await showDatePicker(
                     context: context,
                     initialDate: jobCreateVM.startLocumDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
+                    firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
@@ -88,7 +88,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                     initialDate: jobCreateVM.endLocumDate ??
                         jobCreateVM.startLocumDate ??
                         DateTime.now(),
-                    firstDate: jobCreateVM.startLocumDate ?? DateTime(2000),
+                    firstDate: jobCreateVM.startLocumDate ?? DateTime.now(),
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {

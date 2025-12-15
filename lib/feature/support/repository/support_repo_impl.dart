@@ -20,7 +20,7 @@ class SupportRepoImpl extends SupportRepository {
 
   @override
   Future<GetSupportRequestReasonData> getSupportRequestsReasons(variables)  async {
-    final res = await http.query(getSupportRequestReasonsQuery, variables: {});
+    final res = await http.query(getSupportRequestReasonsQuery);
     final data = GetSupportRequestReasonData.fromJson(res ?? {});
     return data;
   }

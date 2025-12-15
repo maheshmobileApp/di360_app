@@ -18,38 +18,38 @@ class NotificationViewModel extends ChangeNotifier {
   int? notificationCount = 0;
 
   getNotifications() async {
-  final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  try {
-    final query = await basedOnTypeCallNotificationQuery();
-    var response = await _http.query(query, variables: {"user_id": userId});
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    try {
+      final query = await basedOnTypeCallNotificationQuery();
+      var response = await _http.query(query, variables: {"user_id": userId});
 
-    if (response != null) {
-      final notificationData = NotificationData.fromJson(response);
-      notificationsList = notificationData.notifications;
+      if (response != null) {
+        final notificationData = NotificationData.fromJson(response);
+        notificationsList = notificationData.notifications;
+      }
+    } catch (e) {
+      print("Error loading notifications: $e");
     }
-  } catch (e) {
-    print("Error loading notifications: $e");
+    notifyListeners();
   }
-  notifyListeners();
-}
 
-getNotificationsCount() async {
-  final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  try {
-    final query = await basedOnTypeCallNotificationCount();
-    var response = await _http.query(query, variables: {"user_id": userId});
+  getNotificationsCount() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    try {
+      final query = await basedOnTypeCallNotificationCount();
+      var response = await _http.query(query, variables: {"user_id": userId});
 
-    if (response != null) {
-      final res = NotificationCountData.fromJson(response);
-      notificationCount = res.notificationsAggregate?.aggregate?.count;
+      if (response != null) {
+        final res = NotificationCountData.fromJson(response);
+        notificationCount = res.notificationsAggregate?.aggregate?.count;
+      }
+    } catch (e) {
+      print("Error loading notification count: $e");
     }
-  } catch (e) {
-    print("Error loading notification count: $e");
+    notifyListeners();
   }
-  notifyListeners();
-}
 
- Future<String> basedOnTypeCallNotificationQuery() async {
+  Future<String> basedOnTypeCallNotificationQuery() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (type == "PROFESSIONAL") {
       return getProfessionalNotifications;
@@ -60,10 +60,10 @@ getNotificationsCount() async {
     } else if (type == 'PRACTICE') {
       return getPracticeNotifications;
     }
-    return getProfessionalNotifications; 
-  } 
-  
- Future<String> basedOnTypeCallNotificationCount() async {
+    return getProfessionalNotifications;
+  }
+
+  Future<String> basedOnTypeCallNotificationCount() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (type == "PROFESSIONAL") {
       return professionNotificationCount;
@@ -76,6 +76,7 @@ getNotificationsCount() async {
     }
     return professionNotificationCount;
   }
+
   updateMarkAsReadNotification(BuildContext context, String Id) async {
     Loaders.circularShowLoader(context);
     try {

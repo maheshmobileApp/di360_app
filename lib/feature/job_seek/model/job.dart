@@ -40,12 +40,13 @@ class Jobs {
   String? facebookUrl;
   List<ClinicLogo>? clinicLogo;
   String? timings;
-  Banner?  bannerImage;
+  Banner? bannerImage;
   String? timingtoggle;
   String? createdAt;
+  String? updatedAt;
   JobApplicantsAggregate? jobApplicantsAggregate;
 
-  Jobs (
+  Jobs(
       {this.id,
       this.title,
       this.jType,
@@ -86,87 +87,89 @@ class Jobs {
       this.bannerImage,
       this.timingtoggle,
       this.createdAt,
+      this.updatedAt,
       this.jobApplicantsAggregate});
 
-  Jobs .fromJson(Map<String, dynamic> json) {
-  id = json['id'];
-  title = json['title'];
-  jType = json['j_type'];
-  jRole = json['j_role'];
-  description = json['description'];
+  Jobs.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    jType = json['j_type'];
+    jRole = json['j_role'];
+    description = json['description'];
 
-  typeofEmployment = json['TypeofEmployment'] is List
-      ? List<String>.from(json['TypeofEmployment'])
-      : [];
+    typeofEmployment = json['TypeofEmployment'] is List
+        ? List<String>.from(json['TypeofEmployment'])
+        : [];
 
-  availabilityDate = json['availability_date'] is List
-      ? List<String>.from(json['availability_date'])
-      : [];
+    availabilityDate = json['availability_date'] is List
+        ? List<String>.from(json['availability_date'])
+        : [];
 
-  autoExpiryDate = json['auto_expiry_date']?.toString();
-  yearsOfExperience = json['years_of_experience']?.toString();
-  dentalPracticeId = json['dental_practice_id'];
-  dentalSupplierId = json['dental_supplier_id'];
-  activeStatus = json['active_status'];
-  location = json['location'];
-  logo = json['logo']?.toString();
-  state = json['state'];
-  city = json['city'];
-  salary = json['salary'];
-  companyName = json['company_name'];
-  websiteUrl = json['website_url'];
-  payRange = json['pay_range'];
-  education = json['education'];
-  video = json['video']?.toString();
-  closedAt = json['closed_at'];
-  status = json['status'];
+    autoExpiryDate = json['auto_expiry_date']?.toString();
+    yearsOfExperience = json['years_of_experience']?.toString();
+    dentalPracticeId = json['dental_practice_id'];
+    dentalSupplierId = json['dental_supplier_id'];
+    activeStatus = json['active_status'];
+    location = json['location'];
+    logo = json['logo']?.toString();
+    state = json['state'];
+    city = json['city'];
+    salary = json['salary'];
+    companyName = json['company_name'];
+    websiteUrl = json['website_url'];
+    payRange = json['pay_range'];
+    education = json['education'];
+    video = json['video']?.toString();
+    closedAt = json['closed_at'];
+    status = json['status'];
 
-  offeredBenefits = json['offered_benefits'] is List
-      ? List<String>.from(json['offered_benefits'])
-      : [];
+    offeredBenefits = json['offered_benefits'] is List
+        ? List<String>.from(json['offered_benefits'])
+        : [];
 
-  country = json['country'];
-  endDateToggle = json['endDateToggle'];
-  payMax = json['pay_max'];
-  payMin = json['pay_min'];
-  hiringPeriod = json['hiring_period'];
-  noOfPeople = json['no_of_people']?.toString();
-  rateBilling = json['rate_billing'];
-  linkedinUrl = json['linkedin_url'] ?? "";
-  instagramUrl = json['instagram_url'] ?? "";
-  facebookUrl = json['facebook_url'] ?? "";
+    country = json['country'];
+    endDateToggle = json['endDateToggle'];
+    payMax = json['pay_max'];
+    payMin = json['pay_min'];
+    hiringPeriod = json['hiring_period'];
+    noOfPeople = json['no_of_people']?.toString();
+    rateBilling = json['rate_billing'];
+    linkedinUrl = json['linkedin_url'] ?? "";
+    instagramUrl = json['instagram_url'] ?? "";
+    facebookUrl = json['facebook_url'] ?? "";
 
-  if (json['clinic_logo'] != null) {
-    if (json['clinic_logo'] is List) {
-      clinicLogo = (json['clinic_logo'] as List)
-          .map((e) => ClinicLogo.fromJson(e))
-          .toList();
-    } else if (json['clinic_logo'] is String) {
-      clinicLogo = [ClinicLogo(url: json['clinic_logo'])];
+    if (json['clinic_logo'] != null) {
+      if (json['clinic_logo'] is List) {
+        clinicLogo = (json['clinic_logo'] as List)
+            .map((e) => ClinicLogo.fromJson(e))
+            .toList();
+      } else if (json['clinic_logo'] is String) {
+        clinicLogo = [ClinicLogo(url: json['clinic_logo'])];
+      }
+    } else {
+      clinicLogo = null;
     }
-  }else {
-    clinicLogo = null;
-  }
 
- if (json['banner_image'] != null) {
-    if (json['banner_image'] is Map) {
-      bannerImage = Banner.fromJson(json['banner_image']);
-    } else if (json['banner_image'] is String) {
-      bannerImage = Banner(url: json['banner_image']);
-    }else{
+    if (json['banner_image'] != null) {
+      if (json['banner_image'] is Map) {
+        bannerImage = Banner.fromJson(json['banner_image']);
+      } else if (json['banner_image'] is String) {
+        bannerImage = Banner(url: json['banner_image']);
+      } else {
+        bannerImage = null;
+      }
+    } else {
       bannerImage = null;
     }
-  }else {
-    bannerImage = null;
-  }
-  timings = json['timings'];
-  timingtoggle = json['timingtoggle'];
-  createdAt = json['created_at'];
+    timings = json['timings'];
+    timingtoggle = json['timingtoggle'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
 
-  jobApplicantsAggregate = json['job_applicants_aggregate'] != null
-      ? JobApplicantsAggregate.fromJson(json['job_applicants_aggregate'])
-      : null;
-}
+    jobApplicantsAggregate = json['job_applicants_aggregate'] != null
+        ? JobApplicantsAggregate.fromJson(json['job_applicants_aggregate'])
+        : null;
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -212,6 +215,7 @@ class Jobs {
     data['banner_image'] = this.bannerImage;
     data['timingtoggle'] = this.timingtoggle;
     data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     if (this.jobApplicantsAggregate != null) {
       data['job_applicants_aggregate'] = this.jobApplicantsAggregate!.toJson();
     }
@@ -240,6 +244,7 @@ class ClinicLogo {
     return data;
   }
 }
+
 class Banner {
   String? url;
   String? type;
@@ -247,7 +252,7 @@ class Banner {
 
   Banner({this.url, this.type, this.extension});
 
- Banner.fromJson(Map<String, dynamic> json) {
+  Banner.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     type = json['type'];
     extension = json['extension'];

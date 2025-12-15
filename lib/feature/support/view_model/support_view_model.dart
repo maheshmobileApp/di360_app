@@ -18,25 +18,8 @@ class SupportViewModel extends ChangeNotifier {
   String selectedTab = "Open";
   String? selectedReason;
   String? selectedReasonId;
-  List<String> requestReasons = ["Learning Hub", "Catalogue"];
-  List<SupportRequestReasons> supportRequestReasonsList = [];
-
-  void setSelectedReason(String? name) async {
-    await getSupportRequestsReasons();
-    selectedReason = name;
-
-    if (name != null) {
-      final match = supportRequestReasonsList.firstWhere(
-        (reason) => reason == name,
-        orElse: () => SupportRequestReasons(),
-      );
-      selectedReasonId = match.id;
-    } else {
-      selectedReasonId = null;
-    }
-
-    notifyListeners();
-  }
+  List<String> requestReasons = [];
+  GetSupportRequestReasonData? supportRequestReasonsList;
 
   void setSelectedTab(String tab) {
     selectedTab = tab;
@@ -52,6 +35,11 @@ class SupportViewModel extends ChangeNotifier {
 
   void setSearchBar(bool value) {
     searchBarOpen = value;
+    notifyListeners();
+  }
+
+  void setSelectedReason(String? reason) {
+    selectedReason = reason;
     notifyListeners();
   }
 
@@ -98,11 +86,17 @@ class SupportViewModel extends ChangeNotifier {
   }
 
   Future<void> getSupportRequestsReasons() async {
+    print("********************getSupportRequestsReasons calling");
     final variables = {};
     final res = await repo.getSupportRequestsReasons(variables);
 
     if (res.supportRequestReasons != null) {
       supportRequestReasonsData = res;
+      requestReasons = res.supportRequestReasons!
+          .map((e) => e.name ?? '')
+          .where((name) => name.isNotEmpty)
+          .toList();
+
     }
     notifyListeners();
   }
@@ -117,9 +111,19 @@ class SupportViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List uploadedAttachment = [];
+
   Future<void> sendMessage(String requestId) async {
+    print("********************send message calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    if (selectedAttachments != null) {
+      var value = await _http.uploadImage(selectedAttachments?.path);
+      print("resp from upload $value");
+      if (value != null) {
+        uploadedAttachment.add(value);
+      }
+    }
 
     final variables = {
       "conversation": {
@@ -128,13 +132,19 @@ class SupportViewModel extends ChangeNotifier {
         "sender_id": userId,
         "sender_type": type,
         "message": messageController.text,
-        "attachments": [],
+        "attachments": uploadedAttachment,
         "created_at": DateTime.now().toIso8601String()
       }
     };
+    print("********************variables $variables");
     final res = await repo.insertMessage(variables);
 
-    if (res != null) {}
+    if (res != null) {
+      getSupportMessages(requestId);
+      messageController.clear();
+      selectedAttachments = null;
+      uploadedAttachment = [];
+    }
     notifyListeners();
   }
 
@@ -197,6 +207,13 @@ class SupportViewModel extends ChangeNotifier {
   /***********************Image Upload*********************** */
   List existingImages = [];
   List<PlatformFile> selectedFiles = [];
+  PlatformFile? selectedAttachments;
+
+  void setSelectedAttachments(PlatformFile? file) {
+    selectedAttachments = file;
+    notifyListeners();
+  }
+
   void removeExistingFile(int index) {
     existingImages.removeAt(index);
     notifyListeners();

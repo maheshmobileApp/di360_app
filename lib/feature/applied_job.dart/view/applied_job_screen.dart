@@ -35,7 +35,7 @@ class AppliedJobScreen extends StatelessWidget {
             if (vm.appliedJobs.isEmpty) {
               return const Center(
                 child: Text(
-                  'No applied jobs found',
+                  'Your applied jobs will be listed here once you apply',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               );

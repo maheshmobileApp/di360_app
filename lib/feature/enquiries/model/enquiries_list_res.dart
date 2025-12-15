@@ -1,3 +1,6 @@
+
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+
 class EnquiriesListRes {
   EnquiriesListResData? data;
 
@@ -46,8 +49,8 @@ class JobEnquiries {
   String? createdAt;
   String? enquiryUserid;
   DentalProfessional? dentalProfessional;
-  Null? jobs;
-  Null? jobApplicantsFind;
+  Jobs? jobs;
+  JobApplicantsFind? jobApplicantsFind;
   String? sTypename;
 
   JobEnquiries(
@@ -68,8 +71,10 @@ class JobEnquiries {
     dentalProfessional = json['dental_professional'] != null
         ? new DentalProfessional.fromJson(json['dental_professional'])
         : null;
-    jobs = json['jobs'];
-    jobApplicantsFind = json['job_applicants_find'];
+    jobs = json['jobs'] != null ? new Jobs.fromJson(json['jobs']) : null;
+    jobApplicantsFind = json['job_applicants_find'] != null
+        ? new JobApplicantsFind.fromJson(json['job_applicants_find'])
+        : null;
     sTypename = json['__typename'];
   }
 
@@ -82,8 +87,12 @@ class JobEnquiries {
     if (this.dentalProfessional != null) {
       data['dental_professional'] = this.dentalProfessional!.toJson();
     }
-    data['jobs'] = this.jobs;
-    data['job_applicants_find'] = this.jobApplicantsFind;
+    if (this.jobs != null) {
+      data['jobs'] = this.jobs!.toJson();
+    }
+    if (this.jobApplicantsFind != null) {
+      data['job_applicants_find'] = this.jobApplicantsFind!.toJson();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -157,6 +166,66 @@ class ProfileImage {
     data['directory'] = this.directory;
     data['extension'] = this.extension;
     data['mime_type'] = this.mimeType;
+    return data;
+  }
+}
+/*
+class Jobs {
+  String? id;
+  String? title;
+  String? logo;
+  String? companyName;
+  String? jRole;
+  List<String>? typeofEmployment;
+  String? sTypename;
+
+  Jobs(
+      {this.id,
+      this.title,
+      this.logo,
+      this.companyName,
+      this.jRole,
+      this.typeofEmployment,
+      this.sTypename});
+
+  Jobs.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    logo = json['logo'];
+    companyName = json['company_name'];
+    jRole = json['j_role'];
+    typeofEmployment = json['TypeofEmployment'].cast<String>();
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['title'] = this.title;
+    data['logo'] = this.logo;
+    data['company_name'] = this.companyName;
+    data['j_role'] = this.jRole;
+    data['TypeofEmployment'] = this.typeofEmployment;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}*/
+
+class JobApplicantsFind {
+  String? id;
+  String? sTypename;
+
+  JobApplicantsFind({this.id, this.sTypename});
+
+  JobApplicantsFind.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

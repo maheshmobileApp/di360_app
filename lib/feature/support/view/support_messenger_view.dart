@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
@@ -7,6 +8,7 @@ import 'package:di360_flutter/feature/support/model/get_support_messages_res.dar
 import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/support/widgets/attachment_picker.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +124,71 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                     ),
                   ),
 
+                  // Show selected attachment above TextField
+                  if (supportVM.selectedAttachments != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              supportVM.selectedAttachments!.extension == 'pdf' ? Icons.picture_as_pdf : Icons.image,
+                              color: Colors.orange,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    supportVM.selectedAttachments!.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    '${(supportVM.selectedAttachments!.size / 1024).toStringAsFixed(1)} KB',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                supportVM.selectedAttachments = null;
+                                supportVM.notifyListeners();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade100,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Icon(
+                                  Icons.close,
+                                  color: Colors.red.shade700,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   // Bottom input area
                   Padding(
                       padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
@@ -130,8 +197,7 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                           AttachmentPicker(
                             icon: ImageConst.attachment,
                             onPick: (file) {
-                              print("Picked file: ${file.name}");
-                              // TODO: upload, show preview, etc
+                              supportVM.setSelectedAttachments(file);
                             },
                           ),
                           Expanded(
@@ -157,8 +223,11 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      supportVM.sendMessage(
-                                          widget.supportRequest?.id ?? "");
+                                      if (supportVM.messageController.text.trim().isNotEmpty || 
+                                          supportVM.selectedAttachments != null) {
+                                        supportVM.sendMessage(
+                                            widget.supportRequest?.id ?? "");
+                                      }
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 6),
@@ -186,9 +255,8 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
     final isMine = msg?.senderType != "ADMIN";
 
     final alignment =
-      isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start;
-    final bubbleColor =
-        isMine ? const Color(0xFFFFF1E6) : Colors.grey.shade200;
+        isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final bubbleColor = isMine ? const Color(0xFFFFF1E6) : Colors.grey.shade200;
     final radius = isMine
         ? const BorderRadius.only(
             topLeft: Radius.circular(14),
@@ -210,7 +278,14 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
         children: [
           if (!isMine) const SizedBox(width: 4),
           if (!isMine)
-            CircleAvatar(radius: 20, backgroundColor: Colors.grey.shade300),
+            CircleAvatar(
+              backgroundColor: AppColors.whiteColor,
+              radius: 20,
+              child: SvgPicture.asset(
+                ImageConst.logo,
+                fit: BoxFit.cover,
+              ),
+            ),
           if (!isMine) const SizedBox(width: 8),
           Flexible(
             child: Column(
@@ -231,14 +306,74 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                         style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 8),
+                      (msg?.attachments != null &&
+                              msg!.attachments!.isNotEmpty)
+                          ?
+                      Container(
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF6F0),
+                          borderRadius: radius,
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon((msg.attachments?.first.type!="image")?Icons.picture_as_pdf:Icons.image,
+                                      color: Colors.orange, size: 30),
+                                  Text(msg.attachments?.first.name ?? '',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600)),
+                                  const SizedBox(height: 6),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                final attachment = msg.attachments?.first;
+                                if (attachment?.url != null && attachment?.name != null) {
+                                  
+                                }
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 16),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Download',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600)),
+                                    SizedBox(width: 8),
+                                    Icon(Icons.file_download,
+                                        color: Colors.white, size: 18),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ): const SizedBox.shrink(),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(DateFormatUtils.formatToTime(msg?.createdAt??""),
+                          Text(
+                              DateFormatUtils.formatToTime(
+                                  msg?.createdAt ?? ""),
                               style: TextStyle(
                                   fontSize: 11, color: Colors.grey[600])),
-                          
                         ],
                       ),
                     ],

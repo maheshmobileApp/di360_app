@@ -77,7 +77,6 @@ Widget build(BuildContext context) {
                 addVertical(16),
                 ImagePickerField(
                 title: "Clinic Photos",
-                isRequired: true,
                 serverImages: jobCreateVM.serverClinicImgs,
                 allowMultiple: true,
                 onServerFilesRemoved: (updatedList) {
