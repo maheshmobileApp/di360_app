@@ -5,7 +5,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
-import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';

@@ -33,16 +33,19 @@ class BasicInfo extends StatelessWidget with BaseContextHelpers {
             InputTextField(
                 controller: viewProfileVM.businessNameController,
                 hintText: "Business Name",
+                isRequired: true,
                 title: "Business Name"),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.nameController,
                 hintText: "Name",
+                isRequired: true,
                 title: "Contact Name"),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.abnNUmberController,
                 hintText: "ABN / ACN Number",
+                isRequired: true,
                 title: "ABN / ACN Number"),
             addVertical(10),
             InputTextField(
@@ -56,6 +59,7 @@ class BasicInfo extends StatelessWidget with BaseContextHelpers {
             InputTextField(
                 controller: viewProfileVM.phoneNoController,
                 hintText: "Phone Number",
+                isRequired: true,
                 title: "Phone Number"),
           ],
         ));
@@ -79,6 +83,7 @@ class BasicInfo extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
       hintText: "Select category",
+      isRequired: true,
     );
   }
 }

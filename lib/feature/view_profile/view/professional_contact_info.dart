@@ -18,6 +18,7 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
               controller: viewProfileVM.addressController,
               hintText: "Address",
               title: "Address",
+              isRequired: true,
               validator:(v) {
                 if (v!.isEmpty) {
                   return "Please enter address";

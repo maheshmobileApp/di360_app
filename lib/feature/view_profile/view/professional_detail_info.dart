@@ -39,6 +39,8 @@ class ProfessionalDetailInfo extends StatelessWidget with BaseContextHelpers {
       title: "Profession Type",
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
+          isRequired: true,
+          validator: (v) => v == null ? 'Select profession type' : null,
       items: allCategories.map((cat) {
         return DropdownMenuItem<Object>(
           value: cat,

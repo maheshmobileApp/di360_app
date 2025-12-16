@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
@@ -13,7 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfessionalPersonalDetails extends StatelessWidget
-    with BaseContextHelpers {
+    with BaseContextHelpers, ValidationMixins {
   const ProfessionalPersonalDetails({super.key});
 
   @override
@@ -36,7 +37,10 @@ class ProfessionalPersonalDetails extends StatelessWidget
           CustomDropDown(
               value: viewProfileVM.selectedSalutation,
               title: "Select Type",
+              isRequired: true,
               onChanged: (v) => viewProfileVM.selectedSalutation = v,
+              validator: (v) =>
+                  viewProfileVM.selectedSalutation == null ? 'Please select your type' : null,
               items: ConstantData.salutationList
                   .map((e) => DropdownMenuItem<String>(
                       value: e,
@@ -48,7 +52,9 @@ class ProfessionalPersonalDetails extends StatelessWidget
           InputTextField(
               controller: viewProfileVM.firstNameController,
               hintText: "First Name",
-              title: "first Name"),
+              isRequired: true,
+              title: "first Name",
+              validator: validateFirstName),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.middleNameController,
@@ -58,12 +64,18 @@ class ProfessionalPersonalDetails extends StatelessWidget
           InputTextField(
               controller: viewProfileVM.lastNameController,
               hintText: "Last Name",
+              isRequired: true,
+              validator: validateLastName,
               title: "Last Name"),
           addVertical(10),
           CustomDatePicker(
               controller: viewProfileVM.dateOfBirthController,
               title: "Date of Birth",
+              isRequired: true,
               hintText: "Select date",
+              validator: (v) => v?.isEmpty == true
+                  ? 'Please select your date of birth'
+                  : null,
               onTap: () async {
                 final picked = await showDatePicker(
                   context: context,
@@ -79,6 +91,7 @@ class ProfessionalPersonalDetails extends StatelessWidget
           CustomDropDown(
               value: viewProfileVM.selectedGender,
               title: "Gender",
+              isRequired: true,
               onChanged: (v) => viewProfileVM.selectedGender = v,
               items: ConstantData.genderList
                   .map((e) => DropdownMenuItem<String>(
@@ -86,7 +99,9 @@ class ProfessionalPersonalDetails extends StatelessWidget
                       child: Text(e,
                           style: TextStyles.medium3(color: AppColors.black))))
                   .toList(),
-              hintText: "Select gender"),
+              hintText: "Select gender",
+              validator: (v) =>
+                  viewProfileVM.selectedGender == null ? 'Please select your gender' : null),
         ]));
   }
 }

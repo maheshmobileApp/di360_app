@@ -20,7 +20,7 @@ class SignupViewModel extends ChangeNotifier {
   final TextEditingController passController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController conformController = TextEditingController();
-  final TextEditingController businessController = TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController postalCodeController = TextEditingController();
@@ -130,6 +130,7 @@ class SignupViewModel extends ChangeNotifier {
           "postal_code": postalCodeController.text,
           "type": selectedType?['type'],
           "state": stateController.text,
+          "business_name": companyNameController.text,
           "status": "PENDING",
           "subscription_plan_id": selectedPlanId,
           "professionType": selectedCategory?.name

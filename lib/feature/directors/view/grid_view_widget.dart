@@ -22,7 +22,6 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final userId = LocalStorage.getStringVal(LocalStorageConst.userId);
     return Consumer<DirectoryViewModel>(builder: (context, value, child) {
       return SingleChildScrollView(
         controller: controller,

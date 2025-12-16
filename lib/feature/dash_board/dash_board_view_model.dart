@@ -44,6 +44,11 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   void _setupPages() {
+    _updatePages();
+    notifyListeners();
+  }
+
+  void _updatePages() {
     if (_userType == "SUPPLIER") {
       _pages = [
         HomeScreen(),
