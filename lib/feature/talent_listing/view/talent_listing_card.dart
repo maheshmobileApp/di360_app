@@ -6,15 +6,15 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_view.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
-import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 class TalentListingCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfiles? jobProfiles;
+  final Jobhirings? jobProfiles;
   final TalentListingViewModel vm;
   final int? index;
 
@@ -29,8 +29,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobProfiles?.createdAt ?? '') ?? '';
     final String? profileImageUrl =
-        (jobProfiles?.profileImage.isNotEmpty == true)
-            ? jobProfiles!.profileImage.first.url
+        (jobProfiles?.jobProfiles?.profileImage?.url?.isNotEmpty == true)
+            ? jobProfiles!.jobProfiles!.profileImage!.url
             : null;
 
     return Padding(
@@ -60,8 +60,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   child: _logoWithTitle(
                     context,
                     profileImageUrl,
-                    jobProfiles?.fullName ?? '',
-                    jobProfiles?.professionType ?? '',
+                    jobProfiles?.jobProfiles?.fullName ?? '',
+                    jobProfiles?.jobProfiles?.professionType ?? '',
                   ),
                 ),
                 Column(
@@ -70,8 +70,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _statusChip(jobProfiles?.adminStatus ?? ''),
-                        _TalentMenu(jobProfiles?.adminStatus ?? ''),
+                        _statusChip(jobProfiles?.hiringStatus ?? ''),
+                        _TalentMenu(jobProfiles?.hiringStatus ?? ''),
                       ],
                     ),
                   ],
@@ -82,7 +82,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _chipWidget(jobProfiles?.workType ?? [])),
+                Expanded(child: _chipWidget(jobProfiles?.jobProfiles?.workType ?? [])),
                 JobTimeChip(time: time),
               ],
             ),
@@ -93,7 +93,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                 InkWell(
                   onTap: () async {
                     final profileId = jobProfiles?.id;
-                    final jobId = jobProfiles?.jobDesignation;
+                    final jobId = jobProfiles?.jobProfiles?.professionType??"";
                     if (profileId == null || jobId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -280,12 +280,13 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      onSelected: (value) {
+      onSelected: (value) async{
         if (value == "Preview") {
+          /*
           navigationService.navigateToWithParams(
             RouteList.talentdetailsScreen,
             params: jobProfiles,
-          );
+          );*/
         } else if (value == "Cancel") {
 
         }

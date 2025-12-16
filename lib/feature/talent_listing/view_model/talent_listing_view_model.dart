@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
@@ -67,10 +68,9 @@ class TalentListingViewModel extends ChangeNotifier {
   final List<String> statuses = [
     'All',
     'Pending',
-    'Approve',
-    'Draft',
-    'Reject',
-    'Expire',
+    'Interested',
+    'Not Interested',
+    'Cancelled'
   ];
 
   // Status counts
@@ -82,39 +82,38 @@ class TalentListingViewModel extends ChangeNotifier {
   int? ExpireCount = 0;
 
   Map<String, int?> get statusCountMap => {
-        'All': AllTalentCount,
-        'Pending': PendingCount,
-        'Approve': ApprovalCount,
-        'Reject': RejectedCount,
-        'Draft': DraftCount,
-        'Expire': ExpireCount,
+        'All': 0,
+        'Pending': 0,
+        'Interested': 0,
+        'Not Interested': 0,
+        'Cancelled': 0,
       };
 
-  List<String> listingStatus = [];
-  List<JobProfiles> myTalentListingList = [];
+  String listingStatus = '';
+  HiringTalentList? myTalentListingList;
   void changeStatus(String status) {
     selectedStatus = status;
     switch (status) {
       case 'All':
-        listingStatus = ["PENDING", "APPROVE", "REJECT", "EXPIRE", "DRAFT"];
+        listingStatus = '';
         break;
       case 'Pending':
-        listingStatus = ['PENDING'];
+        listingStatus = 'PENDING';
         break;
       case 'Approve':
-        listingStatus = ['APPROVE'];
+        listingStatus = 'APPROVE';
         break;
       case 'Reject':
-        listingStatus = ['REJECT'];
+        listingStatus = 'REJECT';
         break;
       case 'Draft':
-        listingStatus = ['DRAFT'];
+        listingStatus = 'DRAFT';
         break;
       case 'Expire':
-        listingStatus = ['EXPIRE'];
+        listingStatus = 'EXPIRE';
         break;
       default:
-        listingStatus = ["PENDING", "APPROVE", "REJECT", "EXPIRE", "DRAFT"];
+        listingStatus = "";
     }
     getMyTalentListingData();
   }
@@ -164,7 +163,7 @@ class TalentListingViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e, st) {
       print("Error fetching talent listing: $e\n$st");
-      myTalentListingList = [];
+      myTalentListingList = null;
       notifyListeners();
     }
   }

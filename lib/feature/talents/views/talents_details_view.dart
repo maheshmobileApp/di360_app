@@ -28,7 +28,7 @@ class TalentsDetailsView extends StatefulWidget with BaseContextHelpers {
     super.key,
     this.talentList,
   });
-
+    
   @override
   State<TalentsDetailsView> createState() => _TalentsDetailsViewState();
 }
@@ -183,14 +183,14 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               ],
               
               // Certifications Section
-              if (widget.talentList?.certificate?.isNotEmpty == true) ...[
+              if (widget.talentList?.certificate.isNotEmpty == true) ...[
                 addVertical(16),
                 _sectionHeader("Certifications"),
                 CertificatesView(certificates: widget.talentList?.certificate),
               ],
               
               // Cover Letter Section
-              if (widget.talentList?.coverLetter?.isNotEmpty == true) ...[
+              if (widget.talentList?.coverLetter.isNotEmpty == true) ...[
                 addVertical(16),
                 _sectionHeader("Cover Letter"),
                 CertificatesView(certificates: widget.talentList?.coverLetter),

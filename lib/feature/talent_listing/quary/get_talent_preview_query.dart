@@ -1,0 +1,65 @@
+const String getTalentPreviewQuery = r'''query getTalentPreview($id: uuid!) {
+  job_profiles(where: {id: {_eq: $id}}) {
+    id
+    created_at
+    updated_at
+    skills
+    jobexperiences
+    educations
+    upload_resume
+    job_designation
+    current_company
+    current_ctc
+    dental_professional_id
+    post_anonymously
+    admin_status
+    active_status
+    profile_image
+    full_name
+    mobile_number
+    email_address
+    work_type
+    profession_type
+    location
+    country
+    city
+    state
+    cover_letter
+    certificate
+    radius
+    abn_number
+    availabilityOption
+    availabilityDate
+    fromDate
+    availabilityDay
+    work_rights
+    Year_of_experiance
+    languages_spoken
+    areas_expertise
+    skills
+    percentage
+    salary_amount
+    salary_type
+    aphra_number
+    willing_to_travel
+    travel_distance
+    about_yourself
+    location
+    availabilityType
+    unavailabilityDate
+    dental_professional {
+      id
+      gender
+      name
+      __typename
+    }
+    jobhirings {
+      id
+      dental_supplier_id
+      hiring_status
+      __typename
+    }
+    __typename
+  }
+}
+''';
