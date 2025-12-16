@@ -38,7 +38,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           color: Colors.white,
         ),
         label: Text(
-          vm.allJobProfiles.isEmpty ? "Create Profile" : "Edit Profile",
+          vm.allJobProfiles.isEmpty ? "Create Profile" : "Update Profile",
           style: const TextStyle(color: Colors.white),
         ),
         onPressed: () async {

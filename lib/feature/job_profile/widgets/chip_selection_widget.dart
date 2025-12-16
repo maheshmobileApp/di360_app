@@ -78,6 +78,8 @@ class _ChipTextFieldState extends State<ChipTextField> {
           focusNode: widget.focusNode,
           decoration: InputDecoration(
             hintText: widget.chips.isEmpty ? widget.hintText : "",
+            hintStyle:
+                TextStyles.regular4(color: AppColors.dropDownHint),
             filled: widget.isFilled ?? true,
             fillColor: widget.fillColor ?? Colors.white,
             contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 10),

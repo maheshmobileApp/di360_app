@@ -99,6 +99,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       TextEditingController();
   final TextEditingController percentageController =
       TextEditingController();
+  final TextEditingController salaryController =
+      TextEditingController();
   List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
   File? profileFile;
@@ -155,6 +157,22 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Certificate": null,
     "Cover Letter": null,
   };
+
+  final List<String> salaryPerOptions = ["Hourly", "Weekly", "Monthly", "Yearly"];
+  String? selectedSalaryPer;
+
+  void setSelectSalaryPer (String value){
+    if (value == "Hourly") {
+      selectedSalaryPer = "Per Hour";
+    } else if (value == "Weekly") {
+      selectedSalaryPer = "Per Week";
+    } else if (value == "Monthly") {
+      selectedSalaryPer = "Per Month";
+    } else if (value == "Yearly") {
+      selectedSalaryPer = "Per Year";
+    }
+    notifyListeners();
+  }
 
   List<String> removedServerDocKeys = [];
 
@@ -317,6 +335,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   //Willing to travel
   bool isWillingToTravel = false;
   //
+  //Post as Anonymous
+  bool isPostAnonymous = false;
+  //
   //Availability
   bool isJoiningImmediate = false;
   DateTime? joiningDate;
@@ -472,6 +493,12 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   // ─────WillingToTravel ─────
   void toggleWillingToTravel(bool value) {
     isWillingToTravel = value;
+    notifyListeners();
+  }
+
+  // ─────PostAnonymous ─────
+  void togglePostAnonymous(bool value) {
+    isPostAnonymous = value;
     notifyListeners();
   }
 
@@ -801,8 +828,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "abn_number": abnNumberController.text,
             "availabilityOption": selectedAvailabilityType,
             "current_ctc": "100000",
-            "post_anonymously":
-                false, // we need to send toggle value dynamically
+            "post_anonymously": isPostAnonymous,
             "admin_status": isDraft ? "DRAFT" : "PENDING",
             "jobexperiences": experiences
                 .map((e) => {
@@ -830,11 +856,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "languages_spoken": languages,
             "areas_expertise": expertise,
             "skills": selectskills.map((toElement) => toElement).toList(),
-            "salary_amount": 120000, // need to send dynamically
-            "salary_type": "Per Year", // need to send dynamically
+            "salary_amount": salaryController.text, // need to send dynamically
+            "salary_type": selectedSalaryPer, // need to send dynamically
             "travel_distance":
                 DistanceController.text, // need to send dynamically
-            "percentage": "10",
+            "percentage": percentageController.text,
             "aphra_number": aphraRegistrationNumberController.text,
             "willing_to_travel": isWillingToTravel,
             "about_yourself": aboutMeController.text,
@@ -944,7 +970,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "abn_number": abnNumberController.text,
           "availabilityOption": selectedAvailabilityType,
           "current_ctc": "100000",
-          "post_anonymously": false, // we need to send toggle value dynamically
+          "post_anonymously": isPostAnonymous,
           "admin_status": isDraft ? "DRAFT" : "PENDING",
           "jobexperiences": experiences
               .map((e) => {
@@ -972,11 +998,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "languages_spoken": languages,
           "areas_expertise": expertise,
           "skills": selectskills.map((toElement) => toElement).toList(),
-          "salary_amount": 120000, // need to send dynamically
-          "salary_type": "Per Year", // need to send dynamically
+          "salary_amount": salaryController.text, // need to send dynamically
+          "salary_type": selectedSalaryPer, // need to send dynamically
           "travel_distance":
               DistanceController.text, // need to send dynamically
-          "percentage": "10",
+          "percentage": percentageController.text,
           "aphra_number": aphraRegistrationNumberController.text,
           "willing_to_travel": isWillingToTravel,
           "about_yourself": aboutMeController.text,
