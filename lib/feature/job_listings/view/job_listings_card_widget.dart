@@ -59,6 +59,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                         jobsListingData?.title ?? '',
                         jobsListingData?.companyName ?? '',
                         jobsListingData?.status ?? '',
+                        jobsListingData?.activeStatus ?? '',
                       ),
                     ),
                     Row(
@@ -85,34 +86,45 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                        onTap: () async {
-                          final count = jobsListingData
-                                  ?.jobApplicantsAggregate?.aggregate?.count ??
-                              0;
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                            onTap: () async {
+                              final count = jobsListingData
+                                      ?.jobApplicantsAggregate
+                                      ?.aggregate
+                                      ?.count ??
+                                  0;
 
-                          if (count != 0) {
-                            Loaders.circularShowLoader(context);
-                            viewModel.jobId = jobsListingData?.id ?? '';
-                            await viewModel.getMyJobApplicantsgData(
-                              context,
-                              jobsListingData?.id ?? '',
-                            );
-                            Loaders.circularHideLoader(context);
+                              if (count != 0) {
+                                Loaders.circularShowLoader(context);
+                                viewModel.jobId = jobsListingData?.id ?? '';
+                                await viewModel.getMyJobApplicantsgData(
+                                  context,
+                                  jobsListingData?.id ?? '',
+                                );
+                                Loaders.circularHideLoader(context);
 
-                            navigationService.navigateToWithParams(
-                              RouteList.JobListingApplicantscreen,
-                              params: jobsListingData,
-                            );
-                          } else {
-                            scaffoldMessenger("0 Applicants Applied");
-                          }
-                        },
-                        child: _registeredChip(
-                            jobsListingData?.jobApplicantsAggregate?.aggregate
-                                    ?.count ??
-                                0,
-                            "Applicants")),
+                                navigationService.navigateToWithParams(
+                                  RouteList.JobListingApplicantscreen,
+                                  params: jobsListingData,
+                                );
+                              } else {
+                                scaffoldMessenger("0 Applicants Applied");
+                              }
+                            },
+                            child: _registeredChip(
+                                jobsListingData?.jobApplicantsAggregate
+                                        ?.aggregate?.count ??
+                                    0,
+                                "Applicants")),
+                        addHorizontal(10),
+                        GestureDetector(
+                            onTap: () async {},
+                            child: _registeredChip(0, "Enquiries")),
+                      ],
+                    ),
                     GestureDetector(
                       onTap: () {
                         navigationService.navigateToWithParams(
@@ -213,6 +225,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     String company,
     String title,
     String status,
+    String activeStatus,
   ) {
     return Row(
       children: [
@@ -238,7 +251,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
                 child: Text(
-                  status,
+                  status == "APPROVE" ? activeStatus : status,
                   style: TextStyles.medium1(
                     color: AppColors.greenColor,
                     fontSize: 10,

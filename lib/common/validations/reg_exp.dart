@@ -36,3 +36,11 @@ bool isValidAustralianPhoneNumber(String phone) {
   final pattern = RegExp(r'^(\+61|0)[23478]\d{8}$');
   return pattern.hasMatch(phone) && phone.length == 10;
 }
+
+bool isValidPhoneNumber(String phone) {
+  return RegExp(r'^[0-9]{10}$').hasMatch(phone);
+}
+
+bool isValidateABNNumber(String abn) {
+  return RegExp(r'^[0-9]{10}$').hasMatch(abn);
+}

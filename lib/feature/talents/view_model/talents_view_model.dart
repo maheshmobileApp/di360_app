@@ -133,6 +133,7 @@ class TalentsViewModel extends ChangeNotifier {
     try {
       final res = await repo.getTalentDetails();
       talentList = res;
+      print("***********************${talentList.first.jobHirings.length}***********************");
       print("Fetched ${talentList.length} talents");
     } finally {
       Loaders.circularHideLoader(context);

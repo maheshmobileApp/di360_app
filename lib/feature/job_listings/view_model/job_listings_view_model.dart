@@ -328,6 +328,7 @@ class JobListingsViewModel extends ChangeNotifier {
       final res = await repo.fetchApplicantMessages(jobId);
       if (res.messages != null) {
         messages = res.messages!;
+        print("******************messages fetched ${messages}");
       }
     } catch (e) {
       errorMessage = e.toString();
@@ -339,10 +340,12 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> deleteapplicantMessage(BuildContext context, String Id,
       String applicantId, bool deletedStatus) async {
+        print("******************deleteapplicantMessage called");
     try {
       isLoading = true;
 
       final res = await repo.deleteApplicantMessage(Id, deletedStatus);
+      print("res $res");
       await fetchApplicantMessages(applicantId);
     } catch (e) {
       errorMessage = e.toString();
