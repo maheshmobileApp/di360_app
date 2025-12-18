@@ -50,7 +50,13 @@ query getalljobs($andList: [jobs_bool_exp!]) {
         count
       }
     }
+       job_enquiries_aggregate {
+      aggregate {
+        count
+      }
+    }
   }
-}''';
+}
+''';
 
 

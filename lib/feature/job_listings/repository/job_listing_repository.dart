@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/job_listings/model/get_filtered_enquiry_res.dart';
 import 'package:di360_flutter/feature/job_listings/model/get_job_applicants_count_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
@@ -16,8 +17,10 @@ abstract class JobListingRepository {
   Future<void> updateJobAggrateStatus(dynamic variables);
   Future<JobListingApplicantsMessageResponse> fetchApplicantMessages(
       String jobId);
-  Future<String?> sendApplicantMessage(Map<String, dynamic> variables,String typeName);
+  Future<String?> sendApplicantMessage(
+      Map<String, dynamic> variables, String typeName);
   Future<Jobs> getEditJobIDData(String jobId);
   Future<dynamic> deleteApplicantMessage(String Id, bool deleteStatus);
   Future<dynamic> updateApplicantMessage(String Id, String message);
+  Future<FilteredEnquiryData> getFilteredEnquiryData(dynamic variables);
 }
