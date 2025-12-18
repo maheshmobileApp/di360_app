@@ -96,7 +96,6 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                       children: [
                                         Flexible(
                                           child: Text(
-                                              director.name ??
                                                   director.companyName ??
                                                   '',
                                               textAlign: TextAlign.center,
