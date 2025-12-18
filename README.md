@@ -393,7 +393,7 @@ flutter run --dart-define-from-file=.env/dev.json
 flutter run --dart-define-from-file=.env/prod.json
 
 flutter build ipa --release --export-method app-store \
-  --dart-define-from-file=.env/production.json
+  --dart-define-from-file=.env/prod.json
 
 flutter build appbundle --release --dart-define-from-file=.env/prod.json
 
