@@ -65,7 +65,8 @@ class MyApp extends StatelessWidget {
       stream: Connectivity().onConnectivityChanged,
       builder: (context, snapshot) {
         final hasConnection = snapshot.data != null &&
-            !snapshot.data!.contains(ConnectivityResult.none);
+            snapshot.data!.isNotEmpty &&
+            snapshot.data!.first != ConnectivityResult.none;
         
         if (snapshot.hasData && !hasConnection) {
           return const MaterialApp(

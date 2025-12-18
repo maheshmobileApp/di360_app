@@ -2,26 +2,26 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-
 class AvailabilityCalendarDialog extends StatefulWidget {
   final String availabilityType;
   final List<String> availabilityDays;
   final List<String> availabilityDates;
+  final String? title;
 
   const AvailabilityCalendarDialog({
     Key? key,
     required this.availabilityType,
     required this.availabilityDays,
     required this.availabilityDates,
+    this.title,
   }) : super(key: key);
 
-  factory AvailabilityCalendarDialog.fromJobProfile(dynamic jobProfile) {
+  factory AvailabilityCalendarDialog.fromJobProfile(dynamic jobProfile, {String? title}) {
     final rawType =
         (jobProfile?.availabilityType ?? '').toString().toLowerCase();
     final hasDates =
         (jobProfile?.availabilityDate as List?)?.isNotEmpty == true;
-    final hasDays =
-        (jobProfile?.availabilityDay as List?)?.isNotEmpty == true;
+    final hasDays = (jobProfile?.availabilityDay as List?)?.isNotEmpty == true;
 
     String resolvedType;
     if (['days', 'dates', 'both'].contains(rawType)) {
@@ -51,6 +51,7 @@ class AvailabilityCalendarDialog extends StatefulWidget {
       availabilityType: resolvedType,
       availabilityDays: daysList,
       availabilityDates: datesList,
+      title: title,
     );
   }
 
@@ -91,9 +92,9 @@ class _AvailabilityCalendarDialogState
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 12),
-            const Text(
-              "Availability",
-              style: TextStyle(
+            Text(
+              widget.title ?? "Availability",
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
                 color: AppColors.primaryColor,
@@ -166,7 +167,6 @@ class _AvailabilityCalendarDialogState
     );
   }
 }
-
 
 DateTime? parseDateString(String? s) {
   if (s == null) return null;

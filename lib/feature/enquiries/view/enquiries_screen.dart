@@ -10,17 +10,14 @@ class EnquiriesScreen extends StatelessWidget {
     super.key,
   });
 
-  
-
   Widget build(BuildContext context) {
     final vm = Provider.of<EnquiriesViewModel>(context);
-    final count = vm.enquiriesListData?.jobEnquiries?.length ?? 0;  
+    final count = vm.enquiriesListData?.jobEnquiries?.length ?? 0;
     return Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppbarTitleBackIconWidget(title: 'Enquiries'),
         body: ListView.builder(
-          
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           itemCount: count,
           itemBuilder: (_, index) {
             final job = vm.enquiriesListData?.jobEnquiries?[index];

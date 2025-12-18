@@ -242,6 +242,10 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 text: (widget.talentList?.jobHirings?.isNotEmpty == true && widget.talentList?.jobHirings?.first.id != null) ? 'Requested' : 'Hire Me',
                 height: 42,
                 onPressed: () async {
+                  if (widget.talentList?.jobHirings?.isNotEmpty == true && widget.talentList?.jobHirings?.first.id != null){
+                    ToastMessage.show('You have already sent a request to this talent!');
+
+                  }else{
                   final userId =
                       await LocalStorage.getStringVal(LocalStorageConst.userId);
                   final provider =
@@ -253,7 +257,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                       attachments: []);
                   await provider.hireMe(hireRequest);
                   ToastMessage.show('Hire Me Request sent successfully!');
-                },
+                }},
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.whiteColor,
               ),

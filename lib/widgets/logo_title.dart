@@ -39,6 +39,7 @@ class LogoWithTitle extends StatelessWidget {
                           )))
                   : CircleAvatar(
                       radius: 24,
+                      child: Icon(Icons.person),
                       backgroundColor: Colors.grey,
                     ),
             )),

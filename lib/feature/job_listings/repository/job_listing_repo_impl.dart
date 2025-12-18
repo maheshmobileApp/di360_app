@@ -166,6 +166,7 @@ class JobListingRepoImpl extends JobListingRepository {
   @override
   Future<String?> sendApplicantMessage(
       Map<String, dynamic> variables, String typeName) async {
+    print("***************************$typeName");
     try {
       final data = await http
           .mutation(typeName != "applicant" ? talentMessge : applicantMessge, {
@@ -204,7 +205,7 @@ class JobListingRepoImpl extends JobListingRepository {
   }
 
   @override
-  Future<FilteredEnquiryData> getFilteredEnquiryData(variables)  async {
+  Future<FilteredEnquiryData> getFilteredEnquiryData(variables) async {
     final res = await http.query(getFilteredEnquiryQuery, variables: variables);
     final data = FilteredEnquiryData.fromJson(res);
     return data;

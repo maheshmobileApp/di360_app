@@ -42,4 +42,5 @@ class EnquiriesViewModel extends ChangeNotifier {
     notifyListeners();
     return res;
   }
+  /******************Enquiry Messages****************/
 }
