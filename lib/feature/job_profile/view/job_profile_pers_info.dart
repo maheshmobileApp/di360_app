@@ -1,24 +1,28 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/reg_exp.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
+import 'package:di360_flutter/feature/job_profile/widgets/custom_selected_fileds.dart';
+
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
-class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
+class JobProfilePersInfo extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   JobProfilePersInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
     final jobProfileVM = Provider.of<JobProfileCreateViewModel>(context);
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+        backgroundColor: AppColors.whiteColor,
         body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SingleChildScrollView(
@@ -31,6 +35,17 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
                     children: [
                       _sectionHeader("Personal Info"),
                       addVertical(16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Post as Anonymous",
+                            style: TextStyles.regular3(color: AppColors.black),
+                          ),
+                          _customToggleButton(jobProfileVM),
+                        ],
+                      ),
+                      addVertical(16),
                       InputTextField(
                         controller: jobProfileVM.fullNameController,
                         readOnly: true,
@@ -42,17 +57,10 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
                         controller: jobProfileVM.mobileNumberController,
                         hintText: "Enter Mobile Number",
                         title: "Mobile Number",
+                        maxLength: 10,
                         keyboardType: TextInputType.number,
                         isRequired: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Mobile Number';
-                          }
-                          if (!phoneNoValid(value)) {
-                            return 'Please enter a valid Mobile Number';
-                          }
-                          return null;
-                        },
+                        validator: validatePhoneNumber,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                         ],
@@ -94,13 +102,13 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
                 ),
               ),*/
                       ImagePickerField(
-                        title: "Presented By (Image)",
+                        title: "Profile Image",
                         isRequired: true,
                         serverImage: jobProfileVM.serverProfileFile,
                         serverImageType: "image",
-                        /*onServerFileRemoved: (value) {
-                    jobCreateVM.setPresentedImg(null);
-                  },*/
+                        onServerFileRemoved: (value) {
+                          jobProfileVM.setProfileImg(null);
+                        },
                         showPreview: true,
                         selectedFile: jobProfileVM.profileFile,
                         onFilePicked: (file) =>
@@ -125,6 +133,37 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
     return Text(
       title,
       style: TextStyles.clashMedium(color: AppColors.buttonColor),
+    );
+  }
+
+  Widget _customToggleButton(JobProfileCreateViewModel jobProfileVM) {
+    return GestureDetector(
+      onTap: () => jobProfileVM.togglePostAnonymous(!jobProfileVM.isPostAnonymous),
+      child: Container(
+        width: 50,
+        height: 28,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: jobProfileVM.isPostAnonymous 
+              ? AppColors.primaryColor 
+              : AppColors.geryColor,
+        ),
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 200),
+          alignment: jobProfileVM.isPostAnonymous 
+              ? Alignment.centerRight 
+              : Alignment.centerLeft,
+          child: Container(
+            width: 24,
+            height: 24,
+            margin: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -154,6 +193,8 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+
+
   Widget _buildRoleTypes(JobProfileCreateViewModel jobProfileVM) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,22 +217,6 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
               ? 'Please select role type'
               : null,
         ),
-        addVertical(8),
-        if (jobProfileVM.selectedRole == "Dentist" ||
-            jobProfileVM.selectedRole == "Dental Specialist")
-          InputTextField(
-            controller: jobProfileVM.aphraRegistrationNumberController,
-            hintText: "Enter 10-digit  Aphra Registration Number",
-            title: " Aphra Registration Number",
-            isRequired: true,
-            keyboardType: TextInputType.number,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter  Aphra Registration Number';
-              }
-              return null;
-            },
-          ),
       ],
     );
   }
@@ -217,11 +242,79 @@ class JobProfilePersInfo extends StatelessWidget with BaseContextHelpers {
             controller: jobProfileVM.abnNumberController,
             hintText: "Enter 10-digit ABN Number",
             title: "ABN Number",
+            maxLength: 10,
             isRequired: true,
             keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter ABN Number'
-                : null,
+            validator: validateABNNumber,
+          ),
+        ],
+        if (jobProfileVM.selectedRole == "Dentist" ||
+            jobProfileVM.selectedRole == "Dental Specialist") ...[
+          addVertical(8),
+          InputTextField(
+            controller: jobProfileVM.aphraRegistrationNumberController,
+            hintText: "Enter 10-digit Aphra Registration Number",
+            title: "Aphra Registration Number",
+            isRequired: true,
+            maxLength: 13,
+            validator: validateAphraNumber,
+          ),
+        ],
+        if ((jobProfileVM.selectedRole == "Dentist" ||
+                jobProfileVM.selectedRole == "Dental Hygienist") &&
+            (jobProfileVM.selectedEmploymentChips.contains("Locum") ||
+                jobProfileVM.selectedEmploymentChips
+                    .contains("Contractor"))) ...[
+          addVertical(8),
+          InputTextField(
+            controller: jobProfileVM.percentageController,
+            hintText: "Enter %",
+            title: "Percentage (%)",
+            maxLength: 3,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+          ),
+        ],
+        if ((jobProfileVM.selectedRole == "Dentist" ||
+                jobProfileVM.selectedRole == "Dental Hygienist") &&
+            (jobProfileVM.selectedEmploymentChips.contains("Casual") ||
+                jobProfileVM.selectedEmploymentChips.contains("Full Time") ||
+                jobProfileVM.selectedEmploymentChips
+                    .contains("Part Time"))) ...[
+          addVertical(8),
+          //Text("Salary", style: TextStyles.regular3(color: AppColors.black)),
+          //addVertical(6),
+          Row(
+            children: [
+              Expanded(
+                child: InputTextField(
+                  controller: jobProfileVM.salaryController,
+                  hintText: "Enter Amount",
+                  title: "Salary",
+                  maxLength: 10,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                ),
+              ),
+              addHorizontal(10),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: CustomSelectField(
+                    hint: "Per",
+                    value: jobProfileVM.selectedSalaryPer,
+                    items: jobProfileVM.salaryPerOptions,
+                    onChanged: (v) {
+                      jobProfileVM.setSelectSalaryPer(v);
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ],

@@ -98,7 +98,8 @@ class _TalentListingScreenState extends State<TalentListingScreen>
           ),
           const Divider(),
           Expanded(
-            child: vm.myTalentListingList.isEmpty
+            child: vm.myTalentListingList?.jobhirings == null ||
+                    vm.myTalentListingList!.jobhirings!.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -111,9 +112,9 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                     ),
                   )
                 : ListView.builder(
-                    itemCount: vm.myTalentListingList.length,
+                    itemCount: vm.myTalentListingList?.jobhirings?.length,
                     itemBuilder: (context, index) {
-                      final jobData = vm.myTalentListingList[index];
+                      final jobData = vm.myTalentListingList?.jobhirings?[index];
                       try {
                         return TalentListingCard(
                           jobProfiles: jobData,

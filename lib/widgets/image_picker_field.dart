@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/network_video_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class ImagePickerField extends StatelessWidget {
   final String? hintText;
   final bool showPreview;
   final bool allowMultiple;
+  final bool acceptVideo;
 
   // Local Single file
   final File? selectedFile;
@@ -40,6 +42,7 @@ class ImagePickerField extends StatelessWidget {
     this.hintText,
     this.showPreview = true,
     this.allowMultiple = false,
+    this.acceptVideo = false,
     this.selectedFile,
     this.onFilePicked,
     this.selectedFiles,
@@ -113,6 +116,21 @@ class ImagePickerField extends StatelessWidget {
     final picker = ImagePicker();
 
     if (allowMultiple) {
+      // Check current total count
+      final currentCount =
+          (selectedFiles?.length ?? 0) + (serverImages?.length ?? 0);
+
+      if (currentCount >= 10) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cannot upload more than 10 images'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+        return;
+      }
+
       List<File> newFiles = [];
 
       if (source == ImageSource.gallery) {
@@ -131,6 +149,20 @@ class ImagePickerField extends StatelessWidget {
           if (selectedFiles != null) ...selectedFiles!,
           ...newFiles,
         ];
+
+        // Check if merged list exceeds 10 images
+        final totalAfterMerge = merged.length + (serverImages?.length ?? 0);
+        if (totalAfterMerge > 10) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cannot upload more than 10 images'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          Navigator.pop(context);
+          return;
+        }
+
         onFilesPicked?.call(merged);
 
         // ✅ Update FormField value to remove validation error
@@ -147,7 +179,12 @@ class ImagePickerField extends StatelessWidget {
         picked = await picker.pickImage(
             source: ImageSource.camera, imageQuality: 80);
       } else {
-        picked = await picker.pickMedia(imageQuality: 80);
+        if (acceptVideo) {
+          picked = await picker.pickMedia(imageQuality: 80);
+        } else {
+          picked = await picker.pickImage(
+              source: ImageSource.gallery, imageQuality: 80);
+        }
       }
 
       if (picked != null) {
@@ -233,13 +270,24 @@ class ImagePickerField extends StatelessWidget {
               ),
             const SizedBox(height: 10),
             GestureDetector(
-              //onTap: () => _showPickerSheet(context, field),
-              onTap: (selectedFile == null &&
-                      (selectedFiles == null || selectedFiles!.isEmpty) &&
-                      (serverImage == null || serverImage!.isEmpty) &&
-                      (serverImages == null || serverImages!.isEmpty))
-                  ? () => _showPickerSheet(context, field)
-                  : null,
+              onTap: () {
+                // Check if we're at the limit for multiple files
+                if (allowMultiple) {
+                  final totalCount = (selectedFiles?.length ?? 0) +
+                      (serverImages?.length ?? 0);
+                  if (totalCount >= 10) {
+                    scaffoldMessenger('Cannot upload more than 10 images');
+                  }
+                }
+
+                // Original condition for single file or empty state
+                if (selectedFile == null &&
+                    (selectedFiles == null || selectedFiles!.isEmpty) &&
+                    (serverImage == null || serverImage!.isEmpty) &&
+                    (serverImages == null || serverImages!.isEmpty)) {
+                  _showPickerSheet(context, field);
+                }
+              },
               child: DottedBorder(
                 color: field.hasError ? Colors.red : Colors.grey.shade400,
                 strokeWidth: 1.5,
@@ -441,7 +489,11 @@ class ImagePickerField extends StatelessWidget {
             ],
           );
         } else {
-          return _buildAddItemCard(() => _showPickerSheet(context, field));
+          // Only show add button if under 10 images
+          final totalCount = serverCount + localCount;
+          return totalCount < 10
+              ? _buildAddItemCard(() => _showPickerSheet(context, field))
+              : const SizedBox.shrink();
         }
       },
     );
@@ -455,7 +507,7 @@ class ImagePickerField extends StatelessWidget {
           Text("Click here to Choose a file.",
               style: TextStyles.medium2(color: AppColors.black)),
           const SizedBox(height: 8),
-          Text(hintText ?? "JPEG, PNG formats, up to 5 MB each",
+          Text(hintText ?? (acceptVideo ? "JPEG, PNG, MP4 formats, up to 5 MB each" : "JPEG, PNG formats, up to 5 MB each"),
               style: TextStyles.regular2(color: AppColors.dropDownHint)),
         ],
       );

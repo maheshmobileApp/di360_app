@@ -1,5 +1,4 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';

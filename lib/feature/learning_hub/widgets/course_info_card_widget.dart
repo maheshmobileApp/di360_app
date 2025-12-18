@@ -137,9 +137,13 @@ class CourseInfoCardWidget extends StatelessWidget {
                             Icon(Icons.access_time_rounded,
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
-                            Text(DateFormatUtils.formatToAmPm(startTime)),
+                            Text(startTime.isNotEmpty 
+                                ? DateFormatUtils.formatToAmPm(startTime) 
+                                : '--'),
                             Text(" - "),
-                            Text(DateFormatUtils.formatToAmPm(endTime))
+                            Text(endTime.isNotEmpty 
+                                ? DateFormatUtils.formatToAmPm(endTime) 
+                                : '--')
                           ],
                         ),
                       ],

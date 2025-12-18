@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -49,11 +48,13 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
             final accent = Colors.orange;
 
             Widget dayCell(DateTime date) {
-              final isSelected =
-                  tempSelected.any((d) => _isSameDate(d, date));
+              final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+              final isPast = date.isBefore(today);
+              final isSelected = tempSelected.any((d) => _isSameDate(d, date));
+              
               return InkWell(
                 borderRadius: BorderRadius.circular(20),
-                onTap: () {
+                onTap: isPast ? null : () {
                   setDialogState(() {
                     if (isSelected) {
                       tempSelected.removeWhere((d) => _isSameDate(d, date));
@@ -66,16 +67,16 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
                   margin: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected ? accent : Colors.transparent,
+                    color: isSelected ? accent : (isPast ? Colors.grey[200] : Colors.transparent),
                     border: Border.all(
-                      color: isSelected ? accent : Colors.black26,
+                      color: isPast ? Colors.grey : (isSelected ? accent : Colors.black26),
                     ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '${date.day}',
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: isSelected ? Colors.white : (isPast ? Colors.grey : Colors.black),
                       fontWeight: FontWeight.w600,
                     ),
                   ),

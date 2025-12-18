@@ -38,7 +38,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   final linkedInController = TextEditingController();
   final locationSearchController = TextEditingController();
   final stateController = TextEditingController();
-  final startDateController = TextEditingController();
+  TextEditingController startDateController = TextEditingController();
+  TextEditingController educationLevelController = TextEditingController();
   final endDateController = TextEditingController();
   final cityPostCodeController = TextEditingController();
   final minSalaryController = TextEditingController();
@@ -66,7 +67,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedPayRange;
   String? selectRate;
   String? selectCountry;
-  String? selectEducation;
+  //String? selectEducation;
   String? selecteBenefitsType;
   String? selectHire;
   String? selectPositions;
@@ -89,13 +90,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   File? bannerFile;
   String? serverBannerImg;
   List<File>? clinicPhotos = [];
+  List<File>? bannerPhotos = [];
   List<String> serverClinicImgs = [];
+  List<String> serverBannerImgs = [];
   bool editMode = false;
   List<ClinicLogo> selectedClinicImgList = [];
+  ClinicLogo? selectedBannerImgList;
   Jobs? createJobPreviewData;
 
   Future<void> setJobPreviewData() async {
-    (bannerFile != null) ? await validateLogoAndBanner() : null;
+    await validateLogoAndBanner();
     await validateClinic();
     createJobPreviewData = Jobs(
         id: "",
@@ -122,7 +126,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         companyName: companyNameController.text,
         websiteUrl: websiteController.text,
         payRange: selectedPayRange,
-        education: selectEducation,
+        education: educationLevelController.text,
         status: "",
         offeredBenefits: selectedBenefits,
         country: selectCountry,
@@ -140,6 +144,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         facebookUrl: facebookController.text,
         instagramUrl: instgramController.text,
         video: videoLinkController.text,
+       bannerImage: selectedBannerImgList,
         linkedinUrl: linkedInController.text);
 
     notifyListeners();
@@ -147,6 +152,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   void setBannerImg(File? value) {
     bannerFile = value;
+    serverBannerImg = null;
+    selectedBannerImgList = null;
 
     notifyListeners();
   }
@@ -317,11 +324,15 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> validateLogoAndBanner() async {
     if (serverBannerImg == null) {
       var value = await _http.uploadImage(bannerFile?.path);
-      banner_image = value['url'];
-      print(banner_image);
+      selectedBannerImgList =
+          ClinicLogo(url: value['url'], type: "image", extension: "jpeg");
+      print(selectedBannerImgList);
       notifyListeners();
     } else {
-      banner_image = serverBannerImg ?? "";
+      selectedBannerImgList = ClinicLogo(
+          url: serverBannerImg ?? "", type: "image", extension: "jpeg");
+      print(
+          "********************************validateLogoAndBanner Calling $serverBannerImg ");
       notifyListeners();
     }
   }
@@ -440,10 +451,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void setSelectedEducation(String? value) {
+  /*void setSelectedEducation(String? value) {
     selectEducation = value;
     notifyListeners();
-  }
+  }*/
 
   // ───── Benefits  ─────
   void setSelectedBenefits(List<String> values) {
@@ -710,19 +721,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "company_name": companyNameController.text,
         "pay_range":
             selectedPayRange, //Getting fron Dropdown, this is static data for now
-        "education":
-            selectEducation, // Getting fron Dropdown, this is static data for now
+        "education": educationLevelController
+            .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-        "banner_image": bannerFile != null
-            ? [
-                {
-                  "url": banner_image,
-                  "name": bannerFile!.path.split("/").last,
-                  "type": "image",
-                  "extension": "jpeg",
-                }
-              ]
-            : [],
+        "banner_image": selectedBannerImgList,
 
         "clinic_logo": selectedClinicImgList,
 
@@ -776,7 +778,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       filePaths,
       clinicPhotos: clinicPhotos,
     );*/
-    (bannerFile != null) ? await validateLogoAndBanner() : null;
+    await validateLogoAndBanner();
     await validateClinic();
     final result = await repo.updateJobListing({
       "id": jobId,
@@ -817,19 +819,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "company_name": companyNameController.text,
         "pay_range":
             selectedPayRange, //Getting fron Dropdown, this is static data for now
-        "education":
-            selectEducation, // Getting fron Dropdown, this is static data for now
+        "education": educationLevelController
+            .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
-        "banner_image": bannerFile != null
-            ? [
-                {
-                  "url": banner_image,
-                  "name": bannerFile!.path.split("/").last,
-                  "type": "image",
-                  "extension": "jpeg",
-                }
-              ]
-            : [],
+        "banner_image": selectedBannerImgList,
 
         "clinic_logo": selectedClinicImgList,
 
@@ -873,7 +866,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> loadJobData(Jobs? jobData) async {
-    //print("printinnnnn $jobData");
+    print(
+        "prinT*************************************** ${jobData?.bannerImage?.url}");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";
@@ -881,6 +875,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     videoLinkController.text = jobData?.video ?? "";
     countryController.text = jobData?.location ?? "";
     serverBannerImg = jobData?.bannerImage?.url;
+    startDateController.text = jobData?.closedAt ?? "";
+    endDateController.text = jobData?.closedAt ?? "";
 
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
@@ -904,7 +900,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       ..addAll(jobData?.typeofEmployment ?? []);
     _updateLocumVisibility();
 
-    selectEducation = jobData?.education;
+    educationLevelController.text = jobData?.education ?? "";
     selectCountry = jobData?.location;
     selectHire = jobData?.hiringPeriod;
     selectPositions = jobData?.noOfPeople;

@@ -118,7 +118,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
+                        lastDate: DateTime.now(), // Only past/today dates
                       );
                       if (picked != null) {
                         setState(() {
@@ -137,15 +137,16 @@ class _AddEducationDialogState extends State<AddEducationDialog>
                       ),
                     ),
                 ] else if (vm.selectedQualification == "No") ...[
-                  const Text("Expected Finish Date"),
+                  
                   CustomDatePicker(
+                    title: "Expected Finish Date",
                     controller: vm.ExpectedFinishDateController,
                     hintText: "Date",
                     onTap: () async {
                       final picked = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
+                        firstDate: DateTime.now(), // Only today/future dates
                         lastDate: DateTime(2100),
                       );
                       if (picked != null) {

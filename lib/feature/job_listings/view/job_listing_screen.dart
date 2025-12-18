@@ -106,7 +106,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "No Jobs matched your search.",
+                            _getEmptyStateMessage(jobListingVM.selectedStatus),
                             style: TextStyles.medium2(color: AppColors.black),
                           ),
                         ],
@@ -239,5 +239,26 @@ class _JobListingScreenState extends State<JobListingScreen>
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));
+  }
+
+  String _getEmptyStateMessage(String status) {
+    switch (status) {
+      case 'All':
+        return 'No job listings available.';
+      case 'Draft':
+        return 'No draft jobs available at the moment.';
+      case 'Pending Approval':
+        return 'No jobs pending approval at the moment.';
+      case 'Active':
+        return 'No active jobs available at the moment.';
+      case 'InActive':
+        return 'No inactive jobs available at the moment.';
+      case 'Expired':
+        return 'No expired jobs available at the moment.';
+      case 'Reject':
+        return 'No rejected jobs available at the moment.';
+      default:
+        return 'No job listings with status "$status".';
+    }
   }
 }

@@ -12,4 +12,5 @@ class LocalStorageConst {
   static const String communityStatus = 'false';
   static const String communityId = 'communityId';
   static const String businessName = 'businessName';
+  static const String profileCompleted = 'profileCompleted';
 }

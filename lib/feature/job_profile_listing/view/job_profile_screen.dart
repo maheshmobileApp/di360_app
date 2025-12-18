@@ -38,7 +38,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
           color: Colors.white,
         ),
         label: Text(
-          vm.allJobProfiles.isEmpty ? "Create Profile" : "Edit Profile",
+          vm.allJobProfiles.isEmpty ? "Create Profile" : "Update Profile",
           style: const TextStyle(color: Colors.white),
         ),
         onPressed: () async {
@@ -70,8 +70,9 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                 : vm.allJobProfiles.isEmpty
                     ? Center(
                         child: Text(
-                          "No Profiles Found",
+                          "No profile yet. Create your dental profile to showcase your skills and get hired.",
                           style: TextStyles.medium2(color: AppColors.black),
+                          textAlign: TextAlign.center,
                         ),
                       )
                     : ListView.builder(

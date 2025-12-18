@@ -247,6 +247,7 @@ class AddCourse extends StatelessWidget
               ImagePickerField(
                 title: "Course Header Banner / Video",
                 isRequired: true,
+                acceptVideo: true,
                 serverImage: jobCreateVM.serverCourseHeaderBanner?.url,
                 serverImageType: jobCreateVM.serverCourseHeaderBanner?.type,
                 showPreview: true,
@@ -273,9 +274,9 @@ class AddCourse extends StatelessWidget
               ImagePickerField(
                 title: "Course Header Banner Image",
                 isRequired: true,
-                allowMultiple: true,
                 serverImages: jobCreateVM.serverCourseBannerImg,
                 showPreview: true,
+                allowMultiple: true,
                 onServerFilesRemoved: (updatedList) {
                   jobCreateVM.setServerCourseBannerImg(updatedList);
                 },

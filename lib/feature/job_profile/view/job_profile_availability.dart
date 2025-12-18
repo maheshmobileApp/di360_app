@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_
 import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -45,11 +46,15 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
                   hintText: "Enter distance in Km",
                   controller: jobProfileVM.DistanceController,
                   title: "Distance to Travel (Km)",
+                  maxLength: 3,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 ),
               ],
               addVertical(20),
-              Text("Joining", style: TextStyles.regular2()),
+              Text("Availability", style: TextStyles.regular2()),
               addVertical(6),
               Row(
                 children: [

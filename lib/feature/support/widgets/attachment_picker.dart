@@ -18,7 +18,7 @@ class AttachmentPicker extends StatelessWidget {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['pdf','doc', 'docx'],
+      allowedExtensions: ['pdf','doc', 'docx','png','jpg','jpeg'],
     );
 
     if (result != null && result.files.isNotEmpty) {

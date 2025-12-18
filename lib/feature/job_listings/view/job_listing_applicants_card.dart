@@ -255,7 +255,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
       onSelected: (value) {
         String newStatus = "";
         switch (value) {
-          case "Shortlist":
+          case "Shortlisted":
             newStatus = "SHORTLISTED";
             break;
           case "Organize Interview":
@@ -278,8 +278,8 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
             status == 'DECLINED' ||
             status == "INTERVIEWS")
           PopupMenuItem(
-            value: "Shortlist",
-            child: _buildRow(AppColors.black, "Shortlist"),
+            value: "Shortlisted",
+            child: _buildRow(AppColors.black, "Shortlisted"),
           ),
         if (status == 'APPLIED' ||
             status == 'ACCEPTED' ||

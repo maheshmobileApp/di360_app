@@ -4,10 +4,36 @@ mixin ValidationMixins {
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Mobile Number";
-    if (isValidAustralianPhoneNumber(value))
+    if (!isValidPhoneNumber(value))
       return 'Enter valid mobile number';
     return null;
   }
+
+  String? validateABNNumber(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please enter your ABN Number";
+    if (!isValidateABNNumber(value))
+      return 'Enter valid ABN number';
+    return null;
+  }
+
+  String? validateLocation(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please select a location";
+    return null;
+  }
+
+  
+  String? validateAphraNumber(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please enter your Aphra Registration Number";
+    if (value.length != 13)
+      return 'Enter valid Aphra Registration Number';
+   
+    return null;
+  }
+
+  
 
   String? validateEmptyPhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
@@ -36,6 +62,11 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateMessage(String? value) {
+    if (value == null || value.isEmpty) return "Please enter message";
+    return null;
+  }
+
   String? validateName(String? value) {
     if (value == null || value.isEmpty) return "Please enter your name";
     return null;
@@ -52,19 +83,18 @@ mixin ValidationMixins {
     return null;
   }
 
-  String? validateBusiness(String? value) {
-    if (value == null || value.isEmpty) return "Please enter business name";
+  String? validateCompanyName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter company name";
+    return null;
+  }
+
+String? validatePracticeName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter practice name";
     return null;
   }
 
   String? validateState(String? value) {
     if (value == null || value.isEmpty) return "Please enter state";
-    return null;
-  }
-
-  String? validatePostalCode(String? value) {
-    if (value == null || value.isEmpty) return "Please enter postal code";
-    // if (!checkPostalCode(value)) return 'Enter valid postal code';
     return null;
   }
 
@@ -149,6 +179,23 @@ mixin ValidationMixins {
   String? validateBannerName(String? value) {
     if (value == null || value.isEmpty) return 'Please enter banner name';
     return null;
+  }
+
+  String? validatePostalCode(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter postal code';
+    if (value.length != 4 || !RegExp(r'^[0-9]{4}$').hasMatch(value)) {
+      return 'Postal code must be exactly 4 digits';
+    }
+    return null;
+  }
+
+  String? ValidateJobTitle(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter job title';
+    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+      return 'Job title can only contain letters and spaces';
+    }else{
+      return null;
+    }
   }
 
   String? validateUrl(String? value) {

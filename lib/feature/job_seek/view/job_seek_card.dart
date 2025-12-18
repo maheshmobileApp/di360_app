@@ -7,11 +7,12 @@ import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:share_plus/share_plus.dart';
 
 class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   final Jobs? jobsData;
   final List<Widget>? children;
-  const JobSeekCard({super.key, this.children, this.jobsData});
+  const JobSeekCard({super.key, this.children, this.jobsData,});
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +51,39 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               addVertical(10),
               _locationWidget(jobsData?.location ?? ""),
               addVertical(10),
-              _chipWidget(jobsData?.typeofEmployment ?? []),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _chipWidget(jobsData?.typeofEmployment ?? []),
+                  GestureDetector(
+                          onTap:  () {
+                              SharePlus.instance.share(ShareParams(
+                                  uri: Uri(
+                                      path:
+                                          'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
+                            },
+                          child: _circleIcon(
+                            child: Icon(Icons.share,
+                                size: 20, color: Colors.black),
+                          ),
+                        ),
+                ],
+              ),
             ],
           ),
         ),
       
+    );
+  }
+
+  Widget _circleIcon({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        shape: BoxShape.circle,
+      ),
+      child: child,
     );
   }
   Widget _chipWidget(List<dynamic> typeofEmployment) {

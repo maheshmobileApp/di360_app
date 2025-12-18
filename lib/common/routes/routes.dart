@@ -216,7 +216,7 @@ class Routes {
       RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView(),
       RouteList.communitMarketView: (context) => CommunityMarketView(),
       RouteList.joinCommunityView: (context) => JoinCommunityView(),
-      RouteList.partnershipCommunityRequestView: (context) => PartnershipCommunityRequestView()
+      RouteList.partnershipCommunityRequestView: (context) => PartnershipCommunityRequestView(),
       
     };
   }

@@ -35,11 +35,10 @@ class JobProfileListingViewModel extends ChangeNotifier {
   Future<void> fetchJobProfiles(BuildContext context) async {
     isLoading = true;
     final response = await repo.getJobProfiles();
-    allJobProfiles = response;
-    if (response.isNotEmpty) {
-      //allJobProfiles = response;
-      setJobProfileId(response.first.id ?? "");
-      getMyEnquiryJobData(context, id: response.first.id ?? "");
+    allJobProfiles = response ?? [];
+    if (allJobProfiles.isNotEmpty) {
+      setJobProfileId(allJobProfiles.first.id ?? "");
+      getMyEnquiryJobData(context, id: allJobProfiles.first.id ?? "");
     }
     /*try {
       final response = await repo.getJobProfiles();

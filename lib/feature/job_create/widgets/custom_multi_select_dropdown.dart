@@ -1,8 +1,6 @@
-
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
-
 
 class CustomMultiSelectDropDown<T> extends StatefulWidget {
   final List<T> items;
@@ -27,8 +25,6 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
 
 class _CustomMultiSelectDropDownState<T>
     extends State<CustomMultiSelectDropDown<T>> {
-  final LayerLink _layerLink = LayerLink();
-  OverlayEntry? _overlayEntry;
   List<T> _selected = [];
 
   @override
@@ -44,103 +40,78 @@ class _CustomMultiSelectDropDownState<T>
   }
 
   void _toggleDropdown() {
-    if (_overlayEntry == null) {
-      _overlayEntry = _createOverlayEntry();
-      Overlay.of(context).insert(_overlayEntry!);
-    } else {
-      _closeDropdown();
-    }
-  }
-
-  void _closeDropdown() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
-  OverlayEntry _createOverlayEntry() {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final size = renderBox.size;
-    final offset = renderBox.localToGlobal(Offset.zero);
-    
-  final screenHeight = MediaQuery.of(context).size.height;
-  const double dropdownMaxHeight = 300;
-
-  // Check if there’s enough space below; otherwise, show above
-  final bool showAbove = (offset.dy + size.height + dropdownMaxHeight) > screenHeight;
-
-
-    return OverlayEntry(
-      builder: (context) => Stack(
-
-        children: [
-        // 🔹 This layer detects taps outside and closes dropdown
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: _closeDropdown,
-            behavior: HitTestBehavior.translucent,
-            child: Container(color: Colors.transparent),
-          ),
-        ), Positioned(
-          left: offset.dx,
-          width: size.width,
-          top: showAbove
-              ? offset.dy - dropdownMaxHeight // show above
-              : offset.dy + size.height,    
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            offset:  showAbove
-                ? Offset(0, -size.height - 8)
-                : Offset(0, size.height + 4),
-            child: Material(
-              color: AppColors.whiteColor,
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 500),
-                child: StatefulBuilder(
-                  builder: (context, setStateOverlay) {
-                    return ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: widget.items.length,
-                      itemBuilder: (context, index) {
-                        final item = widget.items[index];
-                        final isSelected = _selected.contains(item);
-                        return CheckboxListTile(
-                          dense: true,
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 8),
-                          activeColor: AppColors.primaryColor,
-                          value: isSelected,
-                          title: Text(
-                            widget.itemLabel(item),
-                            style: TextStyles.regular3(
-                              color: isSelected ? AppColors.primaryColor: AppColors.black,
-                            ),
-                          ),
-                          onChanged: (checked) {
-                            setStateOverlay(() {
-                              if (checked == true) {
-                                _selected.add(item);
-                              } else {
-                                _selected.remove(item);
-                              }
-                            });
-                            setState(() {
-                              widget.onSelectionChanged(List<T>.from(_selected));
-                            });
-                          },
-                        );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: AppColors.whiteColor,
+              title: Text(widget.hintText,style: TextStyles.bold3(color: AppColors.black),),
+              content: SizedBox(
+                width: double.infinity,
+                height: 300,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.items.length,
+                  itemBuilder: (context, index) {
+                    final item = widget.items[index];
+                    final isSelected = _selected.contains(item);
+                    return CheckboxListTile(
+                      dense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      activeColor: AppColors.primaryColor,
+                      value: isSelected,
+                      title: Text(
+                        widget.itemLabel(item),
+                        style: TextStyles.regular3(
+                          color: isSelected
+                              ? AppColors.primaryColor
+                              : AppColors.black,
+                        ),
+                      ),
+                      onChanged: (checked) {
+                        setStateDialog(() {
+                          if (checked == true) {
+                            // Handle Locum exclusivity
+                            if (widget.itemLabel(item) == "Locum") {
+                              // If Locum is selected, clear all others
+                              _selected.clear();
+                              _selected.add(item);
+                            } else {
+                              // If other item is selected, remove Locum if present
+                              _selected.removeWhere((selectedItem) =>
+                                  widget.itemLabel(selectedItem) == "Locum");
+                              _selected.add(item);
+                            }
+                          } else {
+                            _selected.remove(item);
+                          }
+                        });
                       },
                     );
                   },
                 ),
               ),
-            ),
-          ),
-        ),]
-      ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child:  Text('Cancel', style: TextStyles.semiBold(color: AppColors.black,fontSize: 16),),
+                ),
+                TextButton(
+                  onPressed: () {
+                    widget.onSelectionChanged(List<T>.from(_selected));
+                    Navigator.of(context).pop();
+                  },
+                  child:  Text('OK', style: TextStyles.semiBold(color: AppColors.black,fontSize: 16),),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -149,39 +120,31 @@ class _CustomMultiSelectDropDownState<T>
     final displayText = _selected.isEmpty
         ? widget.hintText
         : _selected.map((e) => widget.itemLabel(e)).join(", ");
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: InkWell(
-        onTap: _toggleDropdown,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.geryColor, width: 1.5),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  displayText,
-                 style: TextStyles.regular3(
-                    color: _selected.isEmpty ? AppColors.geryColor : AppColors.black,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+    return InkWell(
+      onTap: _toggleDropdown,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.geryColor, width: 1.5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                displayText,
+                style: TextStyles.regular3(
+                  color:
+                      _selected.isEmpty ? AppColors.geryColor : AppColors.black,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
-              const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
-            ],
-          ),
+            ),
+            const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
+          ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _closeDropdown();
-    super.dispose();
   }
 }

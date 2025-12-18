@@ -225,7 +225,15 @@ class LearningHubRepoImpl extends LearningHubRepository {
           .toList()
       : [];
 
-      String startDateFormatted = DateFormat("yyyy-MM-dd").format(DateFormat("dd/MM/yyyy").parse(startDate));
+      String startDateFormatted = "";
+      if (startDate.isNotEmpty) {
+        try {
+          startDateFormatted = DateFormat("yyyy-MM-dd").format(DateFormat("dd/MM/yyyy").parse(startDate));
+        } catch (e) {
+          print("Date parsing error: $e");
+          startDateFormatted = "";
+        }
+      }
 
 
     if (type.isNotEmpty) {

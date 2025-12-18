@@ -36,10 +36,10 @@ class JobListingsViewModel extends ChangeNotifier {
     'All',
     'Applied',
     'Shortlisted',
-    'Interviews',
+    'Organize Interview',
     'Accepted',
-    'Reject',
-    'Declined'
+    'Declined',
+    'Enquiry'
   ];
 
   int? allJobTalentCount = 0;
@@ -73,10 +73,10 @@ class JobListingsViewModel extends ChangeNotifier {
         'All': allJobapplicantCount,
         'Applied': appliedjobapplicnatsCount,
         'Shortlisted': shortlistedjobapplicnatsCount,
-        'Interviews': interviewsjobapplicnatsCount,
+        'Organize Interview': interviewsjobapplicnatsCount,
         'Accepted': acceptedjobapplicnatsCount,
-        'Reject': rejectjobapplicnatsCount,
-        'Declined': declinedjobapplicnatsCount
+        'Declined': declinedjobapplicnatsCount,
+        'Enquiry': 0
       };
 
   List<String>? listingStatus = [];
@@ -293,7 +293,24 @@ class JobListingsViewModel extends ChangeNotifier {
     }
     print(res);
     if (res != null) {
-      scaffoldMessenger('JobAggrateData update successfully');
+      String message;
+      switch (status.toUpperCase()) {
+        case 'ACCEPTED':
+          message = 'Applicant accepted successfully';
+          break;
+        case 'REJECTED':
+          message = 'Applicant rejected successfully';
+          break;
+        case 'SHORTLISTED':
+          message = 'Applicant shortlisted successfully';
+          break;
+        case 'INTERVIEWS':
+          message = 'Interview organized successfully';
+          break;
+        default:
+          message = 'Applicant status updated successfully';
+      }
+      scaffoldMessenger(message);
       Loaders.circularHideLoader(context);
 
       getMyJobApplicantsgData(context, jobId ?? '');
@@ -311,6 +328,7 @@ class JobListingsViewModel extends ChangeNotifier {
       final res = await repo.fetchApplicantMessages(jobId);
       if (res.messages != null) {
         messages = res.messages!;
+        print("******************messages fetched ${messages}");
       }
     } catch (e) {
       errorMessage = e.toString();
@@ -322,10 +340,12 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> deleteapplicantMessage(BuildContext context, String Id,
       String applicantId, bool deletedStatus) async {
+        print("******************deleteapplicantMessage called");
     try {
       isLoading = true;
 
       final res = await repo.deleteApplicantMessage(Id, deletedStatus);
+      print("res $res");
       await fetchApplicantMessages(applicantId);
     } catch (e) {
       errorMessage = e.toString();

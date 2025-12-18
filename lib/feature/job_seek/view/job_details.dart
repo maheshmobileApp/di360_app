@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
@@ -210,7 +211,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                Jiffy.parse(widget.job.createdAt ?? '').fromNow(),
+                widget.job.createdAt?.isNotEmpty == true
+                    ? Jiffy.parse(widget.job.createdAt!).fromNow()
+                    : 'Recently posted',
                 style: TextStyle(
                   color: Colors.orange,
                   fontSize: 12,
@@ -257,21 +260,29 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             iconPath: ImageConst.briefcurrencySvg,
             title: 'Rate',
             subtitle:
-                '${widget.job.rateBilling}  ${widget.job.payMin} - ${widget.job.payMax}'),
-        Divider(height: 10),
-        _sectionHeader('Job Description'),
-        _sectionText('${widget.job.description ?? ''}'),
+                '${widget.job.rateBilling}  ${widget.job.payMin}\$ - ${widget.job.payMax}\$'),
+        Divider(height: 4),
+        //_sectionHeader('Benefits'),
+        //_sectionText('${widget.job.offeredBenefits?.isNotEmpty == true ? widget.job.offeredBenefits!.first : 'No benefits listed'}'),
+        //Divider(height: 10),
         if (widget.job.offeredBenefits?.length != 0)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _sectionHeader("Skills"),
+              _sectionHeader("Benifits"),
               CustomChipView(typesList: widget.job.offeredBenefits ?? []),
             ],
           ),
+        Divider(height: 4),
+        _sectionHeader('Job Description'),
+        _sectionText('${widget.job.description ?? ''}'),
+        Divider(height: 4),
         _sectionHeader('Job Location'),
         Text('${widget.job.location ?? ''}'),
         locationView(context),
+        Divider(height: 4),
+        _sectionHeader('About Compnay'),
+        _sectionText('${widget.job.description ?? ''}'),
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,13 +297,25 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       widget.job.clinicLogo!.map((e) => e.url ?? '').toList()),
             ],
           ),
-        if (widget.job.facebookUrl!.isNotEmpty ||
-            widget.job.instagramUrl!.isNotEmpty ||
-            widget.job.linkedinUrl!.isNotEmpty)
+        if ((widget.job.facebookUrl?.isNotEmpty == true) ||
+            (widget.job.instagramUrl?.isNotEmpty == true) ||
+            (widget.job.linkedinUrl?.isNotEmpty == true))
           _sectionHeader('Social Media Handles'),
         Row(
           children: [
-            if (widget.job.facebookUrl!.isNotEmpty)
+            if (widget.job.websiteUrl?.isNotEmpty == true)
+              IconButton(
+                  icon: SvgPicture.asset(ImageConst.webSvg,
+                      width: 30, height: 46),
+                  onPressed: () async {
+                    final Uri appUri = Uri.parse(widget.job.websiteUrl!);
+                    if (await canLaunchUrl(appUri)) {
+                      await launchUrl(appUri,
+                          mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }),
+            if (widget.job.facebookUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.facebookSvg),
                   onPressed: () async {
@@ -303,7 +326,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       return;
                     }
                   }),
-            if (widget.job.instagramUrl!.isNotEmpty)
+            if (widget.job.instagramUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.instagramSvg),
                   onPressed: () async {
@@ -314,7 +337,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       return;
                     }
                   }),
-            if (widget.job.linkedinUrl!.isNotEmpty)
+            if (widget.job.linkedinUrl?.isNotEmpty == true)
               IconButton(
                   icon: ImageWidget(imageUrl: ImageConst.linkedinSvg),
                   onPressed: () async {
@@ -327,6 +350,18 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   }),
           ],
         ),
+        if (widget.job.video?.isNotEmpty == true) ...[
+          _sectionHeader('Video Link'),
+          GestureDetector(
+              onTap: () async {
+                final Uri appUri = Uri.parse(widget.job.video!);
+                if (await canLaunchUrl(appUri)) {
+                  await launchUrl(appUri, mode: LaunchMode.externalApplication);
+                  return;
+                }
+              },
+              child: Text(widget.job.video ?? '',style: TextStyles.medium2(color: AppColors.primaryColor),)),
+        ],
         SizedBox(height: 20),
         actionsWidget(context),
         SizedBox(height: 20),

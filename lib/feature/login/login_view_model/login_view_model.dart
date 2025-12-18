@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
@@ -86,6 +84,8 @@ class LoginViewModel extends ChangeNotifier {
               LocalStorageConst.type, result.loginApi?.type ?? '');
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
               result.loginApi?.subscriptionId ?? '');
+          await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
+              result.loginApi?.profileCompleted ?? false);
           await LocalStorage.setStringVal(
               LocalStorageConst.profilePic,
               result.loginApi?.logo?.url ??
@@ -144,35 +144,31 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<void> getSuppliers(String id) async {
     final res = await repo.getSuppliers(id);
-    if (res != null) {
-      supplerData = res;
-      print('****************supplerData ${supplerData}');
-    }
+    supplerData = res;
+    print('****************supplerData ${supplerData}');
     notifyListeners();
   }
 
   Future<void> getSupplierCommunityOwner(String id) async {
     final res = await repo.getSupplierCommunityOwner(id);
-    if (res != null) {
-      supplerCommunityOwner = res;
-      print("***************$supplerCommunityOwner");
+    supplerCommunityOwner = res;
+    print("***************$supplerCommunityOwner");
 
-      final supplier = supplerCommunityOwner?.dentalSuppliers?.first;
+    final supplier = supplerCommunityOwner?.dentalSuppliers?.first;
 
-      if (supplier?.communityStatus == "YES") {
-        await LocalStorage.setStringVal(
-            LocalStorageConst.communityName, supplier?.businessName ?? '');
-        await LocalStorage.setStringVal(
-            LocalStorageConst.communityId, supplier?.communityId ?? '');
-        await LocalStorage.setStringVal(
-            LocalStorageConst.communityStatus, 'true');
-        await LocalStorage.setStringVal(  
-            LocalStorageConst.businessName, supplier?.businessName??"");
-        print("***** Updating JSON (Need to update account.json) *****");
-      } else {
-        await LocalStorage.setStringVal(
-            LocalStorageConst.communityStatus, 'false');
-      }
+    if (supplier?.communityStatus == "YES") {
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityName, supplier?.businessName ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityId, supplier?.communityId ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityStatus, 'true');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.businessName, supplier?.businessName ?? "");
+      print("***** Updating JSON (Need to update account.json) *****");
+    } else {
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityStatus, 'false');
     }
     notifyListeners();
   }

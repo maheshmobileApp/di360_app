@@ -26,7 +26,7 @@ class ExerinaceInfoIcons extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: TextStyles.regular1(color: AppColors.locationTextColor),
+            style: TextStyles.medium2(color: AppColors.locationTextColor),
           ),
         ),
       ],

@@ -44,6 +44,7 @@ query getalljobs($andList: [jobs_bool_exp!]) {
     banner_image
     timingtoggle
     created_at
+    updated_at
     job_applicants_aggregate {
       aggregate {
         count

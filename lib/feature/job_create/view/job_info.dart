@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
@@ -9,7 +10,7 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobInfo extends StatelessWidget with BaseContextHelpers {
+class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins {
   JobInfo({super.key});
 
   @override
@@ -26,11 +27,11 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
             InputTextField(
               controller: jobCreateVM.jobTitleController,
               hintText: "Enter Job Title",
+              keyboardType: TextInputType.name,
               title: "Job Title",
+              maxLength: 70,
               isRequired: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter job title'
-                  : null,
+              validator: ValidateJobTitle,
             ),
             addVertical(16),
             InputTextField(
@@ -67,7 +68,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                   final picked = await showDatePicker(
                     context: context,
                     initialDate: jobCreateVM.startLocumDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
+                    firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
@@ -88,7 +89,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
                     initialDate: jobCreateVM.endLocumDate ??
                         jobCreateVM.startLocumDate ??
                         DateTime.now(),
-                    firstDate: jobCreateVM.startLocumDate ?? DateTime(2000),
+                    firstDate: jobCreateVM.startLocumDate ?? DateTime.now(),
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
@@ -128,7 +129,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers {
             InputTextField(
               controller: jobCreateVM.jobDescController,
               hintText: "Enter job description here",
-              maxLength: 500,
+              maxLength: 1000,
               maxLines: 5,
               title: "Description",
               isRequired: true,

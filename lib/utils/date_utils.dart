@@ -63,4 +63,14 @@ static String formatDateTime(String dateTimeString) {
     return dateTimeString; // Return original if parsing fails
   }
 }
+
+static String formatToTime(String dateTimeString) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final originalTime = dateTime.add(dateTime.timeZoneOffset);
+    return DateFormat('hh:mm a').format(originalTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
 }

@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
+import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -94,7 +95,13 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             addVertical(8),
             _buildExperience(jobCreateVM),
             addVertical(8),
-            _buildEducation(jobCreateVM),
+            InputTextField(
+                controller: jobCreateVM.educationLevelController,
+                hintText: "Enter Education Level",
+                title: "Education Level",
+                maxLength: 75,
+              ),
+            //_buildEducation(jobCreateVM),
             addVertical(8),
             Text(
               "Do you offer any of the following benefits?",
@@ -193,7 +200,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildEducation(JobCreateViewModel jobCreateVM) {
+  /*Widget _buildEducation(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       value: jobCreateVM.educationLevels.contains(jobCreateVM.selectEducation)
           ? jobCreateVM.selectEducation
@@ -208,11 +215,11 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
       }).toList(),
       hintText: "Select level",
     );
-  }
+  }*/
 
   Widget _buildBenefits(JobCreateViewModel jobCreateVM) {
     return CustomMultiSelectDropDown<String>(
-      items: jobCreateVM.benefitsList.toSet().toList(),
+      items: jobCreateVM.benefitsList,
       selectedItems: jobCreateVM.selectedBenefits,
       itemLabel: (item) => item,
       hintText: "Select Benefits",

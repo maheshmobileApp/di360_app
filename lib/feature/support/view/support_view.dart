@@ -1,8 +1,14 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/support/widgets/ticket_card.dart';
+import 'package:di360_flutter/feature/support/widgets/upload_image_field.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -16,49 +22,36 @@ class SupportView extends StatefulWidget {
   _SupportViewState createState() => _SupportViewState();
 }
 
-class _SupportViewState extends State<SupportView> {
-  final List<Map<String, String>> tickets = [
-    {
-      'userName': 'John Doe',
-      'ticketNo': 'DS21001',
-      'dateTime': '12 Nov 2025 · 11:45pm',
-      'reason':
-          'Login issues with the application. Unable to access dashboard after recent update.',
-    },
-    {
-      'userName': 'Jane Smith',
-      'ticketNo': 'DS21002',
-      'dateTime': '11 Nov 2025 · 09:30am',
-      'reason':
-          'Payment gateway not working properly. Transaction failed multiple times.',
-    },
-    {
-      'userName': 'Mike Johnson',
-      'ticketNo': 'DS21003',
-      'dateTime': '10 Nov 2025 · 03:15pm',
-      'reason':
-          'Profile information not updating correctly. Changes are not being saved.',
-    },
-  ];
-  // default
+class _SupportViewState extends State<SupportView> with ValidationMixins {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final viewModel = Provider.of<SupportViewModel>(context, listen: false);
+      viewModel.setSelectedTab("Open");
+      await viewModel.getSupportRequests(context);
+      await viewModel.getSupportRequestsReasons();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final supportVM = Provider.of<SupportViewModel>(context);
+    final tickets = supportVM.supportRequestsData?.supportRequests ?? [];
+    return FutureBuilder<String>(
+        future: LocalStorage.getStringVal(LocalStorageConst.type),
+        builder: (context, snapshot) {
+          final type = snapshot.data ?? '';
 
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBarWidget(
-        filterWidget: GestureDetector(
-          onTap: () {},
-          child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-        ),
-      ),
-      body: (tickets.length == 0)
-          ? Center(
-              child: SvgPicture.asset(ImageConst.noSupport),
-            )
-          : Padding(
+          return Scaffold(
+            backgroundColor: AppColors.whiteColor,
+            appBar: AppBarWidget(
+                title: "Conversations",
+                searchAction: () =>
+                    supportVM.setSearchBar(!supportVM.searchBarOpen)),
+            body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(children: [
                 Container(
@@ -73,6 +66,7 @@ class _SupportViewState extends State<SupportView> {
                         child: GestureDetector(
                           onTap: () {
                             supportVM.setSelectedTab("Open");
+                            supportVM.getSupportRequests(context);
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -102,6 +96,7 @@ class _SupportViewState extends State<SupportView> {
                         child: GestureDetector(
                           onTap: () {
                             supportVM.setSelectedTab("Close");
+                            supportVM.getSupportRequests(context);
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -134,89 +129,136 @@ class _SupportViewState extends State<SupportView> {
                 Divider(
                   color: AppColors.geryColor,
                 ),
+                if (supportVM.searchBarOpen)
+                  SearchWidget(
+                    controller: supportVM.searchController,
+                    hintText: "Enter Ticket Number...",
+                    onClear: () {
+                      supportVM.searchController.clear();
+                      supportVM.getSupportRequests(context);
+                    },
+                    onSearch: () {
+                      supportVM.getSupportRequests(context);
+                    },
+                  ),
                 SizedBox(
                   height: 8,
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: tickets.length,
-                    itemBuilder: (context, index) {
-                      final ticket = tickets[index];
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 8),
-                        child: TicketCard(
-                          userName: ticket['userName']!,
-                          ticketNo: ticket['ticketNo']!,
-                          dateTime: ticket['dateTime']!,
-                          reason: ticket['reason']!,
-                          onTap: () {
-                            navigationService
-                                .navigateTo(RouteList.supportChatScreen);
+                (tickets.length == 0)
+                    ? Center(
+                        child: SvgPicture.asset(ImageConst.noSupport),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                          itemCount: tickets.length,
+                          itemBuilder: (context, index) {
+                            final ticket = tickets[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 8),
+                              child: TicketCard(
+                                userName: (type == "SUPPLIER")
+                                    ? ticket.dentalSupplier?.businessName ?? ""
+                                    : ticket.dentalProfessional?.name ?? "",
+                                ticketNo:
+                                    ticket.supportRequestNumber.toString(),
+                                dateTime: ticket.createdAt ?? "",
+                                reason: ticket.reason ?? "",
+                                onTap: () async {
+                                  await supportVM
+                                      .getSupportMessages(ticket.id ?? "");
+                                  navigationService.push(SupportMessengerView(
+                                      supportRequest: ticket));
+                                },
+                              ),
+                            );
                           },
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
               ]),
             ),
-      floatingActionButton: GestureDetector(
-          onTap: () {
-            showModalBottomSheet(
-              backgroundColor: AppColors.whiteColor,
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Raise your Ticket',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+            floatingActionButton: GestureDetector(
+                onTap: () {
+                  supportVM.getSupportRequestsReasons();
+                  supportVM.clearData();
+                  showModalBottomSheet(
+                    backgroundColor: AppColors.whiteColor,
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => Padding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Raise your Ticket',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                _buildRequestReasons(supportVM),
+                                SizedBox(height: 16),
+                                InputTextField(
+                                  isRequired: true,
+                                  controller: supportVM.descriptionController,
+                                  hintText: "Enter Message",
+                                  title: "Message",
+                                  maxLength: 1000,
+                                  maxLines: 4,
+                                  validator: validateMessage,
+                                ),
+                                SizedBox(height: 16),
+                                UploadImageField(),
+                                AppButton(
+                                  height: 50,
+                                  onTap: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      supportVM.sendSupportRequest(context);
+                                    }
+                                  },
+                                  text: 'Submit',
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      InputTextField(
-                        controller: supportVM.reasonController,
-                        hintText: "Enter Reason Type",
-                        title: "Reason Type",
-                        maxLength: 100,
-                        isRequired: true,
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter Reason type'
-                            : null,
-                      ),
-                      SizedBox(height: 16),
-                      InputTextField(
-                        controller: supportVM.courseNameController,
-                        hintText: "Enter Description",
-                        title: "Description",
-                        maxLength: 1000,
-                        maxLines: 4,
-                      ),
-                      SizedBox(height: 20),
-                      AppButton(
-                        height: 50,
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        text: 'Submit',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-          child: SvgPicture.asset(ImageConst.createSupport)),
+                    ),
+                  );
+                },
+                child: SvgPicture.asset(ImageConst.createSupport)),
+          );
+        });
+  }
+
+  Widget _buildRequestReasons(SupportViewModel supportVM) {
+    return CustomDropDown(
+      isRequired: true,
+      value: supportVM.selectedReason,
+      title: "Reason Type",
+      onChanged: (v) {
+        supportVM.setSelectedReason(v as String);
+      },
+      items: supportVM.requestReasons
+          .map<DropdownMenuItem<Object>>((String value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select Reason",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select reason'
+          : null,
     );
   }
 }

@@ -110,27 +110,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                     addHorizontal(10),
                     availabilityChip(
                       label: 'Availability',
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AvailabilityCalendarDialog(
-                            availabilityType:
-                                resolveAvailabilityType(jobsListingData),
-                            availabilityDays:
-                                (jobsListingData.availabilityDay as List?)
-                                        ?.map((e) => e?.toString() ?? '')
-                                        .where((s) => s.isNotEmpty)
-                                        .toList() ??
-                                    <String>[],
-                            availabilityDates:
-                                (jobsListingData.availabilityDate as List?)
-                                        ?.map((e) => e?.toString() ?? '')
-                                        .where((s) => s.isNotEmpty)
-                                        .toList() ??
-                                    <String>[],
-                          ),
-                        );
-                      },
+                      onTap: () => _showAvailabilityOptions(context, resolveAvailabilityType(jobsListingData)),
                     ),
                   ],
                 ),
@@ -418,6 +398,57 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     }
   }
 
+  void _showAvailabilityOptions(BuildContext context, String availabilityType) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Availability Options'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.calendar_today, color: AppColors.primaryColor),
+              title: const Text('Availability'),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => AvailabilityCalendarDialog(
+                    availabilityType: availabilityType,
+                    availabilityDays: (jobsListingData.availabilityDay as List?)
+                            ?.map((e) => e?.toString() ?? '')
+                            .where((s) => s.isNotEmpty)
+                            .toList() ?? <String>[],
+                    availabilityDates: (jobsListingData.availabilityDate as List?)
+                            ?.map((e) => e?.toString() ?? '')
+                            .where((s) => s.isNotEmpty)
+                            .toList() ?? <String>[],
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_calendar, color: Color(0xFF2E7D32)),
+              title: const Text('Update Availability'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Implement update availability functionality
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.event_busy, color: Color(0xFFD32F2F)),
+              title: const Text('Update Unavailability'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Implement update unavailability functionality
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget availabilityChip({
     required String label,
     Color backgroundColor = const Color(0xFFFFF1E5),
@@ -439,8 +470,7 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.calendar_today,
-                size: 20, color: AppColors.primaryColor),
+            const Icon(Icons.calendar_today, size: 20, color: AppColors.primaryColor),
             const SizedBox(width: 2),
             Text(
               label,

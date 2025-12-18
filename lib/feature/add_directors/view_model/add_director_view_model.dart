@@ -226,10 +226,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> fetchTheDirectorData(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final editVM = context.read<EditDeleteDirectorViewModel>();
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.getDirectoriesData();
     if (res.isNotEmpty) {
       await getBusinessTypes();
@@ -249,10 +249,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       assignBasicInfoData(context);
     } else {
       clearBasicInfoData();
+      Loaders.circularHideLoader(context);
       type == 'PROFESSIONAL'
           ? navigationService.navigateTo(RouteList.professionAddDirectorView)
           : navigationService.navigateTo(RouteList.adddirectorview);
-      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

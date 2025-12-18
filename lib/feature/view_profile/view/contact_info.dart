@@ -15,6 +15,7 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
           InputTextField(
               controller: viewProfileVM.firstNameController,
               hintText: "First Name",
+              isRequired: true,
               title: "first Name"),
           addVertical(10),
           InputTextField(
@@ -25,6 +26,7 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
           InputTextField(
               controller: viewProfileVM.lastNameController,
               hintText: "Last Name",
+              isRequired: true,
               title: "Last Name"),
           addVertical(10),
           InputTextField(
@@ -50,6 +52,7 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
           InputTextField(
               controller: viewProfileVM.addressController,
               hintText: "Address",
+              isRequired: true,
               title: "Address"),
           addVertical(10),
           InputTextField(
