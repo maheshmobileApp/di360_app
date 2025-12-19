@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
@@ -10,9 +9,9 @@ import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dar
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/create_course_enum.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +35,14 @@ class _JobCreateViewState extends State<NewCourseScreen> {
         backgroundColor: AppColors.whiteColor,
         leading: IconButton(
             onPressed: () {
-              navigationService.goBack();
+              showAlertMessage(
+                context,
+                'Do you really want to go back, delete data if you back?',
+                onBack: () async {
+                  navigationService.goBack();
+                  navigationService.goBack();
+                },
+              );
             },
             icon: Icon(Icons.arrow_back_ios)),
         title: Text(

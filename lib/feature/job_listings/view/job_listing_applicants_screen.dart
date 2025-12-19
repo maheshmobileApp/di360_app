@@ -1,9 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_card.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -146,12 +148,14 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
         children: [
           CircleAvatar(
             backgroundColor: AppColors.geryColor,
-            backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
+         
             radius: 30,
-            child: logo.isEmpty
-                ? const Icon(Icons.business,
-                    size: 20, color: AppColors.lightGeryColor)
-                : null,
+            child: CachedNetworkImageWidget(
+                                      imageUrl: logo ??
+                                          '',
+                                      fit: BoxFit.fill,
+                                      errorWidget:
+                                          Image.asset(ImageConst.prfImg)),
           ),
         ],
       ),

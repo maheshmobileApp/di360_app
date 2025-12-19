@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class CourseInfoCardWidget extends StatelessWidget {
@@ -92,15 +94,12 @@ class CourseInfoCardWidget extends StatelessWidget {
                             children: [
                               CircleAvatar(
                                 backgroundColor: AppColors.geryColor,
-                                backgroundImage: profilePic.isNotEmpty
-                                    ? NetworkImage(profilePic)
-                                    : null,
                                 radius: 20,
-                                child: profilePic.isEmpty
-                                    ? const Icon(Icons.business,
-                                        size: 20,
-                                        color: AppColors.lightGeryColor)
-                                    : null,
+                                child: CachedNetworkImageWidget(
+                                    imageUrl: profilePic ?? '',
+                                    fit: BoxFit.fill,
+                                    errorWidget:
+                                        Image.asset(ImageConst.prfImg)),
                               ),
                               const SizedBox(width: 10),
                               Flexible(
@@ -137,12 +136,12 @@ class CourseInfoCardWidget extends StatelessWidget {
                             Icon(Icons.access_time_rounded,
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
-                            Text(startTime.isNotEmpty 
-                                ? DateFormatUtils.formatToAmPm(startTime) 
+                            Text(startTime.isNotEmpty
+                                ? DateFormatUtils.formatToAmPm(startTime)
                                 : '--'),
                             Text(" - "),
-                            Text(endTime.isNotEmpty 
-                                ? DateFormatUtils.formatToAmPm(endTime) 
+                            Text(endTime.isNotEmpty
+                                ? DateFormatUtils.formatToAmPm(endTime)
                                 : '--')
                           ],
                         ),

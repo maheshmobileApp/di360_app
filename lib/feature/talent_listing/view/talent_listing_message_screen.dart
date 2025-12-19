@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -6,6 +7,7 @@ import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.da
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -60,11 +62,16 @@ class _TalentListingMessageScreenState
         return CircleAvatar(
           radius: 22,
           backgroundColor: AppColors.geryColor,
-          backgroundImage:
-              (profileUrl.isNotEmpty) ? NetworkImage(profileUrl) : null,
-          child: (profileUrl.isEmpty)
-              ? const Icon(Icons.person, color: AppColors.whiteColor)
-              : null,
+          child: (profileUrl.isNotEmpty)
+              ? ClipOval(
+                  child: CachedNetworkImageWidget(
+                    imageUrl: profileUrl,
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Icon(Icons.person, color: AppColors.whiteColor),
         );
       }
     } else {
@@ -73,12 +80,16 @@ class _TalentListingMessageScreenState
       return CircleAvatar(
         radius: 22,
         backgroundColor: AppColors.geryColor,
-        backgroundImage: (profileUrl != null && profileUrl.isNotEmpty)
-            ? NetworkImage(profileUrl)
-            : null,
-        child: (profileUrl == null || profileUrl.isEmpty)
-            ? const Icon(Icons.person, color: AppColors.whiteColor)
-            : null,
+        child: (profileUrl != null && profileUrl.isNotEmpty)
+            ? ClipOval(
+                child: CachedNetworkImageWidget(
+                  imageUrl: profileUrl,
+                  width: 44,
+                  height: 44,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : const Icon(Icons.person, color: AppColors.whiteColor),
       );
     }
   }
@@ -88,7 +99,7 @@ class _TalentListingMessageScreenState
     return Consumer<TalentListingViewModel>(
       builder: (context, vm, child) {
         final vm = Provider.of<TalentListingViewModel>(context);
-         final messages = vm.talentMessages?.talentsMessage;
+        final messages = vm.talentMessages?.talentsMessage;
         return Scaffold(
           backgroundColor: AppColors.whiteColor,
           appBar: AppbarTitleBackIconWidget(title: 'Messages'),
@@ -100,7 +111,7 @@ class _TalentListingMessageScreenState
                     : ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.all(12),
-                        itemCount: messages?.length??0,
+                        itemCount: messages?.length ?? 0,
                         itemBuilder: (context, index) {
                           final TalentsMessage? msg = messages?[index];
                           final bool isMe = msg?.messageFrom == widget.userId;
@@ -208,7 +219,12 @@ class _TalentListingMessageScreenState
                               vm.messageController.clear();
                             } else {
                               vm.sendTalentMessage(
-                                  context, widget.applicantId, text,  widget.typeName != null ? widget.typeName : "");
+                                  context,
+                                  widget.applicantId,
+                                  text,
+                                  widget.typeName != null
+                                      ? widget.typeName
+                                      : "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
@@ -235,8 +251,8 @@ class _TalentListingMessageScreenState
     );
   }
 
-  Widget _MessegeMenu(BuildContext context, TalentListingViewModel vm, String messageId,
-      String applicantId, String message, String oldMessage) {
+  Widget _MessegeMenu(BuildContext context, TalentListingViewModel vm,
+      String messageId, String applicantId, String message, String oldMessage) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -244,7 +260,7 @@ class _TalentListingMessageScreenState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Delete") {
-          vm.deleteTalentMessage(context, messageId,applicantId);
+          vm.deleteTalentMessage(context, messageId, applicantId);
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(messageId, vm.messageController.text);

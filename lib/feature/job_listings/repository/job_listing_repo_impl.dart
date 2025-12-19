@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_listings/model/get_filtered_enquiry_res.dart';
 import 'package:di360_flutter/feature/job_listings/model/get_job_applicants_count_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
@@ -13,6 +14,7 @@ import 'package:di360_flutter/feature/job_listings/quary/delete_message_query.da
 import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_count_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_applicants_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_data_query.dart';
+import 'package:di360_flutter/feature/job_listings/quary/get_job_filtere_enquiry_query.dart';
 import 'package:di360_flutter/feature/job_listings/quary/get_job_listing_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/job_applicants_messge_quary.dart';
 import 'package:di360_flutter/feature/job_listings/quary/job_status_count_quary.dart';
@@ -164,6 +166,7 @@ class JobListingRepoImpl extends JobListingRepository {
   @override
   Future<String?> sendApplicantMessage(
       Map<String, dynamic> variables, String typeName) async {
+    print("***************************$typeName");
     try {
       final data = await http
           .mutation(typeName != "applicant" ? talentMessge : applicantMessge, {
@@ -198,6 +201,13 @@ class JobListingRepoImpl extends JobListingRepository {
     final variables = {"id": Id, "message": message};
     final data = await http.mutation(updateMessageQuery, variables);
 
+    return data;
+  }
+
+  @override
+  Future<FilteredEnquiryData> getFilteredEnquiryData(variables) async {
+    final res = await http.query(getFilteredEnquiryQuery, variables: variables);
+    final data = FilteredEnquiryData.fromJson(res);
     return data;
   }
 }

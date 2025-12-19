@@ -189,6 +189,7 @@ class TalentListingViewModel extends ChangeNotifier {
   }
 
   Future<TalentsMessageResData?> fetchTalentMessages(String talentId) async {
+    print("**********************************fetch talent message calling");
     try {
       isLoading = true;
       final res = await repo.fetchTalentMessages(talentId);
@@ -214,6 +215,8 @@ class TalentListingViewModel extends ChangeNotifier {
 
   Future<void> updateTalentMessage(
       BuildContext context, String talentId) async {
+            print("update talent message calling");
+
     try {
       isLoading = true;
 
@@ -251,6 +254,7 @@ class TalentListingViewModel extends ChangeNotifier {
 
   Future<dynamic> sendTalentMessage(BuildContext context, String talentId,
       String message, String? typeName) async {
+    print("send talent message calling");
     if (message.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;

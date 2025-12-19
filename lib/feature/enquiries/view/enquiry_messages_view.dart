@@ -2,6 +2,8 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
+import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
@@ -12,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class JobListingApplicantsMessege extends StatefulWidget
+class EnquiryMessagesView extends StatefulWidget
     with BaseContextHelpers {
   final String jobId;
   final String applicantId;
@@ -21,7 +23,7 @@ class JobListingApplicantsMessege extends StatefulWidget
   final JobApplicants? applicant;
   final String? typeName;
 
-  const JobListingApplicantsMessege({
+  const EnquiryMessagesView({
     super.key,
     required this.jobId,
     required this.applicantId,
@@ -32,19 +34,19 @@ class JobListingApplicantsMessege extends StatefulWidget
   });
 
   @override
-  State<JobListingApplicantsMessege> createState() =>
+  State<EnquiryMessagesView> createState() =>
       _JobListingApplicantsMessegeState();
 }
 
 class _JobListingApplicantsMessegeState
-    extends State<JobListingApplicantsMessege> {
+    extends State<EnquiryMessagesView> {
   final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    final vm = Provider.of<JobListingsViewModel>(context, listen: false);
-    vm.fetchApplicantMessages(widget.applicantId);
+    final vm = Provider.of<EnquiriesViewModel>(context, listen: false);
+    vm.fetchEnquiriesMessages(widget.applicantId);
   }
 
   String formatDateTime(String? time) {
@@ -62,16 +64,10 @@ class _JobListingApplicantsMessegeState
         return CircleAvatar(
           radius: 22,
           backgroundColor: AppColors.geryColor,
-          child: (profileUrl.isNotEmpty)
-              ? ClipOval(
-                  child: CachedNetworkImageWidget(
-                    imageUrl: profileUrl,
-                    width: 44,
-                    height: 44,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Icon(Icons.person, color: AppColors.whiteColor),
+          child: CachedNetworkImageWidget(
+              imageUrl: profileUrl ?? '',
+              fit: BoxFit.fill,
+              errorWidget: Image.asset(ImageConst.prfImg)),
         );
       }
     } else {
@@ -80,25 +76,19 @@ class _JobListingApplicantsMessegeState
       return CircleAvatar(
         radius: 22,
         backgroundColor: AppColors.geryColor,
-        child: (profileUrl != null && profileUrl.isNotEmpty)
-            ? ClipOval(
-                child: CachedNetworkImageWidget(
-                  imageUrl: profileUrl,
-                  width: 44,
-                  height: 44,
-                  fit: BoxFit.cover,
-                ),
-              )
-            : const Icon(Icons.person, color: AppColors.whiteColor),
+        child: CachedNetworkImageWidget(
+              imageUrl: profileUrl ?? '',
+              fit: BoxFit.fill,
+              errorWidget: Image.asset(ImageConst.prfImg)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<JobListingsViewModel>(
+    return Consumer<EnquiriesViewModel>(
       builder: (context, vm, child) {
-        final vm = Provider.of<JobListingsViewModel>(context);
+        final vm = Provider.of<EnquiriesViewModel>(context);
         return Scaffold(
           backgroundColor: AppColors.whiteColor,
           appBar: AppbarTitleBackIconWidget(title: 'Messages'),
@@ -112,7 +102,7 @@ class _JobListingApplicantsMessegeState
                         padding: const EdgeInsets.all(12),
                         itemCount: vm.messages.length,
                         itemBuilder: (context, index) {
-                          final JobApplicantMessage msg = vm.messages[index];
+                          final JobApplicantMessages msg = vm.messages[index];
                           final bool isMe = msg.messageFrom == widget.userId;
                           final avatarWidget = _buildAvatar(isMe);
 
@@ -132,7 +122,7 @@ class _JobListingApplicantsMessegeState
                                     if (!isMe) avatarWidget,
                                     if (!isMe) const SizedBox(width: 6),
                                     Text(
-                                      formatDateTime(msg.createdAt),
+                                      formatDateTime(""),
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey[600],
@@ -171,7 +161,7 @@ class _JobListingApplicantsMessegeState
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                    if (msg.updatedAt != msg.createdAt)
+                                    //if (msg.updatedAt != msg.createdAt)
                                       const Padding(
                                         padding: EdgeInsets.only(top: 2),
                                         child: Text(
@@ -209,7 +199,7 @@ class _JobListingApplicantsMessegeState
                       ),
                       IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed: () {
+                        onPressed: () {/*
                           final text = vm.messageController.text.trim();
                           if (text.isNotEmpty) {
                             if (vm.editMessage) {
@@ -231,7 +221,7 @@ class _JobListingApplicantsMessegeState
                                 }
                               });
                             }
-                          }
+                          }*/
                         },
                       ),
                     ],
@@ -245,7 +235,7 @@ class _JobListingApplicantsMessegeState
     );
   }
 
-  Widget _MessegeMenu(BuildContext context, JobListingsViewModel vm, String id,
+  Widget _MessegeMenu(BuildContext context, EnquiriesViewModel vm, String id,
       String applicantId, String message, String oldMessage) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
@@ -253,14 +243,14 @@ class _JobListingApplicantsMessegeState
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
-        if (value == "Delete") {
+        /*if (value == "Delete") {
           vm.deleteapplicantMessage(context, id, applicantId, true);
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(id, vm.messageController.text);
           vm.messageController.text = oldMessage;
           //vm.updateApplicantMessage(context, id, applicantId, message);
-        }
+        }*/
       },
       itemBuilder: (context) => [
         PopupMenuItem(

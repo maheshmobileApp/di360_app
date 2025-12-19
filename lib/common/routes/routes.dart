@@ -26,6 +26,7 @@ import 'package:di360_flutter/feature/directors/view/directories_filter_screen.d
 import 'package:di360_flutter/feature/directors/view/join_community_view.dart';
 import 'package:di360_flutter/feature/directors/view/partnership_community_request_view.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_screen.dart';
+import 'package:di360_flutter/feature/enquiries/view/enquiry_messages_view.dart';
 import 'package:di360_flutter/feature/job_create/view/job_create_view.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_messege.dart';
@@ -136,6 +137,19 @@ class Routes {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return TalentListingMessageScreen(
+          jobId: args['jobId'],
+          applicantId: args['applicantId'],
+          userId: args['userId'],
+          profilePic: args['profilePic'] ?? "",
+          applicant: args['applicant'],
+          typeName: args['type'],
+        );
+      },
+      
+      RouteList.enquiryMessagesView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return EnquiryMessagesView(
           jobId: args['jobId'],
           applicantId: args['applicantId'],
           userId: args['userId'],

@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -143,14 +144,12 @@ class ListingHubMasterCard extends StatelessWidget {
                           // Placeholder for Logo
                           CircleAvatar(
                             backgroundColor: AppColors.geryColor,
-                            backgroundImage: profilePic.isNotEmpty
-                                ? NetworkImage(profilePic)
-                                : null,
                             radius: 15,
-                            child: profilePic.isEmpty
-                                ? const Icon(Icons.business,
-                                    size: 20, color: AppColors.lightGeryColor)
-                                : null,
+                            child: CachedNetworkImageWidget(
+                                    imageUrl: profilePic ?? '',
+                                    fit: BoxFit.fill,
+                                    errorWidget:
+                                        Image.asset(ImageConst.prfImg)),
                           ),
                           const SizedBox(width: 12),
                           Text(presenterName.toUpperCase(),
@@ -166,7 +165,7 @@ class ListingHubMasterCard extends StatelessWidget {
                           onTap: onShareTap,
                           child: _circleIcon(
                             child: Icon(Icons.share,
-                                size: 20, color: Colors.black),
+                                size: 20, color: AppColors.primaryColor),
                           ),
                         ),
                     ],

@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
@@ -8,6 +9,7 @@ import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -93,15 +95,13 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
                     CircleAvatar(
                       radius: 40,
                       backgroundColor: AppColors.geryColor,
-                      backgroundImage:
-                          profileImageUrl != null && profileImageUrl.isNotEmpty
-                              ? NetworkImage(profileImageUrl)
-                              : null,
-                      child:
-                          (profileImageUrl == null || profileImageUrl.isEmpty)
-                              ? const Icon(Icons.person,
-                                  size: 40, color: AppColors.lightGeryColor)
-                              : null,
+                  
+                      child: CachedNetworkImageWidget(
+                                      imageUrl: profileImageUrl ??
+                                          '',
+                                      fit: BoxFit.fill,
+                                      errorWidget:
+                                          Image.asset(ImageConst.prfImg)),
                     ),
                     Positioned(
                       bottom: 0,

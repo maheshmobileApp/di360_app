@@ -40,6 +40,7 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
           backgroundColor: Colors.white,
           endDrawer: NotificationsPanel(),
           appBar: AppBarWidget(
+            searchWidget: false,
               filterWidget: GestureDetector(
             onTap: () {
               if (jobSeekViewModel.selectedTabIndex == 0) {
