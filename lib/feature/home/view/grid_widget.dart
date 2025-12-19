@@ -56,7 +56,6 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     } else if (title == 'Support') {
       navigationService.navigateTo(RouteList.supportScreen);
     } else if (title == 'Directory') {
-      context.read<DirectoryViewModel>().clearFilter();
       await navigationService.navigateTo(RouteList.directory);
     } else if (title == 'Learning Hub') {
       Loaders.circularShowLoader(context);

@@ -274,12 +274,14 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             CircleAvatar(
               backgroundColor: AppColors.geryColor,
               radius: 30,
-              child: CachedNetworkImageWidget(
-                                      imageUrl: logo ??
-                                          '',
-                                      fit: BoxFit.fill,
-                                      errorWidget:
-                                          Image.asset(ImageConst.prfImg)),
+              child: ClipOval(
+                child: CachedNetworkImageWidget(
+                    imageUrl: logo ?? '',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorWidget: Image.asset(ImageConst.prfImg)),
+              ),
             ),
             Positioned(
               bottom: 0,

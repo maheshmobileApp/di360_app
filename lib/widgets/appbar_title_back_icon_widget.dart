@@ -18,7 +18,7 @@ class AppbarTitleBackIconWidget extends StatelessWidget
           onTap: backAction ?? () => navigationService.goBack(),
           child: const Icon(Icons.arrow_back_ios, color: AppColors.black)),
       title:
-          Text(title ?? '', style: TextStyles.bold4(color: AppColors.black)),
+          Text(title ?? '', style: TextStyles.bold3(color: AppColors.black)),
     );
   }
 

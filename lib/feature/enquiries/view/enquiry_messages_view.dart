@@ -1,7 +1,8 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
+/*import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
@@ -43,7 +44,7 @@ class _JobListingApplicantsMessegeState
   @override
   void initState() {
     super.initState();
-    final vm = Provider.of<JobListingsViewModel>(context, listen: false);
+    final vm = Provider.of<EnquiriesViewModel>(context, listen: false);
     vm.fetchApplicantMessages(widget.applicantId);
   }
 
@@ -84,9 +85,9 @@ class _JobListingApplicantsMessegeState
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<JobListingsViewModel>(
+    return Consumer<EnquiriesViewModel>(
       builder: (context, vm, child) {
-        final vm = Provider.of<JobListingsViewModel>(context);
+        final vm = Provider.of<EnquiriesViewModel>(context);
         return Scaffold(
           backgroundColor: AppColors.whiteColor,
           appBar: AppbarTitleBackIconWidget(title: 'Messages'),
@@ -233,7 +234,7 @@ class _JobListingApplicantsMessegeState
     );
   }
 
-  Widget _MessegeMenu(BuildContext context, JobListingsViewModel vm, String id,
+  Widget _MessegeMenu(BuildContext context, EnquiriesViewModel vm, String id,
       String applicantId, String message, String oldMessage) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
@@ -280,3 +281,4 @@ class _JobListingApplicantsMessegeState
     );
   }
 }
+*/
