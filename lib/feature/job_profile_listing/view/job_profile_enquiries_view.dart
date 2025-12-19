@@ -1,4 +1,3 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:flutter/material.dart';

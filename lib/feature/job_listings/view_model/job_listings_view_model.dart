@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_listings/model/get_filtered_enquiry_res.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repo_impl.dart';
@@ -117,6 +118,15 @@ class JobListingsViewModel extends ChangeNotifier {
       listingStatusforapplicants = ['ACCEPTED'];
     } else if (status == 'Declined') {
       listingStatusforapplicants = ['DECLINED'];
+    } else if (status == 'Enquiry') {
+      listingStatusforapplicants = [
+        "APPLIED",
+        "INTERVIEWS",
+        "ACCEPTED",
+        "REJECT",
+        "SHORTLISTED",
+        "DECLINED"
+      ];
     }
     getMyJobApplicantsgData(context, jobId ?? '');
     notifyListeners();
@@ -196,10 +206,30 @@ class JobListingsViewModel extends ChangeNotifier {
     //Loaders.circularShowLoader(context);
     final res = await repo.getJobApplicants(listingStatusforapplicants, jobId);
     if (res != null) {
-      myApplicantsList = res;
-      //Loaders.circularHideLoader(context);
+      if (selectedstatusesforapplicatnts != "Enquiry") {
+        myApplicantsList = res;
+      } else {}
+    }
+    notifyListeners();
+  }
+
+  //getJobFilteredEnquiry
+
+  FilteredEnquiryData? filteredEnquiryData;
+  Future<void> getJobFilteredEnquiry(BuildContext context, String jobId) async {
+    final variables = {
+      "where": {
+        "job_id": {"_eq": jobId}
+      },
+      "limit": 5,
+      "offset": 0
+    };
+
+    final res = await repo.getFilteredEnquiryData(variables);
+    if (res != null) {
+      filteredEnquiryData = res;
     } else {
-      //Loaders.circularHideLoader(context);
+      filteredEnquiryData = null;
     }
     notifyListeners();
   }
@@ -340,7 +370,7 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> deleteapplicantMessage(BuildContext context, String Id,
       String applicantId, bool deletedStatus) async {
-        print("******************deleteapplicantMessage called");
+    print("******************deleteapplicantMessage called");
     try {
       isLoading = true;
 
@@ -384,9 +414,8 @@ class JobListingsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> sendApplicantMessage(
-      BuildContext context, String applicantId, String message,
-       String? typeName) async {
+  Future<void> sendApplicantMessage(BuildContext context, String applicantId,
+      String message, String? typeName) async {
     if (message.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;

@@ -45,6 +45,7 @@ class Jobs {
   String? createdAt;
   String? updatedAt;
   JobApplicantsAggregate? jobApplicantsAggregate;
+  JobEnquiriesAggregate? jobEnquiriesAggregate;
   
 
   Jobs(
@@ -89,7 +90,8 @@ class Jobs {
       this.timingtoggle,
       this.createdAt,
       this.updatedAt,
-      this.jobApplicantsAggregate});
+      this.jobApplicantsAggregate,
+      this.jobEnquiriesAggregate});
 
   Jobs.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -170,6 +172,10 @@ class Jobs {
     jobApplicantsAggregate = json['job_applicants_aggregate'] != null
         ? JobApplicantsAggregate.fromJson(json['job_applicants_aggregate'])
         : null;
+    
+    jobEnquiriesAggregate = json['job_enquiries_aggregate'] != null
+        ? JobEnquiriesAggregate.fromJson(json['job_enquiries_aggregate'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -219,6 +225,9 @@ class Jobs {
     data['updated_at'] = this.updatedAt;
     if (this.jobApplicantsAggregate != null) {
       data['job_applicants_aggregate'] = this.jobApplicantsAggregate!.toJson();
+    }
+    if (this.jobEnquiriesAggregate != null) {
+      data['job_enquiries_aggregate'] = this.jobEnquiriesAggregate!.toJson();
     }
     return data;
   }
@@ -274,6 +283,26 @@ class JobApplicantsAggregate {
   JobApplicantsAggregate({this.aggregate});
 
   JobApplicantsAggregate.fromJson(Map<String, dynamic> json) {
+    aggregate = json['aggregate'] != null
+        ? new Aggregate.fromJson(json['aggregate'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.aggregate != null) {
+      data['aggregate'] = this.aggregate!.toJson();
+    }
+    return data;
+  }
+}
+
+class JobEnquiriesAggregate {
+  Aggregate? aggregate;
+
+  JobEnquiriesAggregate({this.aggregate});
+
+  JobEnquiriesAggregate.fromJson(Map<String, dynamic> json) {
     aggregate = json['aggregate'] != null
         ? new Aggregate.fromJson(json['aggregate'])
         : null;

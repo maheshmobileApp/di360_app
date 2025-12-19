@@ -60,7 +60,14 @@ class _JobCreateViewState extends State<JobCreateView> {
         backgroundColor: AppColors.whiteColor,
         leading: IconButton(
             onPressed: () {
-              NavigationService().goBack();
+              showAlertMessage(
+                context,
+                'Do you really want to go back, delete data if you back?',
+                onBack: () async {
+                  navigationService.goBack();
+                  navigationService.goBack();
+                },
+              );
             },
             icon: Icon(Icons.arrow_back_ios)),
         title: Text(

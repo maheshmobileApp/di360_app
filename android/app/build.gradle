@@ -16,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.dentalinterface360.app"
     compileSdk = 36
-    ndkVersion = "26.1.10909125"
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -25,14 +25,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
-    }
-
-    dependencies {
-        implementation 'androidx.core:core:1.13.1'
-        implementation 'androidx.core:core-ktx:1.13.1'
-        implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
-        implementation 'androidx.activity:activity-ktx:1.9.1'
-        implementation 'androidx.fragment:fragment-ktx:1.8.2'
     }
 
     signingConfigs {
@@ -60,6 +52,14 @@ android {
             signingConfig = signingConfigs.release
         }
     }
+}
+
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
+    implementation 'androidx.activity:activity-ktx:1.9.1'
+    implementation 'androidx.fragment:fragment-ktx:1.8.2'
 }
 
 flutter {

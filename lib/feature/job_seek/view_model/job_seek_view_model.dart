@@ -144,7 +144,8 @@ class JobSeekViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchFilteredJobs(BuildContext context) async {
+  Future<void> 
+  fetchFilteredJobs(BuildContext context) async {
     isLoading = true;
     notifyListeners();
 

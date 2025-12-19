@@ -121,8 +121,46 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                                 "Applicants")),
                         addHorizontal(10),
                         GestureDetector(
-                            onTap: () async {},
-                            child: _registeredChip(0, "Enquiries")),
+                            onTap: () async {
+                              final count = jobsListingData
+                                      ?.jobEnquiriesAggregate
+                                      ?.aggregate
+                                      ?.count ??
+                                  0;
+
+                              if (count != 0) {
+                                Loaders.circularShowLoader(context);
+                                viewModel.jobId = jobsListingData?.id ?? '';
+                                viewModel.changeStatusforapplicatnts(
+                                    "All", context);
+                                viewModel.selectedstatusesforapplicatnts =
+                                    "Enquiry";
+
+                                await viewModel.getMyJobApplicantsgData(
+                                  context,
+                                  jobsListingData?.id ?? '',
+                                );
+
+                                /*await viewModel.getJobFilteredEnquiry(
+                                  context,
+                                  jobsListingData?.id ?? '',
+                                );*/
+
+                                Loaders.circularHideLoader(context);
+
+                                navigationService.navigateToWithParams(
+                                  RouteList.JobListingApplicantscreen,
+                                  params: jobsListingData,
+                                );
+                              } else {
+                                scaffoldMessenger("0 Enquiries Received");
+                              }
+                            },
+                            child: _registeredChip(
+                                jobsListingData?.jobEnquiriesAggregate
+                                        ?.aggregate?.count ??
+                                    0,
+                                "Enquiries")),
                       ],
                     ),
                     GestureDetector(
