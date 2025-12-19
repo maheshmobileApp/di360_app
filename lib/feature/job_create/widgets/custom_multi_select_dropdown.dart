@@ -47,9 +47,10 @@ class _CustomMultiSelectDropDownState<T>
           builder: (context, setStateDialog) {
             return AlertDialog(
               backgroundColor: AppColors.whiteColor,
-              title: Text(widget.hintText),
+              title: Text(widget.hintText,style: TextStyles.bold3(color: AppColors.black),),
               content: SizedBox(
-                width: double.maxFinite,
+                width: double.infinity,
+                height: 300,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: widget.items.length,
@@ -97,14 +98,14 @@ class _CustomMultiSelectDropDownState<T>
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancel', style: TextStyle(color: AppColors.black)),
+                  child:  Text('Cancel', style: TextStyles.semiBold(color: AppColors.black,fontSize: 16),),
                 ),
                 TextButton(
                   onPressed: () {
                     widget.onSelectionChanged(List<T>.from(_selected));
                     Navigator.of(context).pop();
                   },
-                  child: const Text('OK', style: TextStyle(color: AppColors.black)),
+                  child:  Text('OK', style: TextStyles.semiBold(color: AppColors.black,fontSize: 16),),
                 ),
               ],
             );

@@ -4,7 +4,7 @@ mixin ValidationMixins {
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Mobile Number";
-    if (value.length != 10 || !RegExp(r'^[0-9]{10}$').hasMatch(value))
+    if (!isValidPhoneNumber(value))
       return 'Enter valid mobile number';
     return null;
   }
@@ -12,7 +12,7 @@ mixin ValidationMixins {
   String? validateABNNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your ABN Number";
-    if (value.length != 10)
+    if (!isValidateABNNumber(value))
       return 'Enter valid ABN number';
     return null;
   }

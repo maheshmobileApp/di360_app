@@ -239,7 +239,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             addHorizontal(16),
             Expanded(
               child: CustomRoundedButton(
-                text: 'Hire Me',
+                text: (widget.talentList?.jobHirings?.isNotEmpty == true && widget.talentList?.jobHirings?.first.id != null) ? 'Requested' : 'Hire Me',
                 height: 42,
                 onPressed: () async {
                   final userId =

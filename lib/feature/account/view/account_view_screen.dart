@@ -172,6 +172,15 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                     .navigateTo(RouteList.viewProfileScreen);
                           } else if (item.title == 'Job Listings') {
                             Loaders.circularShowLoader(context);
+                            context.read<JobListingsViewModel>().listingStatus =
+                                [
+                              "APPROVE",
+                              "PENDING",
+                              "INACTIVE",
+                              "EXPIRED",
+                              "REJECT",
+                              "DRAFT"
+                            ];
                             await context
                                 .read<JobListingsViewModel>()
                                 .getMyJobListingData(context);
@@ -285,11 +294,10 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.newsFeedCategoriesView);
                           } else if (item.title == "News Feed") {
-                             context
+                            context
                                 .read<DashBoardViewModel>()
-                                .setIndex(1,context);
-                          }  
-                          else if (item.title.contains("Community")) {
+                                .setIndex(1, context);
+                          } else if (item.title.contains("Community")) {
                             final viewModel = Provider.of<CommunityViewModel>(
                                 context,
                                 listen: false);

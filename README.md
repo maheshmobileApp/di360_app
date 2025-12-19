@@ -371,15 +371,21 @@ ADMIN
  PRACTICE
     dentalpractice1@yopmail.com
     123456
+    tirupractice@yopmail.com
+    123456
 
 PROFESSIONAL
   paded85578@lodores.com
   sandeep
+  mahesh@yopmail.com
+  123456
 
 SUPPLIER
   dentalbusiness1@yopmail.com
   123456
 
+yernagulamahesh@gmail.com
+Test@123
 
 
 Dev -> url 
@@ -387,13 +393,17 @@ Prod -> url
 Stag
 Qa
 
-
-flutter run --dart-define-from-file=.env/dev.json
+## Flutter build commands 
+flutter pub get && flutter run --dart-define-from-file=.env/dev.json
 
 flutter run --dart-define-from-file=.env/prod.json
 
+
+
+  # For iOS Build 
 flutter build ipa --release --export-method app-store \
-  --dart-define-from-file=.env/production.json
-
+  --dart-define-from-file=.env/prod.json
+ # For Android Build 
 flutter build appbundle --release --dart-define-from-file=.env/prod.json
-
+ # For Android Apk 
+flutter build apk --release --dart-define-from-file=.env/dev.json

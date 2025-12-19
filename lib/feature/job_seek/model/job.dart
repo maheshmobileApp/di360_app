@@ -40,11 +40,12 @@ class Jobs {
   String? facebookUrl;
   List<ClinicLogo>? clinicLogo;
   String? timings;
-  Banner? bannerImage;
+  ClinicLogo? bannerImage;
   String? timingtoggle;
   String? createdAt;
   String? updatedAt;
   JobApplicantsAggregate? jobApplicantsAggregate;
+  
 
   Jobs(
       {this.id,
@@ -152,9 +153,9 @@ class Jobs {
 
     if (json['banner_image'] != null) {
       if (json['banner_image'] is Map) {
-        bannerImage = Banner.fromJson(json['banner_image']);
+        bannerImage = ClinicLogo.fromJson(json['banner_image']);
       } else if (json['banner_image'] is String) {
-        bannerImage = Banner(url: json['banner_image']);
+        bannerImage = ClinicLogo(url: json['banner_image']);
       } else {
         bannerImage = null;
       }

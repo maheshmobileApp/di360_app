@@ -99,7 +99,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   Jobs? createJobPreviewData;
 
   Future<void> setJobPreviewData() async {
-    (bannerFile != null) ? await validateLogoAndBanner() : null;
+    await validateLogoAndBanner();
     await validateClinic();
     createJobPreviewData = Jobs(
         id: "",
@@ -144,6 +144,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         facebookUrl: facebookController.text,
         instagramUrl: instgramController.text,
         video: videoLinkController.text,
+       bannerImage: selectedBannerImgList,
         linkedinUrl: linkedInController.text);
 
     notifyListeners();
@@ -330,6 +331,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     } else {
       selectedBannerImgList = ClinicLogo(
           url: serverBannerImg ?? "", type: "image", extension: "jpeg");
+      print(
+          "********************************validateLogoAndBanner Calling $serverBannerImg ");
       notifyListeners();
     }
   }
@@ -718,8 +721,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "company_name": companyNameController.text,
         "pay_range":
             selectedPayRange, //Getting fron Dropdown, this is static data for now
-        "education":
-            educationLevelController.text, // Getting fron Dropdown, this is static data for now
+        "education": educationLevelController
+            .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
         "banner_image": selectedBannerImgList,
 
@@ -775,7 +778,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       filePaths,
       clinicPhotos: clinicPhotos,
     );*/
-    (bannerFile != null) ? await validateLogoAndBanner() : null;
+    await validateLogoAndBanner();
     await validateClinic();
     final result = await repo.updateJobListing({
       "id": jobId,
@@ -816,8 +819,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "company_name": companyNameController.text,
         "pay_range":
             selectedPayRange, //Getting fron Dropdown, this is static data for now
-        "education":
-            educationLevelController.text, // Getting fron Dropdown, this is static data for now
+        "education": educationLevelController
+            .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
         "banner_image": selectedBannerImgList,
 
@@ -873,6 +876,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     countryController.text = jobData?.location ?? "";
     serverBannerImg = jobData?.bannerImage?.url;
     startDateController.text = jobData?.closedAt ?? "";
+    endDateController.text = jobData?.closedAt ?? "";
 
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
