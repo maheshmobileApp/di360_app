@@ -1,7 +1,8 @@
-/*import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
@@ -45,7 +46,7 @@ class _JobListingApplicantsMessegeState
   void initState() {
     super.initState();
     final vm = Provider.of<EnquiriesViewModel>(context, listen: false);
-    vm.fetchApplicantMessages(widget.applicantId);
+    vm.fetchEnquiriesMessages(widget.applicantId);
   }
 
   String formatDateTime(String? time) {
@@ -101,7 +102,7 @@ class _JobListingApplicantsMessegeState
                         padding: const EdgeInsets.all(12),
                         itemCount: vm.messages.length,
                         itemBuilder: (context, index) {
-                          final JobApplicantMessage msg = vm.messages[index];
+                          final JobApplicantMessages msg = vm.messages[index];
                           final bool isMe = msg.messageFrom == widget.userId;
                           final avatarWidget = _buildAvatar(isMe);
 
@@ -121,7 +122,7 @@ class _JobListingApplicantsMessegeState
                                     if (!isMe) avatarWidget,
                                     if (!isMe) const SizedBox(width: 6),
                                     Text(
-                                      formatDateTime(msg.createdAt),
+                                      formatDateTime(""),
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey[600],
@@ -160,7 +161,7 @@ class _JobListingApplicantsMessegeState
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                    if (msg.updatedAt != msg.createdAt)
+                                    //if (msg.updatedAt != msg.createdAt)
                                       const Padding(
                                         padding: EdgeInsets.only(top: 2),
                                         child: Text(
@@ -198,7 +199,7 @@ class _JobListingApplicantsMessegeState
                       ),
                       IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed: () {
+                        onPressed: () {/*
                           final text = vm.messageController.text.trim();
                           if (text.isNotEmpty) {
                             if (vm.editMessage) {
@@ -220,7 +221,7 @@ class _JobListingApplicantsMessegeState
                                 }
                               });
                             }
-                          }
+                          }*/
                         },
                       ),
                     ],
@@ -242,14 +243,14 @@ class _JobListingApplicantsMessegeState
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
-        if (value == "Delete") {
+        /*if (value == "Delete") {
           vm.deleteapplicantMessage(context, id, applicantId, true);
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(id, vm.messageController.text);
           vm.messageController.text = oldMessage;
           //vm.updateApplicantMessage(context, id, applicantId, message);
-        }
+        }*/
       },
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -281,4 +282,3 @@ class _JobListingApplicantsMessegeState
     );
   }
 }
-*/

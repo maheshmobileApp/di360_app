@@ -34,9 +34,13 @@ class AppliedJobScreen extends StatelessWidget {
 
             if (vm.appliedJobs.isEmpty) {
               return const Center(
-                child: Text(
-                  'Your applied jobs will be listed here once you apply',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Your applied jobs will be listed here once you apply',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
                 ),
               );
             }

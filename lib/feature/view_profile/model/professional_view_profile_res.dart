@@ -100,8 +100,9 @@ class DentalProfessionalsByPk {
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
     professionType = json['profession_type'];
-    address =
-        json['address'] != null ? new Address.fromJson(json['address']) : null;
+    address = json['address'] != null && json['address'] is Map<String, dynamic>
+        ? new Address.fromJson(json['address'])
+        : null;
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
     bankDetails = json['bank_details'] != null

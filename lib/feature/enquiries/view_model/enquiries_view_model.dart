@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart';
 import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
+import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
 import 'package:di360_flutter/feature/enquiries/repository/enquiries_repo_impl.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -46,7 +47,7 @@ class EnquiriesViewModel extends ChangeNotifier {
   }
   /******************Enquiry Messages****************/
 
-  List<JobApplicantMessage> messages = [];
+  List<JobApplicantMessages> messages = [];
   bool isLoading = false;
   final TextEditingController messageController = TextEditingController();
   bool editMessage = false;
@@ -65,14 +66,17 @@ class EnquiriesViewModel extends ChangeNotifier {
     newmessage = message;
     notifyListeners();
   }
-/*
-  Future<void> fetchApplicantMessages(String jobId) async {
+
+  Future<void> fetchEnquiriesMessages(String jobId) async {
+    final variables = {
+        "job_enquiry_id": {"_eq": jobId}
+      };
     try {
       isLoading = true;
 
-      final res = await repo.fetchApplicantMessages(jobId);
-      if (res.messages != null) {
-        messages = res.messages!;
+      final res = await repo.fetchEnquiriesMessages(variables);
+      if (res.jobApplicantMessages != null) {
+        messages = res.jobApplicantMessages??[];
         print("******************messages fetched ${messages}");
       }
     } catch (e) {
@@ -82,7 +86,7 @@ class EnquiriesViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+/*
   Future<void> updateApplicantMessage(
       BuildContext context, String applicantId) async {
     try {

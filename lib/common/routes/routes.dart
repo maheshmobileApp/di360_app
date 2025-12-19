@@ -146,7 +146,7 @@ class Routes {
         );
       },
       
-      /*RouteList.enquiryMessagesView: (context) {
+      RouteList.enquiryMessagesView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return EnquiryMessagesView(
@@ -157,7 +157,7 @@ class Routes {
           applicant: args['applicant'],
           typeName: args['type'],
         );
-      },*/
+      },
       RouteList.AppliedJobScreen: (context) {
         return AppliedJobScreen();
       },

@@ -116,25 +116,33 @@ class GetDirectories {
     if (json['working_at'] != null) {
       workingAt = <WorkingAt>[];
       json['working_at'].forEach((v) {
-        workingAt!.add(new WorkingAt.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          workingAt!.add(new WorkingAt.fromJson(v));
+        }
       });
     }
     if (json['education'] != null) {
       education = <Education>[];
       json['education'].forEach((v) {
-        education!.add(new Education.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          education!.add(new Education.fromJson(v));
+        }
       });
     }
     if (json['university_school'] != null) {
       universitySchool = <UniversitySchool>[];
       json['university_school'].forEach((v) {
-        universitySchool!.add(new UniversitySchool.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          universitySchool!.add(new UniversitySchool.fromJson(v));
+        }
       });
     }
     if (json['hobbies'] != null) {
       hobbies = <Hobbies>[];
       json['hobbies'].forEach((v) {
-        hobbies!.add(new Hobbies.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          hobbies!.add(new Hobbies.fromJson(v));
+        }
       });
     }
     logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
@@ -147,61 +155,81 @@ class GetDirectories {
     if (json['directory_documents'] != null) {
       directoryDocuments = <DirectoryDocuments>[];
       json['directory_documents'].forEach((v) {
-        directoryDocuments!.add(new DirectoryDocuments.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryDocuments!.add(new DirectoryDocuments.fromJson(v));
+        }
       });
     }
     if (json['directory_locations'] != null) {
       directoryLocations = <DirectoryLocations>[];
       json['directory_locations'].forEach((v) {
-        directoryLocations!.add(new DirectoryLocations.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryLocations!.add(new DirectoryLocations.fromJson(v));
+        }
       });
     }
     if (json['directory_services'] != null) {
       directoryServices = <DirectoryServices>[];
       json['directory_services'].forEach((v) {
-        directoryServices!.add(new DirectoryServices.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryServices!.add(new DirectoryServices.fromJson(v));
+        }
       });
     }
     if (json['directory_certifications'] != null) {
       directoryCertifications = <DirectoryCertification>[];
       json['directory_certifications'].forEach((v) {
-        directoryCertifications!.add(new DirectoryCertification.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryCertifications!.add(new DirectoryCertification.fromJson(v));
+        }
       });
     }
     if (json['directory_achievements'] != null) {
       directoryAchievements = <DirectoryAchievements>[];
       json['directory_achievements'].forEach((v) {
-        directoryAchievements!.add(new DirectoryAchievements.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryAchievements!.add(new DirectoryAchievements.fromJson(v));
+        }
       });
     }
     if (json['directory_appointments'] != null) {
       directoryAppointments = <DirectoryAppointment>[];
       json['directory_appointments'].forEach((v) {
-        directoryAppointments!.add(new DirectoryAppointment.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryAppointments!.add(new DirectoryAppointment.fromJson(v));
+        }
       });
     }
     if (json['directory_team_members'] != null) {
       directoryTeamMembers = <DirectoryTeamMembers>[];
       json['directory_team_members'].forEach((v) {
-        directoryTeamMembers!.add(new DirectoryTeamMembers.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryTeamMembers!.add(new DirectoryTeamMembers.fromJson(v));
+        }
       });
     }
     if (json['directory_gallery_posts'] != null) {
       directoryGalleryPosts = <DirectoryGalleryPosts>[];
       json['directory_gallery_posts'].forEach((v) {
-        directoryGalleryPosts!.add(new DirectoryGalleryPosts.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryGalleryPosts!.add(new DirectoryGalleryPosts.fromJson(v));
+        }
       });
     }
     if (json['directory_testimonials'] != null) {
       directoryTestimonials = <DirectoryTestimonials>[];
       json['directory_testimonials'].forEach((v) {
-        directoryTestimonials!.add(new DirectoryTestimonials.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryTestimonials!.add(new DirectoryTestimonials.fromJson(v));
+        }
       });
     }
     if (json['directory_faqs'] != null) {
       directoryFaqs = <DirectoryFaqs>[];
       json['directory_faqs'].forEach((v) {
-        directoryFaqs!.add(new DirectoryFaqs.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          directoryFaqs!.add(new DirectoryFaqs.fromJson(v));
+        }
       });
     }
     sTypename = json['__typename'];
