@@ -114,7 +114,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     _descriptionWidget(description),
-                    (imageUrls?.isNotEmpty??false)
+                    (imageUrls?.isNotEmpty ?? false)
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
                     const Divider(),
@@ -153,7 +153,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
                           onTap: onShareTap,
                           child: _circleIcon(
                             child: Icon(Icons.share,
-                                size: 20, color: Colors.black),
+                                size: 20, color: AppColors.primaryColor),
                           ),
                         ),
 
@@ -200,7 +200,8 @@ class NewsFeedCommunityCard extends StatelessWidget {
 
   Widget _buildSingleMedia(PostImage media, List<PostImage> allMedia) {
     return GestureDetector(
-      onTap: () => navigationService.push(ImageViewerScreen(postImage: allMedia as List<PostImage>?)),
+      onTap: () => navigationService
+          .push(ImageViewerScreen(postImage: allMedia as List<PostImage>?)),
       child: Container(
         width: double.infinity,
         height: 200,
@@ -226,7 +227,8 @@ class NewsFeedCommunityCard extends StatelessWidget {
         itemBuilder: (context, index) {
           final media = mediaList[index];
           return GestureDetector(
-            onTap: () => navigationService.push(ImageViewerScreen(postImage: mediaList as List<PostImage>?)),
+            onTap: () => navigationService.push(
+                ImageViewerScreen(postImage: mediaList as List<PostImage>?)),
             child: Container(
               width: 250,
               decoration: BoxDecoration(
@@ -278,14 +280,16 @@ class NewsFeedCommunityCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.picture_as_pdf, size: isFullSize ? 40 : 40, color: Colors.red),
+            Icon(Icons.picture_as_pdf,
+                size: isFullSize ? 40 : 40, color: Colors.red),
             SizedBox(height: 8),
             if (isFullSize)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   name.isNotEmpty ? name : 'PDF Document',
-                  style: TextStyles.medium3(fontSize: 12, color: Colors.red[700]!),
+                  style:
+                      TextStyles.medium3(fontSize: 12, color: Colors.red[700]!),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -297,13 +301,16 @@ class NewsFeedCommunityCard extends StatelessWidget {
     }
 
     // Word document handling
-    if (type.contains('msword') || name.endsWith('.doc') || name.endsWith('.docx')) {
+    if (type.contains('msword') ||
+        name.endsWith('.doc') ||
+        name.endsWith('.docx')) {
       return Container(
         color: Colors.blue[50],
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.description, size: isFullSize ? 60 : 40, color: Colors.blue),
+            Icon(Icons.description,
+                size: isFullSize ? 60 : 40, color: Colors.blue),
             SizedBox(height: 8),
             if (isFullSize)
               Padding(
@@ -332,7 +339,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
     );
   }
 
-   Widget _mediaCard({
+  Widget _mediaCard({
     required Widget child,
     VoidCallback? onTap,
     bool isFullWidth = false,
@@ -377,12 +384,18 @@ class NewsFeedCommunityCard extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: AppColors.geryColor,
-              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
               radius: 30,
-              child: logo.isEmpty
-                  ? const Icon(Icons.business,
-                      size: 20, color: AppColors.lightGeryColor)
-                  : null,
+              child: logo.isNotEmpty
+                  ? ClipOval(
+                      child: CachedNetworkImageWidget(
+                        imageUrl: logo,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : const Icon(Icons.person,
+                      size: 20, color: AppColors.lightGeryColor),
             ),
           ],
         ),

@@ -64,7 +64,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                             },
                           child: _circleIcon(
                             child: Icon(Icons.share,
-                                size: 20, color: Colors.black),
+                                size: 20, color: AppColors.primaryColor),
                           ),
                         ),
                 ],

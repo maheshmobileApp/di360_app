@@ -49,6 +49,8 @@ class DirectoryViewModel extends ChangeNotifier {
 // Dropdown Selections
   String? selectedTeamMember;
   String? selectedService;
+  String? userType;
+  String? userId;
 
   final List<String> serviceList = ['Test'];
 
@@ -58,6 +60,16 @@ class DirectoryViewModel extends ChangeNotifier {
 
   void setSelectedMembership(String? value) {
     selectedMembership = value;
+    notifyListeners();
+  }
+
+  void setUserType(String? value) {
+    userType = value;
+    notifyListeners();
+  }
+
+  void setUserId(String? value) {
+    userId = value;
     notifyListeners();
   }
 
@@ -356,7 +368,7 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
-      print("*************************Directord data fected $directorDetails");
+      print("*************************Directord data fected ${directorDetails?.dentalSupplierId}");
       print("*Directord data fected $directorDetails");
       quickLinkItems = [
         if (directorDetails?.description != null)

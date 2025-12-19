@@ -1,5 +1,7 @@
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 
@@ -67,14 +69,10 @@ class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
                               return ListTile(
                                 leading: CircleAvatar(
                                   radius: 24,
-                                  backgroundImage: profileImageUrl!=
-                                          null
-                                      ? NetworkImage(profileImageUrl!)
-                                      : null,
-                                  child: profileImageUrl ==
-                                          null
-                                      ? const Icon(Icons.person, size: 24)
-                                      : null,
+                                  child: CachedNetworkImageWidget(
+              imageUrl: profileImageUrl ?? '',
+              fit: BoxFit.fill,
+              errorWidget: Image.asset(ImageConst.prfImg)),
                                 ),
                                 title: Text(applicant?.jobEnquiries?[index].enquiryDescription??""),
                               );

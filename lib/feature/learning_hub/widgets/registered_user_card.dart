@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -33,13 +35,11 @@ class RegisteredUserCard extends StatelessWidget {
           // ✅ Image Container (1st column)
           CircleAvatar(
             backgroundColor: AppColors.geryColor,
-            backgroundImage:
-                imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
             radius: 30,
-            child: imageUrl.isEmpty
-                ? const Icon(Icons.person,
-                    size: 28, color: AppColors.lightGeryColor)
-                : null,
+            child: CachedNetworkImageWidget(
+                imageUrl: imageUrl ?? '',
+                fit: BoxFit.fill,
+                errorWidget: Image.asset(ImageConst.prfImg)),
           ),
 
           const SizedBox(width: 12),
