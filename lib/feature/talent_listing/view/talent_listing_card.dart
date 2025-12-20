@@ -177,12 +177,12 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
+              Text(role,
                   style:
                       TextStyles.semiBold(fontSize: 16, color: AppColors.black),
                   overflow: TextOverflow.ellipsis,maxLines: 2,),
               addVertical(4),
-              Text(role,
+              Text(title,
                   style: TextStyles.regular2(color: AppColors.black),
                   overflow: TextOverflow.ellipsis),
             ],

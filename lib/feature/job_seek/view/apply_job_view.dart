@@ -180,7 +180,7 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
             SizedBox(height: 16),
             ResumeUploadWidget(
               onFileSelected: _onResumeSelected,
-              isRequired: false,
+              isRequired: true,
             ),
             SizedBox(height: 16),
             InputTextField(

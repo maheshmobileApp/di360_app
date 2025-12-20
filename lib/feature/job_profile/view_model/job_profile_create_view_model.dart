@@ -315,7 +315,12 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       (index) => (2000 + index).toString()
     ).reversed.toList();
 
-  List<String> availabilityTypes = ["Select Day", "Select Date"];
+  List<String> get availabilityTypes {
+    if (_selectedEmploymentChips.contains("Locum")) {
+      return ["Select Date"];
+    }
+    return ["Select Day", "Select Date"];
+  }
   List<String> QualificationTypes = ["Yes", "No"];
 
   // Employment types;

@@ -8,6 +8,7 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
   final String Function(T) itemLabel;
   final Function(List<T>) onSelectionChanged;
   final String hintText;
+  final bool Function(T)? greyOutCondition;
 
   const CustomMultiSelectDropDown({
     Key? key,
@@ -16,6 +17,7 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
     required this.itemLabel,
     required this.onSelectionChanged,
     required this.hintText,
+    this.greyOutCondition,
   }) : super(key: key);
 
   @override
@@ -50,7 +52,6 @@ class _CustomMultiSelectDropDownState<T>
               title: Text(widget.hintText,style: TextStyles.bold3(color: AppColors.black),),
               content: SizedBox(
                 width: double.infinity,
-                height: 300,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: widget.items.length,
@@ -65,9 +66,7 @@ class _CustomMultiSelectDropDownState<T>
                       title: Text(
                         widget.itemLabel(item),
                         style: TextStyles.regular3(
-                          color: isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.black,
+                          color: _getItemColor(item, _selected, isSelected),
                         ),
                       ),
                       onChanged: (checked) {
@@ -113,6 +112,26 @@ class _CustomMultiSelectDropDownState<T>
         );
       },
     );
+  }
+
+  Color _getItemColor(T item, List<T> currentSelection, bool isSelected) {
+    if (widget.greyOutCondition != null) {
+      // Apply grey out logic based on current dialog selection
+      if (currentSelection.isEmpty) {
+        return isSelected ? AppColors.primaryColor : AppColors.black;
+      }
+      
+      final hasLocum = currentSelection.any((selected) => widget.itemLabel(selected) == "Locum");
+      final isLocum = widget.itemLabel(item) == "Locum";
+      
+      if (hasLocum && !isLocum) {
+        return Colors.grey; // Grey out non-Locum when Locum is selected
+      } else if (!hasLocum && isLocum && currentSelection.isNotEmpty) {
+        return Colors.grey; // Grey out Locum when other items are selected
+      }
+    }
+    
+    return isSelected ? AppColors.primaryColor : AppColors.black;
   }
 
   @override

@@ -9,7 +9,6 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class JobListingApplicantsScreen extends StatefulWidget {
   final Jobs? jobsListingData;
   const JobListingApplicantsScreen({super.key, this.jobsListingData});
@@ -134,50 +133,44 @@ class _JobListingApplicantsScreenState extends State<JobListingApplicantsScreen>
     );
   }
 
-  Widget _logoWithTitle(
-  BuildContext context,
-  String logo,
-  String company,
-  String title,
-  String jobTitle
-) {
-  return Row(
-    children: [
-      Stack(
-        alignment: Alignment.center,
-        children: [
-          CircleAvatar(
-            backgroundColor: AppColors.geryColor,
-         
-            radius: 30,
-            child: CachedNetworkImageWidget(
-                                      imageUrl: logo ??
-                                          '',
-                                      fit: BoxFit.fill,
-                                      errorWidget:
-                                          Image.asset(ImageConst.prfImg)),
-          ),
-        ],
-      ),
-      addHorizontal(12),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _logoWithTitle(BuildContext context, String logo, String company,
+      String title, String jobTitle) {
+    return Row(
+      children: [
+        Stack(
+          alignment: Alignment.center,
           children: [
-            Text(company,
-                style: TextStyles.medium2(color: AppColors.black)),
+            CircleAvatar(
+              backgroundColor: AppColors.geryColor,
+              radius: 30,
+              child: ClipOval(
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: CachedNetworkImageWidget(
+                      imageUrl: logo ?? '',
+                      fit: BoxFit.fill,
+                      errorWidget: Image.asset(ImageConst.prfImg)),
+                ),
+              ),
+            ),
+          ],
+        ),
+        addHorizontal(12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(company, style: TextStyles.medium2(color: AppColors.black)),
               addVertical(2),
               Text(jobTitle,
                   style: TextStyles.regular2(color: AppColors.black)),
-            addVertical(2),
-            Text(title,
-                style: TextStyles.regular2(color: AppColors.black)),
-          ],
+              addVertical(2),
+              Text(title, style: TextStyles.regular2(color: AppColors.black)),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }
-
-}
-

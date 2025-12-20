@@ -83,6 +83,18 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
                 controller: jobCreateVM.endLocumDateController,
                 title: "End Locum Date",
                 hintText: "Select end date",
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select end date';
+                  }
+                  if (jobCreateVM.startLocumDate != null && jobCreateVM.endLocumDate != null) {
+                    if (jobCreateVM.endLocumDate!.isBefore(jobCreateVM.startLocumDate!) || 
+                        jobCreateVM.endLocumDate!.isAtSameMomentAs(jobCreateVM.startLocumDate!)) {
+                      return 'End date must be after start date';
+                    }
+                  }
+                  return null;
+                },
                 onTap: () async {
                   final picked = await showDatePicker(
                     context: context,
@@ -93,7 +105,18 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
                     lastDate: DateTime(2100),
                   );
                   if (picked != null) {
-                    jobCreateVM.setEndLocumDate(picked);
+                    if (jobCreateVM.startLocumDate != null && 
+                        (picked.isBefore(jobCreateVM.startLocumDate!) || 
+                         picked.isAtSameMomentAs(jobCreateVM.startLocumDate!))) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('End date must be after start date'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      jobCreateVM.setEndLocumDate(picked);
+                    }
                   } else {
                     jobCreateVM.clearDates();
                   }
@@ -186,6 +209,16 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
           selectedItems: jobCreateVM.selectedEmploymentChips,
           itemLabel: (item) => item,
           hintText: "Select employment type",
+          greyOutCondition: (item) {
+            if (jobCreateVM.selectedEmploymentChips.isEmpty) {
+              return false; // All black when nothing selected
+            }
+            if (jobCreateVM.selectedEmploymentChips.contains("Locum")) {
+              return item != "Locum"; // Grey out non-Locum items when Locum is selected
+            } else {
+              return item == "Locum"; // Grey out Locum when other items are selected
+            }
+          },
           onSelectionChanged: (selected) {
             final current =
                 List<String>.from(jobCreateVM.selectedEmploymentChips);
