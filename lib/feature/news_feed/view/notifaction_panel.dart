@@ -1,6 +1,8 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
@@ -13,6 +15,7 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context);
     return Drawer(
       backgroundColor: AppColors.whiteColor,
       elevation: 16,
@@ -44,66 +47,81 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                       itemBuilder: (context, index) {
                         final notification =
                             notificationVM.notificationsList?[index];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: Text(jiffyDataWidget(
-                                    notification?.createdAt ?? '',
-                                    format: 'dd-MM-yyyy hh:mm a')),
+                        return GestureDetector(
+                          onTap: () {
+                            if (notification?.type == 'NEWS_FEED') {
+                              dashBoardVM.setIndex(1, context);
+                              navigationService
+                                  .pushNamedAndRemoveUntil(RouteList.dashBoard);
+                            } else if (notification?.type ==
+                                'SUPPORT_REQUEST') {
+                              //  navigationService.pushNamedAndRemoveUntil(RouteList.supportRequest);
+                            } else if (notification?.type == 'COMMUNITY') {
+                            } else if (notification?.type == 'CATALOGUE') {
+                            } else if (notification?.type == 'COURSE') {
+                            } else if (notification?.type == 'APPOINTMENT') {}
+                          }, // COMMUNITY , CATALOGUE , COURSE, APPOINTMENT,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(jiffyDataWidget(
+                                      notification?.createdAt ?? '',
+                                      format: 'dd-MM-yyyy hh:mm a')),
+                                ),
                               ),
-                            ),
-                            addVertical(10),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Text(notification?.title ?? '',
-                                  style: TextStyles.regular2(
-                                      color: AppColors.primaryColor)),
-                            ),
-                            addVertical(10),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Text(notification?.body ?? '',
-                                  style: TextStyles.regular2(
-                                      color: AppColors.black)),
-                            ),
-                            addVertical(8),
-                            /*  Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    notificationVM.updateMarkAsReadNotification(
-                                        context, notification?.id ?? '');
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.hintColor,
-                                      borderRadius: BorderRadius.circular(22),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
-                                      child: Text(
-                                        'Mark as read',
-                                        style: TextStyles.regular2(
-                                            color: AppColors.black),
+                              addVertical(10),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(notification?.title ?? '',
+                                    style: TextStyles.regular2(
+                                        color: AppColors.primaryColor)),
+                              ),
+                              addVertical(10),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(notification?.body ?? '',
+                                    style: TextStyles.regular2(
+                                        color: AppColors.black)),
+                              ),
+                              addVertical(8),
+                              /*  Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      notificationVM.updateMarkAsReadNotification(
+                                          context, notification?.id ?? '');
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColors.hintColor,
+                                        borderRadius: BorderRadius.circular(22),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 8),
+                                        child: Text(
+                                          'Mark as read',
+                                          style: TextStyles.regular2(
+                                              color: AppColors.black),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),*/
-                            Divider(),
-                          ],
+                              ),*/
+                              Divider(),
+                            ],
+                          ),
                         );
                       },
                     ),

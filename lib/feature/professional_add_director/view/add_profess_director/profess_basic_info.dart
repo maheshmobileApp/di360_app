@@ -35,23 +35,21 @@ class ProfessBasicInfo extends StatelessWidget
           InputTextField(
             hintText: "Enter designation",
             title: "Designation",
-            isRequired: true,
-            controller: professDirectorVM.designationCntr,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter company name'
-                : null,
+            controller: professDirectorVM.designationCntr
           ),
           addVertical(20),
           InputTextField(
             title: "Name",
             hintText: 'Enter name',
             controller: professDirectorVM.nameController,
+            isRequired: true,
             validator: validateFirstName,
           ),
           addVertical(20),
           InputTextField(
             title: "Email ID",
             validator: validateEmail,
+            isRequired: true,
             hintText: 'Enter emailId',
             controller: professDirectorVM.emailController,
           ),
@@ -200,7 +198,7 @@ class ProfessBasicInfo extends StatelessWidget
 
     return CustomDropDown(
       value: addDirectorVM.selectedBusineestype,
-      title: "Business Type",
+      title: "Profession Type",
       onChanged: (v) =>
           addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
       items: allCategories.map((cat) {
@@ -211,6 +209,7 @@ class ProfessBasicInfo extends StatelessWidget
         );
       }).toList(),
       hintText: "Select category",
+      isRequired: true
     );
   }
 }

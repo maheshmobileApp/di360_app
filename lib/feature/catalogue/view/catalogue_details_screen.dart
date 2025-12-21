@@ -32,7 +32,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            addVertical(6),
+            addVertical(3),
             SizedBox(
               height: 400,
               child: Card(
@@ -144,7 +144,7 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          addVertical(16),
+          addVertical(12),
           Center(
             child: Text('RELATED CATALOGUES',
                 style: TextStyles.bold1(color: AppColors.black, fontSize: 16)),
