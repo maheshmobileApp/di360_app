@@ -97,10 +97,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedRole;
   final TextEditingController aphraRegistrationNumberController =
       TextEditingController();
-  final TextEditingController percentageController =
-      TextEditingController();
-  final TextEditingController salaryController =
-      TextEditingController();
+  final TextEditingController percentageController = TextEditingController();
+  final TextEditingController salaryController = TextEditingController();
   List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
   File? profileFile;
@@ -158,10 +156,15 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Cover Letter": null,
   };
 
-  final List<String> salaryPerOptions = ["Hourly", "Weekly", "Monthly", "Yearly"];
+  final List<String> salaryPerOptions = [
+    "Hourly",
+    "Weekly",
+    "Monthly",
+    "Yearly"
+  ];
   String? selectedSalaryPer;
 
-  void setSelectSalaryPer (String value){
+  void setSelectSalaryPer(String value) {
     if (value == "Hourly") {
       selectedSalaryPer = "Per Hour";
     } else if (value == "Weekly") {
@@ -260,7 +263,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 // Static data
   final List<String> employmentTypeList = [
     "Contractor",
-    "Temporary Contractor",
     "Locum",
     "Full Time",
     "Part Time",
@@ -311,16 +313,21 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "December"
   ];
   final List<String> years = List.generate(
-      DateTime.now().year - 2000 + 1, 
-      (index) => (2000 + index).toString()
-    ).reversed.toList();
+          DateTime.now().year - 2000 + 1, (index) => (2000 + index).toString())
+      .reversed
+      .toList();
 
   List<String> get availabilityTypes {
     if (_selectedEmploymentChips.contains("Locum")) {
+      selectedAvailabilityType = "Select Date";
+
       return ["Select Date"];
+    } else {
+      selectedAvailabilityType = "Select Day";
+      return ["Select Day"];
     }
-    return ["Select Day", "Select Date"];
   }
+
   List<String> QualificationTypes = ["Yes", "No"];
 
   // Employment types;
@@ -718,7 +725,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   Map<String, String> _getFileTypeAndExtension(String filePath) {
     final extension = filePath.split('.').last.toLowerCase();
     String type;
-    
+
     switch (extension) {
       case 'jpg':
       case 'jpeg':
@@ -737,7 +744,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       default:
         type = 'file';
     }
-    
+
     return {'type': type, 'extension': extension};
   }
 

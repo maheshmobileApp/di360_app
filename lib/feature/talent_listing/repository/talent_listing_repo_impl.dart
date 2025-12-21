@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.d
 import 'package:di360_flutter/feature/talent_listing/quary/delete_talent_message.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_data.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/send_talent_message_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_listing_messages_query.dart';
@@ -19,22 +20,25 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
   @override
-  Future<HiringTalentList> getMyTalentListing(
-      String? listingStatus) async {
+  Future<HiringTalentList> getMyTalentListing(String? listingStatus) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     /*final adminStatusList = (listingStatus == null || listingStatus.isEmpty)
         ? ["REJECT", "APPROVE", "PENDING", "DRAFT", "EXPIRE"]
         : listingStatus;*/
-        print("*****************************listingStatus: $listingStatus");
+    print("*****************************listingStatus: $listingStatus");
     try {
       final whereConditions = [
-        {"dental_supplier_id": {"_eq": userId}}
+        {
+          "dental_supplier_id": {"_eq": userId}
+        }
       ];
-      
+
       if (listingStatus != null && listingStatus.isNotEmpty) {
-        whereConditions.add({"hiring_status": {"_eq": listingStatus}});
+        whereConditions.add({
+          "hiring_status": {"_eq": listingStatus}
+        });
       }
-      
+
       final response = await _http.query(getTalentListingQuery, variables: {
         "where": {"_and": whereConditions},
         "limit": 10,
@@ -126,6 +130,12 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
     return data;
   }
-  
- 
+
+  @override
+  Future<JobProfiles> getTalentPreviewData(variables) async {
+    final res =
+        await _http.query(getTalentPreviewDataQuery, variables: variables);
+    final data = JobProfiles.fromJson(res);
+    return data;
+  }
 }

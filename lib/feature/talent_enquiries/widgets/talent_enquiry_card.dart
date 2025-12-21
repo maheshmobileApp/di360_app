@@ -7,7 +7,8 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_view.dart';
-import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_enquiries/model/get_talent_enquiry_res.dart';
+import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
@@ -16,12 +17,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
-class TalentListingCard extends StatelessWidget with BaseContextHelpers {
-  final Jobhirings? jobProfiles;
-  final TalentListingViewModel vm;
+class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
+  final TalentEnquiries? jobProfiles;
+  final TalentEnquiryViewModel vm;
   final int? index;
 
-  const TalentListingCard({
+  const TalentEnquiryCard({
     super.key,
     required this.jobProfiles,
     required this.vm,
@@ -32,10 +33,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobProfiles?.createdAt ?? '') ?? '';
     final String? profileImageUrl =
-        (jobProfiles?.jobProfiles?.profileImage?.url?.isNotEmpty == true)
-            ? jobProfiles!.jobProfiles!.profileImage!.url
+        (jobProfiles?.jobProfiles?.profileImage?.first.url?.isNotEmpty == true)
+            ? jobProfiles!.jobProfiles!.profileImage?.first.url
             : null;
-    final viewModel = Provider.of<TalentListingViewModel>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -74,8 +74,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _statusChip(jobProfiles?.hiringStatus ?? ''),
-                        _TalentMenu(jobProfiles?.hiringStatus ?? '',context, vm),
+                        
+                       // _TalentMenu(jobProfiles?.hiringStatus ?? '',context, vm),
                       ],
                     ),
                   ],
@@ -124,29 +124,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                       child: _roundedButton("Message"),
                     ),
                     addHorizontal(10),
-                InkWell(
-                    onTap: () async {
-                      await vm.getTalentEnquiry(context,jobProfiles?.id??"");
-                      if (vm.talentEnquiryData == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Applicant data not available")),
-                        );
-                        return;
-                      }
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        builder: (context) => JobProfileEnquiriesView(
-                          applicant: vm.talentEnquiryData,   
-                          profileImageUrl: profileImageUrl,// safe now
-                        ),
-                      );
-                    },
-                    child: _roundedButton("Enquiry")),
+                
                   ],
                 ),
                 
@@ -302,9 +280,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) async{
         if (value == "Preview") {
-          final profileId = jobProfiles?.jobProfiles?.id ?? jobProfiles?.jobProfilesId ?? "";
+          //final profileId = jobProfiles?.jobProfiles?.id ?? jobProfiles?.jobProfilesId ?? "";
           
-          await vm.getTalentPreviewData(context, profileId);
+          //await vm.getTalentPreviewData(context, profileId);
           
           if (vm.talentPreviewData != null) {
             navigationService.navigateToWithParams(

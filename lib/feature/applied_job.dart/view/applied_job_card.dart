@@ -28,7 +28,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     final String time = _getShortTime(job?.createdAt ?? '') ?? '';
      final applicant = appliedJob;
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(

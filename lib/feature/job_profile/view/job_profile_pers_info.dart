@@ -230,6 +230,16 @@ class JobProfilePersInfo extends StatelessWidget
           selectedItems: jobProfileVM.selectedEmploymentChips,
           itemLabel: (item) => item,
           hintText: "Select employment type",
+          greyOutCondition: (item) {
+            if (jobProfileVM.selectedEmploymentChips.isEmpty) {
+              return false; // All black when nothing selected
+            }
+            if (jobProfileVM.selectedEmploymentChips.contains("Locum")) {
+              return item != "Locum"; // Grey out non-Locum items when Locum is selected
+            } else {
+              return item == "Locum"; // Grey out Locum when other items are selected
+            }
+          },
           onSelectionChanged: (selected) {
             jobProfileVM.setSelectedEmploymentTypes(selected);
           },

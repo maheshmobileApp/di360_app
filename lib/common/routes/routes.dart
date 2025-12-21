@@ -67,6 +67,7 @@ import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view/support_view.dart';
+import 'package:di360_flutter/feature/talent_enquiries/view/talent_enquiries_view.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_message_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
@@ -231,6 +232,7 @@ class Routes {
       RouteList.communitMarketView: (context) => CommunityMarketView(),
       RouteList.joinCommunityView: (context) => JoinCommunityView(),
       RouteList.partnershipCommunityRequestView: (context) => PartnershipCommunityRequestView(),
+      RouteList.talentEnquiriesView: (context) => TalentEnquiriesView()
       
     };
   }

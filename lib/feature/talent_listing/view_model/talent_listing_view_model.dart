@@ -215,7 +215,7 @@ class TalentListingViewModel extends ChangeNotifier {
 
   Future<void> updateTalentMessage(
       BuildContext context, String talentId) async {
-            print("update talent message calling");
+    print("update talent message calling");
 
     try {
       isLoading = true;
@@ -284,5 +284,20 @@ class TalentListingViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       notifyListeners();
     }
+  }
+
+  /**************Talent Listing********************* */
+  JobProfiles? talentPreviewData;
+  Future<void> getTalentPreviewData(
+      BuildContext context, String profileId) async {
+    final variables = {"id": profileId};
+    final res = await repo.getTalentPreviewData(variables);
+    if (res != null) {
+      talentPreviewData = res;
+     
+    } else {
+     
+    }
+    notifyListeners();
   }
 }

@@ -47,7 +47,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     provider.getApplyJobStatus(widget.job.id ?? "", userId);
   }
 
-  void _showEnquiryForm(BuildContext context) {
+  void _showEnquiryForm(BuildContext context,JobSeekViewModel provider) {
     showDialog(
       context: context,
       builder: (context) {
@@ -58,12 +58,19 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             CustomRoundedButton(
               text: "Send",
               onPressed: () async {
-                navigationService.goBack();
+                if (provider.enquiryData != null){
+                   navigationService.goBack();
                 await Provider.of<JobSeekViewModel>(context, listen: false)
                     .jobEnquire(widget.job.id!);
                 ToastMessage.show('Enquiry sent successfully!');
+
+                }else{
+                    ToastMessage.show('Please enter enquiry message');
+
+                }
+               
               },
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
             ),
           ],
@@ -409,9 +416,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           Expanded(
             child: CustomRoundedButton(
               text: 'Enquiry',
-              onPressed: () => _showEnquiryForm(context),
+              onPressed: () => _showEnquiryForm(context,provider),
               backgroundColor: const Color(0xFFFFF3E8),
-              textColor: Colors.orange,
+              textColor: AppColors.primaryColor,
             ),
           ),
           const SizedBox(width: 16),
@@ -420,7 +427,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               text: provider.isJobApplied ? 'Applied' : 'Apply',
               onPressed: () =>
                   provider.isJobApplied ? null : _showApplyForm(context),
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
             ),
           ),

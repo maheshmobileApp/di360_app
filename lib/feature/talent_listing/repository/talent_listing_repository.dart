@@ -14,4 +14,5 @@ abstract class TalentListingRepository {
       Map<String, dynamic> variables, String typeName);
   Future<dynamic> updateTalentMessage(String Id, String message);
   Future<dynamic> deleteTalentMessage(String Id, bool deletedStatus);
+  Future<JobProfiles> getTalentPreviewData(dynamic variables);
 }
