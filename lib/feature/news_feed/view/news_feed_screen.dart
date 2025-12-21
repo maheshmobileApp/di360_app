@@ -98,8 +98,8 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
               child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
                   ? Center(
                       child: Text('No Data',
-                          style: TextStyles.clashSemiBold(
-                              color: AppColors.black, fontSize: 20)))
+                          style: TextStyles.medium3(
+                              color: AppColors.black,)))
                   : GenericListViewWithBanners<Newsfeeds>(
                       items: homeViewModel.allNewsFeedsData?.newsfeeds ?? [],
                       bannerIndices: BannerUtils.calculateBannerIndices(

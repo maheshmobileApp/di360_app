@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
@@ -6,6 +7,7 @@ import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.da
 import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -60,11 +62,16 @@ class _JobListingApplicantsMessegeState
         return CircleAvatar(
           radius: 22,
           backgroundColor: AppColors.geryColor,
-          backgroundImage:
-              (profileUrl.isNotEmpty) ? NetworkImage(profileUrl) : null,
-          child: (profileUrl.isEmpty)
-              ? const Icon(Icons.person, color: AppColors.whiteColor)
-              : null,
+          child: (profileUrl.isNotEmpty)
+              ? ClipOval(
+                  child: CachedNetworkImageWidget(
+                    imageUrl: profileUrl,
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Icon(Icons.person, color: AppColors.whiteColor),
         );
       }
     } else {
@@ -73,12 +80,16 @@ class _JobListingApplicantsMessegeState
       return CircleAvatar(
         radius: 22,
         backgroundColor: AppColors.geryColor,
-        backgroundImage: (profileUrl != null && profileUrl.isNotEmpty)
-            ? NetworkImage(profileUrl)
-            : null,
-        child: (profileUrl == null || profileUrl.isEmpty)
-            ? const Icon(Icons.person, color: AppColors.whiteColor)
-            : null,
+        child: (profileUrl != null && profileUrl.isNotEmpty)
+            ? ClipOval(
+                child: CachedNetworkImageWidget(
+                  imageUrl: profileUrl,
+                  width: 44,
+                  height: 44,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : const Icon(Icons.person, color: AppColors.whiteColor),
       );
     }
   }

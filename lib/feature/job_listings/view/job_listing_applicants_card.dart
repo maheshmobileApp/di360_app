@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -9,6 +10,7 @@ import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.da
 import 'package:di360_flutter/feature/job_listings/view/job_listing_applicants_enquiry.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
@@ -60,12 +62,10 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                   CircleAvatar(
                     radius: 22,
                     backgroundColor: AppColors.geryColor,
-                    backgroundImage: professional?.profileImage?.url != null
-                        ? NetworkImage(professional!.profileImage!.url!)
-                        : null,
-                    child: professional?.profileImage?.url == null
-                        ? const Icon(Icons.person, color: AppColors.whiteColor)
-                        : null,
+                    child: CachedNetworkImageWidget(
+                        imageUrl: professional!.profileImage!.url ?? '',
+                        fit: BoxFit.fill,
+                        errorWidget: Image.asset(ImageConst.prfImg)),
                   ),
                   addHorizontal(12),
                   Expanded(

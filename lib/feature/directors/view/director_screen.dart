@@ -29,6 +29,7 @@ class _DirectorScreenState extends State<DirectorScreen>
   fetchDirectorData() {
     final directorVM = context.read<DirectoryViewModel>();
     directorVM.getDirectorsList(context);
+    directorVM.clearFilter();
   }
 
   @override
@@ -36,6 +37,7 @@ class _DirectorScreenState extends State<DirectorScreen>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((s) {
       fetchDirectorData();
+        
     });
     _scrollController.addListener(() {
       if (_scrollController.offset > 700) {

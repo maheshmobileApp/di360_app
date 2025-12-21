@@ -11,6 +11,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
@@ -272,12 +273,15 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           children: [
             CircleAvatar(
               backgroundColor: AppColors.geryColor,
-              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
               radius: 30,
-              child: logo.isEmpty
-                  ? const Icon(Icons.business,
-                      size: 20, color: AppColors.lightGeryColor)
-                  : null,
+              child: ClipOval(
+                child: CachedNetworkImageWidget(
+                    imageUrl: logo ?? '',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorWidget: Image.asset(ImageConst.prfImg)),
+              ),
             ),
             Positioned(
               bottom: 0,

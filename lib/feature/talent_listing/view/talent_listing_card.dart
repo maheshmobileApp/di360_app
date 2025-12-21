@@ -159,10 +159,6 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         width: 48,
         height: 48,
         fit: BoxFit.cover,
-        placeholder: (_, __) => const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2)),
         errorWidget: (_, __, ___) => const Icon(Icons.error),
       );
     } else {

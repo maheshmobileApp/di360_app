@@ -20,7 +20,6 @@ class DirectorDetailsScreen extends StatefulWidget {
 }
 
 class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
-  String? type;
 
   @override
   void initState() {
@@ -29,10 +28,18 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
   }
 
   _loadUserType() async {
+    final directionalVM = Provider.of<DirectoryViewModel>(context, listen: false);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
-    setState(() {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    directionalVM.setUserType(userType);
+    directionalVM.setUserId(userId);
+
+
+    /*setState(() {
       type = userType;
-    });
+      userID = userId;
+    });*/
   }
 
   @override
@@ -83,7 +90,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         "Dental  Community" &&
                     type == "PROFESSIONAL")*/
            
-            (type == "PROFESSIONAL" || type == "SUPPLIER") && (directionalVM.directorCommunityID != null)
+            (directionalVM.userType == "PROFESSIONAL" || directionalVM.userType  == "SUPPLIER") && (directionalVM.directorCommunityID != null) && (directionalVM.directorDetails?.dentalSupplierId != directionalVM.userId)
                 ? Positioned(
                     top: 20,
                     right: 20,
@@ -91,7 +98,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                       onTap: () async {
                         directionalVM.clearCommunityFields();
 
-                        (type == "PROFESSIONAL")
+                        (directionalVM.userType  == "PROFESSIONAL")
                             ? ((directionalVM.communityStatusString ==
                                     "Join Community")
                                 ? navigationService
@@ -111,7 +118,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                              type == "PROFESSIONAL"
+                              directionalVM.userType  == "PROFESSIONAL"
                                   ? directionalVM.communityStatusString
                                   : directionalVM.partnershipStatusString,
                               style: TextStyles.semiBold(

@@ -1,9 +1,11 @@
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
-
-class JobListingApplicantsEnquiry extends StatelessWidget with BaseContextHelpers {
+class JobListingApplicantsEnquiry extends StatelessWidget
+    with BaseContextHelpers {
   final JobApplicants applicant;
 
   const JobListingApplicantsEnquiry({super.key, required this.applicant});
@@ -33,7 +35,7 @@ class JobListingApplicantsEnquiry extends StatelessWidget with BaseContextHelper
                       child: Text(
                         "Enquiry",
                         style: TextStyle(
-                          fontSize: 18, 
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -44,7 +46,6 @@ class JobListingApplicantsEnquiry extends StatelessWidget with BaseContextHelper
                     )
                   ],
                 ),
-
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   shape: RoundedRectangleBorder(
@@ -68,19 +69,13 @@ class JobListingApplicantsEnquiry extends StatelessWidget with BaseContextHelper
                               return ListTile(
                                 leading: CircleAvatar(
                                   radius: 24,
-                                  backgroundImage: applicant.dentalProfessional
-                                              ?.profileImage?.url !=
-                                          null
-                                      ? NetworkImage(applicant
-                                          .dentalProfessional!
-                                          .profileImage!
-                                          .url!)
-                                      : null,
-                                  child: applicant.dentalProfessional
-                                              ?.profileImage?.url ==
-                                          null
-                                      ? const Icon(Icons.person, size: 24)
-                                      : null,
+                                  child: CachedNetworkImageWidget(
+                                      imageUrl: applicant.dentalProfessional!
+                                              .profileImage!.url ??
+                                          '',
+                                      fit: BoxFit.fill,
+                                      errorWidget:
+                                          Image.asset(ImageConst.prfImg)),
                                 ),
                                 title: Text(enquiry.enquiryDescription ?? ""),
                               );

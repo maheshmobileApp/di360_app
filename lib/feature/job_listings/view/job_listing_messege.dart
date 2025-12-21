@@ -1,8 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 //import 'package:di360_flutter/feature/job_listings/model/job_listings_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class JobListingMessege extends StatelessWidget with BaseContextHelpers {
@@ -26,17 +28,15 @@ class JobListingMessege extends StatelessWidget with BaseContextHelpers {
             jobsListingData?.status ?? '',
           ),
           actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: AppColors.bottomNavUnSelectedColor,
+            IconButton(
+              icon: const Icon(
+                Icons.more_vert,
+                color: AppColors.bottomNavUnSelectedColor,
+              ),
+              onPressed: () {},
             ),
-            onPressed: () {},
-          ),
-        ],
-        )
-           
-        );
+          ],
+        ));
   }
 
   Widget _logoWithTitle(
@@ -53,12 +53,11 @@ class JobListingMessege extends StatelessWidget with BaseContextHelpers {
           children: [
             CircleAvatar(
               backgroundColor: AppColors.geryColor,
-              backgroundImage: logo.isNotEmpty ? NetworkImage(logo) : null,
               radius: 30,
-              child: logo.isEmpty
-                  ? const Icon(Icons.business,
-                      size: 20, color: AppColors.lightGeryColor)
-                  : null,
+              child: CachedNetworkImageWidget(
+                  imageUrl: logo ?? '',
+                  fit: BoxFit.fill,
+                  errorWidget: Image.asset(ImageConst.prfImg)),
             ),
             Positioned(
               bottom: 0,
