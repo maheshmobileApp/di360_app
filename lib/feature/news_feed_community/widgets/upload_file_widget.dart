@@ -36,6 +36,7 @@ class _FileUploadWidgetState extends State<UploadFileWidget> {
           right: 0,
           child: GestureDetector(
             onTap: () {
+              print('Removing ${isExisting ? "existing" : "new"} file at index $index');
               if (isExisting) {
                 viewModel.removeExistingFile(index);
               } else {

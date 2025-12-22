@@ -7,6 +7,7 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
@@ -147,6 +148,18 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               ),
               body: Column(
                 children: [
+                  if (viewModel.searchBarOpen)
+                    SearchWidget(
+                      controller: viewModel.searchController,
+                      hintText: "Search News Feed...",
+                      onClear: () {
+                        viewModel.searchController.clear();
+                        viewModel.getAllNewsFeeds(context);
+                      },
+                      onSearch: () {
+                        viewModel.getAllNewsFeeds(context);
+                      },
+                    ),
                   CommunityHeaderCard(
                     imageUrl: viewModel
                             .bannerData?.directories!.first.bannerImage?.url ??
@@ -171,18 +184,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                       });
                     },
                   ),
-                  if (viewModel.searchBarOpen)
-                    SearchWidget(
-                      controller: viewModel.searchController,
-                      hintText: "Search News Feed...",
-                      onClear: () {
-                        viewModel.searchController.clear();
-                        viewModel.getAllNewsFeeds(context);
-                      },
-                      onSearch: () {
-                         viewModel.getAllNewsFeeds(context);
-                      },
-                    ),
                   (type == 'PROFESSIONAL')
                       ? SizedBox.shrink()
                       : communityStatusWidget(viewModel),
@@ -193,16 +194,19 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             itemCount: joinRequests.length,
                             itemBuilder: (context, index) {
                               final newsItem = joinRequests[index];
+                              print(
+                                  "///////////////////////////////////////////////////${newsItem.videoUrl}");
                               return NewsFeedCommunityCard(
                                   createdAt: newsItem.createdAt ?? "",
+                                  videoUrl: newsItem.videoUrl ?? "",
+                                  websiteUrl: newsItem.webUrl ?? "",
                                   feedUserRole: newsItem.userRole ?? "",
                                   imageUrls: newsItem.postImage ?? [],
                                   id: newsItem.id ?? '',
-                                  logoUrl: (newsItem.userRole == "PROFESSIONAL")
-                                      ? newsItem.dentalProfessional
-                                              ?.profileImage?.url ??
-                                          ''
-                                      : homeVM.profilePic ?? "",
+                                  feedUserId: _feedUserIdWidget(newsItem.userRole, newsItem),
+                                  
+                                  logoUrl: _logoUrlWidget(
+                                      newsItem.userRole, newsItem),
                                   companyName: (newsItem.userRole ==
                                           "PROFESSIONAL")
                                       ? newsItem.dentalProfessional?.name ?? ''
@@ -234,9 +238,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   },
                                   onShareTap: () {
                                     SharePlus.instance.share(ShareParams(
-                                        uri: Uri(
-                                            path:
-                                                'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
+                                        uri: Uri.parse(
+                                            'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
                                   },
                                   onMenuAction: (action, id) async {
                                     switch (action) {
@@ -284,13 +287,16 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 .map((item) => item.url ?? "")
                                                 .where((url) => url.isNotEmpty)
                                                 .toList();
+                                        // Set existing images for UploadFileWidget
+                                        viewModel.existingImages =
+                                            newsItem.postImage ?? [];
                                         navigationService.navigateTo(
                                             RouteList.addNewsFeedCommunityView);
 
                                         break;
                                       case "Delete":
                                         showAlertMessage(context,
-                                            'Are you sure you want to delete this Category?',
+                                            'Are you sure you want to delete this news feed post?',
                                             onBack: () async {
                                           await viewModel
                                               .deleteNewsFeedCommunity(
@@ -334,6 +340,32 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       },
     );
   }
+
+  String _logoUrlWidget(String? userRole, Newsfeeds newsItem) {
+    if (userRole == "PROFESSIONAL") {
+      return newsItem.dentalProfessional?.profileImage?.url ?? '';
+    } else if (userRole == "SUPPLIER") {
+      return newsItem.dentalSupplier?.logo?.url ?? '';
+    } else if (userRole == "PRACTICE") {
+      return newsItem.dentalPractice?.logo?.url ?? '';
+    } else {
+      return '';
+    }
+  } 
+  
+  String _feedUserIdWidget(String? userRole, Newsfeeds newsItem) {
+    if (userRole == "PROFESSIONAL") {
+      return newsItem.dentalProfessional?.id ??"";
+    } else if (userRole == "SUPPLIER") {
+      return newsItem.dentalSupplier?.id ?? '';
+    } else if (userRole == "PRACTICE") {
+      return newsItem.dentalPractice?.id ?? '';
+    } else {
+      return '';
+    }
+  }//
+
+  
 
   SizedBox communityStatusWidget(NewsFeedCommunityViewModel courseListingVM) {
     return SizedBox(

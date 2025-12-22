@@ -86,7 +86,7 @@ class CommunityHeaderCard extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: onLeaveTap,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.primaryColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

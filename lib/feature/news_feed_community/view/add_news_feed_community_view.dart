@@ -64,7 +64,12 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   hintText: "Enter Video URL",
                   title: "Video URL",
                   maxLength: 100,
-                  validator: validateOptionalUrl,
+                  validator: (value) {
+                    if (value != null && value.isNotEmpty) {
+                      return validateOptionalUrl(value);
+                    }
+                    return null;
+                  },
                 ),
                 addVertical(16),
                 InputTextField(
@@ -72,16 +77,23 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   hintText: "Enter Website URL",
                   title: "Website URL",
                   maxLength: 100,
-                  validator: validateOptionalUrl,
+                  validator: (value) {
+                    if (value != null && value.isNotEmpty) {
+                      return validateOptionalUrl(value);
+                    }
+                    return null;
+                  },
                 ),
                 addVertical(30),
                 AppButton(
                     height: 50,
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
-                      (viewModel.isEditNewsFeed == true)
-                          ? viewModel.updateNewsFeedCommunity(context)
-                          : viewModel.addNewsFeed(context);
+                      if (_formKey.currentState?.validate() ?? false) {
+                        (viewModel.isEditNewsFeed == true)
+                            ? viewModel.updateNewsFeedCommunity(context)
+                            : viewModel.addNewsFeed(context);
+                      }
                     }),
               ],
             ),

@@ -8,6 +8,14 @@ mixin ValidationMixins {
       return 'Enter valid mobile number';
     return null;
   }
+  
+
+   String? validateMembershipNumber(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please enter Membership Number";
+
+    return null;
+  }
 
   String? validateABNNumber(String? value) {
     if (value == null || value.isEmpty)
@@ -109,7 +117,7 @@ String? validatePracticeName(String? value) {
   }
 
   String? validateOptionalUrl(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
+    if (value == null || value.trim().isEmpty) return 'Link is required';
     final trimmed = value.trim();
     final uri = Uri.tryParse(trimmed);
     if (uri == null ||

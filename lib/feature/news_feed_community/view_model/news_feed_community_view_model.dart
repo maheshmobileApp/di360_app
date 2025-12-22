@@ -376,9 +376,14 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     videoLinkController.clear();
     websiteLinkController.clear();
     selectedFiles.clear();
+    existingImages.clear();
+    uploadedFiles.clear();
     serverNewsFeedGallery = null;
     selectedNewsFeedGallery = null;
     selectedCategory = null;
+    selectedCategoryId = null;
+    isEditNewsFeed = false;
+    editNewsFeedId = "";
   }
 
   // UN LIKE
@@ -491,6 +496,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
+    // Clear uploadedFiles to start fresh
+    uploadedFiles.clear();
+
     for (var element in selectedFiles) {
       var value = await _http.uploadImage(element.path);
       print("resp from upload $value");
@@ -499,6 +507,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       }
     }
 
+    // Add only remaining existing images (not removed ones)
     if (isEditNewsFeed == true) {
       uploadedFiles.addAll(existingImages);
     }
@@ -534,6 +543,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       //await getAllStatusCounts();
       Loaders.circularHideLoader(context);
       scaffoldMessenger("News Feed Updated Successfully");
+      
+      // Clear all file data after successful update
+      clearAddNewsFeedData();
+      
       navigationService.goBack();
     }
 

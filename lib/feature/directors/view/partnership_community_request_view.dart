@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 class PartnershipCommunityRequestView extends StatelessWidget
     with BaseContextHelpers, ValidationMixins {
+  final _formKey = GlobalKey<FormState>();
   PartnershipCommunityRequestView({super.key});
 
   @override
@@ -21,7 +22,9 @@ class PartnershipCommunityRequestView extends StatelessWidget
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: SingleChildScrollView(
-          child: Padding(
+          child: Form(
+            key: _formKey,
+            child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,22 +47,25 @@ class PartnershipCommunityRequestView extends StatelessWidget
                   hintText: "Enter Contact Name",
                   title: "Contact Name",
                   maxLength: 100,
+                  isRequired: true,
+                  validator: (value) => value == null || value.isEmpty ? 'Please enter contact name' : null,
                 ),
                 SizedBox(height: 8),
                 InputTextField(
                   controller: directorVM.emailController,
                   hintText: "Enter Email",
                   title: "Email",
-                  maxLength: 100,
                   validator: validateEmail,
+                  isRequired: true,
                 ),
                 SizedBox(height: 8),
                 InputTextField(
                   controller: directorVM.phoneController,
                   hintText: "Enter Phone Number",
                   title: "Phone",
-                  maxLength: 100,
+                  maxLength: 10,
                   validator: validatePhoneNumber,
+                  isRequired: true,
                 ),
                 SizedBox(
                   height: 30,
@@ -82,13 +88,15 @@ class PartnershipCommunityRequestView extends StatelessWidget
                     Expanded(
                       child: AppButton(
                           height: 40,
-                          text: 'Register Now',
+                          text: 'Submit',
                           onTap: () {
-                            directorVM.partnershipRegsiter(
-                                context,
-                                directorVM.directorCommunityID ?? "",
-                                directorVM.directorCommunityName ?? "",
-                                directorVM.directorSupplierID ?? "");
+                            if (_formKey.currentState!.validate()) {
+                              directorVM.partnershipRegsiter(
+                                  context,
+                                  directorVM.directorCommunityID ?? "",
+                                  directorVM.directorCommunityName ?? "",
+                                  directorVM.directorSupplierID ?? "");
+                            }
                           }),
                     ),
                   ],
@@ -96,6 +104,6 @@ class PartnershipCommunityRequestView extends StatelessWidget
               ],
             ),
           ),
-        ));
+        )));
   }
 }

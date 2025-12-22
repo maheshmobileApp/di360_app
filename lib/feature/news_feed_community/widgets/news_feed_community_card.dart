@@ -28,6 +28,9 @@ class NewsFeedCommunityCard extends StatelessWidget {
   final int registeredCount;
   final String chipTitle;
   final List<PostImage>? imageUrls;
+  final String videoUrl;
+  final String websiteUrl;
+  final String? feedUserId;
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
@@ -60,6 +63,9 @@ class NewsFeedCommunityCard extends StatelessWidget {
     this.onLikeTap,
     this.onShareTap,
     this.onCommentTap,
+    required this.videoUrl,
+    required this.websiteUrl,
+    required this.feedUserId,
     required this.likes,
     this.isLiked = false,
   });
@@ -68,10 +74,14 @@ class NewsFeedCommunityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final String time = _getShortTime(createdAt) ?? '';
 
-    return FutureBuilder<String>(
-      future: LocalStorage.getStringVal(LocalStorageConst.type),
+    return FutureBuilder<List<String>>(
+      future: Future.wait([
+        LocalStorage.getStringVal(LocalStorageConst.type),
+        LocalStorage.getStringVal(LocalStorageConst.userId),
+      ]),
       builder: (context, snapshot) {
-        final type = snapshot.data ?? '';
+        final type = snapshot.data?[0] ?? '';
+        final userId = snapshot.data?[1] ?? '';
 
         return Padding(
           padding: const EdgeInsets.all(8),
@@ -100,7 +110,8 @@ class NewsFeedCommunityCard extends StatelessWidget {
                         ),
                         if (type == "SUPPLIER" ||
                             (type == "PROFESSIONAL" &&
-                                feedUserRole != "SUPPLIER"))
+                                feedUserRole == "PROFESSIONAL" &&
+                                feedUserId == userId))
                           Row(
                             children: [
                               _menuWidget(context, type),
@@ -117,6 +128,10 @@ class NewsFeedCommunityCard extends StatelessWidget {
                     (imageUrls?.isNotEmpty ?? false)
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
+                    (videoUrl.isNotEmpty)
+                        ? _buildYouTubePreview(videoUrl)
+                        : SizedBox.shrink(),
+                    webSiteText(websiteUrl),
                     const Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,6 +199,103 @@ class NewsFeedCommunityCard extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget webSiteText(String url) {
+    final validUrl = url.startsWith('http') ? url : 'https://$url';
+
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(validUrl);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          print("Could not launch $validUrl");
+        }
+      },
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: 'Website Url : ',
+              style: TextStyles.medium2(color: AppColors.black),
+            ),
+            TextSpan(
+              text: validUrl,
+              style: TextStyles.regular2(
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildYouTubePreview(String videoUrl) {
+    // Extract YouTube video ID from URL
+    String? videoId = _extractYouTubeId(videoUrl);
+    if (videoId == null) return SizedBox.shrink();
+
+    String thumbnailUrl =
+        'https://img.youtube.com/vi/$videoId/maxresdefault.jpg';
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      height: 200,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.black,
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: CachedNetworkImageWidget(
+              imageUrl: thumbnailUrl,
+              width: double.infinity,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Center(
+            child: GestureDetector(
+              onTap: () => _launchYouTube(videoUrl),
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String? _extractYouTubeId(String url) {
+    RegExp regExp = RegExp(
+      r'(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})',
+      caseSensitive: false,
+    );
+    Match? match = regExp.firstMatch(url);
+    return match?.group(1);
+  }
+
+  void _launchYouTube(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Widget _buildImageRow(List<PostImage>? allMediaList) {
