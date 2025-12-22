@@ -122,6 +122,7 @@ void showSignupSuccessDialog(
 
 void showTopMessage(BuildContext context, String message) {
   Flushbar(
+    backgroundColor: AppColors.primaryColor,
     message: message,
     duration: const Duration(seconds: 3),
     margin: const EdgeInsets.all(8),

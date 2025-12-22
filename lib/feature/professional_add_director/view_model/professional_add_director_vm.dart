@@ -266,7 +266,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     if (result != null) {
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
-      scaffoldMessenger('Update BasicInfo successfully');
+      scaffoldMessenger('Updated Basic Information successfully');
     } else {
       Loaders.circularHideLoader(context);
     }

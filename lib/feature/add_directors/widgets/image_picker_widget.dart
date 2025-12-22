@@ -142,7 +142,7 @@ void imagePickerSelection(
               children: [
                 buildOption(
                   icon: Icons.photo_library,
-                  label: "Gallery",
+                  label: "Files",
                   color: Colors.blue,
                   onTap: galleryOnTap ?? () {},
                 ),

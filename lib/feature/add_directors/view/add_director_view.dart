@@ -164,7 +164,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                       }
                     }
                   } else {
-                    scaffoldMessenger('Please select business type');
+                    //scaffoldMessenger('Please select business type');
                   }
                 },
                 backgroundColor: AppColors.primaryColor,

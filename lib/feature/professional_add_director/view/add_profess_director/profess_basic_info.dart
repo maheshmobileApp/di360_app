@@ -198,6 +198,7 @@ class ProfessBasicInfo extends StatelessWidget
 
     return CustomDropDown(
       value: addDirectorVM.selectedBusineestype,
+      
       title: "Profession Type",
       onChanged: (v) =>
           addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
@@ -209,7 +210,8 @@ class ProfessBasicInfo extends StatelessWidget
         );
       }).toList(),
       hintText: "Select category",
-      isRequired: true
+      isRequired: true,
+      validator: (value) => addDirectorVM.selectedBusineestype == null ? 'Please select category' : null,
     );
   }
 }
