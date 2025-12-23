@@ -35,7 +35,7 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                       width: 180,
                       onTap: () {
                         showDeleteAccountDialog(context, () {
-                          
+                          provider.deleteAccount(context);
                         });
                       }),
                   AppButton(

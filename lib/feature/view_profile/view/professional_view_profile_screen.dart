@@ -41,7 +41,9 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                       height: 45,
                       width: 180,
                       onTap: () {
-                        showDeleteAccountDialog(context, () {});
+                        showDeleteAccountDialog(context, () {
+                          provider.deleteAccount(context);
+                        });
                       }),
                   AppButton(
                       text: 'Save & Update',
