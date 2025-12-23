@@ -1,3 +1,4 @@
+
 class GetHiringTalentListRes {
   HiringTalentList? data;
 
@@ -47,12 +48,12 @@ class Jobhirings {
   String? updatedAt;
   String? createdAt;
   String? jobProfilesId;
-  Null? dentalPracticeId;
+  dynamic? dentalPracticeId;
   DentalSupplier? dentalSupplier;
-  Null? dentalPractice;
-  JobProfiles? jobProfiles;
-  Null? talentEnquiriesFindPractice;
-  Null? talentEnquiriesFindSupplier;
+  dynamic? dentalPractice;
+  HiringJobProfiles? jobProfiles;
+  dynamic? talentEnquiriesFindPractice;
+  dynamic? talentEnquiriesFindSupplier;
   Directories? directories;
   String? sTypename;
 
@@ -87,7 +88,7 @@ class Jobhirings {
         : null;
     dentalPractice = json['dental_practice'];
     jobProfiles = json['job_profiles'] != null
-        ? new JobProfiles.fromJson(json['job_profiles'])
+        ? new HiringJobProfiles.fromJson(json['job_profiles'])
         : null;
     talentEnquiriesFindPractice = json['talent_enquiries_find_practice'];
     talentEnquiriesFindSupplier = json['talent_enquiries_find_supplier'];
@@ -204,7 +205,7 @@ class Logo {
   }
 }
 
-class JobProfiles {
+class HiringJobProfiles {
   String? id;
   String? fullName;
   String? professionType;
@@ -216,7 +217,7 @@ class JobProfiles {
   DentalProfessional? dentalProfessional;
   String? sTypename;
 
-  JobProfiles(
+  HiringJobProfiles(
       {this.id,
       this.fullName,
       this.professionType,
@@ -228,7 +229,7 @@ class JobProfiles {
       this.dentalProfessional,
       this.sTypename});
 
-  JobProfiles.fromJson(Map<String, dynamic> json) {
+  HiringJobProfiles.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fullName = json['full_name'];
     professionType = json['profession_type'];

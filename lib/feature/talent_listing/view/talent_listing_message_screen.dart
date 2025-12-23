@@ -1,11 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/model/job_applicants_respo.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -45,13 +46,6 @@ class _TalentListingMessageScreenState
     super.initState();
     final vm = Provider.of<TalentListingViewModel>(context, listen: false);
     vm.fetchTalentMessages(widget.applicantId);
-  }
-
-  String formatDateTime(String? time) {
-    if (time == null) return "";
-    final dateTime = DateTime.tryParse(time);
-    if (dateTime == null) return "";
-    return DateFormat("dd MMM yyyy, hh:mm a").format(dateTime);
   }
 
   Widget _buildAvatar(bool isMe) {
@@ -116,7 +110,6 @@ class _TalentListingMessageScreenState
                           final TalentsMessage? msg = messages?[index];
                           final bool isMe = msg?.messageFrom == widget.userId;
                           final avatarWidget = _buildAvatar(isMe);
-
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Column(
@@ -133,7 +126,7 @@ class _TalentListingMessageScreenState
                                     if (!isMe) avatarWidget,
                                     if (!isMe) const SizedBox(width: 6),
                                     Text(
-                                      formatDateTime(msg?.createdAt),
+                                      DateFormatUtils.formatDateTime(msg?.createdAt??""),
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey[600],
@@ -211,32 +204,33 @@ class _TalentListingMessageScreenState
                       IconButton(
                         icon: const Icon(Icons.send),
                         onPressed: () {
+                          print("send icon clicking********************");
                           final text = vm.messageController.text.trim();
-                          if (text.isNotEmpty) {
-                            if (vm.editMessage) {
-                              vm.updateTalentMessage(
-                                  context, widget.applicantId);
-                              vm.messageController.clear();
-                            } else {
-                              vm.sendTalentMessage(
-                                  context,
-                                  widget.applicantId,
-                                  text,
-                                  widget.typeName != null
-                                      ? widget.typeName
-                                      : "");
-                              vm.messageController.clear();
-                              Future.delayed(const Duration(milliseconds: 200),
-                                  () {
-                                if (scrollController.hasClients) {
-                                  scrollController.animateTo(
-                                    scrollController.position.maxScrollExtent,
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeOut,
-                                  );
-                                }
-                              });
-                            }
+                          if (text.isEmpty) {
+                            scaffoldMessenger("Message cannot be empty");
+                            return;
+                          }
+                          if (vm.editMessage) {
+                            vm.updateTalentMessage(context, widget.applicantId);
+                            vm.messageController.clear();
+                          } else {
+                            vm.sendTalentMessage(
+                                context,
+                                widget.jobId,
+                                widget.applicantId,
+                                text,
+                                widget.typeName != null ? widget.typeName : "");
+                            vm.messageController.clear();
+                            Future.delayed(const Duration(milliseconds: 200),
+                                () {
+                              if (scrollController.hasClients) {
+                                scrollController.animateTo(
+                                  scrollController.position.maxScrollExtent,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeOut,
+                                );
+                              }
+                            });
                           }
                         },
                       ),

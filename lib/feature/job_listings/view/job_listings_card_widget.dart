@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
@@ -275,12 +276,27 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               backgroundColor: AppColors.geryColor,
               radius: 30,
               child: ClipOval(
+                
                 child: CachedNetworkImageWidget(
                     imageUrl: logo ?? '',
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
                     errorWidget: Image.asset(ImageConst.prfImg)),
+              ),
+            ),
+            CircleAvatar(
+              backgroundColor: AppColors.geryColor,
+              radius: 30,
+              child: ClipOval(
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: CachedNetworkImageWidget(
+                      imageUrl: logo ?? '',
+                      fit: BoxFit.fill,
+                      errorWidget: Image.asset(ImageConst.prfImg)),
+                ),
               ),
             ),
             Positioned(
@@ -295,7 +311,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 child: Text(
                   status == "APPROVE" ? activeStatus : status,
                   style: TextStyles.medium1(
-                    color: AppColors.greenColor,
+                    color: StatusColors.getColor(status),
                     fontSize: 10,
                   ),
                 ),

@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -17,7 +18,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.symmetric(vertical: 4,horizontal: 12),
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -55,17 +56,37 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _chipWidget(jobsData?.typeofEmployment ?? []),
-                  GestureDetector(
-                          onTap:  () {
-                              SharePlus.instance.share(ShareParams(
-                                  uri: Uri.parse(
-                                            'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
-                            },
-                          child: _circleIcon(
-                            child: Icon(Icons.share,
-                                size: 20, color: AppColors.primaryColor),
+                  Row(
+                    children: [
+                      GestureDetector(
+                              onTap:  () {
+                                  SharePlus.instance.share(ShareParams(
+                                      uri: Uri(
+                                          path:
+                                              'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
+                                },
+                              child: _circleIcon(
+                                child: Icon(Icons.share,
+                                    size: 20, color: AppColors.primaryColor),
+                              ),
+                            ),
+                            addHorizontal(10),
+                            Row(
+                        children: [
+                          Text(
+                            "View Details",
+                            style: TextStyles.medium1(
+                                color: AppColors.primaryColor),
                           ),
-                        ),
+                          SvgPicture.asset(
+                            ImageConst.nextArrow,
+                            width: 26,
+                            height: 26,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],

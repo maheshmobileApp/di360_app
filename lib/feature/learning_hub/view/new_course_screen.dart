@@ -37,7 +37,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
             onPressed: () {
               showAlertMessage(
                 context,
-                'Do you really want to go back, delete data if you back?',
+                'You have unsaved changes. Do you want to discard them?',
                 onBack: () async {
                   navigationService.goBack();
                   navigationService.goBack();

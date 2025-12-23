@@ -118,7 +118,7 @@ class _ResumeUploadWidgetState extends State<ResumeUploadWidget> {
           children: [
             Text(
               'Resume',
-              style: TextStyles.clashMedium(color: AppColors.primaryColor),
+              style: TextStyles.regular3(),
             ),
             if (widget.isRequired)
               Text(

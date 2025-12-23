@@ -49,7 +49,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   builder: (context, vm, _) {
                     return PdfPickerChip(
                       title: "Resume",
-                      isRequired: true,
+                      //isRequired: true,
                       file: vm.resumeFile,
                       serverFileName:  vm.serverDocuments["Resume"]?.name,
                       onTap: () => vm.pickResumePdf(),
@@ -117,7 +117,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                   "Certificate", jobProfileVM.certificateFile!);
               added = true;
             }
-            if (!added) {
+            /*if (!added) {
               showTopSnackBar(
                 Overlay.of(context),
                 const CustomSnackBar.error(
@@ -126,7 +126,7 @@ class _AddDocumentsDialogState extends State<AddDocumentsDialog>
                 ),
               );
               return;
-            }
+            }*/
             Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(

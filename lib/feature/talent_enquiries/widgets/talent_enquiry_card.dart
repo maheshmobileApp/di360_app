@@ -4,26 +4,25 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_view.dart';
-import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_enquiries/model/get_talent_enquiry_res.dart';
+import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
-class TalentListingCard extends StatelessWidget with BaseContextHelpers {
-  final Jobhirings? jobProfiles;
-  final TalentListingViewModel vm;
+class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
+  final TalentEnquiries? jobProfiles;
+  final TalentEnquiryViewModel vm;
   final int? index;
 
-  const TalentListingCard({
+  const TalentEnquiryCard({
     super.key,
     required this.jobProfiles,
     required this.vm,
@@ -34,11 +33,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobProfiles?.createdAt ?? '') ?? '';
     final String? profileImageUrl =
-        (jobProfiles?.jobProfiles?.profileImage?.url?.isNotEmpty == true)
-            ? jobProfiles!.jobProfiles!.profileImage!.url
+        (jobProfiles?.jobProfiles?.profileImage?.first.url?.isNotEmpty == true)
+            ? jobProfiles!.jobProfiles!.profileImage?.first.url
             : null;
-    final viewModel =
-        Provider.of<TalentListingViewModel>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -77,9 +74,8 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _statusChip(jobProfiles?.hiringStatus ?? ''),
-                        _TalentMenu(
-                            jobProfiles?.hiringStatus ?? '', context, vm),
+                        
+                       // _TalentMenu(jobProfiles?.hiringStatus ?? '',context, vm),
                       ],
                     ),
                   ],
@@ -90,9 +86,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                    child:
-                        _chipWidget(jobProfiles?.jobProfiles?.workType ?? [])),
+                Expanded(child: _chipWidget(jobProfiles?.jobProfiles?.workType ?? [])),
                 JobTimeChip(time: time),
               ],
             ),
@@ -105,10 +99,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final profileId = jobProfiles?.jobProfilesId??"";
-                        final jobId =
-                            jobProfiles?.id??"";
-                        if (profileId.isEmpty || jobId.isEmpty) {
+                        final profileId = jobProfiles?.id;
+                        final jobId = jobProfiles?.jobProfiles?.professionType??"";
+                        if (profileId == null || jobId == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text("Talent or Job ID not available"),
@@ -124,72 +117,31 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                             "jobId": jobId,
                             "applicantId": profileId,
                             "userId": userId,
+                    
                           },
                         );
                       },
                       child: _roundedButton("Message"),
                     ),
                     addHorizontal(10),
-                    InkWell(
-                        onTap: () async {
-                          await vm.getTalentEnquiry(
-                              context, jobProfiles?.jobProfilesId??"");
-                          if (vm.talentEnquiryData?.talentEnquiries?.length ==
-                              0) {
-                            scaffoldMessenger("No Enquiries found");
-                            return;
-                          }
-                          showModalBottomSheet(
-                            context: context,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20)),
-                            ),
-                            builder: (context) => JobProfileEnquiriesView(
-                              applicant: vm.talentEnquiryData,
-                              profileImageUrl: "", // safe now
-                            ),
-                          );
-                        },
-                        child: _roundedButton("Enquiry")),
+                
                   ],
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    final profileId = jobProfiles?.jobProfiles?.id ?? "";
-                    final professionType =
-                        jobProfiles?.jobProfiles?.professionType ?? "";
-
-                    await vm.getTalentPreviewData(
-                        context, profileId, professionType);
-
-                    if (vm.talentPreviewData.isNotEmpty) {
-                      navigationService.navigateToWithParams(
-                        RouteList.talentdetailsScreen,
-                        params: vm.talentPreviewData.first,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Talent data not available")),
-                      );
-                    }
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        "View Details",
-                        style:
-                            TextStyles.medium1(color: AppColors.primaryColor),
+                
+                  Row(
+                        children: [
+                          Text(
+                            "View Details",
+                            style: TextStyles.medium1(
+                                color: AppColors.primaryColor),
+                          ),
+                          SvgPicture.asset(
+                            ImageConst.nextArrow,
+                            width: 26,
+                            height: 26,
+                          ),
+                        ],
                       ),
-                      SvgPicture.asset(
-                        ImageConst.nextArrow,
-                        width: 26,
-                        height: 26,
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ],
@@ -227,13 +179,10 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                role,
-                style:
-                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
+              Text(role,
+                  style:
+                      TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                  overflow: TextOverflow.ellipsis,maxLines: 2,),
               addVertical(4),
               Text(title,
                   style: TextStyles.regular2(color: AppColors.black),
@@ -278,11 +227,16 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
     switch (status) {
       case "pending":
         bgColor = const Color.fromRGBO(225, 146, 0, 0.1);
-        textColor = AppColors.primaryColor;
+        textColor = const Color.fromRGBO(225, 146, 0, 1);
         break;
-      case "cancelled":
-        bgColor = const Color.fromARGB(22, 174, 174, 174);
-        textColor =AppColors.redColor;
+      case "approve":
+        bgColor = const Color.fromRGBO(0, 147, 79, 0.1);
+        textColor = const Color.fromRGBO(0, 147, 79, 1);
+        break;
+      case "rejected":
+      case "reject":
+        bgColor = const Color.fromRGBO(215, 19, 19, 0.1);
+        textColor = const Color.fromRGBO(215, 19, 19, 1);
         break;
       default:
         bgColor = const Color.fromRGBO(253, 245, 229, 1);
@@ -318,24 +272,22 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         ]),
       );
 
-  Widget _TalentMenu(
-      String adminStatus, BuildContext context, TalentListingViewModel vm) {
+  Widget _TalentMenu(String adminStatus,BuildContext context,TalentListingViewModel vm) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      onSelected: (value) async {
+      onSelected: (value) async{
         if (value == "Preview") {
-          final profileId = jobProfiles?.jobProfiles?.id ?? "";
-          final professionType = jobProfiles?.jobProfiles?.professionType ?? "";
-
-          await vm.getTalentPreviewData(context, profileId, professionType);
-
-          if (vm.talentPreviewData.isNotEmpty) {
+          //final profileId = jobProfiles?.jobProfiles?.id ?? jobProfiles?.jobProfilesId ?? "";
+          
+          //await vm.getTalentPreviewData(context, profileId);
+          
+          if (vm.talentPreviewData != null) {
             navigationService.navigateToWithParams(
               RouteList.talentdetailsScreen,
-              params: vm.talentPreviewData.first,
+              params: {'talentData': vm.talentPreviewData},
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -343,8 +295,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             );
           }
         } else if (value == "Cancel") {
-          final talentId = jobProfiles?.id ?? "";
-          await vm.updateTalentListingStatus(context, talentId);
+
         }
       },
       itemBuilder: (context) => [
@@ -352,11 +303,10 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
           value: "Preview",
           child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
         ),
-        if (adminStatus.toLowerCase() != "cancelled")
-          PopupMenuItem(
-            value: "Cancel",
-            child: _buildRow(Icons.cancel, AppColors.redColor, "Cancel"),
-          ),
+        PopupMenuItem(
+          value: "Cancel",
+          child: _buildRow(Icons.cancel, AppColors.redColor, "Cancel"),
+        ),
       ],
     );
   }

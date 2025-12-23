@@ -42,27 +42,47 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             Row(
               children: [
                 Expanded(
-                child: (jobCreateVM.isStartDateEnabled)
-                    ? CustomDatePicker(
-                        title: "",
-                        controller: jobCreateVM.startDateController,
-                        text: null,
-                        hintText: "Date",
-                        onTap: () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            jobCreateVM.startDateController.text =
-                                "${picked.day}/${picked.month}/${picked.year}";
-                          }
-                        },
-                      )
-                    : SizedBox.shrink(),
-                                ),
+                  child: (jobCreateVM.isStartDateEnabled)
+                      ? CustomDatePicker(
+                          title: "",
+                          controller: jobCreateVM.startDateController,
+                          text: null,
+                          hintText: "Date",
+                          validator: (value) {
+                            if (jobCreateVM.isStartDateEnabled &&
+                                (value == null || value.isEmpty)) {
+                              return 'Please select start date';
+                            }
+                            return null;
+                          },
+                          onTap: () async {
+                            DateTime firstDate = DateTime.now();
+                            DateTime lastDate = DateTime(2100);
+                            
+                            // Set firstDate from startLocumDate
+                            if (jobCreateVM.startLocumDate != null) {
+                              firstDate = jobCreateVM.startLocumDate!;
+                            }
+                            
+                            // Set lastDate from endLocumDate
+                            if (jobCreateVM.endLocumDate != null) {
+                              lastDate = jobCreateVM.endLocumDate!;
+                            }
+                            
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: firstDate,
+                              firstDate: firstDate,
+                              lastDate: lastDate,
+                            );
+                            if (picked != null) {
+                              jobCreateVM.startDateController.text =
+                                  "${picked.day}/${picked.month}/${picked.year}";
+                            }
+                          },
+                        )
+                      : SizedBox.shrink(),
+                ),
                 addHorizontal(8),
                 Expanded(
                   child: (jobCreateVM.isEndDateEnabled)
@@ -71,14 +91,53 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                           controller: jobCreateVM.endDateController,
                           text: null,
                           hintText: "Date",
+                          validator: (value) {
+                            if (jobCreateVM.isEndDateEnabled &&
+                                (value == null || value.isEmpty)) {
+                              return 'Please select end date';
+                            }
+                            if (_shouldShowDateError(jobCreateVM)) {
+                              return 'End date must be after start date';
+                            }
+                            return null;
+                          },
                           onTap: () async {
+                            DateTime startDate = DateTime.now();
+                             DateTime lastDate = DateTime(2100);
+                             // Set lastDate from endLocumDate
+                            if (jobCreateVM.endLocumDate != null) {
+                              lastDate = jobCreateVM.endLocumDate!;
+                            }
+                            if (jobCreateVM.startDateController.text.isNotEmpty) {
+                              try {
+                                final parts = jobCreateVM.startDateController.text.split('/');
+                                startDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+                              } catch (e) {
+                                startDate = DateTime.now();
+                              }
+                            }
                             final picked = await showDatePicker(
                               context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2100),
+                              initialDate: startDate,
+                              firstDate: startDate,
+                              lastDate: lastDate,
                             );
                             if (picked != null) {
+                              if (jobCreateVM.startDateController.text.isNotEmpty) {
+                                try {
+                                  final startParts = jobCreateVM.startDateController.text.split('/');
+                                  final startDate = DateTime(int.parse(startParts[2]), int.parse(startParts[1]), int.parse(startParts[0]));
+                                  if (picked.isBefore(startDate) || picked.isAtSameMomentAs(startDate)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('End date must be after start date'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                } catch (e) {}
+                              }
                               jobCreateVM.endDateController.text =
                                   "${picked.day}/${picked.month}/${picked.year}";
                             }
@@ -88,6 +147,14 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                 ),
               ],
             ),
+            /*if (_shouldShowDateError(jobCreateVM))
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  'End date must be after start date',
+                  style: TextStyles.regular2(color: Colors.red),
+                ),
+              ),*/
             addVertical(16),
             _buildHireData(jobCreateVM),
             addVertical(8),
@@ -96,11 +163,11 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
             _buildExperience(jobCreateVM),
             addVertical(8),
             InputTextField(
-                controller: jobCreateVM.educationLevelController,
-                hintText: "Enter Education Level",
-                title: "Education Level",
-                maxLength: 75,
-              ),
+              controller: jobCreateVM.educationLevelController,
+              hintText: "Enter Education Level",
+              title: "Education Level",
+              maxLength: 75,
+            ),
             //_buildEducation(jobCreateVM),
             addVertical(8),
             Text(
@@ -227,6 +294,31 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
         jobCreateVM.setSelectedBenefits(selected);
       },
     );
+  }
+
+  bool _shouldShowDateError(JobCreateViewModel jobCreateVM) {
+    if (!jobCreateVM.isStartDateEnabled || !jobCreateVM.isEndDateEnabled) {
+      return false;
+    }
+
+    if (jobCreateVM.startDateController.text.isEmpty ||
+        jobCreateVM.endDateController.text.isEmpty) {
+      return false;
+    }
+
+    try {
+      final startParts = jobCreateVM.startDateController.text.split('/');
+      final endParts = jobCreateVM.endDateController.text.split('/');
+
+      final startDate = DateTime(int.parse(startParts[2]),
+          int.parse(startParts[1]), int.parse(startParts[0]));
+      final endDate = DateTime(int.parse(endParts[2]), int.parse(endParts[1]),
+          int.parse(endParts[0]));
+
+      return endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate);
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> pickAndSetDate(

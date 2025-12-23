@@ -109,40 +109,48 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ExerinaceInfoIcons(
-                      icon: Icons.work,
-                      text:
-                          '${widget.talentList?.yearOfExperience ?? 0} Yrs Experience'),
-                  addVertical(12),
-                  ExerinaceInfoIcons(
-                      icon: Icons.location_on,
-                      text: '${widget.talentList?.location ?? ''}'),
-                  addVertical(12),
-                  ExerinaceInfoIcons(
-                      icon: Icons.call,
-                      text: '${widget.talentList?.mobileNumber ?? ''}'),
-                  addVertical(12),
-                  ExerinaceInfoIcons(
-                      icon: Icons.business,
-                      text: '${widget.talentList?.currentCompany ?? ''}'),
-                  addVertical(12),
-                  ExerinaceInfoIcons(
-                      icon: Icons.email,
-                      text: '${widget.talentList?.emailAddress ?? ''}'),
-                  addVertical(12),
-                  ExerinaceInfoIcons(
-                    icon: Icons.language,
-                    text: (widget.talentList?.languagesSpoken != null)
-                        ? widget.talentList!.languagesSpoken.join(", ")
-                        : '',
-                  ),
-                  addVertical(12),
-                  ExerinaceInfoIcons(
-                    icon: Icons.build,
-                    text: (widget.talentList?.areasExpertise != null)
-                        ? widget.talentList!.areasExpertise.join(", ")
-                        : '',
-                  ),
+                  if (widget.talentList?.yearOfExperience != null)
+                    ExerinaceInfoIcons(
+                        icon: Icons.work,
+                        text: '${widget.talentList!.yearOfExperience} Yrs Experience'),
+                  if (widget.talentList?.yearOfExperience != null)
+                    addVertical(12),
+                  if (widget.talentList?.location?.isNotEmpty == true)
+                    ExerinaceInfoIcons(
+                        icon: Icons.location_on,
+                        text: widget.talentList!.location!),
+                  if (widget.talentList?.location?.isNotEmpty == true)
+                    addVertical(12),
+                  if (widget.talentList?.mobileNumber?.isNotEmpty == true)
+                    ExerinaceInfoIcons(
+                        icon: Icons.call,
+                        text: widget.talentList!.mobileNumber!),
+                  if (widget.talentList?.mobileNumber?.isNotEmpty == true)
+                    addVertical(12),
+                  if (widget.talentList?.currentCompany?.isNotEmpty == true)
+                    ExerinaceInfoIcons(
+                        icon: Icons.business,
+                        text: widget.talentList!.currentCompany!),
+                  if (widget.talentList?.currentCompany?.isNotEmpty == true)
+                    addVertical(12),
+                  if (widget.talentList?.emailAddress?.isNotEmpty == true)
+                    ExerinaceInfoIcons(
+                        icon: Icons.email,
+                        text: widget.talentList!.emailAddress!),
+                  if (widget.talentList?.emailAddress?.isNotEmpty == true)
+                    addVertical(12),
+                  if (widget.talentList?.languagesSpoken.isNotEmpty == true)
+                    ExerinaceInfoIcons(
+                      icon: Icons.language,
+                      text: widget.talentList!.languagesSpoken.join(", "),
+                    ),
+                  if (widget.talentList?.languagesSpoken.isNotEmpty == true)
+                    addVertical(12),
+                  if (widget.talentList?.areasExpertise.isNotEmpty == true)
+                    ExerinaceInfoIcons(
+                      icon: Icons.build,
+                      text: widget.talentList!.areasExpertise.join(", "),
+                    ),
                 ],
               ),
               Divider(color: AppColors.geryColor),
@@ -160,11 +168,11 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               ],
               
               // Work Type Section
-              if (widget.talentList?.workType?.isNotEmpty == true) ...[
+              if (widget.talentList?.workType.isNotEmpty == true) ...[
                 addVertical(10),
                 _sectionHeader("Work Type"),
                 addVertical(6),
-                CustomChipView(typesList: widget.talentList!.workType!),
+                CustomChipView(typesList: widget.talentList!.workType),
               ],
               
               // About Section
@@ -175,7 +183,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               ],
               
               // Work Experience Section
-              if (widget.talentList?.jobExperiences?.isNotEmpty == true) ...[
+              if (widget.talentList?.jobExperiences.isNotEmpty == true) ...[
                 const Divider(),
                 _sectionHeader("Work Experience"),
                 addVertical(10),
@@ -239,10 +247,10 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             addHorizontal(16),
             Expanded(
               child: CustomRoundedButton(
-                text: (widget.talentList?.jobHirings?.isNotEmpty == true && widget.talentList?.jobHirings?.first.id != null) ? 'Requested' : 'Hire Me',
+                text: (widget.talentList?.jobHirings.isNotEmpty == true && widget.talentList?.jobHirings.first.id != null) ? 'Requested' : 'Hire Me',
                 height: 42,
                 onPressed: () async {
-                  if (widget.talentList?.jobHirings?.isNotEmpty == true && widget.talentList?.jobHirings?.first.id != null){
+                  if (widget.talentList?.jobHirings.isNotEmpty == true && widget.talentList?.jobHirings.first.id != null){
                     ToastMessage.show('You have already sent a request to this talent!');
 
                   }else{
