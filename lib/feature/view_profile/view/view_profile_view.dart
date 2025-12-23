@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/view_profile/view/basic_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/contact_info.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +25,29 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
           _sectionTitle('Contact Information', ContactInfo()),
           addVertical(20),
           Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AppButton(
-                  text: 'Save & Update',
-                  height: 45,
-                  onTap: () {
-                    provider.updateViewProfile(context);
-                  }))
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppButton(
+                      text: 'Delete My Account',
+                      height: 45,
+                      width: 180,
+                      onTap: () {
+                        showDeleteAccountDialog(context, () {
+                          
+                        });
+                      }),
+                  AppButton(
+                      text: 'Save & Update',
+                      height: 45,
+                      width: 180,
+                      onTap: () {
+                        provider.updateViewProfile(context);
+                      }),
+                ],
+              )),
+          addVertical(10)
         ])));
   }
 

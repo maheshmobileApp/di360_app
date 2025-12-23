@@ -867,13 +867,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> loadJobData(Jobs? jobData) async {
     print(
-        "prinT*************************************** ${jobData?.bannerImage?.url}");
+        "prinT*************************************** ${jobData?.country}");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";
     jobDescController.text = jobData?.description ?? "";
     videoLinkController.text = jobData?.video ?? "";
-    countryController.text = jobData?.location ?? "";
+    countryController.text = jobData?.country ?? "";
     serverBannerImg = jobData?.bannerImage?.url;
     startDateController.text = jobData?.closedAt ?? "";
     endDateController.text = jobData?.closedAt ?? "";

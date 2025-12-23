@@ -45,7 +45,7 @@ class AppliedJobScreen extends StatelessWidget {
               );
             }
             return ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
               itemCount: vm.appliedJobs.length,
               itemBuilder: (_, index) {
                 final job = vm.appliedJobs[index];

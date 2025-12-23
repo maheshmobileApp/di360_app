@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/view_profile/view/professional_contact_inf
 import 'package:di360_flutter/feature/view_profile/view/professional_detail_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_personal_details.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:flutter/material.dart';
@@ -32,15 +33,29 @@ class ProfessionalViewProfileScreen extends StatelessWidget
             addVertical(20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AppButton(
-                  text: 'Save & Update',
-                  height: 45,
-                  onTap: () {
-                    if (formKey.currentState!.validate()) {
-                      provider.updateViewProfile(context);
-                    }
-                  }),
-            )
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppButton(
+                      text: 'Delete My Account',
+                      height: 45,
+                      width: 180,
+                      onTap: () {
+                        showDeleteAccountDialog(context, () {});
+                      }),
+                  AppButton(
+                      text: 'Save & Update',
+                      height: 45,
+                      width: 180,
+                      onTap: () {
+                        if (formKey.currentState!.validate()) {
+                          provider.updateViewProfile(context);
+                        }
+                      }),
+                ],
+              ),
+            ),
+            addVertical(10)
           ]),
         )));
   }

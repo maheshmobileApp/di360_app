@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_card.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,6 +23,18 @@ class TalentListingScreen extends StatefulWidget {
 class _TalentListingScreenState extends State<TalentListingScreen>
     with BaseContextHelpers {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final vm = Provider.of<TalentListingViewModel>(context, listen: false);
+      Loaders.circularShowLoader(context);
+      vm.listingStatus = "";
+      await vm.getMyTalentListingData();
+      Loaders.circularHideLoader(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final vm = Provider.of<TalentListingViewModel>(context);
 
@@ -29,11 +42,26 @@ class _TalentListingScreenState extends State<TalentListingScreen>
       backgroundColor: AppColors.whiteColor,
       endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
-          filterWidget: GestureDetector(
-        onTap: () =>
-            navigationService.navigateTo(RouteList.TalentListingFilter),
-        child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-      )),
+          searchWidget: false,
+          filterWidget: Row(
+            children: [
+              GestureDetector(
+                onTap: () =>
+                    navigationService.navigateTo(RouteList.TalentListingFilter),
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              ),
+              if (vm.removeIcon == true)
+                GestureDetector(
+                  onTap: () {
+                    vm.clearSelections();
+                    vm.setRemoveIcon(false);
+                    vm.getMyTalentListingData();
+                  },
+                  child: Icon(Icons.close, color: AppColors.black),
+                )
+            ],
+          )),
       body: Column(
         children: [
           SizedBox(
@@ -114,7 +142,8 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                 : ListView.builder(
                     itemCount: vm.myTalentListingList?.jobhirings?.length,
                     itemBuilder: (context, index) {
-                      final jobData = vm.myTalentListingList?.jobhirings?[index];
+                      final jobData =
+                          vm.myTalentListingList?.jobhirings?[index];
                       try {
                         return TalentListingCard(
                           jobProfiles: jobData,

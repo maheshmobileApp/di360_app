@@ -190,10 +190,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
         ),
         ElevatedButton(
           onPressed: () {
-            if (!_formKey.currentState!.validate() ||
-                vm.selectedQualification == null ||
-                (vm.selectedQualification == "Yes" && vm.FinishDateController.text.isEmpty) ||
-                (vm.selectedQualification == "No" && vm.ExpectedFinishDateController.text.isEmpty)) {
+            if (!_formKey.currentState!.validate()) {
               showTopSnackBar(
                 Overlay.of(context),
                 const CustomSnackBar.error(
@@ -213,7 +210,7 @@ class _AddEducationDialogState extends State<AddEducationDialog>
               expectedFinishDate: vm.selectedQualification == "No"
                   ? vm.ExpectedFinishDateController.text.trim()
                   : null,
-              selectedQualification: vm.selectedQualification!,
+              selectedQualification: vm.selectedQualification ?? "",
               courseHighlights: vm.courseHighlightsController.text.trim(),
             );
 
@@ -252,7 +249,6 @@ class _AddEducationDialogState extends State<AddEducationDialog>
       hintText: "Select Qualification",
     );*/
      CustomDropDown(
-      isRequired: true,
       value:  jobProfileVM.selectedQualification,
       title: "Qualification Finished",
       onChanged: (v) => setState(() {
@@ -264,9 +260,6 @@ class _AddEducationDialogState extends State<AddEducationDialog>
           .toList(),
      
        hintText: "Select Qualification",
-      validator: (value) => value == null || value.toString().isEmpty
-          ? 'Please select Qualification'
-          : null,
     );
   }
 }

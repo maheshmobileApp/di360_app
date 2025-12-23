@@ -138,6 +138,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
                       .formKeys[professAddDirectVM.currentStep];
                   if ((currentFormKey.currentState?.validate() ?? false)) {
                     if (isLastStep) {
+                      scaffoldMessenger('Submitted Successfully');
                       navigationService.goBack();
                     } else {
                       if (currentStep == 0) {
@@ -154,7 +155,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
                       }
                     }
                   } else {
-                    scaffoldMessenger('Please select business type');
+                    //scaffoldMessenger('Please select business type');
                   }
                 },
                 backgroundColor: AppColors.primaryColor,

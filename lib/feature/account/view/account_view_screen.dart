@@ -21,6 +21,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_mod
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -214,15 +215,26 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               arguments: userId,
                             );
                           } else if (item.title == 'Talent Listing') {
-                            Loaders.circularShowLoader(context);
+                            /*Loaders.circularShowLoader(context);
                             await context
                                 .read<TalentListingViewModel>()
                                 .getMyTalentListingData();
-                            Loaders.circularHideLoader(context);
+                            Loaders.circularHideLoader(context);*/
 
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);
-                          } else if (item.title == 'My Directory') {
+                          } else if (item.title == 'Talent Enquiries') {
+                            Loaders.circularShowLoader(context);
+                            await context
+                                .read<TalentEnquiryViewModel>()
+                                .getCoursesListingData();
+                            Loaders.circularHideLoader(context);
+
+                            navigationService
+                                .navigateTo(RouteList.talentEnquiriesView);
+                          }
+                          
+                           else if (item.title == 'My Directory') {
                             await context
                                 .read<AddDirectoryViewModel>()
                                 .fetchTheDirectorData(context);

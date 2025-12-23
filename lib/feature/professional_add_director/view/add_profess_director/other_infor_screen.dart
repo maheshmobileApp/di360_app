@@ -52,34 +52,39 @@ class OtherInforScreen extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.45,
-          minChildSize: 0.3,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24))
-              ),
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 20),
-                        child: AddSocialForm(id: id),
-                      ),
-                    ),
-                  ],
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.45,
+            maxChildSize: 0.9,
+            minChildSize: 0.3,
+            expand: false,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24))
                 ),
-              ),
-            );
-          },
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 20),
+                          child: AddSocialForm(id: id),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );
@@ -110,13 +115,13 @@ class OtherInforScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Text(data?.mediaName, style: TextStyles.medium2()),
+                      Text(data?.mediaName ?? '', style: TextStyles.medium2()),
                       Spacer(),
                       InkWell(
                           onTap: () {
                             addDirectVM.selectedAccount = data?.mediaName;
                             addDirectVM.socialAccountsurlCntr.text =
-                                data?.mediaLink;
+                                data?.mediaLink ?? '';
                             editVM.updateIsEditSocialMed(true);
                             showBusinessTimingsBottomSheet(
                                 context, data?.id ?? '');

@@ -47,7 +47,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     provider.getApplyJobStatus(widget.job.id ?? "", userId);
   }
 
-  void _showEnquiryForm(BuildContext context) {
+  void _showEnquiryForm(BuildContext context,JobSeekViewModel provider) {
     showDialog(
       context: context,
       builder: (context) {
@@ -58,12 +58,19 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             CustomRoundedButton(
               text: "Send",
               onPressed: () async {
-                navigationService.goBack();
+                if (provider.enquiryData != null){
+                   navigationService.goBack();
                 await Provider.of<JobSeekViewModel>(context, listen: false)
                     .jobEnquire(widget.job.id!);
                 ToastMessage.show('Enquiry sent successfully!');
+
+                }else{
+                    ToastMessage.show('Please enter enquiry message');
+
+                }
+               
               },
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
             ),
           ],
@@ -224,44 +231,65 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           ],
         ),
         SizedBox(height: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            jobInfoItem(ImageConst.briefcaseSvg,
-                '${widget.job.yearsOfExperience ?? 0} Yrs Experience'),
-            SizedBox(height: 12),
-            jobInfoItem(ImageConst.briefcurrencySvg,
-                '${widget.job.payMin ?? 0} - ${widget.job.payMax ?? 0}'),
-          ],
-        ),
-        SizedBox(height: 12),
-        Wrap(
-          spacing: 1,
-          runSpacing: 2,
-          children: widget.job.typeofEmployment
-                  ?.map((type) => customFilterChip(type.toString()))
-                  .toList() ??
-              [],
-        ),
+        if (widget.job.yearsOfExperience != null)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              jobInfoItem(ImageConst.briefcaseSvg,
+                  '${widget.job.yearsOfExperience} Yrs Experience'),
+              SizedBox(height: 12),
+            ],
+          ),
+        /*if ((widget.job.payMin != null && widget.job.payMin! > 0) || 
+            (widget.job.payMax != null && widget.job.payMax! > 0))
+          Column(
+            children: [
+              jobInfoItem(ImageConst.briefcurrencySvg,
+                  '${widget.job.payMin ?? 0} - ${widget.job.payMax ?? 0}'),
+              SizedBox(height: 12),
+            ],
+          ),*/
+        if (widget.job.typeofEmployment?.isNotEmpty == true)
+          Column(
+            children: [
+              Wrap(
+                spacing: 1,
+                runSpacing: 2,
+                children: widget.job.typeofEmployment!
+                    .map((type) => customFilterChip(type.toString()))
+                    .toList(),
+              ),
+            ],
+          ),
         Divider(height: 30),
-        InfoItem(
-            iconPath: ImageConst.hiringSvg,
-            title: 'Looking for hire',
-            subtitle: '${widget.job.hiringPeriod}'),
-        InfoItem(
-            iconPath: ImageConst.graduationSvg,
-            title: 'Education Level',
-            subtitle: '${widget.job.education ?? ""}'),
-        InfoItem(
-            iconPath: ImageConst.peopleSvg,
-            title: 'No. Positions',
-            subtitle: '${widget.job.noOfPeople ?? 0}'),
-        InfoItem(
-            iconPath: ImageConst.briefcurrencySvg,
-            title: 'Rate',
-            subtitle:
-                '${widget.job.rateBilling}  ${widget.job.payMin}\$ - ${widget.job.payMax}\$'),
-        Divider(height: 4),
+        if (widget.job.hiringPeriod?.isNotEmpty == true)
+          InfoItem(
+              iconPath: ImageConst.hiringSvg,
+              title: 'Looking for hire',
+              subtitle: '${widget.job.hiringPeriod}'),
+        if (widget.job.education?.isNotEmpty == true)
+          InfoItem(
+              iconPath: ImageConst.graduationSvg,
+              title: 'Education Level',
+              subtitle: '${widget.job.education}'),
+        if (widget.job.noOfPeople != null)
+          InfoItem(
+              iconPath: ImageConst.peopleSvg,
+              title: 'No. Positions',
+              subtitle: '${widget.job.noOfPeople}'),
+        if (widget.job.rateBilling?.isNotEmpty == true)
+          InfoItem(
+              iconPath: ImageConst.briefcurrencySvg,
+              title: 'Rate',
+              subtitle:
+                  '${widget.job.rateBilling}'),
+        if ((widget.job.payMin != null || widget.job.payMax != null))
+          InfoItem(
+              iconPath: ImageConst.briefcurrencySvg,
+              title: 'Pay',
+              subtitle:
+                  '\$ ${widget.job.payMin ?? 0} - \$ ${widget.job.payMax ?? 0}'),
+
         //_sectionHeader('Benefits'),
         //_sectionText('${widget.job.offeredBenefits?.isNotEmpty == true ? widget.job.offeredBenefits!.first : 'No benefits listed'}'),
         //Divider(height: 10),
@@ -269,20 +297,27 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Divider(height: 4),
               _sectionHeader("Benifits"),
               CustomChipView(typesList: widget.job.offeredBenefits ?? []),
             ],
           ),
-        Divider(height: 4),
-        _sectionHeader('Job Description'),
-        _sectionText('${widget.job.description ?? ''}'),
-        Divider(height: 4),
-        _sectionHeader('Job Location'),
-        Text('${widget.job.location ?? ''}'),
-        locationView(context),
-        Divider(height: 4),
-        _sectionHeader('About Compnay'),
-        _sectionText('${widget.job.description ?? ''}'),
+        if (widget.job.description?.isNotEmpty == true) ...[
+          Divider(height: 4),
+          _sectionHeader('Job Description'),
+          _sectionText('${widget.job.description}'),
+        ],
+        if (widget.job.location?.isNotEmpty == true) ...[
+          Divider(height: 4),
+          _sectionHeader('Job Location'),
+          Text('${widget.job.location}'),
+          locationView(context),
+        ],
+        if (widget.job.description?.isNotEmpty == true) ...[
+          Divider(height: 4),
+          _sectionHeader('About Company'),
+          _sectionText('${widget.job.description}'),
+        ],
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,7 +395,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   return;
                 }
               },
-              child: Text(widget.job.video ?? '',style: TextStyles.medium2(color: AppColors.primaryColor),)),
+              child: Text(
+                widget.job.video ?? '',
+                style: TextStyles.medium2(color: AppColors.primaryColor),
+              )),
         ],
         SizedBox(height: 20),
         actionsWidget(context),
@@ -378,9 +416,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           Expanded(
             child: CustomRoundedButton(
               text: 'Enquiry',
-              onPressed: () => _showEnquiryForm(context),
+              onPressed: () => _showEnquiryForm(context,provider),
               backgroundColor: const Color(0xFFFFF3E8),
-              textColor: Colors.orange,
+              textColor: AppColors.primaryColor,
             ),
           ),
           const SizedBox(width: 16),
@@ -389,7 +427,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               text: provider.isJobApplied ? 'Applied' : 'Apply',
               onPressed: () =>
                   provider.isJobApplied ? null : _showApplyForm(context),
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
             ),
           ),

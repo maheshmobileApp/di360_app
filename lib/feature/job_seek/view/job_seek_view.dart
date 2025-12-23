@@ -66,6 +66,7 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
 
   Widget _buildJobsList(JobSeekViewModel vm) {
     return RefreshIndicator(
+      backgroundColor: AppColors.whiteColor,
       onRefresh: () async => await vm.refreshJobs(context),
       child: vm.jobs.isEmpty
           ? Center(

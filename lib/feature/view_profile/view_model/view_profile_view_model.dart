@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
@@ -10,6 +11,7 @@ import 'package:di360_flutter/feature/view_profile/model/professional_view_profi
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
 import 'package:di360_flutter/feature/view_profile/repository/view_profile_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:flutter/material.dart';
@@ -146,7 +148,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void loadProfessionalViewProfileData(DentalProfessionalsByPk? viewProfile) async{
+  void loadProfessionalViewProfileData(
+      DentalProfessionalsByPk? viewProfile) async {
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
     phoneNoController.text = viewProfile?.phone ?? "";
@@ -338,6 +341,22 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteAccount(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final result = await repo.deleteAccount();
+      Loaders.circularHideLoader(context);
+    if (result['delete_clients'] != null) {
+      navigationService.pushNamedAndRemoveUntil(RouteList.login);
+      LocalStorage.clearAllData();
+      scaffoldMessenger('Delete account successfully');
+    } else {
+      navigationService.pushNamedAndRemoveUntil(RouteList.login);
+      LocalStorage.clearAllData();
+      scaffoldMessenger(result.toString());
     }
     notifyListeners();
   }

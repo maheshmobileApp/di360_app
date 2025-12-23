@@ -234,9 +234,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   },
                                   onShareTap: () {
                                     SharePlus.instance.share(ShareParams(
-                                        uri: Uri(
-                                            path:
-                                                'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
+                                        uri: Uri.parse(
+                                            'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
                                   },
                                   onMenuAction: (action, id) async {
                                     switch (action) {

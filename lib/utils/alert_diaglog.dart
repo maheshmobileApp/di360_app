@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 
 alertPopup(BuildContext context, String message, {Function()? onBack}) {
@@ -31,10 +32,8 @@ scaffoldMessenger(String msg, {Color? color}) {
     SnackBar(
       content:
           Text(msg, style: TextStyles.medium3(color: AppColors.whiteColor)),
-      backgroundColor:
-          color ?? AppColors.primaryColor,
-      duration:
-          const Duration(seconds: 2),
+      backgroundColor: color ?? AppColors.primaryColor,
+      duration: const Duration(seconds: 2),
     ),
   );
 }
@@ -44,7 +43,7 @@ showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
       context: context,
       builder: (_) {
         return AlertDialog(
-          backgroundColor: AppColors.whiteColor,
+            backgroundColor: AppColors.whiteColor,
             title: Text(message,
                 style: TextStyles.medium3(color: AppColors.black)),
             actions: [
@@ -120,8 +119,67 @@ void showSignupSuccessDialog(
   );
 }
 
+void showDeleteAccountDialog(BuildContext context, Function()? onTap) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text("Delete Account",
+                    style: TextStyles.bold3(color: AppColors.primaryColor)),
+                InkWell(
+                    onTap: () => navigationService.goBack(),
+                    child: Icon(Icons.close, color: AppColors.black))
+              ]),
+              Divider(color: AppColors.dividerColor),
+              const SizedBox(height: 20),
+              Text(
+                "We're sorry to see you go.",
+                style: TextStyles.bold3(color: AppColors.black),
+              ),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AppButton(
+                        text: 'Delete Account',
+                        height: 40,
+                        radius: 10,
+                        width: 140,
+                        onTap: onTap),
+                        SizedBox(width: 10),
+                    AppButton(
+                        text: 'Cancel',
+                        height: 40,
+                        radius: 10,
+                        width: 70,
+                        btnColor: AppColors.lightGeryColor,
+                        onTap: () => navigationService.goBack())
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 void showTopMessage(BuildContext context, String message) {
   Flushbar(
+    backgroundColor: AppColors.primaryColor,
     message: message,
     duration: const Duration(seconds: 3),
     margin: const EdgeInsets.all(8),

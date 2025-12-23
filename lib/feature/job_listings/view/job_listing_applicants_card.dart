@@ -33,6 +33,7 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     var resume = '';
     final attachment = applicant?.attachments ?? [];
     if (attachment.length > 0) {
+      print("attachment resume url ${attachment.first.url}");
       resume = attachment.first.url ?? '';
     }
 
@@ -59,14 +60,21 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                
                   CircleAvatar(
-                    radius: 22,
-                    backgroundColor: AppColors.geryColor,
-                    child: CachedNetworkImageWidget(
-                        imageUrl: professional!.profileImage!.url ?? '',
-                        fit: BoxFit.fill,
-                        errorWidget: Image.asset(ImageConst.prfImg)),
-                  ),
+              backgroundColor: AppColors.geryColor,
+              radius: 22,
+              child: ClipOval(
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: CachedNetworkImageWidget(
+                      imageUrl: professional!.profileImage!.url ?? '',
+                      fit: BoxFit.fill,
+                      errorWidget: Image.asset(ImageConst.prfImg)),
+                ),
+              ),
+            ),
                   addHorizontal(12),
                   Expanded(
                     child: Column(

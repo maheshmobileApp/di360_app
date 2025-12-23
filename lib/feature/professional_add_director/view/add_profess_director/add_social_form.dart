@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -11,10 +12,11 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddSocialForm extends StatelessWidget with BaseContextHelpers {
+class AddSocialForm extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   final String? id;
-  AddSocialForm({super.key,this.id});
-  
+  AddSocialForm({super.key, this.id});
+
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
@@ -28,9 +30,7 @@ class AddSocialForm extends StatelessWidget with BaseContextHelpers {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          socialUrlsWidget(addDirectorVM, context, editVM)
-        ],
+        children: [socialUrlsWidget(addDirectorVM, context, editVM)],
       ),
     );
   }
@@ -58,24 +58,26 @@ class AddSocialForm extends StatelessWidget with BaseContextHelpers {
       addVertical(16),
       InputTextField(
         title: "Social Accounts URL",
+        isRequired: true,
         hintText: "Paste/enter link",
         keyboardType: TextInputType.emailAddress,
         controller: addDirectorVM.socialAccountsurlCntr,
-        validator: (value) =>
-            value == null || value.isEmpty ? 'Please select urls' : null,
+        validator: validateUrl,
       ),
       addVertical(20),
       AppButton(
         text: editVM.isEditSocialMed ? 'Update' : 'Add',
-        onTap: () {
+        onTap: () async {
           if (addDirectorVM.selectedAccount == null &&
               addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
             showTopMessage(context, 'select socail account & account url');
           } else {
-            editVM.isEditSocialMed ?
-            editVM.updateTheSocialurl(context, id ?? '') :
-            addDirectorVM.addSocialUrls(context);
+            editVM.isEditSocialMed
+                ? editVM.updateTheSocialurl(context, id ?? '')
+                : addDirectorVM.addSocialUrls(context);
+
             navigationService.goBack();
+            await addDirectorVM.fetchTheDirectorData(context);
           }
         },
       )

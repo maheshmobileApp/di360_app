@@ -3,15 +3,19 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_talent_listing_status_count_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_talent_preview_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/delete_talent_message.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
-import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_query.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_status_count.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_data.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/send_talent_message_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_listing_messages_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/update_talent_listing_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/update_talent_query.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -19,27 +23,32 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
   @override
-  Future<HiringTalentList> getMyTalentListing(
-      String? listingStatus) async {
+  Future<HiringTalentList> getMyTalentListing(dynamic variables) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    /*final adminStatusList = (listingStatus == null || listingStatus.isEmpty)
-        ? ["REJECT", "APPROVE", "PENDING", "DRAFT", "EXPIRE"]
-        : listingStatus;*/
-        print("*****************************listingStatus: $listingStatus");
+
     try {
-      final whereConditions = [
-        {"dental_supplier_id": {"_eq": userId}}
+      /*final whereConditions = [
+        {
+          "dental_supplier_id": {"_eq": userId}
+        }
       ];
-      
+
       if (listingStatus != null && listingStatus.isNotEmpty) {
-        whereConditions.add({"hiring_status": {"_eq": listingStatus}});
+        whereConditions.add({
+          "hiring_status": {"_eq": listingStatus}
+        });
       }
-      
-      final response = await _http.query(getTalentListingQuery, variables: {
+
+      final variables = {
         "where": {"_and": whereConditions},
         "limit": 10,
         "offset": 0
-      });
+      };
+
+      print("************Variables: $variables");*/
+
+      final response =
+          await _http.query(getTalentListingQuery, variables: variables);
       final res = HiringTalentList.fromJson(response);
       return res;
     } catch (e, st) {
@@ -85,6 +94,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
   @override
   Future<TalentsMessageResData> fetchTalentMessages(String talentId) async {
+    print("***********************talentId: $talentId");
     final data = await _http
         .query(talentListingMessagesQuery, variables: {"talent_id": talentId});
 
@@ -94,13 +104,9 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
   @override
   Future<String?> sendTalentMessage(
-      Map<String, dynamic> variables, String typeName) async {
+      dynamic variables) async {
     try {
-      final data = await _http.mutation(sendTalentMessageQuery, {
-        "object": variables,
-      });
-
-      // Return the ID of the new message
+      final data = await _http.mutation(sendTalentMessageQuery, variables);
       return data['insert_talents_message_one']?['id'] as String?;
     } catch (e) {
       throw Exception("Failed to send message: $e");
@@ -120,12 +126,38 @@ class TalentListingRepoImpl implements TalentListingRepository {
   }
 
   @override
-  Future deleteTalentMessage(String Id, bool deletedStatus) async {
-    final variables = {"id": Id, "deleted_status": deletedStatus};
+  Future deleteTalentMessage(dynamic variables) async {
+
     final data = await _http.mutation(deleteTalentMessageQuery, variables);
 
     return data;
   }
-  
- 
+
+  @override
+  Future<List<JobProfiles>> getTalentPreviewData(variables) async {
+    final res =
+        await _http.query(getTalentPreviewDataQuery, variables: variables);
+
+    if (res != null && res['job_profiles'] != null) {
+      final List<dynamic> jobProfilesList = res['job_profiles'];
+      return jobProfilesList.map((json) => JobProfiles.fromJson(json)).toList();
+    }
+    return [];
+  }
+
+  @override
+  Future<TalentListingStatusCount> getTalentListingStatusCounts(
+      dynamic variables) async {
+    final res = await _http.query(getTalentListingStatusCountsQuery,
+        variables: variables);
+    final data = TalentListingStatusCount.fromJson(res);
+    return data;
+  }
+
+  @override
+  Future updateTalentListing(variables) async {
+    final res =
+        await _http.query(updateTalentListingQuery, variables: variables);
+    return res;
+  }
 }

@@ -103,7 +103,7 @@ class JobProfilePersInfo extends StatelessWidget
               ),*/
                       ImagePickerField(
                         title: "Profile Image",
-                        isRequired: true,
+                        //isRequired: true,
                         serverImage: jobProfileVM.serverProfileFile,
                         serverImageType: "image",
                         onServerFileRemoved: (value) {
@@ -201,7 +201,7 @@ class JobProfilePersInfo extends StatelessWidget
       children: [
         CustomDropDown(
           value: jobProfileVM.selectedRole,
-          title: "Role",
+          title: "Profession Type",
           onChanged: (v) {
             jobProfileVM.setSelectedRole(v as String);
           },
@@ -212,9 +212,9 @@ class JobProfilePersInfo extends StatelessWidget
               child: Text(value),
             );
           }).toList(),
-          hintText: "Select role type",
+          hintText: "Select any type",
           validator: (value) => value == null || value.toString().isEmpty
-              ? 'Please select role type'
+              ? 'Please select Profession Type'
               : null,
         ),
       ],
@@ -230,6 +230,16 @@ class JobProfilePersInfo extends StatelessWidget
           selectedItems: jobProfileVM.selectedEmploymentChips,
           itemLabel: (item) => item,
           hintText: "Select employment type",
+          greyOutCondition: (item) {
+            if (jobProfileVM.selectedEmploymentChips.isEmpty) {
+              return false; // All black when nothing selected
+            }
+            if (jobProfileVM.selectedEmploymentChips.contains("Locum")) {
+              return item != "Locum"; // Grey out non-Locum items when Locum is selected
+            } else {
+              return item == "Locum"; // Grey out Locum when other items are selected
+            }
+          },
           onSelectionChanged: (selected) {
             jobProfileVM.setSelectedEmploymentTypes(selected);
           },

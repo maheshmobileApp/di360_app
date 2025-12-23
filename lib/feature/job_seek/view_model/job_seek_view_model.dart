@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,7 @@ class JobSeekViewModel extends ChangeNotifier {
     initializeFilterOptions();
   }
 
-  String? _enquiryData;
+  String? enquiryData;
   Jobs? selectedJob;
   bool isJobApplied = false;
   List<Jobs> jobs = [];
@@ -144,8 +145,7 @@ class JobSeekViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> 
-  fetchFilteredJobs(BuildContext context) async {
+  Future<void> fetchFilteredJobs(BuildContext context) async {
     isLoading = true;
     notifyListeners();
 
@@ -154,10 +154,9 @@ class JobSeekViewModel extends ChangeNotifier {
       print("Selected Employment Types: $selectedEmploymentTypes");
       print("Selected Experiences: $selectedExperiences");
       print("Selected Availability Dates: $selectedAvailability");
-          Loaders.circularShowLoader(context);
+      Loaders.circularShowLoader(context);
 
       final result = await repo.fetchFilteredJobs(
-        
         selectedProfessions,
         selectedEmploymentTypes,
         selectedExperiences,
@@ -165,8 +164,7 @@ class JobSeekViewModel extends ChangeNotifier {
         locationController.text,
       );
       jobs = result;
-          Loaders.circularHideLoader(context);
-
+      Loaders.circularHideLoader(context);
 
       filteredJobs = result;
       print("Fetched ${filteredJobs.length} filtered jobs");
@@ -227,13 +225,14 @@ class JobSeekViewModel extends ChangeNotifier {
   }
 
   void onChangeEnquireData(String data) {
-    _enquiryData = data;
+    enquiryData = data;
+    notifyListeners();
   }
 
   Future<bool> jobEnquire(String jobId) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     var enquireData = EnquireRequest(
-      enquiryDescription: _enquiryData ?? '',
+      enquiryDescription: enquiryData ?? '',
       jobId: jobId,
       enquiryUserId: userId,
     );
@@ -318,7 +317,7 @@ class JobSeekViewModel extends ChangeNotifier {
         }
       }
     }
-    
+
     selectedIndices[section] = currentSet;
     notifyListeners();
   }

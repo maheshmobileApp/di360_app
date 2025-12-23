@@ -247,14 +247,14 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
           hintText: "Enter role",
           title: " Role ",
           controller: addDirectorVM.roleCntr,
-          isRequired: true,
-          validator: (value) =>
-              value == null || value.isEmpty ? 'Please enter  role' : null,
+          //isRequired: true,
+          /*validator: (value) =>
+              value == null || value.isEmpty ? 'Please enter  role' : null,*/
         ),
         addVertical(20),
         ImagePickerInputField(
           title: 'Image ',
-          isRequired: true,
+          //isRequired: true,
           imageFile: addDirectorVM.testimonialsFile,
           onTap: () => imagePickerSelection(
               context,
@@ -293,23 +293,23 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
 
   bool validationImageAndPicture(AddDirectoryViewModel addDirectorVM,
       BuildContext context, dynamic img, dynamic msgPic) {
-    if (addDirectorVM.testimonialsFile?.path.isEmpty ?? false || img == null) {
-      showTopMessage(context, 'Select image');
+    // Check if name is provided
+    if (addDirectorVM.testiNameCntr.text.isEmpty) {
+      showTopMessage(context, 'Please enter name');
       return false;
     }
-    if ((addDirectorVM.testimonialsPicFile?.path.isEmpty ??
-            false || msgPic == null) &&
-        addDirectorVM.messageCntr.text.isEmpty) {
-      showTopMessage(
-          context, 'Please add either a message or a picture, not both');
+    
+    // Check if either message or picture is provided
+    bool hasMessage = addDirectorVM.messageCntr.text.isNotEmpty;
+    bool hasPicture = (addDirectorVM.testimonialsPicFile != null && 
+                      addDirectorVM.testimonialsPicFile!.path.isNotEmpty) || 
+                     msgPic != null;
+    
+    if (!hasMessage && !hasPicture) {
+      showTopMessage(context, 'Please add either a message or a picture');
       return false;
     }
-    if (addDirectorVM.testimonialsPicFile == null &&
-        addDirectorVM.messageCntr.text.isEmpty) {
-      showTopMessage(
-          context, 'Please add either a message or a picture, only one');
-      return false;
-    }
+    
     return true;
   }
 }

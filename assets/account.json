@@ -92,6 +92,14 @@
             {
               "title": "Job Listings",
               "asset": "assets/profile/jobseek/#000000ff.svg"
+            }, 
+            {
+              "title": "Talent Listing",
+              "asset": "assets/profile/jobseek/#000000ff.svg"
+            },
+            {
+              "title": "Talent Enquiries",
+              "asset": "assets/profile/jobseek/#000000ff.svg"
             }
           ]
         },
@@ -178,6 +186,10 @@
             },
             {
               "title": "Talent Listing",
+              "asset": "assets/profile/jobseek/#000000ff.svg"
+            },
+            {
+              "title": "Talent Enquiries",
               "asset": "assets/profile/jobseek/#000000ff.svg"
             }
           ]

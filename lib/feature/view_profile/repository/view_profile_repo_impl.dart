@@ -4,6 +4,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/view_profile/model/practice_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/professional_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
+import 'package:di360_flutter/feature/view_profile/query/delete_account_querys.dart';
 import 'package:di360_flutter/feature/view_profile/query/pratice_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/professional_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_profile_logo.dart';
@@ -67,5 +68,19 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
         await http.query(professionalViewProfileQuery, variables: variables);
     final parsed = ProfessionalData.fromJson(res);
     return parsed.dentalProfessionalsByPk;
+  }
+
+  @override
+  Future<dynamic> deleteAccount() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await http.mutation(
+        type == 'PRACTICE'
+            ? deletePracticeAccountQuery
+            : type == 'PROFESSIONAL'
+                ? deleteProfessionalAccountQuery
+                : deleteSupplierAccountQuery,
+        {"id": userId});
+    return res;
   }
 }
