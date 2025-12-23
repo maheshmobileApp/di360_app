@@ -45,10 +45,10 @@ class TalentEnquiries {
   String? createdAt;
   String? talentId;
   String? enquiryFrom;
-  Null? dentalPractices;
-  JobProfiles? jobProfiles;
-  Null? jobhiringsFindPractice;
-  Null? jobhiringsFindSupplier;
+  dynamic? dentalPractices;
+  JobProfilesEnquiry? jobProfiles;
+  dynamic? jobhiringsFindPractice;
+  dynamic? jobhiringsFindSupplier;
   String? sTypename;
 
   TalentEnquiries(
@@ -69,7 +69,7 @@ class TalentEnquiries {
     enquiryFrom = json['enquiry_from'];
     dentalPractices = json['dental_practices'];
     jobProfiles = json['job_profiles'] != null
-        ? new JobProfiles.fromJson(json['job_profiles'])
+        ? new JobProfilesEnquiry.fromJson(json['job_profiles'])
         : null;
     jobhiringsFindPractice = json['jobhirings_find_practice'];
     jobhiringsFindSupplier = json['jobhirings_find_supplier'];
@@ -93,7 +93,7 @@ class TalentEnquiries {
   }
 }
 
-class JobProfiles {
+class JobProfilesEnquiry {
   String? id;
   String? fullName;
   String? professionType;
@@ -105,7 +105,7 @@ class JobProfiles {
   DentalProfessional? dentalProfessional;
   String? sTypename;
 
-  JobProfiles(
+  JobProfilesEnquiry(
       {this.id,
       this.fullName,
       this.professionType,
@@ -117,18 +117,20 @@ class JobProfiles {
       this.dentalProfessional,
       this.sTypename});
 
-  JobProfiles.fromJson(Map<String, dynamic> json) {
+  JobProfilesEnquiry.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fullName = json['full_name'];
     professionType = json['profession_type'];
     state = json['state'];
     if (json['profile_image'] != null) {
       profileImage = <ProfileImage>[];
-      json['profile_image'].forEach((v) {
-        profileImage!.add(new ProfileImage.fromJson(v));
-      });
+      if (json['profile_image'] is List) {
+        json['profile_image'].forEach((v) {
+          profileImage!.add(new ProfileImage.fromJson(v));
+        });
+      }
     }
-    workType = json['work_type'].cast<String>();
+    workType = json['work_type'] != null ? json['work_type'].cast<String>() : null;
     dentalProfessionalId = json['dental_professional_id'];
     postAnonymously = json['post_anonymously'];
     dentalProfessional = json['dental_professional'] != null
