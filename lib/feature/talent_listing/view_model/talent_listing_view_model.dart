@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 class TalentListingViewModel extends ChangeNotifier {
   final TalentListingRepository repo = TalentListingRepoImpl();
   final List<String> roleOptions = [
-    "Surgen",
+    "Surgeon",
     "Dentist",
     "Dental Hygienist",
     "Dental Prosthetist",
@@ -36,6 +36,12 @@ class TalentListingViewModel extends ChangeNotifier {
   TextEditingController messageController = TextEditingController();
 
   bool editMessage = false;
+  bool removeIcon = false;
+
+  void setRemoveIcon(bool value) {
+    editMessage = value;
+    notifyListeners();
+  }
 
   void setEditMessage(bool value) {
     editMessage = value;
@@ -53,13 +59,16 @@ class TalentListingViewModel extends ChangeNotifier {
   }
 
   void setState(String val) {
+    listingStatus = val;
     selectedState = val;
     notifyListeners();
   }
 
   void clearSelections() {
+    listingStatus = "";
     selectedRole = null;
     selectedEmploymentType = null;
+    selectedState = null;
     notifyListeners();
   }
 
@@ -80,13 +89,16 @@ class TalentListingViewModel extends ChangeNotifier {
   int? RejectedCount = 0;
   int? DraftCount = 0;
   int? ExpireCount = 0;
+  int? InterestedCount = 0;
+  int? NotInterestedCount = 0;
+  int? CancelledCount = 0;
 
   Map<String, int?> get statusCountMap => {
-        'All': 0,
-        'Pending': 0,
-        'Interested': 0,
-        'Not Interested': 0,
-        'Cancelled': 0,
+        'All': AllTalentCount,
+        'Pending': PendingCount,
+        'Interested': InterestedCount,
+        'Not Interested': NotInterestedCount,
+        'Cancelled': CancelledCount,
       };
 
   String listingStatus = '';
@@ -112,6 +124,12 @@ class TalentListingViewModel extends ChangeNotifier {
       case 'Expire':
         listingStatus = 'EXPIRE';
         break;
+      case 'Interested':
+        listingStatus = 'APPROVE';
+      case 'Not Interested':
+        listingStatus = 'REJECT';
+      case 'Cancelled':
+        listingStatus = 'CANCELLED';
       default:
         listingStatus = "";
     }
@@ -148,17 +166,84 @@ class TalentListingViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e, st) {
       print('Error in fetchTalentStatusCounts: $e\n$st');
-      AllTalentCount = PendingCount =
-          ApprovalCount = RejectedCount = DraftCount = ExpireCount = 0;
+      AllTalentCount = 0;
+      PendingCount = 0;
+      ApprovalCount = 0;
+      RejectedCount = 0;
+      DraftCount = 0;
+      ExpireCount = 0;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchTalentListingStatusCounts() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    try {
+      final variables = {
+        "where": {
+          "dental_supplier_id": {"_eq": userId}
+        }
+      };
+      print("***************************variables: $variables");
+      final res = await repo.getTalentListingStatusCounts(variables);
+      final data = res;
+      AllTalentCount = data.all?.aggregate?.count ?? 0;
+      PendingCount = data.pending?.aggregate?.count ?? 0;
+      InterestedCount = data.approve?.aggregate?.count ?? 0;
+      NotInterestedCount = data.rejected?.aggregate?.count ?? 0;
+      CancelledCount = data.cancelled?.aggregate?.count ?? 0;
+      notifyListeners();
+    } catch (e, st) {
+      print('Error in fetchTalentListingStatusCounts: $e\n$st');
+      AllTalentCount = 0;
+      PendingCount = 0;
+      InterestedCount = 0;
+      NotInterestedCount = 0;
+      CancelledCount = 0;
       notifyListeners();
     }
   }
 
   Future<void> getMyTalentListingData() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     print("talents calling");
+
+    final List<Map<String, dynamic>> whereConditions = [
+      {
+        "dental_supplier_id": {"_eq": userId}
+      }
+    ];
+
+    if (listingStatus != "" && listingStatus.isNotEmpty) {
+      whereConditions.add({
+        "hiring_status": {"_eq": listingStatus}
+      });
+    }
+
+    if (selectedRole != null && selectedRole!.isNotEmpty) {
+      whereConditions.add({
+        "job_profiles": {
+          "profession_type": {"_ilike": "%$selectedRole%"}
+        }
+      });
+    }
+
+    if (selectedEmploymentType != null && selectedEmploymentType!.isNotEmpty) {
+      whereConditions.add({
+        "job_profiles": {
+          "work_type": {"_contains": selectedEmploymentType}
+        }
+      });
+    }
+
+    final variables = {
+      "where": {"_and": whereConditions},
+      "limit": 10,
+      "offset": 0
+    };
     try {
-      await fetchTalentStatusCounts();
-      final res = await repo.getMyTalentListing(listingStatus);
+      await fetchTalentListingStatusCounts();
+      final res = await repo.getMyTalentListing(variables);
       myTalentListingList = res;
       notifyListeners();
     } catch (e, st) {
@@ -180,6 +265,8 @@ class TalentListingViewModel extends ChangeNotifier {
     final res = await repo.getTalentEnquiry(talentId);
     if (res != null) {
       talentEnquiryData = res;
+      print("***********************talent enquiries data: $talentId");
+      print("***********************talent enquiries data: $talentEnquiryData");
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
@@ -235,11 +322,12 @@ class TalentListingViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteTalentMessage(
-      BuildContext context, String talentId, String applicantId) async {
+      BuildContext context, String messageId, String applicantId) async {
     try {
       isLoading = true;
+      final variables = {"id": messageId, "deleted_status": true};
 
-      final res = await repo.deleteTalentMessage(talentId, true);
+      final res = await repo.deleteTalentMessage(variables);
       if (res != null) {
         setEditMessage(false);
         await fetchTalentMessages(applicantId);
@@ -252,23 +340,27 @@ class TalentListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<dynamic> sendTalentMessage(BuildContext context, String talentId,
-      String message, String? typeName) async {
+  Future<dynamic> sendTalentMessage(
+      BuildContext context,
+      String talentMessageId,
+      String talentId,
+      String message,
+      String? typeName) async {
     print("send talent message calling");
-    if (message.isEmpty) {
-      scaffoldMessenger("Message cannot be empty");
-      return;
-    }
-
     try {
       Loaders.circularShowLoader(context);
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
-      final res = await repo.sendTalentMessage({
-        "talent_message_id_to": talentId,
-        "message": message,
-        "message_from": userId,
-      }, typeName ?? "");
+      final variables = {
+        "object": {
+          "message": message,
+          "talent_message_id_to": talentMessageId,
+          "message_from": userId,
+          "talent_id": talentId
+        }
+      };
+
+      final res = await repo.sendTalentMessage(variables);
 
       if (res != null) {
         scaffoldMessenger("Message sent successfully");
@@ -287,17 +379,29 @@ class TalentListingViewModel extends ChangeNotifier {
   }
 
   /**************Talent Listing********************* */
-  JobProfiles? talentPreviewData;
+  List<JobProfiles> talentPreviewData = [];
   Future<void> getTalentPreviewData(
-      BuildContext context, String profileId) async {
-    final variables = {"id": profileId};
+      BuildContext context, String profileId, String professionType) async {
+    final variables = {
+      "profession_type": professionType,
+      "limit": 10,
+      "offset": 0,
+      "excludeId": profileId
+    };
     final res = await repo.getTalentPreviewData(variables);
-    if (res != null) {
+    if (res.isNotEmpty) {
       talentPreviewData = res;
-     
-    } else {
-     
-    }
+    } else {}
+    notifyListeners();
+  }
+
+  Future<void> updateTalentListingStatus(
+      BuildContext context, String talentId) async {
+    final variables = {"id": talentId, "status": "CANCELLED"};
+    final res = await repo.updateTalentListing(variables);
+    if (res.isNotEmpty) {
+      scaffoldMessenger("Talent Cancelled Successfully");
+    } else {}
     notifyListeners();
   }
 }

@@ -1,8 +1,19 @@
-const String getTalentPreviewDataQuery = r'''query getTalentPreview($id: uuid!) {
-  job_profiles(where: {id: {_eq: $id}}) {
+const String getTalentPreviewDataQuery = r'''query getRelatedTalentListMutation($profession_type: String, $limit: Int!, $offset: Int!, $excludeId: uuid!) {
+  job_profiles(
+    where: {profession_type: {_eq: $profession_type}, id: {_neq: $excludeId}, admin_status: {_eq: "APPROVE"}, active_status: {_eq: "ACTIVE"}}
+    limit: $limit
+    offset: $offset
+    order_by: [{created_at: desc}, {id: asc}]
+  ) {
     id
     created_at
     updated_at
+    dental_professional_id
+    admin_status
+    profile_image
+    full_name
+    mobile_number
+    email_address
     skills
     jobexperiences
     educations
@@ -10,14 +21,7 @@ const String getTalentPreviewDataQuery = r'''query getTalentPreview($id: uuid!) 
     job_designation
     current_company
     current_ctc
-    dental_professional_id
     post_anonymously
-    admin_status
-    active_status
-    profile_image
-    full_name
-    mobile_number
-    email_address
     work_type
     profession_type
     location
@@ -28,15 +32,14 @@ const String getTalentPreviewDataQuery = r'''query getTalentPreview($id: uuid!) 
     certificate
     radius
     abn_number
+    availabilityType
     availabilityOption
     availabilityDate
-    fromDate
     availabilityDay
     work_rights
     Year_of_experiance
     languages_spoken
     areas_expertise
-    skills
     percentage
     salary_amount
     salary_type
@@ -44,18 +47,16 @@ const String getTalentPreviewDataQuery = r'''query getTalentPreview($id: uuid!) 
     willing_to_travel
     travel_distance
     about_yourself
-    location
-    availabilityType
-    unavailabilityDate
+    fromDate
     dental_professional {
       id
       gender
-      name
       __typename
     }
     jobhirings {
       id
       dental_supplier_id
+      dental_practice_id
       hiring_status
       __typename
     }

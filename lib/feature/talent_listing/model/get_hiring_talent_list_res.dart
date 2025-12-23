@@ -48,12 +48,12 @@ class Jobhirings {
   String? updatedAt;
   String? createdAt;
   String? jobProfilesId;
-  Null? dentalPracticeId;
+  dynamic? dentalPracticeId;
   DentalSupplier? dentalSupplier;
-  Null? dentalPractice;
+  dynamic? dentalPractice;
   HiringJobProfiles? jobProfiles;
-  Null? talentEnquiriesFindPractice;
-  Null? talentEnquiriesFindSupplier;
+  dynamic? talentEnquiriesFindPractice;
+  dynamic? talentEnquiriesFindSupplier;
   Directories? directories;
   String? sTypename;
 

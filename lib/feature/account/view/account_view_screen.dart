@@ -215,11 +215,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                               arguments: userId,
                             );
                           } else if (item.title == 'Talent Listing') {
-                            Loaders.circularShowLoader(context);
+                            /*Loaders.circularShowLoader(context);
                             await context
                                 .read<TalentListingViewModel>()
                                 .getMyTalentListingData();
-                            Loaders.circularHideLoader(context);
+                            Loaders.circularHideLoader(context);*/
 
                             navigationService
                                 .navigateTo(RouteList.TalentListingScreen);

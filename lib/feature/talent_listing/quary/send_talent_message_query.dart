@@ -5,3 +5,5 @@ const String sendTalentMessageQuery =
     __typename
   }
 }''';
+
+
