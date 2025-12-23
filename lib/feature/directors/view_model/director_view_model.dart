@@ -121,8 +121,15 @@ class DirectoryViewModel extends ChangeNotifier {
   dynamic supportingImageObj;
 
   void selectSingleCategory(String categoryId) {
-    _selectedCategoryId = categoryId;
-    updateTheRemoveIcon(true);
+    if (_selectedCategoryId == categoryId) {
+      // If same category is clicked, deselect it
+      _selectedCategoryId = null;
+      updateTheRemoveIcon(false);
+    } else {
+      // Select new category
+      _selectedCategoryId = categoryId;
+      updateTheRemoveIcon(true);
+    }
     notifyListeners();
   }
 
