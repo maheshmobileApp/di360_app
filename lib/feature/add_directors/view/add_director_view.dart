@@ -17,7 +17,6 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/add_directory_enum.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
