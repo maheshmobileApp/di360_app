@@ -182,6 +182,8 @@ class ProfessBasicInfo extends StatelessWidget
           InputTextField(
             hintText: "Enter your text here",
             maxLength: 500,
+            isRequired: true,
+            validator: (value) => value == null || value.isEmpty ? 'Please enter description' : null,
             maxLines: 5,
             title: "Description",
             controller: professDirectorVM.descController,

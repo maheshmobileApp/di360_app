@@ -262,7 +262,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                   .pickTestimonialImage(picker.ImageSource.gallery),
               () => addDirectorVM
                   .pickTestimonialImage(picker.ImageSource.camera)),
-          hintText: imgUrl ?? 'JPEG, PNG, PDF formats, up to 5 MB',
+          hintText: imgUrl ?? 'JPEG, PNG up to 5 MB',
         ),
         addVertical(20),
         InputTextField(
@@ -285,7 +285,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                   .pickTestimonialPicture(picker.ImageSource.gallery),
               () => addDirectorVM
                   .pickTestimonialPicture(picker.ImageSource.camera)),
-          hintText: picUrl ?? 'JPEG, PNG, PDF formats, up to 5 MB',
+          hintText: picUrl ?? 'JPEG, PNG up to 5 MB',
         ),
       ],
     );

@@ -6,7 +6,10 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:location/location.dart' as loc;
 import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +28,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   List<TextEditingController> universitiesCntr = [];
   List<TextEditingController> educationCntr = [];
   List<TextEditingController> workAtCntr = [];
+
+  double? latitude;
+  double? longitude;
 
 // Navigation
   final PageController pageController = PageController();
@@ -125,20 +131,23 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   }
 
   void loadEducation(List<Education> list) {
-    educationCntr =
-        list.map((h) => TextEditingController(text: h.qualification ?? "")).toList();
+    educationCntr = list
+        .map((h) => TextEditingController(text: h.qualification ?? ""))
+        .toList();
     notifyListeners();
   }
 
   void updateEducation(BuildContext context, int index, String value) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education?[index].qualification = value;
+    addDirectorVM.getBasicInfoData.first.education?[index].qualification =
+        value;
     notifyListeners();
   }
 
   void addEducation(BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education?.add(Education(qualification: ""));
+    addDirectorVM.getBasicInfoData.first.education
+        ?.add(Education(qualification: ""));
     educationCntr.add(TextEditingController());
     notifyListeners();
   }
@@ -198,20 +207,40 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "description": descController.text,
         "directory_category_id": addDirectorVM.selectedBusineestype?.id,
         "banner_image": banner == null
-            ? addDirectorVM.getBasicInfoData.first.bannerImage
+            ? addDirectorVM.getBasicInfoData.isEmpty
+                ? null
+                : addDirectorVM.getBasicInfoData.first.bannerImage
             : banner,
         "profile_image": profile == null
-            ? addDirectorVM.getBasicInfoData.first.profileImage
+            ? addDirectorVM.getBasicInfoData.isEmpty
+                ? null
+                : addDirectorVM.getBasicInfoData.first.profileImage
             : profile,
-        "university_school": addDirectorVM.getBasicInfoData.first.universitySchool,
-        "working_at": addDirectorVM.getBasicInfoData.first.workingAt,
+        "university_school": addDirectorVM.getBasicInfoData.isEmpty
+            ? null
+            : addDirectorVM.getBasicInfoData.first.universitySchool,
+        "working_at": addDirectorVM.getBasicInfoData.isEmpty
+            ? null
+            : addDirectorVM.getBasicInfoData.first.workingAt,
         "designation": designationCntr.text,
-        "education": addDirectorVM.getBasicInfoData.first.education,
-        "hobbies": addDirectorVM.getBasicInfoData.first.hobbies,
+        "education": addDirectorVM.getBasicInfoData.isEmpty
+            ? null
+            : addDirectorVM.getBasicInfoData.first.education,
+        "hobbies": addDirectorVM.getBasicInfoData.isEmpty
+            ? null
+            : addDirectorVM.getBasicInfoData.first.hobbies,
         "special_interests": [],
         "type": "PROFESSIONAL",
-        "latitude": '',
-        "longitude": '',
+        "latitude": addDirectorVM.getBasicInfoData.isEmpty
+            ? null
+            : addDirectorVM.getBasicInfoData.first.latitude == null
+                ? latitude
+                : addDirectorVM.getBasicInfoData.first.latitude,
+        "longitude": addDirectorVM.getBasicInfoData.isEmpty
+            ? null
+            : addDirectorVM.getBasicInfoData.first.longitude == null
+                ? longitude
+                : addDirectorVM.getBasicInfoData.first.longitude,
         "pincode": "",
         "dental_professional_id": userId
       }
@@ -219,6 +248,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     if (result != null) {
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
+      goToNextStep();
       scaffoldMessenger('Add BasicInfo successfully');
     } else {
       Loaders.circularHideLoader(context);
@@ -266,6 +296,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     if (result != null) {
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
+      goToNextStep();
       scaffoldMessenger('Updated Basic Information successfully');
     } else {
       Loaders.circularHideLoader(context);
@@ -289,6 +320,45 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     loadUniversities(data.universitySchool ?? []);
     //loadEducation(data.education ?? []);
     loadWorkAt(data.workingAt ?? []);
+    await getLocation();
     notifyListeners();
+  }
+
+  Future<void> getLocation() async {
+    loc.Location location = loc.Location();
+    bool serviceEnabled;
+    loc.PermissionStatus permissionGranted;
+    loc.LocationData locationData;
+
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == loc.PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != loc.PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    locationData = await location.getLocation();
+    latitude = locationData.latitude;
+    longitude = locationData.longitude;
+    await getAddressFromLatLang();
+    notifyListeners();
+  }
+
+  Future<void> getAddressFromLatLang() async {
+    List<Placemark> placemark =
+        await placemarkFromCoordinates(latitude ?? 0.0, longitude ?? 0.0);
+    Placemark place = placemark[0];
+    final address =
+        '${place.locality},${place.administrativeArea},${place.country}';
+    addressController.text = address;
   }
 }

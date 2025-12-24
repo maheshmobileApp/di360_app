@@ -8,6 +8,7 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:di360_flutter/services/banner_services.dart';
 
 class UserData extends StatelessWidget with BaseContextHelpers {
   final String? imageUrl;
@@ -30,8 +31,10 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-          SvgPicture.asset(ImageConst.homeBG,width: getSize(context).width),
-          ListBanner(),
+          BannerServices.instance.listBanner?.isEmpty ?? false
+              ? SvgPicture.asset(ImageConst.homeBG,
+                  width: getSize(context).width)
+              : ListBanner(),
           Positioned(
               right: 1,
               left: 1,
@@ -61,7 +64,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
           child: Column(children: [
             addVertical(50),
             Divider(color: AppColors.dividerColor),
-             addVertical(6),
+            addVertical(6),
             Text(userName ?? homeViewModel.userName ?? '',
                 style: TextStyles.clashMedium(
                     fontSize: 20, color: AppColors.black)),

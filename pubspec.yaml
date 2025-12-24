@@ -70,11 +70,14 @@ dependencies:
   table_calendar: ^3.0.9
   video_thumbnail: ^0.5.6
   image: ^4.1.7
+  location: ^5.0.3
+  geocoding: ^2.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
+
 flutter_launcher_icons:
   android: true
   ios: true
