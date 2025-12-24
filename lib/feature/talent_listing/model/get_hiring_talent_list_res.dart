@@ -234,10 +234,10 @@ class HiringJobProfiles {
     fullName = json['full_name'];
     professionType = json['profession_type'];
     state = json['state'];
-    profileImage = json['profile_image'] != null
-        ? new ProfileImage.fromJson(json['profile_image'])
+    profileImage = json['profile_image'] != null && json['profile_image'] is List && (json['profile_image'] as List).isNotEmpty
+        ? new ProfileImage.fromJson(json['profile_image'][0])
         : null;
-    workType = json['work_type'].cast<String>();
+    workType = json['work_type'] != null ? json['work_type'].cast<String>() : null;
     dentalProfessionalId = json['dental_professional_id'];
     postAnonymously = json['post_anonymously'];
     dentalProfessional = json['dental_professional'] != null

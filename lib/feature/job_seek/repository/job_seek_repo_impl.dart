@@ -128,7 +128,7 @@ class JobSeekRepoImpl extends JobSeekRepository {
       final variables = {
         "where": whereConditions,
       };
-      print("Filter Variables: $variables");
+      print("*******************Filter Variables: $variables");
       final result =
           await _http.query(getAllJobsFilterQuery, variables: variables);
       final jobsJson = result['jobs'] as List<dynamic>? ?? [];

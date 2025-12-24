@@ -79,6 +79,7 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                         itemCount: vm.allJobProfiles.length,
                         itemBuilder: (context, index) {
                           final jobData = vm.allJobProfiles[index];
+                          print("*****************************************Job data: $jobData");
                           return JobProfileCard(
                             jobsListingData: jobData,
                             vm: vm,

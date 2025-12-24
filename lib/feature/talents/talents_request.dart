@@ -55,7 +55,10 @@ String talentsRequest = r'''query GetJobProfileData {
       __typename
     }
     jobhirings {
-      id
+     id
+      dental_supplier_id
+      dental_practice_id
+      hiring_status
       __typename
     }
     __typename

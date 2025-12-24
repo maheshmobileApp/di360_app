@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 
 abstract class LearningHubRepository {
   Future<List<JobsRoleList>> getCategory();
@@ -19,10 +20,12 @@ abstract class LearningHubRepository {
   Future<GetCourseTypes> getCourseType();
   Future<GetCourseCategories> getCourseCategory();
   Future<dynamic> deleteCourse(String? courseId);
-  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(
-      String? courseId);
+  Future<RegisteredUsersData> getCourseRegisteredUsers(
+      String? courseId,String status);
   Future<dynamic> userRegisterToCourse(dynamic variables);
   Future<List<CoursesListingDetails>?> getAllListingData(String? searchText);
   Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
       String type, String courseCategoryId, String startDate, String address);
+  Future<RegisterUserTabCountData> getRegisterUserTabCountData(dynamic variables);
+  Future<dynamic> updateRegUserStatus(dynamic variables);
 }

@@ -24,29 +24,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
   final HttpService _http = HttpService();
   @override
   Future<HiringTalentList> getMyTalentListing(dynamic variables) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-
     try {
-      /*final whereConditions = [
-        {
-          "dental_supplier_id": {"_eq": userId}
-        }
-      ];
-
-      if (listingStatus != null && listingStatus.isNotEmpty) {
-        whereConditions.add({
-          "hiring_status": {"_eq": listingStatus}
-        });
-      }
-
-      final variables = {
-        "where": {"_and": whereConditions},
-        "limit": 10,
-        "offset": 0
-      };
-
-      print("************Variables: $variables");*/
-
       final response =
           await _http.query(getTalentListingQuery, variables: variables);
       final res = HiringTalentList.fromJson(response);
@@ -103,8 +81,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
   }
 
   @override
-  Future<String?> sendTalentMessage(
-      dynamic variables) async {
+  Future<String?> sendTalentMessage(dynamic variables) async {
     try {
       final data = await _http.mutation(sendTalentMessageQuery, variables);
       return data['insert_talents_message_one']?['id'] as String?;
@@ -127,7 +104,6 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
   @override
   Future deleteTalentMessage(dynamic variables) async {
-
     final data = await _http.mutation(deleteTalentMessageQuery, variables);
 
     return data;

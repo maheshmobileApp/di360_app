@@ -104,7 +104,7 @@ class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final profileId = jobProfiles?.jobProfiles?.id ?? "";
+                        final profileId = jobProfiles?.talentId?? "";
                         final jobId = jobProfiles?.id ?? "";
                         if (profileId.isEmpty || jobId.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
