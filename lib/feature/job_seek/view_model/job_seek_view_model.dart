@@ -50,6 +50,11 @@ class JobSeekViewModel extends ChangeNotifier {
   List<String> selectedExperiences = [];
   List<String> selectedAvailability = [];
 
+  String get formattedEmploymentTypes {
+    if (selectedEmploymentTypes.isEmpty) return '[]';
+    return '[${selectedEmploymentTypes.map((e) => '"$e"').join(', ')}]';
+  }
+
   Map<String, Set<int>> selectedIndices = {
     'profession': {},
     'employment': {},
@@ -156,13 +161,62 @@ class JobSeekViewModel extends ChangeNotifier {
       print("Selected Availability Dates: $selectedAvailability");
       Loaders.circularShowLoader(context);
 
-      final result = await repo.fetchFilteredJobs(
-        selectedProfessions,
-        selectedEmploymentTypes,
-        selectedExperiences,
-        selectedAvailability,
-        locationController.text,
-      );
+      // Build dynamic where conditions
+      final List<Map<String, dynamic>> andConditions = [
+        {"status": {"_eq": "APPROVE"}},
+        {"active_status": {"_eq": "ACTIVE"}}
+      ];
+
+      // Add location search if not empty
+      if (locationController.text.isNotEmpty) {
+        andConditions.add({
+          "_or": [
+            {"title": {"_ilike": "%${locationController.text}%"}},
+            {"company_name": {"_ilike": "%${locationController.text}%"}},
+            {"location": {"_ilike": "%${locationController.text}%"}},
+            {"city": {"_ilike": "%${locationController.text}%"}},
+            {"state": {"_ilike": "%${locationController.text}%"}}
+          ]
+        });
+      }
+
+      // Add profession filter if selected
+      if (selectedProfessions.isNotEmpty) {
+        andConditions.add({
+          "j_role": {"_in": selectedProfessions}
+        });
+      }
+
+      // Add employment type filter if selected
+      if (selectedEmploymentTypes.isNotEmpty) {
+        andConditions.add({
+          "TypeofEmployment": {"_contains": selectedEmploymentTypes}
+        });
+      }
+
+      // Add experience filter if selected
+      if (selectedExperiences.isNotEmpty) {
+        andConditions.add({
+          "years_of_experience": {"_eq": selectedExperiences.first}
+        });
+      }
+
+      // Add availability date filter if selected
+      if (selectedAvailability.isNotEmpty) {
+        andConditions.add({
+          "availability_date": {"_has_keys_any": selectedAvailability}
+        });
+      }
+
+      final variables = {
+        "limit": 10,
+        "offset": 0,
+        "where": {"_and": andConditions},
+        "order_by": [{"created_at": (selectedSort=='A to Z')?"asc":"desc"}]
+      };
+
+      print("Dynamic Variables: $variables");
+      final result = await repo.fetchFilteredJobs(variables);
       jobs = result;
       Loaders.circularHideLoader(context);
 
