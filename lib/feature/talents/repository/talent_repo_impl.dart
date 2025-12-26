@@ -36,14 +36,10 @@ class TalentRepoImpl extends TalentRepository {
 
   @override
   Future<List<JobProfiles>> getJobProfileFilterData(
-    List<String>? professions,
-    List<String>? employmentTypes,
-    List<String>? experience, // changed from List<String> to String
-    List<String>? availabilityDates,
-    List<String>? availabilityDays,
+    dynamic variables
   ) async {
     try {
-      final Map<String, dynamic> whereConditions = {};
+      /*final Map<String, dynamic> whereConditions = {};
 
       /*if (professions != null && professions.isNotEmpty) {
         whereConditions["j_role"] = {"_in": professions};
@@ -67,7 +63,7 @@ class TalentRepoImpl extends TalentRepository {
 
       final variables = {
         "where": whereConditions,
-      };
+      };*/
 
       print("Filter Variables: $variables");
 

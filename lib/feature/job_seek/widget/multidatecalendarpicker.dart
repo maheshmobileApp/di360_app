@@ -8,6 +8,9 @@ class MultiDateCalendarPicker extends StatefulWidget {
   final Function(List<DateTime>) onDatesChanged;
   final TextEditingController controller;
   final String title;
+  final DateTime? initialDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   const MultiDateCalendarPicker({
     Key? key,
@@ -15,6 +18,9 @@ class MultiDateCalendarPicker extends StatefulWidget {
     required this.onDatesChanged,
     required this.controller,
     this.title = "Availability Date",
+    this.initialDate,
+    this.firstDate,
+    this.lastDate,
   }) : super(key: key);
 
   @override
@@ -36,7 +42,9 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
 
   Future<void> _openMultiSelectDialog(BuildContext context) async {
     List<DateTime> tempSelected = List.from(widget.selectedDates);
-    DateTime focusedMonth = widget.selectedDates.isNotEmpty
+    DateTime focusedMonth = widget.initialDate != null
+        ? DateTime(widget.initialDate!.year, widget.initialDate!.month)
+        : widget.selectedDates.isNotEmpty
         ? DateTime(widget.selectedDates.last.year, widget.selectedDates.last.month)
         : DateTime(DateTime.now().year, DateTime.now().month);
 
@@ -49,12 +57,16 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
 
             Widget dayCell(DateTime date) {
               final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-              final isPast = date.isBefore(today);
+              final firstDate = widget.firstDate ?? today;
+              final lastDate = widget.lastDate;
+              final isPast = date.isBefore(firstDate);
+              final isFuture = lastDate != null && date.isAfter(lastDate);
+              final isDisabled = isPast || isFuture;
               final isSelected = tempSelected.any((d) => _isSameDate(d, date));
               
               return InkWell(
                 borderRadius: BorderRadius.circular(20),
-                onTap: isPast ? null : () {
+                onTap: isDisabled ? null : () {
                   setDialogState(() {
                     if (isSelected) {
                       tempSelected.removeWhere((d) => _isSameDate(d, date));
@@ -67,16 +79,16 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
                   margin: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected ? accent : (isPast ? Colors.grey[200] : Colors.transparent),
+                    color: isSelected ? accent : (isDisabled ? Colors.grey[200] : Colors.transparent),
                     border: Border.all(
-                      color: isPast ? Colors.grey : (isSelected ? accent : Colors.black26),
+                      color: isDisabled ? Colors.grey : (isSelected ? accent : Colors.black26),
                     ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '${date.day}',
                     style: TextStyle(
-                      color: isSelected ? Colors.white : (isPast ? Colors.grey : Colors.black),
+                      color: isSelected ? Colors.white : (isDisabled ? Colors.grey : Colors.black),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -94,7 +106,7 @@ class _MultiDateCalendarPickerState extends State<MultiDateCalendarPicker> {
               ),
               title: const Text(
                 "Select Availability Dates",
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),
               ),
               content: SizedBox(
                 width: 330,
