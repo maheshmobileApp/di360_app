@@ -56,7 +56,7 @@ class SignupScreen extends StatelessWidget
                     CustomDropDown<Map<String, String>>(
                       isRequired: true,
                       value: viewModel.selectedType,
-                      title: "Subscription Type",
+                      title: "User Type",
                       onChanged: (v) {
                         viewModel.setSelectedType(v);
                       },
@@ -67,7 +67,7 @@ class SignupScreen extends StatelessWidget
                                 child: Text("${country['name']}"),
                               ))
                           .toList(),
-                      hintText: "Select subscription type",
+                      hintText: "Select User type",
                       validator: (value) =>
                           value == null ? 'Please select type' : null,
                     ),
