@@ -79,7 +79,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   int get totalSteps => ConstantData.steps.length;
   String selectedShowPromotion = "All Users";
 
-  void setSelectedShowPromotion(String value){
+  void setSelectedShowPromotion(String value) {
     selectedShowPromotion = value;
     notifyListeners();
   }
@@ -235,6 +235,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       await getBusinessTypes();
       _currentStep = 0;
       getBasicInfoData = res;
+      print("*******************************************${getBasicInfoData.first.directoryLocations}");
       await context.read<DirectoryViewModel>().getFollowersCount(userId);
       await editVM.getAppointments(context);
       Loaders.circularHideLoader(context);
@@ -449,7 +450,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     });
     if (res != null) {
       Loaders.circularHideLoader(context);
-      scaffoldMessenger('Update BasicInfo added successfully');
+      scaffoldMessenger('Updated Basic Information successfully');
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -673,12 +674,15 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> addTestimonials(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var prfImg = await addDirectorRepositoryImpl.http
-        .uploadImage(testimonialsFile?.path);
+    dynamic prfImg;
+    if (testimonialsFile != null) {
+      prfImg = await addDirectorRepositoryImpl.http
+          .uploadImage(testimonialsFile!.path);
+    }
     dynamic msgPic;
     if (testimonialsPicFile != null) {
       msgPic = await addDirectorRepositoryImpl.http
-          .uploadImage(testimonialsPicFile?.path);
+          .uploadImage(testimonialsPicFile!.path);
     }
     final res = await addDirectorRepositoryImpl.addTestimonials({
       "testiObj": {

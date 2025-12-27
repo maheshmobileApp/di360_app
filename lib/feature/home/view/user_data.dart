@@ -6,6 +6,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class UserData extends StatelessWidget with BaseContextHelpers {
@@ -29,6 +30,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
+          SvgPicture.asset(ImageConst.homeBG,width: getSize(context).width),
           ListBanner(),
           Positioned(
               right: 1,
@@ -78,7 +80,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
             ]),
             addVertical(6),
             Divider(color: AppColors.dividerColor),
-            addVertical(35)
+            addVertical(20)
           ]))
     ]);
   }

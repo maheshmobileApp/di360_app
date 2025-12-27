@@ -28,8 +28,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
     with BaseContextHelpers {
   @override
   void initState() {
-    super.initState(); 
-    final viewModel = Provider.of<LearningHubMasterViewModel>(context, listen: false);
+    super.initState();
+    final viewModel =
+        Provider.of<LearningHubMasterViewModel>(context, listen: false);
     viewModel.clearFilterOptions();
   }
 
@@ -135,9 +136,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             },
                             onShareTap: () {
                               SharePlus.instance.share(ShareParams(
-                                  uri: Uri(
-                                      path:
-                                          'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
+                                  uri: Uri.parse(
+                                      'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
                             },
                           );
                         },

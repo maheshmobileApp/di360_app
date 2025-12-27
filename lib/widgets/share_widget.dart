@@ -12,8 +12,7 @@ class ShareWidget extends StatelessWidget {
     return GestureDetector(
         onTap: () {
           SharePlus.instance.share(ShareParams(
-              uri: Uri(
-                  path:
+              uri: Uri.parse(
                       'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
         },
         child: Container(

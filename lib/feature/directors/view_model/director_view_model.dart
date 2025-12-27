@@ -474,12 +474,10 @@ class DirectoryViewModel extends ChangeNotifier {
   GetBusinessDetailsData? businessDetails;
   Future<void> getBusinessSupplierDetails(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final variables = {"id": userId};
     final res = await repository.getBusinessSupplierDetails(variables);
     if (res.dentalSuppliersByPk != null) {
       businessDetails = res;
-      print("****************Business********************$businessDetails");
       firstNameController.text =
           businessDetails?.dentalSuppliersByPk?.firstName ?? "";
       lastNameController.text =
@@ -494,7 +492,6 @@ class DirectoryViewModel extends ChangeNotifier {
   GetBusinessProfDetailsData? businessProfDetails;
   Future<void> getBusinessProfessionalDetails(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final variables = {"id": userId};
     final res = await repository.getBusinessProfessionalDetails(variables);
     if (res.dentalProfessionalsByPk != null) {

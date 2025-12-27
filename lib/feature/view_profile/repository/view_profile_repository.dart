@@ -10,4 +10,5 @@ abstract class ViewProfileRepository {
       Map<String, dynamic> data);
   Future<DentalPracticesByPk?> getPracticeViewProfileData();
   Future<DentalProfessionalsByPk?> getProfessionalViewProfile();
+  Future<dynamic> deleteAccount();
 }
