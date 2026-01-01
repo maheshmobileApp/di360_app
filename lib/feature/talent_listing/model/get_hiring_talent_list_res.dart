@@ -293,14 +293,22 @@ class ProfileImage {
 
 class DentalProfessional {
   String? gender;
-  Null? profileImage;
+  List<ProfileImage>? profileImage;
   String? sTypename;
 
   DentalProfessional({this.gender, this.profileImage, this.sTypename});
 
   DentalProfessional.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
-    profileImage = json['profile_image'];
+    if (json['profile_image'] != null) {
+      if (json['profile_image'] is List) {
+        profileImage = (json['profile_image'] as List)
+            .map((v) => ProfileImage.fromJson(v))
+            .toList();
+      } else if (json['profile_image'] is Map) {
+        profileImage = [ProfileImage.fromJson(json['profile_image'])];
+      }
+    }
     sTypename = json['__typename'];
   }
 

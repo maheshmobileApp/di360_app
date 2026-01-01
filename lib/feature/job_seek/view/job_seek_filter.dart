@@ -245,6 +245,8 @@ class JobSeekFilterScreen extends StatelessWidget with BaseContextHelpers {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MultiDateCalendarPicker(
+          initialDate: DateTime.now(),
+          firstDate: DateTime.utc(2000),
           selectedDates: model.selectedLocumDatesObjects,
           controller: model.locumDateController,
           onDatesChanged: (dates) {
