@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 
