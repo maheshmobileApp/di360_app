@@ -83,4 +83,6 @@ class RouteList {
       'partnershipCommunityRequestView';
   static const String enquiryMessagesView = 'enquiryMessagesView';
   static const String talentEnquiriesView = 'talentEnquiriesView';
+  static const String campaignListingView = 'campaignListingView';
+  static const String createCampaignView = 'createCampaignView';
 }

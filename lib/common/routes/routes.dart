@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/view/add_news_feed_screen.da
 import 'package:di360_flutter/feature/applied_job.dart/view/applied_job_screen.dart';
 import 'package:di360_flutter/feature/banners/view/add_banners_screen.dart';
 import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
+import 'package:di360_flutter/feature/campaign/view/create_campaign_view.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
@@ -52,6 +53,7 @@ import 'package:di360_flutter/feature/learning_hub/view/registered_users_view.da
 import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
+import 'package:di360_flutter/feature/campaign/view/campaign_listing_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
@@ -146,7 +148,6 @@ class Routes {
           typeName: args['type'],
         );
       },
-      
       RouteList.enquiryMessagesView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -217,7 +218,6 @@ class Routes {
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return RegisteredUsersView(
           courseId: args['course_id'],
-          
         );
       },
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
@@ -229,18 +229,23 @@ class Routes {
       RouteList.supportChatScreen: (context) => SupportMessengerView(),
       RouteList.joinRequestView: (context) => JoinRequestView(),
       RouteList.partnershipRequestView: (context) => PartnershipRequestView(),
-      RouteList.membershipRegistrationView: (context) => MembershipRegistrationView(),
-      RouteList.partnershipRegistrationView: (context) => PartnershipRegistrationView(),
+      RouteList.membershipRegistrationView: (context) =>
+          MembershipRegistrationView(),
+      RouteList.partnershipRegistrationView: (context) =>
+          PartnershipRegistrationView(),
       RouteList.newsFeedCategoriesView: (context) => NewsFeedCategoriesView(),
       RouteList.createCategoryView: (context) => CreateCategoryView(),
       RouteList.newsFeedScreen: (context) => NewsFeedScreen(),
       RouteList.newsFeedCommunityView: (context) => NewsFeedCommunityView(),
-      RouteList.addNewsFeedCommunityView: (context) => AddNewsFeedCommunityView(),
+      RouteList.addNewsFeedCommunityView: (context) =>
+          AddNewsFeedCommunityView(),
       RouteList.communitMarketView: (context) => CommunityMarketView(),
       RouteList.joinCommunityView: (context) => JoinCommunityView(),
-      RouteList.partnershipCommunityRequestView: (context) => PartnershipCommunityRequestView(),
-      RouteList.talentEnquiriesView: (context) => TalentEnquiriesView()
-      
+      RouteList.partnershipCommunityRequestView: (context) =>
+          PartnershipCommunityRequestView(),
+      RouteList.talentEnquiriesView: (context) => TalentEnquiriesView(),
+      RouteList.campaignListingView: (context) => CampaignListingView(),
+      RouteList.createCampaignView: (context) => CreateCampaignView()
     };
   }
 }

@@ -232,9 +232,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
 
                             navigationService
                                 .navigateTo(RouteList.talentEnquiriesView);
-                          }
-                          
-                           else if (item.title == 'My Directory') {
+                          } else if (item.title == 'My Directory') {
                             await context
                                 .read<AddDirectoryViewModel>()
                                 .fetchTheDirectorData(context);
@@ -284,6 +282,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == "Banners") {
                             navigationService
                                 .navigateTo(RouteList.bannersListView);
+                          } else if (item.title == "Marketing") {
+                            navigationService
+                                .navigateTo(RouteList.campaignListingView);
+                          } else if (item.title == "Team Members") {
+                            navigationService
+                                .navigateTo(RouteList.campaignListingView);
                           } else if (item.title == "Appointments") {
                             navigationService
                                 .navigateTo(RouteList.myAppointment);

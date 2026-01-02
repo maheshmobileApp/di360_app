@@ -56,6 +56,7 @@ class CustomDropDown<T> extends StatelessWidget {
         DropdownButtonFormField<T>(
           dropdownColor: Colors.white,
           menuMaxHeight:400,
+          isExpanded: true,
           value: value,
           validator: validator,
           onChanged: onChanged,
