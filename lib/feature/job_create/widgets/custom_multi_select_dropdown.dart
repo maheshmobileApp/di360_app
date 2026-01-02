@@ -118,7 +118,19 @@ class _CustomMultiSelectDropDownState<T>
                                     // If Locum is selected, clear all others
                                     _selected.clear();
                                     _selected.add(item);
-                                  } else {
+                                  }
+                                  // Handle Directory permissions mutual exclusion
+                                  else if (widget.itemLabel(item) == "Directory Full Access") {
+                                    _selected.removeWhere((selectedItem) =>
+                                        widget.itemLabel(selectedItem) == "Directory Minimal");
+                                    _selected.add(item);
+                                  }
+                                  else if (widget.itemLabel(item) == "Directory Minimal") {
+                                    _selected.removeWhere((selectedItem) =>
+                                        widget.itemLabel(selectedItem) == "Directory Full Access");
+                                    _selected.add(item);
+                                  }
+                                  else {
                                     // If other item is selected, remove Locum if present
                                     _selected.removeWhere((selectedItem) =>
                                         widget.itemLabel(selectedItem) ==

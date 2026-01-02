@@ -25,6 +25,9 @@ class AppBarWidget extends StatelessWidget
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
     return AppBar(
+      elevation: 3,
+      shadowColor: AppColors.black.withOpacity(0.2),
+
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Stack(

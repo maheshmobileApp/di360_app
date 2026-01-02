@@ -287,7 +287,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .navigateTo(RouteList.campaignListingView);
                           } else if (item.title == "Team Members") {
                             navigationService
-                                .navigateTo(RouteList.campaignListingView);
+                                .navigateTo(RouteList.teamMembersListingView);
                           } else if (item.title == "Appointments") {
                             navigationService
                                 .navigateTo(RouteList.myAppointment);

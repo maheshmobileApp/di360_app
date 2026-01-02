@@ -76,6 +76,8 @@ import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
+import 'package:di360_flutter/feature/team_members/view/create_team_member_view.dart';
+import 'package:di360_flutter/feature/team_members/view/team_members_listing_view.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_view_profile_screen.dart';
 import 'package:di360_flutter/feature/view_profile/view/view_profile_view.dart';
 import 'package:provider/provider.dart';
@@ -245,7 +247,9 @@ class Routes {
           PartnershipCommunityRequestView(),
       RouteList.talentEnquiriesView: (context) => TalentEnquiriesView(),
       RouteList.campaignListingView: (context) => CampaignListingView(),
-      RouteList.createCampaignView: (context) => CreateCampaignView()
+      RouteList.createCampaignView: (context) => CreateCampaignView(),
+      RouteList.teamMembersListingView: (context) => TeamMembersListingView(),
+      RouteList.createTeamMemberView: (context) => CreateTeamMemberView()
     };
   }
 }

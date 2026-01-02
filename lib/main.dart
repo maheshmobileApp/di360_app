@@ -39,6 +39,7 @@ import 'package:di360_flutter/feature/support/view_model/support_view_model.dart
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
+import 'package:di360_flutter/feature/team_members/view_model/team_members_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -118,6 +119,7 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(
                 create: (_) => NewsFeedCommunityCommentViewModel()),
             ChangeNotifierProvider(create: (_) => CampaignViewModel()),
+            ChangeNotifierProvider(create: (_) => TeamMembersViewModel())
           ],
           child: MaterialApp(
             navigatorKey: navigatorKey,

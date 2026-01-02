@@ -1,7 +1,10 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
+import 'package:di360_flutter/feature/campaign/model/get_states_by_groups_res.dart';
 import 'package:di360_flutter/feature/campaign/repository/campaign_repo_impl.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 
@@ -17,7 +20,7 @@ class CampaignViewModel extends ChangeNotifier {
 
   String selectStateCondition = "";
 
-  void setStateCondition(String condition){
+  void setStateCondition(String condition) {
     selectStateCondition = condition;
     notifyListeners();
   }
@@ -30,16 +33,14 @@ class CampaignViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> empOptions = [
+  List<String> groupOptions = [
     "Community members",
     "Contact-Partner",
     "Contact-Member"
   ];
 
-  List<String> stateOptions = [
-  ];
-  List<String> sendOptions = [
-  ];
+  List<String> stateOptions = [];
+  List<String> sendOptions = [];
 
   List<String> typeOptions = ["SMS", "Email", "HTML", "Email with PDF"];
 
@@ -67,24 +68,22 @@ class CampaignViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  final List<String> _selectedEmploymentChips = [];
-  List<String> get selectedEmploymentChips =>
-      List.unmodifiable(_selectedEmploymentChips);
-  void removeEmploymentTypeChip(String empType) {
-    _selectedEmploymentChips.remove(empType);
+  final List<String> _selectedGroupChips = [];
+  List<String> get selectedGroupChips => List.unmodifiable(_selectedGroupChips);
+  void removeGroupTypeChip(String empType) {
+    _selectedGroupChips.remove(empType);
     notifyListeners();
   }
 
-  void addEmploymentTypeChip(String empType) {
-    if (!_selectedEmploymentChips.contains(empType)) {
-      _selectedEmploymentChips.add(empType);
+  void addGroupTypeChip(String empType) {
+    if (!_selectedGroupChips.contains(empType)) {
+      _selectedGroupChips.add(empType);
       notifyListeners();
     }
   }
 
   final List<String> _selectedStateChips = [];
-  List<String> get selectedStateChips =>
-      List.unmodifiable(_selectedStateChips);
+  List<String> get selectedStateChips => List.unmodifiable(_selectedStateChips);
   void removeStateTypeChip(String empType) {
     _selectedStateChips.remove(empType);
     notifyListeners();
@@ -98,8 +97,7 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   final List<String> _selectedSendChips = [];
-  List<String> get selectedSendChips =>
-      List.unmodifiable(_selectedSendChips);
+  List<String> get selectedSendChips => List.unmodifiable(_selectedSendChips);
   void removeSendTypeChip(String empType) {
     _selectedSendChips.remove(empType);
     notifyListeners();
@@ -113,6 +111,7 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   CampaignListData? campaignListData;
+  StatesByGroupsData? statesByGroups;
 
   Future<void> getCampaignListing() async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -120,6 +119,67 @@ class CampaignViewModel extends ChangeNotifier {
     final res = await repo.getCampaignListData(variables);
     if (res.smsCampaign?.length != 0) {
       campaignListData = res;
+    } else {
+      campaignListData = res;
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteCampaign(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": id};
+    final res = await repo.deleteCampaign(variables);
+    if (res != null) {
+      await getCampaignListing();
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger("Campaign Deleted Successfully");
+    }
+    notifyListeners();
+  }
+
+  Future<void> getStatesByGroups() async {
+    print("***********************getStatesByGroups");
+    List<String> sourceList = [];
+    List<String> contactTypeList = [];
+
+    if (_selectedGroupChips.contains("Community members")) {
+      sourceList.add("community_members");
+    }
+
+    if (_selectedGroupChips.contains("Contact-Partner") ||
+        _selectedGroupChips.contains("Contact-Member")) {
+      sourceList.add("partners_contact_book");
+    }
+
+    if (_selectedGroupChips.contains("Contact-Partner")) {
+      contactTypeList.addAll(["PARTNER"]);
+    }
+
+    if (_selectedGroupChips.contains("Contact-Member")) {
+      contactTypeList.addAll(["MEMBER"]);
+    }
+
+    final Map<String, dynamic> whereClause = {
+      "source": {"_in": sourceList}
+    };
+
+    if (contactTypeList.isNotEmpty) {
+      whereClause["contact_type"] = {"_in": contactTypeList};
+    }
+
+    final variables = {"where": whereClause};
+    print("***********************variables $variables");
+
+    final res = await repo.getStatesByGroups(variables);
+    if (res.campaignContacts?.length != 0) {
+      statesByGroups = res;
+      stateOptions = statesByGroups?.campaignContacts
+              ?.map((e) => e.state ?? '')
+              .where((state) => state.isNotEmpty)
+              .toList() ??
+          [];
+    } else {
+      statesByGroups = res;
     }
     notifyListeners();
   }

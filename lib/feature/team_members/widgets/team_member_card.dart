@@ -1,36 +1,27 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
-class CampaignCard extends StatelessWidget {
-  final String id;
-  final String campaignName;
-  final String type;
-  final String createdBy;
+class TeamMemberCard extends StatelessWidget {
+  final String userName;
+  final String email;
   final String status;
-  final String date;
-  final String time;
-  final String repeat;
+  final String id;
 
   final VoidCallback? onApprove;
   final Function(String action, String id)? onMenuAction;
+
   final VoidCallback? onReject;
 
-  const CampaignCard({
+  const TeamMemberCard({
     super.key,
+    required this.userName,
     required this.id,
-    required this.campaignName,
     this.onApprove,
     this.onReject,
     this.onMenuAction,
-    required this.type,
-    required this.createdBy,
+    required this.email,
     required this.status,
-    required this.date,
-    required this.time,
-    required this.repeat,
   });
 
   @override
@@ -55,13 +46,13 @@ class CampaignCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        "Campaign Name: ",
+                        "User Name: ",
                         style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                       Expanded(
                         child: Text(
-                          "$campaignName",
+                          "$userName",
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -78,10 +69,9 @@ class CampaignCard extends StatelessWidget {
                   color: AppColors.whiteColor,
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.more_vert),
-                  onSelected: (value) => onMenuAction?.call(value,id),
+                  onSelected: (value) => onMenuAction?.call(value, id),
                   itemBuilder: (context) => [
-                    _popupItem("Preview", Icons.remove_red_eye, Colors.orange),
-                    _popupItem("Repeat", Icons.repeat, AppColors.blueColor),
+                    _popupItem("Edit", Icons.edit, AppColors.blueColor),
                     _popupItem("Delete", Icons.delete, AppColors.redColor),
                   ],
                 ),
@@ -90,11 +80,7 @@ class CampaignCard extends StatelessWidget {
               ],
             ),
 
-            _infoRow("Type", type),
-            _infoRow("Created by", createdBy),
-            _infoRow("Scheduled date", date),
-            _infoRow("Time", time),
-            _infoRow("Repeat", (repeat == "") ? "no" : repeat),
+            _infoRow("Email", email),
             _infoRow("Status", status),
           ],
         ),
@@ -116,7 +102,6 @@ class CampaignCard extends StatelessWidget {
   }
 
   Widget _infoRow(String title, String value) {
-    String formattedValue = DateFormatUtils.formatDateTime(value);
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -127,7 +112,7 @@ class CampaignCard extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              formattedValue,
+              value,
               overflow: TextOverflow.ellipsis,
             ),
           ),

@@ -112,8 +112,10 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
               (viewModel.selectStateCondition == 'Yes')
                   ? _buildStates(viewModel)
                   : SizedBox.shrink(),
-                addVertical(10),
-              _buildNumbersAndEmails(viewModel)
+              addVertical(10),
+              (viewModel.selectedType != "")
+                  ? _buildNumbersAndEmails(viewModel)
+                  : SizedBox.shrink()
             ],
           ),
         ),
@@ -194,23 +196,25 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
       children: [
         CustomMultiSelectDropDown<String>(
           height: 50,
-          items: viewModel.empOptions,
-          selectedItems: viewModel.selectedEmploymentChips,
+          items: viewModel.groupOptions,
+          selectedItems: viewModel.selectedGroupChips,
           itemLabel: (item) => item,
           hintText: "Select Groups",
           onSelectionChanged: (selected) {
             final current =
-                List<String>.from(viewModel.selectedEmploymentChips);
+                List<String>.from(viewModel.selectedGroupChips);
             for (final emp in current) {
               if (!selected.contains(emp)) {
-                viewModel.removeEmploymentTypeChip(emp);
+                viewModel.removeGroupTypeChip(emp);
               }
             }
             for (final emp in selected) {
               if (!current.contains(emp)) {
-                viewModel.addEmploymentTypeChip(emp);
+                viewModel.addGroupTypeChip(emp);
               }
             }
+            // Call API after selection is finalized
+            viewModel.getStatesByGroups();
           },
         ),
         addVertical(16),
@@ -258,7 +262,9 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Send to Numbers",
+          viewModel.selectedType == "SMS"
+              ? "Send to Numbers"
+              : "Send To Email Address",
           style: TextStyles.regular3(color: AppColors.black),
         ),
         addVertical(6),

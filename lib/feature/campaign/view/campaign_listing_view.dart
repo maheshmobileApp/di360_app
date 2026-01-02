@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_mod
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,8 +28,16 @@ class _JobListingScreenState extends State<CampaignListingView>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
     final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
-    viewModel.getCampaignListing();
+    Loaders.circularShowLoader(context);
+    await viewModel.getCampaignListing();
+    Loaders.circularHideLoader(context);
   }
 
   @override
@@ -82,10 +91,9 @@ class _JobListingScreenState extends State<CampaignListingView>
                     color: AppColors.black))),
          
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 8),
           child: Column(
             children: [
-              Divider(),
               /*if (viewModel.searchBarOpen)
                 SearchWidget(
                   controller: viewModel.searchController,
@@ -118,15 +126,22 @@ class _JobListingScreenState extends State<CampaignListingView>
                           final campaignData =
                               viewModel.campaignListData?.smsCampaign?[index];
                           return CampaignCard(
+                            id: campaignData?.id??"" ,
                             campaignName: campaignData?.campaignName??"",
                             date: campaignData?.scheduleDate??"",
                             type: campaignData?.messageChannel??"",
                             status: campaignData?.status??"",
                             repeat: campaignData?.isRepeating??"",
                             time: campaignData?.scheduleTimeLocal??"", createdBy: '',
-          
-          
-                           
+                            onMenuAction: (action,id){
+                              switch (action) {
+                                case 'Delete':
+                                  viewModel.deleteCampaign(context,id);
+                                  break;
+                                default:
+                                  break;
+                              }
+                            },
                           );
                         },
                       ),
