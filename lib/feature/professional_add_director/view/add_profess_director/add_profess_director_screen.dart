@@ -142,11 +142,10 @@ class ProfessionalAddDirectorView extends StatelessWidget
                       navigationService.goBack();
                     } else {
                       if (currentStep == 0) {
-                        addDirectorVM.getBasicInfoData.first.id?.isEmpty ??
-                                false
+                        print(addDirectorVM.getBasicInfoData);
+                        addDirectorVM.getBasicInfoData.isEmpty == true
                             ? await professAddDirectVM.addBasicData(context)
                             : await professAddDirectVM.updateBasicData(context);
-                        professAddDirectVM.goToNextStep();
                       } else if (currentStep == 1) {
                         await professAddDirectVM.updateBasicData(context);
                         professAddDirectVM.goToNextStep();

@@ -13,11 +13,7 @@ abstract class TalentRepository {
     int offset = 0,
   });*/
   Future<List<JobProfiles>> getJobProfileFilterData(
-    List<String>? selectedProfessions,
-  List<String>? selectedEmploymentTypes,
-  List<String>? selectedExperiences,
-  List<String>? availability,
-   List<String>? selectedDays,
+   dynamic variables
 );
   Future<List<JobsRoleLists>> getJobProfiles();
 }

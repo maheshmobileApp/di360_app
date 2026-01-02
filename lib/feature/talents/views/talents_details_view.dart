@@ -28,7 +28,7 @@ class TalentsDetailsView extends StatefulWidget with BaseContextHelpers {
     super.key,
     this.talentList,
   });
-    
+
   @override
   State<TalentsDetailsView> createState() => _TalentsDetailsViewState();
 }
@@ -39,28 +39,37 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
-        leading: IconButton(
-            onPressed: () {
-              navigationService.goBack();
-            },
-            icon: Icon(Icons.arrow_back_ios)),
-        title: Text(
-          "Talent Preview",
-          style: TextStyles.medium2(),
-        )),
-       body: _buildBodyContent(context, talentViewModel),
-       bottomNavigationBar: FutureBuilder<String>(
-         future: LocalStorage.getStringVal(LocalStorageConst.type),
-         builder: (context, snapshot) {
-           if (snapshot.hasData && snapshot.data == "SUPPLIER" || snapshot.data == "PRACTICE") {
-             return _bottomButtons(context);
-           }
-           return const SizedBox.shrink();
-         },
-       ));
+        appBar: AppBar(
+            backgroundColor: AppColors.whiteColor,
+            leading: IconButton(
+                onPressed: () {
+                  navigationService.goBack();
+                },
+                icon: Icon(Icons.arrow_back_ios)),
+            title: Text(
+              "Talent Preview",
+              style: TextStyles.medium2(),
+            )),
+        body: _buildBodyContent(context, talentViewModel),
+        bottomNavigationBar: FutureBuilder<String>(
+          future: LocalStorage.getStringVal(LocalStorageConst.type),
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                (snapshot.data == "SUPPLIER" || snapshot.data == "PRACTICE")) {
+              return FutureBuilder<String>(
+                future: LocalStorage.getStringVal(LocalStorageConst.userId),
+                builder: (context, userSnapshot) {
+                  if (userSnapshot.hasData) {
+                    return _bottomButtons(context, userSnapshot.data!);
+                  }
+                  return const SizedBox.shrink();
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ));
   }
 
   Widget _buildBodyContent(
@@ -73,7 +82,6 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
-          
           children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(
@@ -95,7 +103,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                       text: 'View CV',
                       onPressed: () {
                         navigationService.push(HorizantalPdf(
-                          fileUrl: widget.talentList!.uploadResume.first.url ?? '',
+                          fileUrl:
+                              widget.talentList!.uploadResume.first.url ?? '',
                           fileName: '',
                           isfullScreen: true,
                         ));
@@ -112,7 +121,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                   if (widget.talentList?.yearOfExperience != null)
                     ExerinaceInfoIcons(
                         icon: Icons.work,
-                        text: '${widget.talentList!.yearOfExperience} Yrs Experience'),
+                        text:
+                            '${widget.talentList!.yearOfExperience} Yrs Experience'),
                   if (widget.talentList?.yearOfExperience != null)
                     addVertical(12),
                   if (widget.talentList?.location?.isNotEmpty == true)
@@ -154,11 +164,10 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 ],
               ),
               Divider(color: AppColors.geryColor),
-              
+
               // Professional Details Section
-              if (_hasAnyProfessionalData())
-                _buildProfessionalSection(),
-              
+              if (_hasAnyProfessionalData()) _buildProfessionalSection(),
+
               // Skills Section
               if (widget.talentList?.skills?.isNotEmpty == true) ...[
                 addVertical(10),
@@ -166,7 +175,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 addVertical(6),
                 CustomChipView(typesList: widget.talentList!.skills!),
               ],
-              
+
               // Work Type Section
               if (widget.talentList?.workType.isNotEmpty == true) ...[
                 addVertical(10),
@@ -174,14 +183,14 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 addVertical(6),
                 CustomChipView(typesList: widget.talentList!.workType),
               ],
-              
+
               // About Section
               if (widget.talentList?.aboutYourself?.isNotEmpty == true) ...[
                 const Divider(),
                 _sectionHeader("About me / Profile Summary"),
                 _sectionText(widget.talentList!.aboutYourself!),
               ],
-              
+
               // Work Experience Section
               if (widget.talentList?.jobExperiences.isNotEmpty == true) ...[
                 const Divider(),
@@ -189,21 +198,21 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 addVertical(10),
                 _buildJobExperiencesList(talentViewmodel),
               ],
-              
+
               // Certifications Section
               if (widget.talentList?.certificate.isNotEmpty == true) ...[
                 addVertical(16),
                 _sectionHeader("Certifications"),
                 CertificatesView(certificates: widget.talentList?.certificate),
               ],
-              
+
               // Cover Letter Section
               if (widget.talentList?.coverLetter.isNotEmpty == true) ...[
                 addVertical(16),
                 _sectionHeader("Cover Letter"),
                 CertificatesView(certificates: widget.talentList?.coverLetter),
               ],
-              
+
               // Location Section
               if (widget.talentList?.location?.isNotEmpty == true) ...[
                 addVertical(16),
@@ -218,7 +227,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
     );
   }
 
-  Widget _bottomButtons(BuildContext context) {
+  Widget _bottomButtons(BuildContext context, String userId) {
     return Container(
       height: getSize(context).height * 0.1,
       decoration: BoxDecoration(boxShadow: [
@@ -247,25 +256,38 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             addHorizontal(16),
             Expanded(
               child: CustomRoundedButton(
-                text: (widget.talentList?.jobHirings.isNotEmpty == true && widget.talentList?.jobHirings.first.id != null) ? 'Requested' : 'Hire Me',
+                text: ((widget.talentList?.jobHirings
+                                .any((v) => v.dentalSupplierId == userId) ==
+                            true) ||
+                        (widget.talentList?.jobHirings
+                                .any((v) => v.dentalPracticeId == userId) ==
+                            true))
+                    ? 'Requested'
+                    : 'Hire Me',
                 height: 42,
                 onPressed: () async {
-                  if (widget.talentList?.jobHirings.isNotEmpty == true && widget.talentList?.jobHirings.first.id != null){
-                    ToastMessage.show('You have already sent a request to this talent!');
-
-                  }else{
                   final userId =
                       await LocalStorage.getStringVal(LocalStorageConst.userId);
-                  final provider =
-                      Provider.of<TalentsViewModel>(context, listen: false);
-                  final hireRequest = HireMeRequest(
-                      dentalProfessionalId: userId,
-                      dentalSupplierId: null,
-                      message: '',
-                      attachments: []);
-                  await provider.hireMe(hireRequest);
-                  ToastMessage.show('Hire Me Request sent successfully!');
-                }},
+                  if ((widget.talentList?.jobHirings
+                              .any((v) => v.dentalSupplierId == userId) ==
+                          true) ||
+                      (widget.talentList?.jobHirings
+                              .any((v) => v.dentalPracticeId == userId) ==
+                          true)) {
+                    ToastMessage.show(
+                        'You have already sent a request to this talent!');
+                  } else {
+                    final provider =
+                        Provider.of<TalentsViewModel>(context, listen: false);
+                    final hireRequest = HireMeRequest(
+                        dentalProfessionalId: userId,
+                        dentalSupplierId: null,
+                        message: '',
+                        attachments: []);
+                    await provider.hireMe(hireRequest);
+                    ToastMessage.show('Hire Me Request sent successfully!');
+                  }
+                },
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.whiteColor,
               ),
@@ -413,23 +435,22 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
         overflow: TextOverflow.visible,
         style: TextStyles.regular1(color: AppColors.locationTextColor));
   }
-  
+
   bool _hasAnyProfessionalData() {
     return (widget.talentList?.abnNumber?.isNotEmpty == true) ||
-           (widget.talentList?.professionType?.isNotEmpty == true) ||
-           (widget.talentList?.aphraNumber?.isNotEmpty == true) ||
-           (widget.talentList?.workRights?.isNotEmpty == true);
+        (widget.talentList?.professionType?.isNotEmpty == true) ||
+        (widget.talentList?.aphraNumber?.isNotEmpty == true) ||
+        (widget.talentList?.workRights?.isNotEmpty == true);
   }
-  
+
   Widget _buildProfessionalSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         addVertical(16),
         _sectionHeader("Professional Details"),
-        
         if (widget.talentList?.professionType?.isNotEmpty == true) ...[
-           addVertical(10),
+          addVertical(10),
           Text("Profession Type", style: TextStyles.medium2()),
           addVertical(4),
           ExerinaceInfoIcons(
@@ -437,7 +458,6 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             text: widget.talentList!.professionType!,
           ),
         ],
-        
         if (widget.talentList?.abnNumber?.isNotEmpty == true) ...[
           addVertical(10),
           Text("ABN Number", style: TextStyles.medium2()),
@@ -447,7 +467,6 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             text: widget.talentList!.abnNumber!,
           ),
         ],
-        
         if (widget.talentList?.aphraNumber?.isNotEmpty == true) ...[
           addVertical(10),
           Text("AHPRA Number", style: TextStyles.medium2()),
@@ -457,7 +476,6 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             text: widget.talentList!.aphraNumber!,
           ),
         ],
-        
         if (widget.talentList?.workRights?.isNotEmpty == true) ...[
           addVertical(10),
           Text("Work Rights", style: TextStyles.medium2()),

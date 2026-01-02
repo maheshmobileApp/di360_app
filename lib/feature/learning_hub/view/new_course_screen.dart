@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
@@ -52,8 +53,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
         actions: [
           GestureDetector(
             onTap: () async {
-              //await jobCreateVM.setJobPreviewData();
-              //navigationService.navigateTo(RouteList.courseDetailScreen);
+              
+              navigationService.navigateTo(RouteList.courseDetailScreen);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

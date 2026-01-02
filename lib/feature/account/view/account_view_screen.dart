@@ -22,7 +22,6 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
-import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';

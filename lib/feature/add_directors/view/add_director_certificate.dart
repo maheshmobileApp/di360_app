@@ -126,7 +126,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
               () =>
                   addDirectorVM.pickCertificateImage(picker.ImageSource.camera),
             ),
-            hintText: fileName ?? 'JPEG, PNG, PDF formats, up to 5 MB',
+            hintText: fileName ?? 'JPEG, PNG up to 5 MB',
           ),
           addVertical(20),
           CustomBottomButton(

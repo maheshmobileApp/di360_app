@@ -20,11 +20,7 @@ abstract class JobSeekRepository {
   Future<List<JobsRoleList>> getJobRoles();
   Future<List<JobTypes>> getJobWorkTypes();
   Future<List<Jobs>> fetchFilteredJobs(
-  List<String> professions,
-  List<String> employmentTypes,
-  List<String> experiences,
-  List<String> availability,
-  String? location
+  dynamic variables
 );
 
 

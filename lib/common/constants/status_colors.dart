@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class StatusColors {
   static const Map<String, Color> _statusColorMap = {
     "APPROVE": Colors.green,
+    "APPROVED": Colors.green,
+    "CANCELLED": Colors.red,
     "PENDING": Colors.orange,
     "REJECTED": Colors.red,
     "DRAFT": Colors.black,
@@ -10,6 +12,6 @@ class StatusColors {
   };
 
   static Color getColor(String status) {
-    return _statusColorMap[status] ?? Colors.black; 
+    return _statusColorMap[status] ?? Colors.black;
   }
 }

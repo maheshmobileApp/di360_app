@@ -249,6 +249,8 @@ class TalentsFilterScreen extends StatelessWidget with BaseContextHelpers {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MultiDateCalendarPicker(
+          initialDate: DateTime.now(),
+          firstDate: DateTime.utc(2000),
           selectedDates: model.availabilityDates,
           controller: model.availabilityDateController,
           onDatesChanged: (dates) {

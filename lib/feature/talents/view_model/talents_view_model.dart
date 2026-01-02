@@ -133,7 +133,8 @@ class TalentsViewModel extends ChangeNotifier {
     try {
       final res = await repo.getTalentDetails();
       talentList = res;
-      print("***********************${talentList.first.jobHirings.length}***********************");
+      print(
+          "***********************${talentList.first.jobHirings.length}***********************");
       print("Fetched ${talentList.length} talents");
     } finally {
       Loaders.circularHideLoader(context);
@@ -145,13 +146,78 @@ class TalentsViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     try {
       printSelectedItems();
-      final result = await repo.getJobProfileFilterData(
-        selectedProfessions,
-        selectedEmploymentTypes,
-        selectedExperiences,
-        selectedAvailability,
-        selectedDays,
-      );
+
+      List<Map<String, dynamic>> whereConditions = [
+        {
+          "admin_status": {"_eq": "APPROVE"}
+        },
+        {
+          "active_status": {"_eq": "ACTIVE"}
+        }
+      ];
+
+      if (locationController.text.isNotEmpty) {
+        whereConditions.add({
+          "_or": [
+            {
+              "full_name": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "location": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "city": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "state": {"_ilike": "%${locationController.text}%"}
+            }
+          ]
+        });
+      }
+
+      if (selectedProfessions.isNotEmpty) {
+        whereConditions.add({
+          "profession_type": {"_in": selectedProfessions}
+        });
+      }
+
+      if (selectedEmploymentTypes.isNotEmpty) {
+        whereConditions.add({
+          "work_type": {"_has_keys_any": selectedEmploymentTypes}
+        });
+      }
+
+      if (selectedAvailability.isNotEmpty) {
+        whereConditions.add({
+          "availabilityDate": {"_has_keys_any": selectedAvailability}
+        });
+      }
+
+      if (selectedDays.isNotEmpty) {
+        whereConditions.add({
+          "availabilityDay": {"_has_keys_any": selectedDays}
+        });
+      }
+
+      if (selectedExperiences.isNotEmpty) {
+        whereConditions.add({
+          "Year_of_experiance": {"_eq": selectedExperiences.first}
+        });
+      }
+
+      final variables = {
+        "limit": 10,
+        "offset": 0,
+        "where": {"_and": whereConditions}
+      };
+
+      if (selectedSort != null) {
+        variables["order_by"] = [
+          {"full_name": selectedSort == 'A to Z' ? 'asc' : 'desc'}
+        ];
+      }
+
+      final result = await repo.getJobProfileFilterData(variables);
       if (result != []) {
         talentList = result;
       }
@@ -261,6 +327,7 @@ class TalentsViewModel extends ChangeNotifier {
   void clearSelections() {
     selectedIndices.updateAll((key, value) => {});
     selectedExperienceDropdown = null;
+    availabilityDateController.text = "";
     selectedSort = null;
     availabilityDates.clear();
     selectedDays.clear();

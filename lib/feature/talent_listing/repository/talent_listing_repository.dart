@@ -13,8 +13,7 @@ abstract class TalentListingRepository {
       dynamic variables);
   Future<JobProfileEnquiriesResList> getTalentEnquiry(String talentId);
   Future<TalentsMessageResData> fetchTalentMessages(String talentId);
-  Future<dynamic> sendTalentMessage(
-      dynamic variables);
+  Future<dynamic> sendTalentMessage(dynamic variables);
   Future<dynamic> updateTalentMessage(String Id, String message);
   Future<dynamic> deleteTalentMessage(dynamic variables);
   Future<List<JobProfiles>> getTalentPreviewData(dynamic variables);

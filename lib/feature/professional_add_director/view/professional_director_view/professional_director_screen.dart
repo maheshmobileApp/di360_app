@@ -19,20 +19,20 @@ class ProfessionalDirectorScreen extends StatelessWidget {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final directionalVM = Provider.of<DirectoryViewModel>(context);
     final professVM = Provider.of<ProfessionalAddDirectorVm>(context);
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.whiteColor,
-        floatingActionButton: FloatingActionButton(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            onPressed: () {
-              professVM.updateCurrentStep();
-              navigationService.navigateTo(RouteList.professionAddDirectorView);
-            },
-            backgroundColor: AppColors.primaryColor,
-            child: SvgPicture.asset(ImageConst.addFeed,
-                color: AppColors.whiteColor)),
-        body: CustomScrollView(
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      floatingActionButton: FloatingActionButton(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          onPressed: () {
+            professVM.updateCurrentStep();
+            navigationService.navigateTo(RouteList.professionAddDirectorView);
+          },
+          backgroundColor: AppColors.primaryColor,
+          child: SvgPicture.asset(ImageConst.addFeed,
+              color: AppColors.whiteColor)),
+      body: SafeArea(
+        child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: UserDetailsWidget(

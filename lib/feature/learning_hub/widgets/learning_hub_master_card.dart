@@ -141,15 +141,18 @@ class ListingHubMasterCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Placeholder for Logo
                           CircleAvatar(
                             backgroundColor: AppColors.geryColor,
                             radius: 15,
-                            child: CachedNetworkImageWidget(
-                                    imageUrl: profilePic ?? '',
-                                    fit: BoxFit.fill,
-                                    errorWidget:
-                                        Image.asset(ImageConst.prfImg)),
+                            child: ClipOval(
+                              child: CachedNetworkImageWidget(
+                                imageUrl: profilePic ?? '',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                                errorWidget: Image.asset(ImageConst.prfImg)
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Text(presenterName.toUpperCase(),

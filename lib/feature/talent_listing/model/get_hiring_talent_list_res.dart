@@ -234,10 +234,10 @@ class HiringJobProfiles {
     fullName = json['full_name'];
     professionType = json['profession_type'];
     state = json['state'];
-    profileImage = json['profile_image'] != null
-        ? new ProfileImage.fromJson(json['profile_image'])
+    profileImage = json['profile_image'] != null && json['profile_image'] is List && (json['profile_image'] as List).isNotEmpty
+        ? new ProfileImage.fromJson(json['profile_image'][0])
         : null;
-    workType = json['work_type'].cast<String>();
+    workType = json['work_type'] != null ? json['work_type'].cast<String>() : null;
     dentalProfessionalId = json['dental_professional_id'];
     postAnonymously = json['post_anonymously'];
     dentalProfessional = json['dental_professional'] != null
@@ -293,14 +293,22 @@ class ProfileImage {
 
 class DentalProfessional {
   String? gender;
-  Null? profileImage;
+  List<ProfileImage>? profileImage;
   String? sTypename;
 
   DentalProfessional({this.gender, this.profileImage, this.sTypename});
 
   DentalProfessional.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
-    profileImage = json['profile_image'];
+    if (json['profile_image'] != null) {
+      if (json['profile_image'] is List) {
+        profileImage = (json['profile_image'] as List)
+            .map((v) => ProfileImage.fromJson(v))
+            .toList();
+      } else if (json['profile_image'] is Map) {
+        profileImage = [ProfileImage.fromJson(json['profile_image'])];
+      }
+    }
     sTypename = json['__typename'];
   }
 

@@ -14,6 +14,11 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final professDirectorVM = Provider.of<ProfessionalAddDirectorVm>(context);
+    
+    if (addDirectorVM.getBasicInfoData.isEmpty) {
+      return Center(child: Text('No data available'));
+    }
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -25,7 +30,7 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.first.education?.length,
+            itemCount: addDirectorVM.getBasicInfoData.first.education?.length ?? 0,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -61,7 +66,7 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.first.workingAt?.length,
+            itemCount: addDirectorVM.getBasicInfoData.first.workingAt?.length ?? 0,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
