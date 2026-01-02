@@ -200,7 +200,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                     if (count > 0) {
                       navigationService
-                          .navigateTo(RouteList.registeredUsersView);
+                          .navigateToWithParams(RouteList.registeredUsersView,params: {"course_id":course.id ?? "" });
                     } else {
                       scaffoldMessenger('No Registered Users');
                     }

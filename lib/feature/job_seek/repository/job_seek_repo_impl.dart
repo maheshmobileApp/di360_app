@@ -99,36 +99,9 @@ class JobSeekRepoImpl extends JobSeekRepository {
   }
 
   @override
-  Future<List<Jobs>> fetchFilteredJobs(
-    List<String>? professions,
-    List<String>? employmentTypes,
-    List<String>? experiences,
-    List<String>? availability,
-    String? location,
-  ) async {
+  Future<List<Jobs>> fetchFilteredJobs(dynamic variables) async {
     try {
-      final Map<String, dynamic> whereConditions = {};
-     
-      if (employmentTypes != null && employmentTypes.isNotEmpty) {
-        whereConditions["TypeofEmployment"] = {"_contains": employmentTypes};
-      }
-
-      if (experiences != null && experiences.isNotEmpty) {
-        whereConditions["years_of_experience"] = {"_eq": experiences[0]};
-      }
-
-      if (professions != null && professions.isNotEmpty) {
-        whereConditions["j_role"] = {"_in": professions};
-      }
-
-      if (location != null && location.isNotEmpty) {
-        whereConditions["location"] = {"_eq": location};
-      }
-
-      final variables = {
-        "where": whereConditions,
-      };
-      print("Filter Variables: $variables");
+      print("*******************Filter Variables: $variables");
       final result =
           await _http.query(getAllJobsFilterQuery, variables: variables);
       final jobsJson = result['jobs'] as List<dynamic>? ?? [];

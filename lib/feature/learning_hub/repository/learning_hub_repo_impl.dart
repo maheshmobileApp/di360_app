@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/course_status_cou
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/delete_course_query.dart';
@@ -16,9 +17,11 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_coun
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_market_place_courses.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/get_register_user_tab_count.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
@@ -56,8 +59,8 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getCoursesListing(
-      String? listingStatus,String? activeStatus, String? userId, String? searchText) async {
+  Future<List<CoursesListingDetails>?> getCoursesListing(String? listingStatus,
+      String? activeStatus, String? userId, String? searchText) async {
     final Map<String, dynamic> whereCondition = {};
 
     if (listingStatus != null &&
@@ -166,17 +169,27 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CourseRegisteredUsers>?> getCourseRegisteredUsers(
-      String? courseId) async {
+  Future<RegisteredUsersData> getCourseRegisteredUsers(
+      String? courseId, String status) async {
+    final Map<String, dynamic> statusCondition = status == ""
+        ? {
+            "_in": ["PENDING", "APPROVED", "CANCELLED", "COMPLETED"]
+          }
+        : {"_eq": status};
+
     final Map<String, dynamic> variables = {
-      "course_id": "${courseId}",
-      "limit": 1000,
-      "offset": 0
+      "limit": 100,
+      "offset": 0,
+      "where": {
+        "course_id": {"_eq": courseId},
+        "status": statusCondition
+      }
     };
+    print("**************************variables $variables");
     final getUsersData =
         await http.query(getCourseRegisteredUsersQuery, variables: variables);
-    final result = GetUsers.fromJson(getUsersData);
-    return result.courseRegisteredUsers;
+    final result = RegisteredUsersData.fromJson(getUsersData);
+    return result;
   }
 
   @override
@@ -214,41 +227,41 @@ class LearningHubRepoImpl extends LearningHubRepository {
     final List<Map<String, dynamic>> andConditions = [];
 
     final List<String> typeList = type.isNotEmpty
-      ? type.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
-      : [];
+        ? type
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList()
+        : [];
 
     final List<String> categoryList = courseCategoryId.isNotEmpty
-      ? courseCategoryId
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList()
-      : [];
+        ? courseCategoryId
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList()
+        : [];
 
-      String startDateFormatted = "";
-      if (startDate.isNotEmpty) {
-        try {
-          startDateFormatted = DateFormat("yyyy-MM-dd").format(DateFormat("dd/MM/yyyy").parse(startDate));
-        } catch (e) {
-          print("Date parsing error: $e");
-          startDateFormatted = "";
-        }
+    String startDateFormatted = "";
+    if (startDate.isNotEmpty) {
+      try {
+        startDateFormatted = DateFormat("yyyy-MM-dd")
+            .format(DateFormat("dd/MM/yyyy").parse(startDate));
+      } catch (e) {
+        print("Date parsing error: $e");
+        startDateFormatted = "";
       }
-
+    }
 
     if (type.isNotEmpty) {
       andConditions.add({
-        "type": {
-          "_in": typeList
-        }
+        "type": {"_in": typeList}
       });
     }
 
     if (courseCategoryId.isNotEmpty) {
       andConditions.add({
-        "course_category_id": {
-          "_in": categoryList
-        }
+        "course_category_id": {"_in": categoryList}
       });
     }
 
@@ -287,6 +300,23 @@ class LearningHubRepoImpl extends LearningHubRepository {
   Future updateCourseStatus(String courseId, String status) async {
     final Map<String, dynamic> variables = {"id": courseId, "status": status};
     final res = await http.mutation(getUpdateCourseStatus, variables);
+    return res;
+  }
+
+  @override
+  Future<RegisterUserTabCountData> getRegisterUserTabCountData(
+      variables) async {
+    final res =
+        await http.query(getRegisterUserTabCountQuery, variables: variables);
+    final data = RegisterUserTabCountData.fromJson(res);
+    return data;
+  }
+  
+  @override
+  Future updateRegUserStatus(variables)  async {
+    final res =
+        await http.mutation(updateRegUserStatusQuery, variables);
+   
     return res;
   }
 

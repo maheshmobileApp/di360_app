@@ -367,16 +367,28 @@ class DentalProfessional {
 
 class JobHiring {
   final String? id;
+  final String? dentalSupplierId;
+  final String? dentalPracticeId;
+  final String? hiringStatus;
   final String? typeName;
 
-  JobHiring({this.id, this.typeName});
+  JobHiring({this.id, this.dentalSupplierId, this.dentalPracticeId, this.hiringStatus, this.typeName});
 
   factory JobHiring.fromJson(Map<String, dynamic> json) => JobHiring(
         id: json['id'],
+        dentalSupplierId: json['dental_supplier_id'],
+        dentalPracticeId: json['dental_practice_id'],
+        hiringStatus: json['hiring_status'],
         typeName: json['__typename'],
       );
 
-  Map<String, dynamic> toJson() => {'id': id, '__typename': typeName,};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'dental_supplier_id': dentalSupplierId,
+        'dental_practice_id': dentalPracticeId,
+        'hiting_status': hiringStatus,
+        '__typename': typeName,
+      };
 }
 
 class TalentEnquiries {

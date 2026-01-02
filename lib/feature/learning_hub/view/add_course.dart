@@ -242,11 +242,10 @@ class AddCourse extends StatelessWidget
                 onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
               ),
               SizedBox(height: 8),
-              _sectionHeader("Images/Video"),
+              //_sectionHeader("Images/Video"),
               SizedBox(height: 8),
               ImagePickerField(
-                title: "Course Header Banner / Video",
-                isRequired: true,
+                title: "Course Banner Image/Video.",
                 acceptVideo: true,
                 serverImage: jobCreateVM.serverCourseHeaderBanner?.url,
                 serverImageType: jobCreateVM.serverCourseHeaderBanner?.type,
@@ -284,7 +283,7 @@ class AddCourse extends StatelessWidget
                 onFilesPicked: (file) => jobCreateVM.setCourseBannerImg(file),
               ),
               SizedBox(height: 8),
-              _sectionHeader("Price/Availability"),
+              //_sectionHeader("Price/Availability"),
               SizedBox(height: 8),
               InputTextField(
                 hintText: "Enter your text here",

@@ -11,7 +11,6 @@ import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class TalentListingMessageScreen extends StatefulWidget
     with BaseContextHelpers {
@@ -104,6 +103,7 @@ class _TalentListingMessageScreenState
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
                         controller: scrollController,
+                        reverse: true,
                         padding: const EdgeInsets.all(12),
                         itemCount: messages?.length ?? 0,
                         itemBuilder: (context, index) {

@@ -212,7 +212,14 @@ class Routes {
           ProfessionalAddDirectorView(),
       RouteList.bannersListView: (context) => BannersListScreen(),
       RouteList.addBanners: (context) => AddBannersScreen(),
-      RouteList.registeredUsersView: (context) => RegisteredUsersView(),
+      RouteList.registeredUsersView: (context) {
+        final args =
+            ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return RegisteredUsersView(
+          courseId: args['course_id'],
+          
+        );
+      },
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
       RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
       RouteList.viewProfileScreen: (context) => ViewProfileView(),
