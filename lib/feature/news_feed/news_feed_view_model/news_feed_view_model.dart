@@ -271,10 +271,10 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> blockUser(BuildContext context, String userId) async {
     Loaders.circularShowLoader(context);
-    final res = await _http.post('/api/v1/auth/check-news-feed-block', {
+     await _http.post('/api/v1/auth/check-news-feed-block', {
       "userId": userId,
     });
-    scaffoldMessenger(res['message']);
+    scaffoldMessenger("Reported successfully");
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
