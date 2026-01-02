@@ -80,7 +80,7 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
                                   color: AppColors.primaryColor))
                         ]),
                     SizedBox(height: 20),
-                    InputTextField(title: 'Report', hintText: 'Enter report'),
+                    InputTextField(title: 'Report', hintText: 'Enter report',maxLines: 5,),
                     SizedBox(height: 40),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

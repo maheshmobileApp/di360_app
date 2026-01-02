@@ -440,7 +440,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 viewModel.reportNewsFeed(context, newsfeeds?.id ?? '');
               });
             } else if (val == 'block') {
-              showUserBlockPopup(context, 'Are you sure Block this user',
+              showUserBlockPopup(context, 'Are you sure you want to block this user?',
                   confirmAction: () {
                 navigationService.goBack();
                 viewModel.blockUser(context, newsUserId);
