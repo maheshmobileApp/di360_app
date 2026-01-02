@@ -33,10 +33,9 @@ class ProfessBasicInfo extends StatelessWidget
           _buildBusineestype(addDirectorVM),
           addVertical(20),
           InputTextField(
-            hintText: "Enter designation",
-            title: "Designation",
-            controller: professDirectorVM.designationCntr
-          ),
+              hintText: "Enter designation",
+              title: "Designation",
+              controller: professDirectorVM.designationCntr),
           addVertical(20),
           InputTextField(
             title: "Name",
@@ -55,13 +54,12 @@ class ProfessBasicInfo extends StatelessWidget
           ),
           addVertical(20),
           InputTextField(
-            hintText: "Enter Phone Number",
-            title: " Phone Number ",
-            controller: professDirectorVM.mobileNumberCntr,
-            isRequired: true,
-            keyboardType: TextInputType.number,
-             validator: validatePhoneNumber
-          ),
+              hintText: "Enter Phone Number",
+              title: " Phone Number ",
+              controller: professDirectorVM.mobileNumberCntr,
+              isRequired: true,
+              keyboardType: TextInputType.number,
+              validator: validatePhoneNumber),
           addVertical(20),
           InputTextField(
             hintText: "Enter Alternate Phone Number",
@@ -109,46 +107,82 @@ class ProfessBasicInfo extends StatelessWidget
           ),
           addVertical(10),
           sectionHeader('Hobbies'),
-          addVertical(20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.isNotEmpty ? addDirectorVM.getBasicInfoData.first.hobbies?.length ?? 0 : 0,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InputTextField(
-                          hintText: "Enter hobbies",
-                          title: "Hobbies",
-                          controller: professDirectorVM.hobbiesCntr[index],
-                          onChange: (value) => professDirectorVM.updateHobby(
-                              context, index, value)),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: AppColors.redColor),
-                      onPressed: () =>
-                          professDirectorVM.removeHobby(context, index),
-                    )
-                  ],
-                ),
+          InputTextField(
+              title: '',
+              hintText: 'Add hobby',
+              controller: professDirectorVM.hobbiesCntr,
+              onSubmitted: (val) {
+                professDirectorVM.addHobby(val ?? '', context);
+              }),
+          if (addDirectorVM.getBasicInfoData.first.hobbies?.isNotEmpty ??
+              false) ...[
+            addVertical(10),
+            Consumer<AddDirectoryViewModel>(
+                builder: (context, addDirectorV, child) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: List.generate(
+                    addDirectorV.getBasicInfoData.first.hobbies?.length ?? 0,
+                    (index) {
+                  final hobby =
+                      addDirectorV.getBasicInfoData.first.hobbies?[index];
+                  return Chip(
+                    label: Text(hobby?.name ?? ''),
+                    deleteIcon: Icon(Icons.close),
+                    onDeleted: () {
+                      professDirectorVM.removeHobby(index, context);
+                    },
+                  );
+                }),
               );
-            },
-          ),
-          addVertical(10),
-          ElevatedButton.icon(
-            onPressed: () => professDirectorVM.addHobby(context),
-            icon: const Icon(Icons.add),
-            label: const Text("Add hobbies"),
-          ),
+            }),
+          ],
+
+          // ListView.builder(
+          //   shrinkWrap: true,
+          //   physics: NeverScrollableScrollPhysics(),
+          //   itemCount: addDirectorVM.getBasicInfoData.isNotEmpty ? addDirectorVM.getBasicInfoData.first.hobbies?.length ?? 0 : 0,
+          //   itemBuilder: (context, index) {
+          //     return Padding(
+          //       padding: const EdgeInsets.only(top: 10),
+          //       child: Row(
+          //         children: [
+          //           Expanded(
+          //             child: InputTextField(
+          //                 hintText: "Enter hobbies",
+          //                 title: "Hobbies",
+          //                 controller: professDirectorVM.hobbiesCntr[index],
+          //                 onChange: (value) => professDirectorVM.updateHobby(
+          //                     context, index, value)),
+          //           ),
+          //           IconButton(
+          //             icon: Icon(Icons.delete, color: AppColors.redColor),
+          //             onPressed: () =>
+          //                 professDirectorVM.removeHobby(context, index),
+          //           )
+          //         ],
+          //       ),
+          //     );
+          //   },
+          // ),
+
+          // addVertical(10),
+          // ElevatedButton.icon(
+          //   onPressed: () => professDirectorVM.addHobby(context),
+          //   icon: const Icon(Icons.add),
+          //   label: const Text("Add hobbies"),
+          // ),
           sectionHeader('Universities'),
           addVertical(20),
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.isNotEmpty ? addDirectorVM.getBasicInfoData.first.universitySchool?.length ?? 0 : 0,
+            itemCount: addDirectorVM.getBasicInfoData.isNotEmpty
+                ? addDirectorVM
+                        .getBasicInfoData.first.universitySchool?.length ??
+                    0
+                : 0,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -183,7 +217,9 @@ class ProfessBasicInfo extends StatelessWidget
             hintText: "Enter your text here",
             maxLength: 500,
             isRequired: true,
-            validator: (value) => value == null || value.isEmpty ? 'Please enter description' : null,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please enter description'
+                : null,
             maxLines: 5,
             title: "Description",
             controller: professDirectorVM.descController,
@@ -200,7 +236,6 @@ class ProfessBasicInfo extends StatelessWidget
 
     return CustomDropDown(
       value: addDirectorVM.selectedBusineestype,
-      
       title: "Profession Type",
       onChanged: (v) =>
           addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
@@ -213,7 +248,9 @@ class ProfessBasicInfo extends StatelessWidget
       }).toList(),
       hintText: "Select category",
       isRequired: true,
-      validator: (value) => addDirectorVM.selectedBusineestype == null ? 'Please select category' : null,
+      validator: (value) => addDirectorVM.selectedBusineestype == null
+          ? 'Please select category'
+          : null,
     );
   }
 }

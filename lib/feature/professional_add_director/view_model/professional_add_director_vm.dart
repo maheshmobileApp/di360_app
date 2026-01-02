@@ -24,7 +24,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   final TextEditingController descController = TextEditingController();
   TextEditingController alternateNumberController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  List<TextEditingController> hobbiesCntr = [];
+  TextEditingController hobbiesCntr = TextEditingController();
   List<TextEditingController> universitiesCntr = [];
   List<TextEditingController> educationCntr = [];
   List<TextEditingController> workAtCntr = [];
@@ -77,31 +77,48 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     }
   }
 
-  void loadHobbies(List<Hobbies> list) {
-    hobbiesCntr =
-        list.map((h) => TextEditingController(text: h.name ?? "")).toList();
-    notifyListeners();
-  }
-
-  void updateHobby(BuildContext context, int index, String value) {
+  void addHobby(String value, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.hobbies?[index].name = value;
+    if (value.isNotEmpty) {
+      addDirectorVM.getBasicInfoData.first.hobbies
+          ?.add(Hobbies(name: value));
+      hobbiesCntr.clear();
+    }
+    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void addHobby(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.hobbies?.add(Hobbies(name: null));
-    hobbiesCntr.add(TextEditingController());
-    notifyListeners();
-  }
-
-  void removeHobby(BuildContext context, int index) {
+  void removeHobby(int index, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.hobbies?.removeAt(index);
-    hobbiesCntr.removeAt(index);
     notifyListeners();
   }
+
+  // void loadHobbies(List<Hobbies> list) {
+  //   hobbiesCntr =
+  //       list.map((h) => TextEditingController(text: h.name ?? "")).toList();
+  //   notifyListeners();
+  // }
+
+  // void updateHobby(BuildContext context, int index, String value) {
+  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
+  //   addDirectorVM.getBasicInfoData.first.hobbies?[index].name = value;
+  //   notifyListeners();
+  // }
+
+  // void addHobby(BuildContext context) {
+  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
+  //   addDirectorVM.getBasicInfoData.first.hobbies?.add(Hobbies(name: null));
+  //   hobbiesCntr.add(TextEditingController());
+  //   notifyListeners();
+  // }
+
+  // void removeHobby(BuildContext context, int index) {
+  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
+  //   addDirectorVM.getBasicInfoData.first.hobbies?.removeAt(index);
+  //   hobbiesCntr.removeAt(index);
+  //   notifyListeners();
+  // }
 
   void loadUniversities(List<UniversitySchool> list) {
     universitiesCntr =
@@ -316,7 +333,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     emailController.text = data.email ?? '';
     alternateNumberController.text = data.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
-    loadHobbies(data.hobbies ?? []);
+    //  loadHobbies(data.hobbies ?? []);
     loadUniversities(data.universitySchool ?? []);
     //loadEducation(data.education ?? []);
     loadWorkAt(data.workingAt ?? []);
