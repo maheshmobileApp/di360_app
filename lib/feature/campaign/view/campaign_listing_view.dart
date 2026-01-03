@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/campaign/widgets/campaign_card.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_mod
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -45,12 +47,12 @@ class _JobListingScreenState extends State<CampaignListingView>
     final viewModel = Provider.of<CampaignViewModel>(context);
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
     final filterVM = Provider.of<FilterViewModel>(context);
-     var floatingActionButton = FloatingActionButton(
+    var floatingActionButton = FloatingActionButton(
       backgroundColor: AppColors.primaryColor,
       onPressed: () {
-       
+        viewModel.setRepeatMode(false);
+        viewModel.clearFields();
         navigationService.navigateTo(RouteList.createCampaignView);
-       
       },
       child: SvgPicture.asset(ImageConst.addFeed),
     );
@@ -89,9 +91,8 @@ class _JobListingScreenState extends State<CampaignListingView>
                 },
                 child: SvgPicture.asset(ImageConst.filter,
                     color: AppColors.black))),
-         
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: Column(
             children: [
               /*if (viewModel.searchBarOpen)
@@ -126,17 +127,34 @@ class _JobListingScreenState extends State<CampaignListingView>
                           final campaignData =
                               viewModel.campaignListData?.smsCampaign?[index];
                           return CampaignCard(
-                            id: campaignData?.id??"" ,
-                            campaignName: campaignData?.campaignName??"",
-                            date: campaignData?.scheduleDate??"",
-                            type: campaignData?.messageChannel??"",
-                            status: campaignData?.status??"",
-                            repeat: campaignData?.isRepeating??"",
-                            time: campaignData?.scheduleTimeLocal??"", createdBy: '',
-                            onMenuAction: (action,id){
+                            id: campaignData?.id ?? "",
+                            campaignName: campaignData?.campaignName ?? "",
+                            date: campaignData?.scheduleDate ?? "",
+                            type: campaignData?.messageChannel ?? "",
+                            status: campaignData?.status ?? "",
+                            repeat: campaignData?.isRepeating ?? "",
+                            time: campaignData?.scheduleTimeLocal ?? "",
+                            createdBy: '',
+                            onMenuAction: (action, id) async {
                               switch (action) {
                                 case 'Delete':
-                                  viewModel.deleteCampaign(context,id);
+                                 showAlertMessage(context,
+                                      'Are you sure you want to remove this Campaign?',
+                                      onBack: () {
+                                    navigationService.goBack();
+                                   viewModel.deleteCampaign(context, id);
+                                  });
+                                  
+                                  break;
+                                case 'Preview':
+                                  _showPreviewDialog(context,campaignData );
+                                  break;
+                                case 'Repeat':
+                                  viewModel.setRepeatMode(true);
+                                  await viewModel.getCampaignDetails(id);
+
+                                  navigationService
+                                      .navigateTo(RouteList.createCampaignView);
                                   break;
                                 default:
                                   break;
@@ -150,5 +168,42 @@ class _JobListingScreenState extends State<CampaignListingView>
           ),
         ),
         floatingActionButton: floatingActionButton);
+  }
+
+  _loadCampaignData(SmsCampaign? data) {}
+
+  void _showPreviewDialog(BuildContext context, SmsCampaign? data) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          title: Text(
+            data?.messageChannel == "SMS" ? "SMS Preview" : "Email Preview",
+            style: TextStyles.bold3(color: AppColors.black),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: SingleChildScrollView(
+              child: Text(
+                      data?.messageText ?? "",
+                      style: TextStyles.regular3(color: AppColors.black),
+                    )
+                 
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Close',
+                style: TextStyles.semiBold(color: AppColors.black, fontSize: 16),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

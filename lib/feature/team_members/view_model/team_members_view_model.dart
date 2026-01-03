@@ -252,8 +252,9 @@ class TeamMembersViewModel extends ChangeNotifier {
     print("variables:*****************$variables");
     final res = await repo.createTeamMember(variables);
     if (res != null) {
-      Loaders.circularHideLoader(context);
       await getTeamMembers();
+      Loaders.circularHideLoader(context);
+
       navigationService.goBack();
       clearFields();
       scaffoldMessenger("Team Member Created Sucessfully!");

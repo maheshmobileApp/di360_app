@@ -7,9 +7,11 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_time_picker.dart';
+import 'package:di360_flutter/feature/campaign/widgets/counts_container.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/radio_button_group.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +23,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CampaignViewModel>(context);
     final jobCreateVM = Provider.of<JobCreateViewModel>(context);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -45,7 +48,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -55,6 +58,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
                 hintText: "Enter Campaign name",
                 title: "Campaign Name",
                 maxLength: 100,
+                readOnly: viewModel.repeatMode,
               ),
               addVertical(10),
               CustomDatePicker(
@@ -104,7 +108,8 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
                 options: ['Yes', 'No'],
                 selectedValue: viewModel.selectStateCondition,
                 labelBuilder: (value) => value,
-                direction: Axis.vertical, // try Axis.vertical also
+                direction: Axis.vertical,
+                readOnly: viewModel.repeatMode,
                 onChanged: (value) {
                   viewModel.setStateCondition(value);
                 },
@@ -115,7 +120,29 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
               addVertical(10),
               (viewModel.selectedType != "")
                   ? _buildNumbersAndEmails(viewModel)
-                  : SizedBox.shrink()
+                  : SizedBox.shrink(),
+              CountsContainer(
+                type: viewModel.selectedType,
+                recipientsCount: viewModel.recipientsCount,
+                emailsCount: viewModel.selectedSendChips.length.toString(),
+                totalsCount: viewModel.selectedSendChips.length.toString(),
+              ),
+               addVertical(10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomRoundedButton(
+                    text: 'Cancel',
+                    onPressed: () {},
+                    height: 42,
+                    backgroundColor: AppColors.geryColor,
+                    textColor: Colors.black,
+                  ),CustomRoundedButton(text: 'Save', onPressed: () {  },height: 42,
+               
+                backgroundColor: AppColors.primaryColor,
+                textColor: Colors.white,)
+                ],
+              )
             ],
           ),
         ),
@@ -133,8 +160,8 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
   Widget _buildTimeZones(CampaignViewModel viewModel) {
     final validRoles = viewModel.timeOptions;
 
-    final selectedValue = validRoles.contains(viewModel.selectedTime)
-        ? viewModel.selectedTime
+    final selectedValue = validRoles.contains(viewModel.selectedTimeZone)
+        ? viewModel.selectedTimeZone
         : null;
 
     return CustomDropDown(
@@ -142,7 +169,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
       value: selectedValue,
       title: "Time Zone",
       onChanged: (v) {
-        viewModel.setSelectedTime(v as String);
+        viewModel.setSelectedTimeZone(v as String);
       },
       items: validRoles.map<DropdownMenuItem<Object>>((String value) {
         return DropdownMenuItem<Object>(
@@ -171,6 +198,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
       isRequired: true,
       value: selectedValue,
       title: "Select Type",
+      readOnly: viewModel.repeatMode,
       onChanged: (v) {
         viewModel.setSelectedType(v as String);
       },
@@ -200,9 +228,9 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
           selectedItems: viewModel.selectedGroupChips,
           itemLabel: (item) => item,
           hintText: "Select Groups",
+          readOnly: viewModel.repeatMode,
           onSelectionChanged: (selected) {
-            final current =
-                List<String>.from(viewModel.selectedGroupChips);
+            final current = List<String>.from(viewModel.selectedGroupChips);
             for (final emp in current) {
               if (!selected.contains(emp)) {
                 viewModel.removeGroupTypeChip(emp);
@@ -215,6 +243,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
             }
             // Call API after selection is finalized
             viewModel.getStatesByGroups();
+            viewModel.getContacts();
           },
         ),
         addVertical(16),
@@ -233,6 +262,7 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
         addVertical(6),
         CustomMultiSelectDropDown<String>(
           showOptions: true,
+          readOnly: viewModel.repeatMode,
           height: 50,
           items: viewModel.stateOptions,
           selectedItems: viewModel.selectedStateChips,
@@ -270,11 +300,12 @@ class CreateCampaignView extends StatelessWidget with BaseContextHelpers {
         addVertical(6),
         CustomMultiSelectDropDown<String>(
           showOptions: true,
+          readOnly: viewModel.repeatMode,
           height: 50,
           items: viewModel.sendOptions,
           selectedItems: viewModel.selectedSendChips,
           itemLabel: (item) => item,
-          hintText: "Select....",
+          hintText: "Select",
           onSelectionChanged: (selected) {
             final current = List<String>.from(viewModel.selectedSendChips);
             for (final emp in current) {

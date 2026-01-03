@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
-import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/team_members/view_model/team_members_view_model.dart';
 import 'package:di360_flutter/feature/team_members/widgets/team_member_card.dart';

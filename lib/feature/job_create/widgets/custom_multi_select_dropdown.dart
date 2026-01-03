@@ -11,6 +11,7 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
   final bool Function(T)? greyOutCondition;
   final double? height;
   final bool showOptions;
+  final bool readOnly;
 
   const CustomMultiSelectDropDown({
     Key? key,
@@ -22,6 +23,7 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
     this.greyOutCondition,
     this.height,
     this.showOptions = false,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -64,7 +66,7 @@ class _CustomMultiSelectDropDownState<T>
                   children: [
                     if (widget.showOptions)
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
                             onPressed: () {
@@ -74,7 +76,7 @@ class _CustomMultiSelectDropDownState<T>
                             },
                             child: Text('Select All',
                                 style: TextStyles.semiBold(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors.black,
                                     fontSize: 14)),
                           ),
                           TextButton(
@@ -85,11 +87,12 @@ class _CustomMultiSelectDropDownState<T>
                             },
                             child: Text('Clear All',
                                 style: TextStyles.semiBold(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors.redColor,
                                     fontSize: 14)),
                           ),
                         ],
                       ),
+                      Divider(color: AppColors.black,),
                     Flexible(
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -206,7 +209,7 @@ class _CustomMultiSelectDropDownState<T>
         ? widget.hintText
         : _selected.map((e) => widget.itemLabel(e)).join(", ");
     return InkWell(
-      onTap: _toggleDropdown,
+      onTap: widget.readOnly ? null : _toggleDropdown,
       child: Container(
         height: widget.height,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
