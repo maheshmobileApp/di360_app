@@ -1,31 +1,81 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NewsMenuWidget extends StatelessWidget {
-  final Function(String)? onSelected;
-  const NewsMenuWidget({super.key, this.onSelected});
+  final Newsfeeds? newsfeeds;
+  const NewsMenuWidget({super.key, this.newsfeeds});
 
   @override
   Widget build(BuildContext context) {
+    final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
+    final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: const EdgeInsets.all(0),
-      onSelected: onSelected,
+      onSelected: (value) async {
+        if (value == 'edit') {
+          await addNeedFeedViewModel.fetchNewsfeedCategories();
+          await addNeedFeedViewModel.editFeedObject(newsfeeds);
+          navigationService.navigateTo(RouteList.addNewsFeed);
+        } else if (value == 'delete') {
+          showAlertMessage(
+              context, 'Are you really want to delete this NewsFeed ?',
+              onBack: () {
+            needFeedViewModel.deleteTheNewsFeed(context, newsfeeds?.id ?? '');
+            navigationService.goBack();
+          });
+        } else if (value == 'report') {
+          showReportBottomSheet(context, () {
+            navigationService.goBack();
+            needFeedViewModel.reportNewsFeed(context, newsfeeds?.id ?? '');
+          });
+        } else if (value == 'block') {
+          showUserBlockPopup(context, 'Are you sure Block this user',
+              confirmAction: () {
+            navigationService.goBack();
+            needFeedViewModel.blockUser(
+                context,
+                newsfeeds?.dentalSupplier?.id ??
+                    newsfeeds?.dentalPractice?.id ??
+                    newsfeeds?.dentalProfessional?.id ??
+                    '');
+          });
+        }
+      },
       itemBuilder: (context) => [
-        PopupMenuItem(
-            value: "share",
-            child: buildRow(Icons.share, AppColors.blueColor, "Share")),
-        PopupMenuItem(
-            value: "report",
-            child: buildRow(Icons.report, AppColors.primaryColor, "Report")),
-        PopupMenuItem(
-            value: "block",
-            child: buildRow(Icons.block, AppColors.redColor, "Block")),
+        if (newsfeeds?.dentalAdminId == needFeedViewModel.userID ||
+            newsfeeds?.dentalPracticeId == needFeedViewModel.userID ||
+            newsfeeds?.dentalProfessionalId == needFeedViewModel.userID ||
+            newsfeeds?.dentalSupplierId == needFeedViewModel.userID) ...[
+          PopupMenuItem(
+              value: "edit",
+              child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),
+          PopupMenuItem(
+              value: "delete",
+              child: buildRow(Icons.delete, AppColors.redColor, "Delete"))
+        ],
+        if (newsfeeds?.dentalAdminId != needFeedViewModel.userID ||
+            newsfeeds?.dentalPracticeId != needFeedViewModel.userID ||
+            newsfeeds?.dentalProfessionalId != needFeedViewModel.userID ||
+            newsfeeds?.dentalSupplierId != needFeedViewModel.userID) ...[
+          PopupMenuItem(
+              value: "report",
+              child: buildRow(Icons.report, AppColors.primaryColor, "Report")),
+          PopupMenuItem(
+              value: "block",
+              child: buildRow(Icons.block, AppColors.redColor, "Block"))
+        ]
       ],
     );
   }
