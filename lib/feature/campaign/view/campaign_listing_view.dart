@@ -156,7 +156,7 @@ class _JobListingScreenState extends State<CampaignListingView>
   }
 
   void _showPreviewDialog(BuildContext context, SmsCampaign? data) {
-    final messageText = data?.messageText ?? "";
+    final messageText = (data?.messageText ?? "").trim();
     final isHtml = _isHtmlContent(messageText);
 
     showDialog(
@@ -168,12 +168,17 @@ class _JobListingScreenState extends State<CampaignListingView>
             data?.messageChannel == "SMS" ? "SMS Preview" : "Email Preview",
             style: TextStyles.bold3(color: AppColors.black),
           ),
-          content: SizedBox(
-            width: double.maxFinite,
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+              maxWidth: double.maxFinite,
+            ),
             child: isHtml
-                ? HtmlWidget(
-                    messageText,
-                    textStyle: TextStyles.medium1(color: AppColors.black),
+                ? SingleChildScrollView(
+                    child: HtmlWidget(
+                      messageText,
+                      textStyle: TextStyles.medium1(color: AppColors.black),
+                    ),
                   )
                 : SingleChildScrollView(
                     child: Text(
