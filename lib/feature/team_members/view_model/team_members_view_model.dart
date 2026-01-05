@@ -254,7 +254,6 @@ class TeamMembersViewModel extends ChangeNotifier {
     if (res != null) {
       await getTeamMembers();
       Loaders.circularHideLoader(context);
-
       navigationService.goBack();
       clearFields();
       scaffoldMessenger("Team Member Created Sucessfully!");
@@ -334,8 +333,9 @@ class TeamMembersViewModel extends ChangeNotifier {
     final res = await repo.updateTeamMember(variables);
     if (res != null) {
       editedId = '';
-      Loaders.circularHideLoader(context);
       await getTeamMembers();
+      Loaders.circularHideLoader(context);
+
       navigationService.goBack();
       clearFields();
       scaffoldMessenger("Team Member Updated Sucessfully!");

@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart'
 import 'package:di360_flutter/feature/campaign/model/get_contacts_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_states_by_groups_res.dart';
 import 'package:di360_flutter/feature/campaign/repository/campaign_repo_impl.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +17,87 @@ class CampaignViewModel extends ChangeNotifier {
   TextEditingController campaignNameController = TextEditingController();
   TextEditingController scheduleTimeController = TextEditingController();
   TextEditingController scheduleDateController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
+  
+  bool searchBarOpen = false;
+  
+  void toggleSearchBar() {
+    searchBarOpen = !searchBarOpen;
+    if (!searchBarOpen) {
+      searchController.clear();
+    }
+    notifyListeners();
+  }
   String _formatDate(DateTime date) {
     return di360_date_utils.DateFormatUtils.formatToDayMonthYear(date);
   }
 
   String selectStateCondition = "";
   bool repeatMode = false;
+  bool smsFilterStatus = false;
+  bool emailFilterStatus = false;
+  bool htmlFilterStatus = false;
+  bool emailWithPdfFilterStatus = false;
 
   void setRepeatMode(bool value) {
     repeatMode = value;
     notifyListeners();
+  }
+
+  void setSmsFilterStatus(bool value) {
+    smsFilterStatus = value;
+    notifyListeners();
+  }
+
+  void setEmailFilterStatus(bool value) {
+    emailFilterStatus = value;
+    notifyListeners();
+  }
+
+  void setHtmlFilterStatus(bool value) {
+    htmlFilterStatus = value;
+    notifyListeners();
+  }
+
+  void setEmailWithPdfFilterStatus(bool value) {
+    emailWithPdfFilterStatus = value;
+    notifyListeners();
+  }
+
+  void clearAllFilters() {
+    smsFilterStatus = false;
+    emailFilterStatus = false;
+    htmlFilterStatus = false;
+    emailWithPdfFilterStatus = false;
+    notifyListeners();
+  }
+
+  List<SmsCampaign> get filteredCampaigns {
+    var list = campaignListData?.smsCampaign ?? [];
+    
+    // Apply search filter
+    if (searchController.text.isNotEmpty) {
+      list = list.where((c) => 
+        (c.campaignName?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false) ||
+        (c.messageChannel?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false) ||
+        (c.status?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false)
+      ).toList();
+    }
+    
+    // Apply channel filters
+    bool hasChannelFilter = smsFilterStatus || emailFilterStatus || htmlFilterStatus || emailWithPdfFilterStatus;
+    if (hasChannelFilter) {
+      list = list.where((c) {
+        bool channelMatch = (smsFilterStatus && c.messageChannel == 'SMS') ||
+            (emailFilterStatus && c.messageChannel == 'EMAIL') ||
+            (htmlFilterStatus && c.messageChannel == 'HTML') ||
+            (emailWithPdfFilterStatus && c.messageChannel == 'EMAIL_WITH_PDF');
+        return channelMatch;
+      }).toList();
+    }
+    
+    return list;
   }
 
   void setStateCondition(String condition) {
@@ -34,7 +106,7 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   DateTime scheduledDate = DateTime.now();
-  void setStartLocumDate(DateTime date) {
+  void setScheduleDate(DateTime date) {
     scheduledDate = date;
     scheduleDateController.text =
         di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
@@ -46,6 +118,13 @@ class CampaignViewModel extends ChangeNotifier {
     "Contact-Partner",
     "Contact-Member"
   ];
+
+  Map<String, bool> filterOptions = {
+    "SMS": false,
+    "Email": false,
+    "HTML": false,
+    "Email with PDF": false,
+  };
 
   List<String> stateOptions = [];
   List<String> sendOptions = [];
@@ -136,9 +215,14 @@ class CampaignViewModel extends ChangeNotifier {
 
   Future<void> getCampaignListing() async {
     try {
-      final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final variables = {"limit": 10, "offset": 0, "where": {}};
+      final variables = {
+        "limit": 10,
+        "offset": 0,
+        "where": {
+        }
+      };
       final res = await repo.getCampaignListData(variables);
+      searchController.text = "";
 
       campaignListData = res;
       notifyListeners();
@@ -173,9 +257,10 @@ class CampaignViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> createCampaign() async {
+  Future<void> createCampaign(BuildContext context) async {
+    print("*******************create campaign calling");
+    Loaders.circularShowLoader(context);
     try {
-      final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final variables = {
         "fields": {
           "from_email": null,
@@ -188,12 +273,12 @@ class CampaignViewModel extends ChangeNotifier {
           "schedule_timezone": selectedTimeZone,
           "email_design_json": null,
           "sms_segments_count": 1,
-          "characters_used": 21,
+          "characters_used": messageController.text.length,
           "is_repeating": "no",
           "is_refined_by_state": selectStateCondition == "Yes" ? "yes" : "no",
           "refine_state": selectedStateChips,
           "groups": selectedGroupChips,
-          "message_text": "Hello This is tester.",
+          "message_text": messageController.text,
           "send_to_numbers": selectedSendChips,
           "send_to_emails": null,
           "status": "PENDING",
@@ -202,9 +287,14 @@ class CampaignViewModel extends ChangeNotifier {
           "message_channel": selectedType
         }
       };
+      print(variables);
       final res = await repo.createCampaign(variables);
       if (res != "") {
         await getCampaignListing();
+        Loaders.circularHideLoader(context);
+        scaffoldMessenger("Campaign successfully Created");
+
+        navigationService.goBack();
         notifyListeners();
       }
       notifyListeners();
@@ -333,6 +423,7 @@ class CampaignViewModel extends ChangeNotifier {
     campaignNameController.clear();
     scheduleDateController.clear();
     scheduleTimeController.clear();
+    messageController.clear();
     selectedTimeZone = "";
     selectedType = "";
     _selectedStateChips = [];

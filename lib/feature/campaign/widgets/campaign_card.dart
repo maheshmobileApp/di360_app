@@ -83,6 +83,7 @@ class CampaignCard extends StatelessWidget {
                     _popupItem("Preview", Icons.remove_red_eye, Colors.orange),
                     _popupItem("Repeat", Icons.repeat, AppColors.blueColor),
                     _popupItem("Delete", Icons.delete, AppColors.redColor),
+                    _popupItem("View Details", Icons.remove_red_eye, Colors.orange),
                   ],
                 ),
 

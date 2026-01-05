@@ -80,8 +80,8 @@ class TeamMemberCard extends StatelessWidget {
               ],
             ),
 
-            _infoRow("Email", email),
-            _infoRow("Status", status),
+            _infoRow("Email", email,TextStyles.medium2()),
+            _infoRow("Status", status == "VERIFIED"?"Verified": "Verfication Pending",TextStyles.medium2(color: status == "VERIFIED"?AppColors.greenColor:AppColors.blueColor)),
           ],
         ),
       ),
@@ -101,7 +101,7 @@ class TeamMemberCard extends StatelessWidget {
     );
   }
 
-  Widget _infoRow(String title, String value) {
+  Widget _infoRow(String title, String value,TextStyle? valueStyle) {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -114,6 +114,7 @@ class TeamMemberCard extends StatelessWidget {
             child: Text(
               value,
               overflow: TextOverflow.ellipsis,
+              style: valueStyle,
             ),
           ),
         ],

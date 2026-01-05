@@ -6,9 +6,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/campaign/widgets/campaign_card.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
-import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
-import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -16,6 +14,8 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:di360_flutter/widgets/top_right_filter_dialog.dart';
 import 'package:provider/provider.dart';
 
 class CampaignListingView extends StatefulWidget {
@@ -45,8 +45,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CampaignViewModel>(context);
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
-    final filterVM = Provider.of<FilterViewModel>(context);
     var floatingActionButton = FloatingActionButton(
       backgroundColor: AppColors.primaryColor,
       onPressed: () {
@@ -62,32 +60,12 @@ class _JobListingScreenState extends State<CampaignListingView>
         endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Campaign management',
+            searchAction: (){
+               viewModel.toggleSearchBar();
+            },
             filterWidget: GestureDetector(
                 onTap: () {
-                  filterVM.fetchCourseCategory(context);
-                  filterVM.fetchCourseType(context);
-
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => FilterBottomSheet(
-                      onApply: () {
-                        /*myLearningHubVM.getCoursesWithFilters(
-                            context,
-                            filterVM.selectedOptions['Filter by Type'],
-                            filterVM.selectedOptions['Category'], filterVM.selectedDate.toString());
-                        navigationService.goBack();*/
-                      },
-                      onClear: () {
-                        /*filterVM.clearAll();
-                         myLearningHubVM.getCoursesWithFilters(
-                            context,
-                            filterVM.selectedOptions['Filter by Type'],
-                            filterVM.selectedOptions['Category'], filterVM.selectedDate.toString());*/
-                      },
-                    ),
-                  );
+                  _openFilterDialog(context, viewModel);
                 },
                 child: SvgPicture.asset(ImageConst.filter,
                     color: AppColors.black))),
@@ -95,20 +73,20 @@ class _JobListingScreenState extends State<CampaignListingView>
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: Column(
             children: [
-              /*if (viewModel.searchBarOpen)
+              if (viewModel.searchBarOpen)
                 SearchWidget(
                   controller: viewModel.searchController,
-                  hintText: "Search Course...",
+                  hintText: "Search Campaign...",
+                  searchButton: false,
+                  onChanged: (value) {
+                    viewModel.notifyListeners();
+                  },
                   onClear: () {
-                   /* myLearningHubVM.searchController.clear();
-                    myLearningHubVM.getCoursesWithMyRegistrations(context);*/
+                    viewModel.notifyListeners();
                   },
-                  onSearch: () {
-                   /* myLearningHubVM.getCoursesWithMyRegistrations(context);*/
-                  },
-                ),*/
+                ),
               Expanded(
-                child: viewModel.campaignListData?.smsCampaign?.isEmpty ?? false
+                child: viewModel.filteredCampaigns.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -121,11 +99,9 @@ class _JobListingScreenState extends State<CampaignListingView>
                         ),
                       )
                     : ListView.builder(
-                        itemCount:
-                            viewModel.campaignListData?.smsCampaign?.length,
+                        itemCount: viewModel.filteredCampaigns.length,
                         itemBuilder: (context, index) {
-                          final campaignData =
-                              viewModel.campaignListData?.smsCampaign?[index];
+                          final campaignData = viewModel.filteredCampaigns[index];
                           return CampaignCard(
                             id: campaignData?.id ?? "",
                             campaignName: campaignData?.campaignName ?? "",
@@ -138,16 +114,19 @@ class _JobListingScreenState extends State<CampaignListingView>
                             onMenuAction: (action, id) async {
                               switch (action) {
                                 case 'Delete':
-                                 showAlertMessage(context,
+                                  showAlertMessage(context,
                                       'Are you sure you want to remove this Campaign?',
                                       onBack: () {
                                     navigationService.goBack();
-                                   viewModel.deleteCampaign(context, id);
+                                    viewModel.deleteCampaign(context, id);
                                   });
-                                  
+
                                   break;
                                 case 'Preview':
-                                  _showPreviewDialog(context,campaignData );
+                                  _showPreviewDialog(context, campaignData);
+                                  break;
+                                case 'View Details':
+                                  _showPreviewDialog(context, campaignData);
                                   break;
                                 case 'Repeat':
                                   viewModel.setRepeatMode(true);
@@ -170,9 +149,16 @@ class _JobListingScreenState extends State<CampaignListingView>
         floatingActionButton: floatingActionButton);
   }
 
-  _loadCampaignData(SmsCampaign? data) {}
+  bool _isHtmlContent(String text) {
+    return text.contains('<html>') ||
+        text.contains('<!DOCTYPE') ||
+        text.contains('<body>');
+  }
 
   void _showPreviewDialog(BuildContext context, SmsCampaign? data) {
+    final messageText = data?.messageText ?? "";
+    final isHtml = _isHtmlContent(messageText);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -184,26 +170,70 @@ class _JobListingScreenState extends State<CampaignListingView>
           ),
           content: SizedBox(
             width: double.maxFinite,
-            height: 400,
-            child: SingleChildScrollView(
-              child: Text(
-                      data?.messageText ?? "",
+            child: isHtml
+                ? HtmlWidget(
+                    messageText,
+                    textStyle: TextStyles.medium1(color: AppColors.black),
+                  )
+                : SingleChildScrollView(
+                    child: Text(
+                      messageText,
                       style: TextStyles.regular3(color: AppColors.black),
-                    )
-                 
-            ),
+                    ),
+                  ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Close',
-                style: TextStyles.semiBold(color: AppColors.black, fontSize: 16),
+                style:
+                    TextStyles.semiBold(color: AppColors.black, fontSize: 16),
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  void _openFilterDialog(BuildContext context, CampaignViewModel viewModel) {
+    TopRightFilterDialog.show(
+      context,
+      title: 'Filter Campaigns',
+      filterOptions: [
+        FilterOption(
+          title: 'SMS',
+          onChanged: (val) {
+            viewModel.setSmsFilterStatus(val);
+          },
+        ),
+        FilterOption(
+          title: 'Email',
+          onChanged: (val) {
+            viewModel.setEmailFilterStatus(val);
+          },
+        ),
+        FilterOption(
+          title: 'HTML',
+          onChanged: (val) {
+            viewModel.setHtmlFilterStatus(val);
+          },
+        ),
+        FilterOption(
+          title: 'Email with PDF',
+          onChanged: (val) {
+            viewModel.setEmailWithPdfFilterStatus(val);
+          },
+        ),
+      ],
+      clearAll: () {
+        viewModel.clearAllFilters();
+      },
+      onClose: () {
+        Navigator.of(context).pop();
+      },
+      
     );
   }
 }

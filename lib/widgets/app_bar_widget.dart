@@ -27,7 +27,6 @@ class AppBarWidget extends StatelessWidget
     return AppBar(
       elevation: 3,
       shadowColor: AppColors.black.withOpacity(0.2),
-
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Stack(
