@@ -121,6 +121,7 @@ class TopRightFilterDialog extends StatelessWidget {
                         children: [
                           ...filterOptions.map((option) {
                             return CheckboxListTile(
+                              activeColor: AppColors.primaryColor,
                               contentPadding: EdgeInsets.zero,
                               title: Text(option.title),
                               value: _getValue(option.title, viewModel),

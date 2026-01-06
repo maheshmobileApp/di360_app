@@ -163,6 +163,9 @@ class _JobListingScreenState extends State<CampaignListingView>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
           backgroundColor: AppColors.whiteColor,
           title: Text(
             data?.messageChannel == "SMS" ? "SMS Preview" : "Email Preview",
