@@ -22,9 +22,9 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
-import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -280,8 +280,17 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
-                            navigationService
-                                .navigateTo(RouteList.bannersListView);
+                            final bannerPermission =
+                                await LocalStorage.getBoolValue(
+                                    LocalStorageConst.bannerPermission);
+
+                            if (bannerPermission) {
+                              navigationService
+                                  .navigateTo(RouteList.bannersListView);
+                            } else {
+                              scaffoldMessenger(
+                                  "You do not have permission to access this feature.");
+                            }
                           } else if (item.title == "Marketing") {
                             navigationService
                                 .navigateTo(RouteList.campaignListingView);

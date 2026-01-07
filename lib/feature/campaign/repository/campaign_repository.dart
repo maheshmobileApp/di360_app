@@ -1,5 +1,6 @@
 import 'package:di360_flutter/feature/campaign/model/get_campaign_details_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
+import 'package:di360_flutter/feature/campaign/model/get_contact_count_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_contacts_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_states_by_groups_res.dart';
 
@@ -10,4 +11,5 @@ abstract class CampaignRepository {
   Future<ContactsData> getContacts(dynamic variables);
   Future<dynamic> createCampaign(dynamic variables);
   Future<CampaignDetailsData> getCampaignDetails(dynamic variables);
+  Future<ContactCountData> getContactCount(dynamic variables);
 }

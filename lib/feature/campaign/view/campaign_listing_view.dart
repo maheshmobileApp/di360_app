@@ -181,6 +181,12 @@ class _JobListingScreenState extends State<CampaignListingView>
                     child: HtmlWidget(
                       messageText,
                       textStyle: TextStyles.medium1(color: AppColors.black),
+                      customStylesBuilder: (element) {
+                        if (element.localName == 'body') {
+                          return {'background-color': 'transparent'};
+                        }
+                        return null;
+                      },
                     ),
                   )
                 : SingleChildScrollView(

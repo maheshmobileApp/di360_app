@@ -92,19 +92,20 @@ class CreateCampaignView extends StatelessWidget
                     onTap: () async {
                       final now = DateTime.now();
                       final selectedDate = viewModel.scheduledDate;
-                      final isToday = selectedDate.year == now.year && 
-                                     selectedDate.month == now.month && 
-                                     selectedDate.day == now.day;
-                      
-                      final initialTime = isToday 
-                          ? TimeOfDay.fromDateTime(now.add(Duration(minutes: 1)))
+                      final isToday = selectedDate.year == now.year &&
+                          selectedDate.month == now.month &&
+                          selectedDate.day == now.day;
+
+                      final initialTime = isToday
+                          ? TimeOfDay.fromDateTime(
+                              now.add(Duration(minutes: 1)))
                           : TimeOfDay(hour: 9, minute: 0);
-                      
+
                       final picked = await showTimePicker(
                         context: context,
                         initialTime: initialTime,
                       );
-                      
+
                       if (picked != null) {
                         if (isToday) {
                           final selectedDateTime = DateTime(
@@ -114,14 +115,16 @@ class CreateCampaignView extends StatelessWidget
                             picked.hour,
                             picked.minute,
                           );
-                          
+
                           if (selectedDateTime.isBefore(now)) {
-                            scaffoldMessenger('Please select a future time for today');
+                            scaffoldMessenger(
+                                'Please select a future time for today');
                             return;
                           }
                         }
-                        
-                        viewModel.scheduleTimeController.text = picked.format(context);
+
+                        viewModel.scheduleTimeController.text =
+                            picked.format(context);
                       }
                     },
                     validator: (value) {
@@ -158,14 +161,16 @@ class CreateCampaignView extends StatelessWidget
                       ? _buildStates(viewModel)
                       : SizedBox.shrink(),
                   addVertical(10),
-                  (viewModel.selectedType != "")
+                  /*(viewModel.selectedType != "")
                       ? _buildNumbersAndEmails(viewModel)
-                      : SizedBox.shrink(),
+                      : SizedBox.shrink(),*/
                   CountsContainer(
                     type: viewModel.selectedType,
                     recipientsCount: viewModel.recipientsCount,
-                    emailsCount: viewModel.selectedSendChips.length.toString(),
-                    totalsCount: viewModel.selectedSendChips.length.toString(),
+                    emailsCount: viewModel
+                        .recipientsCount, //viewModel.selectedSendChips.length.toString(),
+                    totalsCount: viewModel
+                        .recipientsCount, //viewModel.selectedSendChips.length.toString(),
                   ),
                   addVertical(10),
                   InputTextField(
@@ -195,7 +200,7 @@ class CreateCampaignView extends StatelessWidget
                         textColor: Colors.black,
                       ),
                       CustomRoundedButton(
-                        text: 'Save',
+                        text: viewModel.repeatMode ? 'Repeat' : 'Save',
                         onPressed: () => _validateAndSave(context, viewModel),
                         height: 42,
                         backgroundColor: AppColors.primaryColor,
@@ -222,10 +227,6 @@ class CreateCampaignView extends StatelessWidget
       }
       if (viewModel.selectedType.isEmpty) {
         scaffoldMessenger('Please select campaign type');
-        return;
-      }
-      if (viewModel.selectedSendChips.isEmpty) {
-        scaffoldMessenger('Please select recipients');
         return;
       }
       viewModel.createCampaign(context);
@@ -326,6 +327,7 @@ class CreateCampaignView extends StatelessWidget
             // Call API after selection is finalized
             viewModel.getStatesByGroups();
             viewModel.getContacts();
+            viewModel.getContactCount();
           },
         ),
         addVertical(16),
@@ -362,6 +364,7 @@ class CreateCampaignView extends StatelessWidget
                 viewModel.addStateTypeChip(emp);
               }
             }
+            viewModel.getContactCount();
           },
         ),
         addVertical(16),

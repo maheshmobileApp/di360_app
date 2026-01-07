@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_details_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
+import 'package:di360_flutter/feature/campaign/model/get_contact_count_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_contacts_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_states_by_groups_res.dart';
 import 'package:di360_flutter/feature/campaign/repository/campaign_repo_impl.dart';
@@ -19,9 +20,9 @@ class CampaignViewModel extends ChangeNotifier {
   TextEditingController scheduleDateController = TextEditingController();
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
-  
+
   bool searchBarOpen = false;
-  
+
   void toggleSearchBar() {
     searchBarOpen = !searchBarOpen;
     if (!searchBarOpen) {
@@ -29,11 +30,12 @@ class CampaignViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
   String _formatDate(DateTime date) {
     return di360_date_utils.DateFormatUtils.formatToDayMonthYear(date);
   }
 
-  String selectStateCondition = "";
+  String selectStateCondition = "No";
   bool repeatMode = false;
   bool smsFilterStatus = false;
   bool emailFilterStatus = false;
@@ -75,18 +77,31 @@ class CampaignViewModel extends ChangeNotifier {
 
   List<SmsCampaign> get filteredCampaigns {
     var list = campaignListData?.smsCampaign ?? [];
-    
+
     // Apply search filter
     if (searchController.text.isNotEmpty) {
-      list = list.where((c) => 
-        (c.campaignName?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false) ||
-        (c.messageChannel?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false) ||
-        (c.status?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false)
-      ).toList();
+      list = list
+          .where((c) =>
+              (c.campaignName
+                      ?.toLowerCase()
+                      .contains(searchController.text.toLowerCase()) ??
+                  false) ||
+              (c.messageChannel
+                      ?.toLowerCase()
+                      .contains(searchController.text.toLowerCase()) ??
+                  false) ||
+              (c.status
+                      ?.toLowerCase()
+                      .contains(searchController.text.toLowerCase()) ??
+                  false))
+          .toList();
     }
-    
+
     // Apply channel filters
-    bool hasChannelFilter = smsFilterStatus || emailFilterStatus || htmlFilterStatus || emailWithPdfFilterStatus;
+    bool hasChannelFilter = smsFilterStatus ||
+        emailFilterStatus ||
+        htmlFilterStatus ||
+        emailWithPdfFilterStatus;
     if (hasChannelFilter) {
       list = list.where((c) {
         bool channelMatch = (smsFilterStatus && c.messageChannel == 'SMS') ||
@@ -96,7 +111,7 @@ class CampaignViewModel extends ChangeNotifier {
         return channelMatch;
       }).toList();
     }
-    
+
     return list;
   }
 
@@ -215,12 +230,7 @@ class CampaignViewModel extends ChangeNotifier {
 
   Future<void> getCampaignListing() async {
     try {
-      final variables = {
-        "limit": 10,
-        "offset": 0,
-        "where": {
-        }
-      };
+      final variables = {"limit": 10, "offset": 0, "where": {}};
       final res = await repo.getCampaignListData(variables);
       searchController.text = "";
 
@@ -249,7 +259,57 @@ class CampaignViewModel extends ChangeNotifier {
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
       selectStateCondition = data?.isRefinedByState == "yes" ? "Yes" : "No";
       _selectedSendChips = (data?.sendToNumbers?.cast<String>()) ?? [];
-      recipientsCount = data?.recipientsCount.toString() ?? "0";
+     recipientsCount = data?.recipientsCount.toString() ?? "0";
+
+      notifyListeners();
+    } catch (e) {
+      print("Error in getCampaignListing: $e");
+    }
+  }
+
+  ContactCountData? contactCountData;
+  Future<void> getContactCount() async {
+    try {
+            List<String> sourceList = [];
+      List<String> contactTypeList = [];
+
+      if (_selectedGroupChips.contains("Community members")) {
+        sourceList.add("community_members");
+      }
+
+      if (_selectedGroupChips.contains("Contact-Partner") ||
+          _selectedGroupChips.contains("Contact-Member")) {
+        sourceList.add("partners_contact_book");
+      }
+
+      if (_selectedGroupChips.contains("Contact-Partner")) {
+        contactTypeList.addAll(["PARTNER"]);
+      }
+
+      if (_selectedGroupChips.contains("Contact-Member")) {
+        contactTypeList.addAll(["MEMBER"]);
+      }
+
+      final Map<String, dynamic> whereClause = {
+        "source": {"_in": sourceList}
+      };
+
+      if (contactTypeList.isNotEmpty) {
+        whereClause["contact_type"] = {"_in": contactTypeList};
+      }
+
+      if (selectedStateChips.isNotEmpty) {
+        whereClause["state"] = {"_in": selectedStateChips};
+      }
+      
+      final variables = {"where": whereClause};
+      final res = await repo.getContactCount(variables);
+
+      contactCountData = res;
+      recipientsCount = contactCountData
+              ?.campaignContactsAggregate?.aggregate?.count
+              .toString() ??
+          "0";
 
       notifyListeners();
     } catch (e) {
@@ -265,9 +325,9 @@ class CampaignViewModel extends ChangeNotifier {
         "fields": {
           "from_email": null,
           "campaign_name": campaignNameController.text,
-          "recipients_count": contactsData?.campaignContacts?.length,
-          "total_count": selectedSendChips.length,
-          "mobile_email_count": selectedSendChips.length,
+          "recipients_count": recipientsCount,
+          "total_count": recipientsCount,
+          "mobile_email_count": recipientsCount,
           "schedule_date": scheduleDateController.text,
           "schedule_time_local": scheduleTimeController.text,
           "schedule_timezone": selectedTimeZone,
@@ -339,8 +399,8 @@ class CampaignViewModel extends ChangeNotifier {
       final variables = {"where": whereClause};
       final res = await repo.getContacts(variables);
       contactsData = res;
-      recipientsCount =
-          contactsData?.campaignContacts?.length.toString() ?? "0";
+     /* recipientsCount =
+          contactsData?.campaignContacts?.length.toString() ?? "0";*/
       sendOptions = (selectedType == "SMS")
           ? contactsData?.campaignContacts
                   ?.map((e) => e.phone ?? '')
@@ -428,7 +488,6 @@ class CampaignViewModel extends ChangeNotifier {
     selectedType = "";
     _selectedStateChips = [];
     _selectedGroupChips = [];
-    selectStateCondition = "";
     _selectedSendChips = [];
     recipientsCount = "0";
     notifyListeners();

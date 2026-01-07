@@ -13,4 +13,12 @@ class LocalStorageConst {
   static const String communityId = 'communityId';
   static const String businessName = 'businessName';
   static const String profileCompleted = 'profileCompleted';
+  static const String subType = "subType";
+  static const String directoryMinimalPermission = 'directoryMinimalPermission';
+  static const String learninghubPermission = 'learninghubPermission';
+  static const String cataloguePermission = 'cataloguePermission';
+  static const String jobseekPermission = 'jobseekPermission';
+  static const String newsfeedPermission = 'newsfeedPermission';
+  static const String bannerPermission = 'bannerPermission';
+  static const String directoryFullAccessPermission = 'directoryFullAccessPermission';
 }

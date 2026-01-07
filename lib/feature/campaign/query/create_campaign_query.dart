@@ -5,3 +5,4 @@ const String createCampaignQuery =
     __typename
   }
 }''';
+

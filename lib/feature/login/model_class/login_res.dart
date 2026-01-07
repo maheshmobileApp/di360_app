@@ -61,6 +61,10 @@ class LoginApi {
   String? planId;
   String? paymentStatus;
   String? subscriptionId;
+  SubscriptionPermissions? subscriptionPermissions;
+  String? subType;
+  String? ownerId;
+  String? sTypename;
 
   LoginApi(
       {this.id,
@@ -86,7 +90,11 @@ class LoginApi {
       this.dashboardPermissions,
       this.planId,
       this.paymentStatus,
-      this.subscriptionId});
+      this.subscriptionId,
+      this.subscriptionPermissions,
+      this.subType,
+      this.ownerId,
+      this.sTypename});
 
   LoginApi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -115,6 +123,12 @@ class LoginApi {
     planId = json['plan_id'];
     paymentStatus = json['payment_status'];
     subscriptionId = json['subscription_id'];
+   subscriptionPermissions = json['subscription_permissions'] != null
+        ? new SubscriptionPermissions.fromJson(json['subscription_permissions'])
+        : null;
+    subType = json['sub_type'];
+    ownerId = json['owner_id'];
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
@@ -147,6 +161,120 @@ class LoginApi {
     data['plan_id'] = this.planId;
     data['payment_status'] = this.paymentStatus;
     data['subscription_id'] = this.subscriptionId;
+    if (this.subscriptionPermissions != null) {
+      data['subscription_permissions'] = this.subscriptionPermissions!.toJson();
+    }
+    data['sub_type'] = this.subType;
+    data['owner_id'] = this.ownerId;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class SubscriptionPermissions {
+  List<Marketplace>? marketplace;
+  List<Modules>? modules;
+
+  SubscriptionPermissions({this.marketplace, this.modules});
+
+  SubscriptionPermissions.fromJson(Map<String, dynamic> json) {
+    if (json['marketplace'] != null) {
+      marketplace = <Marketplace>[];
+      json['marketplace'].forEach((v) {
+        marketplace!.add(Marketplace.fromJson(v));
+      });
+    }
+    if (json['modules'] != null) {
+      modules = <Modules>[];
+      json['modules'].forEach((v) {
+        modules!.add(Modules.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (marketplace != null) {
+      data['marketplace'] = marketplace!.map((v) => v.toJson()).toList();
+    }
+    if (modules != null) {
+      data['modules'] = modules!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Marketplace {
+  bool? myDashboard;
+  bool? jobseek;
+  bool? listJobs;
+  bool? talentSearchPermission;
+  bool? cataloguesPermission;
+  bool? directoryPermission;
+  bool? learningHubPermission;
+  bool? secondHandSupplies;
+  bool? suppliesPermission;
+  bool? buySellPermission;
+
+  Marketplace(
+      {this.myDashboard,
+      this.jobseek,
+      this.listJobs,
+      this.talentSearchPermission,
+      this.cataloguesPermission,
+      this.directoryPermission,
+      this.learningHubPermission,
+      this.secondHandSupplies,
+      this.suppliesPermission,
+      this.buySellPermission});
+
+  Marketplace.fromJson(Map<String, dynamic> json) {
+    myDashboard = json['my_dashboard'];
+    jobseek = json['jobseek'];
+    listJobs = json['list_jobs'];
+    talentSearchPermission = json['talent_search_permission'];
+    cataloguesPermission = json['catalogues_permission'];
+    directoryPermission = json['directory_permission'];
+    learningHubPermission = json['learning_hub_permission'];
+    secondHandSupplies = json['second_hand_supplies'];
+    suppliesPermission = json['supplies_permission'];
+    buySellPermission = json['buy_sell_permission'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['my_dashboard'] = myDashboard;
+    data['jobseek'] = jobseek;
+    data['list_jobs'] = listJobs;
+    data['talent_search_permission'] = talentSearchPermission;
+    data['catalogues_permission'] = cataloguesPermission;
+    data['directory_permission'] = directoryPermission;
+    data['learning_hub_permission'] = learningHubPermission;
+    data['second_hand_supplies'] = secondHandSupplies;
+    data['supplies_permission'] = suppliesPermission;
+    data['buy_sell_permission'] = buySellPermission;
+    return data;
+  }
+}
+
+class Modules {
+  int? count;
+  String? name;
+  bool? permission;
+
+  Modules({this.count, this.name, this.permission});
+
+  Modules.fromJson(Map<String, dynamic> json) {
+    count = json['count'];
+    name = json['name'];
+    permission = json['permission'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['count'] = count;
+    data['name'] = name;
+    data['permission'] = permission;
     return data;
   }
 }
