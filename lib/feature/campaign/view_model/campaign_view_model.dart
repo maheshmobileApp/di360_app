@@ -252,14 +252,18 @@ class CampaignViewModel extends ChangeNotifier {
       final data = campaignDetails?.smsCampaignByPk;
       campaignNameController.text = data?.campaignName ?? "";
       scheduleDateController.text = data?.scheduleDate ?? "";
-      scheduleTimeController.text = data?.scheduleTimeLocal ?? "";
-      selectedTimeZone = data?.scheduleTimezone ?? "";
+      scheduleTimeController.text = "";
+      selectedTimeZone = timeOptions.firstWhere(
+        (element) => element.contains(data?.scheduleTimezone ?? ""),
+        orElse: () => "",
+      );
+      print("******************************${data?.scheduleTimezone}");
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
       selectStateCondition = data?.isRefinedByState == "yes" ? "Yes" : "No";
       _selectedSendChips = (data?.sendToNumbers?.cast<String>()) ?? [];
-     recipientsCount = data?.recipientsCount.toString() ?? "0";
+      recipientsCount = data?.recipientsCount.toString() ?? "0";
 
       notifyListeners();
     } catch (e) {
@@ -270,7 +274,7 @@ class CampaignViewModel extends ChangeNotifier {
   ContactCountData? contactCountData;
   Future<void> getContactCount() async {
     try {
-            List<String> sourceList = [];
+      List<String> sourceList = [];
       List<String> contactTypeList = [];
 
       if (_selectedGroupChips.contains("Community members")) {
@@ -301,7 +305,7 @@ class CampaignViewModel extends ChangeNotifier {
       if (selectedStateChips.isNotEmpty) {
         whereClause["state"] = {"_in": selectedStateChips};
       }
-      
+
       final variables = {"where": whereClause};
       final res = await repo.getContactCount(variables);
 
@@ -399,7 +403,7 @@ class CampaignViewModel extends ChangeNotifier {
       final variables = {"where": whereClause};
       final res = await repo.getContacts(variables);
       contactsData = res;
-     /* recipientsCount =
+      /* recipientsCount =
           contactsData?.campaignContacts?.length.toString() ?? "0";*/
       sendOptions = (selectedType == "SMS")
           ? contactsData?.campaignContacts

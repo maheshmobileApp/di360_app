@@ -63,7 +63,7 @@ class CreateCampaignView extends StatelessWidget
                     hintText: "Enter Campaign name",
                     title: "Campaign Name",
                     maxLength: 100,
-                    readOnly: viewModel.repeatMode,
+                    //readOnly: viewModel.repeatMode,
                     validator: validationCampaignName,
                   ),
                   addVertical(10),
@@ -152,7 +152,7 @@ class CreateCampaignView extends StatelessWidget
                     selectedValue: viewModel.selectStateCondition,
                     labelBuilder: (value) => value,
                     direction: Axis.vertical,
-                    readOnly: viewModel.repeatMode,
+                    //readOnly: viewModel.repeatMode,
                     onChanged: (value) {
                       viewModel.setStateCondition(value);
                     },
@@ -200,7 +200,7 @@ class CreateCampaignView extends StatelessWidget
                         textColor: Colors.black,
                       ),
                       CustomRoundedButton(
-                        text: viewModel.repeatMode ? 'Repeat' : 'Save',
+                        text:  viewModel.repeatMode? 'Repeat':'Save',
                         onPressed: () => _validateAndSave(context, viewModel),
                         height: 42,
                         backgroundColor: AppColors.primaryColor,
@@ -281,7 +281,7 @@ class CreateCampaignView extends StatelessWidget
       isRequired: true,
       value: selectedValue,
       title: "Select Type",
-      readOnly: viewModel.repeatMode,
+      //readOnly: viewModel.repeatMode,
       onChanged: (v) {
         viewModel.setSelectedType(v as String);
       },
@@ -311,7 +311,7 @@ class CreateCampaignView extends StatelessWidget
           selectedItems: viewModel.selectedGroupChips,
           itemLabel: (item) => item,
           hintText: "Select Groups",
-          readOnly: viewModel.repeatMode,
+          //readOnly: viewModel.repeatMode,
           onSelectionChanged: (selected) {
             final current = List<String>.from(viewModel.selectedGroupChips);
             for (final emp in current) {
@@ -346,7 +346,7 @@ class CreateCampaignView extends StatelessWidget
         addVertical(6),
         CustomMultiSelectDropDown<String>(
           showOptions: true,
-          readOnly: viewModel.repeatMode,
+          //readOnly: viewModel.repeatMode,
           height: 50,
           items: viewModel.stateOptions,
           selectedItems: viewModel.selectedStateChips,
@@ -385,7 +385,7 @@ class CreateCampaignView extends StatelessWidget
         addVertical(6),
         CustomMultiSelectDropDown<String>(
           showOptions: true,
-          readOnly: viewModel.repeatMode,
+          //readOnly: viewModel.repeatMode,
           height: 50,
           items: viewModel.sendOptions,
           selectedItems: viewModel.selectedSendChips,

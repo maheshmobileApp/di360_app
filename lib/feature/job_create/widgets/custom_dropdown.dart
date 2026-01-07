@@ -63,6 +63,7 @@ class CustomDropDown<T> extends StatelessWidget {
           validator: validator,
           onChanged: readOnly ? null : onChanged,
           autovalidateMode: AutovalidateMode.onUserInteraction,
+          style: style ?? TextStyles.regular3(color: AppColors.black),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             filled: bgcolor != null,
