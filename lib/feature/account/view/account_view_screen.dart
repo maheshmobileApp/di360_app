@@ -280,7 +280,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
-                            final bannerPermission =
+                            /*final bannerPermission =
                                 await LocalStorage.getBoolValue(
                                     LocalStorageConst.bannerPermission);
 
@@ -290,7 +290,9 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             } else {
                               scaffoldMessenger(
                                   "You do not have permission to access this feature.");
-                            }
+                            }*/
+                             navigationService
+                                  .navigateTo(RouteList.bannersListView);
                           } else if (item.title == "Marketing") {
                             navigationService
                                 .navigateTo(RouteList.campaignListingView);
