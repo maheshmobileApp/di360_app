@@ -83,7 +83,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                             director.profileImage?.url ??
                                             '',
                                         height: 170,
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                     Container(

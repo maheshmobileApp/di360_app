@@ -87,26 +87,31 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
               ),
               SizedBox(height: 40),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Registration Link :",
                     style: TextStyles.regular3(color: AppColors.black),
                   ),
                   SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () async {
-                      final url = Uri.parse(viewModel.membershipLink);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url,
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        scaffoldMessenger("Invalid link !!");
-                      }
-                    },
-                    child: Text(
-                      viewModel.membershipLink,
-                      maxLines: 3,
-                      style: TextStyles.bold3(color: AppColors.primaryColor),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final url = Uri.parse(viewModel.membershipLink);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url,
+                              mode: LaunchMode.externalApplication);
+                        } else {
+                          scaffoldMessenger("Invalid link !!");
+                        }
+                      },
+                      child: Text(
+                        viewModel.membershipLink,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyles.bold3(color: AppColors.primaryColor),
+                      ),
                     ),
                   )
                 ],

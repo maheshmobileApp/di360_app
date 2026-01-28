@@ -54,7 +54,7 @@ class CoursesListingDetails {
   bool? isFeatured;
   String? activeStatus;
   String? type;
-  String? address;
+  List<dynamic>? address;
   String? scheduledAt;
   dynamic maxSubscribers;
   dynamic priceInAud;

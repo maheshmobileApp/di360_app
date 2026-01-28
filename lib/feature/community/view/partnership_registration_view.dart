@@ -93,20 +93,23 @@ class _PartnershipRegistrationViewState
                       style: TextStyles.regular3(color: AppColors.black),
                     ),
                     SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () async {
-                        final url = Uri.parse(viewModel.partnershipLink);
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(url,
-                              mode: LaunchMode.externalApplication);
-                        } else {
-                          scaffoldMessenger("Invalid link !!");
-                        }
-                      },
-                      child: Text(
-                        viewModel.partnershipLink,
-                        maxLines: 3,
-                        style: TextStyles.bold3(color: AppColors.primaryColor),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          final url = Uri.parse(viewModel.partnershipLink);
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url,
+                                mode: LaunchMode.externalApplication);
+                          } else {
+                            scaffoldMessenger("Invalid link !!");
+                          }
+                        },
+                        child: Text(
+                          viewModel.partnershipLink,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyles.bold3(color: AppColors.primaryColor),
+                        ),
                       ),
                     )
                   ],
