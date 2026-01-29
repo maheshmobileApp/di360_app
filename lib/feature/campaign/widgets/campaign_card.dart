@@ -53,6 +53,7 @@ class CampaignCard extends StatelessWidget {
               children: [
                 Flexible(
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Campaign Name: ",

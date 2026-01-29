@@ -254,6 +254,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               ),
             ),
             addHorizontal(16),
+           
             Expanded(
               child: CustomRoundedButton(
                 text: ((widget.talentList?.jobHirings

@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -136,6 +137,27 @@ class TalentsViewModel extends ChangeNotifier {
       print(
           "***********************${talentList.first.jobHirings.length}***********************");
       print("Fetched ${talentList.length} talents");
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
+  }
+
+  UpdateHiringStatusData? hiringStatusData;
+  String? hiringStatus;
+  void setHiringStatus(String status) {
+    hiringStatus = status;
+    notifyListeners();
+  }
+
+  Future<void> updateHiringStatus(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": id, "status": "PENDING"};
+    try {
+      final res = await repo.updateHiringStatus(variables);
+      hiringStatusData = res;
+      setHiringStatus(hiringStatusData?.updateJobhiringsByPk?.hiringStatus ?? '');
+      print("Updated hiring status: $res");
     } finally {
       Loaders.circularHideLoader(context);
       notifyListeners();

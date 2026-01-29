@@ -55,7 +55,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _chipWidget(jobsData?.typeofEmployment ?? []),
+                  Flexible(child: _chipWidget(jobsData?.typeofEmployment ?? [])),
                   Row(
                     children: [
                       GestureDetector(

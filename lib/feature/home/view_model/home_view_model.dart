@@ -42,6 +42,7 @@ class HomeViewModel extends ChangeNotifier {
       });
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
+        print('********************************************Newsfeeds Data: ${result.newsfeeds}');
         allNewsFeedsData = result;
         Loaders.circularHideLoader(context);
       } else {

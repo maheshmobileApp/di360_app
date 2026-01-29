@@ -42,7 +42,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             addVertical(10),
-            _buildHeader(
+           /* _buildHeader(
                 newsfeeds?.dentalSupplier?.logo?.url ??
                     newsfeeds?.dentalPractice?.logo?.url ??
                     newsfeeds?.dentalProfessional?.profileImage?.url ??
@@ -51,6 +51,32 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 newsfeeds?.dentalSupplier?.name ??
                     newsfeeds?.dentalPractice?.name ??
                     newsfeeds?.dentalProfessional?.name,
+                newsfeeds?.createdAt ?? '',
+                context,
+                newsfeeds,
+                needFeedViewModel,
+                addNeedFeedViewModel),*/
+             _buildHeader(
+                newsfeeds?.dentalSupplier != null
+                    ? newsfeeds?.dentalSupplier?.logo?.url ??
+                        newsfeeds?.dentalSupplier?.directories?.first.logo?.url ??
+                        ''
+                    : newsfeeds?.dentalPractice != null
+                        ? newsfeeds?.dentalPractice?.logo?.url ?? ''
+                        : newsfeeds?.dentalProfessional != null
+                            ? newsfeeds?.dentalProfessional?.profileImage?.url ??
+                                ''
+                            : '',
+                newsfeeds?.dentalSupplier != null
+                    ? 
+                        newsfeeds?.dentalSupplier?.directories?.first.companyName ??
+                        ''
+                    : newsfeeds?.dentalPractice != null
+                        ? newsfeeds?.dentalPractice?.name ?? ''
+                        : newsfeeds?.dentalProfessional != null
+                            ? newsfeeds?.dentalProfessional?.name ??
+                                ''
+                            : '',
                 newsfeeds?.createdAt ?? '',
                 context,
                 newsfeeds,
