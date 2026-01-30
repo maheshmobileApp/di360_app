@@ -74,6 +74,7 @@ import 'package:di360_flutter/feature/talent_listing/view/talent_listing_filter.
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_message_screen.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_screen.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/feature/talents/views/talent_preview.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
 import 'package:di360_flutter/feature/team_members/view/create_team_member_view.dart';
@@ -189,6 +190,13 @@ class Routes {
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return TalentsDetailsView(
+          talentList: args as JobProfiles,
+        );
+      },
+
+      RouteList.talentPreview: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return TalentPreview(
           talentList: args as JobProfiles,
         );
       },

@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
@@ -12,9 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
-  final JobProfiles jobsListingData;
+  final Jobhirings? jobsListingData;
   final dynamic parmas;
-  final int index; 
+  final int index;
 
   const JobProfileRequestCard({
     super.key,
@@ -25,10 +26,11 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(jobsListingData.createdAt ?? '');
-    final String? profileImageUrl = jobsListingData.profileImage.isNotEmpty
-        ? jobsListingData.profileImage.first.url
-        : '';
+    final String time = _getShortTime(jobsListingData?.createdAt ?? '');
+    final String? profileImageUrl =
+        jobsListingData?.dentalSupplier?.logo != null && jobsListingData?.dentalSupplier?.logo?.url != null && jobsListingData?.dentalSupplier?.logo?.url != ""
+            ? jobsListingData?.dentalSupplier?.logo?.url
+            : '';
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Container(
@@ -47,9 +49,9 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                 Expanded(
                   child: _logoWithTitle(
                     profileImageUrl ?? "",
-                    jobsListingData.fullName ?? '',
-                    jobsListingData.emailAddress ?? '',
-                    jobsListingData.mobileNumber ?? '',
+                    jobsListingData?.dentalSupplier?.name ?? '',
+                    jobsListingData?.dentalSupplier?.directories?.email ?? "",
+                    jobsListingData?.dentalSupplier?.directories?.phone ?? "",
                   ),
                 ),
                 Row(
@@ -59,8 +61,8 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                     menuWidget(
                       context,
                       index,
-                      jobsListingData.id ?? '',
-                      jobsListingData.activeStatus ?? '',
+                      jobsListingData?.id ?? '',
+                      jobsListingData?.hiringStatus ?? '',
                     ),
                   ],
                 ),
@@ -69,18 +71,18 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
             addVertical(10),
             Row(
               children: [
-                _statusChip(jobsListingData.adminStatus ?? ''),
+                _statusChip(jobsListingData?.hiringStatus ?? ''),
                 addHorizontal(10),
               ],
             ),
             addVertical(10),
-             const Divider(),
+            const Divider(),
             Row(
               children: [
-               InkWell(
+                InkWell(
                   onTap: () async {
-                    final profileId = jobsListingData.id;
-                    final jobId =jobsListingData.jobDesignation;
+                    /*final profileId = jobsListingData?.id;
+                    final jobId = jobsListingData.jobDesignation;
                     if (profileId == null || jobId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -98,7 +100,7 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                         "applicantId": profileId,
                         "userId": userId,
                       },
-                    );
+                    );*/
                   },
                   child: _roundedButton("Message"),
                 ),
@@ -152,7 +154,8 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
             children: [
               Text(
                 name,
-                style: TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

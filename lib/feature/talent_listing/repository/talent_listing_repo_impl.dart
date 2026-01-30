@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_qu
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_status_count.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_data.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/send_talent_message_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_listing_messages_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_status_count_quary.dart';
@@ -112,7 +113,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
   @override
   Future<List<JobProfiles>> getTalentPreviewData(variables) async {
     final res =
-        await _http.query(getTalentPreviewDataQuery, variables: variables);
+        await _http.query(getTalentPreviewQuery, variables: variables);
 
     if (res != null && res['job_profiles'] != null) {
       final List<dynamic> jobProfilesList = res['job_profiles'];
@@ -133,7 +134,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
   @override
   Future updateTalentListing(variables) async {
     final res =
-        await _http.query(updateTalentListingQuery, variables: variables);
+        await _http.mutation(updateTalentListingQuery, variables);
     return res;
   }
 }

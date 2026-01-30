@@ -382,15 +382,19 @@ class TalentListingViewModel extends ChangeNotifier {
   List<JobProfiles> talentPreviewData = [];
   Future<void> getTalentPreviewData(
       BuildContext context, String profileId, String professionType) async {
-    final variables = {
+    /*final variables = {
       "profession_type": professionType,
       "limit": 10,
       "offset": 0,
       "excludeId": profileId
-    };
+    };*/
+    final variables = {"id": profileId};
+    Loaders.circularShowLoader(context);
+
     final res = await repo.getTalentPreviewData(variables);
     if (res.isNotEmpty) {
       talentPreviewData = res;
+      Loaders.circularHideLoader(context);
     } else {}
     notifyListeners();
   }
@@ -399,9 +403,11 @@ class TalentListingViewModel extends ChangeNotifier {
       BuildContext context, String talentId) async {
     final variables = {"id": talentId, "status": "CANCELLED"};
     final res = await repo.updateTalentListing(variables);
-    if (res.isNotEmpty) {
+    if (res != null && res.isNotEmpty) {
       scaffoldMessenger("Talent Cancelled Successfully");
-    } else {}
+    } else {
+      scaffoldMessenger("Failed to cancel talent");
+    }
     notifyListeners();
   }
 }

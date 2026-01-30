@@ -21,19 +21,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TalentsDetailsView extends StatefulWidget with BaseContextHelpers {
+class TalentPreview extends StatefulWidget with BaseContextHelpers {
   final JobProfiles? talentList;
 
-  const TalentsDetailsView({
+  const TalentPreview({
     super.key,
     this.talentList,
   });
 
   @override
-  State<TalentsDetailsView> createState() => _TalentsDetailsViewState();
+  State<TalentPreview> createState() => _TalentPreviewState();
 }
 
-class _TalentsDetailsViewState extends State<TalentsDetailsView>
+class _TalentPreviewState extends State<TalentPreview>
     with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
@@ -48,11 +48,11 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 },
                 icon: Icon(Icons.arrow_back_ios)),
             title: Text(
-              "Talent Detail View",
+              "Talent Preview",
               style: TextStyles.medium2(),
             )),
         body: _buildBodyContent(context, talentViewModel),
-        bottomNavigationBar: FutureBuilder<String>(
+        /*bottomNavigationBar: FutureBuilder<String>(
           future: LocalStorage.getStringVal(LocalStorageConst.type),
           builder: (context, snapshot) {
             if (snapshot.hasData &&
@@ -69,7 +69,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
             }
             return const SizedBox.shrink();
           },
-        ));
+        )*/);
   }
 
   Widget _buildBodyContent(

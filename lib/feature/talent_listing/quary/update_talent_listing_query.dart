@@ -7,3 +7,5 @@ const String updateTalentListingQuery =
   }
 }
 ''';
+
+

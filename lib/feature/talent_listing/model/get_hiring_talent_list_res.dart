@@ -1,11 +1,12 @@
-
 class GetHiringTalentListRes {
   HiringTalentList? data;
 
   GetHiringTalentListRes({this.data});
 
   GetHiringTalentListRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new HiringTalentList.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new HiringTalentList.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -128,16 +129,29 @@ class Jobhirings {
 class DentalSupplier {
   String? id;
   String? name;
+  DirectoriesList? directories;
   Null? profileImage;
   Logo? logo;
   String? sTypename;
 
   DentalSupplier(
-      {this.id, this.name, this.profileImage, this.logo, this.sTypename});
+      {this.id, this.name, this.directories, this.profileImage, this.logo, this.sTypename});
 
   DentalSupplier.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    // Handle directories as either List or Map
+    if (json['directories'] != null) {
+      if (json['directories'] is List) {
+        // If it's a list, take the first item or handle as needed
+        final dirList = json['directories'] as List;
+        directories = dirList.isNotEmpty 
+            ? DirectoriesList.fromJson(dirList[0] as Map<String, dynamic>)
+            : null;
+      } else if (json['directories'] is Map<String, dynamic>) {
+        directories = DirectoriesList.fromJson(json['directories']);
+      }
+    }
     profileImage = json['profile_image'];
     logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
     sTypename = json['__typename'];
@@ -147,6 +161,7 @@ class DentalSupplier {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['directories'] = this.directories?.toJson();
     data['profile_image'] = this.profileImage;
     if (this.logo != null) {
       data['logo'] = this.logo!.toJson();
@@ -234,10 +249,13 @@ class HiringJobProfiles {
     fullName = json['full_name'];
     professionType = json['profession_type'];
     state = json['state'];
-    profileImage = json['profile_image'] != null && json['profile_image'] is List && (json['profile_image'] as List).isNotEmpty
+    profileImage = json['profile_image'] != null &&
+            json['profile_image'] is List &&
+            (json['profile_image'] as List).isNotEmpty
         ? new ProfileImage.fromJson(json['profile_image'][0])
         : null;
-    workType = json['work_type'] != null ? json['work_type'].cast<String>() : null;
+    workType =
+        json['work_type'] != null ? json['work_type'].cast<String>() : null;
     dentalProfessionalId = json['dental_professional_id'];
     postAnonymously = json['post_anonymously'];
     dentalProfessional = json['dental_professional'] != null
@@ -341,6 +359,33 @@ class Directories {
       data['logo'] = this.logo!.toJson();
     }
     data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+
+class DirectoriesList  {
+  String? id;
+  String? email;
+  String? phone;
+  String? typename;
+
+  DirectoriesList({this.id, this.email, this.phone, this.typename});
+
+  DirectoriesList.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    email = json['email'];
+    phone = json['phone'];
+    typename = json['__typename'];
+    
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['email'] = this.email;
+    data['phone'] = this.phone;
+    data['__typename'] = this.typename;
     return data;
   }
 }

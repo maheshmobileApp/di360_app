@@ -87,4 +87,5 @@ class RouteList {
   static const String createCampaignView = 'createCampaignView';
   static const String teamMembersListingView = 'teamMembersListingView';
   static const String createTeamMemberView = 'createTeamMemberView';
+  static const String talentPreview = '/talentPreview';
 }
