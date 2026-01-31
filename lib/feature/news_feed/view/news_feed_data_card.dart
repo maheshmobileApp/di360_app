@@ -34,15 +34,13 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     return Container(
       color: AppColors.whiteColor,
-      child: GestureDetector(
-        onTap: () {
-          navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: GestureDetector(onTap: () {
+        navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+      },
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             addVertical(10),
-           /* _buildHeader(
+            /* _buildHeader(
                 newsfeeds?.dentalSupplier?.logo?.url ??
                     newsfeeds?.dentalPractice?.logo?.url ??
                     newsfeeds?.dentalProfessional?.profileImage?.url ??
@@ -56,26 +54,27 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 newsfeeds,
                 needFeedViewModel,
                 addNeedFeedViewModel),*/
-             _buildHeader(
+            _buildHeader(
                 newsfeeds?.dentalSupplier != null
                     ? newsfeeds?.dentalSupplier?.logo?.url ??
-                        newsfeeds?.dentalSupplier?.directories?.first.logo?.url ??
+                        newsfeeds
+                            ?.dentalSupplier?.directories?.first.logo?.url ??
                         ''
                     : newsfeeds?.dentalPractice != null
                         ? newsfeeds?.dentalPractice?.logo?.url ?? ''
                         : newsfeeds?.dentalProfessional != null
-                            ? newsfeeds?.dentalProfessional?.profileImage?.url ??
+                            ? newsfeeds
+                                    ?.dentalProfessional?.profileImage?.url ??
                                 ''
                             : '',
                 newsfeeds?.dentalSupplier != null
-                    ? 
-                        newsfeeds?.dentalSupplier?.directories?.first.companyName ??
+                    ? newsfeeds
+                            ?.dentalSupplier?.directories?.first.companyName ??
                         ''
                     : newsfeeds?.dentalPractice != null
                         ? newsfeeds?.dentalPractice?.name ?? ''
                         : newsfeeds?.dentalProfessional != null
-                            ? newsfeeds?.dentalProfessional?.name ??
-                                ''
+                            ? newsfeeds?.dentalProfessional?.name ?? ''
                             : '',
                 newsfeeds?.createdAt ?? '',
                 context,
@@ -119,12 +118,11 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   addVertical(10)
                 ],
               ),
-    ),
-          ),
-          Divider(thickness: 8, color: Color(0xffEDEFF1))
-        ]),
-      ),
-    );
+            ),
+            Divider(thickness: 8, color: Color(0xffEDEFF1)),
+          ]),
+          
+    ));
   }
 
   Widget _buildHeader(
