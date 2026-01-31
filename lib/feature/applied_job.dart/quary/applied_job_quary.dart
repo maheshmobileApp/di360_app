@@ -1,4 +1,39 @@
-const String appliedJobQuery = r'''
+const String appliedJobQuery =
+    r'''query getmyAppliedJobData($limit: Int, $offset: Int, $where: job_applicants_bool_exp) {
+  job_applicants(
+    limit: $limit
+    offset: $offset
+    order_by: {updated_at: desc}
+    where: $where
+  ) {
+    id
+    created_at
+    job_id
+    status
+    dental_professional_id
+    dental_professional {
+      profile_image
+      __typename
+    }
+    job {
+      id
+      title
+      logo
+      company_name
+      j_role
+      TypeofEmployment
+      __typename
+    }
+    job_enquiries_find {
+      id
+      __typename
+    }
+    __typename
+  }
+}
+''';
+/*
+r'''
 query getajobswithallprofiles($dental_professional_id:uuid) {  
   job_applicants( where: {_and: [{ dental_professional_id: {_eq: $dental_professional_id}}]}){
   id
@@ -61,8 +96,7 @@ query getajobswithallprofiles($dental_professional_id:uuid) {
     }
   }
  }
-''';
-
+''';*/
 
 const String enquireJobListQuery = r'''
 query getEnquiryList($dental_professional_id:uuid) {  

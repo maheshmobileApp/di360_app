@@ -162,9 +162,24 @@ class JobSeekViewModel extends ChangeNotifier {
       Loaders.circularShowLoader(context);
 
       // Build dynamic where conditions
+      final String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final List<Map<String, dynamic>> andConditions = [
         {"status": {"_eq": "APPROVE"}},
-        {"active_status": {"_eq": "ACTIVE"}}
+        {"active_status": {"_eq": "ACTIVE"}},
+        {
+          "_or": [
+            {
+              "start_Date": {
+                "_lte": todayDate
+              }
+            },
+            {
+              "start_Date": {
+                "_is_null": true
+              }
+            }
+          ]
+        }
       ];
 
       // Add location search if not empty
