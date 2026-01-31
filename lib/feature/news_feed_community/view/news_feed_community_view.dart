@@ -148,9 +148,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               body: Column(
                 children: [
                   CommunityHeaderCard(
-                    imageUrl: viewModel
-                            .bannerData?.directories!.first.bannerImage?.url ??
-                        "",
+                    imageUrl: (viewModel.bannerData?.directories != null &&
+                            viewModel.bannerData!.directories!.isNotEmpty)
+                        ? (viewModel.bannerData!.directories!.first.bannerImage
+                                ?.url ??
+                            "")
+                        : "",
                     title: type == "PROFESSIONAL"
                         ? "${viewModel.profCommunityName} Community"
                         : "${businessname}Community",

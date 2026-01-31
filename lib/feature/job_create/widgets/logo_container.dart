@@ -58,7 +58,7 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
             child: Container(
               width: double.infinity,
               height: getSize(context).height * 0.2,
-              child: (serverImg != null || imageFile != null)
+              child: ((serverImg != null && serverImg != '') || imageFile != null)
                   ? Stack(
                       fit: StackFit.expand,
                       children: [
@@ -84,14 +84,14 @@ class LogoContainer extends StatelessWidget with BaseContextHelpers {
                               ),
                               padding: const EdgeInsets.all(4),
                               child: const Icon(
-                                Icons.close,
+                                Icons.edit,
                                 color: Colors.white,
                                 size: 18,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        )
+                      ]
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,

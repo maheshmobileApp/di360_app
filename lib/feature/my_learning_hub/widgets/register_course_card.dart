@@ -118,7 +118,7 @@ class RegisterCourseCard extends StatelessWidget {
               backgroundColor: AppColors.geryColor,
               radius: 30,
               child: CachedNetworkImageWidget(
-                  imageUrl: profilePic ?? '',
+                  imageUrl: profilePic,
                   fit: BoxFit.fill,
                   errorWidget: Image.asset(ImageConst.prfImg)),
             ),

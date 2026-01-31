@@ -226,31 +226,41 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> fetchTheDirectorData(BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    final editVM = context.read<EditDeleteDirectorViewModel>();
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final res = await addDirectorRepositoryImpl.getDirectoriesData();
-    if (res.isNotEmpty) {
-      await getBusinessTypes();
-      _currentStep = 0;
-      getBasicInfoData = res;
-      print("*******************************************${getBasicInfoData.first.directoryLocations}");
-      await context.read<DirectoryViewModel>().getFollowersCount(userId);
-      await editVM.getAppointments(context);
+    try {
+      Loaders.circularShowLoader(context);
+      final editVM = context.read<EditDeleteDirectorViewModel>();
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+      final res = await addDirectorRepositoryImpl.getDirectoriesData();
+      
+      if (res.isNotEmpty) {
+        await getBusinessTypes();
+        _currentStep = 0;
+        getBasicInfoData = res;
+        await context.read<DirectoryViewModel>().getFollowersCount(userId);
+        await editVM.getAppointments(context);
+        Loaders.circularHideLoader(context);
+        type == 'PROFESSIONAL'
+            ? getBasicInfoData.isNotEmpty
+                ? navigationService.navigateTo(RouteList.professionDirectorScreen)
+                : navigationService
+                    .navigateTo(RouteList.professionAddDirectorView)
+            : getBasicInfoData.isNotEmpty
+                ? navigationService.navigateTo(RouteList.myDirectorScreen)
+                : navigationService.navigateTo(RouteList.adddirectorview);
+        assignBasicInfoData(context);
+      } else {
+        clearBasicInfoData();
+        Loaders.circularHideLoader(context);
+        type == 'PROFESSIONAL'
+            ? navigationService.navigateTo(RouteList.professionAddDirectorView)
+            : navigationService.navigateTo(RouteList.adddirectorview);
+      }
+    } catch (e) {
+      print('Error in fetchTheDirectorData: $e');
       Loaders.circularHideLoader(context);
-      type == 'PROFESSIONAL'
-          ? getBasicInfoData.isNotEmpty
-              ? navigationService.navigateTo(RouteList.professionDirectorScreen)
-              : navigationService
-                  .navigateTo(RouteList.professionAddDirectorView)
-          : getBasicInfoData.isNotEmpty
-              ? navigationService.navigateTo(RouteList.myDirectorScreen)
-              : navigationService.navigateTo(RouteList.adddirectorview);
-      assignBasicInfoData(context);
-    } else {
       clearBasicInfoData();
-      Loaders.circularHideLoader(context);
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       type == 'PROFESSIONAL'
           ? navigationService.navigateTo(RouteList.professionAddDirectorView)
           : navigationService.navigateTo(RouteList.adddirectorview);
@@ -259,10 +269,14 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> getDirectories() async {
-    final res = await addDirectorRepositoryImpl.getDirectoriesData();
-    if (res.isNotEmpty) {
-      getBasicInfoData = res;
-      assignBasicInfoData(navigatorKey.currentContext!);
+    try {
+      final res = await addDirectorRepositoryImpl.getDirectoriesData();
+      if (res.isNotEmpty) {
+        getBasicInfoData = res;
+        assignBasicInfoData(navigatorKey.currentContext!);
+      }
+    } catch (e) {
+      print('Error in getDirectories: $e');
     }
     notifyListeners();
   }

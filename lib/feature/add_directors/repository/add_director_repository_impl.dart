@@ -21,26 +21,46 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
 
   @override
   Future<BusinessTypeData?> getBusinessTypes() async {
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final businessType =
-        await http.query(getBusinessTypeQuery, variables: {"type": type});
-    final result = BusinessTypeData.fromJson(businessType);
-    return result;
+    try {
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+      final businessType =
+          await http.query(getBusinessTypeQuery, variables: {"type": type});
+      
+      if (businessType == null) {
+        return null;
+      }
+      
+      final result = BusinessTypeData.fromJson(businessType);
+      return result;
+    } catch (e) {
+      print('Error fetching business types: $e');
+      return null;
+    }
   }
 
   @override
   Future<List<GetDirectories>> getDirectoriesData() async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final res = await http.query(
-        type == 'SUPPLIER'
-            ? getSuppilerDirectorInfoQuery
-            : type == 'PROFESSIONAL'
-                ? getProfessDirectorQuery
-                : getDirectorInfoQuery,
-        variables: {"id": userId});
-    final result = GetDirectoriesData.fromJson(res);
-    return result.directories ?? [];
+    try {
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+      final res = await http.query(
+          type == 'SUPPLIER'
+              ? getSuppilerDirectorInfoQuery
+              : type == 'PROFESSIONAL'
+                  ? getProfessDirectorQuery
+                  : getDirectorInfoQuery,
+          variables: {"id": userId});
+      
+      if (res == null) {
+        return [];
+      }
+      
+      final result = GetDirectoriesData.fromJson(res);
+      return result.directories ?? [];
+    } catch (e) {
+      print('Error fetching directories data: $e');
+      return [];
+    }
   }
 
   @override

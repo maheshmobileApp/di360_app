@@ -8,6 +8,7 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:di360_flutter/services/banner_services.dart';
 
 class UserData extends StatelessWidget with BaseContextHelpers {
   final String? imageUrl;
@@ -30,10 +31,11 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
+
           SvgPicture.asset(ImageConst.homeBG,width: getSize(context).width),
           ListBanner(),
           /*Positioned(
-              right: 1,
+  right: 1,
               left: 1,
               bottom: -40,
               child: CircleAvatar(
@@ -60,6 +62,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(children: [
             Divider(color: AppColors.dividerColor),
+
              addVertical(6),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +86,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                         fontSize: 20, color: AppColors.black)),
               ],
             ),
-            addVertical(6),
+addVertical(6),
             Divider(color: AppColors.dividerColor),
             addVertical(6),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

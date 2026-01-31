@@ -158,7 +158,7 @@ void showDeleteAccountDialog(BuildContext context, Function()? onTap) {
                         radius: 10,
                         width: 140,
                         onTap: onTap),
-                        SizedBox(width: 10),
+                    SizedBox(width: 10),
                     AppButton(
                         text: 'Cancel',
                         height: 40,
@@ -185,4 +185,32 @@ void showTopMessage(BuildContext context, String message) {
     margin: const EdgeInsets.all(8),
     borderRadius: BorderRadius.circular(8),
   ).show(context);
+}
+
+showUserBlockPopup(BuildContext context, String message, {Function()? confirmAction}) {
+  return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            backgroundColor: AppColors.whiteColor,
+            title: Text(message,
+                style: TextStyles.medium3(color: AppColors.black)),
+            actions: [
+              TextButton(
+                  onPressed: confirmAction,
+                  child: Text(
+                    "Confirm",
+                    style: TextStyles.medium4(color: AppColors.primaryColor),
+                  )),
+              TextButton(
+                  onPressed: () => navigationService.goBack(),
+                  child: Text(
+                    "Cancel",
+                    style: TextStyles.medium4(),
+                  )),
+            ]);
+      });
 }

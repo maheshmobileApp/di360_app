@@ -30,7 +30,7 @@ class ImagePickerInputField extends StatelessWidget {
     final bool hasFile = imageFile != null;
     final String fileName = hasFile
         ? imageFile!.path.split('/').last
-        : (hintText ?? 'JPEG, PNG, PDF formats, up to 5 MB');
+        : (hintText ?? 'JPEG, PNG up to 5 MB');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

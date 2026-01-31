@@ -32,10 +32,16 @@ class ProfessionalDetailInfo extends StatelessWidget with BaseContextHelpers {
   Widget _buildBusineestype(ViewProfileViewModel viewVM) {
     final allCategories = viewVM.directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
+        .toSet()
         .toList();
 
+    // Ensure selected value exists in the list
+    final selectedValue = allCategories.contains(viewVM.selectedBusineestype) 
+        ? viewVM.selectedBusineestype 
+        : null;
+
     return CustomDropDown(
-      value: viewVM.selectedBusineestype,
+      value: selectedValue,
       title: "Profession Type",
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),

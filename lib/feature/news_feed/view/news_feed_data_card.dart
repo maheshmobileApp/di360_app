@@ -10,10 +10,10 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/feature/news_feed/view/news_menu_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
@@ -119,13 +119,10 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   addVertical(10)
                 ],
               ),
-            ),
-            Divider(
-              thickness: 8,
-              color: Color(0xffEDEFF1),
-            )
-          ],
-        ),
+    ),
+          ),
+          Divider(thickness: 8, color: Color(0xffEDEFF1))
+        ]),
       ),
     );
   }
@@ -171,67 +168,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           ),
           addHorizontal(15),
-          if (newsfeeds?.dentalAdminId == viewModel.userID ||
-              newsfeeds?.dentalPracticeId == viewModel.userID ||
-              newsfeeds?.dentalProfessionalId == viewModel.userID ||
-              newsfeeds?.dentalSupplierId == viewModel.userID)
-            GestureDetector(
-              onTapDown: (TapDownDetails details) {
-                final offset = details.globalPosition;
-                showMenu(
-                  context: context,
-                  position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  items: [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, color: Colors.blue, size: 18),
-                          SizedBox(width: 8),
-                          Text(
-                            'Edit',
-                            style: TextStyles.semiBold(
-                                color: Colors.blue, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, color: Colors.red, size: 18),
-                          SizedBox(width: 8),
-                          Text(
-                            'Delete',
-                            style: TextStyles.semiBold(
-                                color: Colors.red, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ).then((value) async {
-                  if (value == 'edit') {
-                    await addNewsVM.fetchNewsfeedCategories();
-                    await addNewsVM.editFeedObject(newsfeeds);
-                    navigationService.navigateTo(RouteList.addNewsFeed);
-                  } else if (value == 'delete') {
-                    showAlertMessage(context,
-                        'Are you really want to delete this NewsFeed ?',
-                        onBack: () {
-                      viewModel.deleteTheNewsFeed(context, newsfeeds?.id ?? '');
-                      navigationService.goBack();
-                    });
-                  }
-                });
-              },
-              child: Icon(Icons.more_horiz, size: 20),
-            )
+          NewsMenuWidget(newsfeeds: newsfeeds)
         ],
       ),
     );
@@ -386,11 +323,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _mediaCard({
-    required Widget child,
-    VoidCallback? onTap,
-    bool isFullWidth = false,
-  }) {
+  Widget _mediaCard(
+      {required Widget child, VoidCallback? onTap, bool isFullWidth = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
@@ -444,9 +378,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         Spacer(),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: AppColors.backgroundColor,
-          ),
+              borderRadius: BorderRadius.circular(20),
+              color: AppColors.backgroundColor),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             child: Row(
@@ -458,7 +391,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-        ),
+        )
       ],
     );
   }
