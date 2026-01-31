@@ -1,6 +1,7 @@
 //import 'package:di360_flutter/feature/job_profile/model/job_profile.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profile_respo_impl.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -130,6 +131,32 @@ class JobProfileListingViewModel extends ChangeNotifier {
     final res = await repo.getJobProfileEnquiry(profileId, enquiryId);
     if (res != null) {
       jobPrilfeEnquiryData = res;
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+    return res;
+  }
+
+  HiringTalentList? hiringTalentList;
+
+  Future<HiringTalentList> getAllTalentsRequest(
+      BuildContext context, String professionalId) async {
+    final variables = {
+      "where": {
+        "dental_professional_id": {
+          "_eq": professionalId
+        },
+        "hiring_status": {"_eq": "PENDING"}
+      },
+      "limit": 3,
+      "offset": 0
+    };
+    Loaders.circularShowLoader(context);
+    final res = await repo.getAllTalentsRequest(variables);
+    if (res != null) {
+      hiringTalentList = res;
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);

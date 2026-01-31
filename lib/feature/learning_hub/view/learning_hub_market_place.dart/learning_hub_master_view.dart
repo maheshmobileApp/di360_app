@@ -103,7 +103,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             date: course.startDate ?? "",
                             cpdHours:
                                 course.cpdPoints?.toStringAsFixed(0) ?? "0",
-                            location: course.address ?? "",
+                            location: course.address?.first.toString() ?? "",
                             onTap: () async {
                               if (seats > 0) {
                                 await courseListingVM.getCourseDetails(

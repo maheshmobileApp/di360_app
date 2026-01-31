@@ -4,6 +4,8 @@ import 'package:di360_flutter/feature/job_profile/quary/job_profile_role_quary.d
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dart';
+import 'package:di360_flutter/feature/talents/query/update_hiring_status_request.dart';
 import 'package:di360_flutter/feature/talents/talents_request.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo.dart';
 
@@ -89,5 +91,11 @@ class TalentRepoImpl extends TalentRepository {
             .toList() ??
         [];
     return roles;
+  }
+  
+  @override
+  Future<UpdateHiringStatusData> updateHiringStatus(variables)async {
+    final response = await _http.mutation(updateHiringStatusMutation, variables);
+    return UpdateHiringStatusData.fromJson(response);
   }
 }

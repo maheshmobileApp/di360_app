@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
+import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -38,8 +39,12 @@ import 'package:di360_flutter/feature/support/view_model/support_view_model.dart
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
+import 'package:di360_flutter/feature/team_members/view_model/team_members_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/services/notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +53,15 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await Firebase.initializeApp();
+    await NotificationService.initialize();
+    await NotificationService.initFirebaseMessaging();
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+  }
+  
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -60,22 +74,21 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {   
-     
+  Widget build(BuildContext context) {
     return StreamBuilder<List<ConnectivityResult>>(
       stream: Connectivity().onConnectivityChanged,
       builder: (context, snapshot) {
         final hasConnection = snapshot.data != null &&
             snapshot.data!.isNotEmpty &&
             snapshot.data!.first != ConnectivityResult.none;
-        
+
         if (snapshot.hasData && !hasConnection) {
           return const MaterialApp(
             home: NoInternetView(),
             debugShowCheckedModeBanner: false,
           );
         }
-        
+
         return MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => HomeViewModel()),
@@ -94,7 +107,8 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => AddDirectoryViewModel()),
             ChangeNotifierProvider(create: (_) => AppliedJobViewModel()),
             ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
-            ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
+            ChangeNotifierProvider(
+                create: (_) => EditDeleteDirectorViewModel()),
             ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
             ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
             ChangeNotifierProvider(create: (_) => ProfessionalAddDirectorVm()),
@@ -107,13 +121,17 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
             ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
             ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
-        ChangeNotifierProvider(create: (_) => SupportViewModel()),
-        ChangeNotifierProvider(create: (_) => CommunityViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
-        ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel()),
-        ChangeNotifierProvider(create: (_) => DashBoardViewModel()),
-        ChangeNotifierProvider(create: (_) => TalentEnquiryViewModel()),
-        ChangeNotifierProvider(create: (_) => NewsFeedCommunityCommentViewModel())       
+            ChangeNotifierProvider(create: (_) => SupportViewModel()),
+            ChangeNotifierProvider(create: (_) => CommunityViewModel()),
+            ChangeNotifierProvider(
+                create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
+            ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel()),
+            ChangeNotifierProvider(create: (_) => DashBoardViewModel()),
+            ChangeNotifierProvider(create: (_) => TalentEnquiryViewModel()),
+            ChangeNotifierProvider(
+                create: (_) => NewsFeedCommunityCommentViewModel()),
+            ChangeNotifierProvider(create: (_) => CampaignViewModel()),
+            ChangeNotifierProvider(create: (_) => TeamMembersViewModel())
           ],
           child: MaterialApp(
             navigatorKey: navigatorKey,

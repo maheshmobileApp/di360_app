@@ -48,6 +48,8 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Modules>? modulePermissions = [];
+
   submit(BuildContext context) async {
     // Check connectivity first
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -82,6 +84,8 @@ class LoginViewModel extends ChangeNotifier {
               LocalStorageConst.token, result.loginApi?.accessToken ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.type, result.loginApi?.type ?? '');
+          await LocalStorage.setStringVal(
+              LocalStorageConst.subType, result.loginApi?.subType ?? '');
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
               result.loginApi?.subscriptionId ?? '');
           await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
@@ -92,6 +96,8 @@ class LoginViewModel extends ChangeNotifier {
                   result.loginApi?.profileImage?.url ??
                   '');
           await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
+          _modulePermissions(
+              result.loginApi?.subscriptionPermissions?.modules ?? []);
           _http.setToken(result.loginApi?.accessToken ?? '');
           navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
         }
@@ -104,6 +110,7 @@ class LoginViewModel extends ChangeNotifier {
       scaffoldMessenger('$e');
       Loaders.circularHideLoader(context);
     }
+
     notifyListeners();
   }
 
@@ -174,6 +181,50 @@ class LoginViewModel extends ChangeNotifier {
   }
 }
 
+_modulePermissions(List<Modules> modules) async {
+  if (modules.isEmpty) {
+    print("********************************No modules found");
+    return;
+  }
+  print("********************************Modules: ${modules.first.name}");
+  for (var module in modules) {
+    switch (module.name) {
+      case 'directory_minimal_permission':
+        await LocalStorage.setBoolValue(
+            LocalStorageConst.directoryMinimalPermission,
+            module.permission ?? false);
+        break;
+      case 'directory_full_access_permission':
+        await LocalStorage.setBoolValue(
+            LocalStorageConst.directoryFullAccessPermission,
+            module.permission ?? false);
+        break;
+      case 'learning_hub_modules_permission':
+        await LocalStorage.setBoolValue(LocalStorageConst.learninghubPermission,
+            module.permission ?? false);
+        break;
+      case 'catalogues_modules_permission':
+        await LocalStorage.setBoolValue(
+            LocalStorageConst.cataloguePermission, module.permission ?? false);
+        break;
+      case 'job_seek_modules_permission':
+        await LocalStorage.setBoolValue(
+            LocalStorageConst.jobseekPermission, module.permission ?? false);
+        break;
+      case 'news_feed_modules_permission':
+        await LocalStorage.setBoolValue(
+            LocalStorageConst.newsfeedPermission, module.permission ?? false);
+        break;
+      case 'banner_modules_permission':
+        await LocalStorage.setBoolValue(
+            LocalStorageConst.bannerPermission, module.permission ?? false);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 String get loginSchema => """mutation loginApi(\$details: LoginInput!) {
   login_api(details: \$details) {
     id
@@ -186,6 +237,7 @@ String get loginSchema => """mutation loginApi(\$details: LoginInput!) {
     status
     message
     profile_completed
+    payment_completed
     profile_image
     type
     address
@@ -201,6 +253,8 @@ String get loginSchema => """mutation loginApi(\$details: LoginInput!) {
     payment_status
     subscription_id
     subscription_permissions
+    sub_type
+    owner_id
     __typename
   }
 }

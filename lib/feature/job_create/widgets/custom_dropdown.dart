@@ -16,6 +16,7 @@ class CustomDropDown<T> extends StatelessWidget {
   final bool isRequired;
   final Color? titleColor;
   final String? Function(T?)? validator;
+  final bool readOnly;
 
   const CustomDropDown({
     super.key,
@@ -32,6 +33,7 @@ class CustomDropDown<T> extends StatelessWidget {
     this.isRequired = false,
     this.titleColor,
     this.validator,
+    this.readOnly = false,
   });
 
   @override
@@ -56,10 +58,12 @@ class CustomDropDown<T> extends StatelessWidget {
         DropdownButtonFormField<T>(
           dropdownColor: Colors.white,
           menuMaxHeight:400,
+          isExpanded: true,
           value: value,
           validator: validator,
-          onChanged: onChanged,
+          onChanged: readOnly ? null : onChanged,
           autovalidateMode: AutovalidateMode.onUserInteraction,
+          style: style ?? TextStyles.regular3(color: AppColors.black),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             filled: bgcolor != null,

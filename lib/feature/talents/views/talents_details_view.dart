@@ -48,7 +48,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 },
                 icon: Icon(Icons.arrow_back_ios)),
             title: Text(
-              "Talent Preview",
+              "Talent Detail View",
               style: TextStyles.medium2(),
             )),
         body: _buildBodyContent(context, talentViewModel),
@@ -254,6 +254,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               ),
             ),
             addHorizontal(16),
+           
             Expanded(
               child: CustomRoundedButton(
                 text: ((widget.talentList?.jobHirings

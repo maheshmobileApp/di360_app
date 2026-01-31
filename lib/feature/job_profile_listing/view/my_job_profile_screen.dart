@@ -33,7 +33,7 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-     }
+  }
 
   /*
   @override
@@ -57,13 +57,10 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
             ? widget.jobsListingData.profileImage.first.url
             : null;
 
-    final int requestCount = widget.jobsListingData.jobHirings.length;
-   
     final vm = Provider.of<JobProfileListingViewModel>(context);
-        final talentEnquiries = vm.myEnquiryJobData?.talentEnquiries ?? [];
-         final int enquiryCount =
-         vm.myEnquiryJobData?.talentEnquiries?.length ?? 0;
-
+    final talentEnquiries = vm.myEnquiryJobData?.talentEnquiries ?? [];
+    final int enquiryCount = vm.myEnquiryJobData?.talentEnquiries?.length ?? 0;
+    final int requestCount = vm.hiringTalentList?.jobhirings?.length ?? 0;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -95,13 +92,10 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
                     CircleAvatar(
                       radius: 40,
                       backgroundColor: AppColors.geryColor,
-                  
                       child: CachedNetworkImageWidget(
-                                      imageUrl: profileImageUrl ??
-                                          '',
-                                      fit: BoxFit.fill,
-                                      errorWidget:
-                                          Image.asset(ImageConst.prfImg)),
+                          imageUrl: profileImageUrl ?? '',
+                          fit: BoxFit.fill,
+                          errorWidget: Image.asset(ImageConst.prfImg)),
                     ),
                     Positioned(
                       bottom: 0,
@@ -162,7 +156,8 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
                         itemCount: requestCount,
                         itemBuilder: (context, index) {
                           return JobProfileRequestCard(
-                            jobsListingData: widget.jobsListingData,
+                            jobsListingData:
+                                vm.hiringTalentList?.jobhirings?[index],
                             index: index,
                           );
                         },

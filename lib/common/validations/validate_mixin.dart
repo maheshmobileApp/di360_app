@@ -33,6 +33,19 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validationCampaignName(String? value){
+    if (value == null || value.isEmpty)
+      return "Please enter your Campaign Name";
+    return null;
+  }
+
+  String? validateScheduleDate(String? value){
+    if (value == null || value.isEmpty)
+      return "Please select Scheduled date";
+    return null;
+
+  }
+
   
 
   String? validateEmptyPhoneNumber(String? value) {

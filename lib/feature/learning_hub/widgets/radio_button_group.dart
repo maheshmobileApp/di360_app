@@ -11,7 +11,8 @@ class CustomRadioGroup<T> extends StatefulWidget {
   final ValueChanged<T> onChanged;
   final Color activeColor;
   final Color inactiveColor;
-  final Axis direction; // Row or Column layout
+  final Axis direction;
+  final bool readOnly; // Row or Column layout
 
   const CustomRadioGroup({
     super.key,
@@ -23,7 +24,8 @@ class CustomRadioGroup<T> extends StatefulWidget {
     this.isRequired = false,
     this.activeColor = Colors.orange,
     this.inactiveColor = Colors.grey,
-    this.direction = Axis.horizontal, // default row layout
+    this.direction = Axis.horizontal,
+    this.readOnly = false, // default row layout
   });
 
   @override
@@ -48,7 +50,7 @@ class _CustomRadioGroupState<T> extends State<CustomRadioGroup<T>> {
           children: [
             Text(
               widget.title,
-              style:TextStyles.regular3(color: AppColors.black),
+              style: TextStyles.regular3(color: AppColors.black),
             ),
             if (widget.isRequired)
               const Text(
@@ -70,6 +72,7 @@ class _CustomRadioGroupState<T> extends State<CustomRadioGroup<T>> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Radio<T>(
+                  
                     value: option,
                     groupValue: _groupValue,
                     activeColor: widget.activeColor,
@@ -78,14 +81,19 @@ class _CustomRadioGroupState<T> extends State<CustomRadioGroup<T>> {
                           ? widget.activeColor
                           : widget.inactiveColor,
                     ),
-                    onChanged: (val) {
+                    onChanged: widget.readOnly ? null : (val) {
                       setState(() {
                         _groupValue = val;
                       });
                       widget.onChanged(val as T);
                     },
                   ),
-                  Text(widget.labelBuilder(option)),
+                  Text(
+                    widget.labelBuilder(option),
+                    style: TextStyle(
+                      color: widget.readOnly ? AppColors.lightGeryColor : AppColors.black,
+                    ),
+                  ),
                   const SizedBox(width: 20),
                 ],
               ),

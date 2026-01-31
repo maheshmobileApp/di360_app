@@ -51,7 +51,9 @@ class _JobListingApplicantsMessegeState
     if (time == null) return "";
     final dateTime = DateTime.tryParse(time);
     if (dateTime == null) return "";
-    return DateFormat("dd MMM yyyy, hh:mm a").format(dateTime);
+    // Convert UTC to local time
+    final localDateTime = dateTime.toLocal();
+    return DateFormat("dd MMM yyyy, hh:mm a").format(localDateTime);
   }
 
   Widget _buildAvatar(bool isMe) {

@@ -34,66 +34,95 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     return Container(
       color: AppColors.whiteColor,
-      child: GestureDetector(
-        onTap: () {
-          navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-        },
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          addVertical(10),
-          _buildHeader(
-              newsfeeds?.dentalSupplier?.logo?.url ??
-                  newsfeeds?.dentalPractice?.logo?.url ??
-                  newsfeeds?.dentalProfessional?.profileImage?.url ??
-                  newsfeeds?.dentalSupplier?.directories?.first.logo?.url ??
-                  '',
-              newsfeeds?.dentalSupplier?.name ??
-                  newsfeeds?.dentalPractice?.name ??
-                  newsfeeds?.dentalProfessional?.name,
-              newsfeeds?.createdAt ?? '',
-              context,
-              newsfeeds,
-              needFeedViewModel,
-              addNeedFeedViewModel),
-          addVertical(10),
-          _buildImageRow(catalogueViewModel, context),
-          addVertical(5),
-          if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
-            LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-          addVertical(22),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (newsfeeds?.description == null ||
-                          newsfeeds?.description == '')
-                      ? newsfeeds?.title ?? ''
-                      : newsfeeds?.description ?? '',
-                  style: TextStyles.regular2(color: AppColors.black),
-                ),
-                addVertical(10),
-                if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
-                  webSiteText(newsfeeds?.webUrl ?? ''),
-                if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
-                  addVertical(8),
-                if (newsfeeds?.feedType == 'CATALOGUE')
-                  _buildCatalogueRow(catalogueViewModel, context),
-                Divider(color: AppColors.dividerColor),
-                addVertical(4),
-                _buildStatsRow(
-                    '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
-                    '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
-                    needFeedViewModel,
-                    context),
-                addVertical(10)
-              ],
+      child: GestureDetector(onTap: () {
+        navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+      },
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            addVertical(10),
+            /* _buildHeader(
+                newsfeeds?.dentalSupplier?.logo?.url ??
+                    newsfeeds?.dentalPractice?.logo?.url ??
+                    newsfeeds?.dentalProfessional?.profileImage?.url ??
+                    newsfeeds?.dentalSupplier?.directories?.first.logo?.url ??
+                    '',
+                newsfeeds?.dentalSupplier?.name ??
+                    newsfeeds?.dentalPractice?.name ??
+                    newsfeeds?.dentalProfessional?.name,
+                newsfeeds?.createdAt ?? '',
+                context,
+                newsfeeds,
+                needFeedViewModel,
+                addNeedFeedViewModel),*/
+            _buildHeader(
+                newsfeeds?.dentalSupplier != null
+                    ? newsfeeds?.dentalSupplier?.logo?.url ??
+                        newsfeeds
+                            ?.dentalSupplier?.directories?.first.logo?.url ??
+                        ''
+                    : newsfeeds?.dentalPractice != null
+                        ? newsfeeds?.dentalPractice?.logo?.url ?? ''
+                        : newsfeeds?.dentalProfessional != null
+                            ? newsfeeds
+                                    ?.dentalProfessional?.profileImage?.url ??
+                                ''
+                            : '',
+                newsfeeds?.dentalSupplier != null
+                    ? newsfeeds
+                            ?.dentalSupplier?.directories?.first.companyName ??
+                        ''
+                    : newsfeeds?.dentalPractice != null
+                        ? newsfeeds?.dentalPractice?.name ?? ''
+                        : newsfeeds?.dentalProfessional != null
+                            ? newsfeeds?.dentalProfessional?.name ?? ''
+                            : '',
+                newsfeeds?.createdAt ?? '',
+                context,
+                newsfeeds,
+                needFeedViewModel,
+                addNeedFeedViewModel),
+            addVertical(10),
+            _buildImageRow(catalogueViewModel, context),
+            addVertical(5),
+            if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
+              LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
+            addVertical(22),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (newsfeeds?.description == null ||
+                            newsfeeds?.description == '')
+                        ? newsfeeds?.title ?? ''
+                        : newsfeeds?.description ?? '',
+                    style: TextStyles.regular2(color: AppColors.black),
+                  ),
+                  addVertical(10),
+                  if (newsfeeds?.webUrl != null &&
+                      newsfeeds!.webUrl!.isNotEmpty)
+                    webSiteText(newsfeeds?.webUrl ?? ''),
+                  if (newsfeeds?.webUrl != null &&
+                      newsfeeds!.webUrl!.isNotEmpty)
+                    addVertical(8),
+                  if (newsfeeds?.feedType == 'CATALOGUE')
+                    _buildCatalogueRow(catalogueViewModel, context),
+                  Divider(color: AppColors.dividerColor),
+                  addVertical(4),
+                  _buildStatsRow(
+                      '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
+                      '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
+                      needFeedViewModel,
+                      context),
+                  addVertical(10)
+                ],
+              ),
             ),
-          ),
-          Divider(thickness: 8, color: Color(0xffEDEFF1))
-        ]),
-      ),
-    );
+            Divider(thickness: 8, color: Color(0xffEDEFF1)),
+          ]),
+          
+    ));
   }
 
   Widget _buildHeader(

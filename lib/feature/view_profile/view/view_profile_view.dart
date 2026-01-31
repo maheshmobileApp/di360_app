@@ -29,22 +29,26 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppButton(
-                      text: 'Delete My Account',
-                      height: 45,
-                      width: 180,
-                      onTap: () {
-                        showDeleteAccountDialog(context, () {
-                          provider.deleteAccount(context);
-                        });
-                      }),
-                  AppButton(
-                      text: 'Save & Update',
-                      height: 45,
-                      width: 180,
-                      onTap: () {
-                        provider.updateViewProfile(context);
-                      }),
+                  Expanded(
+                    child: AppButton(
+                        text: 'Delete My Account',
+                        height: 45,
+                        width: 180,
+                        onTap: () {
+                          showDeleteAccountDialog(context, () {
+                            provider.deleteAccount(context);
+                          });
+                        }),
+                  ),
+                  addHorizontal(4),
+                  Expanded(
+                      child: AppButton(
+                          text: 'Save & Update',
+                          height: 45,
+                          width: 180,
+                          onTap: () {
+                            provider.updateViewProfile(context);
+                          })),
                 ],
               )),
           addVertical(10)

@@ -9,6 +9,9 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
   final Function(List<T>) onSelectionChanged;
   final String hintText;
   final bool Function(T)? greyOutCondition;
+  final double? height;
+  final bool showOptions;
+  final bool readOnly;
 
   const CustomMultiSelectDropDown({
     Key? key,
@@ -18,6 +21,9 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
     required this.onSelectionChanged,
     required this.hintText,
     this.greyOutCondition,
+    this.height,
+    this.showOptions = false,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -49,47 +55,101 @@ class _CustomMultiSelectDropDownState<T>
           builder: (context, setStateDialog) {
             return AlertDialog(
               backgroundColor: AppColors.whiteColor,
-              title: Text(widget.hintText,style: TextStyles.bold3(color: AppColors.black),),
+              title: Text(
+                widget.hintText,
+                style: TextStyles.bold3(color: AppColors.black),
+              ),
               content: SizedBox(
                 width: double.infinity,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.items.length,
-                  itemBuilder: (context, index) {
-                    final item = widget.items[index];
-                    final isSelected = _selected.contains(item);
-                    return CheckboxListTile(
-                      dense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                      activeColor: AppColors.primaryColor,
-                      value: isSelected,
-                      title: Text(
-                        widget.itemLabel(item),
-                        style: TextStyles.regular3(
-                          color: _getItemColor(item, _selected, isSelected),
-                        ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.showOptions)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              setStateDialog(() {
+                                _selected = List<T>.from(widget.items);
+                              });
+                            },
+                            child: Text('Select All',
+                                style: TextStyles.semiBold(
+                                    color: AppColors.black,
+                                    fontSize: 14)),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setStateDialog(() {
+                                _selected.clear();
+                              });
+                            },
+                            child: Text('Clear All',
+                                style: TextStyles.semiBold(
+                                    color: AppColors.redColor,
+                                    fontSize: 14)),
+                          ),
+                        ],
                       ),
-                      onChanged: (checked) {
-                        setStateDialog(() {
-                          if (checked == true) {
-                            // Handle Locum exclusivity
-                            if (widget.itemLabel(item) == "Locum") {
-                              // If Locum is selected, clear all others
-                              _selected.clear();
-                              _selected.add(item);
-                            } else {
-                              // If other item is selected, remove Locum if present
-                              _selected.removeWhere((selectedItem) =>
-                                  widget.itemLabel(selectedItem) == "Locum");
-                              _selected.add(item);
-                            }
-                          } else {
-                            _selected.remove(item);
-                          }
-                        });
-                      },
-                    );
-                  },
+                      Divider(color: AppColors.black,),
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: widget.items.length,
+                        itemBuilder: (context, index) {
+                          final item = widget.items[index];
+                          final isSelected = _selected.contains(item);
+                          return CheckboxListTile(
+                            dense: true,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
+                            activeColor: AppColors.primaryColor,
+                            value: isSelected,
+                            title: Text(
+                              widget.itemLabel(item),
+                              style: TextStyles.regular3(
+                                color:
+                                    _getItemColor(item, _selected, isSelected),
+                              ),
+                            ),
+                            onChanged: (checked) {
+                              setStateDialog(() {
+                                if (checked == true) {
+                                  // Handle Locum exclusivity
+                                  if (widget.itemLabel(item) == "Locum") {
+                                    // If Locum is selected, clear all others
+                                    _selected.clear();
+                                    _selected.add(item);
+                                  }
+                                  // Handle Directory permissions mutual exclusion
+                                  else if (widget.itemLabel(item) == "Directory Full Access") {
+                                    _selected.removeWhere((selectedItem) =>
+                                        widget.itemLabel(selectedItem) == "Directory Minimal");
+                                    _selected.add(item);
+                                  }
+                                  else if (widget.itemLabel(item) == "Directory Minimal") {
+                                    _selected.removeWhere((selectedItem) =>
+                                        widget.itemLabel(selectedItem) == "Directory Full Access");
+                                    _selected.add(item);
+                                  }
+                                  else {
+                                    // If other item is selected, remove Locum if present
+                                    _selected.removeWhere((selectedItem) =>
+                                        widget.itemLabel(selectedItem) ==
+                                        "Locum");
+                                    _selected.add(item);
+                                  }
+                                } else {
+                                  _selected.remove(item);
+                                }
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               actions: [
@@ -97,14 +157,22 @@ class _CustomMultiSelectDropDownState<T>
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child:  Text('Cancel', style: TextStyles.semiBold(color: AppColors.black,fontSize: 16),),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyles.semiBold(
+                        color: AppColors.black, fontSize: 16),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
                     widget.onSelectionChanged(List<T>.from(_selected));
                     Navigator.of(context).pop();
                   },
-                  child:  Text('OK', style: TextStyles.semiBold(color: AppColors.black,fontSize: 16),),
+                  child: Text(
+                    'OK',
+                    style: TextStyles.semiBold(
+                        color: AppColors.black, fontSize: 16),
+                  ),
                 ),
               ],
             );
@@ -120,17 +188,18 @@ class _CustomMultiSelectDropDownState<T>
       if (currentSelection.isEmpty) {
         return isSelected ? AppColors.primaryColor : AppColors.black;
       }
-      
-      final hasLocum = currentSelection.any((selected) => widget.itemLabel(selected) == "Locum");
+
+      final hasLocum = currentSelection
+          .any((selected) => widget.itemLabel(selected) == "Locum");
       final isLocum = widget.itemLabel(item) == "Locum";
-      
+
       if (hasLocum && !isLocum) {
         return Colors.grey; // Grey out non-Locum when Locum is selected
       } else if (!hasLocum && isLocum && currentSelection.isNotEmpty) {
         return Colors.grey; // Grey out Locum when other items are selected
       }
     }
-    
+
     return isSelected ? AppColors.primaryColor : AppColors.black;
   }
 
@@ -140,8 +209,9 @@ class _CustomMultiSelectDropDownState<T>
         ? widget.hintText
         : _selected.map((e) => widget.itemLabel(e)).join(", ");
     return InkWell(
-      onTap: _toggleDropdown,
+      onTap: widget.readOnly ? null : _toggleDropdown,
       child: Container(
+        height: widget.height,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),

@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/support/view_model/support_view_model.dart
 import 'package:di360_flutter/feature/support/widgets/ticket_card.dart';
 import 'package:di360_flutter/feature/support/widgets/upload_image_field.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/services/notification_service.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -178,6 +179,11 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
             ),
             floatingActionButton: GestureDetector(
                 onTap: () {
+                  print('FloatingActionButton tapped - showing notification');
+                  /*NotificationService.showNotification(
+                    title: 'Support Ticket',
+                    body: 'Ticket creation started',
+                  );*/
                   supportVM.getSupportRequestsReasons();
                   supportVM.clearData();
                   showModalBottomSheet(

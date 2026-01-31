@@ -1,12 +1,13 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class SearchWidget extends StatelessWidget {
+class SearchWidget extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onClear;
   final VoidCallback? onSearch;
+  final bool searchButton;
 
   const SearchWidget({
     Key? key,
@@ -15,7 +16,21 @@ class SearchWidget extends StatelessWidget {
     this.onChanged,
     this.onClear,
     this.onSearch,
+    this.searchButton = true,
   }) : super(key: key);
+
+  @override
+  State<SearchWidget> createState() => _SearchWidgetState();
+}
+
+class _SearchWidgetState extends State<SearchWidget> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,40 +46,30 @@ class SearchWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: Row(
           children: [
-            // 🔍 Search Icon
             const Icon(Icons.search, color: Colors.grey),
-
             const SizedBox(width: 8),
-
-            // 📝 Text Field
             Expanded(
               child: TextField(
-                controller: controller,
-                onChanged: onChanged,
-                textInputAction:
-                    TextInputAction.search, // shows search icon on keyboard
+                controller: widget.controller,
+                onChanged: widget.onChanged,
+                textInputAction: TextInputAction.search,
                 onSubmitted: (_) {
-                  // ✅ Trigger search when user presses "Search" or "Done"
-                  if (onSearch != null) onSearch!();
+                  if (widget.onSearch != null) widget.onSearch!();
                 },
-
                 decoration: InputDecoration(
-                    hintText: hintText, border: InputBorder.none),
+                    hintText: widget.hintText, border: InputBorder.none),
               ),
             ),
-
-            // ❌ Clear button
-            if (controller.text.isNotEmpty)
+            if (widget.controller.text.isNotEmpty)
               IconButton(
                 icon: const Icon(Icons.clear, color: Colors.grey),
                 onPressed: () {
-                  controller.clear();
-                  if (onClear != null) onClear!();
-                  if (onChanged != null) onChanged!("");
+                  widget.controller.clear();
+                  if (widget.onClear != null) widget.onClear!();
+                  if (widget.onChanged != null) widget.onChanged!("");
                 },
               ),
-
-            // 🔎 Search button
+            if (widget.searchButton)
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
@@ -74,7 +79,7 @@ class SearchWidget extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
-              onPressed: onSearch,
+              onPressed: widget.onSearch,
               label: const Text(
                 "Search",
                 style: TextStyle(color: Colors.white),

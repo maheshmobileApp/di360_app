@@ -110,7 +110,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                     addHorizontal(10),
                     availabilityChip(
                       label: 'Availability',
-                      onTap: () => _showAvailabilityOptions(context, resolveAvailabilityType(jobsListingData)),
+                      onTap: () => _showAvailabilityOptions(
+                          context, resolveAvailabilityType(jobsListingData)),
                     ),
                   ],
                 ),
@@ -118,12 +119,13 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
             ),
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
+              await vm.getAllTalentsRequest(
+                  context, jobsListingData.dentalProfessionalId ?? "");
               navigationService.navigateToWithParams(
                 RouteList.MyJobProfileScreen,
                 params: jobsListingData,
               );
-              
             },
             child: Container(
               width: double.infinity,
@@ -290,7 +292,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
           );
         } else if (value == "Edit") {
           final profileData = vm.allJobProfiles.first;
-          print("Edit preload data: $profileData");
+          print(
+              "*****************Edit preload data: ${profileData.educations}");
           vm.setEditProfileEnable(true);
           navigationService
               .navigateToWithParams(RouteList.JobProfileView, params: {
@@ -402,50 +405,60 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title:  Text('Availability Options',style: TextStyles.bold3(),),
+        title: Text(
+          'Availability Options',
+          style: TextStyles.bold3(),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.calendar_today, color: AppColors.primaryColor),
+              leading: const Icon(Icons.calendar_today,
+                  color: AppColors.primaryColor),
               title: const Text('Availability'),
               onTap: () {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
                   builder: (context) => AvailabilityCalendarDialog(
-                    
                     availabilityType: availabilityType,
                     availabilityDays: (jobsListingData.availabilityDay as List?)
                             ?.map((e) => e?.toString() ?? '')
                             .where((s) => s.isNotEmpty)
-                            .toList() ?? <String>[],
-                    availabilityDates: (jobsListingData.availabilityDate as List?)
-                            ?.map((e) => e?.toString() ?? '')
-                            .where((s) => s.isNotEmpty)
-                            .toList() ?? <String>[],
+                            .toList() ??
+                        <String>[],
+                    availabilityDates:
+                        (jobsListingData.availabilityDate as List?)
+                                ?.map((e) => e?.toString() ?? '')
+                                .where((s) => s.isNotEmpty)
+                                .toList() ??
+                            <String>[],
                   ),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.edit_calendar, color: Color(0xFF2E7D32)),
+              leading:
+                  const Icon(Icons.edit_calendar, color: Color(0xFF2E7D32)),
               title: const Text('Update Availability'),
               onTap: () {
-                 Navigator.pop(context);
+                Navigator.pop(context);
                 showDialog(
                   context: context,
                   builder: (context) => AvailabilityCalendarDialog(
-                    title:'Update Availability' ,
+                    title: 'Update Availability',
                     availabilityType: availabilityType,
                     availabilityDays: (jobsListingData.availabilityDay as List?)
                             ?.map((e) => e?.toString() ?? '')
                             .where((s) => s.isNotEmpty)
-                            .toList() ?? <String>[],
-                    availabilityDates: (jobsListingData.availabilityDate as List?)
-                            ?.map((e) => e?.toString() ?? '')
-                            .where((s) => s.isNotEmpty)
-                            .toList() ?? <String>[],
+                            .toList() ??
+                        <String>[],
+                    availabilityDates:
+                        (jobsListingData.availabilityDate as List?)
+                                ?.map((e) => e?.toString() ?? '')
+                                .where((s) => s.isNotEmpty)
+                                .toList() ??
+                            <String>[],
                   ),
                 );
               },
@@ -458,16 +471,19 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
                 showDialog(
                   context: context,
                   builder: (context) => AvailabilityCalendarDialog(
-                    title:'Update Unavailability' ,
+                    title: 'Update Unavailability',
                     availabilityType: availabilityType,
                     availabilityDays: (jobsListingData.availabilityDay as List?)
                             ?.map((e) => e?.toString() ?? '')
                             .where((s) => s.isNotEmpty)
-                            .toList() ?? <String>[],
-                    availabilityDates: (jobsListingData.availabilityDate as List?)
-                            ?.map((e) => e?.toString() ?? '')
-                            .where((s) => s.isNotEmpty)
-                            .toList() ?? <String>[],
+                            .toList() ??
+                        <String>[],
+                    availabilityDates:
+                        (jobsListingData.availabilityDate as List?)
+                                ?.map((e) => e?.toString() ?? '')
+                                .where((s) => s.isNotEmpty)
+                                .toList() ??
+                            <String>[],
                   ),
                 );
               },
@@ -499,7 +515,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.calendar_today, size: 20, color: AppColors.primaryColor),
+            const Icon(Icons.calendar_today,
+                size: 20, color: AppColors.primaryColor),
             const SizedBox(width: 2),
             Text(
               label,

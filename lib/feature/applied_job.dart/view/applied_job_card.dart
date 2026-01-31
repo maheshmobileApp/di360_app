@@ -25,8 +25,8 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final Jobs? job = appliedJob.job;
-    final String time = _getShortTime(job?.createdAt ?? '') ?? '';
-     final applicant = appliedJob;
+    final String time = _getShortTime(job?.updatedAt ?? '') ?? '';
+    final applicant = appliedJob;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
@@ -73,40 +73,37 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                   child: _chipWidget(job?.typeofEmployment ?? []),
                 ),
                 const SizedBox(width: 12),
-               JobTimeChip(time: time),
+                (time != "") ? JobTimeChip(time: time) : SizedBox.shrink(),
               ],
             ),
-            addVertical(10),
-            _descriptionWidget(job?.description ?? ''),
+            //addVertical(10),
+            //_descriptionWidget(job?.description ?? ''),
             const Divider(),
             Row(
               children: [
                 InkWell(
-                    onTap: () async {
-                      if (
-                          applicant.id == null ||
-                          applicant.jobId == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text("Applicant or Job ID not available")),
-                        );
-                        return;
-                      }
-                      final userId = await LocalStorage.getStringVal(
-                          LocalStorageConst.userId);
-                          
-                      navigationService.navigateToWithParams(
-                        RouteList.JobListingApplicantsMessege,
-                        params: {
-                          "jobId": applicant.jobId ?? "",
-                          "applicantId": applicant.id ?? "",
-                          "userId": userId,
-                          "type": "applicant"
-                        },
+                  onTap: () async {
+                    if (applicant.id == null || applicant.jobId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Applicant or Job ID not available")),
                       );
-                    },
-                    child: _roundedButton("Message"),
+                      return;
+                    }
+                    final userId = await LocalStorage.getStringVal(
+                        LocalStorageConst.userId);
+
+                    navigationService.navigateToWithParams(
+                      RouteList.JobListingApplicantsMessege,
+                      params: {
+                        "jobId": applicant.jobId ?? "",
+                        "applicantId": applicant.id ?? "",
+                        "userId": userId,
+                        "type": "applicant"
+                      },
+                    );
+                  },
+                  child: _roundedButton("Message"),
                 ),
               ],
             ),
@@ -189,8 +186,6 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-
-  
 
   Widget _statusChip(String status) {
     Color bgColor;
@@ -290,11 +285,11 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
         if (value == "Preview") {
-          if(appliedJob.job!= null)
-          navigationService.navigateToWithParams(
-            RouteList.jobdetailsScreen,
-            params: appliedJob.job,
-          );
+          if (appliedJob.job != null)
+            navigationService.navigateToWithParams(
+              RouteList.jobdetailsScreen,
+              params: appliedJob.job,
+            );
         }
       },
       itemBuilder: (context) => [

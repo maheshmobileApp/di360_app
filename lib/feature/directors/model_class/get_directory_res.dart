@@ -4,7 +4,9 @@ class GetDirectoryRes {
   GetDirectoryRes({this.data});
 
   GetDirectoryRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new GetDirectoryData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new GetDirectoryData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -133,30 +135,126 @@ class DirectoriesById {
       this.directoryFaqs});
 
   DirectoriesById.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    description = json['description'];
-    name = json['name'];
-    email = json['email'];
-    phone = json['phone'];
-    address = json['address'];
-    website = json['website'];
-    altPhone = json['alt_phone'];
-    hobbies = json['hobbies'];
-    universitySchool = json['university_school'];
-    abnAcn = json['abn_acn'];
-    status = json['status'];
-    companyName = json['company_name'];
-    profession = json['profession'];
-    membershipLink = json['membership_link'];
-    partnershipLink = json['partnership_link'];
-    businessName = json['business_name'];
-    communityStatus = json['community_status'];
-    communityId = json['community_id'];
-    type = json['type'];
-    education = json['education'];
-    professionType = json['profession_type'];
-    designation = json['designation'];
-    workingAt = json['working_at'];
+    id = json['id'] is List
+        ? (json['id'] as List).isEmpty
+            ? null
+            : (json['id'] as List).join(', ')
+        : json['id']?.toString();
+    description = json['description'] is List
+        ? (json['description'] as List).isEmpty
+            ? null
+            : (json['description'] as List).join(', ')
+        : json['description']?.toString();
+    name = json['name'] is List
+        ? (json['name'] as List).isEmpty
+            ? null
+            : (json['name'] as List).join(', ')
+        : json['name']?.toString();
+    email = json['email'] is List
+        ? (json['email'] as List).isEmpty
+            ? null
+            : (json['email'] as List).join(', ')
+        : json['email']?.toString();
+    phone = json['phone'] is List
+        ? (json['phone'] as List).isEmpty
+            ? null
+            : (json['phone'] as List).join(', ')
+        : json['phone']?.toString();
+    address = json['address'] is List
+        ? (json['address'] as List).isEmpty
+            ? null
+            : (json['address'] as List).join(', ')
+        : json['address']?.toString();
+    website = json['website'] is List
+        ? (json['website'] as List).isEmpty
+            ? null
+            : (json['website'] as List).join(', ')
+        : json['website']?.toString();
+    altPhone = json['alt_phone'] is List
+        ? (json['alt_phone'] as List).isEmpty
+            ? null
+            : (json['alt_phone'] as List).join(', ')
+        : json['alt_phone']?.toString();
+    hobbies = json['hobbies'] is List
+        ? (json['hobbies'] as List).isEmpty
+            ? null
+            : (json['hobbies'] as List).join(', ')
+        : json['hobbies']?.toString();
+    universitySchool = json['university_school'] is List
+        ? (json['university_school'] as List).isEmpty
+            ? null
+            : (json['university_school'] as List).join(', ')
+        : json['university_school']?.toString();
+    abnAcn = json['abn_acn'] is List
+        ? (json['abn_acn'] as List).isEmpty
+            ? null
+            : (json['abn_acn'] as List).join(', ')
+        : json['abn_acn']?.toString();
+    status = json['status'] is List
+        ? (json['status'] as List).isEmpty
+            ? null
+            : (json['status'] as List).join(', ')
+        : json['status']?.toString();
+    companyName = json['company_name'] is List
+        ? (json['company_name'] as List).isEmpty
+            ? null
+            : (json['company_name'] as List).join(', ')
+        : json['company_name']?.toString();
+    profession = json['profession'] is List
+        ? (json['profession'] as List).isEmpty
+            ? null
+            : (json['profession'] as List).join(', ')
+        : json['profession']?.toString();
+    membershipLink = json['membership_link'] is List
+        ? (json['membership_link'] as List).isEmpty
+            ? null
+            : (json['membership_link'] as List).join(', ')
+        : json['membership_link']?.toString();
+    partnershipLink = json['partnership_link'] is List
+        ? (json['partnership_link'] as List).isEmpty
+            ? null
+            : (json['partnership_link'] as List).join(', ')
+        : json['partnership_link']?.toString();
+    businessName = json['business_name'] is List
+        ? (json['business_name'] as List).isEmpty
+            ? null
+            : (json['business_name'] as List).join(', ')
+        : json['business_name']?.toString();
+    communityStatus = json['community_status'] is List
+        ? (json['community_status'] as List).isEmpty
+            ? null
+            : (json['community_status'] as List).join(', ')
+        : json['community_status']?.toString();
+    communityId = json['community_id'] is List
+        ? (json['community_id'] as List).isEmpty
+            ? null
+            : (json['community_id'] as List).join(', ')
+        : json['community_id']?.toString();
+    type = json['type'] is List
+        ? (json['type'] as List).isEmpty
+            ? null
+            : (json['type'] as List).join(', ')
+        : json['type']?.toString();
+    education = json['education'] is List
+        ? (json['education'] as List).isEmpty
+            ? null
+            : (json['education'] as List).join(', ')
+        : json['education']?.toString();
+    professionType = json['profession_type'] is List
+        ? (json['profession_type'] as List).isEmpty
+            ? null
+            : (json['profession_type'] as List).join(', ')
+        : json['profession_type']?.toString();
+    designation = json['designation'] is List
+        ? (json['designation'] as List).isEmpty
+            ? null
+            : (json['designation'] as List).join(', ')
+        : json['designation']?.toString();
+    workingAt = json['working_at'] is List
+        ? (json['working_at'] as List).isEmpty
+            ? null
+            : (json['working_at'] as List).join(', ')
+        : json['working_at']?.toString();
     bannerImage = json['banner_image'] != null
         ? new BannerImage.fromJson(json['banner_image'])
         : null;
@@ -179,7 +277,8 @@ class DirectoriesById {
     directoryServices = json['directory_services']?.cast<dynamic>();
     directoryAchievements = json['directory_achievements']?.cast<dynamic>();
     directoryCertifications = json['directory_certifications']?.cast<dynamic>();
-    directoryAppointmentSlots = json['directory_appointment_slots']?.cast<dynamic>();
+    directoryAppointmentSlots =
+        json['directory_appointment_slots']?.cast<dynamic>();
     directoryTeamMembers = json['directory_team_members']?.cast<dynamic>();
     directoryPartners = json['directory_partners']?.cast<dynamic>();
     directoryGalleryPosts = json['directory_gallery_posts']?.cast<dynamic>();

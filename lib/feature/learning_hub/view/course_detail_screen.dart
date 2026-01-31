@@ -250,13 +250,13 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           child: Column(
                             children: [
                               ContactInfoWidget(
-                                location: courseDetails?.address ?? "",
+                                location: courseDetails?.address?.first.toString() ?? "",
                                 email: courseDetails?.contactEmail ?? "",
                                 phoneNumber: courseDetails?.contactPhone ?? "",
                               ),
-                              if ((courseDetails?.address ?? "").isNotEmpty)
+                              if ((courseDetails?.address?.first.toString() ?? "").isNotEmpty)
                                 LocationViewWidget(
-                                    location: courseDetails?.address!),
+                                    location: courseDetails?.address?.first.toString() ?? ""),
                             ],
                           ),
                         ),

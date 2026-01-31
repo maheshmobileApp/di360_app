@@ -24,6 +24,7 @@ import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_c
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -231,9 +232,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
 
                             navigationService
                                 .navigateTo(RouteList.talentEnquiriesView);
-                          }
-                          
-                           else if (item.title == 'My Directory') {
+                          } else if (item.title == 'My Directory') {
                             await context
                                 .read<AddDirectoryViewModel>()
                                 .fetchTheDirectorData(context);
@@ -281,8 +280,23 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
+                            final bannerPermission =
+                                await LocalStorage.getBoolValue(
+                                    LocalStorageConst.bannerPermission);
+
+                            if (bannerPermission) {
+                              navigationService
+                                  .navigateTo(RouteList.bannersListView);
+                            } else {
+                              scaffoldMessenger(
+                                  "You do not have permission to access this feature.");
+                            }
+                          } else if (item.title == "Marketing") {
                             navigationService
-                                .navigateTo(RouteList.bannersListView);
+                                .navigateTo(RouteList.campaignListingView);
+                          } else if (item.title == "Team Members") {
+                            navigationService
+                                .navigateTo(RouteList.teamMembersListingView);
                           } else if (item.title == "Appointments") {
                             navigationService
                                 .navigateTo(RouteList.myAppointment);

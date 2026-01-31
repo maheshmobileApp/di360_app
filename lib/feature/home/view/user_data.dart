@@ -31,12 +31,11 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-          BannerServices.instance.listBanner?.isEmpty ?? false
-              ? SvgPicture.asset(ImageConst.homeBG,
-                  width: getSize(context).width)
-              : ListBanner(),
-          Positioned(
-              right: 1,
+
+          SvgPicture.asset(ImageConst.homeBG,width: getSize(context).width),
+          ListBanner(),
+          /*Positioned(
+  right: 1,
               left: 1,
               bottom: -40,
               child: CircleAvatar(
@@ -56,19 +55,38 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                     ),
                   ),
                 ),
-              ))
+              ))*/
         ],
       ),
       Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(children: [
-            addVertical(50),
             Divider(color: AppColors.dividerColor),
-            addVertical(6),
-            Text(userName ?? homeViewModel.userName ?? '',
-                style: TextStyles.clashMedium(
-                    fontSize: 20, color: AppColors.black)),
-            addVertical(6),
+
+             addVertical(6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                backgroundColor: AppColors.whiteColor,
+                radius: 30,
+                child: CircleAvatar(
+                  backgroundColor: AppColors.primaryColor,
+                  radius: 30,
+                  child: ClipOval(
+                    child: CachedNetworkImageWidget(
+                        imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
+                        fit: BoxFit.fill,
+                        errorWidget: Image.asset(ImageConst.prfImg)),
+                  ),
+                ),),
+                addHorizontal(12),
+                Text(userName ?? homeViewModel.userName ?? '',
+                    style: TextStyles.clashMedium(
+                        fontSize: 20, color: AppColors.black)),
+              ],
+            ),
+addVertical(6),
             Divider(color: AppColors.dividerColor),
             addVertical(6),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
