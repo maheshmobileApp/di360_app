@@ -41,10 +41,10 @@ import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_v
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/feature/team_members/view_model/team_members_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/firebase_options.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +55,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     await NotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
   } catch (e) {
