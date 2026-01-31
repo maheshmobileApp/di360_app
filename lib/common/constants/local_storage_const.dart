@@ -1,5 +1,6 @@
 class LocalStorageConst {
   static const String token = "token";
+  static const String deviceToken = "deviceToken";
   static const String userId = "userId";
   static const String emailId = "emailId";
   static const String name = "name";

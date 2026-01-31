@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class LoginViewModel extends ChangeNotifier {
@@ -99,6 +100,7 @@ class LoginViewModel extends ChangeNotifier {
           _modulePermissions(
               result.loginApi?.subscriptionPermissions?.modules ?? []);
           _http.setToken(result.loginApi?.accessToken ?? '');
+          updateDevieToken();
           navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
         }
       } else {
@@ -109,6 +111,30 @@ class LoginViewModel extends ChangeNotifier {
     } catch (e) {
       scaffoldMessenger('$e');
       Loaders.circularHideLoader(context);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> updateDevieToken() async {
+    print("********** Updating Device Token **********");
+    try {
+      await Future.delayed(Duration(seconds: 2));
+      
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final deviceToken = await FirebaseMessaging.instance.getToken();
+      
+      if (deviceToken != null && userId.isNotEmpty) {
+        LocalStorage.setStringVal(
+              LocalStorageConst.deviceToken, deviceToken);
+        final variables = {
+          "id": userId,
+          "device_tokens": [deviceToken]
+        };
+        final res = await repo.updateDeviceToken(variables);
+        print("********** Device Token Updated Successfully: $res **********");}
+    } catch (e) {
+      print("********** Error updating device token: $e **********");
     }
 
     notifyListeners();

@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
@@ -12,6 +13,7 @@ import 'package:di360_flutter/feature/home/view/home_screen.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_view.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
+import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
@@ -101,7 +103,7 @@ class DashBoardViewModel extends ChangeNotifier {
               .read<CommunityViewModel>()
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
-           context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
+          context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
           break;
         case 4: // Catalogue
           context.read<CatalogueViewModel>().fetchCatalogue(context);
@@ -177,4 +179,15 @@ Future logOutAlert(BuildContext context) {
           ],
         );
       });
+}
+
+Future<void> deleteToken() async {
+  final HttpService _http = HttpService();
+  final id = await LocalStorage.setStringVal(LocalStorageConst.userId, '');
+  final type = await LocalStorage.setStringVal(LocalStorageConst.type, '');
+
+  final deviceToken =
+      await LocalStorage.setStringVal(LocalStorageConst.deviceToken, '');
+  final variables = {"id": id, "type": type, "devicetoken": deviceToken};
+  final res = await _http.post("api/v1/auth/remove-devicetoken", variables);
 }
