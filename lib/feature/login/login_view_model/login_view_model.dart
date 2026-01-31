@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -119,25 +120,42 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> updateDevieToken() async {
     print("********** Updating Device Token **********");
     try {
-      await Future.delayed(Duration(seconds: 2));
+      // Check if widget is still mounted
+      if (!hasListeners) {
+        print("********** LoginViewModel disposed, skipping token update **********");
+        return;
+      }
       
+      // Check if Firebase is initialized
+      if (Firebase.apps.isEmpty) {
+        print("********** Firebase not initialized, skipping token update **********");
+        return;
+      }
+      
+      await Future.delayed(Duration(seconds: 2));
+
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final deviceToken = await FirebaseMessaging.instance.getToken();
-      
+      print("********** Device Token: $deviceToken");
+
       if (deviceToken != null && userId.isNotEmpty) {
-        LocalStorage.setStringVal(
-              LocalStorageConst.deviceToken, deviceToken);
+        await LocalStorage.setStringVal(
+            LocalStorageConst.deviceToken, deviceToken);
         final variables = {
           "id": userId,
           "device_tokens": [deviceToken]
         };
         final res = await repo.updateDeviceToken(variables);
-        print("********** Device Token Updated Successfully: $res **********");}
+        print("********** Device Token Updated Successfully: $res **********");
+      }
     } catch (e) {
       print("********** Error updating device token: $e **********");
     }
 
-    notifyListeners();
+    // Only notify listeners if not disposed
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 
   getUserDetails() async {

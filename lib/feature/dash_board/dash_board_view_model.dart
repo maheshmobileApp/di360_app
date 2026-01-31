@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/news_feed_community/view/news_feed_communi
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -172,7 +173,8 @@ Future logOutAlert(BuildContext context) {
                 child: const Text('Cancel')),
             TextButton(
                 onPressed: () async {
-                  await LocalStorage.clearAllData();
+                  await deleteToken();
+                  
                   navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 },
                 child: const Text('Ok')),
@@ -183,11 +185,20 @@ Future logOutAlert(BuildContext context) {
 
 Future<void> deleteToken() async {
   final HttpService _http = HttpService();
-  final id = await LocalStorage.setStringVal(LocalStorageConst.userId, '');
-  final type = await LocalStorage.setStringVal(LocalStorageConst.type, '');
+  final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+  final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-  final deviceToken =
-      await LocalStorage.setStringVal(LocalStorageConst.deviceToken, '');
+  final deviceToken = await FirebaseMessaging.instance.getToken();
+
+  // Handle null device token
+  if (deviceToken == null || deviceToken == "") {
+    print("Device token is null or empty, skipping token deletion");
+    return;
+  }
+
   final variables = {"id": id, "type": type, "devicetoken": deviceToken};
-  final res = await _http.post("api/v1/auth/remove-devicetoken", variables);
+  print("variables: $variables");
+  final res = await _http.post("/api/v1/auth/remove-devicetoken", variables);
+  await LocalStorage.clearAllData();
+  print("res: $res");
 }
