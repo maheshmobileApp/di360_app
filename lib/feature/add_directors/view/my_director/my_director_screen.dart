@@ -1,5 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/director_details_view.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/user_details_widget.dart';
@@ -7,7 +7,6 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class MyDirectorScreen extends StatelessWidget {
@@ -20,16 +19,15 @@ class MyDirectorScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton.extended(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             onPressed: () {
               addDirectorVM.updateCurrentStep();
               navigationService.navigateTo(RouteList.adddirectorview);
             },
             backgroundColor: AppColors.primaryColor,
-            child: SvgPicture.asset(ImageConst.addFeed,
-                color: AppColors.whiteColor)),
+            label: Text('Update directory',style: TextStyles.regular2(color: AppColors.whiteColor))),
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(

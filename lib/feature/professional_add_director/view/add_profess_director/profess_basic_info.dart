@@ -138,80 +138,39 @@ class ProfessBasicInfo extends StatelessWidget
               );
             }),
           ],
-
-          // ListView.builder(
-          //   shrinkWrap: true,
-          //   physics: NeverScrollableScrollPhysics(),
-          //   itemCount: addDirectorVM.getBasicInfoData.isNotEmpty ? addDirectorVM.getBasicInfoData.first.hobbies?.length ?? 0 : 0,
-          //   itemBuilder: (context, index) {
-          //     return Padding(
-          //       padding: const EdgeInsets.only(top: 10),
-          //       child: Row(
-          //         children: [
-          //           Expanded(
-          //             child: InputTextField(
-          //                 hintText: "Enter hobbies",
-          //                 title: "Hobbies",
-          //                 controller: professDirectorVM.hobbiesCntr[index],
-          //                 onChange: (value) => professDirectorVM.updateHobby(
-          //                     context, index, value)),
-          //           ),
-          //           IconButton(
-          //             icon: Icon(Icons.delete, color: AppColors.redColor),
-          //             onPressed: () =>
-          //                 professDirectorVM.removeHobby(context, index),
-          //           )
-          //         ],
-          //       ),
-          //     );
-          //   },
-          // ),
-
-          // addVertical(10),
-          // ElevatedButton.icon(
-          //   onPressed: () => professDirectorVM.addHobby(context),
-          //   icon: const Icon(Icons.add),
-          //   label: const Text("Add hobbies"),
-          // ),
+          addVertical(15),
           sectionHeader('Universities'),
-          addVertical(20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.isNotEmpty
-                ? addDirectorVM
-                        .getBasicInfoData.first.universitySchool?.length ??
-                    0
-                : 0,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InputTextField(
-                          hintText: "Enter universities",
-                          title: "Universities School",
-                          controller: professDirectorVM.universitiesCntr[index],
-                          onChange: (value) => professDirectorVM
-                              .updateUniversities(context, index, value)),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: AppColors.redColor),
-                      onPressed: () =>
-                          professDirectorVM.removeUniversities(context, index),
-                    )
-                  ],
-                ),
+          InputTextField(
+              title: '',
+              hintText: 'Add universities',
+              controller: professDirectorVM.universitiesCntr,
+              onSubmitted: (val) {
+                professDirectorVM.addUniversities(val ?? '', context);
+              }),
+          if (addDirectorVM.getBasicInfoData.first.universitySchool?.isNotEmpty ??
+              false) ...[
+            addVertical(10),
+            Consumer<AddDirectoryViewModel>(
+                builder: (context, addDirectorV, child) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: List.generate(
+                    addDirectorV.getBasicInfoData.first.universitySchool?.length ?? 0,
+                    (index) {
+                  final university =
+                      addDirectorV.getBasicInfoData.first.universitySchool?[index];
+                  return Chip(
+                    label: Text(university?.name ?? ''),
+                    deleteIcon: Icon(Icons.close),
+                    onDeleted: () {
+                      professDirectorVM.removeUniversities(index, context);
+                    },
+                  );
+                }),
               );
-            },
-          ),
-          addVertical(10),
-          ElevatedButton.icon(
-            onPressed: () => professDirectorVM.addUniversities(context),
-            icon: const Icon(Icons.add),
-            label: const Text("Add universities"),
-          ),
+            }),
+          ],
           addVertical(20),
           InputTextField(
             hintText: "Enter your text here",

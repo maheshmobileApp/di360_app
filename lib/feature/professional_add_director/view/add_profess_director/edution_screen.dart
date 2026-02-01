@@ -26,40 +26,70 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
           sectionHeader('Education'),
-          addVertical(20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.first.education?.length ?? 0,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InputTextField(
-                          hintText: "Enter education",
-                          title: "Education",
-                          controller: professDirectorVM.educationCntr[index],
-                          onChange: (value) =>
-                              professDirectorVM.updateEducation(context, index, value)),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: AppColors.redColor),
-                      onPressed: () =>
-                          professDirectorVM.removeEducation(context, index),
-                    )
-                  ],
-                ),
+          InputTextField(
+              title: '',
+              hintText: 'Add Education',
+              controller: professDirectorVM.educationCntr,
+              onSubmitted: (val) {
+                professDirectorVM.addEducation(val ?? '', context);
+              }),
+          if (addDirectorVM.getBasicInfoData.first.education?.isNotEmpty ??
+              false) ...[
+            addVertical(10),
+            Consumer<AddDirectoryViewModel>(
+                builder: (context, addDirectorV, child) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: List.generate(
+                    addDirectorV.getBasicInfoData.first.education?.length ?? 0,
+                    (index) {
+                  final educaion =
+                      addDirectorV.getBasicInfoData.first.education?[index];
+                  return Chip(
+                    label: Text(educaion?.name ?? ''),
+                    deleteIcon: Icon(Icons.close),
+                    onDeleted: () {
+                      professDirectorVM.removeEducation(index, context);
+                    },
+                  );
+                }),
               );
-            },
-          ),
-          addVertical(10),
-          ElevatedButton.icon(
-            onPressed: () => professDirectorVM.addEducation(context),
-            icon: const Icon(Icons.add),
-            label: const Text("Add Education"),
-          ),
+            }),
+          ],
+          // ListView.builder(
+          //   shrinkWrap: true,
+          //   physics: NeverScrollableScrollPhysics(),
+          //   itemCount: addDirectorVM.getBasicInfoData.first.education?.length ?? 0,
+          //   itemBuilder: (context, index) {
+          //     return Padding(
+          //       padding: const EdgeInsets.only(top: 10),
+          //       child: Row(
+          //         children: [
+          //           Expanded(
+          //             child: InputTextField(
+          //                 hintText: "Enter education",
+          //                 title: "Education",
+          //                 controller: professDirectorVM.educationCntr[index],
+          //                 onChange: (value) =>
+          //                     professDirectorVM.updateEducation(context, index, value)),
+          //           ),
+          //           IconButton(
+          //             icon: Icon(Icons.delete, color: AppColors.redColor),
+          //             onPressed: () =>
+          //                 professDirectorVM.removeEducation(context, index),
+          //           )
+          //         ],
+          //       ),
+          //     );
+          //   },
+          // ),
+          // addVertical(10),
+          // ElevatedButton.icon(
+          //   onPressed: () => professDirectorVM.addEducation(context),
+          //   icon: const Icon(Icons.add),
+          //   label: const Text("Add Education"),
+          // ),
           addVertical(20),
           sectionHeader('Work Experience'),
           addVertical(20),

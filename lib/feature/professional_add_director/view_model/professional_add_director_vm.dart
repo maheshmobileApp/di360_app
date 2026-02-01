@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:location/location.dart' as loc;
@@ -25,8 +24,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   TextEditingController alternateNumberController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   TextEditingController hobbiesCntr = TextEditingController();
-  List<TextEditingController> universitiesCntr = [];
-  List<TextEditingController> educationCntr = [];
+  TextEditingController universitiesCntr = TextEditingController();
+  TextEditingController educationCntr = TextEditingController();
+ // List<TextEditingController> educationCntr = [];
   List<TextEditingController> workAtCntr = [];
 
   double? latitude;
@@ -38,7 +38,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   int get currentStep => _currentStep;
   int get totalSteps => ConstantData.profesSteps.length;
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(7, (_) => GlobalKey<FormState>());
+      List.generate(3, (_) => GlobalKey<FormState>());
 
   updateCurrentStep() {
     _currentStep = 0;
@@ -94,87 +94,68 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void loadHobbies(List<Hobbies> list) {
-  //   hobbiesCntr =
-  //       list.map((h) => TextEditingController(text: h.name ?? "")).toList();
-  //   notifyListeners();
-  // }
-
-  // void updateHobby(BuildContext context, int index, String value) {
-  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
-  //   addDirectorVM.getBasicInfoData.first.hobbies?[index].name = value;
-  //   notifyListeners();
-  // }
-
-  // void addHobby(BuildContext context) {
-  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
-  //   addDirectorVM.getBasicInfoData.first.hobbies?.add(Hobbies(name: null));
-  //   hobbiesCntr.add(TextEditingController());
-  //   notifyListeners();
-  // }
-
-  // void removeHobby(BuildContext context, int index) {
-  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
-  //   addDirectorVM.getBasicInfoData.first.hobbies?.removeAt(index);
-  //   hobbiesCntr.removeAt(index);
-  //   notifyListeners();
-  // }
-
-  void loadUniversities(List<UniversitySchool> list) {
-    universitiesCntr =
-        list.map((h) => TextEditingController(text: h.name ?? "")).toList();
-    notifyListeners();
-  }
-
-  void updateUniversities(BuildContext context, int index, String value) {
+  void addUniversities(String value, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.universitySchool?[index].name = value;
+    if (value.isNotEmpty) {
+      addDirectorVM.getBasicInfoData.first.universitySchool
+          ?.add(UniversitySchool(name: value));
+      universitiesCntr.clear();
+    }
+    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void addUniversities(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.universitySchool
-        ?.add(UniversitySchool(name: null));
-    universitiesCntr.add(TextEditingController());
-    notifyListeners();
-  }
-
-  void removeUniversities(BuildContext context, int index) {
+  void removeUniversities(int index, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.universitySchool?.removeAt(index);
-    universitiesCntr.removeAt(index);
     notifyListeners();
   }
 
-  void loadEducation(List<Education> list) {
-    educationCntr = list
-        .map((h) => TextEditingController(text: h.qualification ?? ""))
-        .toList();
-    notifyListeners();
-  }
-
-  void updateEducation(BuildContext context, int index, String value) {
+  void addEducation(String value, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education?[index].qualification =
-        value;
+    if (value.isNotEmpty) {
+      addDirectorVM.getBasicInfoData.first.education
+          ?.add(Education(name: value));
+      educationCntr.clear();
+    }
+    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void addEducation(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education
-        ?.add(Education(qualification: ""));
-    educationCntr.add(TextEditingController());
-    notifyListeners();
-  }
-
-  void removeEducation(BuildContext context, int index) {
+  void removeEducation(int index, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.education?.removeAt(index);
-    educationCntr.removeAt(index);
     notifyListeners();
   }
+
+  // void loadEducation(List<Education> list) {
+  //   educationCntr = list
+  //       .map((h) => TextEditingController(text: h.qualification ?? ""))
+  //       .toList();
+  //   notifyListeners();
+  // }
+
+  // void updateEducation(BuildContext context, int index, String value) {
+  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
+  //   addDirectorVM.getBasicInfoData.first.education?[index].qualification =
+  //       value;
+  //   notifyListeners();
+  // }
+
+  // void addEducation(BuildContext context) {
+  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
+  //   addDirectorVM.getBasicInfoData.first.education
+  //       ?.add(Education(qualification: ""));
+  //   educationCntr.add(TextEditingController());
+  //   notifyListeners();
+  // }
+
+  // void removeEducation(BuildContext context, int index) {
+  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
+  //   addDirectorVM.getBasicInfoData.first.education?.removeAt(index);
+  //   educationCntr.removeAt(index);
+  //   notifyListeners();
+  // }
 
   void loadWorkAt(List<WorkingAt> list) {
     workAtCntr =
@@ -334,7 +315,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     alternateNumberController.text = data.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
     //  loadHobbies(data.hobbies ?? []);
-    loadUniversities(data.universitySchool ?? []);
+    //loadUniversities(data.universitySchool ?? []);
     //loadEducation(data.education ?? []);
     loadWorkAt(data.workingAt ?? []);
     await getLocation();

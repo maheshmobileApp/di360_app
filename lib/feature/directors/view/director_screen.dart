@@ -37,7 +37,6 @@ class _DirectorScreenState extends State<DirectorScreen>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((s) {
       fetchDirectorData();
-        
     });
     _scrollController.addListener(() {
       if (_scrollController.offset > 700) {
@@ -126,13 +125,10 @@ class _DirectorScreenState extends State<DirectorScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 20),
-                        child: Text(
-                          'ALL DIRECTORY',
-                          style: TextStyles.bold2(color: AppColors.black),
-                        ),
-                      ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          child: Text('ALL DIRECTORY',
+                              style: TextStyles.bold2(color: AppColors.black))),
                       Divider(),
                       Expanded(
                         child: GridViewWidget(controller: _scrollController),

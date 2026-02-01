@@ -66,13 +66,12 @@ class AddDirectorBasicInfo extends StatelessWidget
           ),
           addVertical(20),
           InputTextField(
-            hintText: "Enter Phone Number",
-            title: " Phone Number ",
-            controller: addDirectorVM.MobileNumberController,
-            isRequired: true,
-            keyboardType: TextInputType.number,
-             validator: validateEmptyPhoneNumber
-          ),
+              hintText: "Enter Phone Number",
+              title: " Phone Number ",
+              controller: addDirectorVM.MobileNumberController,
+              isRequired: true,
+              keyboardType: TextInputType.number,
+              validator: validateEmptyPhoneNumber),
           addVertical(20),
           InputTextField(
             hintText: "Enter Alternate Phone Number",
@@ -136,18 +135,17 @@ class AddDirectorBasicInfo extends StatelessWidget
         .toList();
 
     return CustomDropDown(
-      value: addDirectorVM.selectedBusineestype,
-      title: "Business Type",
-      onChanged: (v) =>
-          addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
-      items: allCategories.map((cat) {
-        return DropdownMenuItem<Object>(
-          value: cat,
-          child: Text(cat.name ?? "",
-              style: TextStyles.medium3(color: AppColors.black)),
-        );
-      }).toList(),
-      hintText: "Select category",
-    );
+        value: addDirectorVM.selectedBusineestype,
+        title: "Profession Type",
+        onChanged: (v) =>
+            addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
+        items: allCategories.map((cat) {
+          return DropdownMenuItem<Object>(
+            value: cat,
+            child: Text(cat.name ?? "",
+                style: TextStyles.medium3(color: AppColors.black)),
+          );
+        }).toList(),
+        hintText: "Select category");
   }
 }
