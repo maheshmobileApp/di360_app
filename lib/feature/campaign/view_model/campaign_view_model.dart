@@ -19,6 +19,8 @@ class CampaignViewModel extends ChangeNotifier {
   TextEditingController scheduleTimeController = TextEditingController();
   TextEditingController scheduleDateController = TextEditingController();
   TextEditingController messageController = TextEditingController();
+  TextEditingController emailSubjectController = TextEditingController();
+  TextEditingController emailToController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
   bool searchBarOpen = false;

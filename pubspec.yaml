@@ -75,6 +75,12 @@ dependencies:
   image: ^4.1.7
   location: ^5.0.3
   geocoding: ^2.1.1
+  flutter_quill: ^10.8.5
+  flutter_quill_extensions: ^10.8.5
+
+dependency_overrides:
+  intl: ^0.18.0
+  quill_native_bridge_windows: 0.0.1
 
 dev_dependencies:
   flutter_test:

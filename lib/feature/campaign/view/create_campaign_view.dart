@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
+import 'package:di360_flutter/feature/campaign/widgets/email_composer.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
@@ -173,7 +174,7 @@ class CreateCampaignView extends StatelessWidget
                         .recipientsCount, //viewModel.selectedSendChips.length.toString(),
                   ),
                   addVertical(10),
-                  InputTextField(
+                  /*InputTextField(
                     hintText: "Message type here.....",
                     maxLength: 160,
                     maxLines: 5,
@@ -185,7 +186,31 @@ class CreateCampaignView extends StatelessWidget
                         return 'Please enter message';
                       }
                     },
-                  ),
+                  ),*/
+                  (viewModel.selectedType != "")
+                      ? (viewModel.selectedType == "SMS")
+                          ? InputTextField(
+                              hintText: "Message type here.....",
+                              maxLength: 160,
+                              maxLines: 5,
+                              title: "Message Composer",
+                              controller: viewModel.messageController,
+                              isRequired: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter message';
+                                }
+                              },
+                            )
+                          : EmailComposer(
+                              subjectController:
+                                  viewModel.emailSubjectController,
+                              toController: viewModel.emailToController,
+                              onBodyChanged: (String value) {
+                               //viewModel.setHtmlEmailMessage(value);
+                              },
+                            )
+                      : SizedBox.shrink(),
                   addVertical(16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
