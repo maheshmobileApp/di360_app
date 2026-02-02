@@ -323,11 +323,33 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> validateLogoAndBanner() async {
     if (serverBannerImg == null) {
-      var value = await _http.uploadImage(bannerFile?.path);
-      selectedBannerImgList =
-          ClinicLogo(url: value['url'], type: "image", extension: "jpeg");
-      print(selectedBannerImgList);
-      notifyListeners();
+      try {
+        var value = await _http.uploadImage(bannerFile?.path);
+        if (value != null && value['url'] != null) {
+          selectedBannerImgList = ClinicLogo(
+            url: value['url'] as String, 
+            type: "image", 
+            extension: "jpeg"
+          );
+        } else {
+          selectedBannerImgList = ClinicLogo(
+            url: "", 
+            type: "image", 
+            extension: "jpeg"
+          );
+          print("Upload failed: No URL returned");
+        }
+        print(selectedBannerImgList);
+        notifyListeners();
+      } catch (e) {
+        selectedBannerImgList = ClinicLogo(
+          url: "", 
+          type: "image", 
+          extension: "jpeg"
+        );
+        print("Upload error: $e");
+        notifyListeners();
+      }
     } else {
       selectedBannerImgList = ClinicLogo(
           url: serverBannerImg ?? "", type: "image", extension: "jpeg");
@@ -380,9 +402,16 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     final List<T> uploaded = [];
 
     for (var file in files) {
-      final response = await _http.uploadImage(file.path);
-
-      uploaded.add(builder(file, response));
+      try {
+        final response = await _http.uploadImage(file.path);
+        if (response != null && response['url'] != null) {
+          uploaded.add(builder(file, response));
+        } else {
+          print("Upload failed for file: ${file.path}");
+        }
+      } catch (e) {
+        print("Upload error for file ${file.path}: $e");
+      }
     }
     return uploaded;
   }

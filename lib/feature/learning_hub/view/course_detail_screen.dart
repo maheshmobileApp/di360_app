@@ -18,6 +18,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
   const CourseDetailScreen({super.key});
 
+  String _getAddressAsString(dynamic address) {
+    if (address == null) return "";
+    if (address is String) return address;
+    if (address is List) {
+      return address.map((e) => e.toString()).join(", ");
+    }
+    return address.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
@@ -250,13 +259,13 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           child: Column(
                             children: [
                               ContactInfoWidget(
-                                location: courseDetails?.address?.first.toString() ?? "",
+                                location: _getAddressAsString(courseDetails?.address),
                                 email: courseDetails?.contactEmail ?? "",
                                 phoneNumber: courseDetails?.contactPhone ?? "",
                               ),
-                              if ((courseDetails?.address?.first.toString() ?? "").isNotEmpty)
+                              if (_getAddressAsString(courseDetails?.address).isNotEmpty)
                                 LocationViewWidget(
-                                    location: courseDetails?.address?.first.toString() ?? ""),
+                                    location: _getAddressAsString(courseDetails?.address)),
                             ],
                           ),
                         ),

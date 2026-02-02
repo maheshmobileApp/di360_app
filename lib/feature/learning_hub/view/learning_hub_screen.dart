@@ -199,8 +199,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         0;
 
                     if (count > 0) {
-                      navigationService
-                          .navigateToWithParams(RouteList.registeredUsersView,params: {"course_id":course.id ?? "" });
+                      navigationService.navigateToWithParams(
+                          RouteList.registeredUsersView,
+                          params: {"course_id": course.id ?? ""});
                     } else {
                       scaffoldMessenger('No Registered Users');
                     }
@@ -208,6 +209,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   onMenuAction: (action, id) async {
                     switch (action) {
                       case "Preview":
+                        print("************Preview Course ID: $id");
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
 
@@ -225,6 +227,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
                         newCourseVM.setEditMode(true);
+                        courseListingVM.setCourseStatus(course.status ?? "");
                         Loaders.circularShowLoader(context);
                         await loadCourseData(
                             newCourseVM, courseListingVM.courseDetails.first);
@@ -261,6 +264,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         newCourseVM.fetchCourseCategory();
                         newCourseVM.fetchCourseType();
                         newCourseVM.setEditMode(true);
+                        courseListingVM.setCourseStatus(course.status ?? "");
+
                         Loaders.circularShowLoader(context);
                         await loadCourseData(
                             newCourseVM, courseListingVM.courseDetails.first);
@@ -340,7 +345,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
     // Reset image/file selections
     newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
-    newCourseVM.selectedCommunityType = course.communityUserType??"Both";
+    newCourseVM.selectedCommunityType = course.communityUserType ?? "Both";
 
     newCourseVM.serverCourseHeaderBanner =
         course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty

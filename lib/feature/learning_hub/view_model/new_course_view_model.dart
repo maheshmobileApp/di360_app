@@ -126,18 +126,18 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   ];*/
 
   List<CourseCreateSteps> get visibleSteps {
-  // If webinar, hide Course Info step
-  if (selectedCourseType != null && selectedCourseType == "Webinar") {
-    return [
-      CourseCreateSteps.ADDCOURSE,
-      CourseCreateSteps.TERMSANDCONDITIONS,
-      CourseCreateSteps.CONTACTS,
-      CourseCreateSteps.SOCIALMEDIALINKS,
-    ];
+    // If webinar, hide Course Info step
+    if (selectedCourseType != null && selectedCourseType == "Webinar") {
+      return [
+        CourseCreateSteps.ADDCOURSE,
+        CourseCreateSteps.TERMSANDCONDITIONS,
+        CourseCreateSteps.CONTACTS,
+        CourseCreateSteps.SOCIALMEDIALINKS,
+      ];
+    }
+    // default: all steps
+    return CourseCreateSteps.values.toList();
   }
-  // default: all steps
-  return CourseCreateSteps.values.toList();
-}
 
   List<String> get stepTitles {
     final map = {
@@ -149,7 +149,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     };
     return visibleSteps.map((s) => map[s] ?? '').toList();
   }
-
 
   final PageController pageController = PageController();
   int _currentStep = 0;
@@ -871,7 +870,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (result != null) {
       navigationService.goBack();
       Loaders.circularHideLoader(context);
-      scaffoldMessenger("Course is updated Successfully");
+      //scaffoldMessenger("Course is updated Successfully");
 
       resetForm();
     } else {
@@ -964,4 +963,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     }
     return false;
   }
+
+  
 }

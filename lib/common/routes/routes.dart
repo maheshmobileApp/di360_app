@@ -41,10 +41,12 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_preview_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_filter_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_market_place.dart/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
@@ -257,7 +259,13 @@ class Routes {
       RouteList.campaignListingView: (context) => CampaignListingView(),
       RouteList.createCampaignView: (context) => CreateCampaignView(),
       RouteList.teamMembersListingView: (context) => TeamMembersListingView(),
-      RouteList.createTeamMemberView: (context) => CreateTeamMemberView()
+      RouteList.createTeamMemberView: (context) => CreateTeamMemberView(),
+      RouteList.coursePreviewScreen: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return CoursePreviewScreen(
+          courseDetails: args as CoursesListingDetails,
+        );
+      }
     };
   }
 }
