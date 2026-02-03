@@ -230,7 +230,7 @@ class CampaignViewModel extends ChangeNotifier {
 
   Future<void> getCampaignListing() async {
     try {
-      final variables = {"limit": 10, "offset": 0, "where": {}};
+      final variables = {"limit": 100, "offset": 0, "where": {}};
       final res = await repo.getCampaignListData(variables);
       searchController.text = "";
 

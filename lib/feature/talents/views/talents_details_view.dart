@@ -75,8 +75,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
   Widget _buildBodyContent(
       BuildContext context, TalentsViewModel talentViewmodel) {
     String profleImage = '';
-    if (widget.talentList!.profileImage.isNotEmpty) {
-      profleImage = widget.talentList!.profileImage.first.url ?? '';
+    if (widget.talentList!.profileImage != null) {
+      profleImage = widget.talentList!.profileImage?.url ?? '';
     }
     return SingleChildScrollView(
       child: Padding(

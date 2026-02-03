@@ -29,8 +29,8 @@ class JobProfileCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final String time = _getShortTime(jobsListingData.createdAt ?? '');
-    final String? profileImageUrl = jobsListingData.profileImage.isNotEmpty
-        ? jobsListingData.profileImage.first.url
+    final String? profileImageUrl = jobsListingData.profileImage != null
+        ? jobsListingData.profileImage?.url
         : '';
     final List<String> workTypes = jobsListingData.workType;
     String resolveAvailabilityType(dynamic jobProfile) {

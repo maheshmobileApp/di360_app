@@ -58,7 +58,7 @@ class JobProfiles {
   final bool postAnonymously;
   final String? adminStatus;
   final String? activeStatus;
-  final List<FileUpload> profileImage;
+  final FileUpload? profileImage;
   final String? fullName;
   final String? mobileNumber;
   final String? emailAddress;
@@ -209,7 +209,11 @@ class JobProfiles {
       postAnonymously: json['post_anonymously'] ?? false,
       adminStatus: json['admin_status']?.toString(),
       activeStatus: json['active_status']?.toString(),
-      profileImage: parseFileUploadList(json['profile_image']),
+      profileImage: json['profile_image'] != null 
+          ? (json['profile_image'] is Map<String, dynamic> 
+              ? FileUpload.fromJson(json['profile_image']) 
+              : FileUpload(url: json['profile_image'].toString()))
+          : null,
       fullName: json['full_name']?.toString(),
       mobileNumber: json['mobile_number']?.toString(),
       emailAddress: json['email_address']?.toString(),
@@ -265,7 +269,7 @@ class JobProfiles {
         'post_anonymously': postAnonymously,
         'admin_status': adminStatus,
         'active_status': activeStatus,
-        'profile_image': profileImage.map((e) => e.toJson()).toList(),
+        'profile_image': profileImage,
         'full_name': fullName,
         'mobile_number': mobileNumber,
         'email_address': emailAddress,

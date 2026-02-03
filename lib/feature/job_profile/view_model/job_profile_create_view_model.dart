@@ -1026,8 +1026,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         }
       });
 
-      if (result != null) {
+      if (result.updateJobProfilesByPk?.id != null) {
         ToastMessage.show('Job Profile Updated Successfully!');
+      } else {
+        ToastMessage.show('${result.updateJobProfilesByPk?.id}');
       }
     } catch (e) {
       debugPrint("Error in jobProfileListing: $e");
@@ -1063,9 +1065,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
-    serverProfileFile = profile?.profileImage.length != 0
-        ? profile?.profileImage.first.url
-        : "";
+    serverProfileFile =
+        profile?.profileImage != null ? profile?.profileImage?.url : "";
     serverResumeDocs = profile?.uploadResume ?? [];
     serverCertDocs = profile?.certificate ?? [];
     serverCoverLetter = profile?.coverLetter ?? [];
@@ -1130,13 +1131,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         city: cityPostCodeController.text,
         radius: "0",
         availabilityType: selectedAvailabilityType,
-        profileImage: [
-          FileUpload(
-              url: profile_img,
-              name: profile_img_name,
-              type: "image",
-              extension: "jpeg")
-        ],
+        profileImage: FileUpload(
+            url: profile_img,
+            name: profile_img_name,
+            type: "image",
+            extension: "jpeg"),
         uploadResume: [
           FileUpload(
               url: serverDocuments["Resume"]?.url ??

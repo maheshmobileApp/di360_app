@@ -12,8 +12,8 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     String profleImage = '';
-    if (talentList!.profileImage.isNotEmpty) {
-      profleImage = talentList!.profileImage.first.url ?? '';
+    if (talentList!.profileImage != null) {
+      profleImage = talentList!.profileImage?.url ?? '';
     } 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 8),

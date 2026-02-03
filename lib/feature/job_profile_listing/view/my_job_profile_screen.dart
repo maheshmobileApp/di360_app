@@ -53,8 +53,8 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
   @override
   Widget build(BuildContext context) {
     final String? profileImageUrl =
-        (widget.jobsListingData.profileImage.isNotEmpty)
-            ? widget.jobsListingData.profileImage.first.url
+        (widget.jobsListingData.profileImage != null)
+            ? widget.jobsListingData.profileImage?.url
             : null;
 
     final vm = Provider.of<JobProfileListingViewModel>(context);
