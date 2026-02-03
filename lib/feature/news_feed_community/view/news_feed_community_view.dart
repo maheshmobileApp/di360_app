@@ -204,8 +204,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   logoUrl: (newsItem.userRole == "PROFESSIONAL")
                                       ? newsItem.dentalProfessional
                                               ?.profileImage?.url ??
-                                          ''
-                                      : homeVM.profilePic ?? "",
+                                          '':newsItem.dentalSupplier
+                                              ?.logo?.url ??
+                                      "",
                                   companyName: (newsItem.userRole ==
                                           "PROFESSIONAL")
                                       ? newsItem.dentalProfessional?.name ?? ''

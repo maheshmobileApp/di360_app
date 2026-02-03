@@ -104,14 +104,18 @@ class AddNewsFeedScreen extends StatelessWidget
                 AppButton(
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
+                      if (viewModel.desController.text.trim().isEmpty) {
+                        scaffoldMessenger('Please enter description');
+                        return;
+                      }
+                      if (viewModel.selectedCategory == null) {
+                        scaffoldMessenger('Please select category');
+                        return;
+                      }
                       if (_formKey.currentState!.validate()) {
-                        if (viewModel.selectedCategory == null) {
-                          scaffoldMessenger('Please select category');
-                        } else {
-                          viewModel.isEditNewsFeed == true
-                              ? viewModel.updateTheNewsFeeds(context)
-                              : viewModel.addNewsFeeds(context);
-                        }
+                        viewModel.isEditNewsFeed == true
+                            ? viewModel.updateTheNewsFeeds(context)
+                            : viewModel.addNewsFeeds(context);
                       }
                     }),
               ],

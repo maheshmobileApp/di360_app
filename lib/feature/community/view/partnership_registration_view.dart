@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -19,7 +20,7 @@ class PartnershipRegistrationView extends StatefulWidget {
 
 class _PartnershipRegistrationViewState
     extends State<PartnershipRegistrationView> with ValidationMixins {
-       final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -44,7 +45,7 @@ class _PartnershipRegistrationViewState
         body: Padding(
           padding: EdgeInsets.all(16),
           child: Form(
-             key: _formKey,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -63,12 +64,24 @@ class _PartnershipRegistrationViewState
                     Expanded(
                       child: AppButton(
                         height: 42,
-                        text:
-                            (viewModel.partnershipLink != "") ? "Update" : "Save",
+                        text: (viewModel.partnershipLink != "")
+                            ? "Update"
+                            : "Save",
                         onTap: () {
-                          viewModel.updatePartnershipLink(context,
+                          if (_formKey.currentState?.validate() ?? false) {
+                            if (viewModel.partnershipLinkController.text
+                                .trim()
+                                .isNotEmpty) {
+                             viewModel.updatePartnershipLink(
+                              context,
                               viewModel.directoryData?.directories?.first.id ??
                                   "");
+                            } else {
+                              scaffoldMessenger(
+                                  "Please enter registration link !!");
+                            }
+                          }
+                          
                         },
                       ),
                     ),
@@ -81,7 +94,14 @@ class _PartnershipRegistrationViewState
                       text: 'Cancel',
                       height: 42,
                       width: 160,
-                      onPressed: () {},
+                      onPressed: () {
+                        navigationService.goBack();
+                        viewModel.partnershipLinkController.text = "";
+                        viewModel.updatePartnershipLink(
+                            context,
+                            viewModel.directoryData?.directories?.first.id ??
+                                "");
+                      },
                     )),
                   ],
                 ),
@@ -108,7 +128,8 @@ class _PartnershipRegistrationViewState
                           viewModel.partnershipLink,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyles.bold3(color: AppColors.primaryColor),
+                          style:
+                              TextStyles.bold3(color: AppColors.primaryColor),
                         ),
                       ),
                     )

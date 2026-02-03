@@ -8,6 +8,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
@@ -32,6 +33,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   bool commentUpdate = false;
   bool removeReplyFeild = false;
   String? hintText;
+  List<PlatformFile> selectedFiles = [];
 
   @override
   void dispose() {
@@ -55,6 +57,28 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> pickFiles() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.any,
+      );
+      if (result != null) {
+        selectedFiles.addAll(result.files);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error picking files: $e');
+    }
+  }
+
+  void removeFile(int index) {
+    if (index < selectedFiles.length) {
+      selectedFiles.removeAt(index);
+      notifyListeners();
+    }
+  }
+
   addCommentTheFeed(BuildContext context, String feedId) async {
     print("*****************addCommentfee");
     await getUserId();
@@ -69,7 +93,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
           "commenter_name": name,
           "comment_Pro_Img": img,
           "comments": commentController.text,
-          "comments_attachments": [],
+          "comments_attachments": selectedFiles,
           "dental_admin_id": adminId ?? null,
           "dental_supplier_id": supplierId ?? null,
           "news_feeds_id": feedId
@@ -78,7 +102,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
@@ -94,12 +118,12 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     try {
       var res = await _http.mutation(updateCommentQuery, {
         "id": commentId,
-        "data": {"comments": commentController.text, "comments_attachments": []}
+        "data": {"comments": commentController.text, "comments_attachments": selectedFiles}
       });
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -195,14 +219,14 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
           "comment_id": commentId,
           "reply_id": commentId,
           "liked_count": 0,
-          "reply_attachments": []
+          "reply_attachments": selectedFiles
         }
       });
       print("***************************************$res");
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -222,13 +246,13 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
         "id": commentId,
         "data": {
           "reply_text": "@$commenterName ${commentController.text}",
-          "reply_attachments": []
+          "reply_attachments": selectedFiles
         }
       });
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+       await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }

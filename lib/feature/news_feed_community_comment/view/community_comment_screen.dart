@@ -16,13 +16,14 @@ import 'package:provider/provider.dart';
 
 class CommunityCommentScreen extends StatefulWidget {
   final Newsfeeds? newsfeeds;
-  const CommunityCommentScreen({super.key,  required this.newsfeeds});
+  const CommunityCommentScreen({super.key, required this.newsfeeds});
 
   @override
   State<CommunityCommentScreen> createState() => _CommentScreenState();
 }
 
-class _CommentScreenState extends State<CommunityCommentScreen> with BaseContextHelpers {
+class _CommentScreenState extends State<CommunityCommentScreen>
+    with BaseContextHelpers {
   // @override
   // void dispose() {
   //   final viewModel = Provider.of<CommentViewModel>(context, listen: false);
@@ -118,14 +119,27 @@ class _CommentScreenState extends State<CommunityCommentScreen> with BaseContext
               ),
             ),
             _buildCommentInputField(context, viewModel, widget.newsfeeds),
+            // File attachments preview
+            if (viewModel.selectedFiles.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: List.generate(
+                    viewModel.selectedFiles.length,
+                    (index) => _buildFilePreview(viewModel.selectedFiles[index], index, viewModel),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCommentInputField(
-      BuildContext context, NewsFeedCommunityCommentViewModel viewModel, Newsfeeds? newsfeeds) {
+  Widget _buildCommentInputField(BuildContext context,
+      NewsFeedCommunityCommentViewModel viewModel, Newsfeeds? newsfeeds) {
     return SafeArea(
       child: Stack(
         clipBehavior: Clip.none,
@@ -162,6 +176,14 @@ class _CommentScreenState extends State<CommunityCommentScreen> with BaseContext
                                 color: AppColors.lightGeryColor)),
                       ),
                     ),
+                    GestureDetector(
+                      child: Icon(Icons.attachment,
+                          color: AppColors.lightGeryColor),
+                      onTap: () {
+                        viewModel.pickFiles();
+                      },
+                    ),
+                    addHorizontal(10),
                     GestureDetector(
                         child: Image.asset(ImageConst.sendIcon,
                             color: AppColors.black),
@@ -219,5 +241,49 @@ class _CommentScreenState extends State<CommunityCommentScreen> with BaseContext
         ],
       ),
     );
+  }
+
+  Widget _buildFilePreview(dynamic file, int index, NewsFeedCommunityCommentViewModel viewModel) {
+    final extension = file.extension?.toLowerCase();
+    return Stack(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          margin: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: _getFileIcon(extension),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => viewModel.removeFile(index),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.close, color: Colors.white, size: 14),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _getFileIcon(String? extension) {
+    if (['jpg', 'png', 'jpeg'].contains(extension)) {
+      return Icon(Icons.image, size: 30, color: Colors.blue);
+    } else if (extension == 'pdf') {
+      return Icon(Icons.picture_as_pdf, size: 30, color: Colors.red);
+    } else if (['mp4', 'mov', 'avi'].contains(extension)) {
+      return Icon(Icons.videocam, size: 30, color: Colors.purple);
+    } else {
+      return Icon(Icons.insert_drive_file, size: 30, color: Colors.grey);
+    }
   }
 }
