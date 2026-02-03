@@ -34,6 +34,21 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
     return address.toString();
   }
 
+  String _safeToString(dynamic value) {
+    if (value == null) return "0";
+    if (value is String) return value;
+    if (value is int || value is double) return value.toString();
+    return value.toString();
+  }
+
+  String _safeCpdPointsToString(dynamic cpdPoints) {
+    if (cpdPoints == null) return "0";
+    if (cpdPoints is String) return cpdPoints;
+    if (cpdPoints is double) return cpdPoints.toInt().toString();
+    if (cpdPoints is int) return cpdPoints.toString();
+    return "0";
+  }
+
   @override
   Widget build(BuildContext context) {
     final bannerUrls = (courseDetails.courseBannerImage ?? [])
@@ -82,8 +97,8 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                   child: RegisterNowWidget(
                     earlyBirdEndDate: courseDetails.earlyBirdEndDate,
                     registerStatus: false, // You can pass this as parameter if needed
-                    currentPrice: courseDetails.earlyBirdPrice?.toString() ?? "0",
-                    oldPrice: courseDetails.afterwardsPrice?.toString() ?? "0",
+                    currentPrice: _safeToString(courseDetails.earlyBirdPrice),
+                    oldPrice: _safeToString(courseDetails.afterwardsPrice),
                     onPressed: onRegisterPressed,
                   ),
                 ),
@@ -133,11 +148,11 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                         courseName: courseDetails.courseName ?? "",
                         profilePic: courseDetails.presentedByImage?.url ?? "",
                         presentByName: courseDetails.presentedByName ?? "",
-                        cpdHours: courseDetails.cpdPoints?.toInt().toString() ?? "0",
+                        cpdHours: _safeCpdPointsToString(courseDetails.cpdPoints),
                         platform: courseDetails.type ?? "",
                         webinar: courseDetails.feedType ?? "",
-                        totalPrice: courseDetails.afterwardsPrice?.toString() ?? "0",
-                        discountPrice: courseDetails.earlyBirdPrice?.toString() ?? "0",
+                        totalPrice: _safeToString(courseDetails.afterwardsPrice),
+                        discountPrice: _safeToString(courseDetails.earlyBirdPrice),
                         bannerUrl: bannerUrl,
                         bannerName: bannerName,
                       ),
