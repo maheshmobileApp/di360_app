@@ -50,6 +50,13 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  String courseStatus = "";
+
+  void setCourseStatus(String value) {
+    courseStatus = value;
+    notifyListeners();
+  }
+
   void setCourseId(String value) {
     courseId = value;
     notifyListeners();
@@ -223,23 +230,16 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  
-
   Future<void> updateRegUserStatus(
       BuildContext context, String regUserId, String status) async {
-  
     final variables = {
       "id": regUserId,
-      "fields": {
-        "webinar_status": status,
-        "status": status
-      }
+      "fields": {"webinar_status": status, "status": status}
     };
     final res = await repo.updateRegUserStatus(variables);
     if (res != null) {
       await getCourseRegisteredUsers(context, courseId ?? "");
       scaffoldMessenger("Status Updated Successfully");
-      
     }
     notifyListeners();
   }

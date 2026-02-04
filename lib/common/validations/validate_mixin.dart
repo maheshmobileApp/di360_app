@@ -128,7 +128,9 @@ String? validatePracticeName(String? value) {
     if (uri == null ||
         !(uri.isAbsolute &&
             uri.hasScheme &&
-            (uri.scheme == 'http' || uri.scheme == 'https'))) {
+            (uri.scheme == 'http' || uri.scheme == 'https') &&
+            uri.host.isNotEmpty &&
+            uri.host.contains('.'))) {
       return 'Please enter a valid URL';
     }
     return null;

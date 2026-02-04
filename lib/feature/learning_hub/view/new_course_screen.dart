@@ -53,8 +53,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
         actions: [
           GestureDetector(
             onTap: () async {
-              
-              navigationService.navigateTo(RouteList.courseDetailScreen);
+               //await newCourseVM.setCoursePreviewData();
+              //navigationService.navigateTo(RouteList.coursePreviewScreen);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -167,59 +167,70 @@ class _JobCreateViewState extends State<NewCourseScreen> {
           if (!isFirstStep) const SizedBox(width: 16),
 
           /// Save Draft Button
-          Expanded(
-            child: CustomRoundedButton(
-              fontSize: 12,
-              text: 'Save Draft',
-              height: 42,
-              width: 160,
-              onPressed: () async {
-                Loaders.circularShowLoader(context);
-                if (newCourseVM.selectedPresentedImg?.path.isNotEmpty ??
-                    false) {
-                  await newCourseVM.validatePresenterImg();
-                }
+          courseListVM.courseStatus == "PENDING"
+              ? SizedBox.shrink()
+              : Expanded(
+                  child: CustomRoundedButton(
+                    fontSize: 12,
+                    text: 'Save Draft',
+                    height: 42,
+                    width: 160,
+                    onPressed: () async {
+                      Loaders.circularShowLoader(context);
+                      if (newCourseVM.selectedPresentedImg?.path.isNotEmpty ??
+                          false) {
+                        await newCourseVM.validatePresenterImg();
+                      }
 
-                if ((newCourseVM.selectedCourseHeaderBanner?.path.isNotEmpty ??
-                        false) ||
-                    (newCourseVM.serverCourseHeaderBanner?.url.isNotEmpty ??
-                        false)) {
-                  await newCourseVM.validateCourseHeaderBanner();
-                }
-                if ((newCourseVM.selectedGallery?.isNotEmpty ?? false) ||
-                    (newCourseVM.serverGallery?.isNotEmpty ?? false)) {
-                  await newCourseVM.validateGallery();
-                }
+                      if ((newCourseVM.selectedCourseHeaderBanner?.path
+                                  .isNotEmpty ??
+                              false) ||
+                          (newCourseVM
+                                  .serverCourseHeaderBanner?.url.isNotEmpty ??
+                              false)) {
+                        await newCourseVM.validateCourseHeaderBanner();
+                      }
+                      if ((newCourseVM.selectedGallery?.isNotEmpty ?? false) ||
+                          (newCourseVM.serverGallery?.isNotEmpty ?? false)) {
+                        await newCourseVM.validateGallery();
+                      }
 
-                if ((newCourseVM.selectedCourseBannerImg?.isNotEmpty ??
-                        false) ||
-                    (newCourseVM.serverCourseBannerImg?.isNotEmpty ?? false)) {
-                  await newCourseVM.validateCourseBanner();
-                }
-                await newCourseVM.buildCourseInfoList();
+                      if ((newCourseVM.selectedCourseBannerImg?.isNotEmpty ??
+                              false) ||
+                          (newCourseVM.serverCourseBannerImg?.isNotEmpty ??
+                              false)) {
+                        await newCourseVM.validateCourseBanner();
+                      }
+                      await newCourseVM.buildCourseInfoList();
 
-                if ((newCourseVM.selectedsponsoredByImg?.isNotEmpty ?? false) ||
-                    (newCourseVM.serverSponsoredByImg?.isNotEmpty ?? false)) {
-                  await newCourseVM.validateSponsoredByImg();
-                }
-                Loaders.circularHideLoader(context);
+                      if ((newCourseVM.selectedsponsoredByImg?.isNotEmpty ??
+                              false) ||
+                          (newCourseVM.serverSponsoredByImg?.isNotEmpty ??
+                              false)) {
+                        await newCourseVM.validateSponsoredByImg();
+                      }
+                      Loaders.circularHideLoader(context);
 
-                (courseListVM.editOptionEnable)
-                    ? await newCourseVM.updateCourseListing(
-                        context, courseListVM.courseId, true)
-                    : await newCourseVM.createdCourseListing(context, true);
-                courseListVM.selectedStatus = "All";
-                await courseListVM.getCoursesListingData(context);
-              },
-              backgroundColor: AppColors.timeBgColor,
-              textColor: AppColors.primaryColor,
-            ),
-          ),
+                      (courseListVM.editOptionEnable)
+                          ? await newCourseVM.updateCourseListing(
+                              context, courseListVM.courseId, true)
+                          : await newCourseVM.createdCourseListing(
+                              context, true);
+                      courseListVM.selectedStatus = "All";
+                      await courseListVM.getCoursesListingData(context);
+                    },
+                    backgroundColor: AppColors.timeBgColor,
+                    textColor: AppColors.primaryColor,
+                  ),
+                ),
           SizedBox(width: 16),
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep
-                  ? (courseListVM.editOptionEnable ? 'Update' : 'Submit')
+                  ? (courseListVM.editOptionEnable &&
+                          courseListVM.courseStatus == "APPROVE"
+                      ? 'Update'
+                      : 'Submit')
                   : 'Next',
               height: 42,
               fontSize: 12,
@@ -231,6 +242,10 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                     if (isLastStep) {
                       await newCourseVM.updateCourseListing(
                           context, courseListVM.courseId, false);
+                      courseListVM.editOptionEnable &&
+                              courseListVM.courseStatus == "Active"
+                          ? scaffoldMessenger("Course is updated Successfully")
+                          : scaffoldMessenger("Course is Created Successfully");
                       courseListVM.selectedStatus = "All";
                       await courseListVM.getCoursesListingData(context);
                     } else {

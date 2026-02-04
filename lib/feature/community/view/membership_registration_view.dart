@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -13,23 +14,24 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MembershipRegistrationView extends StatefulWidget {
   @override
-  State<MembershipRegistrationView> createState() => _MembershipRegistrationViewState();
+  State<MembershipRegistrationView> createState() =>
+      _MembershipRegistrationViewState();
 }
 
-class _MembershipRegistrationViewState extends State<MembershipRegistrationView> with ValidationMixins  {
+class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
+    with ValidationMixins {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-   @override
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
       viewModel.getDirectory();
       viewModel.getMembershipLink(context);
-
-      
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);
@@ -46,76 +48,95 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-              InputTextField(
-                controller: viewModel.membershipLinkController,
-                hintText: "Enter Registration link",
-                title: "Registration Link",
-                maxLength: 75,
-                validator: validateOptionalUrl,
-                isRequired: true,
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: AppButton(
-                      height: 42,
-                      text:
-                          (viewModel.membershipLink != "") ? "Update" : "Save",
-                      onTap: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          viewModel.updateMembershipLink(context,
-                              viewModel.directoryData?.directories?.first.id ??
-                                  "");
-                        }
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                      child: CustomRoundedButton(
-                    fontSize: 16,
-                    backgroundColor: AppColors.timeBgColor,
-                    textColor: AppColors.primaryColor,
-                    text: 'Cancel',
-                    height: 42,
-                    width: 160,
-                    onPressed: () {},
-                  )),
-                ],
-              ),
-              SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Registration Link :",
-                    style: TextStyles.regular3(color: AppColors.black),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () async {
-                        final url = Uri.parse(viewModel.membershipLink);
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(url,
-                              mode: LaunchMode.externalApplication);
-                        } else {
-                          scaffoldMessenger("Invalid link !!");
-                        }
-                      },
-                      child: Text(
-                        viewModel.membershipLink,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyles.bold3(color: AppColors.primaryColor),
+                InputTextField(
+                  controller: viewModel.membershipLinkController,
+                  hintText: "Enter Registration link",
+                  title: "Registration Link",
+                  maxLength: 75,
+                  validator: validateOptionalUrl,
+                  isRequired: true,
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 42,
+                        text: (viewModel.membershipLink != "")
+                            ? "Update"
+                            : "Save",
+                        onTap: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            if (viewModel.membershipLinkController.text
+                                .trim()
+                                .isNotEmpty) {
+                              viewModel.updateMembershipLink(
+                                  context,
+                                  viewModel.directoryData?.directories?.first
+                                          .id ??
+                                      "");
+                            } else {
+                              scaffoldMessenger(
+                                  "Please enter registration link !!");
+                            }
+                          }
+                        },
                       ),
                     ),
-                  )
-                ],
-              ),
+                    SizedBox(width: 16),
+                    Expanded(
+                        child: CustomRoundedButton(
+                      fontSize: 16,
+                      backgroundColor: AppColors.timeBgColor,
+                      textColor: AppColors.primaryColor,
+                      text: 'Cancel',
+                      height: 42,
+                      width: 160,
+                      onPressed: () {
+                        navigationService.goBack();
+                        viewModel.membershipLinkController.text = "";
+                        viewModel.updateMembershipLink(
+                            context,
+                            viewModel.directoryData?.directories?.first.id ??
+                                "");
+                        
+                      },
+                    )),
+                  ],
+                ),
+                SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Registration Link :",
+                      style: TextStyles.regular3(color: AppColors.black),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          final url = Uri.parse(viewModel.membershipLink);
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url,
+                                mode: LaunchMode.externalApplication);
+                          } else {
+                            scaffoldMessenger("Invalid link !!");
+                          }
+                        },
+                        child: Text(
+                          viewModel.membershipLink,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyles.bold3(color: AppColors.primaryColor),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
           ),

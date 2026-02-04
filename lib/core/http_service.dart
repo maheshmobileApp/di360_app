@@ -32,10 +32,20 @@ class HttpService {
     return response;
   }
 
-  Future<dynamic> uploadImage(filePath) async {
-    MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
-    var _data = {"file": _uploadImage, "directory": 'project'};
-    return await post('/api/v1/file-upload/upload-s3', FormData.fromMap(_data));
+  Future<dynamic> uploadImage(String? filePath) async {
+    if (filePath == null || filePath.isEmpty) {
+      print("Upload failed: File path is null or empty");
+      return null;
+    }
+    
+    try {
+      MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
+      var _data = {"file": _uploadImage, "directory": 'project'};
+      return await post('/api/v1/file-upload/upload-s3', FormData.fromMap(_data));
+    } catch (e) {
+      print("Upload image error: $e");
+      return null;
+    }
   }
 
   Future post(url, _data, {showLoading = true}) async {
@@ -47,12 +57,11 @@ class HttpService {
       if (result.statusCode == 201 || result.statusCode == 200) {
         return Map<String, dynamic>.from(result.data);
       }
-
+      print("Upload failed with status code: ${result.statusCode}");
       return null;
     } catch (e, s) {
-      print("$e, $s");
-      //_showError(e);
-      return e;
+      print("Post request error: $e, $s");
+      return null;
     }
   }
 
