@@ -3,6 +3,8 @@ import 'package:di360_flutter/feature/home/model_class/dental_professional_res.d
 import 'package:di360_flutter/feature/home/model_class/dental_supplier_res.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_like_res.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 
 class GetAllNewsFeeds {
   AllNewsFeedData? data;
@@ -72,8 +74,8 @@ class Newsfeeds {
   DentalProfessional? dentalProfessional;
   DentalPractice? dentalPractice;
   AdminUser? adminUser;
-  List<dynamic>? courses;
-  List<dynamic>? jobs;
+  List<Courses>? courses;
+  List<Jobs>? jobs;
   List<NewsfeedsLikes>? newsfeedsLikes;
   List<MyLike>? myLike;
   NewsfeedsLikesAggregate? newsfeedsLikesAggregate;
@@ -157,8 +159,12 @@ class Newsfeeds {
     adminUser = json['admin_user'] != null
         ? new AdminUser.fromJson(json['admin_user'])
         : null;
-    courses = json['courses']?.cast<dynamic>();
-    jobs = json['jobs']?.cast<dynamic>();
+    courses = json['courses'] != null
+        ? (json['courses'] as List).map((e) => Courses.fromJson(e)).toList()
+        : null;
+    jobs = json['jobs'] != null
+        ? (json['jobs'] as List).map((e) => Jobs.fromJson(e)).toList()
+        : null;
     if (json['newsfeeds_likes'] != null) {
       newsfeedsLikes = <NewsfeedsLikes>[];
       json['newsfeeds_likes'].forEach((v) {
@@ -260,6 +266,94 @@ class MyLike {
   }
 
   Map<String, dynamic> toJson() => {'id': id};
+}
+
+
+class Presenters {
+  String? presentedByName;
+  PresentedByImage? presentedByImage;
+
+  Presenters({this.presentedByName, this.presentedByImage});
+
+  Presenters.fromJson(Map<String, dynamic> json) {
+    presentedByName = json['presented_by_name'];
+    presentedByImage = json['presented_by_image'] != null
+        ? new PresentedByImage.fromJson(json['presented_by_image'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['presented_by_name'] = this.presentedByName;
+    if (this.presentedByImage != null) {
+      data['presented_by_image'] = this.presentedByImage!.toJson();
+    }
+    return data;
+  }
+}
+
+
+class Courses {
+  String? id;
+  List<Presenters>? presenters;
+  List<Address>? address;
+  double? cpdPoints;
+  String? type;
+  List<CourseBannerImage>? courseBannerImage;
+  String? sTypename;
+
+  Courses(
+      {this.id,
+      this.presenters,
+      this.address,
+      this.cpdPoints,
+      this.type,
+      this.courseBannerImage,
+      this.sTypename});
+
+  Courses.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    if (json['presenters'] != null) {
+      presenters = <Presenters>[];
+      json['presenters'].forEach((v) {
+        presenters!.add(new Presenters.fromJson(v));
+      });
+    }
+    if (json['address'] != null) {
+      address = <Address>[];
+      json['address'].forEach((v) {
+        address!.add(new Address.fromJson(v));
+      });
+    }
+    cpdPoints = json['cpd_points'];
+    type = json['type'];
+    if (json['course_banner_image'] != null) {
+      courseBannerImage = <CourseBannerImage>[];
+      json['course_banner_image'].forEach((v) {
+        courseBannerImage!.add(new CourseBannerImage.fromJson(v));
+      });
+    }
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    if (this.presenters != null) {
+      data['presenters'] = this.presenters!.map((v) => v.toJson()).toList();
+    }
+    if (this.address != null) {
+      data['address'] = this.address!.map((v) => v.toJson()).toList();
+    }
+    data['cpd_points'] = this.cpdPoints;
+    data['type'] = this.type;
+    if (this.courseBannerImage != null) {
+      data['course_banner_image'] =
+          this.courseBannerImage!.map((v) => v.toJson()).toList();
+    }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
 }
 
 class PostImage {

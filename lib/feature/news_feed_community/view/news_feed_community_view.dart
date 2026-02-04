@@ -8,6 +8,9 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
@@ -59,6 +62,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   Widget build(BuildContext context) {
     return Consumer<NewsFeedCommunityViewModel>(
       builder: (context, viewModel, child) {
+        final courseListingVM = Provider.of<CourseListingViewModel>(context);
+        final jobListingsViewModel = Provider.of<JobListingsViewModel>(context);
+
         final communityVM = Provider.of<CommunityViewModel>(context);
         final homeVM = Provider.of<HomeViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
@@ -183,7 +189,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         viewModel.getAllNewsFeeds(context);
                       },
                       onSearch: () {
-                         viewModel.getAllNewsFeeds(context);
+                        viewModel.getAllNewsFeeds(context);
                       },
                     ),
                   (type == 'PROFESSIONAL')
@@ -197,6 +203,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             itemBuilder: (context, index) {
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
+                                  newsfeeds: newsItem,
+                                  course: newsItem.courses ?? [],
+                                  feedType: newsItem.feedType ?? "",
                                   createdAt: newsItem.createdAt ?? "",
                                   feedUserRole: newsItem.userRole ?? "",
                                   imageUrls: newsItem.postImage ?? [],
@@ -204,9 +213,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   logoUrl: (newsItem.userRole == "PROFESSIONAL")
                                       ? newsItem.dentalProfessional
                                               ?.profileImage?.url ??
-                                          '':newsItem.dentalSupplier
-                                              ?.logo?.url ??
-                                      "",
+                                          ''
+                                      : newsItem.dentalSupplier?.logo?.url ??
+                                          "",
                                   companyName: (newsItem.userRole ==
                                           "PROFESSIONAL")
                                       ? newsItem.dentalProfessional?.name ?? ''
@@ -240,6 +249,23 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     SharePlus.instance.share(ShareParams(
                                         uri: Uri.parse(
                                             'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
+                                  },
+                                  onDetailView: () async {
+                                    if (newsItem.feedType == "LEARNHUB") {
+                                      await courseListingVM.getCourseDetails(
+                                        context,
+                                        newsItem.courses?.first.id ?? "",
+                                      );
+                                      navigationService.navigateTo(
+                                          RouteList.courseDetailScreen);
+                                    } else if (newsItem.feedType == "JOBS") {
+                                      await jobListingsViewModel
+                                          .getJobListingById(context,newsItem.jobs?.first.id??"");
+                                      navigationService.navigateToWithParams(
+                                        RouteList.jobdetailsScreen,
+                                        params: jobListingsViewModel.jobListingData?.first??Jobs(),
+                                      );
+                                    }
                                   },
                                   onMenuAction: (action, id) async {
                                     switch (action) {

@@ -1,19 +1,28 @@
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NewsFeedCommunityCard extends StatelessWidget {
+class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final String id;
   final String logoUrl;
   final String feedUserRole;
@@ -25,7 +34,10 @@ class NewsFeedCommunityCard extends StatelessWidget {
   final String createdAt;
   final int registeredCount;
   final String chipTitle;
+  final String feedType;
   final List<PostImage>? imageUrls;
+  final List<Courses>? course;
+  final List<Jobs>? job;
 
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
@@ -36,6 +48,7 @@ class NewsFeedCommunityCard extends StatelessWidget {
   final int likes;
   final int comments;
   final bool isLiked;
+  final Newsfeeds? newsfeeds;
 
   const NewsFeedCommunityCard({
     super.key,
@@ -51,6 +64,8 @@ class NewsFeedCommunityCard extends StatelessWidget {
     required this.imageUrls,
     required this.createdAt,
     required this.registeredCount,
+    this.course,
+    this.job,
     this.onTapRegistered,
     this.onMenuAction,
     this.onDetailView,
@@ -59,12 +74,15 @@ class NewsFeedCommunityCard extends StatelessWidget {
     this.onShareTap,
     this.onCommentTap,
     required this.likes,
+    required this.feedType,
     this.isLiked = false,
+    this.newsfeeds,
   });
 
   @override
   Widget build(BuildContext context) {
     final String time = _getShortTime(createdAt) ?? '';
+    final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -112,9 +130,17 @@ class NewsFeedCommunityCard extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     _descriptionWidget(description),
+                    const SizedBox(height: 8),
+
                     (imageUrls?.isNotEmpty ?? false)
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
+                    if (feedType == "LEARNHUB")
+                      _learnHubWidget(course?.first ?? Courses(), createdAt),
+                    if (feedType == "CATALOGUE") _buildCatalogueRow(catelougeViewModel,context),
+                    if (feedType == "JOBS")
+                      _jobsWidget(job?.first??Jobs(), createdAt),
+
                     const Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -420,7 +446,224 @@ class NewsFeedCommunityCard extends StatelessWidget {
         description,
         maxLines: 4,
         overflow: TextOverflow.ellipsis,
-        style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
+        style: TextStyles.regular2(color: AppColors.bottomNavUnSelectedColor),
+      ),
+    );
+  }
+
+  Widget _sectionWidget(String title, String value) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyles.regular2(color: AppColors.geryColor),
+        ),
+        SizedBox(
+          height: 2,
+        ),
+        Text(
+          value,
+          style: TextStyles.medium2(color: AppColors.black),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCatalogueRow(
+      CatalogueViewModel catalogueVM, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.email_outlined, color: AppColors.primaryColor),
+                addHorizontal(6),
+                Text(newsfeeds?.dentalSupplier?.email ?? '',
+                    style: TextStyles.regular1(color: AppColors.black)),
+              ],
+            ),
+            addVertical(8),
+            Row(
+              children: [
+                Icon(Icons.phone, color: AppColors.primaryColor),
+                addHorizontal(6),
+                Text(newsfeeds?.dentalSupplier?.phone ?? '',
+                    style: TextStyles.regular1(color: AppColors.black)),
+              ],
+            )
+          ],
+        ),
+        AppButton(
+            text: 'View',
+            height: 40,
+            width: 100,
+            onTap: () async {
+              await catalogueVM.getCatalogDetails(
+                  context, newsfeeds?.payload?.catalogueId ?? '');
+              final id =
+                  catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+              await catalogueVM.getReletedCatalog(context, id);
+              await navigationService.navigateTo(RouteList.catalogueDetails);
+            })
+      ],
+    );
+  }
+
+  Widget _learnHubWidget(Courses course, String createdAt) {
+    return Container(
+      width: double.infinity,
+      height: 120,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _sectionWidget("Presented By",
+                    course.presenters?.first.presentedByName ?? ""),
+                _sectionWidget("CPD Hours", course.cpdPoints.toString()),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlueColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    course.type ?? "",
+                    style: TextStyles.regular1(
+                      color: AppColors.typeTextColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _timeChip(
+                    "Posted on : ${DateFormatUtils.formatDate(createdAt)}"),
+                _timeChip(course.address?.first.city ?? ""),
+                GestureDetector(
+                  onTap: onDetailView,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "View Details",
+                        style:
+                            TextStyles.medium1(color: AppColors.primaryColor),
+                      ),
+                      SvgPicture.asset(
+                        ImageConst.nextArrow,
+                        width: 20,
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  
+  Widget _jobsWidget(Jobs job, String createdAt) {
+    return Container(
+      width: double.infinity,
+      height: 120,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _sectionWidget("Title",
+                    job.title ?? ""),
+                _sectionWidget("Role", job.jRole??""),
+                _chipWidget(job.typeofEmployment??[],"")
+              ],
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _timeChip(
+                    "Posted on : ${DateFormatUtils.formatDate(createdAt)}"),
+                
+                GestureDetector(
+                  onTap: onDetailView,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "View Details",
+                        style:
+                            TextStyles.medium1(color: AppColors.primaryColor),
+                      ),
+                      SvgPicture.asset(
+                        ImageConst.nextArrow,
+                        width: 20,
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  
+  
+
+  Widget _timeChip(String time) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color.fromRGBO(255, 241, 229, 0),
+            Color.fromRGBO(255, 241, 229, 1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        time,
+        style: TextStyles.semiBold(
+            fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
       ),
     );
   }
