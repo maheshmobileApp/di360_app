@@ -12,7 +12,10 @@ import 'package:di360_flutter/feature/campaign/view/create_campaign_view.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
+import 'package:di360_flutter/feature/community/view/contact_filter_view.dart';
+import 'package:di360_flutter/feature/community/view/contacts_view.dart';
 import 'package:di360_flutter/feature/community/view/create_category_view.dart';
+import 'package:di360_flutter/feature/community/view/create_contact_view.dart';
 import 'package:di360_flutter/feature/community/view/join_request_view.dart';
 import 'package:di360_flutter/feature/community/view/membership_registration_view.dart';
 import 'package:di360_flutter/feature/community/view/news_feed_categories_view.dart';
@@ -260,6 +263,9 @@ class Routes {
       RouteList.createCampaignView: (context) => CreateCampaignView(),
       RouteList.teamMembersListingView: (context) => TeamMembersListingView(),
       RouteList.createTeamMemberView: (context) => CreateTeamMemberView(),
+      RouteList.contactView: (context) => ContactsView(),
+      RouteList.createContactView: (context) => CreateContactView(),
+      RouteList.contactFilterView: (context) => ContactFilterView(),
       RouteList.coursePreviewScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return CoursePreviewScreen(

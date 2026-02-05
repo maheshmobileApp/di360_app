@@ -309,7 +309,12 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                           } else if (item.title == "Partnership Request") {
                             navigationService
                                 .navigateTo(RouteList.partnershipRequestView);
-                          } else if (item.title == "Membership Registration") {
+                          } else if (item.title == "Contacts") {
+                            navigationService
+                                .navigateTo(RouteList.contactView);
+                          }
+                          
+                           else if (item.title == "Membership Registration") {
                             navigationService.navigateTo(
                                 RouteList.membershipRegistrationView);
                           } else if (item.title == "Partnership Registration") {

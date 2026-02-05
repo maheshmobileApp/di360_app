@@ -199,6 +199,18 @@ class JobListingsViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+  List<Jobs>? jobListingData;
+  Future<void> getJobListingById(BuildContext context,String jobId) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": jobId};
+
+    final res = await repo.getJobListingById(variables);
+    if (res != null) {
+      jobListingData = res;
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
 
   Future<void> getMyJobApplicantsgData(
       BuildContext context, String jobId) async {

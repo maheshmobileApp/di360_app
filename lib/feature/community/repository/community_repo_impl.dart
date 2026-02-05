@@ -1,4 +1,6 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/community/model/contacts_res.dart';
+import 'package:di360_flutter/feature/community/model/delete_contact_res.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_directory_res.dart';
 import 'package:di360_flutter/feature/community/model/get_joined_community_members.dart';
@@ -7,17 +9,21 @@ import 'package:di360_flutter/feature/community/model/get_new_feed_categories.da
 import 'package:di360_flutter/feature/community/model/get_partnership_link.dart';
 import 'package:di360_flutter/feature/community/model/get_partnership_members.dart';
 import 'package:di360_flutter/feature/community/query/add_category_query.dart';
+import 'package:di360_flutter/feature/community/query/add_contact_query.dart';
 import 'package:di360_flutter/feature/community/query/approve_partnership_request_query.dart';
 import 'package:di360_flutter/feature/community/query/approve_query.dart';
 import 'package:di360_flutter/feature/community/query/delete_category_query.dart';
+import 'package:di360_flutter/feature/community/query/delete_contact_query.dart';
 import 'package:di360_flutter/feature/community/query/get_directory_query.dart';
 import 'package:di360_flutter/feature/community/query/get_join_requests_query.dart';
 import 'package:di360_flutter/feature/community/query/get_joined_community_members.dart';
 import 'package:di360_flutter/feature/community/query/get_membership_link_query.dart';
 import 'package:di360_flutter/feature/community/query/get_news_feed_categories_query.dart';
+import 'package:di360_flutter/feature/community/query/get_partner_contacts_query.dart';
 import 'package:di360_flutter/feature/community/query/get_partnership_link_query.dart';
 import 'package:di360_flutter/feature/community/query/get_partnership_requests_query.dart';
 import 'package:di360_flutter/feature/community/query/update_category_query.dart';
+import 'package:di360_flutter/feature/community/query/update_contact_query.dart';
 import 'package:di360_flutter/feature/community/query/update_membership_link_query.dart';
 import 'package:di360_flutter/feature/community/repository/community_repository.dart';
 
@@ -187,5 +193,31 @@ class CommunityRepoImpl extends CommunityRepository {
     final res = await http.query(getJoinedCommunityQuery, variables: variables);
     final data = GetJoinedCommunityMembersData.fromJson(res);
     return data;
+  }
+
+  @override
+  Future<ContactsData> getContacts(variables) async {
+    final res = await http.query(getPartnerContactsQuery, variables: variables);
+    final data = ContactsData.fromJson(res);
+    return data;
+  }
+  
+  @override
+  Future addContact(variables) async {
+    final res = await http.mutation(addContactQuery, variables);
+    return res;
+  }
+
+  @override
+  Future updateContact(variables) async {
+    final res = await http.mutation(updateContactQuery, variables);
+    return res;
+  }
+
+
+   @override
+  Future<DeleteContactData> deleteContact(variables) async {
+    final res = await http.mutation(deleteContactQuery, variables);
+    return DeleteContactData.fromJson(res);
   }
 }
