@@ -52,7 +52,7 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                             if (notification?.type == 'NEWS_FEED') {
                               dashBoardVM.setIndex(1, context);
                               navigationService
-                                  .pushNamedAndRemoveUntil(RouteList.dashBoard);
+                                  .navigateTo(RouteList.dashBoard);
                             } else if (notification?.type ==
                                 'SUPPORT_REQUEST') {
                               //  navigationService.pushNamedAndRemoveUntil(RouteList.supportRequest);
@@ -60,7 +60,7 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                             } else if (notification?.type == 'CATALOGUE') {
                             } else if (notification?.type == 'COURSE') {
                             } else if (notification?.type == 'APPOINTMENT') {}
-                          }, // COMMUNITY , CATALOGUE , COURSE, APPOINTMENT,
+                          }, // COMMUNITY , CATALOGUE , COURSE, APPOINTMENT,INFORMATIONAL,JOB
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

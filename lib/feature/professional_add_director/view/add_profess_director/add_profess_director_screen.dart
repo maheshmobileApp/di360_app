@@ -1,10 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/add_directors/view/add_director_archiement.dart';
-import 'package:di360_flutter/feature/add_directors/view/add_director_certificate.dart';
-import 'package:di360_flutter/feature/add_directors/view/add_director_gallery.dart';
-import 'package:di360_flutter/feature/add_directors/view/add_director_testmonal.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/edution_screen.dart';
@@ -70,14 +66,14 @@ class ProfessionalAddDirectorView extends StatelessWidget
         return ProfessBasicInfo();
       case ProfessAddDirectoryStep.Education:
         return EducationScreen();
-      case ProfessAddDirectoryStep.Certificates:
-        return AddDirectorCertificate();
-      case ProfessAddDirectoryStep.Achievements:
-        return AddDirectorAchievement();
-      case ProfessAddDirectoryStep.Gallery:
-        return AddDirectorGallery();
-      case ProfessAddDirectoryStep.Testimonials:
-        return AddDirectorTestmonal();
+      // case ProfessAddDirectoryStep.Certificates:
+      //   return AddDirectorCertificate();
+      // case ProfessAddDirectoryStep.Achievements:
+      //   return AddDirectorAchievement();
+      // case ProfessAddDirectoryStep.Gallery:
+      //   return AddDirectorGallery();
+      // case ProfessAddDirectoryStep.Testimonials:
+      //   return AddDirectorTestmonal();
       case ProfessAddDirectoryStep.OtherInformation:
         return OtherInforScreen();
       default:

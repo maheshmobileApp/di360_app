@@ -83,7 +83,6 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
           backgroundColor: AppColors.whiteColor,
           radius: 52,
           child: CircleAvatar(
-              backgroundColor: AppColors.primaryColor,
               radius: 50,
               child: ClipOval(
                   child: SizedBox(
