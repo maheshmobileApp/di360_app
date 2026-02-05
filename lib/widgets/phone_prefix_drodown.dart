@@ -20,7 +20,6 @@ class PhonePrefixDropdown extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
-        color: AppColors.whiteColor,
         border: Border(
           right: BorderSide(
             color: AppColors.HINT_COLOR,
