@@ -1,4 +1,3 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -14,17 +13,15 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final professDirectorVM = Provider.of<ProfessionalAddDirectorVm>(context);
-    
+
     if (addDirectorVM.getBasicInfoData.isEmpty) {
       return Center(child: Text('No data available'));
     }
-    
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           sectionHeader('Education'),
           InputTextField(
               title: '',
@@ -57,75 +54,39 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
               );
             }),
           ],
-          // ListView.builder(
-          //   shrinkWrap: true,
-          //   physics: NeverScrollableScrollPhysics(),
-          //   itemCount: addDirectorVM.getBasicInfoData.first.education?.length ?? 0,
-          //   itemBuilder: (context, index) {
-          //     return Padding(
-          //       padding: const EdgeInsets.only(top: 10),
-          //       child: Row(
-          //         children: [
-          //           Expanded(
-          //             child: InputTextField(
-          //                 hintText: "Enter education",
-          //                 title: "Education",
-          //                 controller: professDirectorVM.educationCntr[index],
-          //                 onChange: (value) =>
-          //                     professDirectorVM.updateEducation(context, index, value)),
-          //           ),
-          //           IconButton(
-          //             icon: Icon(Icons.delete, color: AppColors.redColor),
-          //             onPressed: () =>
-          //                 professDirectorVM.removeEducation(context, index),
-          //           )
-          //         ],
-          //       ),
-          //     );
-          //   },
-          // ),
-          // addVertical(10),
-          // ElevatedButton.icon(
-          //   onPressed: () => professDirectorVM.addEducation(context),
-          //   icon: const Icon(Icons.add),
-          //   label: const Text("Add Education"),
-          // ),
           addVertical(20),
           sectionHeader('Work Experience'),
-          addVertical(20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: addDirectorVM.getBasicInfoData.first.workingAt?.length ?? 0,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InputTextField(
-                          hintText: "Enter work",
-                          title: "Work At",
-                          controller: professDirectorVM.workAtCntr[index],
-                          onChange: (value) =>
-                              professDirectorVM.updateWorkAt(context, index, value)),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: AppColors.redColor),
-                      onPressed: () =>
-                          professDirectorVM.removeWorkAt(context, index),
-                    )
-                  ],
-                ),
+          InputTextField(
+              title: '',
+              hintText: 'Add work experience',
+              controller: professDirectorVM.workAtCntr,
+              onSubmitted: (val) {
+                professDirectorVM.addWorkAt(val ?? '', context);
+              }),
+          if (addDirectorVM.getBasicInfoData.first.workingAt?.isNotEmpty ??
+              false) ...[
+            addVertical(10),
+            Consumer<AddDirectoryViewModel>(
+                builder: (context, addDirectorV, child) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: List.generate(
+                    addDirectorV.getBasicInfoData.first.workingAt?.length ?? 0,
+                    (index) {
+                  final work =
+                      addDirectorV.getBasicInfoData.first.workingAt?[index];
+                  return Chip(
+                    label: Text(work?.name ?? ''),
+                    deleteIcon: Icon(Icons.close),
+                    onDeleted: () {
+                      professDirectorVM.removeWorkAt(index, context);
+                    },
+                  );
+                }),
               );
-            },
-          ),
-          addVertical(10),
-          ElevatedButton.icon(
-            onPressed: () => professDirectorVM.addWorkAt(context),
-            icon: const Icon(Icons.add),
-            label: const Text("Add Work"),
-          ),
+            }),
+          ]
         ]),
       ),
     );

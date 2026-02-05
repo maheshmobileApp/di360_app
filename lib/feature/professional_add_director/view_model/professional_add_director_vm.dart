@@ -4,6 +4,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   TextEditingController hobbiesCntr = TextEditingController();
   TextEditingController universitiesCntr = TextEditingController();
   TextEditingController educationCntr = TextEditingController();
- // List<TextEditingController> educationCntr = [];
-  List<TextEditingController> workAtCntr = [];
+  TextEditingController workAtCntr = TextEditingController();
 
   double? latitude;
   double? longitude;
@@ -63,6 +63,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   void goToPreviousStep() {
     if (_currentStep > 0) {
       _currentStep--;
+      assignTheProfessBasic(navigatorKey.currentContext!);
       pageController.previousPage(
           duration: const Duration(milliseconds: 300), curve: Curves.ease);
       notifyListeners();
@@ -128,58 +129,20 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void loadEducation(List<Education> list) {
-  //   educationCntr = list
-  //       .map((h) => TextEditingController(text: h.qualification ?? ""))
-  //       .toList();
-  //   notifyListeners();
-  // }
-
-  // void updateEducation(BuildContext context, int index, String value) {
-  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
-  //   addDirectorVM.getBasicInfoData.first.education?[index].qualification =
-  //       value;
-  //   notifyListeners();
-  // }
-
-  // void addEducation(BuildContext context) {
-  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
-  //   addDirectorVM.getBasicInfoData.first.education
-  //       ?.add(Education(qualification: ""));
-  //   educationCntr.add(TextEditingController());
-  //   notifyListeners();
-  // }
-
-  // void removeEducation(BuildContext context, int index) {
-  //   final addDirectorVM = context.read<AddDirectoryViewModel>();
-  //   addDirectorVM.getBasicInfoData.first.education?.removeAt(index);
-  //   educationCntr.removeAt(index);
-  //   notifyListeners();
-  // }
-
-  void loadWorkAt(List<WorkingAt> list) {
-    workAtCntr =
-        list.map((h) => TextEditingController(text: h.name ?? "")).toList();
-    notifyListeners();
-  }
-
-  void updateWorkAt(BuildContext context, int index, String value) {
+  void addWorkAt(String value, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.workingAt?[index].name = value;
+    if (value.isNotEmpty) {
+      addDirectorVM.getBasicInfoData.first.workingAt
+          ?.add(WorkingAt(name: value));
+      workAtCntr.clear();
+    }
+    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void addWorkAt(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.workingAt?.add(WorkingAt(name: null));
-    workAtCntr.add(TextEditingController());
-    notifyListeners();
-  }
-
-  void removeWorkAt(BuildContext context, int index) {
+  void removeWorkAt(int index, BuildContext context) {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     addDirectorVM.getBasicInfoData.first.workingAt?.removeAt(index);
-    workAtCntr.removeAt(index);
     notifyListeners();
   }
 
@@ -314,10 +277,6 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     emailController.text = data.email ?? '';
     alternateNumberController.text = data.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
-    //  loadHobbies(data.hobbies ?? []);
-    //loadUniversities(data.universitySchool ?? []);
-    //loadEducation(data.education ?? []);
-    loadWorkAt(data.workingAt ?? []);
     await getLocation();
     notifyListeners();
   }

@@ -44,6 +44,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             title: "Name",
             hintText: 'Enter name',
             controller: addDirectorVM.nameController,
+            isRequired: true,
             validator: validateFirstName,
           ),
           addVertical(20),
@@ -51,6 +52,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             title: "Email ID",
             validator: validateEmail,
             hintText: 'Enter emailId',
+            isRequired: true,
             controller: addDirectorVM.emailController,
           ),
           addVertical(20),
@@ -137,6 +139,7 @@ class AddDirectorBasicInfo extends StatelessWidget
     return CustomDropDown(
         value: addDirectorVM.selectedBusineestype,
         title: "Profession Type",
+        isRequired: true,
         onChanged: (v) =>
             addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
         items: allCategories.map((cat) {

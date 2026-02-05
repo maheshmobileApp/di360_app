@@ -203,6 +203,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void goToPreviousStep() {
     if (_currentStep > 0) {
       _currentStep--;
+      assignBasicInfoData(navigatorKey.currentContext!);
       pageController.previousPage(
           duration: const Duration(milliseconds: 300), curve: Curves.ease);
       notifyListeners();
