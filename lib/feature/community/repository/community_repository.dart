@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/community/model/contacts_res.dart';
+import 'package:di360_flutter/feature/community/model/delete_contact_res.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_directory_res.dart';
 import 'package:di360_flutter/feature/community/model/get_joined_community_members.dart';
@@ -12,7 +14,7 @@ abstract class CommunityRepository {
   Future<PartnershipMembersData> getPartnershipRequest(
       String supplierId, String listingStatus);
   Future<dynamic> approveJoinRequest(dynamic variables);
-   Future<dynamic> approvePartnershipRequest(dynamic variables);
+  Future<dynamic> approvePartnershipRequest(dynamic variables);
   Future<MembershipLinkData> getMembershipLink(dynamic variables);
   Future<PartnershipLinkData> getPartnershipLink(dynamic variables);
   Future<dynamic> updateMembershipLink(dynamic variables);
@@ -24,4 +26,8 @@ abstract class CommunityRepository {
   Future<dynamic> updateCategory(dynamic variables);
   Future<GetJoinedCommunityMembersData> getJoinedCommunityMembers(
       dynamic variables);
+  Future<ContactsData> getContacts(dynamic variables);
+  Future<dynamic> addContact(dynamic variables);
+  Future<dynamic> updateContact(dynamic variables);
+  Future<DeleteContactData> deleteContact(dynamic variables);
 }

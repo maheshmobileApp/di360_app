@@ -64,6 +64,16 @@ static String formatDateTime(String dateTimeString) {
   }
 }
 
+static String formatDate(String dateTimeString) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('dd-MM-yyyy').format(localDateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
+
 static String formatToTime(String dateTimeString) {
   try {
     final dateTime = DateTime.parse(dateTimeString);

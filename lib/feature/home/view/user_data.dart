@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,12 +31,12 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-          // BannerServices.instance.listBanner?.isEmpty ?? false
-          //     ? SvgPicture.asset(ImageConst.homeBG,
-          //         width: getSize(context).width)
-          //     : ListBanner(),
-          SvgPicture.asset(ImageConst.homeBG, width: getSize(context).width),
-          ListBanner(),
+          BannerServices.instance.listBanner?.isEmpty ?? false
+              ? SvgPicture.asset(ImageConst.homeBG,
+                  width: getSize(context).width)
+              : ListBanner(),
+          // SvgPicture.asset(ImageConst.homeBG, width: getSize(context).width),
+          // ListBanner(),
           /*Positioned(
   right: 1,
               left: 1,

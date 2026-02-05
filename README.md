@@ -379,6 +379,8 @@ PROFESSIONAL
   sandeep
   mahesh@yopmail.com
   123456
+  tiruprofeesional@yopmail.com
+  123456
 
 SUPPLIER
   dentalbusiness1@yopmail.com

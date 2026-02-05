@@ -210,4 +210,11 @@ class JobListingRepoImpl extends JobListingRepository {
     final data = FilteredEnquiryData.fromJson(res);
     return data;
   }
+
+  @override
+  Future<List<Jobs>?> getJobListingById(variables) async {
+    final res = await http.query(getJobListingById, variables: variables);
+    final data = JobListing.fromJson(res);
+    return data.jobs;
+  }
 }

@@ -11,6 +11,8 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dro
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_profile/widgets/add_section_button.dart';
 import 'package:di360_flutter/feature/job_profile/widgets/chip_selection_widget.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,27 +35,28 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _sectionHeader("Skills"),
-             addVertical(16),
-                Text("Languages Spoken",  
-                style: TextStyles.regular3(color: AppColors.black),),
-                addVertical( 8),
+              addVertical(16),
+              Text(
+                "Languages Spoken",
+                style: TextStyles.regular3(color: AppColors.black),
+              ),
+              addVertical(8),
               ChipTextField(
                 chips: jobProfileVM.languages,
                 hintText: "Enter multiple languages",
-                onChanged: (chips) {
-                },
+                onChanged: (chips) {},
               ),
-                addVertical(16),
-                Text("Areas of Expertise",
-                 style: TextStyles.regular3(color: AppColors.black),
-                 ),
-                addVertical(8),
+              addVertical(16),
+              Text(
+                "Areas of Expertise",
+                style: TextStyles.regular3(color: AppColors.black),
+              ),
+              addVertical(8),
               ChipTextField(
                 chips: jobProfileVM.expertise,
                 hintText: "Enter areas of expertise",
-                onChanged: (chips) {
-                },),
-      
+                onChanged: (chips) {},
+              ),
               addVertical(16),
               Text(
                 "Skills",
@@ -137,7 +140,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   Widget _sectionHeader(String title) {
     return Text(
       title,
-     style: TextStyles.clashMedium(color: AppColors.buttonColor),
+      style: TextStyles.clashMedium(color: AppColors.buttonColor),
     );
   }
 
@@ -156,18 +159,18 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
   Widget _uploadedDocuments(JobProfileCreateViewModel vm) {
     final docs = vm.combinedDocuments;
 
-  if (docs.isEmpty) return const SizedBox.shrink();
+    if (docs.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: docs.entries.map((entry) {
         final title = entry.key;
         final val = entry.value;
 
-      // detect type
-      final isLocal = val is File;
-      final fileName = isLocal
-          ? val.path.split('/').last
-          : (val as FileUpload).url?.split('/').last;
+        // detect type
+        final isLocal = val is File;
+        final fileName = isLocal
+            ? val.path.split('/').last
+            : (val as FileUpload).url?.split('/').last;
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Column(
@@ -190,7 +193,7 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                         color: AppColors.buttonColor),
                     addHorizontal(8),
                     Expanded(
-                      child: Text(fileName??"",
+                      child: Text(fileName ?? "",
                           style: TextStyles.bold2(color: AppColors.black),
                           overflow: TextOverflow.ellipsis),
                     ),
@@ -226,13 +229,18 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
             title: Row(
               children: [
                 if (edu.qualification!.isNotEmpty)
-                  Text(edu.qualification??"",
-                      style: TextStyles.semiBold(fontSize: 16, color: AppColors.black)),
-                if (edu.qualification!.isNotEmpty && edu.institution!.isNotEmpty)
-                  Text(" at ", style: TextStyles.semiBold(fontSize: 16,color: AppColors.black)),
+                  Text(edu.qualification ?? "",
+                      style: TextStyles.semiBold(
+                          fontSize: 16, color: AppColors.black)),
+                if (edu.qualification!.isNotEmpty &&
+                    edu.institution!.isNotEmpty)
+                  Text(" at ",
+                      style: TextStyles.semiBold(
+                          fontSize: 16, color: AppColors.black)),
                 if (edu.institution!.isNotEmpty)
-                  Text(edu.institution??"",
-                      style: TextStyles.semiBold(fontSize: 16,color: AppColors.blueColor)),
+                  Text(edu.institution ?? "",
+                      style: TextStyles.semiBold(
+                          fontSize: 16, color: AppColors.blueColor)),
               ],
             ),
             subtitle: Column(
@@ -250,25 +258,29 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                           TextStyles.regular2(color: AppColors.lightGeryColor)),
                 if (edu.courseHighlights!.isNotEmpty) ...[
                   addVertical(6),
-                  Text(edu.courseHighlights??"",
+                  Text(edu.courseHighlights ?? "",
                       style:
                           TextStyles.regular2(color: AppColors.lightGeryColor)),
                 ],
               ],
             ),
-            trailing: _buildPopupMenu(
-              onEdit: () {
-                showDialog(  
-                  context: context,
-                  builder: (context) => AddEducationDialog(
-                    jobProfileVM: vm,
-                    education: edu,
-                    index: index,
-                  ),
-                );
-              },
-              onDelete: () => vm.removeEducation(index),
-            ),
+            trailing: _buildPopupMenu(onEdit: () {
+              showDialog(
+                context: context,
+                builder: (context) => AddEducationDialog(
+                  jobProfileVM: vm,
+                  education: edu,
+                  index: index,
+                ),
+              );
+            }, onDelete: () {
+              showAlertMessage(
+                  context, 'Are you sure you want to delete this Education ?',
+                  onBack: () {
+                navigationService.goBack();
+                vm.removeEducation(index);
+              });
+            }),
           ),
         );
       }).toList(),
@@ -285,23 +297,23 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.borderColor),
-            borderRadius: BorderRadius.circular(10)
-            
-          ),
+              border: Border.all(color: AppColors.borderColor),
+              borderRadius: BorderRadius.circular(10)),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
             title: Row(
               children: [
-                if(exp.jobTitle!=null)
-                    Text(exp.jobTitle??"",
-                        style: TextStyles.semiBold(fontSize: 16, color: AppColors.black))
-                    ,
-                    Text(" at ", style: TextStyles.semiBold(fontSize: 16, color: AppColors.black)),
-                if (exp.companyName!=null)
-                  Text(exp.companyName??"",
-                      style: TextStyles.semiBold(fontSize: 16, color: AppColors.blueColor)),
-                
+                if (exp.jobTitle != null)
+                  Text(exp.jobTitle ?? "",
+                      style: TextStyles.semiBold(
+                          fontSize: 16, color: AppColors.black)),
+                Text(" at ",
+                    style: TextStyles.semiBold(
+                        fontSize: 16, color: AppColors.black)),
+                if (exp.companyName != null)
+                  Text(exp.companyName ?? "",
+                      style: TextStyles.semiBold(
+                          fontSize: 16, color: AppColors.blueColor)),
               ],
             ),
             subtitle: Column(
@@ -312,14 +324,15 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                     text: TextSpan(
                       style: TextStyles.regular2(color: AppColors.geryColor),
                       children: [
-                        if (exp.stillInRole??false) ...[
+                        if (exp.stillInRole ?? false) ...[
                           TextSpan(
                             text:
                                 "Started: ${exp.startMonth} ${exp.startYear} • ",
                           ),
                           TextSpan(
                             text: "(Still Working)",
-                            style: TextStyles.bold2(color: AppColors.greenColor),
+                            style:
+                                TextStyles.bold2(color: AppColors.greenColor),
                           ),
                         ] else if (exp.endMonth != null &&
                             exp.endYear != null) ...[
@@ -335,26 +348,30 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                       ],
                     ),
                   ),
-                if (exp.jobDescription!=null) ...[
+                if (exp.jobDescription != null) ...[
                   addVertical(6),
-                  Text(exp.jobDescription??"",
+                  Text(exp.jobDescription ?? "",
                       style: TextStyles.regular2(color: AppColors.geryColor)),
                 ],
               ],
             ),
-            trailing: _buildPopupMenu(
-              onEdit: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AddExperienceDialog(
-                    jobProfileVM: vm,
-                    experience: exp,
-                    index: index,
-                  ),
-                );
-              },
-              onDelete: () => vm.removeExperience(index),
-            ),
+            trailing: _buildPopupMenu(onEdit: () {
+              showDialog(
+                context: context,
+                builder: (context) => AddExperienceDialog(
+                  jobProfileVM: vm,
+                  experience: exp,
+                  index: index,
+                ),
+              );
+            }, onDelete: () {
+              showAlertMessage(
+                  context, 'Are you sure you want to delete this Experience ?',
+                  onBack: () {
+                navigationService.goBack();
+                vm.removeExperience(index);
+              });
+            }),
           ),
         );
       }).toList(),

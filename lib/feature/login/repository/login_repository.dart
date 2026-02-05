@@ -5,5 +5,6 @@ abstract class LoginRepository {
 
   Future<GetSupplierData> getSuppliers(String id);
   Future<GetSupplierCommunityOwnerData> getSupplierCommunityOwner(String id);
+  Future<dynamic> updateDeviceToken(dynamic variables);
 
 }

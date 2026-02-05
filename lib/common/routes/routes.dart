@@ -12,7 +12,10 @@ import 'package:di360_flutter/feature/campaign/view/create_campaign_view.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
+import 'package:di360_flutter/feature/community/view/contact_filter_view.dart';
+import 'package:di360_flutter/feature/community/view/contacts_view.dart';
 import 'package:di360_flutter/feature/community/view/create_category_view.dart';
+import 'package:di360_flutter/feature/community/view/create_contact_view.dart';
 import 'package:di360_flutter/feature/community/view/join_request_view.dart';
 import 'package:di360_flutter/feature/community/view/membership_registration_view.dart';
 import 'package:di360_flutter/feature/community/view/news_feed_categories_view.dart';
@@ -41,10 +44,12 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_info.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_preview_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_filter_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_market_place.dart/learning_hub_master_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view/learning_hub_screen.dart';
@@ -257,7 +262,16 @@ class Routes {
       RouteList.campaignListingView: (context) => CampaignListingView(),
       RouteList.createCampaignView: (context) => CreateCampaignView(),
       RouteList.teamMembersListingView: (context) => TeamMembersListingView(),
-      RouteList.createTeamMemberView: (context) => CreateTeamMemberView()
+      RouteList.createTeamMemberView: (context) => CreateTeamMemberView(),
+      RouteList.contactView: (context) => ContactsView(),
+      RouteList.createContactView: (context) => CreateContactView(),
+      RouteList.contactFilterView: (context) => ContactFilterView(),
+      RouteList.coursePreviewScreen: (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        return CoursePreviewScreen(
+          courseDetails: args as CoursesListingDetails,
+        );
+      }
     };
   }
 }

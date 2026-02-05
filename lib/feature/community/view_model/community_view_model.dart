@@ -1,14 +1,17 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/community/model/contacts_res.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_directory_res.dart';
 import 'package:di360_flutter/feature/community/model/get_joined_community_members.dart';
 import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
 import 'package:di360_flutter/feature/community/model/get_partnership_members.dart';
 import 'package:di360_flutter/feature/community/repository/community_repo_impl.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
+
 class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
 
@@ -18,12 +21,80 @@ class CommunityViewModel extends ChangeNotifier {
   TextEditingController membershipLinkController = TextEditingController();
   TextEditingController partnershipLinkController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
+  TextEditingController contactEmailController = TextEditingController();
+  TextEditingController contactNameController = TextEditingController();
+
+  TextEditingController contactPhoneController = TextEditingController();
+
   bool editMode = false;
+  bool contactEditMode = false;
+  String updateContactId = "";
   String editCategoryId = "";
+
+  void setUpdateContactId(String value) {
+    updateContactId = value;
+    notifyListeners();
+  }
+
+  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  String? selectedPhoneCode = "AU (+61)";
+  void setPhoneCode(String value) {
+    selectedPhoneCode = value;
+    notifyListeners();
+  }
+
+  //***********************filters
+  List<String> filterContactTypes = ["All", "Partner", "Member"];
+   List<String> filterStates = [
+    "All",
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "South Australia",
+    "Western Australia",
+    "Tasmania",
+    "Northern Territory",
+    "Australian Capital Territory"
+  ];
+
+  String selectedFilterContactType = "";
+
+  void setSelectedFilterContactType(String value) {
+    selectedFilterContactType = value;
+    notifyListeners();
+  }
+
+  String selectedFilterState = "";
+  void setSelectedFilterState(String value) {
+    selectedFilterState = value;
+    notifyListeners();
+  }
+
+  List<String> contactTypes = ["Partner", "Member"];
+  String selectedContactType = "";
+  void setSelectedContactType(String value) {
+    selectedContactType = value;
+    notifyListeners();
+  }
+
+  List<String> states = [
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "South Australia",
+    "Western Australia",
+    "Tasmania",
+    "Northern Territory",
+    "Australian Capital Territory"
+  ];
+  String selectedState = "";
+  void setSelectedState(String value) {
+    selectedState = value;
+    notifyListeners();
+  }
 
   final List<String> statuses = [
     'All',
-    'Registered',
     'Pending',
     'Approved',
     'Rejected',
@@ -53,6 +124,11 @@ class CommunityViewModel extends ChangeNotifier {
 
   void updateEditMode(bool value) {
     editMode = value;
+    notifyListeners();
+  }
+
+  void updateContactEditMode(bool value) {
+    contactEditMode = value;
     notifyListeners();
   }
 
@@ -154,7 +230,7 @@ class CommunityViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateCategory(BuildContext context,String id) async {
+  Future<void> updateCategory(BuildContext context, String id) async {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -222,7 +298,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   //Delete Category---------------------------------------------------------------
 
-  Future<void> deleteCategory(BuildContext context,String id) async {
+  Future<void> deleteCategory(BuildContext context, String id) async {
     Loaders.circularShowLoader(context);
     print("*********************Delete Category calling");
     final variables = {"id": id};
@@ -270,11 +346,11 @@ class CommunityViewModel extends ChangeNotifier {
   String? selectedCategoryId;
 
   void updateSelectedCategory(String? categoryId) {
-  selectedCategoryId = categoryId;
-  notifyListeners();
-}
+    selectedCategoryId = categoryId;
+    notifyListeners();
+  }
 
-bool applyCatageories = false;
+  bool applyCatageories = false;
 
   void updateApplyCatageories(bool val) {
     applyCatageories = val;
@@ -283,7 +359,8 @@ bool applyCatageories = false;
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
 
-  Future<void> getNewsFeedCategories(BuildContext context,[String? newsFeedId]) async {
+  Future<void> getNewsFeedCategories(BuildContext context,
+      [String? newsFeedId]) async {
     //Loaders.circularShowLoader(context);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
@@ -362,7 +439,6 @@ bool applyCatageories = false;
 
   Future<void> getJoinedCommunityMembersRes(BuildContext context) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    
 
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
@@ -370,5 +446,186 @@ bool applyCatageories = false;
       getJoinedCommunityMembersData = res;
     }
     notifyListeners();
+  }
+
+  ContactsData? contactsRes;
+  
+  Future<void> getContacts(BuildContext context) async {
+    print("*********************getContacts called");
+    Loaders.circularShowLoader(context);
+
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    Map<String, dynamic> whereClause = {
+      "created_by_id": {"_eq": id}
+    };
+    
+    if (selectedFilterContactType == "Partner") {
+      whereClause["contact_type"] = {"_eq": "PARTNER"};
+    }else if (selectedFilterContactType == "Member"){
+      whereClause["contact_type"] = {"_eq": "MEMBER"};
+
+    }
+
+    final variables = {
+      "where": whereClause,
+      "limit": 100,
+      "offset": 0
+    };
+    final res = await repo.getContacts(variables);
+    if (res.partnersContactBook != []) {
+      contactsRes = res;
+      print("*********************getContacts Successfully");
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addContact(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+
+    try {
+      final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final companyName =
+          await LocalStorage.getStringVal(LocalStorageConst.businessName);
+
+      final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+
+      final variables = {
+        "fields": {
+          "contact_name": contactNameController.text,
+          "email": contactEmailController.text,
+          "phone": "${phoneCode}${contactPhoneController.text}",
+          "company_name": companyName,
+          "state": selectedState,
+          "contact_type":
+              selectedContactType == "Member" ? "MEMBER" : "PARTNER",
+          "created_by_id": id
+        }
+      };
+      print("*********************variables: $variables");
+      final res = await repo.addContact(variables);
+      print("*********************Response: $res");
+
+      // Check if response contains successful insertion
+      if (res != null && res.containsKey('insert_partners_contact_book_one')) {
+        print("*****Contact added successfully: $res");
+        await getContacts(context);
+        navigationService.goBack();
+        Loaders.circularHideLoader(context);
+        clearContactDetails();
+
+        scaffoldMessenger("Contact added successfully");
+      } else {
+        Loaders.circularHideLoader(context);
+        scaffoldMessenger("Failed to add contact");
+      }
+    } catch (e) {
+      Loaders.circularHideLoader(context);
+      if (e.toString().contains('unique_createdby_email')) {
+        scaffoldMessenger("Contact with this email already exists");
+      } else if (e.toString().contains('unique_createdby_phone')) {
+        scaffoldMessenger("Contact with this phone number already exists");
+      } else if (e.toString().contains('Uniqueness violation')) {
+        scaffoldMessenger("Contact already exists");
+      } else {
+        scaffoldMessenger("Error adding contact");
+      }
+      print("Error in addContact: $e");
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateContact(BuildContext context, String contactId) async {
+    Loaders.circularShowLoader(context);
+
+    try {
+      final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final companyName =
+          await LocalStorage.getStringVal(LocalStorageConst.businessName);
+
+      final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+
+      final variables = {
+        "id": contactId,
+        "fields": {
+          "contact_name": contactNameController.text,
+          "email": contactEmailController.text,
+          "phone": "${phoneCode}${contactPhoneController.text}",
+          "company_name": companyName,
+          "state": selectedState,
+          "contact_type":
+              selectedContactType == "Member" ? "MEMBER" : "PARTNER",
+          "created_by_id": id
+        }
+      };
+      print("*********************variables: $variables");
+      final res = await repo.updateContact(variables);
+      print("*********************Response: $res");
+
+      // Check if response contains successful insertion
+      if (res != null &&
+          res.containsKey('update_partners_contact_book_by_pk')) {
+        print("*****Contact updated successfully: $res");
+        await getContacts(context);
+        navigationService.goBack();
+        Loaders.circularHideLoader(context);
+        clearContactDetails();
+
+        scaffoldMessenger("Contact updated successfully");
+      } else {
+        Loaders.circularHideLoader(context);
+        scaffoldMessenger("Failed to add contact");
+      }
+    } catch (e) {
+      Loaders.circularHideLoader(context);
+      if (e.toString().contains('unique_createdby_email')) {
+        scaffoldMessenger("Contact with this email already exists");
+      } else if (e.toString().contains('unique_createdby_phone')) {
+        scaffoldMessenger("Contact with this phone number already exists");
+      } else if (e.toString().contains('Uniqueness violation')) {
+        scaffoldMessenger("Contact already exists");
+      } else {
+        scaffoldMessenger("Error adding contact");
+      }
+      print("Error in addContact: $e");
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteContact(BuildContext context, String id) async {
+    print("*********************getContacts called");
+    Loaders.circularShowLoader(context);
+
+    final variables = {"id": id};
+    final res = await repo.deleteContact(variables);
+    if (res.deletePartnersContactBookByPk?.id != null) {
+      await getContacts(context);
+      navigationService.goBack();
+      Loaders.circularHideLoader(context);
+
+      scaffoldMessenger("Contact deleted sucessfully");
+    } else {
+      scaffoldMessenger("Something went wrong");
+    }
+    notifyListeners();
+  }
+
+  setContactDetails(PartnersContactBook? data) {
+    contactNameController.text = data?.contactName ?? "";
+    selectedState = data?.state ?? "";
+    selectedContactType = data?.contactType == "MEMBER" ? "Member" : "Partner";
+    contactEmailController.text = data?.email ?? "";
+    final phone = data?.phone ?? "";
+    contactPhoneController.text = phone.substring(3);
+  }
+
+  clearContactDetails() {
+    contactNameController.text = "";
+    selectedState = "";
+    selectedContactType = "";
+    contactEmailController.text = "";
+    contactPhoneController.text = "";
+    contactEditMode = false;
   }
 }

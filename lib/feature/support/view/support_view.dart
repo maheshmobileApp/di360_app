@@ -180,10 +180,10 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
             floatingActionButton: GestureDetector(
                 onTap: () {
                   print('FloatingActionButton tapped - showing notification');
-                  /*NotificationService.showNotification(
+                  NotificationService.showNotification(
                     title: 'Support Ticket',
                     body: 'Ticket creation started',
-                  );*/
+                  );
                   supportVM.getSupportRequestsReasons();
                   supportVM.clearData();
                   showModalBottomSheet(

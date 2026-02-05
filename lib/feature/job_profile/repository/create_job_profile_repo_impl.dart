@@ -1,5 +1,7 @@
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/feature/job_profile/model/create_job_profile_res.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
+import 'package:di360_flutter/feature/job_profile/model/update_job_profile_res.dart';
 import 'package:di360_flutter/feature/job_profile/quary/job_profile_quary.dart';
 import 'package:di360_flutter/feature/job_profile/quary/job_profile_role_quary.dart';
 import 'package:di360_flutter/feature/job_profile/quary/update_job_profile_query.dart';
@@ -9,17 +11,17 @@ class CreateJobProfileRepoImpl extends CreateJobProfileRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<dynamic> createJobProfileListing(dynamic variables) async {
+  Future<CreateJobProfileRes> createJobProfileListing(dynamic variables) async {
     final res = await http.mutation(addJobProfileQuery, variables);
     print("*****************************varibles: $variables");
-    return res;
+    return CreateJobProfileRes.fromJson(res);
   }
 
   @override
-  Future<dynamic> updateJobProfileListing(dynamic variables) async {
+  Future<UpdateJobProfileData> updateJobProfileListing(dynamic variables) async {
     final res = await http.mutation(updateJobProfileQuery, variables);
     print("******************************varibles: $variables");
-    return res;
+    return UpdateJobProfileData.fromJson(res);
   }
 
   @override

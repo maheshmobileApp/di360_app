@@ -23,4 +23,5 @@ abstract class JobListingRepository {
   Future<dynamic> deleteApplicantMessage(String Id, bool deleteStatus);
   Future<dynamic> updateApplicantMessage(String Id, String message);
   Future<FilteredEnquiryData> getFilteredEnquiryData(dynamic variables);
+  Future<List<Jobs>?> getJobListingById(dynamic variables);
 }

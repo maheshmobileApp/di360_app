@@ -8,6 +8,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
@@ -32,6 +33,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   bool commentUpdate = false;
   bool removeReplyFeild = false;
   String? hintText;
+  List<PlatformFile> selectedFiles = [];
 
   @override
   void dispose() {
@@ -55,6 +57,57 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> pickFiles() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.any,
+      );
+      if (result != null) {
+        selectedFiles.addAll(result.files);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error picking files: $e');
+    }
+  }
+
+  void removeFile(int index) {
+    if (index < selectedFiles.length) {
+      selectedFiles.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _uploadFiles() async {
+    List<Map<String, dynamic>> uploadedFiles = [];
+
+    for (var file in selectedFiles) {
+      try {
+        final response = await _http.uploadImage(file.path);
+        if (response != null && response['url'] != null) {
+          uploadedFiles.add({
+            "url": response['url'],
+            "name": file.name,
+            "type": file.extension ?? "file",
+            "size": file.size,
+          });
+        }
+      } catch (e) {
+        print('Error uploading file ${file.name}: $e');
+      }
+    }
+
+    return uploadedFiles;
+  }
+
+  Future<List<Map<String, dynamic>>> _getUploadedFiles() async {
+    if (selectedFiles.isNotEmpty) {
+      return await _uploadFiles();
+    }
+    return [];
+  }
+
   addCommentTheFeed(BuildContext context, String feedId) async {
     print("*****************addCommentfee");
     await getUserId();
@@ -62,6 +115,9 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     Loaders.circularShowLoader(context);
     try {
+      // Upload files first
+      final uploadedFiles = await _getUploadedFiles();
+
       var res = await _http.mutation(addNewsFeedCommentQuery, {
         "addCommentsData": {
           "dental_practice_id": practiceId ?? null,
@@ -69,7 +125,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
           "commenter_name": name,
           "comment_Pro_Img": img,
           "comments": commentController.text,
-          "comments_attachments": [],
+          "comments_attachments": uploadedFiles,
           "dental_admin_id": adminId ?? null,
           "dental_supplier_id": supplierId ?? null,
           "news_feeds_id": feedId
@@ -78,11 +134,12 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        selectedFiles.clear();
+        await getNewsfeedComment(context, feedId);
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
-      print("Error removing like: $e");
+      print("Error adding comment: $e");
     }
 
     notifyListeners();
@@ -92,14 +149,21 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
+      // Upload files first
+      final uploadedFiles = await _getUploadedFiles();
       var res = await _http.mutation(updateCommentQuery, {
         "id": commentId,
-        "data": {"comments": commentController.text, "comments_attachments": []}
+        "data": {
+          "comments": commentController.text,
+          "comments_attachments": uploadedFiles
+        }
       });
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        selectedFiles.clear();
+        await getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -168,8 +232,8 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       List<dynamic>? newsFeeds, dynamic count) async {
     print("*****************updateTheCommentObject$newsFeeds");
     final homeVM = context.read<NewsFeedCommunityViewModel>();
-    final feed =
-        homeVM.newsFeedCommunityData?.newsfeeds?.firstWhere((v) => v.id == feedId);
+    final feed = homeVM.newsFeedCommunityData?.newsfeeds
+        ?.firstWhere((v) => v.id == feedId);
     feed?.newsFeedsComments?.clear();
     feed?.newsFeedsComments =
         newsFeeds?.map((e) => NewsFeedsComments.fromJson(e)).toList();
@@ -184,6 +248,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
+      final uploadedFiles = await _getUploadedFiles();
       var res = await _http.mutation(replyCommentQuery, {
         "addReplyData": {
           "dental_practice_id": practiceId ?? null,
@@ -195,14 +260,16 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
           "comment_id": commentId,
           "reply_id": commentId,
           "liked_count": 0,
-          "reply_attachments": []
+          "reply_attachments": uploadedFiles
         }
       });
       print("***************************************$res");
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        selectedFiles.clear();
+        await getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -218,17 +285,20 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
+      final uploadedFiles = await _getUploadedFiles();
       var res = await _http.mutation(updateReplyCommentQuery, {
         "id": commentId,
         "data": {
           "reply_text": "@$commenterName ${commentController.text}",
-          "reply_attachments": []
+          "reply_attachments": uploadedFiles
         }
       });
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        selectedFiles.clear();
+        await getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -249,6 +319,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }

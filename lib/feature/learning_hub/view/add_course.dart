@@ -2,14 +2,19 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_create/view/job_location_view.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_time_picker.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/place_type.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -187,7 +192,7 @@ class AddCourse extends StatelessWidget
                 ],
               ),
               SizedBox(height: 8),
-              if (showAddress) ...[
+              /*if (showAddress) ...[
                 InputTextField(
                   controller: jobCreateVM.addressController,
                   hintText: "Enter Address",
@@ -196,6 +201,83 @@ class AddCourse extends StatelessWidget
                   validator: (value) => value == null || value.isEmpty
                       ? 'Please enter Address'
                       : null,
+                ),
+              ],*/
+              if (showAddress) ...[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Address',
+                          style: TextStyles.regular3(color: AppColors.black),
+                        ),
+                        Text(
+                          ' *',
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    GooglePlaceAutoCompleteTextField(
+                      textEditingController: jobCreateVM.addressController,
+                      googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+                      inputDecoration: InputDecoration(
+                        hintText: "Search Location",
+                        hintStyle:
+                            TextStyles.regular4(color: AppColors.dropDownHint),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
+                        isDense: true,
+                      ),
+                      debounceTime: 800, // default 600 ms,
+                      // countries: ["in", "fr"], // optional by default null is set
+                      isLatLngRequired:
+                          true, // if you required coordinates from place detail
+                      getPlaceDetailWithLatLng: (Prediction prediction) {
+                        // this method will return latlng with place detail
+                        print("placeDetails" + prediction.lng.toString());
+                      }, // this callback is called when isLatLngRequired is true
+                      itemClick: (Prediction prediction) async {
+                        final placeId = prediction.placeId;
+                        if (placeId != null) {
+                          await getPlaceDetails(placeId, jobCreateVM);
+                        }
+                      },
+                      // if we want to make custom list item builder
+                      itemBuilder: (context, index, Prediction prediction) {
+                        return Container(
+                          color: AppColors.whiteColor,
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Icon(Icons.location_on),
+                              SizedBox(
+                                width: 7,
+                              ),
+                              Expanded(
+                                  child:
+                                      Text("${prediction.description ?? ""}"))
+                            ],
+                          ),
+                        );
+                      },
+                      // want to show close icon
+                      isCrossBtnShown: true,
+                      // optional container padding
+                      containerHorizontalPadding: 10,
+                      // place type
+                      placeType: PlaceType.geocode,
+                      // keyboard type (defaults to TextInputType.streetAddress)
+                      // keyboardType: TextInputType.text, // optional - defaults to streetAddress for better address input
+                    ),
+                  ],
                 ),
               ],
               /*SizedBox(height: 8),
@@ -463,6 +545,62 @@ class AddCourse extends StatelessWidget
         hour: int.parse(parts[0]),
         minute: int.parse(parts[1]),
       );
+    }
+  }
+
+  Future<void> getPlaceDetails(
+      String placeId, NewCourseViewModel jobCreateVM) async {
+    final String apiKey = googleApiKey;
+    final String url =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
+
+    try {
+      final response = await Dio().get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data["status"] == "OK") {
+          final result = data["result"];
+
+          String? city;
+          String? state;
+          String? country;
+          String? postalCode;
+          double? lat;
+          double? lng;
+
+          for (var component in result["address_components"]) {
+            var types = component["types"] as List;
+            if (types.contains("locality")) {
+              city = component["long_name"];
+            } else if (types.contains("administrative_area_level_1")) {
+              state = component["long_name"];
+            } else if (types.contains("country")) {
+              country = component["long_name"];
+            } else if (types.contains("postal_code")) {
+              postalCode = component["long_name"];
+            }
+          }
+
+          lat = result["geometry"]["location"]["lat"];
+          lng = result["geometry"]["location"]["lng"];
+          jobCreateVM.addressController.text =
+              result["formatted_address"] ?? "";
+          /*jobCreateVM.countryController.text = country ?? "";
+          jobCreateVM.stateController.text = state ?? "";
+          jobCreateVM.cityPostCodeController.text = postalCode ?? "";*/
+          print("City: $city");
+          print("State: $state");
+          print("Country: $country");
+          print("Postal Code: $postalCode");
+          print("Latitude: $lat, Longitude: $lng");
+        } else {
+          print("Error: ${data["status"]}");
+        }
+      }
+    } catch (e) {
+      print("Dio error: $e");
     }
   }
 

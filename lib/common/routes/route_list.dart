@@ -88,4 +88,8 @@ class RouteList {
   static const String teamMembersListingView = 'teamMembersListingView';
   static const String createTeamMemberView = 'createTeamMemberView';
   static const String talentPreview = '/talentPreview';
+  static const String coursePreviewScreen = '/coursePreviewScreen';
+  static const String contactView = '/contactView';
+  static const String createContactView = '/createContactView';
+  static const String contactFilterView = '/contactFilterView';
 }

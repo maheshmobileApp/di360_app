@@ -3,6 +3,7 @@ import 'package:di360_flutter/feature/login/model_class/get_supplier_community_o
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_community_owner_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_query.dart';
+import 'package:di360_flutter/feature/login/query/update_device_token_query.dart';
 import 'package:di360_flutter/feature/login/repository/login_repository.dart';
 
 class LoginRepoImpl extends LoginRepository {
@@ -25,5 +26,11 @@ class LoginRepoImpl extends LoginRepository {
         await http.query(getSupplierCommunityOwnerQuery, variables: variables);
     final data = GetSupplierCommunityOwnerData.fromJson(res);
     return data;
+  }
+
+  @override
+  Future updateDeviceToken(dynamic variables) async {
+    final res = await http.mutation(updateDeviceTokenQuery, variables);
+    return res;
   }
 }

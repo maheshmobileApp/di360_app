@@ -4,49 +4,46 @@ mixin ValidationMixins {
   String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Mobile Number";
-    if (!isValidPhoneNumber(value))
-      return 'Enter valid mobile number';
+    if (!isValidPhoneNumber(value)) return 'Enter valid mobile number';
+    return null;
+  }
+
+  String? validateContactPhoneNumber(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please enter your Mobile Number";
+    if (!isValidContactPhoneNumber(value)) return 'Enter valid mobile number';
     return null;
   }
 
   String? validateABNNumber(String? value) {
-    if (value == null || value.isEmpty)
-      return "Please enter your ABN Number";
-    if (!isValidateABNNumber(value))
-      return 'Enter valid ABN number';
+    if (value == null || value.isEmpty) return "Please enter your ABN Number";
+    if (!isValidateABNNumber(value)) return 'Enter valid ABN number';
     return null;
   }
 
   String? validateLocation(String? value) {
-    if (value == null || value.isEmpty)
-      return "Please select a location";
+    if (value == null || value.isEmpty) return "Please select a location";
     return null;
   }
 
-  
   String? validateAphraNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Aphra Registration Number";
-    if (value.length != 13)
-      return 'Enter valid Aphra Registration Number';
-   
+    if (value.length != 13) return 'Enter valid Aphra Registration Number';
+
     return null;
   }
 
-  String? validationCampaignName(String? value){
+  String? validationCampaignName(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Campaign Name";
     return null;
   }
 
-  String? validateScheduleDate(String? value){
-    if (value == null || value.isEmpty)
-      return "Please select Scheduled date";
+  String? validateScheduleDate(String? value) {
+    if (value == null || value.isEmpty) return "Please select Scheduled date";
     return null;
-
   }
-
-  
 
   String? validateEmptyPhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
@@ -91,6 +88,11 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateContactName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter your contact name";
+    return null;
+  }
+
   String? validateRegistration(String? value) {
     if (value == null || value.isEmpty) return "Please enter registration no";
     return null;
@@ -101,7 +103,7 @@ mixin ValidationMixins {
     return null;
   }
 
-String? validatePracticeName(String? value) {
+  String? validatePracticeName(String? value) {
     if (value == null || value.isEmpty) return "Please enter practice name";
     return null;
   }
@@ -128,7 +130,9 @@ String? validatePracticeName(String? value) {
     if (uri == null ||
         !(uri.isAbsolute &&
             uri.hasScheme &&
-            (uri.scheme == 'http' || uri.scheme == 'https'))) {
+            (uri.scheme == 'http' || uri.scheme == 'https') &&
+            uri.host.isNotEmpty &&
+            uri.host.contains('.'))) {
       return 'Please enter a valid URL';
     }
     return null;
@@ -206,7 +210,7 @@ String? validatePracticeName(String? value) {
     if (value == null || value.isEmpty) return 'Please enter job title';
     if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
       return 'Job title can only contain letters and spaces';
-    }else{
+    } else {
       return null;
     }
   }

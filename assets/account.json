@@ -146,6 +146,10 @@
               "asset": "assets/profile/account/profile.svg"
             },
             {
+              "title": "Contacts",
+              "asset": "assets/profile/account/profile.svg"
+            },
+            {
               "title": "Membership Registration",
               "asset": "assets/profile/account/profile.svg"
             },

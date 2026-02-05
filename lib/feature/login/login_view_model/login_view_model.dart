@@ -11,6 +11,8 @@ import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class LoginViewModel extends ChangeNotifier {
@@ -79,6 +81,8 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
           await LocalStorage.setStringVal(
+              LocalStorageConst.businessName, result.loginApi?.businessName ?? '');
+          await LocalStorage.setStringVal(
               LocalStorageConst.userId, result.loginApi?.id ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.token, result.loginApi?.accessToken ?? '');
@@ -99,6 +103,7 @@ class LoginViewModel extends ChangeNotifier {
           _modulePermissions(
               result.loginApi?.subscriptionPermissions?.modules ?? []);
           _http.setToken(result.loginApi?.accessToken ?? '');
+          updateDevieToken();
           navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
         }
       } else {
@@ -112,6 +117,47 @@ class LoginViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future<void> updateDevieToken() async {
+    print("********** Updating Device Token **********");
+    try {
+      // Check if widget is still mounted
+      if (!hasListeners) {
+        print("********** LoginViewModel disposed, skipping token update **********");
+        return;
+      }
+      
+      // Check if Firebase is initialized
+      if (Firebase.apps.isEmpty) {
+        print("********** Firebase not initialized, skipping token update **********");
+        return;
+      }
+      
+      await Future.delayed(Duration(seconds: 2));
+
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final deviceToken = await FirebaseMessaging.instance.getToken();
+      print("********** Device Token: $deviceToken");
+
+      if (deviceToken != null && userId.isNotEmpty) {
+        await LocalStorage.setStringVal(
+            LocalStorageConst.deviceToken, deviceToken);
+        final variables = {
+          "id": userId,
+          "device_tokens": [deviceToken]
+        };
+        final res = await repo.updateDeviceToken(variables);
+        print("********** Device Token Updated Successfully: $res **********");
+      }
+    } catch (e) {
+      print("********** Error updating device token: $e **********");
+    }
+
+    // Only notify listeners if not disposed
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 
   getUserDetails() async {
