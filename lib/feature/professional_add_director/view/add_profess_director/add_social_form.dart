@@ -5,7 +5,6 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart'
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -16,7 +15,6 @@ class AddSocialForm extends StatelessWidget
     with BaseContextHelpers, ValidationMixins {
   final String? id;
   AddSocialForm({super.key, this.id});
-
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
@@ -30,57 +28,58 @@ class AddSocialForm extends StatelessWidget
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [socialUrlsWidget(addDirectorVM, context, editVM)],
+        children: [
+          sectionHeader("Add social links"),
+          addVertical(12),
+          CustomDropDown<String>(
+            title: 'Account',
+            hintText: 'Select Account',
+            isRequired: true,
+            value: addDirectorVM.selectedAccount,
+            items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
+                  value: e,
+                  child: Text(e),
+                )).toList(),
+            onChanged: (val) {
+              addDirectorVM.selectedAccount = val;
+            },
+            validator: (value) {
+              final socialList = addDirectorVM
+                  .getBasicInfoData.first.directoryLocations
+                  ?.firstWhere((v) => v.mediaName == value?.toLowerCase());
+              return value == null || value.isEmpty
+                  ? 'Please Select Account'
+                  : socialList?.mediaName == value.toLowerCase()
+                      ? 'This media account is already assigned. Please choose another.'
+                      : null;
+            },
+          ),
+          addVertical(16),
+          InputTextField(
+              title: "Social Accounts URL",
+              isRequired: true,
+              hintText: "Paste/enter link",
+              keyboardType: TextInputType.emailAddress,
+              controller: addDirectorVM.socialAccountsurlCntr,
+              validator: validateOptionalUrl),
+          addVertical(20),
+          AppButton(
+            text: editVM.isEditSocialMed ? 'Update' : 'Add',
+            onTap: () async {
+              if (addDirectorVM.selectedAccount == null &&
+                  addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
+                showTopMessage(context, 'select socail account & account url');
+              } else {
+                // editVM.isEditSocialMed
+                //     ? editVM.updateTheSocialurl(context, id ?? '')
+                //     : addDirectorVM.addSocialUrls(context);
+                // await addDirectorVM.fetchTheDirectorData(context);
+                print('sdhffdjksfakjf');
+              }
+            },
+          )
+        ],
       ),
     );
-  }
-
-  Widget socialUrlsWidget(AddDirectoryViewModel addDirectorVM,
-      BuildContext context, EditDeleteDirectorViewModel editVM) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      sectionHeader("Add social links"),
-      addVertical(12),
-      CustomDropDown<String>(
-        title: 'Account',
-        hintText: 'Select Account',
-        isRequired: true,
-        value: addDirectorVM.selectedAccount,
-        items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
-              value: e,
-              child: Text(e),
-            )).toList(),
-        onChanged: (val) {
-          addDirectorVM.selectedAccount = val;
-        },
-        validator: (value) =>
-            value == null || value.isEmpty ? 'Please Select Account' : null,
-      ),
-      addVertical(16),
-      InputTextField(
-        title: "Social Accounts URL",
-        isRequired: true,
-        hintText: "Paste/enter link",
-        keyboardType: TextInputType.emailAddress,
-        controller: addDirectorVM.socialAccountsurlCntr,
-        validator: validateUrl,
-      ),
-      addVertical(20),
-      AppButton(
-        text: editVM.isEditSocialMed ? 'Update' : 'Add',
-        onTap: () async {
-          if (addDirectorVM.selectedAccount == null &&
-              addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
-            showTopMessage(context, 'select socail account & account url');
-          } else {
-            editVM.isEditSocialMed
-                ? editVM.updateTheSocialurl(context, id ?? '')
-                : addDirectorVM.addSocialUrls(context);
-
-            navigationService.goBack();
-            await addDirectorVM.fetchTheDirectorData(context);
-          }
-        },
-      )
-    ]);
   }
 }

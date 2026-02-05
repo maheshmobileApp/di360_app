@@ -649,7 +649,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final result = await addDirectorRepositoryImpl.addLocation({
       "locationObj": {
-        "media_name": selectedAccount,
+        "media_name": selectedAccount?.toLowerCase(),
         "media_link": socialAccountsurlCntr.text,
         "directory_id": getBasicInfoData.first.id,
         "status": "SOCIAL"

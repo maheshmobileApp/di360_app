@@ -49,13 +49,11 @@ class OtherInforScreen extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: DraggableScrollableSheet(
             initialChildSize: 0.45,
             maxChildSize: 0.9,
@@ -64,9 +62,9 @@ class OtherInforScreen extends StatelessWidget {
             builder: (context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24))
-                ),
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24))),
                 child: SafeArea(
                   top: false,
                   child: Column(
@@ -103,8 +101,8 @@ class OtherInforScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(socialList?.isNotEmpty ?? false)
-            sectionHeader('Social Accounts'),
+            if (socialList?.isNotEmpty ?? false)
+              sectionHeader('Social Accounts'),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

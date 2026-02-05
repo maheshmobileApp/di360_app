@@ -492,7 +492,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     if (res != null) {
       addDirectorVM.getDirectories();
       Loaders.circularHideLoader(context);
-      scaffoldMessenger('Delete timings successfully');
+      scaffoldMessenger('Other details deleted successfully');
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -504,7 +504,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.updateSocailUrl({
       "locationObj": {
-        "media_name": addDirectorVM.selectedAccount,
+        "media_name": addDirectorVM.selectedAccount?.toLowerCase(),
         "media_link": addDirectorVM.socialAccountsurlCntr.text,
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
         "status": "SOCIAL"

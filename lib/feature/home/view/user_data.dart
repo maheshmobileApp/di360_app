@@ -35,8 +35,6 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               ? SvgPicture.asset(ImageConst.homeBG,
                   width: getSize(context).width)
               : ListBanner(),
-          // SvgPicture.asset(ImageConst.homeBG, width: getSize(context).width),
-          // ListBanner(),
           /*Positioned(
   right: 1,
               left: 1,
