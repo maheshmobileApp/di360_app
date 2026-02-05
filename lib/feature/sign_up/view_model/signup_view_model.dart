@@ -138,12 +138,6 @@ class SignupViewModel extends ChangeNotifier {
       });
       if (res.isNotEmpty) {
         final result = SignUpData.fromJson(res);
-        await LocalStorage.setStringVal(
-            LocalStorageConst.name, result.insertClientsOne?.name ?? '');
-        await LocalStorage.setStringVal(
-            LocalStorageConst.userId, result.insertClientsOne?.id ?? '');
-        await LocalStorage.setStringVal(
-            LocalStorageConst.type, result.insertClientsOne?.type ?? '');
         Loaders.circularHideLoader(context);
         showSignupSuccessDialog(context, emailController.text, () {
           navigationService.pushNamedAndRemoveUntil(RouteList.login);
