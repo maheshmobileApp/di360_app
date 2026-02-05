@@ -81,7 +81,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
   Future<List<Map<String, dynamic>>> _uploadFiles() async {
     List<Map<String, dynamic>> uploadedFiles = [];
-    
+
     for (var file in selectedFiles) {
       try {
         final response = await _http.uploadImage(file.path);
@@ -97,7 +97,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
         print('Error uploading file ${file.name}: $e');
       }
     }
-    
+
     return uploadedFiles;
   }
 
@@ -149,17 +149,21 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
-       // Upload files first
+      // Upload files first
       final uploadedFiles = await _getUploadedFiles();
       var res = await _http.mutation(updateCommentQuery, {
         "id": commentId,
-        "data": {"comments": commentController.text, "comments_attachments": uploadedFiles}
+        "data": {
+          "comments": commentController.text,
+          "comments_attachments": uploadedFiles
+        }
       });
 
       if (res.isNotEmpty) {
         commentController.clear();
         selectedFiles.clear();
         await getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -228,8 +232,8 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       List<dynamic>? newsFeeds, dynamic count) async {
     print("*****************updateTheCommentObject$newsFeeds");
     final homeVM = context.read<NewsFeedCommunityViewModel>();
-    final feed =
-        homeVM.newsFeedCommunityData?.newsfeeds?.firstWhere((v) => v.id == feedId);
+    final feed = homeVM.newsFeedCommunityData?.newsfeeds
+        ?.firstWhere((v) => v.id == feedId);
     feed?.newsFeedsComments?.clear();
     feed?.newsFeedsComments =
         newsFeeds?.map((e) => NewsFeedsComments.fromJson(e)).toList();
@@ -265,6 +269,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
         commentController.clear();
         selectedFiles.clear();
         await getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -292,7 +297,8 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         selectedFiles.clear();
-       await getNewsfeedComment(context, feedId);
+        await getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -313,6 +319,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         getNewsfeedComment(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }

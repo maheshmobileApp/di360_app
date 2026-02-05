@@ -868,7 +868,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "languages_spoken": languages,
             "areas_expertise": expertise,
             "skills": selectskills.map((toElement) => toElement).toList(),
-            "salary_amount": salaryController.text, // need to send dynamically
+            "salary_amount": salaryController.text.isNotEmpty 
+                ? int.tryParse(salaryController.text) ?? 0 
+                : 0,
             "salary_type": selectedSalaryPer, // need to send dynamically
             "travel_distance":
                 DistanceController.text, // need to send dynamically
@@ -886,7 +888,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         ]
       });
 
-      if (result != null) {
+      if (result.data?.insertJobProfiles != null) {
         ToastMessage.show('Job Profile Created Successfully!');
       }
     } catch (e) {
@@ -1010,12 +1012,20 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "languages_spoken": languages,
           "areas_expertise": expertise,
           "skills": selectskills.map((toElement) => toElement).toList(),
-          "salary_amount": salaryController.text, // need to send dynamically
+          "salary_amount": salaryController.text== ""
+              ? null
+              : salaryController.text, // need to send dynamically
           "salary_type": selectedSalaryPer, // need to send dynamically
           "travel_distance":
-              DistanceController.text, // need to send dynamically
-          "percentage": percentageController.text,
-          "aphra_number": aphraRegistrationNumberController.text,
+              DistanceController.text== ""
+              ? null
+              : DistanceController.text, // need to send dynamically
+          "percentage": percentageController.text == ""
+              ? null
+              : percentageController.text,
+          "aphra_number": aphraRegistrationNumberController.text == ""
+              ? null
+              : aphraRegistrationNumberController.text,
           "willing_to_travel": isWillingToTravel,
           "about_yourself": aboutMeController.text,
           "availabilityDay": selectedDays,
@@ -1026,13 +1036,13 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         }
       });
 
-      if (result != null) {
+      if (result.updateJobProfilesByPk?.id != null) {
         ToastMessage.show('Job Profile Updated Successfully!');
       }
     } catch (e) {
       debugPrint("Error in jobProfileListing: $e");
       ToastMessage.show('Job Profile Creation error $e ');
-      NavigationService().goBack();
+      //navigationService.goBack();
     } finally {
       //Loaders.circularHideLoader(context);
       notifyListeners();
