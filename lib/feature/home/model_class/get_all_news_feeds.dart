@@ -297,7 +297,7 @@ class Courses {
   String? id;
   List<Presenters>? presenters;
   List<Address>? address;
-  double? cpdPoints;
+  dynamic cpdPoints;
   String? type;
   List<CourseBannerImage>? courseBannerImage;
   String? sTypename;
@@ -319,8 +319,8 @@ class Courses {
         presenters!.add(new Presenters.fromJson(v));
       });
     }
-    if (json['address'] != null) {
       address = <Address>[];
+    if (json['address'] != null) {
       json['address'].forEach((v) {
         address!.add(new Address.fromJson(v));
       });

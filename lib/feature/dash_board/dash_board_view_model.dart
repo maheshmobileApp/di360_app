@@ -188,17 +188,17 @@ Future<void> deleteToken() async {
   final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
   final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-  final deviceToken = await FirebaseMessaging.instance.getToken();
+  // final deviceToken = await FirebaseMessaging.instance.getToken();
 
-  // Handle null device token
-  if (deviceToken == null || deviceToken == "") {
-    print("Device token is null or empty, skipping token deletion");
-    return;
-  }
+  // // Handle null device token
+  // if (deviceToken == null || deviceToken == "") {
+  //   print("Device token is null or empty, skipping token deletion");
+  //   return;
+  // }
 
-  final variables = {"id": id, "type": type, "devicetoken": deviceToken};
-  print("variables: $variables");
-  final res = await _http.post("/api/v1/auth/remove-devicetoken", variables);
+  // final variables = {"id": id, "type": type, "devicetoken": deviceToken};
+  // print("variables: $variables");
+  // final res = await _http.post("/api/v1/auth/remove-devicetoken", variables);
   await LocalStorage.clearAllData();
-  print("res: $res");
+  // print("res: $res");
 }
