@@ -144,7 +144,6 @@ class SignupViewModel extends ChangeNotifier {
             LocalStorageConst.userId, result.insertClientsOne?.id ?? '');
         await LocalStorage.setStringVal(
             LocalStorageConst.type, result.insertClientsOne?.type ?? '');
-        await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
         Loaders.circularHideLoader(context);
         showSignupSuccessDialog(context, emailController.text, () {
           navigationService.pushNamedAndRemoveUntil(RouteList.login);
