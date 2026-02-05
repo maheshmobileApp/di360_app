@@ -41,6 +41,10 @@ bool isValidPhoneNumber(String phone) {
   return RegExp(r'^[0-9]{10}$').hasMatch(phone);
 }
 
+bool isValidContactPhoneNumber(String phone) {
+  return RegExp(r'^[0-9]{9}$').hasMatch(phone);
+}
+
 bool isValidateABNNumber(String abn) {
   return RegExp(r'^[0-9]{10}$').hasMatch(abn);
 }

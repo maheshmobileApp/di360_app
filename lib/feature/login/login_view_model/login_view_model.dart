@@ -81,6 +81,8 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
           await LocalStorage.setStringVal(
+              LocalStorageConst.businessName, result.loginApi?.businessName ?? '');
+          await LocalStorage.setStringVal(
               LocalStorageConst.userId, result.loginApi?.id ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.token, result.loginApi?.accessToken ?? '');

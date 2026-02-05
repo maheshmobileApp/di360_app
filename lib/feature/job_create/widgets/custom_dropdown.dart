@@ -57,8 +57,9 @@ class CustomDropDown<T> extends StatelessWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
           dropdownColor: Colors.white,
-          menuMaxHeight:400,
+          menuMaxHeight: 400,
           isExpanded: true,
+          isDense: true,
           value: value,
           validator: validator,
           onChanged: readOnly ? null : onChanged,
