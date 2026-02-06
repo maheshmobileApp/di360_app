@@ -233,7 +233,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final res = await addDirectorRepositoryImpl.getDirectoriesData();
-      
+
       if (res.isNotEmpty) {
         await getBusinessTypes();
         _currentStep = 0;
@@ -243,7 +243,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         Loaders.circularHideLoader(context);
         type == 'PROFESSIONAL'
             ? getBasicInfoData.isNotEmpty
-                ? navigationService.navigateTo(RouteList.professionDirectorScreen)
+                ? navigationService
+                    .navigateTo(RouteList.professionDirectorScreen)
                 : navigationService
                     .navigateTo(RouteList.professionAddDirectorView)
             : getBasicInfoData.isNotEmpty
@@ -656,8 +657,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
+      await getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Social urls added successfully');
+      NavigationService().goBack();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -710,9 +713,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
-      getDirectories();
+      await getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Testimonial added successfully');
+      navigationService.goBack();
     } else {
       Loaders.circularHideLoader(context);
     }

@@ -1,7 +1,5 @@
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/get_business_type.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/signup_res.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/subscription_res.dart';
@@ -137,7 +135,7 @@ class SignupViewModel extends ChangeNotifier {
         }
       });
       if (res.isNotEmpty) {
-        final result = SignUpData.fromJson(res);
+         SignUpData.fromJson(res);
         Loaders.circularHideLoader(context);
         showSignupSuccessDialog(context, emailController.text, () {
           navigationService.pushNamedAndRemoveUntil(RouteList.login);

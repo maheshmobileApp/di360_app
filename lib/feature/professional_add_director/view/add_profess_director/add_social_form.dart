@@ -44,14 +44,18 @@ class AddSocialForm extends StatelessWidget
               addDirectorVM.selectedAccount = val;
             },
             validator: (value) {
-              final socialList = addDirectorVM
-                  .getBasicInfoData.first.directoryLocations
-                  ?.firstWhere((v) => v.mediaName == value?.toLowerCase());
-              return value == null || value.isEmpty
-                  ? 'Please Select Account'
-                  : socialList?.mediaName == value.toLowerCase()
-                      ? 'This media account is already assigned. Please choose another.'
-                      : null;
+              if (value == null || value.isEmpty)
+                return 'Please Select Account';
+              try {
+                final socialList = addDirectorVM
+                    .getBasicInfoData.first.directoryLocations
+                    ?.firstWhere((v) => v.mediaName == value.toLowerCase());
+                return socialList != null
+                    ? 'This media account is already assigned. Please\n choose another.'
+                    : null;
+              } catch (e) {
+                return null;
+              }
             },
           ),
           addVertical(16),
@@ -66,15 +70,13 @@ class AddSocialForm extends StatelessWidget
           AppButton(
             text: editVM.isEditSocialMed ? 'Update' : 'Add',
             onTap: () async {
-              if (addDirectorVM.selectedAccount == null &&
+              if (addDirectorVM.selectedAccount == null ||
                   addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
-                showTopMessage(context, 'select socail account & account url');
+                showTopMessage(context, 'Please select account and enter URL');
               } else {
-                // editVM.isEditSocialMed
-                //     ? editVM.updateTheSocialurl(context, id ?? '')
-                //     : addDirectorVM.addSocialUrls(context);
-                // await addDirectorVM.fetchTheDirectorData(context);
-                print('sdhffdjksfakjf');
+                editVM.isEditSocialMed
+                    ? editVM.updateTheSocialurl(context, id ?? '')
+                    : addDirectorVM.addSocialUrls(context);
               }
             },
           )

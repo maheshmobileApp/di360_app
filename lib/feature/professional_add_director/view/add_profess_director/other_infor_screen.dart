@@ -117,7 +117,10 @@ class OtherInforScreen extends StatelessWidget {
                       Spacer(),
                       InkWell(
                           onTap: () {
-                            addDirectVM.selectedAccount = data?.mediaName;
+                            final mediaName = data?.mediaName;
+                            addDirectVM.selectedAccount = mediaName != null && mediaName.isNotEmpty
+                                ? mediaName[0].toUpperCase() + mediaName.substring(1)
+                                : null;
                             addDirectVM.socialAccountsurlCntr.text =
                                 data?.mediaLink ?? '';
                             editVM.updateIsEditSocialMed(true);

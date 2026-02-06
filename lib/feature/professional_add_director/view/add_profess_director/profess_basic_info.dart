@@ -13,6 +13,8 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 
 class ProfessBasicInfo extends StatelessWidget
     with BaseContextHelpers, ValidationMixins {
@@ -68,13 +70,53 @@ class ProfessBasicInfo extends StatelessWidget
             controller: professDirectorVM.alternateNumberController,
           ),
           addVertical(20),
-          InputTextField(
-            hintText: "Enter Address",
-            title: " Address ",
-            controller: professDirectorVM.addressController,
-            isRequired: true,
-            validator: (value) =>
-                value == null || value.isEmpty ? 'Please enter  address' : null,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('Address', style: TextStyles.regular3(color: AppColors.black)),
+                  Text(' *', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              SizedBox(height: 10),
+              GooglePlaceAutoCompleteTextField(
+                textEditingController: professDirectorVM.addressController,
+                googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+                inputDecoration: InputDecoration(
+                  hintText: "Search Address",
+                  hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                ),
+                debounceTime: 800,
+                isLatLngRequired: true,
+                getPlaceDetailWithLatLng: (Prediction prediction) {
+                  professDirectorVM.latitude = prediction.lat != null ? double.parse(prediction.lat!) : null;
+                  professDirectorVM.longitude = prediction.lng != null ? double.parse(prediction.lng!) : null;
+                },
+                itemClick: (Prediction prediction) {
+                  professDirectorVM.addressController.text = prediction.description ?? '';
+                },
+                itemBuilder: (context, index, Prediction prediction) {
+                  return Container(
+                    color: AppColors.whiteColor,
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.location_on),
+                        SizedBox(width: 7),
+                        Expanded(child: Text(prediction.description ?? ""))
+                      ],
+                    ),
+                  );
+                },
+                isCrossBtnShown: true,
+                containerHorizontalPadding: 10,
+              ),
+            ],
           ),
           Divider(thickness: 4),
           addVertical(20),

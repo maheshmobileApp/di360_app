@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -141,7 +142,8 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
   }
 }
 
-class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
+class AddSocialAccountForm extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   final String? id;
   AddSocialAccountForm({super.key, this.id});
 
@@ -181,30 +183,40 @@ class AddSocialAccountForm extends StatelessWidget with BaseContextHelpers {
         ],
       ),
       addVertical(12),
-      CustomDropDown<String>(
-        title: 'Account',
-        hintText: 'Select Account',
-        isRequired: true,
-        value: addDirectorVM.selectedAccount,
-        items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
-              value: e,
-              child: Text(e),
-            )).toList(),
-        onChanged: (val) {
-          addDirectorVM.selectedAccount = val;
-        },
-        validator: (value) =>
-            value == null || value.isEmpty ? 'Please Select Account' : null,
-      ),
+          CustomDropDown<String>(
+            title: 'Account',
+            hintText: 'Select Account',
+            isRequired: true,
+            value: addDirectorVM.selectedAccount,
+            items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
+                  value: e,
+                  child: Text(e),
+                )).toList(),
+            onChanged: (val) {
+              addDirectorVM.selectedAccount = val;
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty)
+                return 'Please Select Account';
+              try {
+                final socialList = addDirectorVM
+                    .getBasicInfoData.first.directoryLocations
+                    ?.firstWhere((v) => v.mediaName == value.toLowerCase());
+                return socialList != null
+                    ? 'This media account is already assigned. Please\n choose another.'
+                    : null;
+              } catch (e) {
+                return null;
+              }
+            },
+          ),
       addVertical(16),
       InputTextField(
-        title: "Social Accounts URL",
-        hintText: "Paste/enter link",
-        keyboardType: TextInputType.text,
-        controller: addDirectorVM.socialAccountsurlCntr,
-        validator: (value) =>
-            value == null || value.isEmpty ? 'Please select urls' : null,
-      ),
+          title: "Social Accounts URL",
+          hintText: "Paste/enter link",
+          keyboardType: TextInputType.text,
+          controller: addDirectorVM.socialAccountsurlCntr,
+          validator: validateOptionalUrl),
       addVertical(20),
       AppButton(
         text: editVM.isEditSocialMed ? 'Update' : 'Add',

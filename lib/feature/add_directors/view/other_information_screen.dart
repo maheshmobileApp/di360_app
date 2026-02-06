@@ -204,7 +204,12 @@ class OtherInformationScreen extends StatelessWidget {
                     Spacer(),
                     MenuWidget(onSelected: (v) {
                       if (v == 'Edit') {
-                        addDirectVM.selectedAccount = data?.mediaName;
+                        final mediaName = data?.mediaName;
+                        addDirectVM.selectedAccount =
+                            mediaName != null && mediaName.isNotEmpty
+                                ? mediaName[0].toUpperCase() +
+                                    mediaName.substring(1)
+                                : null;
                         addDirectVM.socialAccountsurlCntr.text =
                             data?.mediaLink;
                         editVM.updateIsEditSocialMed(true);
