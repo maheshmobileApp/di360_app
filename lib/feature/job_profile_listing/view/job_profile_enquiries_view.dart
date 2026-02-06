@@ -80,13 +80,16 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                                     mainAxisAlignment:
                                         MainAxisAlignment.end,
                                     children: [
-                                      CircleAvatar(
-                                        radius: 24,
-                                        child: CachedNetworkImageWidget(
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 48,
+                                          height: 48,
+                                          child: CachedNetworkImageWidget(
                                             imageUrl: profileImageUrl ?? '',
-                                            fit: BoxFit.fill,
-                                            errorWidget:
-                                                Image.asset(ImageConst.prfImg)),
+                                            fit: BoxFit.cover,
+                                            errorWidget: Image.asset(ImageConst.prfImg, fit: BoxFit.cover),
+                                          ),
+                                        ),
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
