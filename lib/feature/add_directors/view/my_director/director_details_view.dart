@@ -405,7 +405,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                         Row(
                           children: [
                             CircleAvatar(
-                              backgroundColor: Colors.orange,
+                            //  backgroundColor: Colors.orange,
                               radius: 23,
                               child: CircleAvatar(
                                 radius: 22,

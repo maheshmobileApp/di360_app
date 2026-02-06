@@ -158,8 +158,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
         return Form(
           key: _formKey,
@@ -171,41 +170,42 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
               child: SingleChildScrollView(
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  ),
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(24))),
                   child: SafeArea(
                     top: false,
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
-                          child: testimonialsWidget(addDirectorVM, context,
-                              imgUrl: data?.profileImage?.url,
-                              picUrl: data?.msgPic?.url),
-                        ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 20),
+                            child: testimonialsWidget(addDirectorVM, context,
+                                imgUrl: data?.profileImage?.url,
+                                picUrl: data?.msgPic?.url)),
                         CloseAddButtonWidget(
-                          closeBtn: () {
-                            editVM.updateIsEditTestimonials(false);
-                            navigationService.goBack();
-                          },
-                          addBtn: () {
-                            if (_formKey.currentState!.validate() &&
-                                validationImageAndPicture(addDirectorVM, context,
-                                    data?.profileImage?.url, data?.msgPic?.url)) {
-                              editVM.isEditTestimonal
-                                  ? editVM.updateTheTestimonial(
-                                      context,
-                                      data?.id ?? '',
-                                      data?.profileImage?.toJson(),
-                                      data?.msgPic?.toJson())
-                                  : addDirectorVM.addTestimonials(context);
+                            closeBtn: () {
+                              editVM.updateIsEditTestimonials(false);
                               navigationService.goBack();
-                            }
-                          },
-                          btnText: editVM.isEditTestimonal ? 'Update' : 'Add',
-                        )
+                            },
+                            addBtn: () {
+                              if (_formKey.currentState!.validate() &&
+                                  validationImageAndPicture(
+                                      addDirectorVM,
+                                      context,
+                                      data?.profileImage?.url,
+                                      data?.msgPic?.url)) {
+                                editVM.isEditTestimonal
+                                    ? editVM.updateTheTestimonial(
+                                        context,
+                                        data?.id ?? '',
+                                        data?.profileImage?.toJson(),
+                                        data?.msgPic?.toJson())
+                                    : addDirectorVM.addTestimonials(context);
+                                navigationService.goBack();
+                              }
+                            },
+                            btnText: editVM.isEditTestimonal ? 'Update' : 'Add')
                       ],
                     ),
                   ),
@@ -244,17 +244,16 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
         ),
         addVertical(20),
         InputTextField(
-          hintText: "Enter role",
-          title: " Role ",
-          controller: addDirectorVM.roleCntr,
-          //isRequired: true,
-          /*validator: (value) =>
-              value == null || value.isEmpty ? 'Please enter  role' : null,*/
-        ),
+            hintText: "Enter role",
+            title: " Role ",
+            controller: addDirectorVM.roleCntr,
+            isRequired: true,
+            validator: (value) =>
+                value == null || value.isEmpty ? 'Please enter  role' : null),
         addVertical(20),
         ImagePickerInputField(
           title: 'Image ',
-          //isRequired: true,
+          isRequired: true,
           imageFile: addDirectorVM.testimonialsFile,
           onTap: () => imagePickerSelection(
               context,
@@ -298,18 +297,18 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
       showTopMessage(context, 'Please enter name');
       return false;
     }
-    
+
     // Check if either message or picture is provided
     bool hasMessage = addDirectorVM.messageCntr.text.isNotEmpty;
-    bool hasPicture = (addDirectorVM.testimonialsPicFile != null && 
-                      addDirectorVM.testimonialsPicFile!.path.isNotEmpty) || 
-                     msgPic != null;
-    
+    bool hasPicture = (addDirectorVM.testimonialsPicFile != null &&
+            addDirectorVM.testimonialsPicFile!.path.isNotEmpty) ||
+        msgPic != null;
+
     if (!hasMessage && !hasPicture) {
       showTopMessage(context, 'Please add either a message or a picture');
       return false;
     }
-    
+
     return true;
   }
 }

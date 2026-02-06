@@ -58,7 +58,6 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                 backgroundColor: AppColors.whiteColor,
                 radius: 63,
                 child: CircleAvatar(
-                  backgroundColor: AppColors.primaryColor,
                   radius: 60,
                   child: ClipOval(
                     child: SizedBox(

@@ -1,5 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/director_details_view.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/user_details_widget.dart';
@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/directors/view_model/director_view_model.d
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class ProfessionalDirectorScreen extends StatelessWidget {
@@ -21,16 +20,16 @@ class ProfessionalDirectorScreen extends StatelessWidget {
     final professVM = Provider.of<ProfessionalAddDirectorVm>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           onPressed: () {
             professVM.updateCurrentStep();
             navigationService.navigateTo(RouteList.professionAddDirectorView);
           },
           backgroundColor: AppColors.primaryColor,
-          child: SvgPicture.asset(ImageConst.addFeed,
-              color: AppColors.whiteColor)),
+          label: Text('Update directory',
+              style: TextStyles.medium2(color: AppColors.whiteColor))),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -48,9 +47,8 @@ class ProfessionalDirectorScreen extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DirectorDetailsView(),
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DirectorDetailsView()),
             ),
           ],
         ),

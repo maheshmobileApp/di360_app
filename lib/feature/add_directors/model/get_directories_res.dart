@@ -274,16 +274,17 @@ class Education {
   final String? selectedQualification;
   final String? courseHighlights;
   final bool? qualificationFinished;
+   String? name;
 
-  Education({
-     this.qualification,
-     this.institution,
-    this.finishDate,
-    this.expectedFinishDate,
-     this.selectedQualification,
-     this.courseHighlights,
-    this.qualificationFinished,
-  });
+  Education(
+      {this.qualification,
+      this.institution,
+      this.finishDate,
+      this.expectedFinishDate,
+      this.selectedQualification,
+      this.courseHighlights,
+      this.qualificationFinished,
+      this.name});
   factory Education.fromJson(Map<String, dynamic> json) {
     bool? qualificationFinished;
     if (json['qualificationFinished'] is bool) {
@@ -299,6 +300,7 @@ class Education {
       courseHighlights: json['courseHighlights'],
       qualificationFinished: qualificationFinished,
       selectedQualification: '',
+      name: json['name']
     );
   }
 
@@ -308,9 +310,9 @@ class Education {
         'qualification': qualification,
         'courseHighlights': courseHighlights,
         'qualificationFinished': qualificationFinished,
+        'name': name
       };
 }
-
 
 class UniversitySchool {
   String? name;

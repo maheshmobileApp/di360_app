@@ -4,11 +4,11 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:di360_flutter/services/banner_services.dart';
 
 class UserData extends StatelessWidget with BaseContextHelpers {
   final String? imageUrl;
@@ -31,8 +31,11 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-
-          SvgPicture.asset(ImageConst.homeBG,width: getSize(context).width),
+          BannerServices.instance.listBanner?.isEmpty ?? false
+              ? SvgPicture.asset(ImageConst.homeBG,
+                  width: getSize(context).width)
+              : ListBanner(),
+          // SvgPicture.asset(ImageConst.homeBG, width: getSize(context).width),
           // ListBanner(),
           /*Positioned(
   right: 1,
@@ -62,31 +65,30 @@ class UserData extends StatelessWidget with BaseContextHelpers {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(children: [
             Divider(color: AppColors.dividerColor),
-
-             addVertical(6),
+            addVertical(6),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                backgroundColor: AppColors.whiteColor,
-                radius: 30,
-                child: CircleAvatar(
-                  backgroundColor: AppColors.primaryColor,
+                  backgroundColor: AppColors.whiteColor,
                   radius: 30,
-                  child: ClipOval(
-                    child: CachedNetworkImageWidget(
-                        imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
-                        fit: BoxFit.fill,
-                        errorWidget: Image.asset(ImageConst.prfImg)),
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: ClipOval(
+                      child: CachedNetworkImageWidget(
+                          imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
+                          fit: BoxFit.contain,
+                          errorWidget: Image.asset(ImageConst.prfImg)),
+                    ),
                   ),
-                ),),
+                ),
                 addHorizontal(12),
                 Text(userName ?? homeViewModel.userName ?? '',
                     style: TextStyles.clashMedium(
                         fontSize: 20, color: AppColors.black)),
               ],
             ),
-addVertical(6),
+            addVertical(6),
             Divider(color: AppColors.dividerColor),
             addVertical(6),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
