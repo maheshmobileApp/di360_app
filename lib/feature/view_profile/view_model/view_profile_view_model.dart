@@ -55,6 +55,29 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   DirectoryCategories? selectedBusineestype;
   List<DirectoryBusinessTypes> directoryBusinessTypes = [];
 
+
+  String _countryCode = '+61'; // default AU
+  String _number = '';
+
+  String get countryCode => _countryCode;
+  String get number => _number;
+
+  String get fullPhone => '$_countryCode$_number';
+
+  // last 3 digits
+  String get lastThree =>
+      _number.length >= 3 ? _number.substring(_number.length - 3) : _number;
+
+  void setCountry(String code) {
+    _countryCode = code;
+    notifyListeners();
+  }
+
+  void setNumber(String value) {
+    _number = value;
+    notifyListeners();
+  }
+
   String? selectedSalutation;
   String? selectedGender;
   DateTime? scheduleDate;
@@ -113,7 +136,17 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   void loadViewProfileData(dynamic viewProfile) async {
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
-    phoneNoController.text = viewProfile?.phone ?? "";
+    final phone = viewProfile?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      _countryCode = '+61';
+      phoneNoController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      _countryCode = '+64';
+      phoneNoController.text = phone.substring(3);
+    } else {
+      _countryCode = '+61';
+      phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
     businessNameController.text = viewProfile?.businessName ?? "";
     abnNUmberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text = viewProfile?.firstName ?? "";
@@ -152,7 +185,17 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       DentalProfessionalsByPk? viewProfile) async {
     nameController.text = viewProfile?.name ?? "";
     emailController.text = viewProfile?.email ?? "";
-    phoneNoController.text = viewProfile?.phone ?? "";
+    final phone = viewProfile?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      _countryCode = '+61';
+      phoneNoController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      _countryCode = '+64';
+      phoneNoController.text = phone.substring(3);
+    } else {
+      _countryCode = '+61';
+      phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
     firstNameController.text = viewProfile?.firstName ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
@@ -275,7 +318,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       requestData["practiceObj"] = {
         "name": nameController.text,
         "email": emailController.text,
-        "phone": phoneNoController.text,
+        "phone": '$countryCode${phoneNoController.text}',
         "business_name": businessNameController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
@@ -292,7 +335,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       requestData["_set"] = {
         "name": nameController.text,
         "email": emailController.text,
-        "phone": phoneNoController.text,
+        "phone": '$countryCode${phoneNoController.text}',
         "address": {
           "city": cityController.text,
           "state": stateController.text,
@@ -316,7 +359,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       requestData["supplierObj"] = {
         "name": nameController.text,
         "email": emailController.text,
-        "phone": phoneNoController.text,
+        "phone": '$countryCode${phoneNoController.text}',
         "business_name": businessNameController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
@@ -339,6 +382,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               ? getProfessionalViewProfileData()
               : getSuppilerViewProfileData();
       Loaders.circularHideLoader(context);
+      navigationService.goBack();
     } else {
       Loaders.circularHideLoader(context);
     }

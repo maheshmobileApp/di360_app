@@ -47,6 +47,7 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
                     setState(() {
                       serverImg = null;
                       galleryImg = null;
+                      addDirectorVM.galleryFile = null;
                       showForm = !showForm;
                     });
                   },

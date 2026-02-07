@@ -47,6 +47,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                     setState(() {
                       fileName = null;
                       addDirectorVM.achievementNameController.clear();
+                      addDirectorVM.achievementFile = null;
                       showForm = !showForm;
                     });
                   },
@@ -66,24 +67,24 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AddDirectoryAchievementCard(
-                    title: achievement?.title ?? '',
-                    imageFile: achievement?.attachments?.url,
+                      title: achievement?.title ?? '',
+                      imageFile: achievement?.attachments?.url,
                       onSelected: (val) {
                         if (val == 'Edit') {
                           addDirectorVM.achievementNameController.text =
-                          achievement?.title ?? '';
-                      editVM.updateIsEditAchieve(true);
-                      setState(() {
-                        fileName = achievement?.attachments?.name;
-                        editId = achievement?.id;
-                        img = achievement?.attachments?.toJson();
-                        showForm = true;
-                      });
+                              achievement?.title ?? '';
+                          editVM.updateIsEditAchieve(true);
+                          setState(() {
+                            fileName = achievement?.attachments?.name;
+                            editId = achievement?.id;
+                            img = achievement?.attachments?.toJson();
+                            showForm = true;
+                          });
                         } else if (val == 'Delete') {
-                          editVM.deleteTheAchieve(context, achievement?.id ?? '');
+                          editVM.deleteTheAchieve(
+                              context, achievement?.id ?? '');
                         }
-                      }
-                  ),
+                      }),
                 );
               },
             ),
@@ -132,6 +133,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
             onFirst: () {
               setState(() {
                 showForm = false;
+                addDirectorVM.achievementFile = null;
               });
               editVM.updateIsEditAchieve(false);
             },

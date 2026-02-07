@@ -402,9 +402,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
-    var logo = await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
-    var banner =
-        await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
+    var logo = logoFile?.path != null && logoFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(logoFile!.path)
+        : null;
+    var banner = bannerFile?.path != null && bannerFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(bannerFile!.path)
+        : null;
     final res = await addDirectorRepositoryImpl.addBasicInfo({
       "dirObj": {
         "company_name": CompanyNameController.text,
@@ -421,9 +424,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
         "emergency_phone": null,
-        "latitude": '',
-        "longitude": '',
-        "pincode": '',
+        "latitude": latitude,
+        "longitude": longitude,
+        "pincode": null,
         "name": nameController.text,
         "profession_type": selectedBusineestype?.name
       }
@@ -503,8 +506,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   void addCertificates(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments =
-        await addDirectorRepositoryImpl.http.uploadImage(certificateFile?.path);
+    var attachments = certificateFile?.path != null && certificateFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(certificateFile!.path)
+        : null;
     final result = await addDirectorRepositoryImpl.addCertificates({
       "certiObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -526,8 +530,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> addDocument(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments =
-        await addDirectorRepositoryImpl.http.uploadImage(documentFile?.path);
+    var attachments = documentFile?.path != null && documentFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(documentFile!.path)
+        : null;
     final result = await addDirectorRepositoryImpl.addDocu({
       "docsObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -549,8 +554,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   void addAchievement(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments =
-        await addDirectorRepositoryImpl.http.uploadImage(achievementFile?.path);
+    var attachments = achievementFile?.path != null && achievementFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(achievementFile!.path)
+        : null;
     final result = await addDirectorRepositoryImpl.addAchieve({
       "achObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -572,8 +578,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> addTeamMember(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments =
-        await addDirectorRepositoryImpl.http.uploadImage(teamMemberFile?.path);
+    var attachments = teamMemberFile?.path != null && teamMemberFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(teamMemberFile!.path)
+        : null;
     final result = await addDirectorRepositoryImpl.addTeamMembers({
       "ourTeamObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -607,8 +614,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   void addGallery(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments =
-        await addDirectorRepositoryImpl.http.uploadImage(galleryFile?.path);
+    var attachments = galleryFile?.path != null && galleryFile!.path.isNotEmpty
+        ? await addDirectorRepositoryImpl.http.uploadImage(galleryFile!.path)
+        : null;
     final result = await addDirectorRepositoryImpl.addGallery({
       "galleryObj": {
         "image": [attachments],
