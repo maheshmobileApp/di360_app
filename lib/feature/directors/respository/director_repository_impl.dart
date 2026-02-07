@@ -101,7 +101,6 @@ class DirectorRepositoryImpl extends DirectorRepository {
   @override
   Future<dynamic> bookAppointmentDirector(variables) async {
     final data = await http.mutation(bookAppointmentQuery, variables);
-    print(variables);
     return data;
   }
 
@@ -125,7 +124,6 @@ class DirectorRepositoryImpl extends DirectorRepository {
   Future<CommunityStatusData> getCommunityStatus(variables) async {
     final res = await http.query(getCommunityStatusQuery, variables: variables);
     final data = CommunityStatusData.fromJson(res);
-    print(variables);
     return data;
   }
 

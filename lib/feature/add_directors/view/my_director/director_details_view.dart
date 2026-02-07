@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
@@ -23,9 +24,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (directData.description != null)
-            _sectionTitle(
-                'BASIC INFO', _description(directData.description ?? '')),
+          _sectionTitle('BASIC INFO', _description(directData)),
           addVertical(8),
           if (directData.directoryServices?.length != 0)
             _sectionTitle('SERVICES', _serviceButtons(context, addDirectVM)),
@@ -53,7 +52,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           if (directData.directoryFaqs?.length != 0)
             _sectionTitle('FAQ', _faqSection(addDirectVM)),
           if (directData.directoryLocations?.length != 0)
-            _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM,context)),
+            _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM, context)),
         ],
       ),
     );
@@ -95,11 +94,34 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _description(String text) => Padding(
+  Widget _description(GetDirectories directData) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: HtmlWidget(text,
-            textStyle: TextStyles.regular3(color: AppColors.black)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildRow('Name', directData.name ?? ''),
+            addVertical(5),
+            _buildRow('Email', directData.email ?? ''),
+            addVertical(5),
+            _buildRow('Phone', directData.phone ?? ''),
+            addVertical(5),
+            _buildRow('Address', directData.address ?? ''),
+            addVertical(5),
+            _buildRow('Type', directData.type ?? ''),
+            addVertical(10),
+            Text('About Us',style: TextStyles.bold3(color: AppColors.primaryColor)),
+            HtmlWidget(directData.description ?? '',
+                textStyle: TextStyles.regular3(color: AppColors.black)),
+          ],
+        ),
       );
+
+  Widget _buildRow(String title, String value) {
+    return Row(children: [
+      SizedBox(width: 90, child: Text(title)),
+      Expanded(child: Text(': $value'))
+    ]);
+  }
 
   Widget _serviceButtons(BuildContext context, AddDirectoryViewModel vm) {
     final services = vm.getBasicInfoData.first.directoryServices ?? [];
@@ -405,7 +427,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                         Row(
                           children: [
                             CircleAvatar(
-                            //  backgroundColor: Colors.orange,
+                              //  backgroundColor: Colors.orange,
                               radius: 23,
                               child: CircleAvatar(
                                 radius: 22,
@@ -492,7 +514,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _contactFAQs(AddDirectoryViewModel vm,BuildContext context) => Padding(
+  Widget _contactFAQs(AddDirectoryViewModel vm, BuildContext context) =>
+      Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
@@ -544,7 +567,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           ),
           const SizedBox(height: 20),
           InkWell(
-            onTap: () => openLocationInMaps(context,vm.getBasicInfoData.first.address ?? ''),
+            onTap: () => openLocationInMaps(
+                context, vm.getBasicInfoData.first.address ?? ''),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(ImageConst.mapsPng,

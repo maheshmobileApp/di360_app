@@ -259,7 +259,6 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             : navigationService.navigateTo(RouteList.adddirectorview);
       }
     } catch (e) {
-      print('Error in fetchTheDirectorData: $e');
       Loaders.circularHideLoader(context);
       clearBasicInfoData();
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);

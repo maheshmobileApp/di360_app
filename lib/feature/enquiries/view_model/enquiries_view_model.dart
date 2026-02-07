@@ -4,7 +4,6 @@ import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart
 import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
 import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
 import 'package:di360_flutter/feature/enquiries/repository/enquiries_repo_impl.dart';
-import 'package:di360_flutter/feature/job_listings/model/job_listing_applicants_messge_respo.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -30,14 +29,11 @@ class EnquiriesViewModel extends ChangeNotifier {
 
   Future<ApplicantEnquiryData?> getApplicantEnquiryData(
       BuildContext context, String jobId) async {
-    print("**********calling getApplicantEnquiryData**********");
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getApplicantEnquiryData(userId, jobId);
     if (res.jobEnquiries != null) {
       applicantEnquiriesListData = res;
-      print(
-          "**********getApplicantEnquiryData${res.jobEnquiries?.first.enquiryDescription}**********");
       Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
@@ -77,7 +73,6 @@ class EnquiriesViewModel extends ChangeNotifier {
       final res = await repo.fetchEnquiriesMessages(variables);
       if (res.jobApplicantMessages != null) {
         messages = res.jobApplicantMessages??[];
-        print("******************messages fetched ${messages}");
       }
     } catch (e) {
       errorMessage = e.toString();

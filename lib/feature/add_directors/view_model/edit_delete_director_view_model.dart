@@ -619,7 +619,6 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     for (var element in selectedFiles) {
       var value =
           await addDirectorRepositoryImpl.http.uploadImage(element.path);
-      print("resp from upload $value");
       if (value != null) {
         uploadedFiles.add(value);
       }
@@ -662,7 +661,6 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     for (var element in selectedFiles) {
       var value =
           await addDirectorRepositoryImpl.http.uploadImage(element.path);
-      print("resp from upload $value");
       if (value != null) {
         uploadedFiles.add(value);
       }

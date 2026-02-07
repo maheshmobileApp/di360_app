@@ -337,9 +337,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
             type: "image", 
             extension: "jpeg"
           );
-          print("Upload failed: No URL returned");
         }
-        print(selectedBannerImgList);
         notifyListeners();
       } catch (e) {
         selectedBannerImgList = ClinicLogo(

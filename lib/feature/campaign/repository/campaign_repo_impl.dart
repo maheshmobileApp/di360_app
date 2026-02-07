@@ -17,7 +17,6 @@ class CampaignRepoImpl extends CampaignRepository{
   final HttpService http = HttpService();
   @override
   Future<CampaignListData?> getCampaignListData(variables) async {
-    print("*****************Calling getCamaign List");
     try {
       final res = await http.query(getCampaignListQuery, variables: variables);
       if (res != null) {

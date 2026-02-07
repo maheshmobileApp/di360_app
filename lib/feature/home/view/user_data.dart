@@ -35,28 +35,6 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               ? SvgPicture.asset(ImageConst.homeBG,
                   width: getSize(context).width)
               : ListBanner(),
-          /*Positioned(
-  right: 1,
-              left: 1,
-              bottom: -40,
-              child: CircleAvatar(
-                backgroundColor: AppColors.whiteColor,
-                radius: 52,
-                child: CircleAvatar(
-                  backgroundColor: AppColors.primaryColor,
-                  radius: 50,
-                  child: ClipOval(
-                    child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: CachedNetworkImageWidget(
-                          imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
-                          fit: BoxFit.fill,
-                          errorWidget: Image.asset(ImageConst.prfImg)),
-                    ),
-                  ),
-                ),
-              ))*/
         ],
       ),
       Padding(
@@ -73,10 +51,13 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   child: CircleAvatar(
                     radius: 30,
                     child: ClipOval(
-                      child: CachedNetworkImageWidget(
-                          imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
-                          fit: BoxFit.contain,
-                          errorWidget: Image.asset(ImageConst.prfImg)),
+                      child: SizedBox(
+                          height: 60,
+                          child: CachedNetworkImageWidget(
+                              imageUrl:
+                                  imageUrl ?? homeViewModel.profilePic ?? '',
+                              fit: BoxFit.fill,
+                              errorWidget: Image.asset(ImageConst.prfImg))),
                     ),
                   ),
                 ),

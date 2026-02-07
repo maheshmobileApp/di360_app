@@ -215,13 +215,10 @@ class DirectoryViewModel extends ChangeNotifier {
   Future<void> getDirectory(String directorId) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final variables = {"id": directorId};
-    print("*************************variables $variables");
     final res = await repository.getDirectory(variables);
     if (res.directoriesByPk != []) {
       getDirectoryData = res;
       directorCommunityID = getDirectoryData?.directoriesByPk?.communityId;
-      print(
-          "***/////////////////////////////*********community id $directorCommunityID");
       directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
       directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
       if (directorCommunityID != null) {
@@ -234,7 +231,6 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   Future<void> getCommunityStatus(String communityId) async {
-    print("*************************get community status calling");
     final memberId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"member_id": memberId, "community_id": communityId};
     final res = await repository.getCommunityStatus(variables);
@@ -256,7 +252,6 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   Future<void> getPartnershipStatus(String communityId) async {
-    print("*************************get partner status calling");
     final memberId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"member_id": memberId, "community_id": communityId};
     final res = await repository.getPartnershipStatus(variables);
@@ -299,8 +294,6 @@ class DirectoryViewModel extends ChangeNotifier {
         "is_registered": false
       }
     };
-    print("*************************variables $variables");
-    print("*variables $variables");
     final res = await repository.communityRegister(variables);
     if (res != null) {
       scaffoldMessenger("Successfully Registered");
@@ -339,7 +332,6 @@ class DirectoryViewModel extends ChangeNotifier {
         "is_registered": false
       }
     };
-    print("*************************variables $variables");
     final res = await repository.partnershipRegister(variables);
     if (res != null) {
       scaffoldMessenger("Successfully Registered");
@@ -368,8 +360,6 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
-      print("*************************Directord data fected ${directorDetails?.dentalSupplierId}");
-      print("*Directord data fected $directorDetails");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
