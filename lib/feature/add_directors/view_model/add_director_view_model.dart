@@ -64,6 +64,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   TextEditingController partnerNameCntr = TextEditingController();
   TextEditingController descriptionCntr = TextEditingController();
 
+  
+  double? latitude;
+  double? longitude;
+
   final GlobalKey<FormState> location = GlobalKey<FormState>();
   final List<GlobalKey<FormState>> formKeys =
       List.generate(12, (_) => GlobalKey<FormState>());
@@ -252,6 +256,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
                 : navigationService.navigateTo(RouteList.adddirectorview);
         assignBasicInfoData(context);
       } else {
+        _currentStep = 0;
         clearBasicInfoData();
         Loaders.circularHideLoader(context);
         type == 'PROFESSIONAL'

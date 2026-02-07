@@ -10,6 +10,8 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -82,13 +84,53 @@ class AddDirectorBasicInfo extends StatelessWidget
             controller: addDirectorVM.alternateNumberController,
           ),
           addVertical(20),
-          InputTextField(
-            hintText: "Enter Address",
-            title: " Address ",
-            controller: addDirectorVM.addressController,
-            isRequired: true,
-            validator: (value) =>
-                value == null || value.isEmpty ? 'Please enter  address' : null,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('Address', style: TextStyles.regular3(color: AppColors.black)),
+                  Text(' *', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              SizedBox(height: 10),
+              GooglePlaceAutoCompleteTextField(
+                textEditingController: addDirectorVM.addressController,
+                googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+                inputDecoration: InputDecoration(
+                  hintText: "Search Address",
+                  hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                ),
+                debounceTime: 800,
+                isLatLngRequired: true,
+                getPlaceDetailWithLatLng: (Prediction prediction) {
+                  addDirectorVM.latitude = prediction.lat != null ? double.parse(prediction.lat!) : null;
+                  addDirectorVM.longitude = prediction.lng != null ? double.parse(prediction.lng!) : null;
+                },
+                itemClick: (Prediction prediction) {
+                  addDirectorVM.addressController.text = prediction.description ?? '';
+                },
+                itemBuilder: (context, index, Prediction prediction) {
+                  return Container(
+                    color: AppColors.whiteColor,
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.location_on),
+                        SizedBox(width: 7),
+                        Expanded(child: Text(prediction.description ?? ""))
+                      ],
+                    ),
+                  );
+                },
+                isCrossBtnShown: true,
+                containerHorizontalPadding: 10
+              ),
+            ],
           ),
           addVertical(20),
           sectionHeader("Logo & Banner"),

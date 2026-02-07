@@ -101,17 +101,12 @@ class JobSeekRepoImpl extends JobSeekRepository {
   @override
   Future<List<Jobs>> fetchFilteredJobs(dynamic variables) async {
     try {
-      print("*******************Filter Variables: $variables");
       final result =
           await _http.query(getAllJobsFilterQuery, variables: variables);
       final jobsJson = result['jobs'] as List<dynamic>? ?? [];
-      print("{jobs: $jobsJson}");
-      print("Fetched ${jobsJson.length} filtered jobs");
       final response = jobsJson.map((e) => Jobs.fromJson(e)).toList();
-      print("Filtered Jobs $response");
       return response;
     } catch (e) {
-      print("Error in fetchFilteredJobs repo: $e");
       return [];
     }
   }

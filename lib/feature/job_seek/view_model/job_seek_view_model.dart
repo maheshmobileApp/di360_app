@@ -12,7 +12,6 @@ import 'package:di360_flutter/feature/job_seek/widget/string_extensions.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/utils/generated_id.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -155,13 +154,7 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      print("Selected Professions: $selectedProfessions");
-      print("Selected Employment Types: $selectedEmploymentTypes");
-      print("Selected Experiences: $selectedExperiences");
-      print("Selected Availability Dates: $selectedAvailability");
       Loaders.circularShowLoader(context);
-
-      // Build dynamic where conditions
       final String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final List<Map<String, dynamic>> andConditions = [
         {"status": {"_eq": "APPROVE"}},

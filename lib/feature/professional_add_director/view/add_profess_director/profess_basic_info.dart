@@ -118,7 +118,6 @@ class ProfessBasicInfo extends StatelessWidget
               ),
             ],
           ),
-          Divider(thickness: 4),
           addVertical(20),
           sectionHeader("Logo & Banner"),
           addVertical(20),

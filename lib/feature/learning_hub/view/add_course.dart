@@ -241,8 +241,6 @@ class AddCourse extends StatelessWidget
                       isLatLngRequired:
                           true, // if you required coordinates from place detail
                       getPlaceDetailWithLatLng: (Prediction prediction) {
-                        // this method will return latlng with place detail
-                        print("placeDetails" + prediction.lng.toString());
                       }, // this callback is called when isLatLngRequired is true
                       itemClick: (Prediction prediction) async {
                         final placeId = prediction.placeId;

@@ -330,7 +330,6 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (serverPresentedImg == null) {
       var value = await _http.uploadImage(selectedPresentedImg?.path);
       presenter_image = value['url'];
-      print(presenter_image);
       notifyListeners();
     } else {
       presenter_image = serverPresentedImg ?? "";

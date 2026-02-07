@@ -96,10 +96,8 @@ class JobListingRepoImpl extends JobListingRepository {
     final String query =
         (type == "SUPPLIER") ? getJobStatusCount : getJobStatusCountPractice;
 
-    print("************************variables $variables");
     final data = await http.query(query, variables: variables);
     final result = JobStatusCountData.fromJson(data);
-    print(result);
     return result;
   }
 
@@ -149,7 +147,6 @@ class JobListingRepoImpl extends JobListingRepository {
     final jobAggrateStatusData =
         await http.mutation(updateJobApplicantStatusData, variables);
     final result = UpadateJobAggrateStatusResp.fromJson(jobAggrateStatusData);
-    print(result);
     return result;
   }
 
@@ -166,7 +163,6 @@ class JobListingRepoImpl extends JobListingRepository {
   @override
   Future<String?> sendApplicantMessage(
       Map<String, dynamic> variables, String typeName) async {
-    print("***************************$typeName");
     try {
       final data = await http
           .mutation(typeName != "applicant" ? talentMessge : applicantMessge, {

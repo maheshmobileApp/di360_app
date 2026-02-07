@@ -159,8 +159,6 @@ class RegisterCourseCard extends StatelessWidget {
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
-              // Handle if the URL can't be launched
-              debugPrint('Could not launch $url');
             }
           },
           child: Text(

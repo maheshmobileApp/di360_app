@@ -61,7 +61,6 @@ class NewsFeedViewModel extends ChangeNotifier {
         // removeTheLikeObject(context, feedId);
       }
     } catch (e) {
-      print("Error removing like: $e");
     }
 
     notifyListeners();
@@ -86,7 +85,6 @@ class NewsFeedViewModel extends ChangeNotifier {
         // updateTheLikeObject(context, newsFeedId);
       }
     } catch (e) {
-      print("Error adding like: $e");
     }
 
     notifyListeners();
@@ -196,7 +194,6 @@ class NewsFeedViewModel extends ChangeNotifier {
             ));
       }
     } catch (e) {
-      print("Error fetching categories: $e");
     }
     notifyListeners();
   }
