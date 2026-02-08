@@ -296,7 +296,8 @@ class DirectoryViewModel extends ChangeNotifier {
         "membership_number": membershipNumberController.text,
         "status": "PENDING",
         "type": "COMMUNITY",
-        "is_registered": false
+        "is_registered": false,
+        "state": "" // Add state field to satisfy NOT NULL constraint
       }
     };
     print("*************************variables $variables");

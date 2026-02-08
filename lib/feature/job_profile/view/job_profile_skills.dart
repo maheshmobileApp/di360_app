@@ -62,8 +62,14 @@ class JobProfileSkills extends StatelessWidget with BaseContextHelpers {
                 "Skills",
                 style: TextStyles.regular3(color: AppColors.black),
               ),
-              addVertical(4),
-              _buildSkills(jobProfileVM),
+              addVertical(8),
+              ChipTextField(
+                chips: jobProfileVM.selectskills,
+                hintText: "Enter skills",
+                onChanged: (chips) {},
+              ),
+              
+              //_buildSkills(jobProfileVM),
               addVertical(24),
               _buildSectionRow(
                 title: "Experience",

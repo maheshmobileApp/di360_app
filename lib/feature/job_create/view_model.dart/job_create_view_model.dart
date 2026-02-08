@@ -772,7 +772,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "active_status":
             "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
         "website_url": websiteController.text,
-        "country": selectCountry,
+        "country": countryController.text,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
         "offered_benefits": selectedBenefits,
         //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
@@ -870,7 +870,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "active_status":
             "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
         "website_url": websiteController.text,
-        "country": selectCountry,
+        "country":  countryController.text,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
         "offered_benefits": selectedBenefits,
         //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
@@ -917,6 +917,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     linkedInController.text = jobData?.linkedinUrl ?? "";
     locationSearchController.text = jobData?.location ?? "";
     stateController.text = jobData?.state ?? "";
+    countryController.text = jobData?.country ?? "";
     cityPostCodeController.text = jobData?.city ?? "";
     minSalaryController.text = jobData?.payMin?.toString() ?? "";
     maxSalaryController.text = jobData?.payMax?.toString() ?? "";

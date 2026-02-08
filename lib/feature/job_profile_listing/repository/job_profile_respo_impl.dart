@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/job_profile_listing/quary/get_profile_enqu
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_deleted_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_quary.dart';
 import 'package:di360_flutter/feature/job_profile_listing/quary/job_profile_updated.dart';
+import 'package:di360_flutter/feature/job_profile_listing/quary/update_talent_request_status_query.dart';
 import 'package:di360_flutter/feature/job_profile_listing/repository/job_profle_repository.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -84,5 +85,12 @@ class JobProfileRepoImpl implements JobProfileRepository {
         await http.query(getAllTalentsRequestQuery, variables: variables);
     final output = HiringTalentList.fromJson(response);
     return output;
+  }
+  
+  @override
+  Future updateTalentListing(variables) async {
+    final response =
+        await http.mutation(updateTalentRequestStatusQuery,variables);
+    return response;
   }
 }

@@ -33,14 +33,18 @@ class CreateCampaignView extends StatelessWidget
           backgroundColor: AppColors.whiteColor,
           leading: IconButton(
               onPressed: () {
-                showAlertMessage(
-                  context,
-                  'You have unsaved changes. Do you want to discard them?',
-                  onBack: () async {
-                    navigationService.goBack();
-                    navigationService.goBack();
-                  },
-                );
+                if (viewModel.hasUnsavedChanges()) {
+                  showAlertMessage(
+                    context,
+                    'You have unsaved changes. Do you want to discard them?',
+                    onBack: () {
+                      navigationService.goBack(); 
+                      navigationService.goBack(); 
+                    },
+                  );
+                } else {
+                  navigationService.goBack();
+                }
               },
               icon: Icon(Icons.arrow_back_ios)),
           title: Text(
@@ -312,7 +316,7 @@ class CreateCampaignView extends StatelessWidget
           itemLabel: (item) => item,
           hintText: "Select Groups",
           //readOnly: viewModel.repeatMode,
-          onSelectionChanged: (selected) {
+          onSelectionChanged: (selected) async {
             final current = List<String>.from(viewModel.selectedGroupChips);
             for (final emp in current) {
               if (!selected.contains(emp)) {
@@ -325,9 +329,15 @@ class CreateCampaignView extends StatelessWidget
               }
             }
             // Call API after selection is finalized
-            viewModel.getStatesByGroups();
-            viewModel.getContacts();
-            viewModel.getContactCount();
+            if (selected.isNotEmpty) {
+              try {
+                await viewModel.getStatesByGroups();
+                await viewModel.getContacts();
+                await viewModel.getContactCount();
+              } catch (e) {
+                print('Error loading group data: $e');
+              }
+            }
           },
         ),
         addVertical(16),

@@ -558,7 +558,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 _timeChip(
                     "Posted on : ${DateFormatUtils.formatDate(createdAt)}"),
-                //  _timeChip(course.address?.first.city ?? ""),
+                if (course.address?.isNotEmpty == true)
+                  _timeChip(course.address?.first.city ?? ""),
                 GestureDetector(
                   onTap: onDetailView,
                   child: Row(

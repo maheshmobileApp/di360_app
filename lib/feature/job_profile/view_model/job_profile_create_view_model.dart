@@ -102,8 +102,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
   File? profileFile;
-  String? serverProfileFile;
+  FileUpload? serverProfileFile;
   String profile_img = "";
+  FileUpload? profileImg;
   String profile_img_name = "";
   List<String> get selectedEmploymentChips =>
       List.unmodifiable(_selectedEmploymentChips);
@@ -753,14 +754,19 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
       if (profileFile?.path != null) {
         var value = await _http.uploadImage(profileFile?.path);
         print("***********Profile Image Upload Response: $value");
-        profile_img = value['url'];
-        profile_img_name = value['name'];
-        print(profile_img);
+        profileImg = FileUpload(
+          url: value['url'],
+          name: value['name'],
+          type: value['type'],
+          extension: value['extension'],
+        );
         notifyListeners();
       }
     } else {
-      profile_img = serverProfileFile ?? "";
-      notifyListeners();
+      if (serverProfileFile != null) {
+        profileImg = serverProfileFile;
+        notifyListeners();
+      }
     }
     print("***********************Profile Image URL: $profile_img");
   }
@@ -777,7 +783,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     try {
       final String? dentalProfessionalId =
           await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final result = await repo.createJobProfileListing({
+      final variables = {
         "jobProfile": [
           {
             "dental_professional_id": dentalProfessionalId,
@@ -791,16 +797,21 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "job_designation": jobDesignationController.text,
             "state": stateController.text,
             "location": locationController.text,
-            "country": selectCountry,
+            "country": countryController.text,
             // "Year_of_experience": selectExperience ?? "",
             "city": cityPostCodeController.text,
             "radius": "0", //no option in mobile design, default to 0
             "availabilityType": selectedAvailabilityType,
-            "profile_image": {
-              "url": profile_img,
-              "name": profile_img_name,
-              ..._getFileTypeAndExtension(profileFile?.path ?? profile_img),
-            },
+            "profile_image": profileImg != null
+                ? [
+                    {
+                      "url": profileImg!.url,
+                      "name": profileImg!.name,
+                      "type": profileImg!.type,
+                      "extension": profileImg!.extension,
+                    }
+                  ]
+                : [],
             "upload_resume": resumeFile != null
                 ? [
                     {
@@ -868,8 +879,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
             "languages_spoken": languages,
             "areas_expertise": expertise,
             "skills": selectskills.map((toElement) => toElement).toList(),
-            "salary_amount": salaryController.text.isNotEmpty 
-                ? int.tryParse(salaryController.text) ?? 0 
+            "salary_amount": salaryController.text.isNotEmpty
+                ? int.tryParse(salaryController.text) ?? 0
                 : 0,
             "salary_type": selectedSalaryPer, // need to send dynamically
             "travel_distance":
@@ -886,7 +897,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                 joiningDate != null ? [joiningDate!.toIso8601String()] : [],
           }
         ]
-      });
+      };
+      final result = await repo.createJobProfileListing(variables);
 
       if (result.data?.insertJobProfiles != null) {
         ToastMessage.show('Job Profile Created Successfully!');
@@ -939,16 +951,21 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "job_designation": jobDesignationController.text,
           "state": stateController.text,
           "location": locationController.text,
-          "country": selectCountry,
+          "country": countryController.text,
           // "Year_of_experience": selectExperience ?? "",
           "city": cityPostCodeController.text,
           "radius": "0", //no option in mobile design, default to 0
           "availabilityType": selectedAvailabilityType,
-          "profile_image": {
-            "url": profile_img,
-            "name": profile_img_name,
-            ..._getFileTypeAndExtension(profileFile?.path ?? profile_img),
-          },
+          "profile_image": profileImg != null
+              ? [
+                  {
+                    "url": profileImg!.url,
+                    "name": profileImg!.name,
+                    "type": profileImg!.type,
+                    "extension": profileImg!.extension,
+                  }
+                ]
+              : [],
           "upload_resume": [
             {
               "url": serverDocuments["Resume"]?.url ??
@@ -1012,12 +1029,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "languages_spoken": languages,
           "areas_expertise": expertise,
           "skills": selectskills.map((toElement) => toElement).toList(),
-          "salary_amount": salaryController.text== ""
+          "salary_amount": salaryController.text == ""
               ? null
               : salaryController.text, // need to send dynamically
           "salary_type": selectedSalaryPer, // need to send dynamically
-          "travel_distance":
-              DistanceController.text== ""
+          "travel_distance": DistanceController.text == ""
               ? null
               : DistanceController.text, // need to send dynamically
           "percentage": percentageController.text == ""
@@ -1066,6 +1082,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     locationController.text = profile?.location ?? "";
     countryController.text = profile?.country ?? "";
     stateController.text = profile?.state ?? "";
+    salaryController.text = profile?.salaryAmount.toString() ?? "";
+    selectedSalaryPer = profile?.salaryType ?? "";
     cityPostCodeController.text = profile?.city ?? "";
     experiences = profile?.jobExperiences ?? [];
     aphraRegistrationNumberController.text = profile?.aphraNumber ?? "";
@@ -1073,9 +1091,12 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
     isWillingToTravel = profile?.willingToTravel ?? false;
     DistanceController.text = profile?.travelDistance ?? "";
-    serverProfileFile = profile?.profileImage.length != 0
-        ? profile?.profileImage.first.url
-        : "";
+    serverProfileFile = profile?.profileImage.isNotEmpty == true
+        ? FileUpload(
+            name: profile?.profileImage.first.name,
+            url: profile?.profileImage.first.url ?? "",
+            type: profile?.profileImage.first.type ?? "")
+        : null;
     serverResumeDocs = profile?.uploadResume ?? [];
     serverCertDocs = profile?.certificate ?? [];
     serverCoverLetter = profile?.coverLetter ?? [];
@@ -1087,6 +1108,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     };
     selectedAvailabilityType = profile?.availabilityType ?? "";
     selectedDays = profile?.availabilityDay ?? [];
+    
 
     availabilityDates = profile?.availabilityDate
             ?.map((dateStr) => DateTime.parse(dateStr))

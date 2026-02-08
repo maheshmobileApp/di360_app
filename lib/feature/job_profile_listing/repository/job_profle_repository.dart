@@ -9,4 +9,5 @@ abstract class JobProfileRepository {
   Future<JobProfileEnquiriesResList> getMyEnquiryJobData(String jobProfileId);
   Future<void> getJobProfileEnquiry(String profileId, String enquiryId);
   Future<HiringTalentList> getAllTalentsRequest(dynamic variables);
+  Future<dynamic> updateTalentListing(dynamic variables);
 }
