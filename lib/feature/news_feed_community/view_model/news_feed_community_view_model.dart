@@ -164,7 +164,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   //GET JOIN REQUEST
   Future<void> getAllNewsFeeds(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    print("*************************************GetAllNewsFeeds Calling");
+    print("######################********GetAllNewsFeeds Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);

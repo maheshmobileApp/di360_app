@@ -75,13 +75,15 @@ class LoginViewModel extends ChangeNotifier {
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
+          
+
           (result.loginApi?.type == "SUPPLIER")
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
               : () {};
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.businessName, result.loginApi?.businessName ?? '');
+          await LocalStorage.setStringVal(LocalStorageConst.businessName,
+              result.loginApi?.businessName ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.userId, result.loginApi?.id ?? '');
           await LocalStorage.setStringVal(
@@ -125,14 +127,9 @@ class LoginViewModel extends ChangeNotifier {
       if (!hasListeners) {
         return;
       }
-      
+
       // Check if Firebase is initialized
       if (Firebase.apps.isEmpty) {
-        return;
-      }
-      
-      await Future.delayed(Duration(seconds: 2));
-
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final deviceToken = await FirebaseMessaging.instance.getToken();
 
@@ -206,6 +203,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.communityId, supplier?.communityId ?? '');
+      
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
@@ -213,6 +211,12 @@ class LoginViewModel extends ChangeNotifier {
     } else {
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'false');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityId, supplier?.communityId ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityName, supplier?.businessName ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.businessName, supplier?.businessName ?? "");
     }
     notifyListeners();
   }
