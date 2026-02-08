@@ -84,9 +84,6 @@ class LearningHubMasterViewModel extends ChangeNotifier with ValidationMixins {
           .map((i) => items[i])
           .toList(growable: false);
     }
-
-    debugPrint('✅ Selected Types: $selectedType');
-    debugPrint('✅ Selected Categories: $selectedCategory');
   }
 
   /// Clears all filters

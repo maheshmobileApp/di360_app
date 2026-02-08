@@ -66,7 +66,6 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                           .getBusinessSupplierDetails(context)
                                       : value.getBusinessProfessionalDetails(
                                           context);
-                                  print(director.id);
                                   await value.GetDirectorDetails(
                                       director.id ?? '');
                                   await value.getDirectory(director.id ?? "");

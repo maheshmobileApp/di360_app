@@ -185,8 +185,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     if (res != null) {
       marketPlaceCoursesList = res;
-      print(
-          "*************************marketPlaceCoursesList: ${marketPlaceCoursesList.length}");
     }
     notifyListeners();
   }
@@ -209,7 +207,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.getCourseDetails(courseId);
     if (res != null) {
       courseDetails = res;
-      print("courseDetails: $res");
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -223,7 +220,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         courseId, listingRegUsersStatus ?? "");
     if (res != null) {
       registeredUsers = res;
-      print("************************registeredUsers: $res");
       await getCourseRegisteredUsersTabCount(context, courseId);
       Loaders.circularHideLoader(context);
     }
@@ -256,7 +252,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.getRegisterUserTabCountData(variables);
     if (res != "") {
       registerUserTabCount = res;
-      print("*******************registerUserTabCount: $registerUserTabCount");
       allRegUsersCount = registerUserTabCount?.all?.aggregate?.count ?? 0;
       pendingRegUsersCount =
           registerUserTabCount?.pending?.aggregate?.count ?? 0;

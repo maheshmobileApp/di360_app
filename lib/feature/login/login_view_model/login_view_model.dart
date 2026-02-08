@@ -123,27 +123,16 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> updateDevieToken() async {
-    print("********** Updating Device Token **********");
     try {
       // Check if widget is still mounted
       if (!hasListeners) {
-        print(
-            "********** LoginViewModel disposed, skipping token update **********");
         return;
       }
 
       // Check if Firebase is initialized
       if (Firebase.apps.isEmpty) {
-        print(
-            "********** Firebase not initialized, skipping token update **********");
-        return;
-      }
-
-      await Future.delayed(Duration(seconds: 2));
-
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final deviceToken = await FirebaseMessaging.instance.getToken();
-      print("********** Device Token: $deviceToken");
 
       if (deviceToken != null && userId.isNotEmpty) {
         await LocalStorage.setStringVal(
@@ -153,10 +142,8 @@ class LoginViewModel extends ChangeNotifier {
           "device_tokens": [deviceToken]
         };
         final res = await repo.updateDeviceToken(variables);
-        print("********** Device Token Updated Successfully: $res **********");
       }
     } catch (e) {
-      print("********** Error updating device token: $e **********");
     }
 
     // Only notify listeners if not disposed
@@ -203,7 +190,6 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> getSuppliers(String id) async {
     final res = await repo.getSuppliers(id);
     supplerData = res;
-    print('****************supplerData ${supplerData}');
     notifyListeners();
   }
 
@@ -211,7 +197,6 @@ class LoginViewModel extends ChangeNotifier {
     print("***************Fetching supplier community owner");
     final res = await repo.getSupplierCommunityOwner(id);
     supplerCommunityOwner = res;
-    print("***************$supplerCommunityOwner");
 
     final supplier = supplerCommunityOwner?.dentalSuppliers?.first;
 
@@ -226,7 +211,6 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
           LocalStorageConst.businessName, supplier?.businessName ?? "");
-      print("***** Updating JSON (Need to update account.json) *****");
     } else {
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'false');
@@ -243,10 +227,8 @@ class LoginViewModel extends ChangeNotifier {
 
 _modulePermissions(List<Modules> modules) async {
   if (modules.isEmpty) {
-    print("********************************No modules found");
     return;
   }
-  print("********************************Modules: ${modules.first.name}");
   for (var module in modules) {
     switch (module.name) {
       case 'directory_minimal_permission':

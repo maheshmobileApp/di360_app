@@ -39,6 +39,8 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                     addDirectorVM.testiNameCntr.clear();
                     addDirectorVM.roleCntr.clear();
                     addDirectorVM.messageCntr.clear();
+                    addDirectorVM.testimonialsFile = null;
+                    addDirectorVM.testimonialsPicFile = null;
                     showTestimonialBottomSheet(context, addDirectorVM, editVM);
                   },
                 ),
@@ -195,14 +197,13 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                                       context,
                                       data?.profileImage?.url,
                                       data?.msgPic?.url)) {
-                                editVM.isEditTestimonal
-                                    ? editVM.updateTheTestimonial(
-                                        context,
-                                        data?.id ?? '',
-                                        data?.profileImage?.toJson(),
-                                        data?.msgPic?.toJson())
-                                    : addDirectorVM.addTestimonials(context);
-                                navigationService.goBack();
+                                // editVM.isEditTestimonal
+                                //     ? editVM.updateTheTestimonial(
+                                //         context,
+                                //         data?.id ?? '',
+                                //         data?.profileImage?.toJson(),
+                                //         data?.msgPic?.toJson())
+                                //     : addDirectorVM.addTestimonials(context);
                               }
                             },
                             btnText: editVM.isEditTestimonal ? 'Update' : 'Add')
@@ -251,17 +252,17 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
             validator: (value) =>
                 value == null || value.isEmpty ? 'Please enter  role' : null),
         addVertical(20),
-        ImagePickerInputField(
-          title: 'Image ',
-          isRequired: true,
-          imageFile: addDirectorVM.testimonialsFile,
-          onTap: () => imagePickerSelection(
-              context,
-              () => addDirectorVM
-                  .pickTestimonialImage(picker.ImageSource.gallery),
-              () => addDirectorVM
-                  .pickTestimonialImage(picker.ImageSource.camera)),
-          hintText: imgUrl ?? 'JPEG, PNG up to 5 MB',
+        Consumer<AddDirectoryViewModel>(
+          builder: (context, vm, _) => ImagePickerInputField(
+            title: 'Image ',
+            isRequired: true,
+            imageFile: vm.testimonialsFile,
+            onTap: () => imagePickerSelection(
+                context,
+                () => vm.pickTestimonialImage(picker.ImageSource.gallery),
+                () => vm.pickTestimonialImage(picker.ImageSource.camera)),
+            hintText: imgUrl ?? 'JPEG, PNG up to 5 MB',
+          ),
         ),
         addVertical(20),
         InputTextField(
@@ -275,16 +276,16 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
             child: Text('OR',
                 style: TextStyles.clashBold(), textAlign: TextAlign.center)),
         addVertical(20),
-        ImagePickerInputField(
-          title: 'Picture ',
-          imageFile: addDirectorVM.testimonialsPicFile,
-          onTap: () => imagePickerSelection(
-              context,
-              () => addDirectorVM
-                  .pickTestimonialPicture(picker.ImageSource.gallery),
-              () => addDirectorVM
-                  .pickTestimonialPicture(picker.ImageSource.camera)),
-          hintText: picUrl ?? 'JPEG, PNG up to 5 MB',
+        Consumer<AddDirectoryViewModel>(
+          builder: (context, vm, _) => ImagePickerInputField(
+            title: 'Picture ',
+            imageFile: vm.testimonialsPicFile,
+            onTap: () => imagePickerSelection(
+                context,
+                () => vm.pickTestimonialPicture(picker.ImageSource.gallery),
+                () => vm.pickTestimonialPicture(picker.ImageSource.camera)),
+            hintText: picUrl ?? 'JPEG, PNG up to 5 MB',
+          ),
         ),
       ],
     );
@@ -302,7 +303,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
     bool hasMessage = addDirectorVM.messageCntr.text.isNotEmpty;
     bool hasPicture = (addDirectorVM.testimonialsPicFile != null &&
             addDirectorVM.testimonialsPicFile!.path.isNotEmpty) ||
-        msgPic != null;
+        (msgPic != null && msgPic.toString().isNotEmpty);
 
     if (!hasMessage && !hasPicture) {
       showTopMessage(context, 'Please add either a message or a picture');

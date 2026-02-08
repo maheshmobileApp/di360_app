@@ -90,8 +90,6 @@ class LoginScreen extends StatelessWidget
                       await viewModel.submit(context);
                       final supplier = viewModel
                           .supplerCommunityOwner?.dentalSuppliers?.first;
-                      print(
-                          "Status***************************${supplier?.communityStatus}");
                       (supplier?.communityStatus == "YES")
                           ? profileVM.updateCommunityStatus(true)
                           : profileVM.updateCommunityStatus(false);

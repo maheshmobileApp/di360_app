@@ -1,5 +1,4 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
@@ -172,7 +171,7 @@ Future logOutAlert(BuildContext context) {
             TextButton(
                 onPressed: () async {
                   await deleteToken();
-                  
+                  await LocalStorage.clearAllData();
                   navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 },
                 child: const Text('Ok')),
@@ -182,9 +181,9 @@ Future logOutAlert(BuildContext context) {
 }
 
 Future<void> deleteToken() async {
-  final HttpService _http = HttpService();
-  final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+  // final HttpService _http = HttpService();
+  // final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+  // final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
   // final deviceToken = await FirebaseMessaging.instance.getToken();
 

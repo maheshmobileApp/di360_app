@@ -65,8 +65,6 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
                   isLatLngRequired:
                       true, // if you required coordinates from place detail
                   getPlaceDetailWithLatLng: (Prediction prediction) {
-                    // this method will return latlng with place detail
-                    print("placeDetails" + prediction.lng.toString());
                   }, // this callback is called when isLatLngRequired is true
                   itemClick: (Prediction prediction) async {
                     final placeId = prediction.placeId;
@@ -180,17 +178,11 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
           jobCreateVM.countryController.text = country ?? "";
           jobCreateVM.stateController.text = state ?? "";
           jobCreateVM.cityPostCodeController.text = postalCode ?? "";
-          print("City: $city");
-          print("State: $state");
-          print("Country: $country");
-          print("Postal Code: $postalCode");
-          print("Latitude: $lat, Longitude: $lng");
         } else {
-          print("Error: ${data["status"]}");
+         
         }
       }
     } catch (e) {
-      print("Dio error: $e");
     }
   }
 

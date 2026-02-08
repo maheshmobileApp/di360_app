@@ -337,9 +337,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
             type: "image", 
             extension: "jpeg"
           );
-          print("Upload failed: No URL returned");
         }
-        print(selectedBannerImgList);
         notifyListeners();
       } catch (e) {
         selectedBannerImgList = ClinicLogo(
@@ -347,14 +345,11 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           type: "image", 
           extension: "jpeg"
         );
-        print("Upload error: $e");
         notifyListeners();
       }
     } else {
       selectedBannerImgList = ClinicLogo(
           url: serverBannerImg ?? "", type: "image", extension: "jpeg");
-      print(
-          "********************************validateLogoAndBanner Calling $serverBannerImg ");
       notifyListeners();
     }
   }
@@ -407,10 +402,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         if (response != null && response['url'] != null) {
           uploaded.add(builder(file, response));
         } else {
-          print("Upload failed for file: ${file.path}");
         }
       } catch (e) {
-        print("Upload error for file ${file.path}: $e");
       }
     }
     return uploaded;
@@ -895,8 +888,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> loadJobData(Jobs? jobData) async {
-    print(
-        "prinT*************************************** ${jobData?.country}");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";

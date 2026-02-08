@@ -1,8 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -46,12 +48,14 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
 
   gridOnTap(String title, BuildContext context,
       DashBoardViewModel dashBoardVM) async {
+    final type = LocalStorage.getStringVal(LocalStorageConst.type);
+    print('****************Type: $type');
     if (title == 'News Feed') {
       dashBoardVM.setIndex(1, navigatorKey.currentContext!);
     } else if (title == 'Job Seek') {
       dashBoardVM.setIndex(2, navigatorKey.currentContext!);
     } else if (title == 'Catalogue') {
-      dashBoardVM.setIndex(3, navigatorKey.currentContext!);
+      dashBoardVM.setIndex(type == "PRACTICE" ? 3 : 4, navigatorKey.currentContext!);
     } else if (title == 'Support') {
       navigationService.navigateTo(RouteList.supportScreen);
     } else if (title == 'Directory') {

@@ -43,15 +43,23 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
               children: [
                 sectionHeader('Certificates'),
                 CustomAddButton(
-                  label: 'Add +',
-                  onPressed: () {
-                    editVM.updateShowCertifiForm(false);
-                    setState(() {
-                      showForm = true;
-                      addDirectorVM.certificateNameController.clear();
-                      fileName = null;
-                    });
-                  },
+                  label: showForm ? 'Cancel' : 'Add +',
+                  onPressed: showForm
+                      ? () {
+                          editVM.updateShowCertifiForm(false);
+                          setState(() {
+                            showForm = false;
+                          });
+                        }
+                      : () {
+                          editVM.updateShowCertifiForm(false);
+                          setState(() {
+                            showForm = true;
+                            addDirectorVM.certificateNameController.clear();
+                            fileName = null;
+                            addDirectorVM.certificateFile = null;
+                          });
+                        },
                 ),
               ],
             ),
@@ -104,6 +112,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputTextField(
             hintText: "Enter Certificate Name",
@@ -128,6 +137,63 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             ),
             hintText: fileName ?? 'JPEG, PNG up to 5 MB',
           ),
+          if (addDirectorVM.certificateFile != null) ...[
+            addVertical(10),
+            Stack(
+              children: [
+                Image.file(addDirectorVM.certificateFile!, height: 70),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        addDirectorVM.certificateFile = null;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.close, color: Colors.white, size: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (fileName != null) ...[
+            addVertical(10),
+            Stack(
+              children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: CachedNetworkImageWidget(
+                        imageUrl: img['url'] ?? '', width: 50, height: 70)),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        fileName = null;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.close, color: Colors.white, size: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
           addVertical(20),
           CustomBottomButton(
             onFirst: () {
@@ -139,8 +205,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             onSecond: () {
               if (addDirectorVM.certificateNameController.text.isEmpty) {
                 scaffoldMessenger('Enter certificate name');
-              } else if (addDirectorVM.certificateFile?.path.isEmpty ??
-                  false || img == null) {
+              } else if (addDirectorVM.certificateFile == null && img == null) {
                 scaffoldMessenger('Enter attachement');
               } else {
                 editVM.showCertifiForm

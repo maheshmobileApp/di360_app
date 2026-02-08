@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/job_listings/view/job_listings_card_widget
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/services/notification_service.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -221,7 +220,6 @@ class _JobListingScreenState extends State<JobListingScreen>
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
-                        print(jobListingVM.myJobListingList.length);
                         return JobListingCard(
                             jobsListingData: jobData,
                             vm: jobListingVM,

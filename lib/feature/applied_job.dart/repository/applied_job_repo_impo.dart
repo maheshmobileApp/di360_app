@@ -20,9 +20,7 @@ class AppliedJobRepositoryImpl {
       final raw = await http.query(appliedJobQuery, variables: variables);
 
       return AppliedJobRespo.fromJson(raw);
-    } catch (e, stack) {
-      print("Error fetching applied jobs: $e");
-      print(stack);
+    } catch (e) {
       return null;
     }
   }

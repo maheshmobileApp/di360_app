@@ -30,6 +30,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         backgroundColor: AppColors.whiteColor,
         endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
+          searchWidget: false,
           filterWidget: Row(
             children: [
               GestureDetector(

@@ -142,8 +142,7 @@ class CommunityViewModel extends ChangeNotifier {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getJoinRequest(id, listingStatus ?? "");
     if (res != null) {
-      communityMembers = res;
-      print("*********************communityMembers: ${communityMembers}");
+      communityMembers = res;;
     }
     notifyListeners();
   }
@@ -154,7 +153,6 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.getPartnershipRequest(id, listingStatus ?? "");
     if (res != null) {
       partnershipMembers = res;
-      print("*********************communityMembers: ${communityMembers}");
     }
     notifyListeners();
   }
@@ -172,7 +170,6 @@ class CommunityViewModel extends ChangeNotifier {
       final variables = {
         "value": communityId,
       };
-      print("📌 variables: $variables");
 
       final res = await repo.getMembershipLink(variables);
 
@@ -184,8 +181,6 @@ class CommunityViewModel extends ChangeNotifier {
         membershipLink = "";
       }
     } catch (e, s) {
-      print("❌ Error while fetching membership link: $e");
-      print(s);
 
       membershipLink = "";
     } finally {
@@ -208,7 +203,6 @@ class CommunityViewModel extends ChangeNotifier {
       final variables = {
         "value": communityId,
       };
-      print("📌 variables: $variables");
 
       final res = await repo.getPartnershipLink(variables);
 
@@ -220,8 +214,6 @@ class CommunityViewModel extends ChangeNotifier {
         partnershipLink = "";
       }
     } catch (e, s) {
-      print("❌ Error while fetching membership link: $e");
-      print(s);
 
       partnershipLink = "";
     } finally {
@@ -244,7 +236,6 @@ class CommunityViewModel extends ChangeNotifier {
         "community_id": communityId
       }
     };
-    print("*********************variables: ${variables}");
     final res = await repo.updateCategory(variables);
     if (res != null) {
       scaffoldMessenger("Category updated Sucessfully");
@@ -280,7 +271,6 @@ class CommunityViewModel extends ChangeNotifier {
 
   //GET DIRECTORY---------------------------------------------------------------
   Future<void> getDirectory() async {
-    print("*********************Directory calling");
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     final variables = {
@@ -291,7 +281,6 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.getDirectory(variables);
     if (res != null) {
       directoryData = res;
-      print(res);
     }
     notifyListeners();
   }
@@ -300,9 +289,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   Future<void> deleteCategory(BuildContext context, String id) async {
     Loaders.circularShowLoader(context);
-    print("*********************Delete Category calling");
     final variables = {"id": id};
-    print("*********************variables: ${variables}");
     final res = await repo.deleteCategory(variables);
     if (res != null) {
       await getNewsFeedCategories(context);
@@ -314,7 +301,6 @@ class CommunityViewModel extends ChangeNotifier {
 
   //UPDATE MEMBERSHIP LINK
   Future<void> updateMembershipLink(BuildContext context, String id) async {
-    print("*********************Update Membership Link calling");
     final variables = {
       "id": id,
       "fields": {"membership_link": membershipLinkController.text}
@@ -368,11 +354,9 @@ class CommunityViewModel extends ChangeNotifier {
     final variables = {
       "communityId": (type == "PROFESSIONAL") ? newsFeedId : communityId
     };
-    print("*********************variables: ${variables}");
     final res = await repo.getNewsFeedCategories(variables);
     if (res != null) {
       newsFeedCategoriesData = res;
-      print("*********************All category fetched successfully");
     }
     //Loaders.circularHideLoader(context);
 
@@ -383,16 +367,13 @@ class CommunityViewModel extends ChangeNotifier {
 
   Future<void> approveJoinRequest(
       String id, String status, BuildContext context) async {
-    print("*********************APPROVE calling");
     Loaders.circularShowLoader(context);
 
     final variables = {
       "id": id,
       "fields": {"status": status}
     };
-    print("*********************variables: ${variables}");
     final res = await repo.approveJoinRequest(variables);
-    print("*********************res: ${res}");
     if (res != null) {
       (status == "APPROVED")
           ? scaffoldMessenger("Member has been Approved Sucessfully")
@@ -400,13 +381,11 @@ class CommunityViewModel extends ChangeNotifier {
     }
     getJoinRequest();
     Loaders.circularHideLoader(context);
-    print("*********************All Reuqests calling");
     notifyListeners();
   }
 
   Future<void> approvePartnershipRequest(
       String id, String status, BuildContext context) async {
-    print("*********************APPROVE calling");
     Loaders.circularShowLoader(context);
 
     final variables = {
@@ -414,9 +393,7 @@ class CommunityViewModel extends ChangeNotifier {
       "fields": {"status": status}
     };
 
-    print("*********************variables: ${variables}");
     final res = await repo.approvePartnershipRequest(variables);
-    print("*********************res: ${res}");
     if (res != null) {
       (status == "APPROVED")
           ? scaffoldMessenger("Member has been Approved Sucessfully")
@@ -424,7 +401,6 @@ class CommunityViewModel extends ChangeNotifier {
     }
     getPartnershipRequest();
     Loaders.circularHideLoader(context);
-    print("*********************All Reuqests calling");
     notifyListeners();
   }
 
@@ -451,7 +427,6 @@ class CommunityViewModel extends ChangeNotifier {
   ContactsData? contactsRes;
   
   Future<void> getContacts(BuildContext context) async {
-    print("*********************getContacts called");
     Loaders.circularShowLoader(context);
 
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -475,7 +450,6 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.getContacts(variables);
     if (res.partnersContactBook != []) {
       contactsRes = res;
-      print("*********************getContacts Successfully");
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -503,13 +477,10 @@ class CommunityViewModel extends ChangeNotifier {
           "created_by_id": id
         }
       };
-      print("*********************variables: $variables");
       final res = await repo.addContact(variables);
-      print("*********************Response: $res");
 
       // Check if response contains successful insertion
       if (res != null && res.containsKey('insert_partners_contact_book_one')) {
-        print("*****Contact added successfully: $res");
         await getContacts(context);
         navigationService.goBack();
         Loaders.circularHideLoader(context);
@@ -531,7 +502,6 @@ class CommunityViewModel extends ChangeNotifier {
       } else {
         scaffoldMessenger("Error adding contact");
       }
-      print("Error in addContact: $e");
     }
     notifyListeners();
   }
@@ -559,14 +529,11 @@ class CommunityViewModel extends ChangeNotifier {
           "created_by_id": id
         }
       };
-      print("*********************variables: $variables");
       final res = await repo.updateContact(variables);
-      print("*********************Response: $res");
 
       // Check if response contains successful insertion
       if (res != null &&
           res.containsKey('update_partners_contact_book_by_pk')) {
-        print("*****Contact updated successfully: $res");
         await getContacts(context);
         navigationService.goBack();
         Loaders.circularHideLoader(context);
@@ -588,13 +555,11 @@ class CommunityViewModel extends ChangeNotifier {
       } else {
         scaffoldMessenger("Error adding contact");
       }
-      print("Error in addContact: $e");
     }
     notifyListeners();
   }
 
   Future<void> deleteContact(BuildContext context, String id) async {
-    print("*********************getContacts called");
     Loaders.circularShowLoader(context);
 
     final variables = {"id": id};

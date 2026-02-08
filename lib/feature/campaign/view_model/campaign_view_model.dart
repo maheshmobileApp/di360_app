@@ -247,7 +247,6 @@ class CampaignViewModel extends ChangeNotifier {
       campaignListData = res;
       notifyListeners();
     } catch (e) {
-      print("Error in getCampaignListing: $e");
     }
   }
 
@@ -267,7 +266,6 @@ class CampaignViewModel extends ChangeNotifier {
         (element) => element.contains(data?.scheduleTimezone ?? ""),
         orElse: () => "",
       );
-      print("******************************${data?.scheduleTimezone}");
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
@@ -277,7 +275,6 @@ class CampaignViewModel extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print("Error in getCampaignListing: $e");
     }
   }
 
@@ -327,12 +324,10 @@ class CampaignViewModel extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print("Error in getCampaignListing: $e");
     }
   }
 
   Future<void> createCampaign(BuildContext context) async {
-    print("*******************create campaign calling");
     Loaders.circularShowLoader(context);
     try {
       String messageChannel = selectedType;
@@ -368,7 +363,6 @@ class CampaignViewModel extends ChangeNotifier {
           "message_channel": messageChannel
         }
       };
-      print(variables);
       final res = await repo.createCampaign(variables);
       if (res != "") {
         await getCampaignListing();
@@ -380,7 +374,6 @@ class CampaignViewModel extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print("Error in createCampaign: $e");
     }
   }
 
@@ -435,7 +428,6 @@ class CampaignViewModel extends ChangeNotifier {
               [];
       notifyListeners();
     } catch (e) {
-      print("Error in getContacts: $e");
     }
   }
 
@@ -453,7 +445,6 @@ class CampaignViewModel extends ChangeNotifier {
 
   Future<void> getStatesByGroups() async {
     try {
-      print("***********************getStatesByGroups");
       List<String> sourceList = [];
       List<String> contactTypeList = [];
 
@@ -483,7 +474,6 @@ class CampaignViewModel extends ChangeNotifier {
       }
 
       final variables = {"where": whereClause};
-      print("***********************variables $variables");
 
       final res = await repo.getStatesByGroups(variables);
       if (res != null) {
@@ -496,7 +486,6 @@ class CampaignViewModel extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print("Error in getStatesByGroups: $e");
     }
   }
 

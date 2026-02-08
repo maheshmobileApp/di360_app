@@ -185,7 +185,6 @@ class _JobProfileViewState extends State<JobProfileView> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
-                print("Save Draft Clicked");
                 (jobProfileListVM.editProfileEnable)
                     ? await jobProfileVM.updateJobProfile(
                         context, true, jobProfileListVM.jobProfileId ?? "")
@@ -217,7 +216,6 @@ class _JobProfileViewState extends State<JobProfileView> {
                 final isValid = currentFormKey.currentState!.validate();
                 if (isValid) {
                   if (isLastStep) {
-                    print("Submit Clicked");
                     (jobProfileListVM.editProfileEnable)
                         ? await jobProfileVM.updateJobProfile(
                             context, false, jobProfileListVM.jobProfileId ?? "")

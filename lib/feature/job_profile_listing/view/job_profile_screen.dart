@@ -49,7 +49,6 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
             //await vm.fetchJobProfiles();
           } else {
             final profileData = vm.allJobProfiles.first;
-            print("Edit preload data: $profileData");
             vm.setEditProfileEnable(true);
             await navigationService
                 .navigateToWithParams(RouteList.JobProfileView, params: {
@@ -79,7 +78,6 @@ class _JobProfileListingScreenState extends State<JobProfileScreen>
                         itemCount: vm.allJobProfiles.length,
                         itemBuilder: (context, index) {
                           final jobData = vm.allJobProfiles[index];
-                          print("*****************************************Job data: $jobData");
                           return JobProfileCard(
                             jobsListingData: jobData,
                             vm: vm,

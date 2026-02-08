@@ -21,6 +21,7 @@ import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
@@ -57,9 +58,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             _buildHeader(
                 newsfeeds?.dentalSupplier != null
                     ? newsfeeds?.dentalSupplier?.logo?.url ??
-                        newsfeeds
-                            ?.dentalSupplier?.directories?.first.logo?.url ??
-                        ''
+                        (newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+                            ? newsfeeds?.dentalSupplier?.directories?.first.logo?.url ?? ''
+                            : '')
                     : newsfeeds?.dentalPractice != null
                         ? newsfeeds?.dentalPractice?.logo?.url ?? ''
                         : newsfeeds?.dentalProfessional != null
@@ -68,9 +69,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 ''
                             : '',
                 newsfeeds?.dentalSupplier != null
-                    ? newsfeeds
-                            ?.dentalSupplier?.directories?.first.companyName ??
-                        ''
+                    ? (newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+                            ? newsfeeds?.dentalSupplier?.directories?.first.companyName ?? ''
+                            : '')
                     : newsfeeds?.dentalPractice != null
                         ? newsfeeds?.dentalPractice?.name ?? ''
                         : newsfeeds?.dentalProfessional != null
@@ -92,12 +93,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  HtmlWidget(
                     (newsfeeds?.description == null ||
                             newsfeeds?.description == '')
                         ? newsfeeds?.title ?? ''
                         : newsfeeds?.description ?? '',
-                    style: TextStyles.regular2(color: AppColors.black),
+                    textStyle: TextStyles.regular2(color: AppColors.black),
                   ),
                   addVertical(10),
                   if (newsfeeds?.webUrl != null &&

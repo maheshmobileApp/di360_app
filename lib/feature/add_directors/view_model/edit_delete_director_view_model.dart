@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/add_directors/model/get_appts_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_partners_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
@@ -431,6 +432,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       addDirectorVM.getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated testimonial successfully');
+      navigationService.goBack();
       updateIsEditTestimonials(false);
       addDirectorVM.testiNameCntr.clear();
       addDirectorVM.roleCntr.clear();
@@ -448,9 +450,9 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteTestimonial({"id": id});
     if (res != null) {
-      addDirectorVM.getDirectories();
-      Loaders.circularHideLoader(context);
+      await addDirectorVM.getDirectories();
       scaffoldMessenger('Delete testimonial successfully');
+      Loaders.circularHideLoader(context);
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -492,7 +494,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     if (res != null) {
       addDirectorVM.getDirectories();
       Loaders.circularHideLoader(context);
-      scaffoldMessenger('Delete timings successfully');
+      scaffoldMessenger('Social Account deleted successfully');
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -504,7 +506,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.updateSocailUrl({
       "locationObj": {
-        "media_name": addDirectorVM.selectedAccount,
+        "media_name": addDirectorVM.selectedAccount?.toLowerCase(),
         "media_link": addDirectorVM.socialAccountsurlCntr.text,
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
         "status": "SOCIAL"
@@ -518,6 +520,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       updateIsEditTimings(false);
       addDirectorVM.socialAccountsurlCntr.clear();
       addDirectorVM.selectedAccount = null;
+      NavigationService().goBack();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -616,7 +619,6 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     for (var element in selectedFiles) {
       var value =
           await addDirectorRepositoryImpl.http.uploadImage(element.path);
-      print("resp from upload $value");
       if (value != null) {
         uploadedFiles.add(value);
       }
@@ -659,7 +661,6 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     for (var element in selectedFiles) {
       var value =
           await addDirectorRepositoryImpl.http.uploadImage(element.path);
-      print("resp from upload $value");
       if (value != null) {
         uploadedFiles.add(value);
       }

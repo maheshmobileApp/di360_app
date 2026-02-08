@@ -711,13 +711,10 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     Map<String, dynamic> responses = {};
     for (int i = 0; i < entries.length; i++) {
       responses[entries[i].key] = responsesList[i];
-      print(
-          "Uploaded ${entries[i].key}: ${entries[i].value} → ${responsesList[i]}");
     }
     for (var entry in filePaths.entries) {
       if (entry.value == null) {
         responses[entry.key] = null;
-        print("No file for ${entry.key}");
       }
     }
     return responses;
@@ -753,7 +750,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     if (serverProfileFile == null) {
       if (profileFile?.path != null) {
         var value = await _http.uploadImage(profileFile?.path);
-        print("***********Profile Image Upload Response: $value");
         profileImg = FileUpload(
           url: value['url'],
           name: value['name'],
@@ -768,7 +764,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         notifyListeners();
       }
     }
-    print("***********************Profile Image URL: $profile_img");
   }
 
   Future<void> createJobProfile(BuildContext context, bool isDraft) async {
@@ -904,7 +899,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         ToastMessage.show('Job Profile Created Successfully!');
       }
     } catch (e) {
-      debugPrint("Error in jobProfileListing: $e");
       ToastMessage.show('Job Profile Creation error $e ');
       NavigationService().goBack();
     } finally {
@@ -1056,7 +1050,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         ToastMessage.show('Job Profile Updated Successfully!');
       }
     } catch (e) {
-      debugPrint("Error in jobProfileListing: $e");
       ToastMessage.show('Job Profile Creation error $e ');
       //navigationService.goBack();
     } finally {
@@ -1111,7 +1104,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     
 
     availabilityDates = profile?.availabilityDate
-            ?.map((dateStr) => DateTime.parse(dateStr))
+            .map((dateStr) => DateTime.parse(dateStr))
             .toList() ??
         [];
     availabilityDateController.text = availabilityDates

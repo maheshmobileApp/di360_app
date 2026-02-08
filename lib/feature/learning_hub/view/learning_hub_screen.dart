@@ -160,7 +160,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
               itemBuilder: (context, index) {
                 final jobData = courseListingVM.coursesListingList[index];
                 final course = jobData;
-                print(courseListingVM.coursesListingList.length);
                 return CouresListingCard(
                   id: course.id ?? "",
                   meetingLink: course.meetingLink ?? "",
@@ -209,7 +208,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   onMenuAction: (action, id) async {
                     switch (action) {
                       case "Preview":
-                        print("************Preview Course ID: $id");
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
 

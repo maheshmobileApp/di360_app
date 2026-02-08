@@ -256,7 +256,6 @@ class _MyJobProfileScreenState extends State<MyJobProfileScreen>
           );
         } else if (value == "Edit") {
           final profileData = vm.allJobProfiles.first;
-          print("Edit preload data: $profileData");
           vm.setEditProfileEnable(true);
           navigationService
               .navigateToWithParams(RouteList.JobProfileView, params: {
