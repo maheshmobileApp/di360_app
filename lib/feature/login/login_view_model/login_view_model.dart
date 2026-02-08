@@ -75,13 +75,16 @@ class LoginViewModel extends ChangeNotifier {
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
+          print(
+              "********** Login type: ${result.loginApi?.type} **********");
+
           (result.loginApi?.type == "SUPPLIER")
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
               : () {};
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.businessName, result.loginApi?.businessName ?? '');
+          await LocalStorage.setStringVal(LocalStorageConst.businessName,
+              result.loginApi?.businessName ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.userId, result.loginApi?.id ?? '');
           await LocalStorage.setStringVal(
@@ -124,16 +127,18 @@ class LoginViewModel extends ChangeNotifier {
     try {
       // Check if widget is still mounted
       if (!hasListeners) {
-        print("********** LoginViewModel disposed, skipping token update **********");
+        print(
+            "********** LoginViewModel disposed, skipping token update **********");
         return;
       }
-      
+
       // Check if Firebase is initialized
       if (Firebase.apps.isEmpty) {
-        print("********** Firebase not initialized, skipping token update **********");
+        print(
+            "********** Firebase not initialized, skipping token update **********");
         return;
       }
-      
+
       await Future.delayed(Duration(seconds: 2));
 
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -203,6 +208,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> getSupplierCommunityOwner(String id) async {
+    print("***************Fetching supplier community owner");
     final res = await repo.getSupplierCommunityOwner(id);
     supplerCommunityOwner = res;
     print("***************$supplerCommunityOwner");
@@ -214,6 +220,8 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.communityId, supplier?.communityId ?? '');
+      print(
+          "***************Community Name: ${supplier?.businessName}, Community ID: ${supplier?.communityId}");
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
@@ -222,6 +230,12 @@ class LoginViewModel extends ChangeNotifier {
     } else {
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'false');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityId, supplier?.communityId ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityName, supplier?.businessName ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.businessName, supplier?.businessName ?? "");
     }
     notifyListeners();
   }
