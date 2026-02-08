@@ -21,6 +21,16 @@ class CampaignViewModel extends ChangeNotifier {
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  bool hasUnsavedChanges() {
+    return campaignNameController.text.isNotEmpty ||
+        scheduleTimeController.text.isNotEmpty ||
+        scheduleDateController.text.isNotEmpty ||
+        messageController.text.isNotEmpty ||
+        _selectedGroupChips.isNotEmpty ||
+        _selectedStateChips.isNotEmpty ||
+        selectedType.isNotEmpty;
+  }
+
   bool searchBarOpen = false;
 
   void toggleSearchBar() {
@@ -320,6 +330,13 @@ class CampaignViewModel extends ChangeNotifier {
   Future<void> createCampaign(BuildContext context) async {
     Loaders.circularShowLoader(context);
     try {
+      String messageChannel = selectedType;
+      if (selectedType == "Email") {
+        messageChannel = "EMAIL";
+      } else if (selectedType == "Email with PDF") {
+        messageChannel = "EMAIL_WITH_PDF";
+      }
+
       final variables = {
         "fields": {
           "from_email": null,
@@ -343,7 +360,7 @@ class CampaignViewModel extends ChangeNotifier {
           "status": "PENDING",
           "email_subject": null,
           "email_attachments": [],
-          "message_channel": selectedType
+          "message_channel": messageChannel
         }
       };
       final res = await repo.createCampaign(variables);
@@ -483,6 +500,7 @@ class CampaignViewModel extends ChangeNotifier {
     _selectedGroupChips = [];
     _selectedSendChips = [];
     recipientsCount = "0";
+    selectStateCondition = "No";
     notifyListeners();
   }
 }

@@ -104,7 +104,7 @@ class JobProfilePersInfo extends StatelessWidget
                       ImagePickerField(
                         title: "Profile Image",
                         //isRequired: true,
-                        serverImage: jobProfileVM.serverProfileFile,
+                        serverImage: jobProfileVM.serverProfileFile?.url,
                         serverImageType: "image",
                         onServerFileRemoved: (value) {
                           jobProfileVM.setProfileImg(null);

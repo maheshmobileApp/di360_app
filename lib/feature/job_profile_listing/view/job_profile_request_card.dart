@@ -4,6 +4,8 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view/job_profile_enquiries_view.dart';
+import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -11,6 +13,7 @@ import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
   final Jobhirings? jobsListingData;
@@ -26,9 +29,13 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
+        final vm = Provider.of<JobProfileListingViewModel>(context);
+
     final String time = _getShortTime(jobsListingData?.createdAt ?? '');
     final String? profileImageUrl =
-        jobsListingData?.dentalSupplier?.logo != null && jobsListingData?.dentalSupplier?.logo?.url != null && jobsListingData?.dentalSupplier?.logo?.url != ""
+        jobsListingData?.dentalSupplier?.logo != null &&
+                jobsListingData?.dentalSupplier?.logo?.url != null &&
+                jobsListingData?.dentalSupplier?.logo?.url != ""
             ? jobsListingData?.dentalSupplier?.logo?.url
             : '';
     return Padding(
@@ -81,8 +88,8 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 InkWell(
                   onTap: () async {
-                    /*final profileId = jobsListingData?.id;
-                    final jobId = jobsListingData.jobDesignation;
+                    final profileId = jobsListingData?.jobProfilesId;
+                    final jobId = jobsListingData?.dentalProfessionalId;
                     if (profileId == null || jobId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -93,19 +100,32 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
                     }
                     final userId = await LocalStorage.getStringVal(
                         LocalStorageConst.userId);
-                    navigationService.navigateToWithParams(
+                   /* navigationService.navigateToWithParams(
                       RouteList.JobListingApplicantsMessege,
                       params: {
                         "jobId": jobId,
-                        "applicantId": profileId,
+                        "applicantId": jobId,
                         "userId": userId,
+                        "type": "profile"
                       },
                     );*/
                   },
                   child: _roundedButton("Message"),
                 ),
                 addHorizontal(10),
-                _roundedButton("Enquiry"),
+                GestureDetector(onTap: () {
+                  showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        builder: (context) => JobProfileEnquiriesView(
+                          applicant: vm.jobPrilfeEnquiryData,   
+                          profileImageUrl: profileImageUrl,// safe now
+                        ),
+                      );
+                }, child: _roundedButton("Enquiry")),
               ],
             ),
           ],
@@ -189,28 +209,23 @@ class JobProfileRequestCard extends StatelessWidget with BaseContextHelpers {
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       onSelected: (value) {
-        if (value == "Accept") {
+        if (value == "Interested") {
           // TODO
-        } else if (value == "Reject") {
+        } else if (value == "Not Interested") {
           // TODO
-        } else if (value == "Preview") {
-          // TODO
-        }
+        } 
       },
       itemBuilder: (context) {
         final items = <PopupMenuEntry<String>>[
           PopupMenuItem(
-            value: "Preview",
-            child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
+            value: "Interested",
+            child: _buildRow( Icons.check, AppColors.black, "Interested"),
           ),
           PopupMenuItem(
-            value: "Accept",
-            child: _buildRow(Icons.check, AppColors.blueColor, "Accept"),
+            value: "Not Interested",
+            child: _buildRow(Icons.close, AppColors.redColor, "Not Interested"),
           ),
-          PopupMenuItem(
-            value: "Reject",
-            child: _buildRow(Icons.cancel, AppColors.redColor, "Reject"),
-          ),
+          
         ];
         return items;
       },

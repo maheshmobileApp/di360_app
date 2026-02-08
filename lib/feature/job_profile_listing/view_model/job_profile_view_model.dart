@@ -139,15 +139,28 @@ class JobProfileListingViewModel extends ChangeNotifier {
     return res;
   }
 
+  Future updateTalentRequestStatus(
+      BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final variables = {};
+    final res = await repo.updateTalentListing(variables);
+    if (res != null) {
+      scaffoldMessenger("Talent request status updated successfully");
+      Loaders.circularHideLoader(context);
+    } else {
+      Loaders.circularHideLoader(context);
+    }
+    notifyListeners();
+    return res;
+  }
+
   HiringTalentList? hiringTalentList;
 
   Future<HiringTalentList> getAllTalentsRequest(
       BuildContext context, String professionalId) async {
     final variables = {
       "where": {
-        "dental_professional_id": {
-          "_eq": professionalId
-        },
+        "dental_professional_id": {"_eq": professionalId},
         "hiring_status": {"_eq": "PENDING"}
       },
       "limit": 3,
