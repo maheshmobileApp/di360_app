@@ -556,7 +556,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           const SizedBox(height: 20),
           Row(
             children: vm.getBasicInfoData.first.directoryLocations!
-                .where((e) => ['facebook', 'instagram', 'linkedIn', 'twitter'].contains(e.mediaName?.toLowerCase()))
+                .where((e) => ['facebook', 'instagram', 'linkedin', 'twitter'].contains(e.mediaName?.toLowerCase()))
                 .map((social) {
               String icon;
               switch (social.mediaName?.toLowerCase()) {

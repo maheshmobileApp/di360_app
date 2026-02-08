@@ -28,26 +28,23 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
               hintText: 'Add Education',
               controller: professDirectorVM.educationCntr,
               onSubmitted: (val) {
-                professDirectorVM.addEducation(val ?? '', context);
+                professDirectorVM.addEducation(val ?? '');
               }),
-          if (addDirectorVM.getBasicInfoData.first.education?.isNotEmpty ??
-              false) ...[
+          if (professDirectorVM.getEducation.isNotEmpty) ...[
             addVertical(10),
             Consumer<AddDirectoryViewModel>(
                 builder: (context, addDirectorV, child) {
               return Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: List.generate(
-                    addDirectorV.getBasicInfoData.first.education?.length ?? 0,
+                children: List.generate(professDirectorVM.getEducation.length,
                     (index) {
-                  final educaion =
-                      addDirectorV.getBasicInfoData.first.education?[index];
+                  final educaion = professDirectorVM.getEducation[index];
                   return Chip(
-                    label: Text(educaion?.name ?? ''),
+                    label: Text(educaion.name ?? ''),
                     deleteIcon: Icon(Icons.close),
                     onDeleted: () {
-                      professDirectorVM.removeEducation(index, context);
+                      professDirectorVM.removeEducation(index);
                     },
                   );
                 }),
@@ -61,28 +58,24 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
               hintText: 'Add work experience',
               controller: professDirectorVM.workAtCntr,
               onSubmitted: (val) {
-                professDirectorVM.addWorkAt(val ?? '', context);
+                professDirectorVM.addWorkAt(val ?? '');
               }),
-          if (addDirectorVM.getBasicInfoData.first.workingAt?.isNotEmpty ??
-              false) ...[
+          if (professDirectorVM.getWorkingAt.isNotEmpty) ...[
             addVertical(10),
             Consumer<AddDirectoryViewModel>(
                 builder: (context, addDirectorV, child) {
               return Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: List.generate(
-                    addDirectorV.getBasicInfoData.first.workingAt?.length ?? 0,
+                children: List.generate(professDirectorVM.getWorkingAt.length,
                     (index) {
-                  final work =
-                      addDirectorV.getBasicInfoData.first.workingAt?[index];
+                  final work = professDirectorVM.getWorkingAt[index];
                   return Chip(
-                    label: Text(work?.name ?? ''),
-                    deleteIcon: Icon(Icons.close),
-                    onDeleted: () {
-                      professDirectorVM.removeWorkAt(index, context);
-                    },
-                  );
+                      label: Text(work.name ?? ''),
+                      deleteIcon: Icon(Icons.close),
+                      onDeleted: () {
+                        professDirectorVM.removeWorkAt(index);
+                      });
                 }),
               );
             }),

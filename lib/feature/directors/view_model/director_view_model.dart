@@ -77,6 +77,7 @@ class DirectoryViewModel extends ChangeNotifier {
     'Basic Info': GlobalKey(),
     'Services': GlobalKey(),
     'Team': GlobalKey(),
+    'Partner': GlobalKey(),
     'Gallery': GlobalKey(),
     'Document': GlobalKey(),
     'Achievements': GlobalKey(),
@@ -367,6 +368,8 @@ class DirectoryViewModel extends ChangeNotifier {
           QuickLinkItem(label: 'Services', icon: Icons.medical_services),
         if (directorDetails?.directoryTeamMembers?.length != 0)
           QuickLinkItem(label: 'Team', icon: Icons.people),
+        if (directorDetails?.directoryPartners?.length != 0)
+          QuickLinkItem(label: 'Partner', icon: Icons.paragliding),
         if (directorDetails?.directoryGalleryPosts?.length != 0 &&
             directorDetails?.directoryGalleryPosts?.first.image?.length != 0)
           QuickLinkItem(label: 'Gallery', icon: Icons.photo_library),

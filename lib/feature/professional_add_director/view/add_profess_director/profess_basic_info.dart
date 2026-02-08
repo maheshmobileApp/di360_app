@@ -75,8 +75,11 @@ class ProfessBasicInfo extends StatelessWidget
             children: [
               Row(
                 children: [
-                  Text('Address', style: TextStyles.regular3(color: AppColors.black)),
-                  Text(' *', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  Text('Address',
+                      style: TextStyles.regular3(color: AppColors.black)),
+                  Text(' *',
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold)),
                 ],
               ),
               SizedBox(height: 10),
@@ -94,11 +97,16 @@ class ProfessBasicInfo extends StatelessWidget
                 debounceTime: 800,
                 isLatLngRequired: true,
                 getPlaceDetailWithLatLng: (Prediction prediction) {
-                  professDirectorVM.latitude = prediction.lat != null ? double.parse(prediction.lat!) : null;
-                  professDirectorVM.longitude = prediction.lng != null ? double.parse(prediction.lng!) : null;
+                  professDirectorVM.latitude = prediction.lat != null
+                      ? double.parse(prediction.lat!)
+                      : null;
+                  professDirectorVM.longitude = prediction.lng != null
+                      ? double.parse(prediction.lng!)
+                      : null;
                 },
                 itemClick: (Prediction prediction) {
-                  professDirectorVM.addressController.text = prediction.description ?? '';
+                  professDirectorVM.addressController.text =
+                      prediction.description ?? '';
                 },
                 itemBuilder: (context, index, Prediction prediction) {
                   return Container(
@@ -153,26 +161,23 @@ class ProfessBasicInfo extends StatelessWidget
               hintText: 'Add hobby',
               controller: professDirectorVM.hobbiesCntr,
               onSubmitted: (val) {
-                professDirectorVM.addHobby(val ?? '', context);
+                professDirectorVM.addHobby(val ?? '');
               }),
-          if (addDirectorVM.getBasicInfoData.first.hobbies?.isNotEmpty ??
-              false) ...[
+          if (professDirectorVM.getHobbies.isNotEmpty) ...[
             addVertical(10),
             Consumer<AddDirectoryViewModel>(
                 builder: (context, addDirectorV, child) {
               return Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: List.generate(
-                    addDirectorV.getBasicInfoData.first.hobbies?.length ?? 0,
-                    (index) {
-                  final hobby =
-                      addDirectorV.getBasicInfoData.first.hobbies?[index];
+                children:
+                    List.generate(professDirectorVM.getHobbies.length, (index) {
+                  final hobby = professDirectorVM.getHobbies[index];
                   return Chip(
-                    label: Text(hobby?.name ?? ''),
+                    label: Text(hobby.name ?? ''),
                     deleteIcon: Icon(Icons.close),
                     onDeleted: () {
-                      professDirectorVM.removeHobby(index, context);
+                      professDirectorVM.removeHobby(index);
                     },
                   );
                 }),
@@ -186,26 +191,23 @@ class ProfessBasicInfo extends StatelessWidget
               hintText: 'Add universities',
               controller: professDirectorVM.universitiesCntr,
               onSubmitted: (val) {
-                professDirectorVM.addUniversities(val ?? '', context);
+                professDirectorVM.addUniversities(val ?? '');
               }),
-          if (addDirectorVM.getBasicInfoData.first.universitySchool?.isNotEmpty ??
-              false) ...[
+          if (professDirectorVM.getUniversitys.isNotEmpty) ...[
             addVertical(10),
             Consumer<AddDirectoryViewModel>(
                 builder: (context, addDirectorV, child) {
               return Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: List.generate(
-                    addDirectorV.getBasicInfoData.first.universitySchool?.length ?? 0,
+                children: List.generate(professDirectorVM.getUniversitys.length,
                     (index) {
-                  final university =
-                      addDirectorV.getBasicInfoData.first.universitySchool?[index];
+                  final university = professDirectorVM.getUniversitys[index];
                   return Chip(
-                    label: Text(university?.name ?? ''),
+                    label: Text(university.name ?? ''),
                     deleteIcon: Icon(Icons.close),
                     onDeleted: () {
-                      professDirectorVM.removeUniversities(index, context);
+                      professDirectorVM.removeUniversities(index);
                     },
                   );
                 }),

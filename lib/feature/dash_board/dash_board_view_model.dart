@@ -171,7 +171,7 @@ Future logOutAlert(BuildContext context) {
             TextButton(
                 onPressed: () async {
                   await deleteToken();
-                  
+                  await LocalStorage.clearAllData();
                   navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 },
                 child: const Text('Ok')),

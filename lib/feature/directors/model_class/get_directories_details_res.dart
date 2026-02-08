@@ -55,6 +55,7 @@ class DirectoriesByPk {
   List<DirectoryCertification>? directoryCertifications;
   List<DirectoryAppointmentSlots>? directoryAppointmentSlots;
   List<DirectoryTeamMembers>? directoryTeamMembers;
+  List<DirectoryPartners>? directoryPartners;
   List<DirectoryGalleryPosts>? directoryGalleryPosts;
   List<DirectoryTestimonials>? directoryTestimonials;
   List<DirectoryFaqs>? directoryFaqs;
@@ -93,6 +94,7 @@ class DirectoriesByPk {
       this.directoryCertifications,
       this.directoryAppointmentSlots,
       this.directoryTeamMembers,
+      this.directoryPartners,
       this.directoryGalleryPosts,
       this.directoryTestimonials,
       this.directoryFaqs,
@@ -169,6 +171,12 @@ class DirectoriesByPk {
       directoryTeamMembers = <DirectoryTeamMembers>[];
       json['directory_team_members'].forEach((v) {
         directoryTeamMembers!.add(new DirectoryTeamMembers.fromJson(v));
+      });
+    }
+    if (json['directory_partners'] != null) {
+      directoryPartners = <DirectoryPartners>[];
+      json['directory_partners'].forEach((v) {
+        directoryPartners!.add(new DirectoryPartners.fromJson(v));
       });
     }
     if (json['directory_gallery_posts'] != null) {
@@ -1029,6 +1037,146 @@ class DirectoryFaqs {
     data['question'] = this.question;
     data['answer'] = this.answer;
     data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class DirectoryPartners {
+  String? name;
+  String? description;
+  PartnerImage? image;
+  List<PartnerAttachement>? attachments;
+  bool? showCommunityUser;
+
+  DirectoryPartners(
+      {this.name,
+      this.description,
+      this.image,
+      this.attachments,
+      this.showCommunityUser});
+
+  DirectoryPartners.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    description = json['description'];
+    image = json['image'] != null ? new PartnerImage.fromJson(json['image']) : null;
+    if (json['attachments'] != null) {
+      attachments = <PartnerAttachement>[];
+      json['attachments'].forEach((v) {
+        attachments!.add(new PartnerAttachement.fromJson(v));
+      });
+    }
+    showCommunityUser = json['show_community_user'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['description'] = this.description;
+    if (this.image != null) {
+      data['image'] = this.image!.toJson();
+    }
+    if (this.attachments != null) {
+      data['attachments'] = this.attachments!.map((v) => v.toJson()).toList();
+    }
+    data['show_community_user'] = this.showCommunityUser;
+    return data;
+  }
+}
+
+class PartnerImage {
+  String? url;
+  String? name;
+  int? size;
+  String? status;
+  String? fileId;
+  bool? isPublic;
+  String? directory;
+  String? extension;
+  String? mimeType;
+
+  PartnerImage(
+      {this.url,
+      this.name,
+      this.size,
+      this.status,
+      this.fileId,
+      this.isPublic,
+      this.directory,
+      this.extension,
+      this.mimeType});
+
+  PartnerImage.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    status = json['status'];
+    fileId = json['file_id'];
+    isPublic = json['isPublic'];
+    directory = json['directory'];
+    extension = json['extension'];
+    mimeType = json['mime_type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['status'] = this.status;
+    data['file_id'] = this.fileId;
+    data['isPublic'] = this.isPublic;
+    data['directory'] = this.directory;
+    data['extension'] = this.extension;
+    data['mime_type'] = this.mimeType;
+    return data;
+  }
+}
+
+class PartnerAttachement {
+  String? url;
+  String? name;
+  int? size;
+  String? status;
+  String? fileId;
+  bool? isPublic;
+  String? directory;
+  String? extension;
+  String? mimeType;
+
+  PartnerAttachement(
+      {this.url,
+      this.name,
+      this.size,
+      this.status,
+      this.fileId,
+      this.isPublic,
+      this.directory,
+      this.extension,
+      this.mimeType});
+
+  PartnerAttachement.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    name = json['name'];
+    size = json['size'];
+    status = json['status'];
+    fileId = json['file_id'];
+    isPublic = json['isPublic'];
+    directory = json['directory'];
+    extension = json['extension'];
+    mimeType = json['mime_type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['url'] = this.url;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['status'] = this.status;
+    data['file_id'] = this.fileId;
+    data['isPublic'] = this.isPublic;
+    data['directory'] = this.directory;
+    data['extension'] = this.extension;
+    data['mime_type'] = this.mimeType;
     return data;
   }
 }

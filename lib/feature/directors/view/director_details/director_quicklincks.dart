@@ -11,7 +11,7 @@ class DirectorQuickLinks extends StatefulWidget {
 }
 
 class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
-  int _selectedIndex = -1; 
+  int _selectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +36,9 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: const [
                   BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 4))
                 ],
               ),
               child: Column(
@@ -48,18 +47,18 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
                   const Text(
                     'QUICK LINKS',
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                      color: Colors.black54,
-                    ),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        color: Colors.black54),
                   ),
                   const SizedBox(height: 16),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: items.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
@@ -68,14 +67,14 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final isSelected = _selectedIndex == index;
-            
+
                       return GestureDetector(
                         onTap: () {
                           setState(() {
                             _selectedIndex = index;
                           });
                           directionalVM.scrollToSectionByLabel(item.label);
-                          Navigator.pop(context); 
+                          Navigator.pop(context);
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -85,22 +84,20 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
                                   ? Colors.orange
                                   : Colors.grey.shade200,
                               radius: 24,
-                              child: Icon(
-                                item.icon,
-                                color: isSelected ? Colors.white : Colors.grey,
-                                size: 20,
-                              ),
+                              child: Icon(item.icon,
+                                  color:
+                                      isSelected ? Colors.white : Colors.grey,
+                                  size: 20),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              item.label,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: isSelected ? Colors.black : Colors.grey,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            Text(item.label,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.grey),
+                                textAlign: TextAlign.center),
                           ],
                         ),
                       );
