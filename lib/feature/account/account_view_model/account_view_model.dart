@@ -15,7 +15,6 @@ class ProfileViewModel extends ChangeNotifier {
   bool communityStatus = false;
 
   void updateCommunityStatus(bool status) {
-    print("updatedStatus**********************$status");
     communityStatus = status;
     notifyListeners();
   }
@@ -72,9 +71,6 @@ class ProfileViewModel extends ChangeNotifier {
   void _updateSupplierOptions(bool communityStatus) async {
     final communityName =
         await LocalStorage.getStringVal(LocalStorageConst.communityName);
-    print(
-        "*********************************************************************************************");
-    print("communityStatus : $communityStatus");
     (communityStatus)
         ? _visibleSections = _visibleSections.map((section) {
             if (section.title == "Community") {

@@ -89,7 +89,6 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     try {
       for (var element in selectedFiles) {
         var value = await _http.uploadImage(element.path);
-        print("resp from upload $value");
         if (value != null) {
           uploadedFiles.add(value);
         }
@@ -135,7 +134,6 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     try {
       for (var element in selectedFiles) {
         var value = await _http.uploadImage(element.path);
-        print("resp from upload $value");
         if (value != null) {
           uploadedFiles.add(value);
         }

@@ -142,7 +142,6 @@ class BannersViewModel extends ChangeNotifier {
 
   Future<void> getBannerCategoryData() async {
     catagorysList = await repo.bannerCategotyList();
-    print("redp${catagorysList}");
     notifyListeners();
   }
 
@@ -218,8 +217,6 @@ class BannersViewModel extends ChangeNotifier {
       bannner_image = value['url'];
       banner_name = value['name'];
     }
-    print(bannner_image);
-    print(banner_name);
     notifyListeners();
   }
 
@@ -252,7 +249,6 @@ class BannersViewModel extends ChangeNotifier {
             '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}'
       }
     });
-    print("resppppp${res}");
     if (res != null) {
       Loaders.circularHideLoader(context);
       navigationService.goBack();

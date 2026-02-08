@@ -35,6 +35,10 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           if (directionalVM.directorDetails?.directoryTeamMembers?.length != 0)
             _sectionTitle('OUR TEAMS', _teamcard(directionalVM),
                 key: directionalVM.sectionKeys['Team']),
+          addVertical(16),
+          if (directionalVM.directorDetails?.directoryPartners?.length != 0)
+            _sectionTitle('Partners', _partnercard(directionalVM),
+                key: directionalVM.sectionKeys['Partner']),
           if (directionalVM.directorDetails?.directoryGalleryPosts?.length !=
                   0 &&
               directionalVM.directorDetails?.directoryGalleryPosts?.first.image
@@ -227,6 +231,62 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                     color: Colors.grey,
                   ),
                 ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _partnercard(DirectoryViewModel vm) {
+    return CustomGrid(
+      children: List.generate(
+          vm.directorDetails?.directoryPartners?.length ?? 0, (index) {
+        final partnerData = vm.directorDetails?.directoryPartners?[index];
+        return Card(
+          shape: RoundedRectangleBorder(
+              side: BorderSide(color: AppColors.HINT_COLOR),
+              borderRadius: BorderRadius.circular(16)),
+          elevation: 1,
+          color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                    height: 110,
+                    child: CachedNetworkImageWidget(
+                        imageUrl: partnerData?.image?.url ?? '',
+                        fit: BoxFit.fill)),
+                const SizedBox(height: 5),
+                Text(
+                  partnerData?.name ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.black
+                  ),
+                ),
+                // const SizedBox(height: 4),
+                // Text(
+                //   teamData?.specialization ?? '',
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     color: Colors.grey,
+                //   ),
+                // ),
+                // Divider(),
+                // Text(
+                //   teamData?.location ?? '',
+                //   textAlign: TextAlign.center,
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     color: Colors.grey,
+                //   ),
+                // ),
               ],
             ),
           ),

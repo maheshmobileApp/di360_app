@@ -29,7 +29,6 @@ class RegisterNowWidget extends StatelessWidget {
       try {
         earlyBirdEnd = DateFormat("dd/MM/yyyy").parse(earlyBirdEndDate!);
       } catch (e) {
-        print("Date parse error: $e");
       }
     }
 

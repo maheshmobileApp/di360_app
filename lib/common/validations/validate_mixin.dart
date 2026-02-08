@@ -124,7 +124,7 @@ mixin ValidationMixins {
   }
 
   String? validateOptionalUrl(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
+    if (value == null || value.trim().isEmpty) return 'Please enter URL';
     final trimmed = value.trim();
     final uri = Uri.tryParse(trimmed);
     if (uri == null ||

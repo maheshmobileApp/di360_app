@@ -33,7 +33,6 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
     var resume = '';
     final attachment = applicant?.attachments ?? [];
     if (attachment.length > 0) {
-      print("attachment resume url ${attachment.first.url}");
       resume = attachment.first.url ?? '';
     }
 

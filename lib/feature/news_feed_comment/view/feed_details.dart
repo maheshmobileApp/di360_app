@@ -16,6 +16,7 @@ import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class FeedDetails extends StatelessWidget with BaseContextHelpers {
@@ -43,11 +44,11 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HtmlWidget(
                 (newsfeeds?.description == null || newsfeeds?.description == '')
                     ? newsfeeds?.title ?? ''
                     : newsfeeds?.description ?? '',
-                style: TextStyles.regular2(color: AppColors.black),
+                textStyle: TextStyles.regular2(color: AppColors.black),
               ),
               addVertical(10),
               if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)

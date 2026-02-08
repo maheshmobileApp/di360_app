@@ -268,7 +268,6 @@ class MyLike {
   Map<String, dynamic> toJson() => {'id': id};
 }
 
-
 class Presenters {
   String? presentedByName;
   PresentedByImage? presentedByImage;
@@ -291,7 +290,6 @@ class Presenters {
     return data;
   }
 }
-
 
 class Courses {
   String? id;
@@ -319,11 +317,13 @@ class Courses {
         presenters!.add(new Presenters.fromJson(v));
       });
     }
+    if (json['address'] != null && json['address'] is List) {
       address = <Address>[];
-    if (json['address'] != null) {
       json['address'].forEach((v) {
         address!.add(new Address.fromJson(v));
       });
+    } else {
+      address = [Address(city: json['address'])];
     }
     cpdPoints = json['cpd_points'];
     type = json['type'];

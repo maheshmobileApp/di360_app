@@ -98,7 +98,7 @@ class AddNewsFeedScreen extends StatelessWidget
                     hintText: 'Enter Website URL',
                     border: OutlineInputBorder(),
                   ),
-                  //  validator: validateOptionalUrl,
+                  validator: validateOptionalUrl,
                 ),
                 addVertical(30),
                 AppButton(

@@ -483,14 +483,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         return;
       }
     } catch (e) {
-      print('Google Maps app not available: $e');
     }
 
     try {
       final Uri webUri = Uri.parse(googleMapsWeb);
       await launchUrl(webUri, mode: LaunchMode.externalApplication);
     } catch (e) {
-      print('Error launching maps: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Could not open maps application'),

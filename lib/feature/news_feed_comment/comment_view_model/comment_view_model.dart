@@ -55,7 +55,6 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   addCommentTheFeed(BuildContext context, String feedId) async {
-    print("*****************addCommentfee");
     await getUserId();
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);

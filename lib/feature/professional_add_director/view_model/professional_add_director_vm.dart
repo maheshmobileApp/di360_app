@@ -8,8 +8,6 @@ import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:location/location.dart' as loc;
 import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +29,11 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   double? latitude;
   double? longitude;
+
+  List<Hobbies> getHobbies = [];
+  List<UniversitySchool> getUniversitys = [];
+  List<Education> getEducation = [];
+  List<WorkingAt> getWorkingAt = [];
 
 // Navigation
   final PageController pageController = PageController();
@@ -78,71 +81,55 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     }
   }
 
-  void addHobby(String value, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
+  void addHobby(String value) {
     if (value.isNotEmpty) {
-      addDirectorVM.getBasicInfoData.first.hobbies
-          ?.add(Hobbies(name: value));
+      getHobbies.add(Hobbies(name: value));
       hobbiesCntr.clear();
+      notifyListeners();
     }
-    addDirectorVM.notifyListeners();
+  }
+
+  void removeHobby(int index) {
+    getHobbies.removeAt(index);
     notifyListeners();
   }
 
-  void removeHobby(int index, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.hobbies?.removeAt(index);
-    notifyListeners();
-  }
-
-  void addUniversities(String value, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
+  void addUniversities(String value) {
     if (value.isNotEmpty) {
-      addDirectorVM.getBasicInfoData.first.universitySchool
-          ?.add(UniversitySchool(name: value));
+      getUniversitys.add(UniversitySchool(name: value));
       universitiesCntr.clear();
     }
-    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void removeUniversities(int index, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.universitySchool?.removeAt(index);
+  void removeUniversities(int index) {
+    getUniversitys.removeAt(index);
     notifyListeners();
   }
 
-  void addEducation(String value, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
+  void addEducation(String value) {
     if (value.isNotEmpty) {
-      addDirectorVM.getBasicInfoData.first.education
-          ?.add(Education(name: value));
+      getEducation.add(Education(name: value));
       educationCntr.clear();
     }
-    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void removeEducation(int index, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.education?.removeAt(index);
+  void removeEducation(int index) {
+    getEducation.removeAt(index);
     notifyListeners();
   }
 
-  void addWorkAt(String value, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
+  void addWorkAt(String value) {
     if (value.isNotEmpty) {
-      addDirectorVM.getBasicInfoData.first.workingAt
-          ?.add(WorkingAt(name: value));
+      getWorkingAt.add(WorkingAt(name: value));
       workAtCntr.clear();
     }
-    addDirectorVM.notifyListeners();
     notifyListeners();
   }
 
-  void removeWorkAt(int index, BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    addDirectorVM.getBasicInfoData.first.workingAt?.removeAt(index);
+  void removeWorkAt(int index) {
+    getWorkingAt.removeAt(index);
     notifyListeners();
   }
 
@@ -177,19 +164,11 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
                 ? null
                 : addDirectorVM.getBasicInfoData.first.profileImage
             : profile,
-        "university_school": addDirectorVM.getBasicInfoData.isEmpty
-            ? null
-            : addDirectorVM.getBasicInfoData.first.universitySchool,
-        "working_at": addDirectorVM.getBasicInfoData.isEmpty
-            ? null
-            : addDirectorVM.getBasicInfoData.first.workingAt,
+        "university_school": getUniversitys,
+        "working_at": getWorkingAt,
         "designation": designationCntr.text,
-        "education": addDirectorVM.getBasicInfoData.isEmpty
-            ? null
-            : addDirectorVM.getBasicInfoData.first.education,
-        "hobbies": addDirectorVM.getBasicInfoData.isEmpty
-            ? null
-            : addDirectorVM.getBasicInfoData.first.hobbies,
+        "education": getEducation,
+        "hobbies": getHobbies,
         "special_interests": [],
         "type": "PROFESSIONAL",
         "latitude": addDirectorVM.getBasicInfoData.isEmpty
@@ -245,11 +224,11 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
             ? addDirectorVM.getBasicInfoData.first.profileImage
             : profile,
         "university_school":
-            addDirectorVM.getBasicInfoData.first.universitySchool,
-        "working_at": addDirectorVM.getBasicInfoData.first.workingAt,
+            getUniversitys,
+        "working_at": getWorkingAt,
         "designation": designationCntr.text,
-        "education": addDirectorVM.getBasicInfoData.first.education,
-        "hobbies": addDirectorVM.getBasicInfoData.first.hobbies,
+        "education": getEducation,
+        "hobbies": getHobbies,
         "special_interests": [],
         "type": "PROFESSIONAL"
       }
@@ -277,45 +256,10 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     emailController.text = data.email ?? '';
     alternateNumberController.text = data.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
-    await getLocation();
+    getHobbies = data.hobbies ?? [];
+    getUniversitys = data.universitySchool ?? [];
+    getEducation = data.education ?? [];
+    getWorkingAt = data.workingAt ?? [];
     notifyListeners();
-  }
-
-  Future<void> getLocation() async {
-    loc.Location location = loc.Location();
-    bool serviceEnabled;
-    loc.PermissionStatus permissionGranted;
-    loc.LocationData locationData;
-
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
-    }
-
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == loc.PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != loc.PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    locationData = await location.getLocation();
-    latitude = locationData.latitude;
-    longitude = locationData.longitude;
-    await getAddressFromLatLang();
-    notifyListeners();
-  }
-
-  Future<void> getAddressFromLatLang() async {
-    List<Placemark> placemark =
-        await placemarkFromCoordinates(latitude ?? 0.0, longitude ?? 0.0);
-    Placemark place = placemark[0];
-    final address =
-        '${place.locality},${place.administrativeArea},${place.country}';
-    addressController.text = address;
   }
 }

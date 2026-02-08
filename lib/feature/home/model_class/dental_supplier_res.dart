@@ -36,6 +36,8 @@ class DentalSupplier {
       json['directories'].forEach((v) {
         directories!.add(new Directories.fromJson(v));
       });
+    } else {
+      directories = [];
     }
     sTypename = json['__typename'];
   }

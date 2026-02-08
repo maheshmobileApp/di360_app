@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
@@ -81,13 +80,13 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
               Text('Welcome Back!',
                   style: TextStyles.dmsansLight(
                       color: AppColors.black, fontSize: 12)),
-              Row(
-                children: [
-                  SvgPicture.asset(ImageConst.notification),
-                  addHorizontal(28),
-                  SvgPicture.asset(ImageConst.search)
-                ],
-              )
+              // Row(
+              //   children: [
+              //     SvgPicture.asset(ImageConst.notification),
+              //     addHorizontal(28),
+              //     SvgPicture.asset(ImageConst.search)
+              //   ],
+              // )
             ]),
             addVertical(12),
             Divider(color: AppColors.dividerColor),

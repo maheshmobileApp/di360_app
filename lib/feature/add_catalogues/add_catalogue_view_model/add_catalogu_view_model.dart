@@ -181,13 +181,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
     if (thumbnailImageObj == null) {
       var value = await _http.uploadImage(thumbnailImagePath);
       thumbnailImageObj = value;
-      print(thumbnailImageObj);
       notifyListeners();
     }
     if (pdfPathUrl == null) {
       var value = await _http.uploadImage(pdfPath);
       pdfPathUrl = value;
-      print(pdfPathUrl);
       notifyListeners();
     }
     final res = await repo.addCatalogue({

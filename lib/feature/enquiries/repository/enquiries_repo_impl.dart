@@ -33,7 +33,6 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
         "enquiry_userid": {"_eq": enquiryId}
       }
     };
-    print("**************************$variables");
     final res =
         await http.query(getApplicantEnquiryQuery, variables: variables);
     final output = ApplicantEnquiryData.fromJson(res);
@@ -42,10 +41,8 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
 
   @override
   Future<EnquiriesMessagesData> fetchEnquiriesMessages(variables) async {
-    print("***************$variables");
     final res =
         await http.query(getEnquiriesMessagesQuery, variables: variables);
-    print("**************************$res");
     final data = EnquiriesMessagesData.fromJson(res);
     return data;
   }

@@ -41,15 +41,16 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
               ],
             ),
             addVertical(16),
-            ...addDirectorVM.getBasicInfoData.first.directoryServices
-                    ?.asMap()
-                    .entries
-                    .map((entry) {
-                  final service = entry.value;
-                  return _ServiceCard(
-                      context, service, addDirectorVM, editDeleteVM);
-                }).toList() ??
-                [],
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              ...addDirectorVM.getBasicInfoData.first.directoryServices
+                      ?.asMap()
+                      .entries
+                      .map((entry) {
+                    final service = entry.value;
+                    return _ServiceCard(
+                        context, service, addDirectorVM, editDeleteVM);
+                  }).toList() ??
+                  [],
           ],
         ),
       ),

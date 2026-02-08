@@ -58,7 +58,7 @@ class HomeViewModel extends ChangeNotifier {
           }
         ]
       },
-      "limit": 10,
+      "limit": 100,
       "offset": 0,
       "userId": userId,
       "roleType": roleType
@@ -67,8 +67,6 @@ class HomeViewModel extends ChangeNotifier {
       var res = await _http.query(getAllNewsfeedsQuery, variables: variables);
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
-        print(
-            '********************************************Newsfeeds Data: ${result.newsfeeds}');
         allNewsFeedsData = result;
         Loaders.circularHideLoader(context);
       } else {

@@ -123,10 +123,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
     };
     final response =
         await http.query(getCourseStatusCount, variables: variables);
-    print("Raw response: $response");
     final result = CourseStatusCountData.fromJson(response);
-    print("Parsed result: $result");
-
     return result;
   }
 
@@ -185,7 +182,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
         "status": statusCondition
       }
     };
-    print("**************************variables $variables");
     final getUsersData =
         await http.query(getCourseRegisteredUsersQuery, variables: variables);
     final result = RegisteredUsersData.fromJson(getUsersData);
@@ -248,7 +244,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
         startDateFormatted = DateFormat("yyyy-MM-dd")
             .format(DateFormat("dd/MM/yyyy").parse(startDate));
       } catch (e) {
-        print("Date parsing error: $e");
         startDateFormatted = "";
       }
     }

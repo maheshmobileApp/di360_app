@@ -193,17 +193,9 @@ class JobProfileLocation extends StatelessWidget with BaseContextHelpers,Validat
           jobProfileVM.countryController.text = country ?? "";
           jobProfileVM.stateController.text = state ?? "";
           jobProfileVM.cityPostCodeController.text = postalCode ?? "";
-          print("City: $city");
-          print("State: $state");
-          print("Country: $country");
-          print("Postal Code: $postalCode");
-          print("Latitude: $lat, Longitude: $lng");
-        } else {
-          print("Error: ${data["status"]}");
         }
       }
     } catch (e) {
-      print("Dio error: $e");
     }
   }
 
