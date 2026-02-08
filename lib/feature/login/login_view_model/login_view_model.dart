@@ -75,8 +75,7 @@ class LoginViewModel extends ChangeNotifier {
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
-          print(
-              "********** Login type: ${result.loginApi?.type} **********");
+          
 
           (result.loginApi?.type == "SUPPLIER")
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
@@ -194,7 +193,6 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> getSupplierCommunityOwner(String id) async {
-    print("***************Fetching supplier community owner");
     final res = await repo.getSupplierCommunityOwner(id);
     supplerCommunityOwner = res;
 
@@ -205,8 +203,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.communityId, supplier?.communityId ?? '');
-      print(
-          "***************Community Name: ${supplier?.businessName}, Community ID: ${supplier?.communityId}");
+      
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
