@@ -77,6 +77,7 @@ class SignupScreen extends StatelessWidget
                           title: 'Company Name',
                           controller: viewModel.companyNameController,
                           hintText: "Enter company name",
+                          isRequired: true,
                           keyboardType: TextInputType.text,
                           validator: validateCompanyName),
                       addVertical(16)
@@ -85,6 +86,7 @@ class SignupScreen extends StatelessWidget
                         title: 'Full name',
                         controller: viewModel.nameController,
                         hintText: "Enter your name",
+                        isRequired: true,
                         keyboardType: TextInputType.emailAddress,
                         validator: validateName),
                     addVertical(16),
@@ -101,25 +103,64 @@ class SignupScreen extends StatelessWidget
                         title: 'Email Id',
                         controller: viewModel.emailController,
                         hintText: "Email Id",
+                        isRequired: true,
                         keyboardType: TextInputType.emailAddress,
                         validator: validateEmail),
                     addVertical(16),
-                    InputTextField(
-                        title: 'Phone Number',
-                        controller: viewModel.numberController,
-                        hintText: "Enter Phone number",
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^\+?[0-9]*$')),
-                        ],
-                        maxLength: 10,
-                        validator: validateEmptyPhoneNumber),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 125,
+                            child: CustomDropDown(
+                              value: viewModel.countryCode,
+                              title: "Phone Number",
+                              onChanged: (v) => viewModel.setCountry(v!),
+                              items: [
+                                DropdownMenuItem(
+                                    value: '+61', child: Text('AU (+61)')),
+                                DropdownMenuItem(
+                                    value: '+64', child: Text('NZ (+64)')),
+                              ],
+                              hintText: "Select category",
+                              isRequired: true,
+                            ),
+                          ),
+                          addHorizontal(5),
+                          Expanded(
+                            child: TextFormField(
+                              controller: viewModel.numberController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(9),
+                              ],
+                              validator: validateEmptyPhoneNumber,
+                              decoration: InputDecoration(
+                                  hintText: 'Enter phone number',
+                                  border: OutlineInputBorder(),
+                                  contentPadding:
+                                      EdgeInsets.fromLTRB(10, 10, 12, 0),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      width: 1.5,
+                                      color: AppColors.HINT_COLOR,
+                                    ),
+                                  )),
+                              onChanged: (value) {
+                                viewModel.setNumber(value);
+                              },
+                            ),
+                          )
+                        ]),
                     addVertical(16),
                     InputTextField(
                       title: 'Password',
                       controller: viewModel.passController,
                       hintText: "Password",
+                      isRequired: true,
                       validator: validatePassword,
                       obsecureText: !viewModel.isPasswordVisible,
                       suffixIcon: IconButton(
@@ -137,6 +178,7 @@ class SignupScreen extends StatelessWidget
                       title: 'Confirm password',
                       controller: viewModel.conformController,
                       hintText: "Confirm password",
+                      isRequired: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please confirm your password';

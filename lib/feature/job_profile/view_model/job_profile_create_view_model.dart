@@ -1081,7 +1081,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     selectedDays = profile?.availabilityDay ?? [];
 
     availabilityDates = profile?.availabilityDate
-            ?.map((dateStr) => DateTime.parse(dateStr))
+            .map((dateStr) => DateTime.parse(dateStr))
             .toList() ??
         [];
     availabilityDateController.text = availabilityDates

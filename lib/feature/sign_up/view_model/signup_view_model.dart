@@ -40,6 +40,28 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String _countryCode = '+61'; // default AU
+  String _number = '';
+
+  String get countryCode => _countryCode;
+  String get number => _number;
+
+  String get fullPhone => '$_countryCode$_number';
+
+  // last 3 digits
+  String get lastThree =>
+      _number.length >= 3 ? _number.substring(_number.length - 3) : _number;
+
+  void setCountry(String code) {
+    _countryCode = code;
+    notifyListeners();
+  }
+
+  void setNumber(String value) {
+    _number = value;
+    notifyListeners();
+  }
+
   String? selectedSubscriptionType;
   String? selectedPlanId;
   String? selectedPlanName;
@@ -124,7 +146,7 @@ class SignupViewModel extends ChangeNotifier {
           "name": nameController.text,
           "email": emailController.text,
           "password": passController.text,
-          "phone": numberController.text,
+          "phone": '$countryCode${numberController.text}',
           "postal_code": postalCodeController.text,
           "type": selectedType?['type'],
           "state": stateController.text,

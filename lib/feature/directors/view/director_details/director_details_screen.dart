@@ -78,18 +78,11 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: DirectorBasicInfo(),
+                    child: DirectorBasicInfo()
                   ),
                 ),
               ],
             ),
-            /*(directionalVM.directorDetails?.professionType ==
-                        "Dental  Community" &&
-                    type == "PROFESSIONAL")*/
-            /*(directionalVM.directorDetails?.professionType ==
-                        "Dental  Community" &&
-                    type == "PROFESSIONAL")*/
-           
             (directionalVM.userType == "PROFESSIONAL" || directionalVM.userType  == "SUPPLIER") && (directionalVM.directorCommunityID != null) && (directionalVM.directorDetails?.dentalSupplierId != directionalVM.userId)
                 ? Positioned(
                     top: 20,

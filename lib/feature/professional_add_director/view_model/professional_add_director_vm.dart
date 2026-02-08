@@ -8,8 +8,6 @@ import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:location/location.dart' as loc;
 import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
 
@@ -277,45 +275,6 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     emailController.text = data.email ?? '';
     alternateNumberController.text = data.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
-    await getLocation();
     notifyListeners();
-  }
-
-  Future<void> getLocation() async {
-    loc.Location location = loc.Location();
-    bool serviceEnabled;
-    loc.PermissionStatus permissionGranted;
-    loc.LocationData locationData;
-
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
-    }
-
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == loc.PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != loc.PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    locationData = await location.getLocation();
-    latitude = locationData.latitude;
-    longitude = locationData.longitude;
-    await getAddressFromLatLang();
-    notifyListeners();
-  }
-
-  Future<void> getAddressFromLatLang() async {
-    List<Placemark> placemark =
-        await placemarkFromCoordinates(latitude ?? 0.0, longitude ?? 0.0);
-    Placemark place = placemark[0];
-    final address =
-        '${place.locality},${place.administrativeArea},${place.country}';
-    addressController.text = address;
   }
 }
