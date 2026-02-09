@@ -75,13 +75,15 @@ class LoginViewModel extends ChangeNotifier {
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
+          
+
           (result.loginApi?.type == "SUPPLIER")
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
               : () {};
           await LocalStorage.setStringVal(
               LocalStorageConst.name, result.loginApi?.name ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.businessName, result.loginApi?.businessName ?? '');
+          await LocalStorage.setStringVal(LocalStorageConst.businessName,
+              result.loginApi?.businessName ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.userId, result.loginApi?.id ?? '');
           await LocalStorage.setStringVal(
@@ -120,38 +122,33 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> updateDevieToken() async {
-    try {
-      // Check if widget is still mounted
-      if (!hasListeners) {
-        return;
-      }
-      
-      // Check if Firebase is initialized
-      if (Firebase.apps.isEmpty) {
-        return;
-      }
-      
-      await Future.delayed(Duration(seconds: 2));
+    // try {
+    //   // Check if widget is still mounted
+    //   if (!hasListeners) {
+    //     return;
+    //   }
 
-      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final deviceToken = await FirebaseMessaging.instance.getToken();
+    //   // Check if Firebase is initialized
+    //   if (Firebase.apps.isEmpty) {
+    //   final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    //   final deviceToken = await FirebaseMessaging.instance.getToken();
 
-      if (deviceToken != null && userId.isNotEmpty) {
-        await LocalStorage.setStringVal(
-            LocalStorageConst.deviceToken, deviceToken);
-        final variables = {
-          "id": userId,
-          "device_tokens": [deviceToken]
-        };
-        final res = await repo.updateDeviceToken(variables);
-      }
-    } catch (e) {
-    }
+    //   if (deviceToken != null && userId.isNotEmpty) {
+    //     await LocalStorage.setStringVal(
+    //         LocalStorageConst.deviceToken, deviceToken);
+    //     // final variables = {
+    //     //   "id": userId,
+    //     //   "device_tokens": [deviceToken]
+    //     // };
+    //     // final res = await repo.updateDeviceToken(variables);
+    //   }
+    // } catch (e) {
+    // }
 
-    // Only notify listeners if not disposed
-    if (hasListeners) {
-      notifyListeners();
-    }
+    // // Only notify listeners if not disposed
+    // if (hasListeners) {
+    //   notifyListeners();
+    // }
   }
 
   getUserDetails() async {
@@ -206,6 +203,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.communityId, supplier?.communityId ?? '');
+      
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
@@ -213,6 +211,12 @@ class LoginViewModel extends ChangeNotifier {
     } else {
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'false');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityId, supplier?.communityId ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.communityName, supplier?.businessName ?? '');
+      await LocalStorage.setStringVal(
+          LocalStorageConst.businessName, supplier?.businessName ?? "");
     }
     notifyListeners();
   }
