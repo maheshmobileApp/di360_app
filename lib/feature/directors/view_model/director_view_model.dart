@@ -52,6 +52,13 @@ class DirectoryViewModel extends ChangeNotifier {
   String? userType;
   String? userId;
 
+  bool showMoreOurTeam = false;
+  bool showMoreOurPartner = false;
+  bool showMoreOurGallery = false;
+  bool showMoreOurDocument = false;
+  bool showMoreOurAchievement = false;
+  bool showMoreOurCertification = false;
+
   final List<String> serviceList = ['Test'];
 
   List<QuickLinkItem> quickLinkItems = [];
@@ -70,6 +77,12 @@ class DirectoryViewModel extends ChangeNotifier {
 
   void setUserId(String? value) {
     userId = value;
+    notifyListeners();
+  }
+
+  
+  void toggleShowMore(bool showMoreType) {
+    showMoreType = !showMoreType;
     notifyListeners();
   }
 
