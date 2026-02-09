@@ -362,6 +362,7 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
+      print("############${directorDetails?.directoryPartners}");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -369,7 +370,7 @@ class DirectoryViewModel extends ChangeNotifier {
           QuickLinkItem(label: 'Services', icon: Icons.medical_services),
         if (directorDetails?.directoryTeamMembers?.length != 0)
           QuickLinkItem(label: 'Team', icon: Icons.people),
-        if (directorDetails?.directoryPartners?.length != 0)
+        if (directorDetails?.directoryPartners?.isNotEmpty ?? false)
           QuickLinkItem(label: 'Partner', icon: Icons.paragliding),
         if (directorDetails?.directoryGalleryPosts?.length != 0 &&
             directorDetails?.directoryGalleryPosts?.first.image?.length != 0)

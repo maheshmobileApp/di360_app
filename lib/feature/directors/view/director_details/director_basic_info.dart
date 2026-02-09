@@ -28,50 +28,61 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                 _description(directionalVM.directorDetails?.description ?? ''),
                 key: directionalVM.sectionKeys['Basic Info']),
           addVertical(8),
-          if (directionalVM.directorDetails?.directoryServices?.length != 0)
+          if (directionalVM.directorDetails?.directoryServices?.isNotEmpty ??
+              false)
             _sectionTitle('SERVICES', _serviceButtons(context, directionalVM),
                 key: directionalVM.sectionKeys['Services']),
           addVertical(16),
-          if (directionalVM.directorDetails?.directoryTeamMembers?.length != 0)
+          if (directionalVM.directorDetails?.directoryTeamMembers?.isNotEmpty ??
+              false)
             _sectionTitle('OUR TEAMS', _teamcard(directionalVM),
                 key: directionalVM.sectionKeys['Team']),
           addVertical(16),
-          if (directionalVM.directorDetails?.directoryPartners?.length != 0)
-            _sectionTitle('Partners', _partnercard(directionalVM),
+          if (directionalVM.directorDetails?.directoryPartners?.isNotEmpty ??
+              false)
+            _sectionTitle('Our Partners', _partnercard(directionalVM),
                 key: directionalVM.sectionKeys['Partner']),
-          if (directionalVM.directorDetails?.directoryGalleryPosts?.length !=
-                  0 &&
-              directionalVM.directorDetails?.directoryGalleryPosts?.first.image
-                      ?.length !=
-                  0)
+          if ((directionalVM
+                      .directorDetails?.directoryGalleryPosts?.isNotEmpty ??
+                  false) &&
+              (directionalVM.directorDetails?.directoryGalleryPosts?.first.image
+                      ?.isNotEmpty ??
+                  false))
             _sectionTitle('GALLERY', _galleryCard(directionalVM),
                 key: directionalVM.sectionKeys['Gallery']),
-          if (directionalVM.directorDetails?.directoryDocuments?.length != 0)
+          if (directionalVM.directorDetails?.directoryDocuments?.isNotEmpty ??
+              false)
             _sectionTitle('OUR DOCUMENT', _documentCard(directionalVM),
                 key: directionalVM.sectionKeys['Document']),
-          if (directionalVM.directorDetails?.directoryAchievements?.length != 0)
+          if (directionalVM
+                  .directorDetails?.directoryAchievements?.isNotEmpty ??
+              false)
             _sectionTitle('OUR ACHIEVEMENTS', _archievementcard(directionalVM),
                 key: directionalVM.sectionKeys['Achievements']),
-          if (directionalVM.directorDetails?.directoryCertifications?.length !=
-              0)
+          if (directionalVM
+                  .directorDetails?.directoryCertifications?.isNotEmpty ??
+              false)
             _sectionTitle(
                 'OUR CERTIFICATIONS', _certificationcard(directionalVM),
                 key: directionalVM.sectionKeys['Certifications']),
           if (directionalVM
-                  .directorDetails?.directoryAppointmentSlots?.length !=
-              0)
+                  .directorDetails?.directoryAppointmentSlots?.isNotEmpty ??
+              false)
             _sectionTitle('Book an appointment with <Clinic Name>',
                 DirectorAppointmentform(),
                 key: directionalVM.sectionKeys['Book Appointment']),
           addVertical(10),
-          if (directionalVM.directorDetails?.directoryTestimonials?.length != 0)
+          if (directionalVM
+                  .directorDetails?.directoryTestimonials?.isNotEmpty ??
+              false)
             _sectionTitle(
                 'HOW TESTLS HAS HELPED OTHERS', _testimonialCard(directionalVM),
                 key: directionalVM.sectionKeys['Testimonials']),
-          if (directionalVM.directorDetails?.directoryFaqs?.length != 0)
+          if (directionalVM.directorDetails?.directoryFaqs?.isNotEmpty ?? false)
             _sectionTitle('FAQ', _faqSection(directionalVM),
                 key: directionalVM.sectionKeys['FAQ']),
-          if (directionalVM.directorDetails?.directoryLocations?.length != 0)
+          if (directionalVM.directorDetails?.directoryLocations?.isNotEmpty ??
+              false)
             _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM, context),
                 key: directionalVM.sectionKeys['Contact Us']),
         ],
@@ -148,17 +159,19 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(label,
-                            style: TextStyles.bold6(color: AppColors.black)),
-                        GestureDetector(
-                          onTap: () => navigationService.goBack,
-                          child: const Icon(Icons.close,
-                              color: AppColors.primaryColor),
-                        ),
-                      ],
+                    Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(label,
+                              style: TextStyles.bold6(color: AppColors.black)),
+                          GestureDetector(
+                            onTap: () => navigationService.goBack,
+                            child: const Icon(Icons.close,
+                                color: AppColors.primaryColor),
+                          ),
+                        ],
+                      ),
                     ),
                     const Divider(height: 20),
                     Text('$label ',
@@ -185,6 +198,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
 
   Widget _teamcard(DirectoryViewModel vm) {
     return CustomGrid(
+      childAspectRatio: 0.80,
       children: List.generate(
           vm.directorDetails?.directoryTeamMembers?.length ?? 0, (index) {
         final teamData = vm.directorDetails?.directoryTeamMembers?[index];
@@ -206,31 +220,23 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                         imageUrl: teamData?.image?.url ?? '',
                         fit: BoxFit.fill)),
                 const SizedBox(height: 5),
-                Text(
-                  teamData?.name ?? '',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                ),
+                Text(teamData?.name ?? '',
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.black)),
                 const SizedBox(height: 4),
-                Text(
-                  teamData?.specialization ?? '',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
+                Text(teamData?.specialization ?? '',
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.grey)),
                 Divider(),
-                Text(
-                  teamData?.location ?? '',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
+                Text(teamData?.location ?? '',
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.grey))
               ],
             ),
           ),
@@ -241,6 +247,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
 
   Widget _partnercard(DirectoryViewModel vm) {
     return CustomGrid(
+      childAspectRatio: 1.0,
       children: List.generate(
           vm.directorDetails?.directoryPartners?.length ?? 0, (index) {
         final partnerData = vm.directorDetails?.directoryPartners?[index];
@@ -254,41 +261,23 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(16)),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                    height: 110,
-                    child: CachedNetworkImageWidget(
-                        imageUrl: partnerData?.image?.url ?? '',
-                        fit: BoxFit.fill)),
-                const SizedBox(height: 5),
-                Text(
-                  partnerData?.name ?? '',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.black
-                  ),
-                ),
-                // const SizedBox(height: 4),
-                // Text(
-                //   teamData?.specialization ?? '',
-                //   style: TextStyle(
-                //     fontSize: 12,
-                //     color: Colors.grey,
-                //   ),
-                // ),
-                // Divider(),
-                // Text(
-                //   teamData?.location ?? '',
-                //   textAlign: TextAlign.center,
-                //   style: TextStyle(
-                //     fontSize: 12,
-                //     color: Colors.grey,
-                //   ),
-                // ),
-              ],
-            ),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      height: 110,
+                      child: CachedNetworkImageWidget(
+                          imageUrl: partnerData?.image?.url ?? '',
+                          fit: BoxFit.fill)),
+                  Divider(),
+                  Text(partnerData?.name ?? '',
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.black))
+                ]),
           ),
         );
       }),
@@ -296,21 +285,24 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _galleryCard(DirectoryViewModel vm) {
+    final galleryPosts = vm.directorDetails?.directoryGalleryPosts;
+    if (galleryPosts == null || galleryPosts.isEmpty) return SizedBox.shrink();
+
+    final images = galleryPosts.first.image;
+    if (images == null || images.isEmpty) return SizedBox.shrink();
+
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: vm.directorDetails!.directoryGalleryPosts!.map((img) {
-              return CustomGrid(
-                  children: img.image!.map((url) {
-                return img.image?.length != 0
-                    ? CachedNetworkImageWidget(
-                        imageUrl: url.url ?? '',
-                        fit: BoxFit.fill,
-                      )
-                    : SizedBox();
-              }).toList());
-            }).first));
+            child: CustomGrid(
+                childAspectRatio: 0.95,
+                children: images.map((url) {
+                  return CachedNetworkImageWidget(
+                    imageUrl: url.url ?? '',
+                    fit: BoxFit.fill,
+                  );
+                }).toList())));
   }
 
   Widget _documentCard(DirectoryViewModel vm) {

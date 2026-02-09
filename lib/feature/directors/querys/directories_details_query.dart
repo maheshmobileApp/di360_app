@@ -75,6 +75,14 @@ query getDirectory($id: uuid!) {
       location
       __typename
     }
+    directory_partners {
+      name
+      description
+      image
+      attachments
+      show_community_user
+      __typename
+    }
     directory_gallery_posts {
       id
       image
