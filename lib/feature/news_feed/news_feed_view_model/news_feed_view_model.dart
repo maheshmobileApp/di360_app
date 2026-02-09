@@ -1,15 +1,20 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_like_res.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/get_news_feed_categories.dart';
 import 'package:di360_flutter/feature/news_feed/querys/edit_feed_query.dart';
+import 'package:di360_flutter/feature/news_feed/querys/get_job_details_by_id.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_news_feed_by_catalog.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_news_feed_catagories.dart';
 import 'package:di360_flutter/feature/news_feed/querys/news_feed_like_querys.dart';
 import 'package:di360_flutter/feature/news_feed/querys/report_query.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -60,8 +65,7 @@ class NewsFeedViewModel extends ChangeNotifier {
         // updateTheNewsFeedLikeCount(context, feedId, false);
         // removeTheLikeObject(context, feedId);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
 
     notifyListeners();
   }
@@ -84,8 +88,7 @@ class NewsFeedViewModel extends ChangeNotifier {
         // updateTheNewsFeedLikeCount(context, newsFeedId, true);
         // updateTheLikeObject(context, newsFeedId);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
 
     notifyListeners();
   }
@@ -193,8 +196,7 @@ class NewsFeedViewModel extends ChangeNotifier {
               categoryName: 'Catalog',
             ));
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     notifyListeners();
   }
 
@@ -268,7 +270,7 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> blockUser(BuildContext context, String userId) async {
     Loaders.circularShowLoader(context);
-     await _http.post('/api/v1/auth/check-news-feed-block', {
+    await _http.post('/api/v1/auth/check-news-feed-block', {
       "userId": userId,
     });
     scaffoldMessenger("Reported successfully");
@@ -282,6 +284,19 @@ class NewsFeedViewModel extends ChangeNotifier {
     Loaders.circularHideLoader(context);
     if (res['update_newsfeeds'] != null) {
       removeTheNewsFeedObject(context, feedId);
+    }
+    notifyListeners();
+  }
+
+  Future<void> getJobDetailsByIds(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final res = await _http.query(getJobDetailsById, variables: {"id": id});
+    Loaders.circularHideLoader(context);
+    if (res.isNotEmpty) {
+      final result = JobdList.fromJson(res);
+      final job = result.jobs?.isNotEmpty ?? false ? result.jobs?.first : Jobs();
+      navigationService.navigateToWithParams(RouteList.jobdetailsScreen,
+          params: job);
     }
     notifyListeners();
   }

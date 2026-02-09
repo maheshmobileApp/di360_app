@@ -250,76 +250,81 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             );
           }),
         ),
+        addVertical(10),
+        if ((vm.directorDetails?.directoryTeamMembers?.length ?? 0) > 2)
+          _showMoreWidget(vm.showMoreOurTeam, vm.toggleShowMoreTeam)
       ],
     );
   }
 
-  Widget _showMoreWidget(bool directorName, Function()? onTap) {
-    return Align(
-      alignment: Alignment.center,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-        addVertical(10),
-        InkWell(
-          onTap: onTap,
-          child: Row(children: [
-            Text(directorName ? 'Show Less' : 'Show More',
-                style: TextStyles.medium2(color: AppColors.black)),
-            addHorizontal(5),
-            Icon(
-                directorName
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
-                color: AppColors.black,
-                size: 20)
-          ]),
-        )
-      ]),
-    );
+  Widget _showMoreWidget(bool directorName, VoidCallback onTap) {
+    return Center(
+        child: InkWell(
+            onTap: onTap,
+            child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Text(directorName ? 'Show Less' : 'Show More',
+                      style: TextStyles.medium2(color: AppColors.black)),
+                  addHorizontal(5),
+                  Icon(
+                      directorName
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: AppColors.black,
+                      size: 20)
+                ]))));
   }
 
   Widget _partnercard(DirectoryViewModel vm, BuildContext context) {
-    return CustomGrid(
-      childAspectRatio: 1.0,
-      children: List.generate(
-          vm.directorDetails?.directoryPartners?.length ?? 0, (index) {
-        final partnerData = vm.directorDetails?.directoryPartners?[index];
-        return InkWell(
-          onTap: () =>
-              _viewPromotion(context, partnerData ?? DirectoryPartners()),
-          child: Card(
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: AppColors.HINT_COLOR),
-                borderRadius: BorderRadius.circular(16)),
-            elevation: 1,
-            color: Colors.white,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        height: 110,
-                        child: CachedNetworkImageWidget(
-                            imageUrl: partnerData?.image?.url ?? '',
-                            fit: BoxFit.fill)),
-                    Divider(),
-                    Text(partnerData?.name ?? '',
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Colors.black))
-                  ]),
+    final partnerList = vm.showMoreOurPartner
+        ? vm.directorDetails?.directoryPartners
+        : vm.directorDetails?.directoryPartners?.take(2).toList();
+    return Column(children: [
+      CustomGrid(
+        childAspectRatio: 1.0,
+        children: List.generate(partnerList?.length ?? 0, (index) {
+          final partnerData = partnerList?[index];
+          return InkWell(
+            onTap: () =>
+                _viewPromotion(context, partnerData ?? DirectoryPartners()),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: AppColors.HINT_COLOR),
+                  borderRadius: BorderRadius.circular(16)),
+              elevation: 1,
+              color: Colors.white,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16)),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          height: 110,
+                          child: CachedNetworkImageWidget(
+                              imageUrl: partnerData?.image?.url ?? '',
+                              fit: BoxFit.fill)),
+                      Divider(),
+                      Text(partnerData?.name ?? '',
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colors.black))
+                    ]),
+              ),
             ),
-          ),
-        );
-      }),
-    );
+          );
+        }),
+      ),
+      addVertical(10),
+      if ((vm.directorDetails?.directoryPartners?.length ?? 0) > 2)
+        _showMoreWidget(vm.showMoreOurPartner, vm.toggleShowMorePartner)
+    ]);
   }
 
   void _viewPromotion(BuildContext context, DirectoryPartners partner) =>
@@ -386,121 +391,138 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     final galleryPosts = vm.directorDetails?.directoryGalleryPosts;
     if (galleryPosts == null || galleryPosts.isEmpty) return SizedBox.shrink();
 
-    final images = galleryPosts.first.image;
+    final images = vm.showMoreOurGallery
+        ? galleryPosts.first.image
+        : galleryPosts.first.image?.take(2).toList();
     if (images == null || images.isEmpty) return SizedBox.shrink();
 
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: CustomGrid(
-                childAspectRatio: 0.95,
-                children: images.map((url) {
-                  return CachedNetworkImageWidget(
-                    imageUrl: url.url ?? '',
-                    fit: BoxFit.fill,
-                  );
-                }).toList())));
+    return Column(
+      children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CustomGrid(
+                    childAspectRatio: 0.95,
+                    children: images.map((url) {
+                      return CachedNetworkImageWidget(
+                        imageUrl: url.url ?? '',
+                        fit: BoxFit.fill,
+                      );
+                    }).toList()))),
+        addVertical(10),
+        if (images.length > 2)
+          _showMoreWidget(vm.showMoreOurGallery, vm.toggleShowMoreGallery)
+      ],
+    );
   }
 
   Widget _documentCard(DirectoryViewModel vm) {
-    return CustomGrid(
-      childAspectRatio: 0.80,
-      children: List.generate(
-          vm.directorDetails?.directoryDocuments?.length ?? 0, (index) {
-        final doc = vm.directorDetails?.directoryDocuments?[index];
-        return Card(
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: AppColors.HINT_COLOR),
-              borderRadius: BorderRadius.circular(16)),
-          elevation: 0,
-          color: AppColors.hintColor,
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(ImageConst.pdf),
-                    const SizedBox(height: 12),
-                    Divider(),
-                    Text(
-                      doc?.name ?? '',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.2,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () async {
-                      final url = doc?.attachment?.url ?? '';
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(
-                          Uri.parse(url),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      }
-                    },
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: Colors.black,
-                      child: Icon(
-                        Icons.download,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
+    final docList = vm.showMoreOurDocument
+        ? vm.directorDetails?.directoryDocuments
+        : vm.directorDetails?.directoryDocuments?.take(2).toList();
+    return Column(
+      children: [
+        CustomGrid(
+            childAspectRatio: 0.80,
+            children: List.generate(docList?.length ?? 0, (index) {
+              final doc = docList?[index];
+              return Card(
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: AppColors.HINT_COLOR),
+                      borderRadius: BorderRadius.circular(16)),
+                  elevation: 0,
+                  color: AppColors.hintColor,
+                  child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Stack(children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(ImageConst.pdf),
+                            const SizedBox(height: 12),
+                            Divider(),
+                            Text(
+                              doc?.name ?? '',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1.2,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                                onTap: () async {
+                                  final url = doc?.attachment?.url ?? '';
+                                  if (await canLaunchUrl(Uri.parse(url))) {
+                                    await launchUrl(
+                                      Uri.parse(url),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                                child: CircleAvatar(
+                                    radius: 14,
+                                    backgroundColor: Colors.black,
+                                    child: Icon(Icons.download,
+                                        size: 16, color: Colors.white))))
+                      ])));
+            })),
+        addVertical(10),
+        if ((vm.directorDetails?.directoryDocuments?.length ?? 0) > 2)
+          _showMoreWidget(vm.showMoreOurDocument, vm.toggleShowMoreDocument)
+      ],
     );
   }
 
   Widget _archievementcard(DirectoryViewModel vm) {
-    return CustomGrid(
-      children: List.generate(
-          vm.directorDetails?.directoryAchievements?.length ?? 0, (index) {
-        final achieve = vm.directorDetails?.directoryAchievements?[index];
-        return Container(
-          decoration: BoxDecoration(
-              color: AppColors.hintColor,
-              border: Border.all(color: AppColors.HINT_COLOR),
-              borderRadius: BorderRadius.circular(16)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: CachedNetworkImageWidget(
-                      imageUrl: achieve?.attachments?.url ?? '',
-                      height: 170,
-                      fit: BoxFit.fill)),
-              Divider(),
-              Text(
-                achieve?.title ?? '',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                  fontSize: 12,
-                ),
+    final achieveList = vm.showMoreOurCertification
+        ? vm.directorDetails?.directoryAchievements
+        : vm.directorDetails?.directoryAchievements?.take(2).toList();
+    return Column(
+      children: [
+        CustomGrid(
+          children: List.generate(achieveList?.length ?? 0, (index) {
+            final achieve = achieveList?[index];
+            return Container(
+              decoration: BoxDecoration(
+                  color: AppColors.hintColor,
+                  border: Border.all(color: AppColors.HINT_COLOR),
+                  borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImageWidget(
+                          imageUrl: achieve?.attachments?.url ?? '',
+                          height: 170,
+                          fit: BoxFit.fill)),
+                  Divider(),
+                  Text(
+                    achieve?.title ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      }),
+            );
+          }),
+        ),
+        addVertical(10),
+        if ((vm.directorDetails?.directoryAchievements?.length ?? 0) > 2)
+          _showMoreWidget(
+              vm.showMoreOurAchievement, vm.toggleShowMoreAchievement)
+      ],
     );
   }
 
@@ -542,8 +564,10 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             );
           }),
         ),
-        _showMoreWidget(vm.showMoreOurCertification,
-            () => vm.toggleShowMore(vm.showMoreOurCertification))
+        addVertical(10),
+        if ((vm.directorDetails?.directoryCertifications?.length ?? 0) > 2)
+          _showMoreWidget(
+              vm.showMoreOurCertification, vm.toggleShowMoreCertification)
       ],
     );
   }

@@ -37,24 +37,49 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> getAllNewsfeeds(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final roleType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
     Loaders.circularShowLoader(context);
     final variables = {
       "where": {
         "status": {"_eq": "PUBLISHED"},
-        "community_id": {"_is_null": true},
         "_and": [
           {
             "_or": [
               {
-                "feed_type": {"_neq": "CATALOGUE"}
+                "community_type": {"_eq": "BOTH"}
               },
               {
-                "feed_type": {"_eq": "CATALOGUE"},
-                "catalogues": {
-                  "schedulerDay": {"_lte": "2026-01-30T00:00:00.000Z"}
+                "user_id": {"_eq": userId}
+              },
+              {
+                "community_id": {
+                  "_in": [communityId]
                 }
               }
             ]
+          },
+          {
+            "_not": {
+              "newsfeed_user_actions": {
+                "created_by_id": {"_eq": userId},
+                "entity_type": {"_eq": "POST"},
+                "action": {
+                  "_in": ["HIDE", "REPORT"]
+                },
+                "status": {"_eq": "ACTIVE"}
+              }
+            }
+          },
+          {
+            "_not": {
+              "blocked_by_user_actions": {
+                "created_by_id": {"_eq": userId},
+                "entity_type": {"_eq": "PROFILE"},
+                "action": {"_eq": "BLOCK"},
+                "status": {"_eq": "ACTIVE"}
+              }
+            }
           }
         ]
       },

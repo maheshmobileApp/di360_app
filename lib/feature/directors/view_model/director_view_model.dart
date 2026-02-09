@@ -80,9 +80,33 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  
-  void toggleShowMore(bool showMoreType) {
-    showMoreType = !showMoreType;
+  void toggleShowMoreTeam() {
+    showMoreOurTeam = !showMoreOurTeam;
+    notifyListeners();
+  }
+
+  void toggleShowMoreAchievement() {
+    showMoreOurAchievement = !showMoreOurAchievement;
+    notifyListeners();
+  }
+
+  void toggleShowMorePartner() {
+    showMoreOurPartner = !showMoreOurPartner;
+    notifyListeners();
+  }
+
+  void toggleShowMoreCertification() {
+    showMoreOurCertification = !showMoreOurCertification;
+    notifyListeners();
+  }
+
+  void toggleShowMoreDocument() {
+    showMoreOurDocument = !showMoreOurDocument;
+    notifyListeners();
+  }
+
+  void toggleShowMoreGallery() {
+    showMoreOurGallery = !showMoreOurGallery;
     notifyListeners();
   }
 

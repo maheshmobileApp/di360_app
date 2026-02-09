@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/build_job_type_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_menu_widget.dart';
@@ -34,10 +35,11 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     return Container(
-      color: AppColors.whiteColor,
-      child: GestureDetector(onTap: () {
-        navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-      },
+        color: AppColors.whiteColor,
+        child: GestureDetector(
+          onTap: () {
+            navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+          },
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             addVertical(10),
@@ -58,8 +60,11 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             _buildHeader(
                 newsfeeds?.dentalSupplier != null
                     ? newsfeeds?.dentalSupplier?.logo?.url ??
-                        (newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
-                            ? newsfeeds?.dentalSupplier?.directories?.first.logo?.url ?? ''
+                        (newsfeeds?.dentalSupplier?.directories?.isNotEmpty ==
+                                true
+                            ? newsfeeds?.dentalSupplier?.directories?.first.logo
+                                    ?.url ??
+                                ''
                             : '')
                     : newsfeeds?.dentalPractice != null
                         ? newsfeeds?.dentalPractice?.logo?.url ?? ''
@@ -69,9 +74,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 ''
                             : '',
                 newsfeeds?.dentalSupplier != null
-                    ? (newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
-                            ? newsfeeds?.dentalSupplier?.directories?.first.companyName ?? ''
-                            : '')
+                    ? (newsfeeds?.dentalSupplier?.directories?.isNotEmpty ==
+                            true
+                        ? newsfeeds?.dentalSupplier?.directories?.first
+                                .companyName ??
+                            ''
+                        : '')
                     : newsfeeds?.dentalPractice != null
                         ? newsfeeds?.dentalPractice?.name ?? ''
                         : newsfeeds?.dentalProfessional != null
@@ -87,6 +95,11 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             addVertical(5),
             if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
               LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
+            if (newsfeeds?.feedType == 'JOBS')
+              BuildJobTypeWidget(
+                  job: newsfeeds?.jobs?.isNotEmpty ?? false
+                      ? newsfeeds?.jobs?.first
+                      : null),
             addVertical(22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -122,8 +135,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
             Divider(thickness: 8, color: Color(0xffEDEFF1)),
           ]),
-          
-    ));
+        ));
   }
 
   Widget _buildHeader(
