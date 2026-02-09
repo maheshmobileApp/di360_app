@@ -27,7 +27,8 @@ class HttpService {
     } catch (e, s) {
       print("$e , $s");
       print("hasura error $e");
-      showHasuraError(e);
+      final err = showHasuraError(e);
+      return {"_error": err};
     }
     return response;
   }
@@ -74,33 +75,34 @@ class HttpService {
       response = response['data'];
     } catch (e, s) {
       print("$e , $s");
-      showHasuraError(e);
-      return {};
+      final err = showHasuraError(e);
+      return {"_error": err};
     }
     return response ?? {};
   }
 
   showHasuraError(e) {
-    String errorMessage = "";
-    if (e is DioException) {
-      errorMessage = e.message ?? "Network error";
-    } else {
+    String errorMessage = "Unknown error";
+    try {
+      if (e is DioException) {
+        errorMessage = e.message ?? "Network error";
+      } else if (e is Map && e.containsKey('errors')) {
+        // hasura_connect may return a map-like error
+        final errors = e['errors'];
+        if (errors is List && errors.isNotEmpty) {
+          errorMessage = errors.first.toString();
+        } else {
+          errorMessage = e.toString();
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+    } catch (_) {
       errorMessage = e.toString();
     }
-    
-    if (errorMessage.contains("http")) {
-      // _utils.showErrorSnackBar(
-      //     msg:
-      //         "We regret the inconvience, something is wrong at our end. please try again after sometime.",
-      //     title: "Server Error");
-    } else if (errorMessage.contains("SocketException")) {
-      // _utils.showErrorSnackBar(
-      //     msg:
-      //         'Seems to be slow internet connection, Please connect to a different source for better experience',
-      //     title: "Slow Internet");
-    } else {
-      //  _utils.showToast(errorMessage);
-    }
+
+    // return parsed message for callers to handle
+    return errorMessage;
   }
 
   Future subscription(document, {variables, showLoading = true}) async {

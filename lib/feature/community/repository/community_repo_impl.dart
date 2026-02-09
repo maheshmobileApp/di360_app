@@ -78,7 +78,7 @@ class CommunityRepoImpl extends CommunityRepository {
     return res;
   }
 
-   @override
+  @override
   Future approvePartnershipRequest(dynamic variables) async {
     final res = await http.mutation(approvePartnershipQuery, variables);
     return res;
@@ -201,10 +201,11 @@ class CommunityRepoImpl extends CommunityRepository {
     final data = ContactsData.fromJson(res);
     return data;
   }
-  
+
   @override
   Future addContact(variables) async {
     final res = await http.mutation(addContactQuery, variables);
+    print("#############################$res");
     return res;
   }
 
@@ -214,8 +215,7 @@ class CommunityRepoImpl extends CommunityRepository {
     return res;
   }
 
-
-   @override
+  @override
   Future<DeleteContactData> deleteContact(variables) async {
     final res = await http.mutation(deleteContactQuery, variables);
     return DeleteContactData.fromJson(res);
