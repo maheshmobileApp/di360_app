@@ -192,54 +192,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          /*GestureDetector(
-            onTap: () async {
-              final count =
-                  jobsListingData?.jobApplicantsAggregate?.aggregate?.count ??
-                      0;
-
-              if (count != 0) {
-                Loaders.circularShowLoader(context);
-                viewModel.jobId = jobsListingData?.id ?? '';
-                await viewModel.getMyJobApplicantsgData(
-                  context,
-                  jobsListingData?.id ?? '',
-                );
-                Loaders.circularHideLoader(context);
-
-                navigationService.navigateToWithParams(
-                  RouteList.JobListingApplicantscreen,
-                  params: jobsListingData,
-                );
-              } else {
-                scaffoldMessenger("0 Applicants Applied");
-              }
-            },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
-                ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromRGBO(116, 130, 148, 0.15),
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  "${jobsListingData?.jobApplicantsAggregate?.aggregate?.count ?? 0} Applicants applied for this role",
-                  style: TextStyles.medium1(color: AppColors.black),
-                ),
-              ),
-            ),
-          ),*/
+         
         ],
       ),
     );

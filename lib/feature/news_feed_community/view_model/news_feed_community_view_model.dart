@@ -376,6 +376,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     videoLinkController.clear();
     websiteLinkController.clear();
     selectedFiles.clear();
+    existingImages.clear();
+    uploadedFiles.clear();
     serverNewsFeedGallery = null;
     selectedNewsFeedGallery = null;
     selectedCategory = null;
@@ -490,6 +492,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+
+    uploadedFiles.clear();
 
     for (var element in selectedFiles) {
       var value = await _http.uploadImage(element.path);

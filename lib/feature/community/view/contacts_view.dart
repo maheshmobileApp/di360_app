@@ -22,8 +22,9 @@ class _ContactsViewState extends State<ContactsView> {
   @override
   void initState() {
     super.initState();
+    final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+    viewModel.contactsRes = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
       viewModel.getContacts(context);
     });
     _scrollController.addListener(_onScroll);
@@ -59,15 +60,14 @@ class _ContactsViewState extends State<ContactsView> {
           )),
       body: Column(
         children: [
-          (contacts?.length != 0)
+          (contacts != null && contacts.isNotEmpty)
               ? Expanded(
                   child: ListView.builder(
                     controller: _scrollController,
                     padding: EdgeInsets.all(10),
-                    itemCount: contacts?.length ??
-                        0 + (viewModel.hasMoreContacts ? 1 : 0),
+                    itemCount: contacts.length + (viewModel.hasMoreContacts ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (index == contacts?.length) {
+                      if (index == contacts.length) {
                         return Center(
                           child: Padding(
                             padding: EdgeInsets.all(16),
@@ -75,7 +75,7 @@ class _ContactsViewState extends State<ContactsView> {
                           ),
                         );
                       }
-                      final contact = contacts?[index];
+                      final contact = contacts[index];
                       return ContactCard(
                           contactName: contact?.contactName ?? "",
                           email: contact?.email ?? "",

@@ -27,6 +27,7 @@ query getalljobs($andList: [jobs_bool_exp!]) {
     education
     video  
     closed_at
+    start_Date
     status
     offered_benefits
     country
