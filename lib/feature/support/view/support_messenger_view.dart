@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/support/model/get_support_messages_res.dar
 import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/support/widgets/attachment_picker.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,6 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
   final ScrollController _scrollController = ScrollController();
 
   String _formatTime(DateTime dt) => DateFormat('hh:mm a').format(dt);
-  String _formatDate(DateTime dt) => DateFormat('dd MMM yyyy').format(dt);
 
   @override
   Widget build(BuildContext context) {

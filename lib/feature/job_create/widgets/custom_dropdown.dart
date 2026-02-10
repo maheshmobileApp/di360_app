@@ -60,7 +60,7 @@ class CustomDropDown<T> extends StatelessWidget {
           menuMaxHeight: 400,
           isExpanded: true,
           isDense: true,
-          value: value,
+          initialValue: value,
           validator: validator,
           onChanged: readOnly ? null : onChanged,
           autovalidateMode: AutovalidateMode.onUserInteraction,

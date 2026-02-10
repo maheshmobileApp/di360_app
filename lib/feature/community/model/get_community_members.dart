@@ -50,7 +50,7 @@ class CommunityMembers {
   String? phone;
   String? supplierId;
   String? communityId;
-  Null? registerLink;
+  dynamic registerLink;
   bool? isRegistered;
   String? sTypename;
 

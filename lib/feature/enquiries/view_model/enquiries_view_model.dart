@@ -17,13 +17,9 @@ class EnquiriesViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getMyEnquiryJobData(userId);
-    if (res != null) {
-      enquiriesListData = res;
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
+    enquiriesListData = res;
+    Loaders.circularHideLoader(context);
+      notifyListeners();
     return res;
   }
 

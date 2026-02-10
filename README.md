@@ -409,3 +409,7 @@ flutter build ipa --release --export-method app-store \
 flutter build appbundle --release --dart-define-from-file=.env/prod.json
  # For Android Apk 
 flutter build apk --release --dart-define-from-file=.env/dev.json
+
+
+
+dart fix --apply

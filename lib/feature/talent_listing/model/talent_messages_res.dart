@@ -48,7 +48,7 @@ class TalentsMessage {
   String? updatedAt;
   String? message;
   String? messageFrom;
-  Null? attachments;
+  dynamic attachments;
 
   TalentsMessage(
       {this.id,

@@ -201,7 +201,7 @@ class JobProfiles {
   List<ProfileImage>? uploadResume;
   String? professionType;
   String? location;
-  Null? country;
+  dynamic country;
   String? sTypename;
 
   JobProfiles(

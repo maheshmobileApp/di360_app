@@ -45,10 +45,10 @@ class TalentEnquiries {
   String? createdAt;
   String? talentId;
   String? enquiryFrom;
-  dynamic? dentalPractices;
+  dynamic dentalPractices;
   JobProfilesEnquiry? jobProfiles;
-  dynamic? jobhiringsFindPractice;
-  dynamic? jobhiringsFindSupplier;
+  dynamic jobhiringsFindPractice;
+  dynamic jobhiringsFindSupplier;
   String? sTypename;
 
   TalentEnquiries(

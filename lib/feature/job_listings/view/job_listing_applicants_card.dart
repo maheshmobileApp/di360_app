@@ -80,12 +80,12 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${professional?.firstName ?? applicant?.firstName ?? "User"} ${professional?.lastName ?? ""}",
+                          "${professional.firstName ?? applicant?.firstName ?? "User"} ${professional.lastName ?? ""}",
                           style: TextStyles.semiBold(color: AppColors.black),
                         ),
                         addVertical(2),
                         Text(
-                          professional?.name ?? "Job Role",
+                          professional.name ?? "Job Role",
                           style: TextStyles.regular2(
                             color: AppColors.bottomNavUnSelectedColor,
                           ),

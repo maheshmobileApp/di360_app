@@ -1,17 +1,13 @@
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_talent_listing_status_count_res.dart';
-import 'package:di360_flutter/feature/talent_listing/model/get_talent_preview_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/delete_talent_message.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_status_count.dart';
-import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_data.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_preview_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/send_talent_message_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/talent_listing_messages_query.dart';

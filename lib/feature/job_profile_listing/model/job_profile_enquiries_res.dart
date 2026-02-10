@@ -47,10 +47,10 @@ class TalentEnquiriesData {
   String? talentId;
   String? enquiryDescription;
   String? enquiryFrom;
-  Null? dentalPractices;
+  dynamic dentalPractices;
   DentalSuppliers? dentalSuppliers;
-  Null? jobhiringsFindPractice;
-  Null? jobhiringsFindSupplier;
+  dynamic jobhiringsFindPractice;
+  dynamic jobhiringsFindSupplier;
   String? sTypename;
 
   TalentEnquiriesData(

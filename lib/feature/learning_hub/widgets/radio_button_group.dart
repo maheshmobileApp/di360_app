@@ -76,8 +76,8 @@ class _CustomRadioGroupState<T> extends State<CustomRadioGroup<T>> {
                     value: option,
                     groupValue: _groupValue,
                     activeColor: widget.activeColor,
-                    fillColor: MaterialStateProperty.resolveWith<Color>(
-                      (states) => states.contains(MaterialState.selected)
+                    fillColor: WidgetStateProperty.resolveWith<Color>(
+                      (states) => states.contains(WidgetState.selected)
                           ? widget.activeColor
                           : widget.inactiveColor,
                     ),

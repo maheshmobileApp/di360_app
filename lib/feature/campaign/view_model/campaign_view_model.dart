@@ -1,5 +1,3 @@
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_details_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_contact_count_res.dart';

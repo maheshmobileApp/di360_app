@@ -1,7 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
-import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
@@ -71,14 +70,13 @@ void main() async {
     await NotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
   } catch (e) {
-    print('Firebase initialization failed: $e');
+
   }
   
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  print('Environment Base URL: ${AppConfig.hasuraBaseUrl}');
   runApp(const MyApp());
 }
 
