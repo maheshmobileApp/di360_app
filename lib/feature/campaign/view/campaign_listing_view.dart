@@ -27,19 +27,42 @@ class CampaignListingView extends StatefulWidget {
 
 class _JobListingScreenState extends State<CampaignListingView>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
+    viewModel.campaignListData = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
+    _scrollController.addListener(_onScroll);
   }
 
-  Future<void> _loadData() async {
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
+      _loadData(loadMore: true);
+    }
+  }
+
+  Future<void> _loadData({bool loadMore = false}) async {
     final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
-    Loaders.circularShowLoader(context);
-    await viewModel.getCampaignListing();
-    Loaders.circularHideLoader(context);
+    if (!loadMore) {
+      Loaders.circularShowLoader(context);
+    }
+    await viewModel.getCampaignListing(loadMore: loadMore);
+    if (!loadMore) {
+      Loaders.circularHideLoader(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -99,18 +122,27 @@ class _JobListingScreenState extends State<CampaignListingView>
                         ),
                       )
                     : ListView.builder(
-                        itemCount: viewModel.filteredCampaigns.length,
+                        controller: _scrollController,
+                        itemCount: viewModel.filteredCampaigns.length + (viewModel.hasMoreCampaigns ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index == viewModel.filteredCampaigns.length) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
                           final campaignData = viewModel.filteredCampaigns[index];
                           return CampaignCard(
-                            id: campaignData?.id ?? "",
-                            campaignName: campaignData?.campaignName ?? "",
-                            date: campaignData?.scheduleDate ?? "",
-                            type: campaignData?.messageChannel ?? "",
-                            status: campaignData?.status ?? "",
-                            repeat: campaignData?.isRepeating ?? "",
-                            time: campaignData?.scheduleTimeLocal ?? "",
-                            createdBy: '',
+                            id: campaignData.id ?? "",
+                            campaignName: campaignData.campaignName ?? "",
+                            date: campaignData.scheduleDate ?? "",
+                            type: campaignData.messageChannel ?? "",
+                            status: campaignData.status ?? "",
+                            repeat: campaignData.isRepeating ?? "",
+                            time: campaignData.scheduleTimeLocal ?? "",
+                            createdBy: "",
                             onMenuAction: (action, id) async {
                               switch (action) {
                                 case 'Delete':

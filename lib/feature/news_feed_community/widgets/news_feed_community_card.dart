@@ -6,7 +6,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -135,11 +134,28 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     (imageUrls?.isNotEmpty ?? false)
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
-                    if (feedType == "LEARNHUB")
+
+                    if (course?.isNotEmpty == true)
+                      ((course?.first.courseBannerImage?.isNotEmpty ?? false) &&
+                              (course?.first.courseBannerImage?.first.url !=
+                                  null))
+                          ? Center(
+                            child: CachedNetworkImageWidget(
+                                height: 150,
+                                imageUrl:
+                                    course?.first.courseBannerImage?.first.url ??
+                                        "",
+                                fit: BoxFit.contain,
+                              ),
+                          )
+                          : SizedBox.shrink(),
+
+                    if (feedType == "LEARNHUB" && course?.isNotEmpty == true)
                       _learnHubWidget(course?.first ?? Courses(), createdAt),
-                    if (feedType == "CATALOGUE") _buildCatalogueRow(catelougeViewModel,context),
-                    if (feedType == "JOBS")
-                      _jobsWidget(job?.first??Jobs(), createdAt),
+                    if (feedType == "CATALOGUE")
+                      _buildCatalogueRow(catelougeViewModel, context),
+                    if (feedType == "JOBS" && job?.isNotEmpty == true)
+                      _jobsWidget(job?.first ?? Jobs(), createdAt),
 
                     const Divider(),
                     Row(
@@ -528,8 +544,11 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionWidget("Presented By",
-                    course.presenters?.first.presentedByName ?? ""),
+                _sectionWidget(
+                    "Presented By",
+                    (course.presenters?.isNotEmpty == true)
+                        ? (course.presenters?.first.presentedByName ?? "")
+                        : ""),
                 _sectionWidget("CPD Hours", course.cpdPoints.toString()),
                 Container(
                   padding:
@@ -586,7 +605,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  
   Widget _jobsWidget(Jobs job, String createdAt) {
     return Container(
       width: double.infinity,
@@ -601,10 +619,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionWidget("Title",
-                    job.title ?? ""),
-                _sectionWidget("Role", job.jRole??""),
-                _chipWidget(job.typeofEmployment??[],"")
+                _sectionWidget("Title", job.title ?? ""),
+                _sectionWidget("Role", job.jRole ?? ""),
+                _chipWidget(job.typeofEmployment ?? [], "")
               ],
             ),
           ),
@@ -617,7 +634,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 _timeChip(
                     "Posted on : ${DateFormatUtils.formatDate(createdAt)}"),
-                
                 GestureDetector(
                   onTap: onDetailView,
                   child: Row(
@@ -643,9 +659,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-
-  
-  
 
   Widget _timeChip(String time) {
     return Container(
@@ -730,7 +743,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             SizedBox(
               width: 10,
             ),
-            (meetingLink != "" && types.first == "Webinar")
+            (meetingLink != "" && type == "Webinar")
                 ? _meetingLinkWidget(meetingLink)
                 : SizedBox.shrink(),
           ],

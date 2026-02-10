@@ -186,14 +186,21 @@ class ProfileImage {
 }
 
 class DentalProfessional {
-  Null? profileImage;
+  List<ProfileImage>? profileImage;
   String? gender;
   String? sTypename;
 
   DentalProfessional({this.profileImage, this.gender, this.sTypename});
 
   DentalProfessional.fromJson(Map<String, dynamic> json) {
-    profileImage = json['profile_image'];
+    if (json['profile_image'] != null) {
+      profileImage = <ProfileImage>[];
+      if (json['profile_image'] is List) {
+        json['profile_image'].forEach((v) {
+          profileImage!.add(new ProfileImage.fromJson(v));
+        });
+      }
+    }
     gender = json['gender'];
     sTypename = json['__typename'];
   }

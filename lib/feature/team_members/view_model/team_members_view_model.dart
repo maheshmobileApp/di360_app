@@ -79,22 +79,50 @@ class TeamMembersViewModel extends ChangeNotifier {
   }
 
   TeamMembersData? teamMembersData;
+  int _teamMembersOffset = 0;
+  bool _hasMoreTeamMembers = true;
+  bool _isLoadingMoreTeamMembers = false;
 
-  Future<void> getTeamMembers() async {
+  bool get hasMoreTeamMembers => _hasMoreTeamMembers;
+  bool get isLoadingMoreTeamMembers => _isLoadingMoreTeamMembers;
+
+  Future<void> getTeamMembers({bool loadMore = false}) async {
     print("**************************************getTeamMembers");
+    if (loadMore) {
+      if (_isLoadingMoreTeamMembers || !_hasMoreTeamMembers) return;
+      _isLoadingMoreTeamMembers = true;
+    } else {
+      _teamMembersOffset = 0;
+      _hasMoreTeamMembers = true;
+      teamMembersData = null;
+    }
+
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "where": {
         "supplier_access_id": {"_eq": id}
       },
-      "limit": 100,
-      "offset": 0
+      "limit": 10,
+      "offset": _teamMembersOffset
     };
     final res = await repo.getTeamMembers(variables);
-    if (res.clients?.length != 0) {
-      teamMembersData = res;
+    
+    if (res.clients != null) {
+      if (loadMore) {
+        teamMembersData?.clients?.addAll(res.clients!);
+      } else {
+        teamMembersData = res;
+      }
+      _hasMoreTeamMembers = (res.clients?.length ?? 0) == 10;
+      _teamMembersOffset += res.clients?.length ?? 0;
     } else {
-      teamMembersData = res;
+      if (!loadMore) {
+        teamMembersData = res;
+      }
+    }
+
+    if (loadMore) {
+      _isLoadingMoreTeamMembers = false;
     }
     notifyListeners();
   }

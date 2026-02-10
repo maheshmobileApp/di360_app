@@ -122,33 +122,28 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> updateDevieToken() async {
-    // try {
-    //   // Check if widget is still mounted
-    //   if (!hasListeners) {
-    //     return;
-    //   }
+    try {
+      if (!hasListeners) return;
+      if (Firebase.apps.isEmpty) return;
+      await Future.delayed(Duration(seconds: 2));
+      
+      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final deviceToken = await FirebaseMessaging.instance.getToken();
 
-    //   // Check if Firebase is initialized
-    //   if (Firebase.apps.isEmpty) {
-    //   final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    //   final deviceToken = await FirebaseMessaging.instance.getToken();
+      if (deviceToken != null && userId.isNotEmpty) {
+        await LocalStorage.setStringVal(
+            LocalStorageConst.deviceToken, deviceToken);
+        final variables = {
+          "id": userId,
+          "device_tokens": [deviceToken]
+        };
+        await repo.updateDeviceToken(variables);
+      }
+    } catch (e) {}
 
-    //   if (deviceToken != null && userId.isNotEmpty) {
-    //     await LocalStorage.setStringVal(
-    //         LocalStorageConst.deviceToken, deviceToken);
-    //     // final variables = {
-    //     //   "id": userId,
-    //     //   "device_tokens": [deviceToken]
-    //     // };
-    //     // final res = await repo.updateDeviceToken(variables);
-    //   }
-    // } catch (e) {
-    // }
-
-    // // Only notify listeners if not disposed
-    // if (hasListeners) {
-    //   notifyListeners();
-    // }
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 
   getUserDetails() async {

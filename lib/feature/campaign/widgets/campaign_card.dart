@@ -92,7 +92,7 @@ class CampaignCard extends StatelessWidget {
             ),
 
             _infoRow("Type", type),
-            _infoRow("Created by", createdBy),
+            //_infoRow("Created by", createdBy),
             _infoRow("Scheduled date", date),
             _infoRow("Time", time),
             _infoRow("Repeat", (repeat == "") ? "no" : repeat),

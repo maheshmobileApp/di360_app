@@ -747,6 +747,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
             .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
         "banner_image": selectedBannerImgList,
+        "start_Date" :  startDateController.text,
 
         "clinic_logo": selectedClinicImgList,
 
@@ -847,6 +848,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": selectedBannerImgList,
 
         "clinic_logo": selectedClinicImgList,
+        "start_Date" :  startDateController.text,
 
         // {
         //   "url":
@@ -895,8 +897,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     videoLinkController.text = jobData?.video ?? "";
     countryController.text = jobData?.country ?? "";
     serverBannerImg = jobData?.bannerImage?.url;
-    startDateController.text = jobData?.closedAt ?? "";
-    endDateController.text = jobData?.closedAt ?? "";
+    isStartDateEnabled = jobData?.startDate != null;
+    isEndDateEnabled = jobData?.startDate != null;
+    startDateController.text = jobData?.startDate ?? "";
+    endDateController.text = jobData?.startDate ?? "";
 
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??

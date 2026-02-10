@@ -299,8 +299,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         viewModel.setSelectedCourseCategoryName(
                                             newsItem.categoryType ?? "");
 
-                                        print(
-                                            "***************** ${newsItem.categoryType ?? ""}");
+                                       
                                         viewModel.newsFeedCategory = communityVM
                                                 .newsFeedCategoriesData
                                                 ?.newsfeedCategories
@@ -313,13 +312,14 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 .map((item) => item.url ?? "")
                                                 .where((url) => url.isNotEmpty)
                                                 .toList();
+                                        viewModel.existingImages = newsItem.postImage ?? [];
                                         navigationService.navigateTo(
                                             RouteList.addNewsFeedCommunityView);
 
                                         break;
                                       case "Delete":
                                         showAlertMessage(context,
-                                            'Are you sure you want to delete this Category?',
+                                            'Are you sure you want to delete this news feed post?',
                                             onBack: () async {
                                           await viewModel
                                               .deleteNewsFeedCommunity(

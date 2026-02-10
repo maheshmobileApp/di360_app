@@ -297,7 +297,7 @@ class Courses {
   List<Address>? address;
   dynamic cpdPoints;
   String? type;
-  List<CourseBannerImage>? courseBannerImage;
+  List<PostImage>? courseBannerImage;
   String? sTypename;
 
   Courses(
@@ -328,9 +328,9 @@ class Courses {
     cpdPoints = json['cpd_points'];
     type = json['type'];
     if (json['course_banner_image'] != null) {
-      courseBannerImage = <CourseBannerImage>[];
+      courseBannerImage = <PostImage>[];
       json['course_banner_image'].forEach((v) {
-        courseBannerImage!.add(new CourseBannerImage.fromJson(v));
+        courseBannerImage!.add(new PostImage.fromJson(v));
       });
     }
     sTypename = json['__typename'];

@@ -45,7 +45,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   //***********************filters
   List<String> filterContactTypes = ["All", "Partner", "Member"];
-   List<String> filterStates = [
+  List<String> filterStates = [
     "All",
     "New South Wales",
     "Victoria",
@@ -142,7 +142,8 @@ class CommunityViewModel extends ChangeNotifier {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getJoinRequest(id, listingStatus ?? "");
     if (res != null) {
-      communityMembers = res;;
+      communityMembers = res;
+      ;
     }
     notifyListeners();
   }
@@ -181,7 +182,6 @@ class CommunityViewModel extends ChangeNotifier {
         membershipLink = "";
       }
     } catch (e, s) {
-
       membershipLink = "";
     } finally {
       Loaders.circularHideLoader(context);
@@ -214,7 +214,6 @@ class CommunityViewModel extends ChangeNotifier {
         partnershipLink = "";
       }
     } catch (e, s) {
-
       partnershipLink = "";
     } finally {
       Loaders.circularHideLoader(context);
@@ -425,31 +424,52 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   ContactsData? contactsRes;
-  
-  Future<void> getContacts(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  int _contactsOffset = 0;
+  bool _hasMoreContacts = true;
+  bool _isLoadingMoreContacts = false;
+
+  bool get hasMoreContacts => _hasMoreContacts;
+  bool get isLoadingMoreContacts => _isLoadingMoreContacts;
+
+  Future<void> getContacts(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore) {
+      if (_isLoadingMoreContacts || !_hasMoreContacts) return;
+      _isLoadingMoreContacts = true;
+    } else {
+      Loaders.circularShowLoader(context);
+      _contactsOffset = 0;
+      _hasMoreContacts = true;
+      contactsRes = null;
+    }
 
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     Map<String, dynamic> whereClause = {
       "created_by_id": {"_eq": id}
     };
-    
+
     if (selectedFilterContactType == "Partner") {
       whereClause["contact_type"] = {"_eq": "PARTNER"};
-    }else if (selectedFilterContactType == "Member"){
+    } else if (selectedFilterContactType == "Member") {
       whereClause["contact_type"] = {"_eq": "MEMBER"};
-
     }
 
-    final variables = {
-      "where": whereClause,
-      "limit": 100,
-      "offset": 0
-    };
+    final variables = {"where": whereClause, "limit": 10, "offset": _contactsOffset};
     final res = await repo.getContacts(variables);
-    if (res.partnersContactBook != []) {
-      contactsRes = res;
+    
+    if (res.partnersContactBook != null) {
+      if (loadMore) {
+        contactsRes?.partnersContactBook?.addAll(res.partnersContactBook!);
+      } else {
+        contactsRes = res;
+      }
+      _hasMoreContacts = (res.partnersContactBook?.length ?? 0) == 10;
+      _contactsOffset += res.partnersContactBook?.length ?? 0;
+    }
+    
+    if (loadMore) {
+      _isLoadingMoreContacts = false;
+    } else {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -478,8 +498,21 @@ class CommunityViewModel extends ChangeNotifier {
         }
       };
       final res = await repo.addContact(variables);
+      if (res != null && res is Map && res.containsKey('_error')) {
+        Loaders.circularHideLoader(context);
+        final err = res['_error']?.toString() ?? 'Error adding contact';
+        if (err.contains('unique_createdby_email')) {
+          scaffoldMessenger("Contact with this email already exists");
+        } else if (err.contains('unique_createdby_phone')) {
+          scaffoldMessenger("Contact with this phone number already exists");
+        } else if (err.toLowerCase().contains('uniqueness violation')) {
+          scaffoldMessenger("Contact already exists");
+        } else {
+          scaffoldMessenger(err);
+        }
+        return;
+      }
 
-      // Check if response contains successful insertion
       if (res != null && res.containsKey('insert_partners_contact_book_one')) {
         await getContacts(context);
         navigationService.goBack();
@@ -493,11 +526,12 @@ class CommunityViewModel extends ChangeNotifier {
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
-      if (e.toString().contains('unique_createdby_email')) {
+      final msg = e.toString();
+      if (msg.contains('unique_createdby_email')) {
         scaffoldMessenger("Contact with this email already exists");
-      } else if (e.toString().contains('unique_createdby_phone')) {
+      } else if (msg.contains('unique_createdby_phone')) {
         scaffoldMessenger("Contact with this phone number already exists");
-      } else if (e.toString().contains('Uniqueness violation')) {
+      } else if (msg.toLowerCase().contains('uniqueness violation')) {
         scaffoldMessenger("Contact already exists");
       } else {
         scaffoldMessenger("Error adding contact");
@@ -531,9 +565,22 @@ class CommunityViewModel extends ChangeNotifier {
       };
       final res = await repo.updateContact(variables);
 
-      // Check if response contains successful insertion
-      if (res != null &&
-          res.containsKey('update_partners_contact_book_by_pk')) {
+      if (res != null && res is Map && res.containsKey('_error')) {
+        Loaders.circularHideLoader(context);
+        final err = res['_error']?.toString() ?? 'Error updating contact';
+        if (err.contains('unique_createdby_email')) {
+          scaffoldMessenger("Contact with this email already exists");
+        } else if (err.contains('unique_createdby_phone')) {
+          scaffoldMessenger("Contact with this phone number already exists");
+        } else if (err.toLowerCase().contains('uniqueness violation')) {
+          scaffoldMessenger("Contact already exists");
+        } else {
+          scaffoldMessenger(err);
+        }
+        return;
+      }
+
+      if (res != null && res.containsKey('update_partners_contact_book_by_pk')) {
         await getContacts(context);
         navigationService.goBack();
         Loaders.circularHideLoader(context);
