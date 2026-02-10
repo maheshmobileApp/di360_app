@@ -25,10 +25,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final Jobs job;
-  const JobDetailsScreen({
-    super.key,
-    required this.job,
-  });
+  const JobDetailsScreen({super.key, required this.job});
 
   @override
   State<JobDetailsScreen> createState() => _JobDetailsScreenState();
@@ -47,7 +44,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     provider.getApplyJobStatus(widget.job.id ?? "", userId);
   }
 
-  void _showEnquiryForm(BuildContext context,JobSeekViewModel provider) {
+  void _showEnquiryForm(BuildContext context, JobSeekViewModel provider) {
     showDialog(
       context: context,
       builder: (context) {
@@ -58,17 +55,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             CustomRoundedButton(
               text: "Send",
               onPressed: () async {
-                if (provider.enquiryData != null){
-                   navigationService.goBack();
-                await Provider.of<JobSeekViewModel>(context, listen: false)
-                    .jobEnquire(widget.job.id!);
-                ToastMessage.show('Enquiry sent successfully!');
-
-                }else{
-                    ToastMessage.show('Please enter enquiry message');
-
+                if (provider.enquiryData != null) {
+                  navigationService.goBack();
+                  await Provider.of<JobSeekViewModel>(context, listen: false)
+                      .jobEnquire(widget.job.id!);
+                  ToastMessage.show('Enquiry sent successfully!');
+                } else {
+                  ToastMessage.show('Please enter enquiry message');
                 }
-               
               },
               backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
@@ -281,8 +275,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           InfoItem(
               iconPath: ImageConst.briefcurrencySvg,
               title: 'Rate',
-              subtitle:
-                  '${widget.job.rateBilling}'),
+              subtitle: '${widget.job.rateBilling}'),
         if ((widget.job.payMin != null || widget.job.payMax != null))
           InfoItem(
               iconPath: ImageConst.briefcurrencySvg,
@@ -416,7 +409,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           Expanded(
             child: CustomRoundedButton(
               text: 'Enquiry',
-              onPressed: () => _showEnquiryForm(context,provider),
+              onPressed: () => _showEnquiryForm(context, provider),
               backgroundColor: const Color(0xFFFFF3E8),
               textColor: AppColors.primaryColor,
             ),
@@ -482,8 +475,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         await launchUrl(appUri, mode: LaunchMode.externalApplication);
         return;
       }
-    } catch (e) {
-    }
+    } catch (e) {}
 
     try {
       final Uri webUri = Uri.parse(googleMapsWeb);

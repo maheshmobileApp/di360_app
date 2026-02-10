@@ -52,6 +52,13 @@ class DirectoryViewModel extends ChangeNotifier {
   String? userType;
   String? userId;
 
+  bool showMoreOurTeam = false;
+  bool showMoreOurPartner = false;
+  bool showMoreOurGallery = false;
+  bool showMoreOurDocument = false;
+  bool showMoreOurAchievement = false;
+  bool showMoreOurCertification = false;
+
   final List<String> serviceList = ['Test'];
 
   List<QuickLinkItem> quickLinkItems = [];
@@ -70,6 +77,36 @@ class DirectoryViewModel extends ChangeNotifier {
 
   void setUserId(String? value) {
     userId = value;
+    notifyListeners();
+  }
+
+  void toggleShowMoreTeam() {
+    showMoreOurTeam = !showMoreOurTeam;
+    notifyListeners();
+  }
+
+  void toggleShowMoreAchievement() {
+    showMoreOurAchievement = !showMoreOurAchievement;
+    notifyListeners();
+  }
+
+  void toggleShowMorePartner() {
+    showMoreOurPartner = !showMoreOurPartner;
+    notifyListeners();
+  }
+
+  void toggleShowMoreCertification() {
+    showMoreOurCertification = !showMoreOurCertification;
+    notifyListeners();
+  }
+
+  void toggleShowMoreDocument() {
+    showMoreOurDocument = !showMoreOurDocument;
+    notifyListeners();
+  }
+
+  void toggleShowMoreGallery() {
+    showMoreOurGallery = !showMoreOurGallery;
     notifyListeners();
   }
 
@@ -362,6 +399,7 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
+      print("############${directorDetails?.directoryPartners}");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -369,7 +407,7 @@ class DirectoryViewModel extends ChangeNotifier {
           QuickLinkItem(label: 'Services', icon: Icons.medical_services),
         if (directorDetails?.directoryTeamMembers?.length != 0)
           QuickLinkItem(label: 'Team', icon: Icons.people),
-        if (directorDetails?.directoryPartners?.length != 0)
+        if (directorDetails?.directoryPartners?.isNotEmpty ?? false)
           QuickLinkItem(label: 'Partner', icon: Icons.paragliding),
         if (directorDetails?.directoryGalleryPosts?.length != 0 &&
             directorDetails?.directoryGalleryPosts?.first.image?.length != 0)

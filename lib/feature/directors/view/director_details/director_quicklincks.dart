@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,14 +45,22 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'QUICK LINKS',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                        color: Colors.black54),
-                  ),
+                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       Text(
+                        'QUICK LINKS',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                            color: Colors.black54),
+                                         ),
+                                         GestureDetector(
+                                          onTap: () => navigationService.goBack(),
+                                          child: Icon(Icons.close))
+                     ],
+                   ),
                   const SizedBox(height: 16),
                   GridView.builder(
                     shrinkWrap: true,

@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+
 class GetDirectoryDetailsRes {
   DirectoryDetailsData? data;
 
@@ -787,7 +789,7 @@ class TeamMemberImage {
 
 class DirectoryGalleryPosts {
   String? id;
-  List<Image>? image;
+  List<Images>? image;
   dynamic beforeImage;
   dynamic afterImage;
   dynamic bannerImage;
@@ -810,9 +812,9 @@ class DirectoryGalleryPosts {
   DirectoryGalleryPosts.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     if (json['image'] != null) {
-      image = <Image>[];
+      image = <Images>[];
       json['image'].forEach((v) {
-        image!.add(new Image.fromJson(v));
+        image!.add(new Images.fromJson(v));
       });
     }
     beforeImage = json['before_image'];
@@ -841,7 +843,7 @@ class DirectoryGalleryPosts {
   }
 }
 
-class Image {
+class Images {
   String? url;
   String? name;
   int? size;
@@ -849,10 +851,10 @@ class Image {
   String? status;
   String? mimeType;
 
-  Image(
+  Images(
       {this.url, this.name, this.size, this.type, this.status, this.mimeType});
 
-  Image.fromJson(Map<String, dynamic> json) {
+  Images.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     size = json['size'];
@@ -1045,7 +1047,7 @@ class DirectoryPartners {
   String? name;
   String? description;
   PartnerImage? image;
-  List<PartnerAttachement>? attachments;
+  List<PostImage>? attachments;
   bool? showCommunityUser;
 
   DirectoryPartners(
@@ -1060,9 +1062,9 @@ class DirectoryPartners {
     description = json['description'];
     image = json['image'] != null ? new PartnerImage.fromJson(json['image']) : null;
     if (json['attachments'] != null) {
-      attachments = <PartnerAttachement>[];
+      attachments = <PostImage>[];
       json['attachments'].forEach((v) {
-        attachments!.add(new PartnerAttachement.fromJson(v));
+        attachments!.add(new PostImage.fromJson(v));
       });
     }
     showCommunityUser = json['show_community_user'];
@@ -1106,55 +1108,6 @@ class PartnerImage {
       this.mimeType});
 
   PartnerImage.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    name = json['name'];
-    size = json['size'];
-    status = json['status'];
-    fileId = json['file_id'];
-    isPublic = json['isPublic'];
-    directory = json['directory'];
-    extension = json['extension'];
-    mimeType = json['mime_type'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['name'] = this.name;
-    data['size'] = this.size;
-    data['status'] = this.status;
-    data['file_id'] = this.fileId;
-    data['isPublic'] = this.isPublic;
-    data['directory'] = this.directory;
-    data['extension'] = this.extension;
-    data['mime_type'] = this.mimeType;
-    return data;
-  }
-}
-
-class PartnerAttachement {
-  String? url;
-  String? name;
-  int? size;
-  String? status;
-  String? fileId;
-  bool? isPublic;
-  String? directory;
-  String? extension;
-  String? mimeType;
-
-  PartnerAttachement(
-      {this.url,
-      this.name,
-      this.size,
-      this.status,
-      this.fileId,
-      this.isPublic,
-      this.directory,
-      this.extension,
-      this.mimeType});
-
-  PartnerAttachement.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     size = json['size'];
