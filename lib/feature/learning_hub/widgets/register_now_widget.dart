@@ -33,8 +33,8 @@ class RegisterNowWidget extends StatelessWidget {
     }
 
     final bool isEarlyBirdActive = earlyBirdEnd != null
-        ? DateTime.now().isBefore(earlyBirdEnd!) ||
-            DateTime.now().isAtSameMomentAs(earlyBirdEnd!)
+        ? DateTime.now().isBefore(earlyBirdEnd) ||
+            DateTime.now().isAtSameMomentAs(earlyBirdEnd)
         : false;
 
     return Container(

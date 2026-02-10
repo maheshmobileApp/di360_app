@@ -45,7 +45,7 @@ class JobApplicantMessages {
   String? jobEnquiryId;
   String? message;
   String? messageFrom;
-  Null? attachments;
+  Null attachments;
 
   JobApplicantMessages(
       {this.id,

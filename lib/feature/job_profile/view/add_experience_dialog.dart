@@ -134,7 +134,7 @@ class _AddExperienceDialogState extends State<AddExperienceDialog>
                           setState(() {
                             vm.selectedStartYear = v;
                             // Clear end year if it's before the new start year
-                            if (vm.selectedEndYear != null && v != null) {
+                            if (vm.selectedEndYear != null) {
                               final startYear = int.parse(v);
                               final endYear = int.parse(vm.selectedEndYear!);
                               if (endYear < startYear) {

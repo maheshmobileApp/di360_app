@@ -77,27 +77,27 @@ class _ContactsViewState extends State<ContactsView> {
                       }
                       final contact = contacts[index];
                       return ContactCard(
-                          contactName: contact?.contactName ?? "",
-                          email: contact?.email ?? "",
-                          phone: contact?.phone ?? "",
-                          contactType: contact?.contactType ?? "",
-                          state: contact?.state ?? "",
-                          company: contact?.companyName ?? "",
+                          contactName: contact.contactName ?? "",
+                          email: contact.email ?? "",
+                          phone: contact.phone ?? "",
+                          contactType: contact.contactType ?? "",
+                          state: contact.state ?? "",
+                          company: contact.companyName ?? "",
                           onMenuAction: (action) async {
                             switch (action) {
                               case "Edit":
                                 navigationService
                                     .navigateTo(RouteList.createContactView);
                                 viewModel.setContactDetails(contact);
-                                viewModel.setUpdateContactId(contact?.id ?? "");
+                                viewModel.setUpdateContactId(contact.id ?? "");
                                 viewModel.updateContactEditMode(true);
                                 break;
                               case "Delete":
                                 showAlertMessage(context,
-                                    'Are you sure you want to delete this ${contact?.contactName}?',
+                                    'Are you sure you want to delete this ${contact.contactName}?',
                                     onBack: () async {
                                   await viewModel.deleteContact(
-                                      context, contact?.id ?? "");
+                                      context, contact.id ?? "");
                                 });
 
                                 break;

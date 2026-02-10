@@ -50,7 +50,7 @@ class CourseRegisteredUsers {
   String? courseId;
   String? fromId;
   String? createdAt;
-  dynamic? webinarStatus;
+  dynamic webinarStatus;
   String? status;
   DirectoriesSupplier? directoriesPractice;
   DirectoriesSupplier? directoriesSupplier;

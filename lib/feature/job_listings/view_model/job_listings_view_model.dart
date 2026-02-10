@@ -238,12 +238,8 @@ class JobListingsViewModel extends ChangeNotifier {
     };
 
     final res = await repo.getFilteredEnquiryData(variables);
-    if (res != null) {
-      filteredEnquiryData = res;
-    } else {
-      filteredEnquiryData = null;
-    }
-    notifyListeners();
+    filteredEnquiryData = res;
+      notifyListeners();
   }
 
   Future<void> fetchJobStatusCounts() async {

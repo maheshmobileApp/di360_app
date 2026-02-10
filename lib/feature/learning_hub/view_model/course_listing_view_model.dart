@@ -218,12 +218,10 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final res = await repo.getCourseRegisteredUsers(
         courseId, listingRegUsersStatus ?? "");
-    if (res != null) {
-      registeredUsers = res;
-      await getCourseRegisteredUsersTabCount(context, courseId);
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
+    registeredUsers = res;
+    await getCourseRegisteredUsersTabCount(context, courseId);
+    Loaders.circularHideLoader(context);
+      notifyListeners();
   }
 
   Future<void> updateRegUserStatus(

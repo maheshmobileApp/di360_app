@@ -1,15 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
-import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
-import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CommunitySupplierMarketView extends StatefulWidget {
   @override
@@ -18,14 +13,9 @@ class CommunitySupplierMarketView extends StatefulWidget {
 
 class _CreateCategoryViewState extends State<CommunitySupplierMarketView>
     with ValidationMixins {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<CommunityViewModel>(context);
-    final newsCommunityVM = Provider.of<NewsFeedCommunityViewModel>(context);
-    final list =
-        viewModel.getJoinedCommunityMembersData?.communityMembers ?? [];
     
     return Scaffold(
       backgroundColor: AppColors.whiteColor,

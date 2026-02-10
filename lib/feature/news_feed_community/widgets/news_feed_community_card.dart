@@ -15,6 +15,7 @@ import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -127,8 +128,10 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     const SizedBox(height: 8),
 
                     const SizedBox(height: 8),
-
-                    _descriptionWidget(description),
+                    HtmlWidget(
+                      description,
+                      textStyle: TextStyles.regular2(color: AppColors.black),
+                    ),
                     const SizedBox(height: 8),
 
                     (imageUrls?.isNotEmpty ?? false)

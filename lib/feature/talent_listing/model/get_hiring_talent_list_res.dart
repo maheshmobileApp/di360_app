@@ -49,12 +49,12 @@ class Jobhirings {
   String? updatedAt;
   String? createdAt;
   String? jobProfilesId;
-  dynamic? dentalPracticeId;
+  dynamic dentalPracticeId;
   DentalSupplier? dentalSupplier;
-  dynamic? dentalPractice;
+  dynamic dentalPractice;
   HiringJobProfiles? jobProfiles;
-  dynamic? talentEnquiriesFindPractice;
-  dynamic? talentEnquiriesFindSupplier;
+  dynamic talentEnquiriesFindPractice;
+  dynamic talentEnquiriesFindSupplier;
   Directories? directories;
   String? sTypename;
 
@@ -130,7 +130,7 @@ class DentalSupplier {
   String? id;
   String? name;
   DirectoriesList? directories;
-  Null? profileImage;
+  Null profileImage;
   Logo? logo;
   String? sTypename;
 

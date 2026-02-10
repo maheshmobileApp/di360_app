@@ -118,7 +118,7 @@ class HttpService {
     return responses;
   }
 
-  _showError(DioError e) {
+  _showError(DioException e) {
     if (e.message!.contains('SocketException') &&
         e.message!.contains('Network is unreachable')) {
       // _utils.showErrorSnackBar(
@@ -126,7 +126,7 @@ class HttpService {
       //         'Something is wrong from our end, Please try again after sometime',
       //     title: "Server Unavailable");
       return;
-    } else if (e.type == DioErrorType.receiveTimeout) {
+    } else if (e.type == DioExceptionType.receiveTimeout) {
       // _utils.showErrorSnackBar(
       //     title: "Seems to be Slow Internet",
       //     msg: "Please connect to Internet for better experience");

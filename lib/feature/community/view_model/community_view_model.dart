@@ -141,21 +141,17 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getJoinRequest() async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getJoinRequest(id, listingStatus ?? "");
-    if (res != null) {
-      communityMembers = res;
-      ;
-    }
-    notifyListeners();
+    communityMembers = res;
+    ;
+      notifyListeners();
   }
 
   //GET PARTNERSHIP REQUESTS
   Future<void> getPartnershipRequest() async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getPartnershipRequest(id, listingStatus ?? "");
-    if (res != null) {
-      partnershipMembers = res;
-    }
-    notifyListeners();
+    partnershipMembers = res;
+      notifyListeners();
   }
 
   String membershipLink = "";
@@ -181,7 +177,7 @@ class CommunityViewModel extends ChangeNotifier {
       } else {
         membershipLink = "";
       }
-    } catch (e, s) {
+    } catch (e) {
       membershipLink = "";
     } finally {
       Loaders.circularHideLoader(context);
@@ -213,7 +209,7 @@ class CommunityViewModel extends ChangeNotifier {
       } else {
         partnershipLink = "";
       }
-    } catch (e, s) {
+    } catch (e) {
       partnershipLink = "";
     } finally {
       Loaders.circularHideLoader(context);
@@ -278,10 +274,8 @@ class CommunityViewModel extends ChangeNotifier {
       }
     };
     final res = await repo.getDirectory(variables);
-    if (res != null) {
-      directoryData = res;
-    }
-    notifyListeners();
+    directoryData = res;
+      notifyListeners();
   }
 
   //Delete Category---------------------------------------------------------------
@@ -354,10 +348,8 @@ class CommunityViewModel extends ChangeNotifier {
       "communityId": (type == "PROFESSIONAL") ? newsFeedId : communityId
     };
     final res = await repo.getNewsFeedCategories(variables);
-    if (res != null) {
-      newsFeedCategoriesData = res;
-    }
-    //Loaders.circularHideLoader(context);
+    newsFeedCategoriesData = res;
+      //Loaders.circularHideLoader(context);
 
     notifyListeners();
   }
@@ -417,10 +409,8 @@ class CommunityViewModel extends ChangeNotifier {
 
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
-    if (res != null) {
-      getJoinedCommunityMembersData = res;
-    }
-    notifyListeners();
+    getJoinedCommunityMembersData = res;
+      notifyListeners();
   }
 
   ContactsData? contactsRes;

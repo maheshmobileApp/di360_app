@@ -263,15 +263,11 @@ class TalentListingViewModel extends ChangeNotifier {
       BuildContext context, String talentId) async {
     Loaders.circularShowLoader(context);
     final res = await repo.getTalentEnquiry(talentId);
-    if (res != null) {
-      talentEnquiryData = res;
-      print("***********************talent enquiries data: $talentId");
-      print("***********************talent enquiries data: $talentEnquiryData");
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
+    talentEnquiryData = res;
+    print("***********************talent enquiries data: $talentId");
+    print("***********************talent enquiries data: $talentEnquiryData");
+    Loaders.circularHideLoader(context);
+      notifyListeners();
     return res;
   }
 
@@ -280,10 +276,8 @@ class TalentListingViewModel extends ChangeNotifier {
     try {
       isLoading = true;
       final res = await repo.fetchTalentMessages(talentId);
-      if (res != null) {
-        talentMessages = res;
-      }
-    } catch (e) {
+      talentMessages = res;
+        } catch (e) {
     } finally {
       isLoading = false;
       notifyListeners();
