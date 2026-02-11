@@ -236,6 +236,7 @@ class CampaignViewModel extends ChangeNotifier {
   CampaignListData? campaignListData;
   StatesByGroupsData? statesByGroups;
   int _campaignOffset = 0;
+  int _campaignLimit = 10;
   bool _hasMoreCampaigns = true;
   bool _isLoadingMoreCampaigns = false;
 
@@ -253,7 +254,7 @@ class CampaignViewModel extends ChangeNotifier {
         campaignListData = null;
       }
 
-      final variables = {"limit": 10, "offset": _campaignOffset, "where": {}};
+      final variables = {"limit": _campaignLimit, "offset": _campaignOffset, "where": {}};
       final res = await repo.getCampaignListData(variables);
       
       if (!loadMore) {
@@ -266,7 +267,7 @@ class CampaignViewModel extends ChangeNotifier {
         } else {
           campaignListData = res;
         }
-        _hasMoreCampaigns = (res?.smsCampaign?.length ?? 0) == 10;
+        _hasMoreCampaigns = (res?.smsCampaign?.length ?? 0) == _campaignLimit;
         _campaignOffset += res?.smsCampaign?.length ?? 0;
       }
 
