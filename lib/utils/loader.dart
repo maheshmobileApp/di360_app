@@ -1,8 +1,9 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
+
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class LoadingWidget extends StatelessWidget {
   final String? message;
@@ -47,25 +48,12 @@ hideLoader() {
 class Loaders {
 
   static circularShowLoader(BuildContext context) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (ctx) {
-        return const Center(
-          child: CircularProgressIndicator(
-            backgroundColor: AppColors.geryColor,
-            color: AppColors.primaryColor,
-          ),
-        );
-      },
-    );
-  }
+EasyLoading.show(status: 'Loading...');
 
-  static circularHideLoader(BuildContext context) {
-  if (Navigator.canPop(context)) {
-    Navigator.of(context, rootNavigator: true).pop(); // Ensures the dialog is closed
   }
-}
+  static circularHideLoader(BuildContext context) {
+    EasyLoading.dismiss();
+  }
 }
 
 FormData convertMapToFormData(Map<String, dynamic> payload) {

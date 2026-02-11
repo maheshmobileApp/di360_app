@@ -21,10 +21,7 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
 
     return Scaffold(
       backgroundColor: Colors.white.withOpacity(0.95),
-      appBar: AppBarWidget(
-        title: 'Quick Links',
-        searchWidget: false,
-      ),
+      appBar: AppBarWidget(title: 'Quick Links', searchWidget: false),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -45,22 +42,20 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Text(
-                        'QUICK LINKS',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                            color: Colors.black54),
-                                         ),
-                                         GestureDetector(
-                                          onTap: () => navigationService.goBack(),
-                                          child: Icon(Icons.close))
-                     ],
-                   ),
+                    children: [
+                      Text('QUICK LINKS',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: Colors.black54)),
+                      GestureDetector(
+                          onTap: () => navigationService.goBack(),
+                          child: Icon(Icons.close))
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   GridView.builder(
                     shrinkWrap: true,

@@ -34,12 +34,6 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
 
     directionalVM.setUserType(userType);
     directionalVM.setUserId(userId);
-
-
-    /*setState(() {
-      type = userType;
-      userID = userId;
-    });*/
   }
 
   @override

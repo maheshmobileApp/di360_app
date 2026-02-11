@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 
 class GetDirectoryDetailsRes {
@@ -32,16 +33,16 @@ class DirectoriesByPk {
   String? phone;
   String? address;
   String? altPhone;
-  dynamic hobbies;
-  dynamic universitySchool;
   dynamic abnAcn;
   String? companyName;
   dynamic profession;
   String? type;
-  dynamic education;
+  List<WorkingAt>? workingAt;
+  List<Education>? education;
+  List<UniversitySchool>? universitySchool;
+  List<Hobbies>? hobbies;
   String? professionType;
   dynamic designation;
-  dynamic workingAt;
   BannerImage? bannerImage;
   Logo? logo;
   double? latitude;
@@ -110,16 +111,43 @@ class DirectoriesByPk {
     phone = json['phone'];
     address = json['address'];
     altPhone = json['alt_phone'];
-    hobbies = json['hobbies'];
-    universitySchool = json['university_school'];
     abnAcn = json['abn_acn'];
     companyName = json['company_name'];
     profession = json['profession'];
-    type = json['type'];
-    education = json['education'];
+    type = json['type'];if (json['working_at'] != null) {
+      workingAt = <WorkingAt>[];
+      json['working_at'].forEach((v) {
+        if (v is Map<String, dynamic>) {
+          workingAt!.add(new WorkingAt.fromJson(v));
+        }
+      });
+    }
+    if (json['education'] != null) {
+      education = <Education>[];
+      json['education'].forEach((v) {
+        if (v is Map<String, dynamic>) {
+          education!.add(new Education.fromJson(v));
+        }
+      });
+    }
+    if (json['university_school'] != null) {
+      universitySchool = <UniversitySchool>[];
+      json['university_school'].forEach((v) {
+        if (v is Map<String, dynamic>) {
+          universitySchool!.add(new UniversitySchool.fromJson(v));
+        }
+      });
+    }
+    if (json['hobbies'] != null) {
+      hobbies = <Hobbies>[];
+      json['hobbies'].forEach((v) {
+        if (v is Map<String, dynamic>) {
+          hobbies!.add(new Hobbies.fromJson(v));
+        }
+      });
+    }
     professionType = json['profession_type'];
     designation = json['designation'];
-    workingAt = json['working_at'];
     bannerImage = json['banner_image'] != null
         ? new BannerImage.fromJson(json['banner_image'])
         : null;

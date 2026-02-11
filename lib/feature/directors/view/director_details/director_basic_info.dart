@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
+import 'package:di360_flutter/feature/directors/view/director_details/hobbies_education_workat_widget.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
@@ -26,23 +27,24 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (directionalVM.directorDetails?.description != null)
-            _sectionTitle('BASIC INFO',
+            sectionTitle('BASIC INFO',
                 _description(directionalVM.directorDetails?.description ?? ''),
                 key: directionalVM.sectionKeys['Basic Info']),
+          HobbiesEducationWorkatWidget(),
           addVertical(8),
           if (directionalVM.directorDetails?.directoryServices?.isNotEmpty ??
               false)
-            _sectionTitle('SERVICES', _serviceButtons(context, directionalVM),
+            sectionTitle('SERVICES', _serviceButtons(context, directionalVM),
                 key: directionalVM.sectionKeys['Services']),
           addVertical(16),
           if (directionalVM.directorDetails?.directoryTeamMembers?.isNotEmpty ??
               false)
-            _sectionTitle('OUR TEAMS', _teamcard(directionalVM),
+            sectionTitle('OUR TEAMS', _teamcard(directionalVM),
                 key: directionalVM.sectionKeys['Team']),
           addVertical(16),
           if (directionalVM.directorDetails?.directoryPartners?.isNotEmpty ??
               false)
-            _sectionTitle('Our Partners', _partnercard(directionalVM, context),
+            sectionTitle('Our Partners', _partnercard(directionalVM, context),
                 key: directionalVM.sectionKeys['Partner']),
           if ((directionalVM
                       .directorDetails?.directoryGalleryPosts?.isNotEmpty ??
@@ -50,81 +52,45 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               (directionalVM.directorDetails?.directoryGalleryPosts?.first.image
                       ?.isNotEmpty ??
                   false))
-            _sectionTitle('GALLERY', _galleryCard(directionalVM),
+            sectionTitle('GALLERY', _galleryCard(directionalVM),
                 key: directionalVM.sectionKeys['Gallery']),
           if (directionalVM.directorDetails?.directoryDocuments?.isNotEmpty ??
               false)
-            _sectionTitle('OUR DOCUMENT', _documentCard(directionalVM),
+            sectionTitle('OUR DOCUMENT', _documentCard(directionalVM),
                 key: directionalVM.sectionKeys['Document']),
           if (directionalVM
                   .directorDetails?.directoryAchievements?.isNotEmpty ??
               false)
-            _sectionTitle('OUR ACHIEVEMENTS', _archievementcard(directionalVM),
+            sectionTitle('OUR ACHIEVEMENTS', _archievementcard(directionalVM),
                 key: directionalVM.sectionKeys['Achievements']),
           if (directionalVM
                   .directorDetails?.directoryCertifications?.isNotEmpty ??
               false)
-            _sectionTitle(
+            sectionTitle(
                 'OUR CERTIFICATIONS', _certificationcard(directionalVM),
                 key: directionalVM.sectionKeys['Certifications']),
           if (directionalVM
                   .directorDetails?.directoryAppointmentSlots?.isNotEmpty ??
               false)
-            _sectionTitle('Book an appointment with <Clinic Name>',
+            sectionTitle('Book an appointment with <Clinic Name>',
                 DirectorAppointmentform(),
                 key: directionalVM.sectionKeys['Book Appointment']),
           addVertical(10),
           if (directionalVM
                   .directorDetails?.directoryTestimonials?.isNotEmpty ??
               false)
-            _sectionTitle(
+            sectionTitle(
                 'HOW TESTLS HAS HELPED OTHERS', _testimonialCard(directionalVM),
                 key: directionalVM.sectionKeys['Testimonials']),
           if (directionalVM.directorDetails?.directoryFaqs?.isNotEmpty ?? false)
-            _sectionTitle('FAQ', _faqSection(directionalVM),
+            sectionTitle('FAQ', _faqSection(directionalVM),
                 key: directionalVM.sectionKeys['FAQ']),
           if (directionalVM.directorDetails?.directoryLocations?.isNotEmpty ??
               false)
-            _sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM, context),
+            sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM, context),
                 key: directionalVM.sectionKeys['Contact Us']),
         ],
       ),
-    );
-  }
-
-  Widget _sectionTitle(String title, Widget? child, {Key? key}) {
-    return Column(
-      key: key,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Row(
-          children: [
-            Container(
-              height: 2,
-              width: 40,
-              color: Colors.orange,
-            ),
-            Expanded(
-              child: Container(
-                height: 2,
-                color: Colors.grey.shade300,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10),
-        Container(child: child)
-      ],
     );
   }
 
@@ -771,4 +737,26 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                   .toList()),
         ]),
       );
+}
+
+Widget sectionTitle(String title, Widget? child, {Key? key}) {
+  return Column(
+    key: key,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text(title,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+      Row(
+        children: [
+          Container(height: 2, width: 40, color: Colors.orange),
+          Expanded(child: Container(height: 2, color: Colors.grey.shade300))
+        ],
+      ),
+      SizedBox(height: 10),
+      Container(child: child)
+    ],
+  );
 }
