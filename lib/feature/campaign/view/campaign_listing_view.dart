@@ -50,6 +50,7 @@ class _JobListingScreenState extends State<CampaignListingView>
     if (!loadMore) {
       Loaders.circularShowLoader(context);
     }
+    viewModel.campaignDetails = null;
     await viewModel.getCampaignListing(loadMore: loadMore);
     if (!loadMore) {
       Loaders.circularHideLoader(context);

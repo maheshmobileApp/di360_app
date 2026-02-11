@@ -530,7 +530,6 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   void resetListingState() {
-    campaignListData = null;
     setSearchBar(false);
     clearAllFilters();
   }
