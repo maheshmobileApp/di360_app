@@ -70,12 +70,23 @@ class LoginViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(loginSchema, _variables);
-      if (res.isNotEmpty) {
+
+      if (res.isNotEmpty && res.containsKey('_error')) {
+        Loaders.circularHideLoader(context);
+        final err =
+            res['_error']?.toString() ?? "Login failed. Please try again.";
+
+        scaffoldMessenger(err == "HasuraRequestError: Invalid credentials"
+            ? "Invalid credentials"
+            : err);
+        return;
+      }
+
+      if (res.isNotEmpty && res.containsKey('login_api')) {
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
-          
 
           (result.loginApi?.type == "SUPPLIER")
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
@@ -107,17 +118,18 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(result.loginApi?.accessToken ?? '');
           updateDevieToken();
           navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+        } else {
+          Loaders.circularHideLoader(context);
+          scaffoldMessenger('Account is ${res['login_api']['status']}');
         }
       } else {
-        scaffoldMessenger(
-            'Either it is Invalid credentials or you have not verified your email.');
         Loaders.circularHideLoader(context);
+        scaffoldMessenger('Login failed. Please try again.');
       }
     } catch (e) {
-      scaffoldMessenger('$e');
       Loaders.circularHideLoader(context);
+      scaffoldMessenger('Login failed. Please try again.');
     }
-
     notifyListeners();
   }
 
@@ -126,7 +138,7 @@ class LoginViewModel extends ChangeNotifier {
       if (!hasListeners) return;
       if (Firebase.apps.isEmpty) return;
       await Future.delayed(Duration(seconds: 2));
-      
+
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final deviceToken = await FirebaseMessaging.instance.getToken();
 
@@ -198,7 +210,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.communityId, supplier?.communityId ?? '');
-      
+
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
