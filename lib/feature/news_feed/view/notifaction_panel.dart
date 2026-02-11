@@ -51,8 +51,8 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                           onTap: () {
                             if (notification?.type == 'NEWS_FEED') {
                               dashBoardVM.setIndex(1, context);
-                              navigationService
-                                  .navigateTo(RouteList.dashBoard);
+                              navigationService.goBack();
+
                             } else if (notification?.type ==
                                 'SUPPORT_REQUEST') {
                               //  navigationService.pushNamedAndRemoveUntil(RouteList.supportRequest);

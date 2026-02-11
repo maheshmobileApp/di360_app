@@ -81,25 +81,26 @@ class AddNewsFeedScreen extends StatelessWidget
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 addVertical(8),
                 TextFormField(
-                  controller: viewModel.videoController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Video URL',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: validateOptionalUrl,
-                ),
+                    controller: viewModel.videoController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Video URL',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: viewModel.videoController.text.isNotEmpty
+                        ? validateOptionalUrl
+                        : null),
                 addVertical(20),
                 Text('Enter Website Link',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 addVertical(8),
                 TextFormField(
-                  controller: viewModel.websiteController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Website URL',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: validateOptionalUrl,
-                ),
+                    controller: viewModel.websiteController,
+                    decoration: InputDecoration(
+                        hintText: 'Enter Website URL',
+                        border: OutlineInputBorder()),
+                    validator: viewModel.websiteController.text.isNotEmpty
+                        ? validateOptionalUrl
+                        : null),
                 addVertical(30),
                 AppButton(
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
