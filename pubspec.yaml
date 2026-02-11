@@ -73,6 +73,8 @@ dependencies:
   table_calendar: ^3.0.9
   video_thumbnail: ^0.5.6
   image: ^4.1.7
+  sn_progress_dialog: ^1.2.0
+  flutter_easyloading: ^3.0.5
 
   http: any
   path_provider: any

@@ -97,4 +97,6 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
             ),
     );
   }
+
+  
 }

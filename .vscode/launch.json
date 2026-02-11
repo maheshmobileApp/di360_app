@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "di360_flutter_backup",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "di360_flutter_backup (env debug)",
+            "request": "launch",
+            "type": "dart",
+            "args": ["--dart-define-from-file=.env/dev.json"]
+        },
+        {
+            "name": "di360_flutter_backup (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "di360_flutter_backup (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

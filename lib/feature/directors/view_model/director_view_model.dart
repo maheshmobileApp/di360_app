@@ -14,7 +14,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_partnership_stat
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/home/querys/get_followers_query.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';

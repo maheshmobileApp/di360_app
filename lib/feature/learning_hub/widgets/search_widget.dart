@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class SearchWidget extends StatefulWidget {
+class SearchWidget extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final ValueChanged<String>? onChanged;
@@ -18,29 +18,6 @@ class SearchWidget extends StatefulWidget {
     this.onSearch,
     this.searchButton = true,
   }) : super(key: key);
-
-  @override
-  State<SearchWidget> createState() => _SearchWidgetState();
-}
-
-class _SearchWidgetState extends State<SearchWidget> {
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(_onControllerChanged);
-  }
-
-  void _onControllerChanged() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_onControllerChanged);
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,26 +37,26 @@ class _SearchWidgetState extends State<SearchWidget> {
             const SizedBox(width: 8),
             Expanded(
               child: TextField(
-                controller: widget.controller,
-                onChanged: widget.onChanged,
+                controller: controller,
+                onChanged: onChanged,
                 textInputAction: TextInputAction.search,
                 onSubmitted: (_) {
-                  if (widget.onSearch != null) widget.onSearch!();
+                  if (onSearch != null) onSearch!();
                 },
                 decoration: InputDecoration(
-                    hintText: widget.hintText, border: InputBorder.none),
+                    hintText: hintText, border: InputBorder.none),
               ),
             ),
-            if (widget.controller.text.isNotEmpty)
+            if (controller.text.isNotEmpty)
               IconButton(
                 icon: const Icon(Icons.clear, color: Colors.grey),
                 onPressed: () {
-                  widget.controller.clear();
-                  if (widget.onClear != null) widget.onClear!();
-                  if (widget.onChanged != null) widget.onChanged!("");
+                  controller.clear();
+                  if (onClear != null) onClear!();
+                  if (onChanged != null) onChanged!("");
                 },
               ),
-            if (widget.searchButton)
+            if (searchButton)
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
@@ -89,7 +66,7 @@ class _SearchWidgetState extends State<SearchWidget> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
-              onPressed: widget.onSearch,
+              onPressed: onSearch,
               label: const Text(
                 "Search",
                 style: TextStyle(color: Colors.white),
