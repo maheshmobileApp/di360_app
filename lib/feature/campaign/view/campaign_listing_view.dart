@@ -32,10 +32,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
-    viewModel.campaignListData = null;
-    viewModel.setSearchBar(false);
-    viewModel.clearAllFilters();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
@@ -45,7 +41,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
       _loadData(loadMore: true);
     }
   }
@@ -103,12 +98,6 @@ class _JobListingScreenState extends State<CampaignListingView>
                   controller: viewModel.searchController,
                   hintText: "Search Campaign...",
                   searchButton: false,
-                  onChanged: (value) {
-                    viewModel.notifyListeners();
-                  },
-                  onClear: () {
-                    viewModel.notifyListeners();
-                  },
                 ),
               Expanded(
                 child: viewModel.filteredCampaigns.isEmpty

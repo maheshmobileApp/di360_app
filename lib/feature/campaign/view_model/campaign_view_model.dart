@@ -19,6 +19,10 @@ class CampaignViewModel extends ChangeNotifier {
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  CampaignViewModel() {
+    searchController.addListener(notifyListeners);
+  }
+
   bool hasUnsavedChanges() {
     return campaignNameController.text.isNotEmpty ||
         scheduleTimeController.text.isNotEmpty ||
@@ -254,9 +258,9 @@ class CampaignViewModel extends ChangeNotifier {
         if (_isLoadingMoreCampaigns || !_hasMoreCampaigns) return;
         _isLoadingMoreCampaigns = true;
       } else {
+        resetListingState();
         _campaignOffset = 0;
         _hasMoreCampaigns = true;
-        campaignListData = null;
       }
 
       final variables = {
@@ -523,6 +527,12 @@ class CampaignViewModel extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {}
+  }
+
+  void resetListingState() {
+    campaignListData = null;
+    setSearchBar(false);
+    clearAllFilters();
   }
 
   clearFields() {
