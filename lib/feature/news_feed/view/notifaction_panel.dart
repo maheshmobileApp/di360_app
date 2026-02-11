@@ -1,10 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/notificatoin_type_enum.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,17 +49,20 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
                             notificationVM.notificationsList?[index];
                         return GestureDetector(
                           onTap: () {
-                            if (notification?.type == 'NEWS_FEED') {
-                              dashBoardVM.setIndex(1, context);
+                            if (notification?.type ==
+                                NotificationType.NEWS_FEED.name) {
                               navigationService.goBack();
-
+                        
                             } else if (notification?.type ==
-                                'SUPPORT_REQUEST') {
-                              //  navigationService.pushNamedAndRemoveUntil(RouteList.supportRequest);
-                            } else if (notification?.type == 'COMMUNITY') {
-                            } else if (notification?.type == 'CATALOGUE') {
-                            } else if (notification?.type == 'COURSE') {
-                            } else if (notification?.type == 'APPOINTMENT') {}
+                                NotificationType.SUPPORT_REQUEST.name) {
+                            } else if (notification?.type ==
+                                NotificationType.COMMUNITY.name) {
+                            } else if (notification?.type ==
+                                NotificationType.CATALOGUE.name) {
+                            } else if (notification?.type ==
+                                NotificationType.COURSE.name) {
+                            } else if (notification?.type ==
+                                NotificationType.APPOINTMENT.name) {}
                           }, // COMMUNITY , CATALOGUE , COURSE, APPOINTMENT,INFORMATIONAL,JOB
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,13 +135,3 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
     );
   }
 }
-
-/*
-mutation update_dental_supplier_notifications {
-  update_dental_supplier_notifications(where: {}, _set: {mark_as_read: true}) {
-    affected_rows
-    __typename
-  }
-}
-
-*/

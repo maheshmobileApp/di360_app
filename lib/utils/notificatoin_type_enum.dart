@@ -1,0 +1,11 @@
+
+enum NotificationType {
+  NEWS_FEED,
+  COMMUNITY,
+  CATALOGUE,
+  COURSE,
+  APPOINTMENT,
+  INFORMATIONAL,
+  JOB,
+  SUPPORT_REQUEST
+}
