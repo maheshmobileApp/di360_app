@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
@@ -251,7 +252,29 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
                                   },
                                   onDetailView: () async {
-                                    if (newsItem.feedType == "LEARNHUB") {
+                                    final feedTypeEnum = FeedType.fromString(newsItem.feedType);
+                                    switch (feedTypeEnum) {
+                                       case FeedType.LEARNHUB:
+                                         await courseListingVM.getCourseDetails(
+                                           context,
+                                           newsItem.courses?.first.id ?? "",
+                                         );
+                                         navigationService.navigateTo(
+                                             RouteList.courseDetailScreen);
+                                         break;
+                                       case FeedType.JOBS:
+                                         await jobListingsViewModel
+                                             .getJobListingById(context,newsItem.jobs?.first.id??"");
+                                         navigationService.navigateToWithParams(
+                                           RouteList.jobdetailsScreen,
+                                           params: jobListingsViewModel.jobListingData?.first??Jobs(),
+                                         );
+                                         break;
+                                       default:
+                                         // Handle default case or other feed types if necessary
+                                         break;
+                                     }
+                                    /*if (newsItem.feedType == "LEARNHUB") {
                                       await courseListingVM.getCourseDetails(
                                         context,
                                         newsItem.courses?.first.id ?? "",
@@ -265,7 +288,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         RouteList.jobdetailsScreen,
                                         params: jobListingsViewModel.jobListingData?.first??Jobs(),
                                       );
-                                    }
+                                    }*/
                                   },
                                   onMenuAction: (action, id) async {
                                     switch (action) {
