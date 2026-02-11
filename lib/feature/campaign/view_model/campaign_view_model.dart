@@ -258,7 +258,6 @@ class CampaignViewModel extends ChangeNotifier {
         if (_isLoadingMoreCampaigns || !_hasMoreCampaigns) return;
         _isLoadingMoreCampaigns = true;
       } else {
-        campaignListData = null;
         resetListingState();
         _campaignOffset = 0;
         _hasMoreCampaigns = true;
