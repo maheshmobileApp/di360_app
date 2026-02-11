@@ -34,6 +34,8 @@ class _JobListingScreenState extends State<CampaignListingView>
     super.initState();
     final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
     viewModel.campaignListData = null;
+    viewModel.setSearchBar(false);
+    viewModel.clearAllFilters();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
@@ -83,8 +85,8 @@ class _JobListingScreenState extends State<CampaignListingView>
         endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Campaign management',
-            searchAction: (){
-               viewModel.toggleSearchBar();
+            searchAction: () {
+              viewModel.toggleSearchBar();
             },
             filterWidget: GestureDetector(
                 onTap: () {
@@ -123,7 +125,8 @@ class _JobListingScreenState extends State<CampaignListingView>
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        itemCount: viewModel.filteredCampaigns.length + (viewModel.hasMoreCampaigns ? 1 : 0),
+                        itemCount: viewModel.filteredCampaigns.length +
+                            (viewModel.hasMoreCampaigns ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index == viewModel.filteredCampaigns.length) {
                             return Center(
@@ -133,7 +136,8 @@ class _JobListingScreenState extends State<CampaignListingView>
                               ),
                             );
                           }
-                          final campaignData = viewModel.filteredCampaigns[index];
+                          final campaignData =
+                              viewModel.filteredCampaigns[index];
                           return CampaignCard(
                             id: campaignData.id ?? "",
                             campaignName: campaignData.campaignName ?? "",
@@ -279,7 +283,6 @@ class _JobListingScreenState extends State<CampaignListingView>
       onClose: () {
         Navigator.of(context).pop();
       },
-      
     );
   }
 }

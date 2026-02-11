@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -54,17 +53,19 @@ class LoginViewModel extends ChangeNotifier {
 
   submit(BuildContext context) async {
     // Check connectivity first
-    final connectivityResult = await Connectivity().checkConnectivity();
+    /*final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
+      scaffoldMessenger("No internet connection. Please check your network.");
       BotToast.showSimpleNotification(
           title: "No internet connection. Please check your network.");
       return "";
-    }
+    }*/
 
     _variables['details']['emailOrPhone'] = emailController.text;
     _variables['details']['password'] = passController.text;
     if (Map.from(_variables['details']).containsValue("")) {
-      BotToast.showSimpleNotification(title: "Please fill all the details");
+       scaffoldMessenger("Please fill all the details");
+      /*BotToast.showSimpleNotification(title: "Please fill all the details");*/
       return "";
     }
     Loaders.circularShowLoader(context);

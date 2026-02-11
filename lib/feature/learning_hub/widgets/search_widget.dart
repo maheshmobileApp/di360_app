@@ -27,9 +27,19 @@ class _SearchWidgetState extends State<SearchWidget> {
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(() {
+    widget.controller.addListener(_onControllerChanged);
+  }
+
+  void _onControllerChanged() {
+    if (mounted) {
       setState(() {});
-    });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onControllerChanged);
+    super.dispose();
   }
 
   @override
