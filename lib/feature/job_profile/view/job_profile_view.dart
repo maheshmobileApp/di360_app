@@ -213,7 +213,7 @@ class _JobProfileViewState extends State<JobProfileView> {
               onPressed: () async {
                 final currentFormKey =
                     jobProfileVM.formKeys[jobProfileVM.currentStep];
-                final isValid = currentFormKey.currentState!.validate();
+                final isValid = currentFormKey.currentState?.validate()??false;
                 if (isValid) {
                   if (isLastStep) {
                     (jobProfileListVM.editProfileEnable)

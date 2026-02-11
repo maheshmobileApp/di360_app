@@ -17,13 +17,31 @@ class ContactsView extends StatefulWidget {
 }
 
 class _ContactsViewState extends State<ContactsView> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+    viewModel.contactsRes = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
       viewModel.getContacts(context);
     });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+      viewModel.getContacts(context, loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -33,45 +51,53 @@ class _ContactsViewState extends State<ContactsView> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-        title: "Contacts",
-        searchWidget: false,
-        filterWidget: GestureDetector(
-          onTap: () =>
-              navigationService.navigateTo(RouteList.contactFilterView),
-          child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-        )
-      ),
+          title: "Contacts",
+          searchWidget: false,
+          filterWidget: GestureDetector(
+            onTap: () =>
+                navigationService.navigateTo(RouteList.contactFilterView),
+            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          )),
       body: Column(
         children: [
-          (contacts?.length != 0)
+          (contacts != null && contacts.isNotEmpty)
               ? Expanded(
                   child: ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.all(10),
-                    itemCount: contacts?.length,
+                    itemCount: contacts.length + (viewModel.hasMoreContacts ? 1 : 0),
                     itemBuilder: (context, index) {
-                      final contact = contacts?[index];
+                      if (index == contacts.length) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      final contact = contacts[index];
                       return ContactCard(
-                          contactName: contact?.contactName ?? "",
-                          email: contact?.email ?? "",
-                          phone: contact?.phone ?? "",
-                          contactType: contact?.contactType ?? "",
-                          state: contact?.state ?? "",
-                          company: contact?.companyName ?? "",
+                          contactName: contact.contactName ?? "",
+                          email: contact.email ?? "",
+                          phone: contact.phone ?? "",
+                          contactType: contact.contactType ?? "",
+                          state: contact.state ?? "",
+                          company: contact.companyName ?? "",
                           onMenuAction: (action) async {
                             switch (action) {
                               case "Edit":
                                 navigationService
                                     .navigateTo(RouteList.createContactView);
                                 viewModel.setContactDetails(contact);
-                                viewModel.setUpdateContactId(contact?.id ?? "");
+                                viewModel.setUpdateContactId(contact.id ?? "");
                                 viewModel.updateContactEditMode(true);
                                 break;
                               case "Delete":
                                 showAlertMessage(context,
-                                    'Are you sure you want to delete this ${contact?.contactName}?',
+                                    'Are you sure you want to delete this ${contact.contactName}?',
                                     onBack: () async {
                                   await viewModel.deleteContact(
-                                      context, contact?.id ?? "");
+                                      context, contact.id ?? "");
                                 });
 
                                 break;

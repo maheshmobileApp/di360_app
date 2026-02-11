@@ -1,5 +1,3 @@
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_details_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_contact_count_res.dart';
@@ -237,16 +235,49 @@ class CampaignViewModel extends ChangeNotifier {
 
   CampaignListData? campaignListData;
   StatesByGroupsData? statesByGroups;
+  int _campaignOffset = 0;
+  bool _hasMoreCampaigns = true;
+  bool _isLoadingMoreCampaigns = false;
 
-  Future<void> getCampaignListing() async {
+  bool get hasMoreCampaigns => _hasMoreCampaigns;
+  bool get isLoadingMoreCampaigns => _isLoadingMoreCampaigns;
+
+  Future<void> getCampaignListing({bool loadMore = false}) async {
     try {
-      final variables = {"limit": 10, "offset": 0, "where": {}};
-      final res = await repo.getCampaignListData(variables);
-      searchController.text = "";
+      if (loadMore) {
+        if (_isLoadingMoreCampaigns || !_hasMoreCampaigns) return;
+        _isLoadingMoreCampaigns = true;
+      } else {
+        _campaignOffset = 0;
+        _hasMoreCampaigns = true;
+        campaignListData = null;
+      }
 
-      campaignListData = res;
+      final variables = {"limit": 10, "offset": _campaignOffset, "where": {}};
+      final res = await repo.getCampaignListData(variables);
+      
+      if (!loadMore) {
+        searchController.text = "";
+      }
+
+      if (res?.smsCampaign != null) {
+        if (loadMore) {
+          campaignListData?.smsCampaign?.addAll(res?.smsCampaign ?? []);
+        } else {
+          campaignListData = res;
+        }
+        _hasMoreCampaigns = (res?.smsCampaign?.length ?? 0) == 10;
+        _campaignOffset += res?.smsCampaign?.length ?? 0;
+      }
+
+      if (loadMore) {
+        _isLoadingMoreCampaigns = false;
+      }
       notifyListeners();
     } catch (e) {
+      if (loadMore) {
+        _isLoadingMoreCampaigns = false;
+      }
     }
   }
 

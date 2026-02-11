@@ -24,19 +24,42 @@ class TeamMembersListingView extends StatefulWidget {
 
 class _JobListingScreenState extends State<TeamMembersListingView>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    final viewModel = Provider.of<TeamMembersViewModel>(context, listen: false);
+    viewModel.teamMembersData = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
+    _scrollController.addListener(_onScroll);
   }
 
-  Future<void> _loadData() async {
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final viewModel = Provider.of<TeamMembersViewModel>(context, listen: false);
+      _loadData(loadMore: true);
+    }
+  }
+
+  Future<void> _loadData({bool loadMore = false}) async {
     final viewModel = Provider.of<TeamMembersViewModel>(context, listen: false);
-    Loaders.circularShowLoader(context);
-    await viewModel.getTeamMembers();
-    Loaders.circularHideLoader(context);
+    if (!loadMore) {
+      Loaders.circularShowLoader(context);
+    }
+    await viewModel.getTeamMembers(loadMore: loadMore);
+    if (!loadMore) {
+      Loaders.circularHideLoader(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -77,7 +100,7 @@ class _JobListingScreenState extends State<TeamMembersListingView>
                   },
                 ),*/
               Expanded(
-                child: viewModel.teamMembersData?.clients?.isEmpty ?? false
+                child: viewModel.teamMembersData?.clients?.isEmpty ?? true
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -90,8 +113,17 @@ class _JobListingScreenState extends State<TeamMembersListingView>
                         ),
                       )
                     : ListView.builder(
-                        itemCount: viewModel.teamMembersData?.clients?.length,
+                        controller: _scrollController,
+                        itemCount: (viewModel.teamMembersData?.clients?.length ?? 0) + (viewModel.hasMoreTeamMembers ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index == viewModel.teamMembersData?.clients?.length) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
                           final teamMemberData =
                               viewModel.teamMembersData?.clients?[index];
                           return TeamMemberCard(

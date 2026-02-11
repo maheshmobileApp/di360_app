@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
-import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_reply_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/image_viewr_screen_community.dart';

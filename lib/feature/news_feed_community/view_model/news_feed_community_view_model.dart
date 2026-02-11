@@ -214,11 +214,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     print("************get all news feed variables: $variables");
 
     final res = await repo.getAllNewsFeeds(variables);
-    if (res != null) {
-      print("*************************************data fetched successfully");
-      newsFeedCommunityData = res;
-    }
-    Loaders.circularHideLoader(context);
+    print("*************************************data fetched successfully");
+    newsFeedCommunityData = res;
+      Loaders.circularHideLoader(context);
     (type == "SUPPLIER") ? getAllStatusCounts() : () {};
 
     notifyListeners();
@@ -250,15 +248,13 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     print("************filter news feed variables: $variables");
 
     final res = await repo.filterNewsFeed(variables);
-    if (res != null) {
-      print(
-          "*************************************filtered data fetched successfully");
-      newsFeedCommunityData = res;
-      updateApplyFilter(true);
-      (type == "SUPPLIER") ? getAllStatusCounts() : () {};
-      notifyListeners();
-    }
-    Loaders.circularHideLoader(context);
+    print(
+        "*************************************filtered data fetched successfully");
+    newsFeedCommunityData = res;
+    updateApplyFilter(true);
+    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
+    notifyListeners();
+      Loaders.circularHideLoader(context);
   }
 
   FeedCountData? feedCountData;
@@ -273,15 +269,13 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     
     print("************get all status counts variables: $variables");
     final res = await repo.feedCount(variables);
-    if (res != null) {
-      feedCountData = res;
-      print("*************************************Counts fetched successfully");
-      pendingCount = feedCountData?.pending?.aggregate?.count;
-      publishedCount = feedCountData?.published?.aggregate?.count;
-      unPublishedCount = feedCountData?.unpublished?.aggregate?.count;
-      print("****************$pendingCount $publishedCount $unPublishedCount");
-    }
-    notifyListeners();
+    feedCountData = res;
+    print("*************************************Counts fetched successfully");
+    pendingCount = feedCountData?.pending?.aggregate?.count;
+    publishedCount = feedCountData?.published?.aggregate?.count;
+    unPublishedCount = feedCountData?.unpublished?.aggregate?.count;
+    print("****************$pendingCount $publishedCount $unPublishedCount");
+      notifyListeners();
   }
 
   //LIKE
@@ -376,6 +370,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     videoLinkController.clear();
     websiteLinkController.clear();
     selectedFiles.clear();
+    existingImages.clear();
+    uploadedFiles.clear();
     serverNewsFeedGallery = null;
     selectedNewsFeedGallery = null;
     selectedCategory = null;
@@ -491,6 +487,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
+    uploadedFiles.clear();
+
     for (var element in selectedFiles) {
       var value = await _http.uploadImage(element.path);
       print("resp from upload $value");
@@ -567,10 +565,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "value": type == "PROFESSIONAL" ? profCommunityId : communityId
     };
     final res = await repo.getBannerUrl(variables);
-    if (res != null) {
-      bannerData = res;
-    }
-
+    bannerData = res;
+  
     notifyListeners();
   }
 

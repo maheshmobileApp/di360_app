@@ -82,7 +82,7 @@ class PartnershipCommunityRequestView extends StatelessWidget
                     Expanded(
                       child: AppButton(
                           height: 40,
-                          text: 'Register Now',
+                          text: 'Submit',
                           onTap: () {
                             directorVM.partnershipRegsiter(
                                 context,

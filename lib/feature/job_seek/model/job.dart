@@ -26,6 +26,7 @@ class Jobs {
   String? education;
   String? video;
   String? closedAt;
+  String? startDate;
   String? status;
   List<String>? offeredBenefits;
   String? country;
@@ -72,6 +73,7 @@ class Jobs {
       this.education,
       this.video,
       this.closedAt,
+      this.startDate,
       this.status,
       this.offeredBenefits,
       this.country,
@@ -124,6 +126,7 @@ class Jobs {
     education = json['education'];
     video = json['video']?.toString();
     closedAt = json['closed_at'];
+    startDate = json['start_Date']?.toString();
     status = json['status'];
 
     offeredBenefits = json['offered_benefits'] is List
@@ -203,6 +206,7 @@ class Jobs {
     data['education'] = this.education;
     data['video'] = this.video;
     data['closed_at'] = this.closedAt;
+    data['start_Date'] = this.startDate;
     data['status'] = this.status;
     data['offered_benefits'] = this.offeredBenefits;
     data['country'] = this.country;

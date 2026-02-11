@@ -50,7 +50,7 @@ class PartnershipMembers {
   bool? isRegistered;
   String? communityId;
   String? supplierId;
-  Null? registerLink;
+  dynamic registerLink;
   String? sTypename;
 
   PartnershipMembers(

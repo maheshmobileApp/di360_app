@@ -1,6 +1,5 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
-import 'package:di360_flutter/feature/talent_enquiries/model/get_talent_enquiries.dart';
 import 'package:di360_flutter/feature/talent_enquiries/model/get_talent_enquiry_res.dart';
 import 'package:di360_flutter/feature/talent_enquiries/query/get_talent_enq_messages_query.dart';
 import 'package:di360_flutter/feature/talent_enquiries/query/get_talent_enq_preview_query.dart';

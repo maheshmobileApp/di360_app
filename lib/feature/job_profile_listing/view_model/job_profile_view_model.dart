@@ -117,10 +117,8 @@ class JobProfileListingViewModel extends ChangeNotifier {
   Future<JobProfileEnquiriesResList?> getMyEnquiryJobData(BuildContext context,
       {required String id}) async {
     final res = await repo.getMyEnquiryJobData(id);
-    if (res != null) {
-      myEnquiryJobData = res;
-    } else {}
-
+    myEnquiryJobData = res;
+  
     notifyListeners();
     return res;
   }
@@ -129,13 +127,9 @@ class JobProfileListingViewModel extends ChangeNotifier {
       BuildContext context, String profileId, String enquiryId) async {
     Loaders.circularShowLoader(context);
     final res = await repo.getJobProfileEnquiry(profileId, enquiryId);
-    if (res != null) {
-      jobPrilfeEnquiryData = res;
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
+    jobPrilfeEnquiryData = res;
+    Loaders.circularHideLoader(context);
+      notifyListeners();
     return res;
   }
 
@@ -168,13 +162,9 @@ class JobProfileListingViewModel extends ChangeNotifier {
     };
     Loaders.circularShowLoader(context);
     final res = await repo.getAllTalentsRequest(variables);
-    if (res != null) {
-      hiringTalentList = res;
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
+    hiringTalentList = res;
+    Loaders.circularHideLoader(context);
+      notifyListeners();
     return res;
   }
 }

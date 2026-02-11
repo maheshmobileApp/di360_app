@@ -186,6 +186,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
     return Row(
       children: [
         Checkbox(
+          activeColor: AppColors.primaryColor,
           visualDensity: VisualDensity.compact,
           value: value,
           onChanged: onChanged,

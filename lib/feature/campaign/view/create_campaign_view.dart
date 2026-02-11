@@ -188,6 +188,7 @@ class CreateCampaignView extends StatelessWidget
                       if (value == null || value.isEmpty) {
                         return 'Please enter message';
                       }
+                      return null;
                     },
                   ),
                   addVertical(16),

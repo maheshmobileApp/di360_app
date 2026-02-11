@@ -7,6 +7,7 @@ import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -48,7 +49,11 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                 jobsData?.title ?? "",
               ),
               addVertical(10),
-              _descriptionWidget(jobsData?.description ?? ""),
+            HtmlWidget(
+              jobsData?.description ?? "",
+              textStyle: TextStyles.regular2(color: AppColors.black),
+            ),
+            // _descriptionWidget(jobsData?.description ?? ""),
               addVertical(10),
               _locationWidget(jobsData?.location ?? ""),
               addVertical(10),

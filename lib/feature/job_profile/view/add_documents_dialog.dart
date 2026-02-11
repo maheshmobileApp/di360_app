@@ -5,8 +5,6 @@ import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_
 import 'package:di360_flutter/feature/job_profile/widgets/pdf_picker_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 class AddDocumentsDialog extends StatefulWidget with BaseContextHelpers {
   final JobProfileCreateViewModel jobProfileVM;
