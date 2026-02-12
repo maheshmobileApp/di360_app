@@ -1,3 +1,4 @@
 abstract class NotificationResposity {
-  Future<void> saveToken();
+  Future<dynamic> getNotification(int limit, int offset);
+  Future<dynamic> getNotificationCount();
 }

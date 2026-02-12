@@ -22,28 +22,20 @@ class NotificationScreen extends StatelessWidget with BaseContextHelpers {
           leading: InkWell(
               onTap: () => navigationService.goBack(),
               child: Icon(Icons.arrow_back, color: AppColors.black))),
-      body: SingleChildScrollView(
-          child: Column(
+      body: Column(
         children: [
-          ListTile(
-            title: Text(
-              'Notifications',
-              style: TextStyles.bold4(color: AppColors.black),
-            ),
-            leading: GestureDetector(
-                onTap: () => navigationService.goBack(),
-                child: Icon(Icons.close)),
-          ),
           notificationVM.notificationsList.length == 0
-              ? Column(
-                  children: [
-                    addVertical(getSize(context).height * 0.4),
-                    Center(
-                      child: Text('No Notifications',
-                          style: TextStyles.bold4(color: AppColors.black)),
-                    ),
-                  ],
-                )
+              ? Center(
+                child: Column(
+                    children: [
+                      addVertical(getSize(context).height * 0.4),
+                      Center(
+                        child: Text('No Notifications',
+                            style: TextStyles.bold4(color: AppColors.black)),
+                      ),
+                    ],
+                  ),
+              )
               : Expanded(
                   child: ListView.builder(
                     itemCount: notificationVM.notificationsList.length,
@@ -102,7 +94,7 @@ class NotificationScreen extends StatelessWidget with BaseContextHelpers {
                   ),
                 ),
         ],
-      )),
+      ),
     );
   }
 }
