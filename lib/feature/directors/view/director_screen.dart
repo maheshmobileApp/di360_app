@@ -6,7 +6,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view/grid_view_widget.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +66,6 @@ class _DirectorScreenState extends State<DirectorScreen>
     final directorVM = Provider.of<DirectoryViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
           searchWidget: false,
           filterWidget: Row(children: [
@@ -85,39 +83,6 @@ class _DirectorScreenState extends State<DirectorScreen>
       body: Column(
         children: [
           ListBanner(),
-          /*  Stack(children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child:
-                    Image.asset(ImageConst.catalogueBg, fit: BoxFit.cover)),
-            Positioned(
-                top: 10,
-                left: 10,
-                child: CircleAvatar(
-                    radius: 20,
-                    child: InkWell(
-                        onTap: () => navigationService.goBack(),
-                        child:
-                            Icon(Icons.arrow_back, color: AppColors.black))))
-          ]),
-          addVertical(16),
-          Selector<DirectoryViewModel, bool>(
-            selector: (_, vm) => vm.removeIcon,
-            builder: (context, removeIcon, _) {
-              final directorVM = context.read<DirectoryViewModel>();
-              return SearchBarWidget(
-                controller: directorVM.searchController,
-                onFieldSubmitted: (value) async {
-                  await directorVM.getDirectorsList(context);
-                  directorVM.updateTheRemoveIcon(true);
-                },
-                filterIconAction: () =>
-                    navigationService.navigateTo(RouteList.directoryFilter),
-                closeIconVal: removeIcon,
-                closeIconAction: () => directorVM.clearFilter(),
-              );
-            },
-          ),*/
           addVertical(16),
           Expanded(
             child: Padding(

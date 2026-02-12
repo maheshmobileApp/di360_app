@@ -64,6 +64,8 @@ import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_scree
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
+import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
+import 'package:di360_flutter/feature/notifications/view/notification_screen.dart';
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
@@ -198,7 +200,6 @@ class Routes {
           talentList: args as JobProfiles,
         );
       },
-
       RouteList.talentPreview: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return TalentPreview(
@@ -269,9 +270,10 @@ class Routes {
       RouteList.coursePreviewScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return CoursePreviewScreen(
-          courseDetails: args as CoursesListingDetails,
-        );
-      }
+            courseDetails: args as CoursesListingDetails);
+      },
+      RouteList.notificationScreen: (context) => ChangeNotifierProvider(
+          create: (_) => NotificationViewModel(), child: NotificationScreen()),
     };
   }
 }

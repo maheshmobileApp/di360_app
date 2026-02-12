@@ -1,7 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/widgets/talent_enquiry_card.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -22,7 +21,6 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
     final vm = Provider.of<TalentEnquiryViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(searchWidget: false,
           ),
       body: Column(

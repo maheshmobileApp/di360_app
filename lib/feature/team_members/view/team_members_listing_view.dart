@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/team_members/view_model/team_members_view_model.dart';
 import 'package:di360_flutter/feature/team_members/widgets/team_member_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -73,10 +72,9 @@ class _JobListingScreenState extends State<TeamMembersListingView>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
           title: 'Team Members',
-          searchWidget: false,
+          searchWidget: false
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),

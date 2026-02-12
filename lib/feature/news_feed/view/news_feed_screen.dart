@@ -11,7 +11,6 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,6 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
           searchWidget: false,
           filterWidget: Row(

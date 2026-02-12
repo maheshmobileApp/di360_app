@@ -7,7 +7,6 @@ import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart'
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/campaign/widgets/campaign_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -78,7 +77,6 @@ class _JobListingScreenState extends State<CampaignListingView>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Campaign management',
             searchAction: () {
