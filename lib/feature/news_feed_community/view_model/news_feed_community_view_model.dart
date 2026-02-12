@@ -345,10 +345,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
 
     final variables = {"fields": fields};
-    print("*************************************add feed fields: $variables");
 
-    print(
-        "***************************************************variables: $variables");
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
       await getAllNewsFeeds(context);

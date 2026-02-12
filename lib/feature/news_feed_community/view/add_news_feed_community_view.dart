@@ -65,7 +65,9 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   title: "Video URL",
                   maxLength: 100,
                   isRequired: false,
-                  validator: validateOptionalUrl,
+                  validator: (value) => value?.trim().isNotEmpty == true
+                      ? validateOptionalUrl(value)
+                      : null,
                 ),
                 addVertical(16),
                 InputTextField(
@@ -74,21 +76,15 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   title: "Website URL",
                   maxLength: 100,
                   isRequired: false,
-                  validator: validateOptionalUrl,
+                  validator: (value) => value?.trim().isNotEmpty == true
+                      ? validateOptionalUrl(value)
+                      : null,
                 ),
                 addVertical(30),
                 AppButton(
                     height: 50,
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
                     onTap: () {
-                      if (viewModel.descriptionController.text.trim().isEmpty) {
-                        scaffoldMessenger('Please enter description');
-                        return;
-                      }
-                      if (viewModel.selectedCategory == null) {
-                        scaffoldMessenger('Please select category');
-                        return;
-                      }
                       if (_formKey.currentState!.validate()) {
                         viewModel.isEditNewsFeed == true
                             ? viewModel.updateNewsFeedCommunity(context)

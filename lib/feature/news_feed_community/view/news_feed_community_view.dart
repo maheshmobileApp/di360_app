@@ -67,7 +67,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         final jobListingsViewModel = Provider.of<JobListingsViewModel>(context);
 
         final communityVM = Provider.of<CommunityViewModel>(context);
-        final homeVM = Provider.of<HomeViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
         final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
         return FutureBuilder<List<String>>(
@@ -238,8 +237,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             newsfeeds: newsItem));
                                   },
                                   onLikeTap: () {
-                                    print(
-                                        "*************///////////**********${newsItem.myLike?.isNotEmpty}");
+                                  
                                     (newsItem.myLike?.isNotEmpty ?? false)
                                         ? viewModel.communityUnLike(
                                             context, newsItem.id ?? '')

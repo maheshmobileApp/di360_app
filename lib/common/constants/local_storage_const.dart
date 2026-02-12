@@ -6,6 +6,7 @@ class LocalStorageConst {
   static const String name = "name";
   static const String isAuth = "isAuth";
   static const String type = "type";
+  static const String professionType = "professionType";
   static const String profilePic = "profilePic";
   static const String supplier_id = "supplier_id";
   static const String subscriptionId = 'subscriptionId';

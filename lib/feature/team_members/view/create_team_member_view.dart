@@ -26,14 +26,18 @@ class CreateTeamMemberView extends StatelessWidget
           backgroundColor: AppColors.whiteColor,
           leading: IconButton(
               onPressed: () {
-                showAlertMessage(
-                  context,
-                  'You have unsaved changes. Do you want to discard them?',
-                  onBack: () async {
-                    navigationService.goBack();
-                    navigationService.goBack();
-                  },
-                );
+                if (viewModel.hasUnsavedChanges()) {
+                  showAlertMessage(
+                    context,
+                    'You have unsaved changes. Do you want to discard them?',
+                    onBack: () async {
+                      navigationService.goBack();
+                      navigationService.goBack();
+                    },
+                  );
+                } else {
+                  navigationService.goBack();
+                }
               },
               icon: Icon(Icons.arrow_back_ios)),
           title: Text(
