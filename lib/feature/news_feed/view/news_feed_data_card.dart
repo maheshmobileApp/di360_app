@@ -45,20 +45,6 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             addVertical(10),
-            /* _buildHeader(
-                newsfeeds?.dentalSupplier?.logo?.url ??
-                    newsfeeds?.dentalPractice?.logo?.url ??
-                    newsfeeds?.dentalProfessional?.profileImage?.url ??
-                    newsfeeds?.dentalSupplier?.directories?.first.logo?.url ??
-                    '',
-                newsfeeds?.dentalSupplier?.name ??
-                    newsfeeds?.dentalPractice?.name ??
-                    newsfeeds?.dentalProfessional?.name,
-                newsfeeds?.createdAt ?? '',
-                context,
-                newsfeeds,
-                needFeedViewModel,
-                addNeedFeedViewModel),*/
             _buildHeader(
                 newsfeeds?.dentalSupplier != null
                     ? newsfeeds?.dentalSupplier?.logo?.url ??

@@ -10,19 +10,53 @@ class NotificationViewModel extends ChangeNotifier {
 
   List<Notifications> notificationsList = [];
   int? notificationCount = 0;
+  int currentPage = 0;
+  final int pageSize = 10;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
 
-  getNotifications(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  getNotifications(BuildContext context, {bool isRefresh = false}) async {
+    if (isRefresh) {
+      currentPage = 0;
+      hasMoreData = true;
+      notificationsList.clear();
+    }
+
+    if (!hasMoreData || isLoadingMore) return;
+
+    if (currentPage == 0) {
+      Loaders.circularShowLoader(context);
+    } else {
+      isLoadingMore = true;
+      notifyListeners();
+    }
+
     try {
-      var response = await notificationResposityImpl.getNotification(10, 0);
+      var response = await notificationResposityImpl.getNotification(
+          pageSize, currentPage * pageSize);
 
       if (response != null) {
         final notificationData = NotificationData.fromJson(response);
-        notificationsList = notificationData.notifications ?? [];
+        final newNotifications = notificationData.notifications ?? [];
+        
+        if (newNotifications.isEmpty) {
+          hasMoreData = false;
+        } else {
+          notificationsList.addAll(newNotifications);
+          currentPage++;
+        }
       }
-      Loaders.circularHideLoader(context);
+
+      if (currentPage == 1) {
+        Loaders.circularHideLoader(context);
+      }
+      isLoadingMore = false;
     } catch (e) {
-      Loaders.circularHideLoader(context);
+      if (currentPage == 1) {
+        Loaders.circularHideLoader(context);
+      }
+      isLoadingMore = false;
+      hasMoreData = false;
       print("Error loading notifications: $e");
     }
     notifyListeners();

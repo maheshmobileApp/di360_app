@@ -59,7 +59,7 @@ class Newsfeeds {
   String? categoryType;
   dynamic attachments;
   String? feedType;
-  dynamic payload;
+  Payload? payload;
   String? userRole;
   String? videoUrl;
   String? webUrl;
