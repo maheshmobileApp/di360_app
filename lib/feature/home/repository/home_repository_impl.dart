@@ -27,11 +27,12 @@ class HomeRepositoryImpl extends HomeRepository {
               {
                 "user_id": {"_eq": userId}
               },
-              {
-                "community_id": {
-                  "_in": [communityId]
+              if (communityId.isNotEmpty)
+                {
+                  "community_id": {
+                    "_in": [communityId]
+                  }
                 }
-              }
             ]
           },
           {
