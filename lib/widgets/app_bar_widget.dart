@@ -45,8 +45,10 @@ class AppBarWidget extends StatelessWidget
       actions: [
         Builder(
           builder: (context) => GestureDetector(
-              onTap: () {
-                navigationService.navigateTo(RouteList.notificationScreen);
+              onTap: () async {
+                await notificationVM.getNotifications(context);
+                await navigationService
+                    .navigateTo(RouteList.notificationScreen);
               },
               child: Stack(
                 clipBehavior: Clip.none,

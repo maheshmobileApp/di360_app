@@ -11,14 +11,12 @@ import 'package:flutter/material.dart';
 
 class NotificationViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
-  NotificationViewModel() {
-    getNotifications();
-  }
 
-  List<Notifications>? notificationsList;
+  List<Notifications> notificationsList = [];
   int? notificationCount = 0;
 
-  getNotifications() async {
+  getNotifications(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     try {
       final query = await basedOnTypeCallNotificationQuery();
@@ -26,9 +24,11 @@ class NotificationViewModel extends ChangeNotifier {
 
       if (response != null) {
         final notificationData = NotificationData.fromJson(response);
-        notificationsList = notificationData.notifications;
+        notificationsList = notificationData.notifications ?? [];
       }
+      Loaders.circularHideLoader(context);
     } catch (e) {
+      Loaders.circularHideLoader(context);
       print("Error loading notifications: $e");
     }
     notifyListeners();
