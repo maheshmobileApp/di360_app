@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_menu_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -34,6 +35,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
+    final newsFeedTypeEnum = FeedType.fromString(newsfeeds?.feedType ?? '');
     return Container(
         color: AppColors.whiteColor,
         child: GestureDetector(
@@ -95,7 +97,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             addVertical(5),
             if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
               LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-            if (newsfeeds?.feedType == 'JOBS')
+            if (newsFeedTypeEnum == FeedType.JOBS)
               BuildJobTypeWidget(
                   job: newsfeeds?.jobs?.isNotEmpty ?? false
                       ? newsfeeds?.jobs?.first
@@ -120,7 +122,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   if (newsfeeds?.webUrl != null &&
                       newsfeeds!.webUrl!.isNotEmpty)
                     addVertical(8),
-                  if (newsfeeds?.feedType == 'CATALOGUE')
+                  if (newsFeedTypeEnum == FeedType.CATALOGUE)
                     _buildCatalogueRow(catalogueViewModel, context),
                   Divider(color: AppColors.dividerColor),
                   addVertical(4),

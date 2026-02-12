@@ -30,21 +30,26 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 150) {
-        if (!_showScrollToTop) {
-          setState(() => _showScrollToTop = true);
-        }
-      } else {
-        if (_showScrollToTop) {
-          setState(() => _showScrollToTop = false);
-        }
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!mounted) return;
+    
+    if (_scrollController.offset > 150) {
+      if (!_showScrollToTop) {
+        setState(() => _showScrollToTop = true);
       }
-    });
+    } else {
+      if (_showScrollToTop) {
+        setState(() => _showScrollToTop = false);
+      }
+    }
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }

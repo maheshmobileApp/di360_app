@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
@@ -50,7 +51,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final bool isLiked;
   final Newsfeeds? newsfeeds;
 
-  const NewsFeedCommunityCard({
+  NewsFeedCommunityCard({
     super.key,
     required this.id,
     required this.logoUrl,
@@ -77,11 +78,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     required this.feedType,
     this.isLiked = false,
     this.newsfeeds,
-  });
+  }) {
+  }
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(createdAt) ?? '';
+    final feedTypeEnum = FeedType.fromString(feedType);
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
 
     return FutureBuilder<String>(
@@ -153,11 +155,11 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                           )
                           : SizedBox.shrink(),
 
-                    if (feedType == "LEARNHUB" && course?.isNotEmpty == true)
+                    if (feedTypeEnum == FeedType.LEARNHUB && course?.isNotEmpty == true)
                       _learnHubWidget(course?.first ?? Courses(), createdAt),
-                    if (feedType == "CATALOGUE")
+                    if (feedTypeEnum == FeedType.CATALOGUE)
                       _buildCatalogueRow(catelougeViewModel, context),
-                    if (feedType == "JOBS" && job?.isNotEmpty == true)
+                    if (feedTypeEnum == FeedType.JOBS && job?.isNotEmpty == true)
                       _jobsWidget(job?.first ?? Jobs(), createdAt),
 
                     const Divider(),

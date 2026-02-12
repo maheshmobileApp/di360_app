@@ -38,8 +38,8 @@ class CreateCampaignView extends StatelessWidget
                     context,
                     'You have unsaved changes. Do you want to discard them?',
                     onBack: () {
-                      navigationService.goBack(); 
-                      navigationService.goBack(); 
+                      navigationService.goBack();
+                      navigationService.goBack();
                     },
                   );
                 } else {
@@ -141,11 +141,20 @@ class CreateCampaignView extends StatelessWidget
                   addVertical(10),
                   _buildTimeZones(viewModel),
                   addVertical(10),
-                  Text(
-                    "Select Groups",
-                    style: TextStyles.regular3(color: AppColors.black),
+                  Row(
+                    children: [
+                      Text(
+                        "Select Groups",
+                        style: TextStyles.regular3(color: AppColors.black),
+                      ),
+
+                       Text(
+                        " *",
+                        style: TextStyles.bold2(color: Colors.red),
+                      ),
+                    ],
                   ),
-                  addVertical(4),
+                  addVertical(6),
                   _buildEmpTypes(viewModel),
                   _buildTypes(viewModel),
                   addVertical(10),
@@ -191,6 +200,12 @@ class CreateCampaignView extends StatelessWidget
                       return null;
                     },
                   ),
+                  addVertical(8),
+                  (viewModel.selectedType != "SMS" && viewModel.selectedType != "")?
+                  Text(
+                    "*For an improved email/HTML composition experience, we recommend using the web application.",
+                    style: TextStyles.regular2(color: AppColors.black),
+                  ):SizedBox.shrink(),
                   addVertical(16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,7 +220,7 @@ class CreateCampaignView extends StatelessWidget
                         textColor: Colors.black,
                       ),
                       CustomRoundedButton(
-                        text:  viewModel.repeatMode? 'Repeat':'Save',
+                        text: viewModel.repeatMode ? 'Repeat' : 'Save',
                         onPressed: () => _validateAndSave(context, viewModel),
                         height: 42,
                         backgroundColor: AppColors.primaryColor,
