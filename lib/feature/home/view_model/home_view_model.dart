@@ -17,6 +17,62 @@ class HomeViewModel extends ChangeNotifier {
   String? userType;
 
   int offset = 0;
+  int limit = 10;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+  ScrollController scrollController = ScrollController();
+
+  HomeViewModel() {
+    scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100 &&
+        !isLoadingMore &&
+        hasMoreData) {
+      loadMoreNewsfeeds();
+    }
+  }
+
+  void loadMoreNewsfeeds() async {
+    if (isLoadingMore || !hasMoreData) return;
+    isLoadingMore = true;
+    
+    offset += limit;
+    print('Loading more... offset: $offset');
+    try {
+      var res = await homeRepositoryImpl.getAllNewsFeed(offset, limit);
+      if (res != null) {
+        final result = AllNewsFeedData.fromJson(res);
+        print('Received ${result.newsfeeds?.length ?? 0} items');
+        if (result.newsfeeds?.isEmpty ?? true) {
+          hasMoreData = false;
+        } else {
+          allNewsFeedsData?.newsfeeds?.addAll(result.newsfeeds ?? []);
+        }
+      } else {
+        hasMoreData = false;
+      }
+    } catch (e) {
+      print('Error loading more: $e');
+      hasMoreData = false;
+      offset -= limit;
+    }
+    isLoadingMore = false;
+    notifyListeners();
+  }
+
+  void resetPagination() {
+    offset = 0;
+    hasMoreData = true;
+    allNewsFeedsData?.newsfeeds?.clear();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   getFollowersCount(BuildContext context) async {
     Loaders.circularShowLoader(context);
@@ -36,8 +92,9 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> getAllNewsfeeds(BuildContext context) async {
     Loaders.circularShowLoader(context);
+    resetPagination();
     try {
-      var res = await homeRepositoryImpl.getAllNewsFeed(offset);
+      var res = await homeRepositoryImpl.getAllNewsFeed(offset,limit);
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         allNewsFeedsData = result;

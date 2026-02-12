@@ -96,37 +96,37 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         body: Column(
           children: [
             Expanded(
-              child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
-                  ? Center(
-                      child: Text('No Data',
-                          style: TextStyles.medium3(
-                              color: AppColors.black,)))
-                  : GenericListViewWithBanners<Newsfeeds>(
-                      items: homeViewModel.allNewsFeedsData?.newsfeeds ?? [],
-                      bannerIndices: BannerUtils.calculateBannerIndices(
-                          homeViewModel.allNewsFeedsData?.newsfeeds?.length ??
-                              0),
-                      itemBuilder: (context, dataIndex) {
-                        final newsData = homeViewModel
-                            .allNewsFeedsData?.newsfeeds?[dataIndex];
-                        return NewsFeedDataCard(newsfeeds: newsData);
-                      },
-                      bannerBuilder: (context, bannerPosition) {
-                        return ListBanner();
-                      },
-                    ),
-            ),
+                child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ??
+                        false
+                    ? Center(
+                        child: Text('No Data',
+                            style: TextStyles.medium3(
+                              color: AppColors.black,
+                            )))
+                    : GenericListViewWithBanners<Newsfeeds>(
+                        controller: homeViewModel.scrollController,
+                        items: homeViewModel.allNewsFeedsData?.newsfeeds ?? [],
+                        bannerIndices: BannerUtils.calculateBannerIndices(
+                            homeViewModel.allNewsFeedsData?.newsfeeds?.length ??
+                                0),
+                        itemBuilder: (context, dataIndex) {
+                          final newsData = homeViewModel
+                              .allNewsFeedsData?.newsfeeds?[dataIndex];
+                          return NewsFeedDataCard(newsfeeds: newsData);
+                        },
+                        bannerBuilder: (context, bannerPosition) {
+                          return ListBanner();
+                        }))
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          backgroundColor: AppColors.primaryColor,
-          onPressed: () async {
-            await categoryVM.fetchNewsfeedCategories();
-            navigationService.navigateTo(RouteList.addNewsFeed);
-          },
-          child: SvgPicture.asset(ImageConst.addFeed),
-        ));
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            backgroundColor: AppColors.primaryColor,
+            onPressed: () async {
+              await categoryVM.fetchNewsfeedCategories();
+              navigationService.navigateTo(RouteList.addNewsFeed);
+            },
+            child: SvgPicture.asset(ImageConst.addFeed)));
   }
 }

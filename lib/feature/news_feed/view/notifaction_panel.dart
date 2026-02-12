@@ -1,7 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/notificatoin_type_enum.dart';
@@ -15,7 +14,6 @@ class NotificationsPanel extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final notificationVM = Provider.of<NotificationViewModel>(context);
-    final dashBoardVM = Provider.of<DashBoardViewModel>(context);
     return Drawer(
       backgroundColor: AppColors.whiteColor,
       elevation: 16,

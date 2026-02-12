@@ -9,6 +9,7 @@ class GenericListViewWithBanners<T> extends StatelessWidget {
 	final Axis scrollDirection;
 	final bool shrinkWrap;
 	final ScrollPhysics? physics;
+  final ScrollController? controller;
 
 	const GenericListViewWithBanners({
 		Key? key,
@@ -19,12 +20,14 @@ class GenericListViewWithBanners<T> extends StatelessWidget {
 		this.scrollDirection = Axis.vertical,
 		this.shrinkWrap = false,
 		this.physics,
+    this.controller
 	}) : super(key: key);
 
 	@override
 	Widget build(BuildContext context) {
 		final totalCount = items.length + bannerIndices.length;
 		return ListView.builder(
+      controller: controller,
 			itemCount: totalCount,
 			scrollDirection: scrollDirection,
 			shrinkWrap: shrinkWrap,

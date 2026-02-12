@@ -15,6 +15,7 @@ class BuildJobTypeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final newsFeedProvider = Provider.of<NewsFeedViewModel>(context);
     return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+      if(job?.bannerImage != null && job?.bannerImage?.url != null)
       CachedNetworkImageWidget(imageUrl: job?.bannerImage?.url ?? ''),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
