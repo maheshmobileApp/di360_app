@@ -32,8 +32,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
-    viewModel.campaignListData = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
@@ -43,7 +41,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
       _loadData(loadMore: true);
     }
   }
@@ -53,6 +50,7 @@ class _JobListingScreenState extends State<CampaignListingView>
     if (!loadMore) {
       Loaders.circularShowLoader(context);
     }
+    viewModel.campaignListData = null;
     await viewModel.getCampaignListing(loadMore: loadMore);
     if (!loadMore) {
       Loaders.circularHideLoader(context);
@@ -83,8 +81,8 @@ class _JobListingScreenState extends State<CampaignListingView>
         endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Campaign management',
-            searchAction: (){
-               viewModel.toggleSearchBar();
+            searchAction: () {
+              viewModel.toggleSearchBar();
             },
             filterWidget: GestureDetector(
                 onTap: () {
@@ -101,12 +99,6 @@ class _JobListingScreenState extends State<CampaignListingView>
                   controller: viewModel.searchController,
                   hintText: "Search Campaign...",
                   searchButton: false,
-                  onChanged: (value) {
-                    viewModel.notifyListeners();
-                  },
-                  onClear: () {
-                    viewModel.notifyListeners();
-                  },
                 ),
               Expanded(
                 child: viewModel.filteredCampaigns.isEmpty
@@ -123,7 +115,8 @@ class _JobListingScreenState extends State<CampaignListingView>
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        itemCount: viewModel.filteredCampaigns.length + (viewModel.hasMoreCampaigns ? 1 : 0),
+                        itemCount: viewModel.filteredCampaigns.length +
+                            (viewModel.hasMoreCampaigns ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index == viewModel.filteredCampaigns.length) {
                             return Center(
@@ -133,7 +126,8 @@ class _JobListingScreenState extends State<CampaignListingView>
                               ),
                             );
                           }
-                          final campaignData = viewModel.filteredCampaigns[index];
+                          final campaignData =
+                              viewModel.filteredCampaigns[index];
                           return CampaignCard(
                             id: campaignData.id ?? "",
                             campaignName: campaignData.campaignName ?? "",
@@ -279,7 +273,6 @@ class _JobListingScreenState extends State<CampaignListingView>
       onClose: () {
         Navigator.of(context).pop();
       },
-      
     );
   }
 }

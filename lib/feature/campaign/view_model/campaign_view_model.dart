@@ -19,6 +19,10 @@ class CampaignViewModel extends ChangeNotifier {
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  CampaignViewModel() {
+    searchController.addListener(notifyListeners);
+  }
+
   bool hasUnsavedChanges() {
     return campaignNameController.text.isNotEmpty ||
         scheduleTimeController.text.isNotEmpty ||
@@ -30,6 +34,11 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   bool searchBarOpen = false;
+
+  void setSearchBar(bool val) {
+    searchBarOpen = val;
+    notifyListeners();
+  }
 
   void toggleSearchBar() {
     searchBarOpen = !searchBarOpen;
@@ -236,6 +245,7 @@ class CampaignViewModel extends ChangeNotifier {
   CampaignListData? campaignListData;
   StatesByGroupsData? statesByGroups;
   int _campaignOffset = 0;
+  int _campaignLimit = 10;
   bool _hasMoreCampaigns = true;
   bool _isLoadingMoreCampaigns = false;
 
@@ -248,14 +258,18 @@ class CampaignViewModel extends ChangeNotifier {
         if (_isLoadingMoreCampaigns || !_hasMoreCampaigns) return;
         _isLoadingMoreCampaigns = true;
       } else {
+        resetListingState();
         _campaignOffset = 0;
         _hasMoreCampaigns = true;
-        campaignListData = null;
       }
 
-      final variables = {"limit": 10, "offset": _campaignOffset, "where": {}};
+      final variables = {
+        "limit": _campaignLimit,
+        "offset": _campaignOffset,
+        "where": {}
+      };
       final res = await repo.getCampaignListData(variables);
-      
+
       if (!loadMore) {
         searchController.text = "";
       }
@@ -266,7 +280,7 @@ class CampaignViewModel extends ChangeNotifier {
         } else {
           campaignListData = res;
         }
-        _hasMoreCampaigns = (res?.smsCampaign?.length ?? 0) == 10;
+        _hasMoreCampaigns = (res?.smsCampaign?.length ?? 0) == _campaignLimit;
         _campaignOffset += res?.smsCampaign?.length ?? 0;
       }
 
@@ -305,8 +319,7 @@ class CampaignViewModel extends ChangeNotifier {
       recipientsCount = data?.recipientsCount.toString() ?? "0";
 
       notifyListeners();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   ContactCountData? contactCountData;
@@ -354,8 +367,7 @@ class CampaignViewModel extends ChangeNotifier {
           "0";
 
       notifyListeners();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<void> createCampaign(BuildContext context) async {
@@ -404,8 +416,7 @@ class CampaignViewModel extends ChangeNotifier {
         notifyListeners();
       }
       notifyListeners();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   ContactsData? contactsData;
@@ -458,8 +469,7 @@ class CampaignViewModel extends ChangeNotifier {
                   .toList() ??
               [];
       notifyListeners();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<void> deleteCampaign(BuildContext context, String id) async {
@@ -516,8 +526,12 @@ class CampaignViewModel extends ChangeNotifier {
             [];
       }
       notifyListeners();
-    } catch (e) {
-    }
+    } catch (e) {}
+  }
+
+  void resetListingState() {
+    setSearchBar(false);
+    clearAllFilters();
   }
 
   clearFields() {

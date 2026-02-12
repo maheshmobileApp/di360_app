@@ -65,11 +65,9 @@ class TeamMembersViewModel extends ChangeNotifier {
 
   void addPermissionTypeChip(String empType) {
     if (!_selectedPermissionChips.contains(empType)) {
-      // If adding "Directory Full Access", remove "Directory Minimal"
       if (empType == "Directory Full Access") {
         _selectedPermissionChips.remove("Directory Minimal");
       }
-      // If adding "Directory Minimal", remove "Directory Full Access"
       if (empType == "Directory Minimal") {
         _selectedPermissionChips.remove("Directory Full Access");
       }
@@ -80,6 +78,7 @@ class TeamMembersViewModel extends ChangeNotifier {
 
   TeamMembersData? teamMembersData;
   int _teamMembersOffset = 0;
+  int _teamMemberLimit = 10;
   bool _hasMoreTeamMembers = true;
   bool _isLoadingMoreTeamMembers = false;
 
@@ -87,14 +86,13 @@ class TeamMembersViewModel extends ChangeNotifier {
   bool get isLoadingMoreTeamMembers => _isLoadingMoreTeamMembers;
 
   Future<void> getTeamMembers({bool loadMore = false}) async {
-    print("**************************************getTeamMembers");
     if (loadMore) {
       if (_isLoadingMoreTeamMembers || !_hasMoreTeamMembers) return;
       _isLoadingMoreTeamMembers = true;
     } else {
+      teamMembersData = null;
       _teamMembersOffset = 0;
       _hasMoreTeamMembers = true;
-      teamMembersData = null;
     }
 
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -102,18 +100,18 @@ class TeamMembersViewModel extends ChangeNotifier {
       "where": {
         "supplier_access_id": {"_eq": id}
       },
-      "limit": 10,
+      "limit": _teamMemberLimit,
       "offset": _teamMembersOffset
     };
     final res = await repo.getTeamMembers(variables);
-    
+
     if (res.clients != null) {
       if (loadMore) {
         teamMembersData?.clients?.addAll(res.clients!);
       } else {
         teamMembersData = res;
       }
-      _hasMoreTeamMembers = (res.clients?.length ?? 0) == 10;
+      _hasMoreTeamMembers = (res.clients?.length ?? 0) == _teamMemberLimit;
       _teamMembersOffset += res.clients?.length ?? 0;
     } else {
       if (!loadMore) {
