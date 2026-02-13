@@ -8,7 +8,6 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -39,7 +38,6 @@ class _JobListingScreenState extends State<LearningHubMasterView>
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 249, 248, 248),
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
           searchAction: () =>
               courseListingVM.setSearchBar(!courseListingVM.searchBarOpen),
@@ -92,6 +90,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                   ?.count);
 
                           return ListingHubMasterCard(
+                            feedId: course.id ?? "",
                             remainingOfSeats: seats,
                             presenterName: course.presentedByName ?? "",
                             profilePic: course.presentedByImage?.url ?? '',
@@ -134,11 +133,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 scaffoldMessenger('Seats are sold out!');
                               }
                             },
-                            onShareTap: () {
-                              SharePlus.instance.share(ShareParams(
-                                  uri: Uri.parse(
-                                      'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
-                            },
+                            
                           );
                         },
                       )),

@@ -29,6 +29,15 @@ class TeamMembersViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool hasUnsavedChanges() {
+    return userNameController.text.isNotEmpty ||
+        emailController.text.isNotEmpty ||
+        phoneController.text.isNotEmpty ||
+        passwordController.text.isNotEmpty ||
+        confirmPasswordController.text.isNotEmpty ||
+        _selectedPermissionChips.isNotEmpty;
+  }
+
   bool _isPasswordVisible = false;
   bool get isPasswordVisible => _isPasswordVisible;
 
@@ -65,11 +74,9 @@ class TeamMembersViewModel extends ChangeNotifier {
 
   void addPermissionTypeChip(String empType) {
     if (!_selectedPermissionChips.contains(empType)) {
-      // If adding "Directory Full Access", remove "Directory Minimal"
       if (empType == "Directory Full Access") {
         _selectedPermissionChips.remove("Directory Minimal");
       }
-      // If adding "Directory Minimal", remove "Directory Full Access"
       if (empType == "Directory Minimal") {
         _selectedPermissionChips.remove("Directory Full Access");
       }
@@ -80,6 +87,7 @@ class TeamMembersViewModel extends ChangeNotifier {
 
   TeamMembersData? teamMembersData;
   int _teamMembersOffset = 0;
+  int _teamMemberLimit = 10;
   bool _hasMoreTeamMembers = true;
   bool _isLoadingMoreTeamMembers = false;
 
@@ -87,14 +95,13 @@ class TeamMembersViewModel extends ChangeNotifier {
   bool get isLoadingMoreTeamMembers => _isLoadingMoreTeamMembers;
 
   Future<void> getTeamMembers({bool loadMore = false}) async {
-    print("**************************************getTeamMembers");
     if (loadMore) {
       if (_isLoadingMoreTeamMembers || !_hasMoreTeamMembers) return;
       _isLoadingMoreTeamMembers = true;
     } else {
+      teamMembersData = null;
       _teamMembersOffset = 0;
       _hasMoreTeamMembers = true;
-      teamMembersData = null;
     }
 
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -102,18 +109,18 @@ class TeamMembersViewModel extends ChangeNotifier {
       "where": {
         "supplier_access_id": {"_eq": id}
       },
-      "limit": 10,
+      "limit": _teamMemberLimit,
       "offset": _teamMembersOffset
     };
     final res = await repo.getTeamMembers(variables);
-    
+
     if (res.clients != null) {
       if (loadMore) {
         teamMembersData?.clients?.addAll(res.clients!);
       } else {
         teamMembersData = res;
       }
-      _hasMoreTeamMembers = (res.clients?.length ?? 0) == 10;
+      _hasMoreTeamMembers = (res.clients?.length ?? 0) == _teamMemberLimit;
       _teamMembersOffset += res.clients?.length ?? 0;
     } else {
       if (!loadMore) {
@@ -172,10 +179,8 @@ class TeamMembersViewModel extends ChangeNotifier {
     passwordController.text = data?.password ?? "";
     confirmPasswordController.text = data?.password ?? "";
 
-    // Clear existing permissions
     _selectedPermissionChips.clear();
 
-    // Add permissions based on API response
     if (data?.permissions?.modules != null) {
       for (var module in data!.permissions!.modules!) {
         if (module.permission == true) {
@@ -215,7 +220,7 @@ class TeamMembersViewModel extends ChangeNotifier {
     final businessName =
         await LocalStorage.getStringVal(LocalStorageConst.businessName);
     final professionType =
-        await LocalStorage.getStringVal(LocalStorageConst.type);
+        await LocalStorage.getStringVal(LocalStorageConst.professionType);
     final subscriptionPlanId =
         await LocalStorage.getStringVal(LocalStorageConst.subscriptionId);
     final variables = {
@@ -228,7 +233,7 @@ class TeamMembersViewModel extends ChangeNotifier {
         "type": "SUPPLIER",
         "supplier_access_id": id,
         "business_name": businessName,
-        "professionType": "Dental  Community",
+        "professionType": professionType,
         "subscription_plan_id": subscriptionPlanId,
         "community_id": null,
         "community_status": null,
@@ -277,7 +282,6 @@ class TeamMembersViewModel extends ChangeNotifier {
         "status": "VERIFICATION_PENDING"
       }
     };
-    print("variables:*****************$variables");
     final res = await repo.createTeamMember(variables);
     if (res != null) {
       await getTeamMembers();
@@ -295,7 +299,7 @@ class TeamMembersViewModel extends ChangeNotifier {
     final businessName =
         await LocalStorage.getStringVal(LocalStorageConst.businessName);
     final professionType =
-        await LocalStorage.getStringVal(LocalStorageConst.type);
+        await LocalStorage.getStringVal(LocalStorageConst.professionType);
     final subscriptionPlanId =
         await LocalStorage.getStringVal(LocalStorageConst.subscriptionId);
     final variables = {
@@ -309,7 +313,7 @@ class TeamMembersViewModel extends ChangeNotifier {
         "type": "SUPPLIER",
         "supplier_access_id": id,
         "business_name": businessName,
-        "professionType": "Dental  Community",
+        "professionType": professionType,
         "subscription_plan_id": subscriptionPlanId,
         "community_id": null,
         "community_status": null,
@@ -357,7 +361,6 @@ class TeamMembersViewModel extends ChangeNotifier {
         }
       }
     };
-    print("variables:*****************$variables");
     final res = await repo.updateTeamMember(variables);
     if (res != null) {
       editedId = '';

@@ -38,6 +38,13 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   List<Jobs> filteredJobs = [];
+  int _jobSeekLimit = 10;
+  int _currentPage = 0;
+  bool _hasMoreJobs = true;
+  bool _isLoadingMore = false;
+
+  bool get hasMoreJobs => _hasMoreJobs;
+  bool get isLoadingMore => _isLoadingMore;
 
   final TextEditingController locationController = TextEditingController();
   final TextEditingController locumDateController = TextEditingController();
@@ -100,12 +107,14 @@ class JobSeekViewModel extends ChangeNotifier {
     if (_selectedTabIndex == index) return;
     _selectedTabIndex = index;
     _isTabLoading = true;
+    _currentPage = 0;
+    _hasMoreJobs = true;
     notifyListeners();
     if (index == 0) {
-      await fetchJobs(context);
+      await fetchJobsForSelectedTab(context);
     } else {
       final talentsVM = Provider.of<TalentsViewModel>(context, listen: false);
-      await talentsVM.fetchTalentProfiles(context);
+      await talentsVM.fetchTalentsForSelectedView(context);
     }
     _isTabLoading = false;
     notifyListeners();
@@ -137,39 +146,64 @@ class JobSeekViewModel extends ChangeNotifier {
 
   Future<void> refreshJobs(BuildContext context) async {
     _isRefreshing = true;
+    _currentPage = 0;
+    _hasMoreJobs = true;
     notifyListeners();
     await fetchJobsForSelectedTab(context);
     _isRefreshing = false;
     notifyListeners();
   }
 
-  Future<void> fetchJobsForSelectedTab(BuildContext context) async {
+  Future<void> fetchJobsForSelectedTab(BuildContext context,
+      {bool loadMore = false}) async {
     if (_selectedTabIndex == 0) {
-      await fetchFilteredJobs(context);
+      // Check if filters are applied
+      final hasFilters = selectedProfessions.isNotEmpty ||
+          selectedEmploymentTypes.isNotEmpty ||
+          selectedExperiences.isNotEmpty ||
+          selectedAvailability.isNotEmpty ||
+          locationController.text.isNotEmpty;
+
+      if (hasFilters) {
+        await fetchFilteredJobs(context, loadMore: loadMore);
+      } else {
+        await fetchJobs(context, loadMore: loadMore);
+      }
     }
   }
 
-  Future<void> fetchFilteredJobs(BuildContext context) async {
-    isLoading = true;
+  Future<void> fetchFilteredJobs(BuildContext context,
+      {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreJobs)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _currentPage = 0;
+      _hasMoreJobs = true;
+    }
     notifyListeners();
 
     try {
-      Loaders.circularShowLoader(context);
+      if (!loadMore) {
+        Loaders.circularShowLoader(context);
+      }
       final String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final List<Map<String, dynamic>> andConditions = [
-        {"status": {"_eq": "APPROVE"}},
-        {"active_status": {"_eq": "ACTIVE"}},
+        {
+          "status": {"_eq": "APPROVE"}
+        },
+        {
+          "active_status": {"_eq": "ACTIVE"}
+        },
         {
           "_or": [
             {
-              "start_Date": {
-                "_lte": todayDate
-              }
+              "start_Date": {"_lte": todayDate}
             },
             {
-              "start_Date": {
-                "_is_null": true
-              }
+              "start_Date": {"_is_null": true}
             }
           ]
         }
@@ -179,11 +213,21 @@ class JobSeekViewModel extends ChangeNotifier {
       if (locationController.text.isNotEmpty) {
         andConditions.add({
           "_or": [
-            {"title": {"_ilike": "%${locationController.text}%"}},
-            {"company_name": {"_ilike": "%${locationController.text}%"}},
-            {"location": {"_ilike": "%${locationController.text}%"}},
-            {"city": {"_ilike": "%${locationController.text}%"}},
-            {"state": {"_ilike": "%${locationController.text}%"}}
+            {
+              "title": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "company_name": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "location": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "city": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "state": {"_ilike": "%${locationController.text}%"}
+            }
           ]
         });
       }
@@ -217,24 +261,39 @@ class JobSeekViewModel extends ChangeNotifier {
       }
 
       final variables = {
-        "limit": 10,
-        "offset": 0,
+        "limit": _jobSeekLimit,
+        "offset": _currentPage * _jobSeekLimit,
         "where": {"_and": andConditions},
-        "order_by": [{"created_at": (selectedSort=='A to Z')?"asc":"desc"}]
+        "order_by": [
+          {"created_at": (selectedSort == 'A to Z') ? "asc" : "desc"}
+        ]
       };
 
-      print("Dynamic Variables: $variables");
       final result = await repo.fetchFilteredJobs(variables);
-      jobs = result;
-      Loaders.circularHideLoader(context);
 
-      filteredJobs = result;
-      print("Fetched ${filteredJobs.length} filtered jobs");
+      if (loadMore) {
+        jobs.addAll(result);
+        filteredJobs.addAll(result);
+      } else {
+        jobs = result;
+        filteredJobs = result;
+      }
+
+      _hasMoreJobs = result.length >= _jobSeekLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
     } catch (e) {
-      print("Error fetching filtered jobs: $e");
-      filteredJobs = [];
+      if (!loadMore) {
+        filteredJobs = [];
+      }
     } finally {
       isLoading = false;
+      _isLoadingMore = false;
       notifyListeners();
     }
   }
@@ -306,13 +365,48 @@ class JobSeekViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchJobs(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  Future<void> fetchJobs(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreJobs)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _currentPage = 0;
+      _hasMoreJobs = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     try {
-      var jobData = await repo.getPopularJobs();
-      jobs = jobData.jobs ?? [];
+      final variables = {
+        "limit": _jobSeekLimit,
+        "offset": _currentPage * _jobSeekLimit
+      };
+      var jobData = await repo.getPopularJobs(variables);
+      final result = jobData.jobs ?? [];
+
+      if (loadMore) {
+        jobs.addAll(result);
+      } else {
+        jobs = result;
+      }
+
+      _hasMoreJobs = result.length >= _jobSeekLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+    } catch (e) {
+      if (!loadMore) {
+        jobs = [];
+      }
     } finally {
-      Loaders.circularHideLoader(context);
+      isLoading = false;
+      _isLoadingMore = false;
       notifyListeners();
     }
   }

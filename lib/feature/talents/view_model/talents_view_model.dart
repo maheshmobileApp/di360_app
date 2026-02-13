@@ -22,6 +22,14 @@ class TalentsViewModel extends ChangeNotifier {
   bool isShowBottomeActions = false;
   List<JobProfiles> talentList = [];
   List<JobProfiles> filteredJobs = [];
+  int _currentPage = 0;
+  bool _hasMoreTalents = true;
+  bool _isLoadingMore = false;
+  bool isLoading = false;
+  final int _talentLimit = 10;
+
+  bool get hasMoreTalents => _hasMoreTalents;
+  bool get isLoadingMore => _isLoadingMore;
   final TextEditingController locationController = TextEditingController();
   final TextEditingController availabilityDateController =
       TextEditingController();
@@ -129,17 +137,79 @@ class TalentsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchTalentProfiles(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  Future<void> fetchTalentProfiles(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreTalents)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _currentPage = 0;
+      _hasMoreTalents = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     try {
-      final res = await repo.getTalentDetails();
-      talentList = res;
-      print(
-          "***********************${talentList.first.jobHirings.length}***********************");
-      print("Fetched ${talentList.length} talents");
+      final variables = {
+        "limit": _talentLimit,
+        "offset": _currentPage * _talentLimit
+      };
+      final result = await repo.getTalentDetails(variables);
+
+      if (loadMore) {
+        talentList.addAll(result);
+      } else {
+        talentList = result;
+      }
+
+      _hasMoreTalents = result.length >= _talentLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+    } catch (e) {
+      if (!loadMore) {
+        talentList = [];
+      }
     } finally {
-      Loaders.circularHideLoader(context);
+      isLoading = false;
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+      _isLoadingMore = false;
       notifyListeners();
+    }
+  }
+
+  bool _isRefreshing = false;
+  bool get isRefreshing => _isRefreshing;
+
+  Future<void> refreshTalents(BuildContext context) async {
+    _isRefreshing = true;
+    _currentPage = 0;
+    _hasMoreTalents = true;
+    notifyListeners();
+    await fetchTalentsForSelectedView(context);
+    _isRefreshing = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchTalentsForSelectedView(BuildContext context, {bool loadMore = false}) async {
+    final hasFilters = selectedProfessions.isNotEmpty ||
+        selectedEmploymentTypes.isNotEmpty ||
+        selectedExperiences.isNotEmpty ||
+        selectedAvailability.isNotEmpty ||
+        selectedDays.isNotEmpty ||
+        locationController.text.isNotEmpty;
+
+    if (hasFilters) {
+      await fetchFilteredJobs(context, loadMore: loadMore);
+    } else {
+      await fetchTalentProfiles(context, loadMore: loadMore);
     }
   }
 
@@ -156,7 +226,8 @@ class TalentsViewModel extends ChangeNotifier {
     try {
       final res = await repo.updateHiringStatus(variables);
       hiringStatusData = res;
-      setHiringStatus(hiringStatusData?.updateJobhiringsByPk?.hiringStatus ?? '');
+      setHiringStatus(
+          hiringStatusData?.updateJobhiringsByPk?.hiringStatus ?? '');
       print("Updated hiring status: $res");
     } finally {
       Loaders.circularHideLoader(context);
@@ -164,8 +235,20 @@ class TalentsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchFilteredJobs(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  Future<void> fetchFilteredJobs(BuildContext context,
+      {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreTalents)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _currentPage = 0;
+      _hasMoreTalents = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     try {
       printSelectedItems();
 
@@ -228,8 +311,8 @@ class TalentsViewModel extends ChangeNotifier {
       }
 
       final variables = {
-        "limit": 10,
-        "offset": 0,
+        "limit": _talentLimit,
+        "offset": _currentPage * _talentLimit,
         "where": {"_and": whereConditions}
       };
 
@@ -240,17 +323,35 @@ class TalentsViewModel extends ChangeNotifier {
       }
 
       final result = await repo.getJobProfileFilterData(variables);
-      if (result != []) {
-        talentList = result;
+
+      if (loadMore) {
+        talentList.addAll(result);
+        filteredJobs.addAll(result);
+      } else {
+        if (result != []) {
+          talentList = result;
+        }
+        filteredJobs = result;
       }
 
-      filteredJobs = result;
-      print("Fetched ${filteredJobs.length} filtered talents");
+      _hasMoreTalents = result.length >= _talentLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      print(
+          "Fetched ${result.length} filtered talents, total: ${filteredJobs.length}");
     } catch (e) {
       print("Error fetching filtered talents: $e");
-      filteredJobs = [];
+      if (!loadMore) {
+        filteredJobs = [];
+      }
     } finally {
-      Loaders.circularHideLoader(context);
+      isLoading = false;
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+      _isLoadingMore = false;
       notifyListeners();
     }
   }

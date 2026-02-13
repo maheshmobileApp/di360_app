@@ -5,7 +5,7 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dart';
 
 abstract class TalentRepository {
-  Future<List<JobProfiles>> getTalentDetails();
+  Future<List<JobProfiles>> getTalentDetails(dynamic variables);
   Future<bool> hireMe(HireMeRequest request);
   Future<UpdateHiringStatusData> updateHiringStatus(dynamic variables);
   Future<bool> enquire(EnquiryRequest request);

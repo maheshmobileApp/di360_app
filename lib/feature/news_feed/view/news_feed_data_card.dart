@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_menu_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -34,6 +35,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
+    final newsFeedTypeEnum = FeedType.fromString(newsfeeds?.feedType ?? '');
     return Container(
         color: AppColors.whiteColor,
         child: GestureDetector(
@@ -43,20 +45,6 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             addVertical(10),
-            /* _buildHeader(
-                newsfeeds?.dentalSupplier?.logo?.url ??
-                    newsfeeds?.dentalPractice?.logo?.url ??
-                    newsfeeds?.dentalProfessional?.profileImage?.url ??
-                    newsfeeds?.dentalSupplier?.directories?.first.logo?.url ??
-                    '',
-                newsfeeds?.dentalSupplier?.name ??
-                    newsfeeds?.dentalPractice?.name ??
-                    newsfeeds?.dentalProfessional?.name,
-                newsfeeds?.createdAt ?? '',
-                context,
-                newsfeeds,
-                needFeedViewModel,
-                addNeedFeedViewModel),*/
             _buildHeader(
                 newsfeeds?.dentalSupplier != null
                     ? newsfeeds?.dentalSupplier?.logo?.url ??
@@ -95,7 +83,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             addVertical(5),
             if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
               LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-            if (newsfeeds?.feedType == 'JOBS')
+            if (newsFeedTypeEnum == FeedType.JOBS)
               BuildJobTypeWidget(
                   job: newsfeeds?.jobs?.isNotEmpty ?? false
                       ? newsfeeds?.jobs?.first
@@ -120,7 +108,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   if (newsfeeds?.webUrl != null &&
                       newsfeeds!.webUrl!.isNotEmpty)
                     addVertical(8),
-                  if (newsfeeds?.feedType == 'CATALOGUE')
+                  if (newsFeedTypeEnum == FeedType.CATALOGUE)
                     _buildCatalogueRow(catalogueViewModel, context),
                   Divider(color: AppColors.dividerColor),
                   addVertical(4),
@@ -128,7 +116,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
                       '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
                       needFeedViewModel,
-                      context),
+                      context,newsfeeds?.id ?? ''),
                   addVertical(10)
                 ],
               ),
@@ -354,7 +342,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildStatsRow(String likeCount, String commentCount,
-      NewsFeedViewModel viewModel, BuildContext context) {
+      NewsFeedViewModel viewModel, BuildContext context,String feedId) {
     final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
 
     return Row(
@@ -385,7 +373,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           ),
         ),
         addHorizontal(10),
-        ShareWidget(),
+        ShareWidget(feedId: feedId,),
         Spacer(),
         Container(
           decoration: BoxDecoration(

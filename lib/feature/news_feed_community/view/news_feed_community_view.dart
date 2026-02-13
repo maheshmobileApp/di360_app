@@ -7,11 +7,11 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
@@ -23,7 +23,6 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class NewsFeedCommunityView extends StatefulWidget {
   @override
@@ -33,9 +32,12 @@ class NewsFeedCommunityView extends StatefulWidget {
 class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     with ValidationMixins {
   String selectedFilter = 'all';
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final viewModel =
@@ -58,6 +60,25 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     });
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      final viewModel =
+          Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
+      if (viewModel.applyFilter) {
+        viewModel.filterNewsFeeds(context, loadMore: true);
+      } else {
+        viewModel.getAllNewsFeeds(context, loadMore: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<NewsFeedCommunityViewModel>(
@@ -66,7 +87,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         final jobListingsViewModel = Provider.of<JobListingsViewModel>(context);
 
         final communityVM = Provider.of<CommunityViewModel>(context);
-        final homeVM = Provider.of<HomeViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
         final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
         return FutureBuilder<List<String>>(
@@ -198,9 +218,21 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                   (joinRequests?.length != 0 && joinRequests != null)
                       ? Expanded(
                           child: ListView.builder(
+                            controller: _scrollController,
                             padding: EdgeInsets.all(10),
-                            itemCount: joinRequests.length,
+                            itemCount: joinRequests.length +
+                                (viewModel.hasMoreNewsFeeds &&
+                                        viewModel.isLoadingMore
+                                    ? 1
+                                    : 0),
                             itemBuilder: (context, index) {
+                              if (index == joinRequests.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Center(
+                                      child: CircularProgressIndicator(color: AppColors.primaryColor,)),
+                                );
+                              }
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
                                   newsfeeds: newsItem,
@@ -237,21 +269,40 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             newsfeeds: newsItem));
                                   },
                                   onLikeTap: () {
-                                    print(
-                                        "*************///////////**********${newsItem.myLike?.isNotEmpty}");
                                     (newsItem.myLike?.isNotEmpty ?? false)
                                         ? viewModel.communityUnLike(
                                             context, newsItem.id ?? '')
                                         : viewModel.communityLike(
                                             context, newsItem.id ?? '');
                                   },
-                                  onShareTap: () {
-                                    SharePlus.instance.share(ShareParams(
-                                        uri: Uri.parse(
-                                            'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
-                                  },
                                   onDetailView: () async {
-                                    if (newsItem.feedType == "LEARNHUB") {
+                                    final feedTypeEnum =
+                                        FeedType.fromString(newsItem.feedType);
+                                    switch (feedTypeEnum) {
+                                      case FeedType.LEARNHUB:
+                                        await courseListingVM.getCourseDetails(
+                                          context,
+                                          newsItem.courses?.first.id ?? "",
+                                        );
+                                        navigationService.navigateTo(
+                                            RouteList.courseDetailScreen);
+                                        break;
+                                      case FeedType.JOBS:
+                                        await jobListingsViewModel
+                                            .getJobListingById(context,
+                                                newsItem.jobs?.first.id ?? "");
+                                        navigationService.navigateToWithParams(
+                                          RouteList.jobdetailsScreen,
+                                          params: jobListingsViewModel
+                                                  .jobListingData?.first ??
+                                              Jobs(),
+                                        );
+                                        break;
+                                      default:
+                                        // Handle default case or other feed types if necessary
+                                        break;
+                                    }
+                                    /*if (newsItem.feedType == "LEARNHUB") {
                                       await courseListingVM.getCourseDetails(
                                         context,
                                         newsItem.courses?.first.id ?? "",
@@ -265,7 +316,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         RouteList.jobdetailsScreen,
                                         params: jobListingsViewModel.jobListingData?.first??Jobs(),
                                       );
-                                    }
+                                    }*/
                                   },
                                   onMenuAction: (action, id) async {
                                     switch (action) {
@@ -299,7 +350,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         viewModel.setSelectedCourseCategoryName(
                                             newsItem.categoryType ?? "");
 
-                                       
                                         viewModel.newsFeedCategory = communityVM
                                                 .newsFeedCategoriesData
                                                 ?.newsfeedCategories
@@ -312,7 +362,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 .map((item) => item.url ?? "")
                                                 .where((url) => url.isNotEmpty)
                                                 .toList();
-                                        viewModel.existingImages = newsItem.postImage ?? [];
+                                        viewModel.existingImages =
+                                            newsItem.postImage ?? [];
                                         navigationService.navigateTo(
                                             RouteList.addNewsFeedCommunityView);
 

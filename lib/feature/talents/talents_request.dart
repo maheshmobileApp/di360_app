@@ -1,7 +1,9 @@
-String talentsRequest = r'''query GetJobProfileData {
+String talentsRequest = r'''query GetJobProfileData($limit: Int!, $offset: Int!) {
   job_profiles(
-      order_by: { created_at: desc }
+    order_by: { created_at: desc }
     where: { active_status: { _eq: "ACTIVE" } }
+    limit: $limit
+    offset: $offset
   ) {
     id
     created_at
@@ -55,7 +57,7 @@ String talentsRequest = r'''query GetJobProfileData {
       __typename
     }
     jobhirings {
-     id
+      id
       dental_supplier_id
       dental_practice_id
       hiring_status

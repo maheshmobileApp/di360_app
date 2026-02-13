@@ -49,7 +49,7 @@ class RegisteredUserCard extends StatelessWidget {
                 radius: 30,
                 child: ClipOval(
                   child: CachedNetworkImageWidget(
-                      imageUrl: imageUrl ?? '',
+                      imageUrl: imageUrl,
                       fit: BoxFit.fill,
                       errorWidget: Image.asset(ImageConst.prfImg)),
                 ),

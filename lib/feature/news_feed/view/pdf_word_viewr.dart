@@ -182,7 +182,7 @@ Widget webSiteText(String url) {
           ),
           TextSpan(
             text: validUrl,
-            style: TextStyles.semiBold(color: AppColors.primaryColor, fontSize: 16),
+            style: TextStyles.semiBold(color: AppColors.primaryColor, fontSize: 14),
           ),
         ],
       ),

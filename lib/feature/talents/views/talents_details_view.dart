@@ -24,10 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
 class TalentsDetailsView extends StatefulWidget with BaseContextHelpers {
   final JobProfiles? talentList;
 
-  const TalentsDetailsView({
-    super.key,
-    this.talentList,
-  });
+  const TalentsDetailsView({super.key, this.talentList});
 
   @override
   State<TalentsDetailsView> createState() => _TalentsDetailsViewState();
@@ -254,7 +251,6 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
               ),
             ),
             addHorizontal(16),
-           
             Expanded(
               child: CustomRoundedButton(
                 text: ((widget.talentList?.jobHirings

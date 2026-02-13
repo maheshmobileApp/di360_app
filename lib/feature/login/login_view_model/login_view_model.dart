@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -54,28 +53,41 @@ class LoginViewModel extends ChangeNotifier {
 
   submit(BuildContext context) async {
     // Check connectivity first
-    final connectivityResult = await Connectivity().checkConnectivity();
+    /*final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
+      scaffoldMessenger("No internet connection. Please check your network.");
       BotToast.showSimpleNotification(
           title: "No internet connection. Please check your network.");
       return "";
-    }
+    }*/
 
     _variables['details']['emailOrPhone'] = emailController.text;
     _variables['details']['password'] = passController.text;
     if (Map.from(_variables['details']).containsValue("")) {
-      BotToast.showSimpleNotification(title: "Please fill all the details");
+       scaffoldMessenger("Please fill all the details");
+      /*BotToast.showSimpleNotification(title: "Please fill all the details");*/
       return "";
     }
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(loginSchema, _variables);
-      if (res.isNotEmpty) {
+
+      if (res.isNotEmpty && res.containsKey('_error')) {
+        Loaders.circularHideLoader(context);
+        final err =
+            res['_error']?.toString() ?? "Login failed. Please try again.";
+
+        scaffoldMessenger(err == "HasuraRequestError: Invalid credentials"
+            ? "Invalid credentials"
+            : err);
+        return;
+      }
+
+      if (res.isNotEmpty && res.containsKey('login_api')) {
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
-          
 
           (result.loginApi?.type == "SUPPLIER")
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
@@ -90,6 +102,8 @@ class LoginViewModel extends ChangeNotifier {
               LocalStorageConst.token, result.loginApi?.accessToken ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.type, result.loginApi?.type ?? '');
+          await LocalStorage.setStringVal(
+              LocalStorageConst.professionType, result.loginApi?.professionType ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.subType, result.loginApi?.subType ?? '');
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
@@ -107,17 +121,18 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(result.loginApi?.accessToken ?? '');
           updateDevieToken();
           navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+        } else {
+          Loaders.circularHideLoader(context);
+          scaffoldMessenger('Account is ${res['login_api']['status']}');
         }
       } else {
-        scaffoldMessenger(
-            'Either it is Invalid credentials or you have not verified your email.');
         Loaders.circularHideLoader(context);
+        scaffoldMessenger('Login failed. Please try again.');
       }
     } catch (e) {
-      scaffoldMessenger('$e');
       Loaders.circularHideLoader(context);
+      scaffoldMessenger('Login failed. Please try again.');
     }
-
     notifyListeners();
   }
 
@@ -126,7 +141,7 @@ class LoginViewModel extends ChangeNotifier {
       if (!hasListeners) return;
       if (Firebase.apps.isEmpty) return;
       await Future.delayed(Duration(seconds: 2));
-      
+
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final deviceToken = await FirebaseMessaging.instance.getToken();
 
@@ -198,7 +213,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.communityId, supplier?.communityId ?? '');
-      
+
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(

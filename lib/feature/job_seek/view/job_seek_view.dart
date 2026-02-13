@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_card.dart';
 import 'package:di360_flutter/feature/job_seek/view/tab_switch.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talents/views/talents_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -25,11 +24,28 @@ class JobSeekView extends StatefulWidget {
 }
 
 class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
+  final ScrollController _jobsScrollController = ScrollController();
+
   @override
   void initState() {
     final provider = Provider.of<JobSeekViewModel>(context, listen: false);
     provider.toggleFloatingButtonVisibility();
+    _jobsScrollController.addListener(_onScroll);
     super.initState();
+  }
+
+  void _onScroll() {
+    if (_jobsScrollController.position.pixels >=
+        _jobsScrollController.position.maxScrollExtent - 100) {
+      final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+      provider.fetchJobsForSelectedTab(context, loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _jobsScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,7 +54,6 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
       builder: (context, jobSeekViewModel, _) {
         return Scaffold(
           backgroundColor: Colors.white,
-          endDrawer: NotificationsPanel(),
           appBar: AppBarWidget(
             searchWidget: false,
               filterWidget: GestureDetector(
@@ -68,33 +83,36 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
     return RefreshIndicator(
       backgroundColor: AppColors.whiteColor,
       onRefresh: () async => await vm.refreshJobs(context),
-      child: vm.jobs.isEmpty
-          ? Center(
-              child: vm.isRefreshing
-                  ? const CircularProgressIndicator()
-                  : const Text("No Jobs Available"),
-            )
-          : GenericListViewWithBanners<Jobs>(
-              items: vm.jobs,
-              bannerIndices: BannerUtils.calculateBannerIndices(
-                  vm.jobs.length), // Show banners at 0 and 5
-              itemBuilder: (context, dataIndex) {
-                final jobData = vm.jobs[dataIndex];
-                return InkWell(
-                  onTap: () {
-                    navigationService.navigateToWithParams(
-                      RouteList.jobdetailsScreen,
-                      params: jobData,
+      child: vm.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : vm.jobs.isEmpty
+              ? const Center(child: Text("No Jobs Available"))
+              : GenericListViewWithBanners<Jobs>(
+                  controller: _jobsScrollController,
+                  items: vm.jobs,
+                  bannerIndices: BannerUtils.calculateBannerIndices(vm.jobs.length),
+                  itemBuilder: (context, dataIndex) {
+                    final jobData = vm.jobs[dataIndex];
+                    return InkWell(
+                      onTap: () {
+                        navigationService.navigateToWithParams(
+                          RouteList.jobdetailsScreen,
+                          params: jobData,
+                        );
+                      },
+                      child: JobSeekCard(jobsData: jobData),
                     );
                   },
-                  child: JobSeekCard(jobsData: jobData),
-                );
-              },
-              bannerBuilder: (context, bannerPos) {
-                // bannerPos is 0 for index 0, 1 for index 5, etc.
-                return ListBanner();
-              },
-            ),
+                  bannerBuilder: (context, bannerPos) {
+                    return ListBanner();
+                  },
+                  loadingWidget: vm.hasMoreJobs && vm.isLoadingMore
+                      ? const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
+                        )
+                      : null,
+                ),
     );
   }
 

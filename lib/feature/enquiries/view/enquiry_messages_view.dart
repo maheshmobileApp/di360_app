@@ -94,7 +94,7 @@ class _JobListingApplicantsMessegeState
             children: [
               Expanded(
                 child: vm.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator(color: AppColors.primaryColor,))
                     : ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.all(12),

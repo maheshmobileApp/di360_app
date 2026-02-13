@@ -9,7 +9,7 @@ class HomeRepositoryImpl extends HomeRepository {
   final HttpService _http = HttpService();
 
   @override
-  Future<dynamic> getAllNewsFeed(int offset) async {
+  Future<dynamic> getAllNewsFeed(int offset,int limit) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final roleType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final communityId =
@@ -27,11 +27,12 @@ class HomeRepositoryImpl extends HomeRepository {
               {
                 "user_id": {"_eq": userId}
               },
-              {
-                "community_id": {
-                  "_in": [communityId]
+              if (communityId.isNotEmpty)
+                {
+                  "community_id": {
+                    "_in": [communityId]
+                  }
                 }
-              }
             ]
           },
           {
@@ -58,7 +59,7 @@ class HomeRepositoryImpl extends HomeRepository {
           }
         ]
       },
-      "limit": 10,
+      "limit": limit,
       "offset": offset,
       "userId": userId,
       "roleType": roleType

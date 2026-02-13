@@ -12,8 +12,8 @@ import 'package:di360_flutter/feature/talents/repository/talent_repo.dart';
 class TalentRepoImpl extends TalentRepository {
   final HttpService _http = HttpService();
   @override
-  Future<List<JobProfiles>> getTalentDetails() async {
-    final jobsData = await _http.query(talentsRequest);
+  Future<List<JobProfiles>> getTalentDetails(dynamic variables) async {
+    final jobsData = await _http.query(talentsRequest,variables: variables);
     final result = TalentsResData.fromJson(jobsData);
     return result.jobProfiles ?? [];
   }

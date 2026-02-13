@@ -96,7 +96,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                                 backgroundColor: AppColors.geryColor,
                                 radius: 20,
                                 child: CachedNetworkImageWidget(
-                                    imageUrl: profilePic ?? '',
+                                    imageUrl: profilePic,
                                     fit: BoxFit.fill,
                                     errorWidget:
                                         Image.asset(ImageConst.prfImg)),

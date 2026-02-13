@@ -7,5 +7,6 @@ enum NotificationType {
   APPOINTMENT,
   INFORMATIONAL,
   JOB,
-  SUPPORT_REQUEST
+  SUPPORT_REQUEST,
+  TALENT
 }

@@ -19,7 +19,6 @@ import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_vie
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -45,31 +44,24 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
         ..fetchProfileSections(profileVM.communityStatus),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(searchWidget: false),
         body: Consumer<ProfileViewModel>(
           builder: (context, vm, _) {
             if (vm.error != null) {
               return Center(
-                child: Text(
-                  'Error: ${vm.error}',
-                  style: TextStyles.regular3(color: AppColors.redColor),
-                ),
-              );
+                  child: Text('Error: ${vm.error}',
+                      style: TextStyles.regular3(color: AppColors.redColor)));
             }
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildProfileHeader(homeViewModel),
-                addVertical(16),
-                ...vm.visibleSections
-                    .map((section) =>
-                        _buildSection(context, section, addDirectorVM))
-                    .toList(),
-                addVertical(12),
-                _buildLogoutTile(context),
-              ],
-            );
+            return ListView(padding: const EdgeInsets.all(16), children: [
+              _buildProfileHeader(homeViewModel),
+              addVertical(16),
+              ...vm.visibleSections
+                  .map((section) =>
+                      _buildSection(context, section, addDirectorVM))
+                  .toList(),
+              addVertical(12),
+              _buildLogoutTile(context)
+            ]);
           },
         ),
       ),
@@ -309,11 +301,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.partnershipRequestView);
                           } else if (item.title == "Contacts") {
-                            navigationService
-                                .navigateTo(RouteList.contactView);
-                          }
-                          
-                           else if (item.title == "Membership Registration") {
+                            navigationService.navigateTo(RouteList.contactView);
+                          } else if (item.title == "Membership Registration") {
                             navigationService.navigateTo(
                                 RouteList.membershipRegistrationView);
                           } else if (item.title == "Partnership Registration") {

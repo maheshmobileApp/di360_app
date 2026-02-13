@@ -7,7 +7,6 @@ import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart'
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/campaign/widgets/campaign_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -32,8 +31,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
-    viewModel.campaignListData = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
@@ -43,7 +40,6 @@ class _JobListingScreenState extends State<CampaignListingView>
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      final viewModel = Provider.of<CampaignViewModel>(context, listen: false);
       _loadData(loadMore: true);
     }
   }
@@ -80,11 +76,10 @@ class _JobListingScreenState extends State<CampaignListingView>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        endDrawer: NotificationsPanel(),
         appBar: AppBarWidget(
             title: 'Campaign management',
-            searchAction: (){
-               viewModel.toggleSearchBar();
+            searchAction: () {
+              viewModel.toggleSearchBar();
             },
             filterWidget: GestureDetector(
                 onTap: () {
@@ -101,12 +96,6 @@ class _JobListingScreenState extends State<CampaignListingView>
                   controller: viewModel.searchController,
                   hintText: "Search Campaign...",
                   searchButton: false,
-                  onChanged: (value) {
-                    viewModel.notifyListeners();
-                  },
-                  onClear: () {
-                    viewModel.notifyListeners();
-                  },
                 ),
               Expanded(
                 child: viewModel.filteredCampaigns.isEmpty
@@ -123,17 +112,19 @@ class _JobListingScreenState extends State<CampaignListingView>
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        itemCount: viewModel.filteredCampaigns.length + (viewModel.hasMoreCampaigns ? 1 : 0),
+                        itemCount: viewModel.filteredCampaigns.length +
+                            (viewModel.hasMoreCampaigns ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index == viewModel.filteredCampaigns.length) {
                             return Center(
                               child: Padding(
                                 padding: EdgeInsets.all(16),
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(color: AppColors.primaryColor,),
                               ),
                             );
                           }
-                          final campaignData = viewModel.filteredCampaigns[index];
+                          final campaignData =
+                              viewModel.filteredCampaigns[index];
                           return CampaignCard(
                             id: campaignData.id ?? "",
                             campaignName: campaignData.campaignName ?? "",
@@ -279,7 +270,6 @@ class _JobListingScreenState extends State<CampaignListingView>
       onClose: () {
         Navigator.of(context).pop();
       },
-      
     );
   }
 }
