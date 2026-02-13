@@ -3,9 +3,11 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/get_notification_res.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
+import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/notificatoin_type_enum.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
@@ -54,6 +56,8 @@ class _NotificationScreenState extends State<NotificationScreen>
     final notificationVM = Provider.of<NotificationViewModel>(context);
     final catalogueVM = Provider.of<CatalogueViewModel>(context);
     final newsFeedProvider = Provider.of<NewsFeedViewModel>(context);
+    final talentEnqVM = Provider.of<TalentEnquiryViewModel>(context);
+    final courseListingVM = Provider.of<CourseListingViewModel>(context);
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
@@ -112,6 +116,10 @@ class _NotificationScreenState extends State<NotificationScreen>
                               .navigateTo(RouteList.catalogueDetails);
                         } else if (notification.type ==
                             NotificationType.COURSE.name) {
+                          await courseListingVM.getCourseDetails(
+                              context, notification.payload?.id ?? '');
+                          await navigationService
+                              .navigateTo(RouteList.courseDetailScreen);
                         } else if (notification.type ==
                             NotificationType.APPOINTMENT.name) {
                           navigationService.navigateTo(RouteList.myAppointment);
@@ -119,9 +127,13 @@ class _NotificationScreenState extends State<NotificationScreen>
                             NotificationType.JOB.name) {
                           newsFeedProvider.getJobDetailsByIds(
                               context, notification.payload?.id ?? '');
-                        }else if (notification.type ==
+                        } else if (notification.type ==
                             NotificationType.TALENT.name) {
-                          
+                          talentEnqVM.getTalentEnqPreviewData(
+                              context, notification.payload?.id ?? '');
+                          navigationService.navigateToWithParams(
+                              RouteList.talentPreview,
+                              params: talentEnqVM.talentEnqPreviewData);
                         }
                       },
                       child: _notificationCard(context, notification));
