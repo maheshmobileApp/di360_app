@@ -25,11 +25,30 @@ class JobSeekView extends StatefulWidget {
 }
 
 class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     final provider = Provider.of<JobSeekViewModel>(context, listen: false);
     provider.toggleFloatingButtonVisibility();
+    _scrollController.addListener(_onScroll);
     super.initState();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+      if (provider.selectedTabIndex == 0) {
+        provider.fetchFilteredJobs(context, loadMore: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,9 +94,9 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                   : const Text("No Jobs Available"),
             )
           : GenericListViewWithBanners<Jobs>(
+              controller: _scrollController,
               items: vm.jobs,
-              bannerIndices: BannerUtils.calculateBannerIndices(
-                  vm.jobs.length), // Show banners at 0 and 5
+              bannerIndices: BannerUtils.calculateBannerIndices(vm.jobs.length),
               itemBuilder: (context, dataIndex) {
                 final jobData = vm.jobs[dataIndex];
                 return InkWell(
@@ -91,9 +110,14 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                 );
               },
               bannerBuilder: (context, bannerPos) {
-                // bannerPos is 0 for index 0, 1 for index 5, etc.
                 return ListBanner();
               },
+              loadingWidget: vm.hasMoreJobs && vm.isLoadingMore
+                  ? const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : null,
             ),
     );
   }

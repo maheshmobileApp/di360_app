@@ -38,6 +38,13 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   List<Jobs> filteredJobs = [];
+  int _jobSeekLimit = 3;
+  int _currentPage = 0;
+  bool _hasMoreJobs = true;
+  bool _isLoadingMore = false;
+
+  bool get hasMoreJobs => _hasMoreJobs;
+  bool get isLoadingMore => _isLoadingMore;
 
   final TextEditingController locationController = TextEditingController();
   final TextEditingController locumDateController = TextEditingController();
@@ -149,12 +156,23 @@ class JobSeekViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchFilteredJobs(BuildContext context) async {
-    isLoading = true;
+  Future<void> fetchFilteredJobs(BuildContext context, {bool loadMore = false}) async {
+    print("*******************Fetching filtered jobs, loadMore: $loadMore, currentPage: $_currentPage");
+    if (loadMore && (_isLoadingMore || !_hasMoreJobs)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _currentPage = 0;
+      _hasMoreJobs = true;
+    }
     notifyListeners();
 
     try {
-      Loaders.circularShowLoader(context);
+      if (!loadMore) {
+        Loaders.circularShowLoader(context);
+      }
       final String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final List<Map<String, dynamic>> andConditions = [
         {"status": {"_eq": "APPROVE"}},
@@ -217,24 +235,39 @@ class JobSeekViewModel extends ChangeNotifier {
       }
 
       final variables = {
-        "limit": 10,
-        "offset": 0,
+        "limit": _jobSeekLimit,
+        "offset": _currentPage * _jobSeekLimit,
         "where": {"_and": andConditions},
         "order_by": [{"created_at": (selectedSort=='A to Z')?"asc":"desc"}]
       };
 
       print("Dynamic Variables: $variables");
       final result = await repo.fetchFilteredJobs(variables);
-      jobs = result;
-      Loaders.circularHideLoader(context);
+      
+      if (loadMore) {
+        jobs.addAll(result);
+        filteredJobs.addAll(result);
+      } else {
+        jobs = result;
+        filteredJobs = result;
+      }
 
-      filteredJobs = result;
-      print("Fetched ${filteredJobs.length} filtered jobs");
+      _hasMoreJobs = result.length >= _jobSeekLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+
     } catch (e) {
-      print("Error fetching filtered jobs: $e");
-      filteredJobs = [];
+      if (!loadMore) {
+        filteredJobs = [];
+      }
     } finally {
       isLoading = false;
+      _isLoadingMore = false;
       notifyListeners();
     }
   }

@@ -34,9 +34,12 @@ class NewsFeedCommunityView extends StatefulWidget {
 class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     with ValidationMixins {
   String selectedFilter = 'all';
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final viewModel =
@@ -57,6 +60,25 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               .toList() ??
           [];
     });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final viewModel =
+          Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
+      if (viewModel.applyFilter) {
+        viewModel.filterNewsFeeds(context, loadMore: true);
+      } else {
+        viewModel.getAllNewsFeeds(context, loadMore: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -198,9 +220,21 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                   (joinRequests?.length != 0 && joinRequests != null)
                       ? Expanded(
                           child: ListView.builder(
+                            controller: _scrollController,
                             padding: EdgeInsets.all(10),
-                            itemCount: joinRequests.length,
+                            itemCount: joinRequests.length +
+                                (viewModel.hasMoreNewsFeeds &&
+                                        viewModel.isLoadingMore
+                                    ? 1
+                                    : 0),
                             itemBuilder: (context, index) {
+                              if (index == joinRequests.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                );
+                              }
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
                                   newsfeeds: newsItem,

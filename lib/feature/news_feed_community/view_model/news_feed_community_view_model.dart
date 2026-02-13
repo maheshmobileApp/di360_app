@@ -20,6 +20,13 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   final NewsFeedCommunityRepoImpl repo = NewsFeedCommunityRepoImpl();
 
   NewsFeedCommunityData? newsFeedCommunityData;
+  int _currentPage = 0;
+  bool _hasMoreNewsFeeds = true;
+  bool _isLoadingMore = false;
+  final int _newsFeedLimit = 10;
+
+  bool get hasMoreNewsFeeds => _hasMoreNewsFeeds;
+  bool get isLoadingMore => _isLoadingMore;
 
   TextEditingController descriptionController = TextEditingController();
   TextEditingController videoLinkController = TextEditingController();
@@ -155,16 +162,24 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String profCommunityId = "";
   String profCommunityName = "";
   void setProfCommunityId(String id, String name) {
-    print("*************************************SetProfCommunityId Calling");
     profCommunityId = id;
     profCommunityName = name;
     notifyListeners();
   }
 
   //GET JOIN REQUEST
-  Future<void> getAllNewsFeeds(BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    print("######################********GetAllNewsFeeds Calling");
+  Future<void> getAllNewsFeeds(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      _currentPage = 0;
+      _hasMoreNewsFeeds = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -206,25 +221,46 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
             }
           ]
       },
-      "limit": 100,
-      "offset": 0,
+      "limit": _newsFeedLimit,
+      "offset": _currentPage * _newsFeedLimit,
       "userId": userId,
       "roleType": type
     };
-    print("************get all news feed variables: $variables");
 
     final res = await repo.getAllNewsFeeds(variables);
-    print("*************************************data fetched successfully");
-    newsFeedCommunityData = res;
+    
+    if (loadMore) {
+      newsFeedCommunityData?.newsfeeds?.addAll(res.newsfeeds ?? []);
+    } else {
+      newsFeedCommunityData = res;
+    }
+
+    _hasMoreNewsFeeds = (res.newsfeeds?.length ?? 0) >= _newsFeedLimit;
+    if ((res.newsfeeds?.length ?? 0) > 0) {
+      _currentPage++;
+    }
+
+    if (!loadMore) {
       Loaders.circularHideLoader(context);
+    }
     (type == "SUPPLIER") ? getAllStatusCounts() : () {};
 
+    _isLoadingMore = false;
     notifyListeners();
   }
 
-  Future<void> filterNewsFeeds(BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    print("*************************************filter NewsFeeds Calling");
+  Future<void> filterNewsFeeds(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      _currentPage = 0;
+      _hasMoreNewsFeeds = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -240,47 +276,54 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
         }
       },
-      "limit": 100,
-      "offset": 0,
+      "limit": _newsFeedLimit,
+      "offset": _currentPage * _newsFeedLimit,
       "userId": userId,
       "roleType": type
     };
-    print("************filter news feed variables: $variables");
 
     final res = await repo.filterNewsFeed(variables);
-    print(
-        "*************************************filtered data fetched successfully");
-    newsFeedCommunityData = res;
-    updateApplyFilter(true);
-    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
-    notifyListeners();
+  
+    if (loadMore) {
+      newsFeedCommunityData?.newsfeeds?.addAll(res.newsfeeds ?? []);
+    } else {
+      newsFeedCommunityData = res;
+      updateApplyFilter(true);
+    }
+
+    _hasMoreNewsFeeds = (res.newsfeeds?.length ?? 0) >= _newsFeedLimit;
+    if ((res.newsfeeds?.length ?? 0) > 0) {
+      _currentPage++;
+    }
+
+    if (!loadMore) {
       Loaders.circularHideLoader(context);
+    }
+    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
+    
+    _isLoadingMore = false;
+    notifyListeners();
   }
 
   FeedCountData? feedCountData;
 
   Future<void> getAllStatusCounts() async {
-    print("*************************************GetAllStatusCounts Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {
       "community_id": communityId,
     };
     
-    print("************get all status counts variables: $variables");
     final res = await repo.feedCount(variables);
     feedCountData = res;
-    print("*************************************Counts fetched successfully");
     pendingCount = feedCountData?.pending?.aggregate?.count;
     publishedCount = feedCountData?.published?.aggregate?.count;
     unPublishedCount = feedCountData?.unpublished?.aggregate?.count;
-    print("****************$pendingCount $publishedCount $unPublishedCount");
       notifyListeners();
   }
 
   //LIKE
   Future<void> communityLike(BuildContext context, [String? newsFeedId]) async {
-    print("*************************************CommunityLike Calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 

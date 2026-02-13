@@ -9,6 +9,8 @@ class GenericListViewWithBanners<T> extends StatelessWidget {
 	final Axis scrollDirection;
 	final bool shrinkWrap;
 	final ScrollPhysics? physics;
+	final ScrollController? controller;
+	final Widget? loadingWidget;
 
 	const GenericListViewWithBanners({
 		Key? key,
@@ -19,17 +21,24 @@ class GenericListViewWithBanners<T> extends StatelessWidget {
 		this.scrollDirection = Axis.vertical,
 		this.shrinkWrap = false,
 		this.physics,
+		this.controller,
+		this.loadingWidget,
 	}) : super(key: key);
 
 	@override
 	Widget build(BuildContext context) {
-		final totalCount = items.length + bannerIndices.length;
+		final totalCount = items.length + bannerIndices.length + (loadingWidget != null ? 1 : 0);
 		return ListView.builder(
+			controller: controller,
 			itemCount: totalCount,
 			scrollDirection: scrollDirection,
 			shrinkWrap: shrinkWrap,
 			physics: physics,
 			itemBuilder: (context, index) {
+				// Check if loading widget at the end
+				if (loadingWidget != null && index == totalCount - 1) {
+					return loadingWidget!;
+				}
 				// If this index is a banner position, show banner
 				final bannerPos = bannerIndices.indexOf(index);
 				if (bannerPos != -1) {
