@@ -36,7 +36,7 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent - 100) {
       final provider = Provider.of<JobSeekViewModel>(context, listen: false);
       if (provider.selectedTabIndex == 0) {
         provider.fetchFilteredJobs(context, loadMore: true);

@@ -156,8 +156,8 @@ class JobSeekViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchFilteredJobs(BuildContext context, {bool loadMore = false}) async {
-    print("*******************Fetching filtered jobs, loadMore: $loadMore, currentPage: $_currentPage");
+  Future<void> fetchFilteredJobs(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreJobs)) return;
 
     if (loadMore) {
@@ -175,19 +175,19 @@ class JobSeekViewModel extends ChangeNotifier {
       }
       final String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final List<Map<String, dynamic>> andConditions = [
-        {"status": {"_eq": "APPROVE"}},
-        {"active_status": {"_eq": "ACTIVE"}},
+        {
+          "status": {"_eq": "APPROVE"}
+        },
+        {
+          "active_status": {"_eq": "ACTIVE"}
+        },
         {
           "_or": [
             {
-              "start_Date": {
-                "_lte": todayDate
-              }
+              "start_Date": {"_lte": todayDate}
             },
             {
-              "start_Date": {
-                "_is_null": true
-              }
+              "start_Date": {"_is_null": true}
             }
           ]
         }
@@ -197,11 +197,21 @@ class JobSeekViewModel extends ChangeNotifier {
       if (locationController.text.isNotEmpty) {
         andConditions.add({
           "_or": [
-            {"title": {"_ilike": "%${locationController.text}%"}},
-            {"company_name": {"_ilike": "%${locationController.text}%"}},
-            {"location": {"_ilike": "%${locationController.text}%"}},
-            {"city": {"_ilike": "%${locationController.text}%"}},
-            {"state": {"_ilike": "%${locationController.text}%"}}
+            {
+              "title": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "company_name": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "location": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "city": {"_ilike": "%${locationController.text}%"}
+            },
+            {
+              "state": {"_ilike": "%${locationController.text}%"}
+            }
           ]
         });
       }
@@ -238,12 +248,14 @@ class JobSeekViewModel extends ChangeNotifier {
         "limit": _jobSeekLimit,
         "offset": _currentPage * _jobSeekLimit,
         "where": {"_and": andConditions},
-        "order_by": [{"created_at": (selectedSort=='A to Z')?"asc":"desc"}]
+        "order_by": [
+          {"created_at": (selectedSort == 'A to Z') ? "asc" : "desc"}
+        ]
       };
 
       print("Dynamic Variables: $variables");
       final result = await repo.fetchFilteredJobs(variables);
-      
+
       if (loadMore) {
         jobs.addAll(result);
         filteredJobs.addAll(result);
@@ -260,7 +272,6 @@ class JobSeekViewModel extends ChangeNotifier {
       if (!loadMore) {
         Loaders.circularHideLoader(context);
       }
-
     } catch (e) {
       if (!loadMore) {
         filteredJobs = [];
@@ -342,7 +353,8 @@ class JobSeekViewModel extends ChangeNotifier {
   Future<void> fetchJobs(BuildContext context) async {
     Loaders.circularShowLoader(context);
     try {
-      var jobData = await repo.getPopularJobs();
+      final variables = {};
+      var jobData = await repo.getPopularJobs(variables);
       jobs = jobData.jobs ?? [];
     } finally {
       Loaders.circularHideLoader(context);

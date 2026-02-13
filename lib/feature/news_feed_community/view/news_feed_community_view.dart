@@ -64,7 +64,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent - 100) {
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       if (viewModel.applyFilter) {
@@ -271,7 +271,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             newsfeeds: newsItem));
                                   },
                                   onLikeTap: () {
-                                  
                                     (newsItem.myLike?.isNotEmpty ?? false)
                                         ? viewModel.communityUnLike(
                                             context, newsItem.id ?? '')
@@ -284,28 +283,32 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
                                   },
                                   onDetailView: () async {
-                                    final feedTypeEnum = FeedType.fromString(newsItem.feedType);
+                                    final feedTypeEnum =
+                                        FeedType.fromString(newsItem.feedType);
                                     switch (feedTypeEnum) {
-                                       case FeedType.LEARNHUB:
-                                         await courseListingVM.getCourseDetails(
-                                           context,
-                                           newsItem.courses?.first.id ?? "",
-                                         );
-                                         navigationService.navigateTo(
-                                             RouteList.courseDetailScreen);
-                                         break;
-                                       case FeedType.JOBS:
-                                         await jobListingsViewModel
-                                             .getJobListingById(context,newsItem.jobs?.first.id??"");
-                                         navigationService.navigateToWithParams(
-                                           RouteList.jobdetailsScreen,
-                                           params: jobListingsViewModel.jobListingData?.first??Jobs(),
-                                         );
-                                         break;
-                                       default:
-                                         // Handle default case or other feed types if necessary
-                                         break;
-                                     }
+                                      case FeedType.LEARNHUB:
+                                        await courseListingVM.getCourseDetails(
+                                          context,
+                                          newsItem.courses?.first.id ?? "",
+                                        );
+                                        navigationService.navigateTo(
+                                            RouteList.courseDetailScreen);
+                                        break;
+                                      case FeedType.JOBS:
+                                        await jobListingsViewModel
+                                            .getJobListingById(context,
+                                                newsItem.jobs?.first.id ?? "");
+                                        navigationService.navigateToWithParams(
+                                          RouteList.jobdetailsScreen,
+                                          params: jobListingsViewModel
+                                                  .jobListingData?.first ??
+                                              Jobs(),
+                                        );
+                                        break;
+                                      default:
+                                        // Handle default case or other feed types if necessary
+                                        break;
+                                    }
                                     /*if (newsItem.feedType == "LEARNHUB") {
                                       await courseListingVM.getCourseDetails(
                                         context,
@@ -354,7 +357,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         viewModel.setSelectedCourseCategoryName(
                                             newsItem.categoryType ?? "");
 
-                                       
                                         viewModel.newsFeedCategory = communityVM
                                                 .newsFeedCategoriesData
                                                 ?.newsfeedCategories
@@ -367,7 +369,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 .map((item) => item.url ?? "")
                                                 .where((url) => url.isNotEmpty)
                                                 .toList();
-                                        viewModel.existingImages = newsItem.postImage ?? [];
+                                        viewModel.existingImages =
+                                            newsItem.postImage ?? [];
                                         navigationService.navigateTo(
                                             RouteList.addNewsFeedCommunityView);
 

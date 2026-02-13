@@ -27,7 +27,8 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void _scrollListener() {
-    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100 &&
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 100 &&
         !isLoadingMore &&
         hasMoreData) {
       loadMoreNewsfeeds();
@@ -37,7 +38,7 @@ class HomeViewModel extends ChangeNotifier {
   void loadMoreNewsfeeds() async {
     if (isLoadingMore || !hasMoreData) return;
     isLoadingMore = true;
-    
+
     offset += limit;
     print('Loading more... offset: $offset');
     try {
@@ -91,10 +92,11 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllNewsfeeds(BuildContext context) async {
+    print('*****************getAllNewsFeeds calling');
     Loaders.circularShowLoader(context);
     resetPagination();
     try {
-      var res = await homeRepositoryImpl.getAllNewsFeed(offset,limit);
+      var res = await homeRepositoryImpl.getAllNewsFeed(offset, limit);
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         allNewsFeedsData = result;

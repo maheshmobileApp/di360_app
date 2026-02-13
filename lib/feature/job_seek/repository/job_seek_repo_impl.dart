@@ -18,7 +18,7 @@ class JobSeekRepoImpl extends JobSeekRepository {
   final HttpService _http = HttpService();
 
   @override
-  Future<JobdList> getPopularJobs() async {
+  Future<JobdList> getPopularJobs(dynamic variables) async {
     final jobsData = await _http.query(job_list_request);
     return JobdList.fromJson(jobsData);
   }

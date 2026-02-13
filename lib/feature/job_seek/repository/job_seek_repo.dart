@@ -10,7 +10,7 @@ import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 
 abstract class JobSeekRepository {
     
-  Future<JobdList> getPopularJobs();
+  Future<JobdList> getPopularJobs(dynamic variables);
   Future<Map<String, dynamic>> applyJob(ApplyJobRequest request);
   Future<Map<String, dynamic>> enquire(EnquireRequest request);
   Future<Map<String, dynamic>> hireMe(HireMeRequest request);

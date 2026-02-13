@@ -39,7 +39,6 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String? selectedCategoryId;
   bool searchBarOpen = false;
   TextEditingController searchController = TextEditingController();
-
   void setSelectedCategoryId(String value) {
     selectedCategoryId = value;
     notifyListeners();
@@ -167,8 +166,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //GET JOIN REQUEST
-  Future<void> getAllNewsFeeds(BuildContext context, {bool loadMore = false}) async {
+  Future<void> getAllNewsFeeds(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
 
     if (loadMore) {
@@ -228,7 +227,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     };
 
     final res = await repo.getAllNewsFeeds(variables);
-    
+
     if (loadMore) {
       newsFeedCommunityData?.newsfeeds?.addAll(res.newsfeeds ?? []);
     } else {
@@ -249,7 +248,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> filterNewsFeeds(BuildContext context, {bool loadMore = false}) async {
+  Future<void> filterNewsFeeds(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
 
     if (loadMore) {
@@ -283,7 +283,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     };
 
     final res = await repo.filterNewsFeed(variables);
-  
+
     if (loadMore) {
       newsFeedCommunityData?.newsfeeds?.addAll(res.newsfeeds ?? []);
     } else {
@@ -300,7 +300,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     (type == "SUPPLIER") ? getAllStatusCounts() : () {};
-    
+
     _isLoadingMore = false;
     notifyListeners();
   }
@@ -313,13 +313,13 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final variables = {
       "community_id": communityId,
     };
-    
+
     final res = await repo.feedCount(variables);
     feedCountData = res;
     pendingCount = feedCountData?.pending?.aggregate?.count;
     publishedCount = feedCountData?.published?.aggregate?.count;
     unPublishedCount = feedCountData?.unpublished?.aggregate?.count;
-      notifyListeners();
+    notifyListeners();
   }
 
   //LIKE
@@ -606,7 +606,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     };
     final res = await repo.getBannerUrl(variables);
     bannerData = res;
-  
+
     notifyListeners();
   }
 

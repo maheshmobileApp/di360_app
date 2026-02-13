@@ -22,6 +22,13 @@ class TalentsViewModel extends ChangeNotifier {
   bool isShowBottomeActions = false;
   List<JobProfiles> talentList = [];
   List<JobProfiles> filteredJobs = [];
+  int _currentPage = 0;
+  bool _hasMoreTalents = true;
+  bool _isLoadingMore = false;
+  final int _talentLimit = 10;
+
+  bool get hasMoreTalents => _hasMoreTalents;
+  bool get isLoadingMore => _isLoadingMore;
   final TextEditingController locationController = TextEditingController();
   final TextEditingController availabilityDateController =
       TextEditingController();
@@ -134,9 +141,7 @@ class TalentsViewModel extends ChangeNotifier {
     try {
       final res = await repo.getTalentDetails();
       talentList = res;
-      print(
-          "***********************${talentList.first.jobHirings.length}***********************");
-      print("Fetched ${talentList.length} talents");
+      
     } finally {
       Loaders.circularHideLoader(context);
       notifyListeners();
@@ -164,8 +169,18 @@ class TalentsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchFilteredJobs(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  Future<void> fetchFilteredJobs(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreTalents)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      _currentPage = 0;
+      _hasMoreTalents = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     try {
       printSelectedItems();
 
@@ -228,8 +243,8 @@ class TalentsViewModel extends ChangeNotifier {
       }
 
       final variables = {
-        "limit": 10,
-        "offset": 0,
+        "limit": _talentLimit,
+        "offset": _currentPage * _talentLimit,
         "where": {"_and": whereConditions}
       };
 
@@ -240,17 +255,33 @@ class TalentsViewModel extends ChangeNotifier {
       }
 
       final result = await repo.getJobProfileFilterData(variables);
-      if (result != []) {
-        talentList = result;
+      
+      if (loadMore) {
+        talentList.addAll(result);
+        filteredJobs.addAll(result);
+      } else {
+        if (result != []) {
+          talentList = result;
+        }
+        filteredJobs = result;
       }
 
-      filteredJobs = result;
-      print("Fetched ${filteredJobs.length} filtered talents");
+      _hasMoreTalents = result.length >= _talentLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      print("Fetched ${result.length} filtered talents, total: ${filteredJobs.length}");
     } catch (e) {
       print("Error fetching filtered talents: $e");
-      filteredJobs = [];
+      if (!loadMore) {
+        filteredJobs = [];
+      }
     } finally {
-      Loaders.circularHideLoader(context);
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+      _isLoadingMore = false;
       notifyListeners();
     }
   }
