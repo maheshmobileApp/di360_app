@@ -299,7 +299,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                       ShareWidget(
                           padding:
                               EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-                          size: 20)
+                          size: 20, feedId: c.id??"",)
                     ],
                   )
                 ],

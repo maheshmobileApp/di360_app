@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -63,17 +64,10 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                   Flexible(child: _chipWidget(jobsData?.typeofEmployment ?? [])),
                   Row(
                     children: [
-                      GestureDetector(
-                              onTap:  () {
-                                  SharePlus.instance.share(ShareParams(
-                                      uri: Uri.parse(
-                                              'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
-                                },
-                              child: _circleIcon(
-                                child: Icon(Icons.share,
-                                    size: 20, color: AppColors.primaryColor),
-                              ),
-                            ),
+                      ShareWidget(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                          size: 20, feedId: jobsData?.id ?? '',),
                             addHorizontal(10),
                             Row(
                         children: [

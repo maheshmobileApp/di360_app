@@ -16,6 +16,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -47,7 +48,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final Function(String action, String id)? onMenuAction;
   final VoidCallback? onDetailView;
   final VoidCallback? onLikeTap;
-  final VoidCallback? onShareTap;
   final VoidCallback? onCommentTap;
   final int likes;
   final int comments;
@@ -75,7 +75,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     this.onDetailView,
     required this.chipTitle,
     this.onLikeTap,
-    this.onShareTap,
     this.onCommentTap,
     required this.likes,
     required this.feedType,
@@ -206,13 +205,10 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         const SizedBox(width: 15),
 
                         /// 🔗 Share Button
-                        GestureDetector(
-                          onTap: onShareTap,
-                          child: _circleIcon(
-                            child: Icon(Icons.share,
-                                size: 20, color: AppColors.primaryColor),
-                          ),
-                        ),
+                        ShareWidget(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                          size: 20, feedId: id,),
 
                         const Spacer(),
 

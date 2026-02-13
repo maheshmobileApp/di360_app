@@ -90,6 +90,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                   ?.count);
 
                           return ListingHubMasterCard(
+                            feedId: course.id ?? "",
                             remainingOfSeats: seats,
                             presenterName: course.presentedByName ?? "",
                             profilePic: course.presentedByImage?.url ?? '',
@@ -132,11 +133,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 scaffoldMessenger('Seats are sold out!');
                               }
                             },
-                            onShareTap: () {
-                              SharePlus.instance.share(ShareParams(
-                                  uri: Uri.parse(
-                                      'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
-                            },
+                            
                           );
                         },
                       )),

@@ -116,7 +116,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
                       '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
                       needFeedViewModel,
-                      context),
+                      context,newsfeeds?.id ?? ''),
                   addVertical(10)
                 ],
               ),
@@ -342,7 +342,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildStatsRow(String likeCount, String commentCount,
-      NewsFeedViewModel viewModel, BuildContext context) {
+      NewsFeedViewModel viewModel, BuildContext context,String feedId) {
     final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
 
     return Row(
@@ -373,7 +373,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           ),
         ),
         addHorizontal(10),
-        ShareWidget(),
+        ShareWidget(feedId: feedId,),
         Spacer(),
         Container(
           decoration: BoxDecoration(

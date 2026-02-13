@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/news_feed_community_comment/view/community
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/share_utils.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -277,11 +278,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         : viewModel.communityLike(
                                             context, newsItem.id ?? '');
                                   },
-                                  onShareTap: () {
-                                    SharePlus.instance.share(ShareParams(
-                                        uri: Uri.parse(
-                                            'https://api.dentalinterface.com/api/v1/prelogin/9dab6d94-589e-46f7-ab39-9156d62afa7b')));
-                                  },
+                                  
                                   onDetailView: () async {
                                     final feedTypeEnum =
                                         FeedType.fromString(newsItem.feedType);

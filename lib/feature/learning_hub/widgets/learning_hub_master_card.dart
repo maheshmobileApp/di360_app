@@ -3,9 +3,11 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 
 class ListingHubMasterCard extends StatelessWidget {
+  final String?  feedId;
   final String imageUrl;
   final String companyName;
   final String description;
@@ -17,11 +19,11 @@ class ListingHubMasterCard extends StatelessWidget {
   final String profilePic;
   final String presenterName;
   final VoidCallback registerTap;
-  final VoidCallback onShareTap;
   final dynamic remainingOfSeats;
 
   const ListingHubMasterCard(
       {super.key,
+      required this.feedId,
       required this.imageUrl,
       required this.companyName,
       required this.description,
@@ -33,7 +35,6 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.profilePic,
       required this.presenterName,
       required this.registerTap,
-      required this.onShareTap,
       required this.remainingOfSeats});
 
   @override
@@ -146,31 +147,28 @@ class ListingHubMasterCard extends StatelessWidget {
                             radius: 15,
                             child: ClipOval(
                               child: CachedNetworkImageWidget(
-                                imageUrl: profilePic ?? '',
-                                width: 30,
-                                height: 30,
-                                fit: BoxFit.cover,
-                                errorWidget: Image.asset(ImageConst.prfImg)
-                              ),
+                                  imageUrl: profilePic ?? '',
+                                  width: 30,
+                                  height: 30,
+                                  fit: BoxFit.cover,
+                                  errorWidget: Image.asset(ImageConst.prfImg)),
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Text(presenterName.toUpperCase(),
+                          Text(
+                            presenterName.toUpperCase(),
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 4),
-                        ],
+                        ],  
                       ),
-                      GestureDetector(
-                          onTap: onShareTap,
-                          child: _circleIcon(
-                            child: Icon(Icons.share,
-                                size: 20, color: AppColors.primaryColor),
-                          ),
-                        ),
+                      ShareWidget(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                          size: 20, feedId: feedId??"",),
                     ],
                   ),
                   const Divider(),
@@ -272,6 +270,7 @@ class ListingHubMasterCard extends StatelessWidget {
       ),
     );
   }
+
   Widget _circleIcon({required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(8),
