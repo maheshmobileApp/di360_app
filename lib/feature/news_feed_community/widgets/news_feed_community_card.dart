@@ -17,11 +17,9 @@ import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
-import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +41,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final List<PostImage>? imageUrls;
   final List<Courses>? course;
   final List<Jobs>? job;
-
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
   final VoidCallback? onDetailView;
@@ -119,7 +116,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         ),
                         if (type == "SUPPLIER" ||
                             (type == "PROFESSIONAL" &&
-                                feedUserRole != "SUPPLIER"))
+                                feedUserRole != "SUPPLIER" && newsfeeds?.userId == LocalStorage.getStringVal(LocalStorageConst.userId)))
                           Row(
                             children: [
                               _menuWidget(context, type),
@@ -207,7 +204,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         /// 🔗 Share Button
                         ShareWidget(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           size: 20, feedId: id,),
 
                         const Spacer(),
@@ -768,7 +765,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (type == "PROFESSIONAL" ||
+        if (type == "PROFESSIONAL" && (newsfeeds?.userId == LocalStorage.getStringVal(LocalStorageConst.userId)) ||
             (type == "SUPPLIER" && feedUserRole == "SUPPLIER")) ...[
           _popupItem("Edit", Icons.edit, AppColors.blueColor),
           _popupItem("Delete", Icons.delete, AppColors.redColor)

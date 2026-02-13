@@ -24,29 +24,27 @@ class JobSeekView extends StatefulWidget {
 }
 
 class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _jobsScrollController = ScrollController();
 
   @override
   void initState() {
     final provider = Provider.of<JobSeekViewModel>(context, listen: false);
     provider.toggleFloatingButtonVisibility();
-    _scrollController.addListener(_onScroll);
+    _jobsScrollController.addListener(_onScroll);
     super.initState();
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 100) {
+    if (_jobsScrollController.position.pixels >=
+        _jobsScrollController.position.maxScrollExtent - 100) {
       final provider = Provider.of<JobSeekViewModel>(context, listen: false);
-      if (provider.selectedTabIndex == 0) {
-        provider.fetchFilteredJobs(context, loadMore: true);
-      }
+      provider.fetchJobsForSelectedTab(context, loadMore: true);
     }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _jobsScrollController.dispose();
     super.dispose();
   }
 
@@ -85,38 +83,36 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
     return RefreshIndicator(
       backgroundColor: AppColors.whiteColor,
       onRefresh: () async => await vm.refreshJobs(context),
-      child: vm.jobs.isEmpty
-          ? Center(
-              child: vm.isRefreshing
-                  ? const CircularProgressIndicator()
-                  : const Text("No Jobs Available"),
-            )
-          : GenericListViewWithBanners<Jobs>(
-              controller: _scrollController,
-              items: vm.jobs,
-              bannerIndices: BannerUtils.calculateBannerIndices(vm.jobs.length),
-              itemBuilder: (context, dataIndex) {
-                final jobData = vm.jobs[dataIndex];
-                return InkWell(
-                  onTap: () {
-                    navigationService.navigateToWithParams(
-                      RouteList.jobdetailsScreen,
-                      params: jobData,
+      child: vm.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : vm.jobs.isEmpty
+              ? const Center(child: Text("No Jobs Available"))
+              : GenericListViewWithBanners<Jobs>(
+                  controller: _jobsScrollController,
+                  items: vm.jobs,
+                  bannerIndices: BannerUtils.calculateBannerIndices(vm.jobs.length),
+                  itemBuilder: (context, dataIndex) {
+                    final jobData = vm.jobs[dataIndex];
+                    return InkWell(
+                      onTap: () {
+                        navigationService.navigateToWithParams(
+                          RouteList.jobdetailsScreen,
+                          params: jobData,
+                        );
+                      },
+                      child: JobSeekCard(jobsData: jobData),
                     );
                   },
-                  child: JobSeekCard(jobsData: jobData),
-                );
-              },
-              bannerBuilder: (context, bannerPos) {
-                return ListBanner();
-              },
-              loadingWidget: vm.hasMoreJobs && vm.isLoadingMore
-                  ? const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  : null,
-            ),
+                  bannerBuilder: (context, bannerPos) {
+                    return ListBanner();
+                  },
+                  loadingWidget: vm.hasMoreJobs && vm.isLoadingMore
+                      ? const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
+                        )
+                      : null,
+                ),
     );
   }
 

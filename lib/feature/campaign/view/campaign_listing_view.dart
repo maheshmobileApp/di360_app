@@ -119,7 +119,7 @@ class _JobListingScreenState extends State<CampaignListingView>
                             return Center(
                               child: Padding(
                                 padding: EdgeInsets.all(16),
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(color: AppColors.primaryColor,),
                               ),
                             );
                           }

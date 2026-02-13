@@ -22,7 +22,7 @@ class ShareWidget extends StatelessWidget {
                 color: AppColors.backgroundColor),
             child: Padding(
                 padding: padding ??
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical:6),
                 child: Icon(Icons.share,
                     color: AppColors.primaryColor, size: size))));
   }

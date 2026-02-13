@@ -1,7 +1,12 @@
-String job_list_request = '''query getAllJobs {
+String job_list_request = r'''query getAllJobs($limit: Int, $offset: Int!) {
   jobs(
     order_by: { created_at: desc }
-    where: { active_status: { _eq: "ACTIVE" }, status: { _in: ["APPROVE"] } }
+    where: {
+      active_status: { _eq: "ACTIVE" }
+      status: { _in: ["APPROVE"] }
+    }
+    limit: $limit
+    offset: $offset
   ) {
     id
     title

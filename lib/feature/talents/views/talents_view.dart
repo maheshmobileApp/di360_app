@@ -29,7 +29,7 @@ class _TalentsViewState extends State<TalentsView> {
         _scrollController.position.maxScrollExtent - 200) {
       final talentViewModel =
           Provider.of<TalentsViewModel>(context, listen: false);
-      talentViewModel.fetchFilteredJobs(context, loadMore: true);
+      talentViewModel.fetchTalentsForSelectedView(context, loadMore: true);
     }
   }
 
@@ -42,35 +42,38 @@ class _TalentsViewState extends State<TalentsView> {
   @override
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
-    return (talentViewModel.talentList.isEmpty)
-        ? Center(
-            child: const Text("No Jobs Available"),
-          )
-        : GenericListViewWithBanners(
-            controller: _scrollController,
-            items: talentViewModel.talentList,
-            itemBuilder: (BuildContext context, int index) {
-              final talentData = talentViewModel.talentList[index];
-              return InkWell(
-                  onTap: () {
-                    navigationService.navigateToWithParams(
-                        RouteList.talentdetailsScreen,
-                        params: talentViewModel.talentList[index]);
+    return RefreshIndicator(
+      onRefresh: () async => await talentViewModel.refreshTalents(context),
+      child: talentViewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : talentViewModel.talentList.isEmpty
+              ? const Center(child: Text("No Talents Available"))
+              : GenericListViewWithBanners(
+                  controller: _scrollController,
+                  items: talentViewModel.talentList,
+                  itemBuilder: (BuildContext context, int index) {
+                    final talentData = talentViewModel.talentList[index];
+                    return InkWell(
+                        onTap: () {
+                          navigationService.navigateToWithParams(
+                              RouteList.talentdetailsScreen,
+                              params: talentViewModel.talentList[index]);
+                        },
+                        child: TalentsCard(talentList: talentData));
                   },
-                  child: TalentsCard(talentList: talentData));
-            },
-            bannerIndices: BannerUtils.calculateBannerIndices(
-                talentViewModel.talentList.length),
-            bannerBuilder: (BuildContext context, int bannerPosition) {
-              return ListBanner();
-            },
-            loadingWidget: talentViewModel.hasMoreTalents &&
-                    talentViewModel.isLoadingMore
-                ? const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : null,
-          );
+                  bannerIndices: BannerUtils.calculateBannerIndices(
+                      talentViewModel.talentList.length),
+                  bannerBuilder: (BuildContext context, int bannerPosition) {
+                    return ListBanner();
+                  },
+                  loadingWidget: talentViewModel.hasMoreTalents &&
+                          talentViewModel.isLoadingMore
+                      ? const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : null,
+                ),
+    );
   }
 }

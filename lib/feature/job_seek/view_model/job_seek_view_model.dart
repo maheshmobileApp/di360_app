@@ -38,7 +38,7 @@ class JobSeekViewModel extends ChangeNotifier {
   bool isJobApplied = false;
   List<Jobs> jobs = [];
   List<Jobs> filteredJobs = [];
-  int _jobSeekLimit = 3;
+  int _jobSeekLimit = 10;
   int _currentPage = 0;
   bool _hasMoreJobs = true;
   bool _isLoadingMore = false;
@@ -107,12 +107,14 @@ class JobSeekViewModel extends ChangeNotifier {
     if (_selectedTabIndex == index) return;
     _selectedTabIndex = index;
     _isTabLoading = true;
+    _currentPage = 0;
+    _hasMoreJobs = true;
     notifyListeners();
     if (index == 0) {
-      await fetchJobs(context);
+      await fetchJobsForSelectedTab(context);
     } else {
       final talentsVM = Provider.of<TalentsViewModel>(context, listen: false);
-      await talentsVM.fetchTalentProfiles(context);
+      await talentsVM.fetchTalentsForSelectedView(context);
     }
     _isTabLoading = false;
     notifyListeners();
@@ -144,15 +146,29 @@ class JobSeekViewModel extends ChangeNotifier {
 
   Future<void> refreshJobs(BuildContext context) async {
     _isRefreshing = true;
+    _currentPage = 0;
+    _hasMoreJobs = true;
     notifyListeners();
     await fetchJobsForSelectedTab(context);
     _isRefreshing = false;
     notifyListeners();
   }
 
-  Future<void> fetchJobsForSelectedTab(BuildContext context) async {
+  Future<void> fetchJobsForSelectedTab(BuildContext context,
+      {bool loadMore = false}) async {
     if (_selectedTabIndex == 0) {
-      await fetchFilteredJobs(context);
+      // Check if filters are applied
+      final hasFilters = selectedProfessions.isNotEmpty ||
+          selectedEmploymentTypes.isNotEmpty ||
+          selectedExperiences.isNotEmpty ||
+          selectedAvailability.isNotEmpty ||
+          locationController.text.isNotEmpty;
+
+      if (hasFilters) {
+        await fetchFilteredJobs(context, loadMore: loadMore);
+      } else {
+        await fetchJobs(context, loadMore: loadMore);
+      }
     }
   }
 
@@ -253,7 +269,6 @@ class JobSeekViewModel extends ChangeNotifier {
         ]
       };
 
-      print("Dynamic Variables: $variables");
       final result = await repo.fetchFilteredJobs(variables);
 
       if (loadMore) {
@@ -350,14 +365,48 @@ class JobSeekViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchJobs(BuildContext context) async {
-    Loaders.circularShowLoader(context);
+  Future<void> fetchJobs(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore && (_isLoadingMore || !_hasMoreJobs)) return;
+
+    if (loadMore) {
+      _isLoadingMore = true;
+    } else {
+      isLoading = true;
+      _currentPage = 0;
+      _hasMoreJobs = true;
+      Loaders.circularShowLoader(context);
+    }
+    notifyListeners();
+
     try {
-      final variables = {};
+      final variables = {
+        "limit": _jobSeekLimit,
+        "offset": _currentPage * _jobSeekLimit
+      };
       var jobData = await repo.getPopularJobs(variables);
-      jobs = jobData.jobs ?? [];
+      final result = jobData.jobs ?? [];
+
+      if (loadMore) {
+        jobs.addAll(result);
+      } else {
+        jobs = result;
+      }
+
+      _hasMoreJobs = result.length >= _jobSeekLimit;
+      if (result.isNotEmpty) {
+        _currentPage++;
+      }
+
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
+    } catch (e) {
+      if (!loadMore) {
+        jobs = [];
+      }
     } finally {
-      Loaders.circularHideLoader(context);
+      isLoading = false;
+      _isLoadingMore = false;
       notifyListeners();
     }
   }

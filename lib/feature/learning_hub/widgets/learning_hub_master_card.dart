@@ -147,7 +147,7 @@ class ListingHubMasterCard extends StatelessWidget {
                             radius: 15,
                             child: ClipOval(
                               child: CachedNetworkImageWidget(
-                                  imageUrl: profilePic ?? '',
+                                  imageUrl: profilePic,
                                   width: 30,
                                   height: 30,
                                   fit: BoxFit.cover,

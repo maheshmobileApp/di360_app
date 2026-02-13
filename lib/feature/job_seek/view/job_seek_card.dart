@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:share_plus/share_plus.dart';
 
 class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   final Jobs? jobsData;
@@ -66,7 +65,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                     children: [
                       ShareWidget(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           size: 20, feedId: jobsData?.id ?? '',),
                             addHorizontal(10),
                             Row(

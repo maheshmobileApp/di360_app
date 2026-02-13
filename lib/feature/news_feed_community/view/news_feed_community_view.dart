@@ -7,7 +7,6 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
@@ -20,12 +19,10 @@ import 'package:di360_flutter/feature/news_feed_community_comment/view/community
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/share_utils.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class NewsFeedCommunityView extends StatefulWidget {
   @override
@@ -233,7 +230,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                 return const Padding(
                                   padding: EdgeInsets.all(16),
                                   child: Center(
-                                      child: CircularProgressIndicator()),
+                                      child: CircularProgressIndicator(color: AppColors.primaryColor,)),
                                 );
                               }
                               final newsItem = joinRequests[index];
@@ -278,7 +275,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         : viewModel.communityLike(
                                             context, newsItem.id ?? '');
                                   },
-                                  
                                   onDetailView: () async {
                                     final feedTypeEnum =
                                         FeedType.fromString(newsItem.feedType);
