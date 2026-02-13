@@ -1,6 +1,9 @@
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/get_notification_res.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/notification_count_res.dart';
+import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/notifications/notification_resposity/notification_resposity_impl.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +12,7 @@ class NotificationViewModel extends ChangeNotifier {
       NotificationResposityImpl();
 
   List<Notifications> notificationsList = [];
+  List<Newsfeeds> newsfeeds = [];
   int? notificationCount = 0;
   int currentPage = 0;
   final int pageSize = 10;
@@ -38,7 +42,7 @@ class NotificationViewModel extends ChangeNotifier {
       if (response != null) {
         final notificationData = NotificationData.fromJson(response);
         final newNotifications = notificationData.notifications ?? [];
-        
+
         if (newNotifications.isEmpty) {
           hasMoreData = false;
         } else {
@@ -69,6 +73,23 @@ class NotificationViewModel extends ChangeNotifier {
       if (response != null) {
         final res = NotificationCountData.fromJson(response);
         notificationCount = res.notificationsAggregate?.aggregate?.count;
+      }
+    } catch (e) {
+      print("Error loading notification count: $e");
+    }
+    notifyListeners();
+  }
+
+  getNewsFeedData(BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    try {
+      var response = await notificationResposityImpl.getNewsFeedData(id);
+      Loaders.circularHideLoader(context);
+      if (response != null) {
+        final res = AllNewsFeedData.fromJson(response);
+        newsfeeds = res.newsfeeds ?? [];
+        navigationService.push(CommentScreen(
+            newsfeeds: newsfeeds.isNotEmpty ? newsfeeds.first : Newsfeeds()));
       }
     } catch (e) {
       print("Error loading notification count: $e");

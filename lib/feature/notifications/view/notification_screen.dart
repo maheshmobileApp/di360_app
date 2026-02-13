@@ -93,15 +93,17 @@ class _NotificationScreenState extends State<NotificationScreen>
                       onTap: () async {
                         if (notification.type ==
                             NotificationType.NEWS_FEED.name) {
-                          navigationService.goBack();
+                          notificationVM.getNewsFeedData(
+                              context, notification.payload?.id ?? '');
                         } else if (notification.type ==
                             NotificationType.SUPPORT_REQUEST.name) {
+                          navigationService.navigateTo(RouteList.supportScreen);
                         } else if (notification.type ==
                             NotificationType.COMMUNITY.name) {
                         } else if (notification.type ==
                             NotificationType.CATALOGUE.name) {
                           await catalogueVM.getCatalogDetails(
-                              context, notification.id ?? '');
+                              context, notification.payload?.id ?? '');
                           final id = catalogueVM
                                   .cataloguesByIdData?.catalogueCategoryId ??
                               '';
@@ -116,7 +118,10 @@ class _NotificationScreenState extends State<NotificationScreen>
                         } else if (notification.type ==
                             NotificationType.JOB.name) {
                           newsFeedProvider.getJobDetailsByIds(
-                              context, notification.id ?? '');
+                              context, notification.payload?.id ?? '');
+                        }else if (notification.type ==
+                            NotificationType.TALENT.name) {
+                          
                         }
                       },
                       child: _notificationCard(context, notification));
