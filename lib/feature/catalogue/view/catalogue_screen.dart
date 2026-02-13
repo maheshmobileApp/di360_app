@@ -7,7 +7,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_like_widget.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
@@ -59,7 +58,6 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
     final vm = Provider.of<CatalogueViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
           searchAction: () =>
               navigationService.navigateTo(RouteList.catalogueFilterScreen),

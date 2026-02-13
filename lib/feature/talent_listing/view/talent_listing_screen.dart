@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_card.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -40,7 +39,6 @@ class _TalentListingScreenState extends State<TalentListingScreen>
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(
           searchWidget: false,
           filterWidget: Row(

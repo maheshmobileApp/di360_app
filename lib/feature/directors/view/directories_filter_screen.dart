@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -20,7 +19,6 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
     final filterProvider = Provider.of<DirectoryViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(searchWidget: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),

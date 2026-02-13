@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/view/notifaction_panel.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,6 @@ class CatalogueFilterScreen extends StatelessWidget with BaseContextHelpers {
 
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
-      endDrawer: NotificationsPanel(),
       appBar: AppBarWidget(searchWidget: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),

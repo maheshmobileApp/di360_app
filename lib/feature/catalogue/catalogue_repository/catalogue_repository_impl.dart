@@ -80,6 +80,7 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
 
   @override
   Future<List<CatalogData>?> getRelatedCatalogues(String catalogueId) async {
+    if (catalogueId.isEmpty) return [];
     final catalogueData = await http
         .query(getRelatedCatalogQuery, variables: {"id": catalogueId});
     final result = ReletedCataloguData.fromJson(catalogueData);

@@ -28,10 +28,10 @@ import 'package:di360_flutter/feature/my_appointments/my_appointment_view_model/
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
+import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
