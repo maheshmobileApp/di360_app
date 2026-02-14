@@ -12,16 +12,30 @@ class PartnershipRequestView extends StatefulWidget {
 }
 
 class _PartnershipRequestViewState extends State<PartnershipRequestView> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
-
       viewModel.changeStatus("All", context);
-
       viewModel.getPartnershipRequest();
     });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+      viewModel.getPartnershipRequest(loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,9 +55,16 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
           (partnershipRequests?.length != 0 && partnershipRequests != null)
               ? Expanded(
                   child: ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.all(10),
-                    itemCount: partnershipRequests.length,
+                    itemCount: partnershipRequests.length + (viewModel.isLoadingMorePartnership ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == partnershipRequests.length) {
+                        return Center(child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(color: AppColors.primaryColor,),
+                        ));
+                      }
                       return PartnershipRequestCard(
                         contactName: partnershipRequests[index].contactName??"",
                           firstName: partnershipRequests[index].companyName ?? "",

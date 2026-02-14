@@ -35,6 +35,11 @@ class TalentListingViewModel extends ChangeNotifier {
   TalentsMessageResData? talentMessages;
   TextEditingController messageController = TextEditingController();
 
+  int _talentLimit = 10;
+  int _talentOffset = 0;
+  bool isLoadingMoreTalents = false;
+  bool hasMoreTalents = true;
+
   bool editMessage = false;
   bool removeIcon = false;
 
@@ -103,7 +108,7 @@ class TalentListingViewModel extends ChangeNotifier {
 
   String listingStatus = '';
   HiringTalentList? myTalentListingList;
-  void changeStatus(String status) {
+  void changeStatus(BuildContext context, String status) {
     selectedStatus = status;
     switch (status) {
       case 'All':
@@ -133,7 +138,7 @@ class TalentListingViewModel extends ChangeNotifier {
       default:
         listingStatus = "";
     }
-    getMyTalentListingData();
+    getMyTalentListingData(context);
   }
 
   Future<void> fetchTalentStatusCounts() async {
@@ -204,7 +209,19 @@ class TalentListingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getMyTalentListingData() async {
+  Future<void> getMyTalentListingData(BuildContext context,
+      {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreTalents || !hasMoreTalents) return;
+      isLoadingMoreTalents = true;
+    } else {
+      Loaders.circularShowLoader(context);
+      _talentOffset = 0;
+      hasMoreTalents = true;
+    }
+
+    notifyListeners();
+
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     print("talents calling");
 
@@ -238,17 +255,34 @@ class TalentListingViewModel extends ChangeNotifier {
 
     final variables = {
       "where": {"_and": whereConditions},
-      "limit": 10,
-      "offset": 0
+      "limit": _talentLimit,
+      "offset": _talentOffset,
     };
     try {
-      await fetchTalentListingStatusCounts();
+      if (!loadMore) {
+        await fetchTalentListingStatusCounts();
+      }
       final res = await repo.getMyTalentListing(variables);
-      myTalentListingList = res;
-      notifyListeners();
+
+      if (loadMore) {
+        myTalentListingList?.jobhirings?.addAll(res.jobhirings ?? []);
+        isLoadingMoreTalents = false;
+      } else {
+        myTalentListingList = res;
+      }
+
+      hasMoreTalents = (res.jobhirings?.length ?? 0) >= _talentLimit;
+      _talentOffset += res.jobhirings?.length ?? 0;
     } catch (e, st) {
       print("Error fetching talent listing: $e\n$st");
-      myTalentListingList = null;
+      if (!loadMore) {
+        myTalentListingList = null;
+      }
+      isLoadingMoreTalents = false;
+    } finally {
+      if (!loadMore) {
+        Loaders.circularHideLoader(context);
+      }
       notifyListeners();
     }
   }
@@ -267,7 +301,7 @@ class TalentListingViewModel extends ChangeNotifier {
     print("***********************talent enquiries data: $talentId");
     print("***********************talent enquiries data: $talentEnquiryData");
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
     return res;
   }
 
@@ -277,7 +311,7 @@ class TalentListingViewModel extends ChangeNotifier {
       isLoading = true;
       final res = await repo.fetchTalentMessages(talentId);
       talentMessages = res;
-        } catch (e) {
+    } catch (e) {
     } finally {
       isLoading = false;
       notifyListeners();

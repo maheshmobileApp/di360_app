@@ -26,7 +26,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
-      final newsFeedVM = Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
 
       await viewModel.getNewsFeedCategories(context);
       

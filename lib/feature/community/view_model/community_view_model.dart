@@ -16,7 +16,14 @@ class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
 
   CommunityMembersData? communityMembers;
+  int _currentPage = 0;
+  int _limitSize = 4;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
   PartnershipMembersData? partnershipMembers;
+  int _partnershipCurrentPage = 0;
+  bool isLoadingMorePartnership = false;
+  bool hasMorePartnershipData = true;
   String selectedStatus = "All";
   TextEditingController membershipLinkController = TextEditingController();
   TextEditingController partnershipLinkController = TextEditingController();
@@ -116,7 +123,7 @@ class CommunityViewModel extends ChangeNotifier {
       listingStatus = 'REJECTED';
     }
 
-    getJoinRequest();
+    getJoinRequest(context);
     getPartnershipRequest();
     notifyListeners();
     //INACTIVE
@@ -138,20 +145,58 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //GET JOIN REQUEST
-  Future<void> getJoinRequest() async {
+  Future<void> getJoinRequest(BuildContext context, {bool loadMore = false}) async {
+    Loaders.circularShowLoader(context);
+    if (loadMore) {
+      if (isLoadingMore || !hasMoreData) return;
+      isLoadingMore = true;
+      _currentPage++;
+    } else {
+      _currentPage = 0;
+      hasMoreData = true;
+    }
+    
+    notifyListeners();
+    
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getJoinRequest(id, listingStatus ?? "");
-    communityMembers = res;
-    ;
-      notifyListeners();
+    final res = await repo.getJoinRequest(id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
+    
+    if (loadMore) {
+      communityMembers?.communityMembers?.addAll(res.communityMembers ?? []);
+      isLoadingMore = false;
+    } else {
+      communityMembers = res;
+    }
+    
+    hasMoreData = (res.communityMembers?.length ?? 0) >= _limitSize;
+     Loaders.circularHideLoader(context);
+    notifyListeners();
   }
 
-  //GET PARTNERSHIP REQUESTS
-  Future<void> getPartnershipRequest() async {
+  Future<void> getPartnershipRequest({bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMorePartnership || !hasMorePartnershipData) return;
+      isLoadingMorePartnership = true;
+      _partnershipCurrentPage++;
+    } else {
+      _partnershipCurrentPage = 0;
+      hasMorePartnershipData = true;
+    }
+    
+    notifyListeners();
+    
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getPartnershipRequest(id, listingStatus ?? "");
-    partnershipMembers = res;
-      notifyListeners();
+    final res = await repo.getPartnershipRequest(id, listingStatus ?? "", _limitSize, _partnershipCurrentPage * _limitSize);
+    
+    if (loadMore) {
+      partnershipMembers?.partnershipMembers?.addAll(res.partnershipMembers ?? []);
+      isLoadingMorePartnership = false;
+    } else {
+      partnershipMembers = res;
+    }
+    
+    hasMorePartnershipData = (res.partnershipMembers?.length ?? 0) >= _limitSize;
+    notifyListeners();
   }
 
   String membershipLink = "";
@@ -370,7 +415,7 @@ class CommunityViewModel extends ChangeNotifier {
           ? scaffoldMessenger("Member has been Approved Sucessfully")
           : scaffoldMessenger("Member has been Rejected Sucessfully");
     }
-    getJoinRequest();
+    getJoinRequest(context);
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
@@ -444,7 +489,7 @@ class CommunityViewModel extends ChangeNotifier {
       whereClause["contact_type"] = {"_eq": "MEMBER"};
     }
 
-    final variables = {"where": whereClause, "limit": 10, "offset": _contactsOffset};
+    final variables = {"where": whereClause, "limit": _limitSize, "offset": _contactsOffset};
     final res = await repo.getContacts(variables);
     
     if (res.partnersContactBook != null) {
@@ -453,7 +498,7 @@ class CommunityViewModel extends ChangeNotifier {
       } else {
         contactsRes = res;
       }
-      _hasMoreContacts = (res.partnersContactBook?.length ?? 0) == 10;
+      _hasMoreContacts = (res.partnersContactBook?.length ?? 0) == _limitSize;
       _contactsOffset += res.partnersContactBook?.length ?? 0;
     }
     

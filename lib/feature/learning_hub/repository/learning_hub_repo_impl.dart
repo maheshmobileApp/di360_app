@@ -60,7 +60,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getCoursesListing(String? listingStatus,
-      String? activeStatus, String? userId, String? searchText) async {
+      String? activeStatus, String? userId, String? searchText, int limit, int offset) async {
     final Map<String, dynamic> whereCondition = {};
 
     if (listingStatus != null &&
@@ -80,8 +80,8 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
     final payload = {
       "where": whereCondition,
-      "limit": 100,
-      "offset": 0,
+      "limit": limit,
+      "offset": offset,
     };
 
     final listingData = await http.query(

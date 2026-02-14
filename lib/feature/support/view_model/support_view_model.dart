@@ -47,6 +47,9 @@ class SupportViewModel extends ChangeNotifier {
   GetSupportRequestReasonData? supportRequestReasonsData;
   SupportMessagesData? supportMessagesData;
 
+  int _supportLimit = 10;
+  int _supportOffset = 0;
+
   Future<void> getSupportRequests(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -73,8 +76,8 @@ class SupportViewModel extends ChangeNotifier {
           "status": {"_eq": selectedTab == "Open" ? "OPEN" : "CLOSED"}
         }
       ],
-      "limit": 10,
-      "offset": 0
+      "limit": _supportLimit,
+      "offset": _supportOffset
     };
     final res = await repo.getSupportRequests(variables);
     Loaders.circularHideLoader(context);

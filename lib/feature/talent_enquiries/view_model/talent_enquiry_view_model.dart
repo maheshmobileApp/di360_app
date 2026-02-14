@@ -11,19 +11,41 @@ class TalentEnquiryViewModel extends ChangeNotifier {
   final TalentEnquiryRepository repo = TalentEnquiryRepoImpl();
 
   TalentEnquiryData? talentEnquiryData;
-  Future<void> getCoursesListingData() async {
+  int _talentEnquiryLimit = 10;
+  int _talentEnquiryOffset = 0;
+  bool isLoadingMoreEnquiries = false;
+  bool hasMoreEnquiries = true;
+
+  Future<void> getCoursesListingData({bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreEnquiries || !hasMoreEnquiries) return;
+      isLoadingMoreEnquiries = true;
+    } else {
+      _talentEnquiryOffset = 0;
+      hasMoreEnquiries = true;
+    }
+    
+    notifyListeners();
+    
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
-      "limit": 5,
-      "offset": 0,
+      "limit": _talentEnquiryLimit,
+      "offset": _talentEnquiryOffset,
       "where": {
         "enquiry_from": {"_eq": userId}
       }
     };
     final res = await repo.getTalentEnquiryData(variables);
-    if (res.talentEnquiries != null) {
+    
+    if (loadMore) {
+      talentEnquiryData?.talentEnquiries?.addAll(res.talentEnquiries ?? []);
+      isLoadingMoreEnquiries = false;
+    } else {
       talentEnquiryData = res;
     }
+    
+    hasMoreEnquiries = (res.talentEnquiries?.length ?? 0) >= _talentEnquiryLimit;
+    _talentEnquiryOffset += res.talentEnquiries?.length ?? 0;
     notifyListeners();
   }
 

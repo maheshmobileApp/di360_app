@@ -24,9 +24,25 @@ class MyLearningHubScreen extends StatefulWidget {
 
 class _JobListingScreenState extends State<MyLearningHubScreen>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final myLearningHubVM = Provider.of<MyLearningHubViewModel>(context, listen: false);
+      myLearningHubVM.getCoursesWithMyRegistrations(context, loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -86,43 +102,55 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                 },
               ),
             Expanded(
-              child: myLearningHubVM.myRegisteredCourses.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "No Data.",
-                            style: TextStyles.medium2(color: AppColors.black),
+              child: myLearningHubVM.isLoading
+                  ? Center(child: CircularProgressIndicator(color: AppColors.primaryColor))
+                  : myLearningHubVM.myRegisteredCourses.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "No Data.",
+                                style: TextStyles.medium2(color: AppColors.black),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: myLearningHubVM.myRegisteredCourses.length,
-                      itemBuilder: (context, index) {
-                        final courseData =
-                            myLearningHubVM.myRegisteredCourses[index];
-                        return RegisterCourseCard(
-                          logo: courseData.presentedByImage?.url ?? "",
-                          cpdPoints: courseData.cpdPoints.toString(),
-                          courseName: courseData.courseName ?? "",
-                          name: courseData.presentedByName ?? "",
-                          status: courseData.status ?? "",
-                          types: courseData.type ?? "",
-                          link: courseData.webinarLink ?? "",
-                          onCardTap: () async {
-                            await courseListingVM.getCourseDetails(
-                                context, courseData.id ?? "");
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          itemCount: myLearningHubVM.myRegisteredCourses.length + (myLearningHubVM.isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == myLearningHubVM.myRegisteredCourses.length) {
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(color: AppColors.primaryColor),
+                                ),
+                              );
+                            }
+                            
+                            final courseData =
+                                myLearningHubVM.myRegisteredCourses[index];
+                            return RegisterCourseCard(
+                              logo: courseData.presentedByImage?.url ?? "",
+                              cpdPoints: courseData.cpdPoints.toString(),
+                              courseName: courseData.courseName ?? "",
+                              name: courseData.presentedByName ?? "",
+                              status: courseData.status ?? "",
+                              types: courseData.type ?? "",
+                              link: courseData.webinarLink ?? "",
+                              onCardTap: () async {
+                                await courseListingVM.getCourseDetails(
+                                    context, courseData.id ?? "");
 
-                            navigationService.navigateTo(
-                              RouteList.courseDetailScreen,
+                                navigationService.navigateTo(
+                                  RouteList.courseDetailScreen,
+                                );
+                              },
+                              createdAt: courseData.createdAt ?? "",
                             );
                           },
-                          createdAt: courseData.createdAt ?? "",
-                        );
-                      },
-                    ),
+                        ),
             ),
           ],
         ));

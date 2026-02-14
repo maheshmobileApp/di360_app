@@ -12,20 +12,47 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
   bool searchBarOpen = false;
   final searchController = TextEditingController();
 
+  int _myLearningHubLimit = 10;
+  int _myLearningHubOffset = 0;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+  bool isLoading = false;
+
   void setSearchBar(bool value) {
     searchBarOpen = value;
     notifyListeners();
   }
 
-  Future<void> getCoursesWithMyRegistrations(BuildContext context) async {
+  Future<void> getCoursesWithMyRegistrations(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMore || !hasMoreData) return;
+      isLoadingMore = true;
+      _myLearningHubOffset += _myLearningHubLimit;
+    } else {
+      _myLearningHubOffset = 0;
+      hasMoreData = true;
+      isLoading = true;
+    }
+    
+    notifyListeners();
+    
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-
-    final res =
-        await repo.getCoursesWithMyRegistrations(userId, searchController.text);
+    final res = await repo.getCoursesWithMyRegistrations(userId, searchController.text, _myLearningHubLimit, _myLearningHubOffset);
 
     if (res != null) {
-      myRegisteredCourses = res;
+      if (loadMore) {
+        myRegisteredCourses.addAll(res);
+        isLoadingMore = false;
+      } else {
+        myRegisteredCourses = res;
+        isLoading = false;
+      }
+      hasMoreData = res.length >= _myLearningHubLimit;
+    } else {
+      isLoading = false;
+      isLoadingMore = false;
     }
+    
     notifyListeners();
   }
 

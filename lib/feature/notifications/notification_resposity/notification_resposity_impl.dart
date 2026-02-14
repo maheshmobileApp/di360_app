@@ -21,13 +21,13 @@ class NotificationResposityImpl extends NotificationResposity {
 
   Future<String> basedOnTypeCallNotificationQuery() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == UserRole.professional) {
+    if (type == UserRole.professional.value) {
       return getProfessionalNotifications;
-    } else if (type == UserRole.supplier) {
+    } else if (type == UserRole.supplier.value) {
       return getSupplierNotifications;
-    } else if (type == UserRole.admin) {
+    } else if (type == UserRole.admin.value) {
       return getAdminNotifications;
-    } else if (type == UserRole.practice) {
+    } else if (type == UserRole.practice.value) {
       return getPracticeNotifications;
     }
     return getProfessionalNotifications;
@@ -35,13 +35,13 @@ class NotificationResposityImpl extends NotificationResposity {
 
   Future<String> basedOnTypeCallNotificationCount() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == UserRole.professional) {
+    if (type == UserRole.professional.value) {
       return professionNotificationCount;
-    } else if (type == UserRole.supplier) {
+    } else if (type == UserRole.supplier.value) {
       return supplierNotificationCount;
-    } else if (type == UserRole.admin) {
+    } else if (type == UserRole.admin.value) {
       return adminNotificationCount;
-    } else if (type == UserRole.practice) {
+    } else if (type == UserRole.practice.value) {
       return practiceNotificationCount;
     }
     return professionNotificationCount;

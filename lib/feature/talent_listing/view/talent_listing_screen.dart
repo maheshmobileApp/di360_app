@@ -21,16 +21,30 @@ class TalentListingScreen extends StatefulWidget {
 
 class _TalentListingScreenState extends State<TalentListingScreen>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final vm = Provider.of<TalentListingViewModel>(context, listen: false);
-      Loaders.circularShowLoader(context);
       vm.listingStatus = "";
-      await vm.getMyTalentListingData();
-      Loaders.circularHideLoader(context);
+      await vm.getMyTalentListingData(context);
     });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final vm = Provider.of<TalentListingViewModel>(context, listen: false);
+      vm.getMyTalentListingData(context, loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -54,7 +68,7 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                   onTap: () {
                     vm.clearSelections();
                     vm.setRemoveIcon(false);
-                    vm.getMyTalentListingData();
+                    vm.getMyTalentListingData(context);
                   },
                   child: Icon(Icons.close, color: AppColors.black),
                 )
@@ -72,7 +86,7 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                 bool isSelected = vm.selectedStatus == status;
                 return GestureDetector(
                   onTap: () {
-                    vm.changeStatus(status);
+                    vm.changeStatus(context, status);
                   },
                   child: Container(
                     margin:
@@ -138,8 +152,15 @@ class _TalentListingScreenState extends State<TalentListingScreen>
                     ),
                   )
                 : ListView.builder(
-                    itemCount: vm.myTalentListingList?.jobhirings?.length,
+                    controller: _scrollController,
+                    itemCount: vm.myTalentListingList!.jobhirings!.length + (vm.isLoadingMoreTalents ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == vm.myTalentListingList!.jobhirings!.length) {
+                        return Center(child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(color: AppColors.primaryColor),
+                        ));
+                      }
                       final jobData =
                           vm.myTalentListingList?.jobhirings?[index];
                       try {

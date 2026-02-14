@@ -29,9 +29,25 @@ class LearningHubScreen extends StatefulWidget {
 
 class _JobListingScreenState extends State<LearningHubScreen>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final courseListingVM = Provider.of<CourseListingViewModel>(context, listen: false);
+      courseListingVM.getCoursesListingData(context, loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -154,8 +170,15 @@ class _JobListingScreenState extends State<LearningHubScreen>
               ),
             )
           : ListView.builder(
-              itemCount: courseListingVM.coursesListingList.length,
+              controller: _scrollController,
+              itemCount: courseListingVM.coursesListingList.length + (courseListingVM.isLoadingMoreCourses ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == courseListingVM.coursesListingList.length) {
+                  return Center(child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator(color: AppColors.primaryColor),
+                  ));
+                }
                 final jobData = courseListingVM.coursesListingList[index];
                 final course = jobData;
                 return CouresListingCard(

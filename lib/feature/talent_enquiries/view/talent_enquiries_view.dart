@@ -16,6 +16,31 @@ class TalentEnquiriesView extends StatefulWidget {
 
 class _TalentListingScreenState extends State<TalentEnquiriesView>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = Provider.of<TalentEnquiryViewModel>(context, listen: false);
+      vm.getCoursesListingData();
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final vm = Provider.of<TalentEnquiryViewModel>(context, listen: false);
+      vm.getCoursesListingData(loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<TalentEnquiryViewModel>(context);
@@ -40,8 +65,15 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
                     ),
                   )
                 : ListView.builder(
-                    itemCount: vm.talentEnquiryData?.talentEnquiries?.length,
+                    controller: _scrollController,
+                    itemCount: vm.talentEnquiryData!.talentEnquiries!.length + (vm.isLoadingMoreEnquiries ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == vm.talentEnquiryData!.talentEnquiries!.length) {
+                        return Center(child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(color: AppColors.primaryColor),
+                        ));
+                      }
                       final jobData = vm.talentEnquiryData?.talentEnquiries?[index];
                       try {
                         return TalentEnquiryCard(

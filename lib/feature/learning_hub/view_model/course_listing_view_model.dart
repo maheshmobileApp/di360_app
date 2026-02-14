@@ -28,6 +28,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   bool editOptionEnable = false;
   bool courseRegistered = false;
 
+  int _courseListingLimit = 10;
+  int _courseListingOffset = 0;
+  bool isLoadingMoreCourses = false;
+  bool hasMoreCourses = true;
+
   /********************************** */
   final userFirstNameController = TextEditingController();
   final userLastNameController = TextEditingController();
@@ -168,15 +173,34 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Cancelled': cancelledRegUsersCount,
       };
 
-  Future<void> getCoursesListingData(BuildContext context) async {
+  Future<void> getCoursesListingData(BuildContext context, {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreCourses || !hasMoreCourses) return;
+      isLoadingMoreCourses = true;
+    } else {
+      _courseListingOffset = 0;
+      hasMoreCourses = true;
+    }
+    
+    notifyListeners();
+    
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getCoursesListing(
-        listingStatus, activeStatus, userId, searchController.text);
+        listingStatus, activeStatus, userId, searchController.text, _courseListingLimit, _courseListingOffset);
 
-    fetchCourseStatusCounts(context);
-    if (res != null) {
-      coursesListingList = res;
+    if (!loadMore) {
+      await fetchCourseStatusCounts(context);
     }
+    
+    if (loadMore) {
+      coursesListingList.addAll(res ?? []);
+      isLoadingMoreCourses = false;
+    } else {
+      coursesListingList = res ?? [];
+    }
+    
+    hasMoreCourses = (res?.length ?? 0) >= _courseListingLimit;
+    _courseListingOffset += res?.length ?? 0;
     notifyListeners();
   }
 
