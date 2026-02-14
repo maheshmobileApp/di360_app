@@ -40,7 +40,7 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
                       height: 42,
                       onPressed: () async {
                         vm.clearSelections();
-                        await vm.getMyTalentListingData();
+                        await vm.getMyTalentListingData(context);
                       },
                       backgroundColor: AppColors.timeBgColor,
                       textColor: Colors.black,
@@ -56,7 +56,7 @@ class TalentListingFilter extends StatelessWidget with BaseContextHelpers {
                         vm.printSelectedItems();
                         vm.setRemoveIcon(true);
                         Loaders.circularShowLoader(context);
-                        await vm.getMyTalentListingData();
+                        await vm.getMyTalentListingData(context);
                         Loaders.circularHideLoader(context);
                         navigationService.goBack();
                       },

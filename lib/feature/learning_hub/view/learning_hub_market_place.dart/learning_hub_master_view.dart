@@ -102,7 +102,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             date: course.startDate ?? "",
                             cpdHours:
                                 course.cpdPoints?.toStringAsFixed(0) ?? "0",
-                            location: course.address?.first.toString() ?? "",
+                            location: course.address ?? "",
                             onTap: () async {
                               if (seats > 0) {
                                 await courseListingVM.getCourseDetails(
@@ -133,7 +133,6 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 scaffoldMessenger('Seats are sold out!');
                               }
                             },
-                            
                           );
                         },
                       )),

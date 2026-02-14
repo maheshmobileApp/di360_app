@@ -14,7 +14,7 @@ abstract class LearningHubRepository {
   Future<dynamic> updateCourseListing(dynamic variables);
   Future<dynamic> updateCourseStatus(String courseId, String status);
   Future<List<CoursesListingDetails>?> getCoursesListing(
-      String? listingStatus,String? activeStatus,String? userId, String? searchText);
+      String? listingStatus,String? activeStatus,String? userId, String? searchText,int limit, int offset);
   Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId);
   Future<CourseStatusCountData> courseListingStatusCount(String? userId);
   Future<GetCourseTypes> getCourseType();

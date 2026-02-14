@@ -10,9 +10,9 @@ import 'package:di360_flutter/feature/community/model/get_partnership_members.da
 
 abstract class CommunityRepository {
   Future<CommunityMembersData> getJoinRequest(
-      String supplierId, String listingStatus);
+      String supplierId, String listingStatus,int limit, int offset);
   Future<PartnershipMembersData> getPartnershipRequest(
-      String supplierId, String listingStatus);
+      String supplierId, String listingStatus,int limit, int offset);
   Future<dynamic> approveJoinRequest(dynamic variables);
   Future<dynamic> approvePartnershipRequest(dynamic variables);
   Future<MembershipLinkData> getMembershipLink(dynamic variables);

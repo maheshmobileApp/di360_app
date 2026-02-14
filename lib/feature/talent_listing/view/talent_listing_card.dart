@@ -344,7 +344,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
         } else if (value == "Cancel") {
           final talentId = jobProfiles?.id ?? "";
           await vm.updateTalentListingStatus(context, talentId);
-          vm.getMyTalentListingData();
+          vm.getMyTalentListingData(context);
 
         }
       },

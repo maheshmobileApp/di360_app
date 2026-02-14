@@ -40,6 +40,18 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  clearData() {
+    selectedType = null;
+    emailController.clear();
+    passController.clear();
+    nameController.clear();
+    conformController.clear();
+    companyNameController.clear();
+    numberController.clear();
+    stateController.clear();
+    postalCodeController.clear();
+  }
+
   String _countryCode = '+61'; // default AU
   String _number = '';
 
@@ -153,7 +165,8 @@ class SignupViewModel extends ChangeNotifier {
           "business_name": companyNameController.text,
           "status": "PENDING",
           "subscription_plan_id": selectedPlanId,
-          "professionType": selectedCategory?.name
+          "professionType": selectedCategory?.name,
+          "tracking_details": "mobile"
         }
       });
       if (res.isNotEmpty) {
@@ -216,10 +229,10 @@ const String singUpQuery = '''
 mutation signUp(\$signUpObj: clients_insert_input!) {  insert_clients_one(object: \$signUpObj) {  
   id    
   email   
-   phone
-   type
-   name   
-    __typename}
+  phone
+  type
+  name   
+  __typename}
 
 }
   ''';

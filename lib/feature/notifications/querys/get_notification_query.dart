@@ -62,7 +62,7 @@ $user_id: uuid!
     mark_as_read
     read_at
     status
-    dental_professional_id
+    dental_supplier_id
     created_at
     updated_at
     __typename
@@ -91,7 +91,7 @@ query get_notifications(
     mark_as_read
     read_at
     status
-    dental_professional_id
+    dental_practice_id
     created_at
     updated_at
     __typename

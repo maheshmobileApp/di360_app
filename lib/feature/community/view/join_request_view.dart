@@ -14,14 +14,30 @@ class JoinRequestView extends StatefulWidget {
 
 
 class _JoinRequestViewState extends State<JoinRequestView> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
       viewModel.changeStatus("All", context);
-      viewModel.getJoinRequest();
+      viewModel.getJoinRequest(context);
     });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
+      viewModel.getJoinRequest(context,loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -39,9 +55,16 @@ class _JoinRequestViewState extends State<JoinRequestView> {
           (joinRequests?.length != 0 && joinRequests != null)?
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: EdgeInsets.all(10),
-              itemCount: joinRequests.length,
+              itemCount: joinRequests.length + (viewModel.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == joinRequests.length) {
+                  return Center(child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator(color: AppColors.primaryColor,),
+                  ));
+                }
                 return JoinRequestCard(
                     firstName: joinRequests[index].firstName ?? "",
                     lastName: joinRequests[index].lastName ?? "",

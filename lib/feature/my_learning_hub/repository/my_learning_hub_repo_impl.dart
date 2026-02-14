@@ -8,7 +8,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
   final HttpService http = HttpService();
   @override
   Future<List<CoursesListingDetails>?> getCoursesWithMyRegistrations(
-      String? userId, String? searchText) async {
+      String? userId, String? searchText,int limit, int offset) async {
     final Map<String, dynamic> variables = {
       "where": {
         "_and": [
@@ -22,8 +22,8 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
           }
         ]
       },
-      "limit": 10,
-      "offset": 0
+      "limit": limit,
+      "offset": offset
     };
     final getMyRegisteredCourses =
         await http.query(getMyRegisteredCourseQuery, variables: variables);
