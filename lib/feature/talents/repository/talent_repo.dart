@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dar
 abstract class TalentRepository {
   Future<List<JobProfiles>> getTalentDetails(dynamic variables);
   Future<bool> hireMe(HireMeRequest request);
+  Future hireMeTalent(dynamic variables);
   Future<UpdateHiringStatusData> updateHiringStatus(dynamic variables);
   Future<bool> enquire(EnquiryRequest request);
   /*Future<List<JobProfile>> getJobProfileFilterData({
@@ -16,4 +17,6 @@ abstract class TalentRepository {
   });*/
   Future<List<JobProfiles>> getJobProfileFilterData(dynamic variables);
   Future<List<JobsRoleLists>> getJobProfiles();
+  Future<List<JobProfiles>> getTalentListMutationById(dynamic variables);
+
 }

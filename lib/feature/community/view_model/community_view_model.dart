@@ -102,6 +102,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   final List<String> statuses = [
     'All',
+    'Registered',
     'Pending',
     'Approved',
     'Rejected',

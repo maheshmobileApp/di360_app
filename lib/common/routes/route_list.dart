@@ -93,4 +93,5 @@ class RouteList {
   static const String createContactView = '/createContactView';
   static const String contactFilterView = '/contactFilterView';
   static const String notificationScreen = '/notificationScreen';
+  static const String talentsHireMeScreen = '/talentsHireMeScreen';
 }

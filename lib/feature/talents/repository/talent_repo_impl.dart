@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dart';
+import 'package:di360_flutter/feature/talents/query/get_talent_list_by_id_query.dart';
 import 'package:di360_flutter/feature/talents/query/update_hiring_status_request.dart';
 import 'package:di360_flutter/feature/talents/talents_request.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo.dart';
@@ -19,13 +20,29 @@ class TalentRepoImpl extends TalentRepository {
   }
 
   @override
-  Future<bool> hireMe(HireMeRequest request) async {
+  Future<bool> hireMe(dynamic variables) async {
     await _http.mutation(
-      hireMeMutation,
-      {'hireobject': request.toJson()},
+      hireMeMutation, variables,
     );
     return true;
   }
+
+  @override
+  Future hireMeTalent(dynamic variables) async {
+    await _http.mutation(
+      hireMeTalentMutation, variables,
+    );
+    return true;
+  }
+  /*{
+    "jobHiringsDetails": {
+        "job_profiles_id": "b6eb6616-733e-48ff-94f5-bfcedcb7b7fe",
+        "dental_professional_id": "4cb36fed-d7f3-4e0b-964f-0c1636836aef",
+        "dental_supplier_id": "5e3c1d29-f7bf-4463-b868-83fbdcdd148b",
+        "dental_practice_id": null,
+        "hiring_status": "PENDING"
+    }
+}*/
 
   @override
   Future<bool> enquire(EnquiryRequest request) async {
@@ -97,5 +114,12 @@ class TalentRepoImpl extends TalentRepository {
   Future<UpdateHiringStatusData> updateHiringStatus(variables)async {
     final response = await _http.mutation(updateHiringStatusMutation, variables);
     return UpdateHiringStatusData.fromJson(response);
+  }
+  
+  @override
+  Future<List<JobProfiles>> getTalentListMutationById(variables) async {
+    final jobsData = await _http.query(getTalentListByIdQuery, variables: variables);
+    final result = TalentsResData.fromJson(jobsData);
+    return result.jobProfiles ?? [];
   }
 }

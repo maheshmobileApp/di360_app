@@ -54,10 +54,11 @@ class _TalentsViewState extends State<TalentsView> {
                   itemBuilder: (BuildContext context, int index) {
                     final talentData = talentViewModel.talentList[index];
                     return InkWell(
-                        onTap: () {
+                        onTap: () async {
+                          await talentViewModel.getTalentListMutationById(
+                              context, talentData.dentalProfessionalId ?? "");
                           navigationService.navigateToWithParams(
-                              RouteList.talentdetailsScreen,
-                              params: talentViewModel.talentList[index]);
+                              RouteList.talentsHireMeScreen);
                         },
                         child: TalentsCard(talentList: talentData));
                   },

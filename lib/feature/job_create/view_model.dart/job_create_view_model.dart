@@ -144,7 +144,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         facebookUrl: facebookController.text,
         instagramUrl: instgramController.text,
         video: videoLinkController.text,
-       bannerImage: selectedBannerImgList,
+        bannerImage: selectedBannerImgList,
         linkedinUrl: linkedInController.text);
 
     notifyListeners();
@@ -327,24 +327,15 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         var value = await _http.uploadImage(bannerFile?.path);
         if (value != null && value['url'] != null) {
           selectedBannerImgList = ClinicLogo(
-            url: value['url'] as String, 
-            type: "image", 
-            extension: "jpeg"
-          );
+              url: value['url'] as String, type: "image", extension: "jpeg");
         } else {
-          selectedBannerImgList = ClinicLogo(
-            url: "", 
-            type: "image", 
-            extension: "jpeg"
-          );
+          selectedBannerImgList =
+              ClinicLogo(url: "", type: "image", extension: "jpeg");
         }
         notifyListeners();
       } catch (e) {
-        selectedBannerImgList = ClinicLogo(
-          url: "", 
-          type: "image", 
-          extension: "jpeg"
-        );
+        selectedBannerImgList =
+            ClinicLogo(url: "", type: "image", extension: "jpeg");
         notifyListeners();
       }
     } else {
@@ -401,10 +392,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         final response = await _http.uploadImage(file.path);
         if (response != null && response['url'] != null) {
           uploaded.add(builder(file, response));
-        } else {
-        }
-      } catch (e) {
-      }
+        } else {}
+      } catch (e) {}
     }
     return uploaded;
   }
@@ -694,16 +683,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 // #region ... Create Job
   Future<void> createdJobListing(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
-    /*Map<String, String?> filePaths = {
-      'banner': bannerFile?.path,
-    };
-    final uploadedFiles = await uploadFiless(
-      filePaths,
-      clinicPhotos: clinicPhotos,
-    );*/
+
     (bannerFile != null) ? await validateLogoAndBanner() : null;
     await validateClinic();
-    final result = await repo.createJobListing({
+    final variables = {
       "postjobObj": {
         "title": jobTitleController.text, // String
         "j_type": "", //
@@ -747,7 +730,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
             .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
         "banner_image": selectedBannerImgList,
-        "start_Date" :  startDateController.text,
+        "start_Date": di360_date_utils.DateFormatUtils.formatDateYear(
+            startDateController.text),
 
         "clinic_logo": selectedClinicImgList,
 
@@ -759,7 +743,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         // }
         //TODO: need to send array of object
 
-        "closed_at": endDate?.toUtc().toIso8601String(),
+        "closed_at": di360_date_utils.DateFormatUtils.formatDateToIso8601(
+            endDateController.text),
         "status": isDraft
             ? "DRAFT"
             : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
@@ -783,7 +768,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "active_status_feed": isDraft ? null : "PENDING",
         "feed_type": "JOBS"
       }
-    });
+    };
+    print("*******************$variables");
+    final result = await repo.createJobListing(variables);
     if (result != null) {
       /* navigationService.goBack();
       Loaders.circularHideLoader(context);
@@ -794,16 +781,10 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> updateJobListing(
       BuildContext context, bool isDraft, String jobId) async {
     Loaders.circularShowLoader(context);
-    /* Map<String, String?> filePaths = {
-      'banner': bannerFile?.path,
-    };
-     final uploadedFiles = await uploadFiles(
-      filePaths,
-      clinicPhotos: clinicPhotos,
-    );*/
+
     await validateLogoAndBanner();
     await validateClinic();
-    final result = await repo.updateJobListing({
+    final variables = {
       "id": jobId,
       "postjobObj": {
         "title": jobTitleController.text, // String
@@ -848,7 +829,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": selectedBannerImgList,
 
         "clinic_logo": selectedClinicImgList,
-        "start_Date" :  startDateController.text,
+        "start_Date": di360_date_utils.DateFormatUtils.formatDateYear(
+            startDateController.text),
 
         // {
         //   "url":
@@ -858,14 +840,15 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         // }
         //TODO: need to send array of object
 
-        "closed_at": endDate?.toUtc().toIso8601String(),
+        "closed_at": di360_date_utils.DateFormatUtils.formatDateToIso8601(
+            endDateController.text),
         "status": isDraft
             ? "DRAFT"
             : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
         "active_status":
             "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
         "website_url": websiteController.text,
-        "country":  countryController.text,
+        "country": countryController.text,
         "endDateToggle": isEndDateEnabled == true ? "YES" : "NO",
         "offered_benefits": selectedBenefits,
         //[ "Performance bonus", "Commission", "relcation fees" ]// TODO: Need to send array of string
@@ -882,7 +865,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "active_status_feed": isDraft ? null : "PENDING",
         "feed_type": "JOBS"
       }
-    });
+    };
+    print("*******************$variables");
+    final result = await repo.updateJobListing(variables);
     if (result != null) {
     } else {
       Loaders.circularHideLoader(context);
@@ -890,6 +875,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> loadJobData(Jobs? jobData) async {
+    print("*************print closed at  ${jobData?.closedAt}");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";
@@ -898,10 +884,12 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     countryController.text = jobData?.country ?? "";
     serverBannerImg = jobData?.bannerImage?.url;
     isStartDateEnabled = jobData?.startDate != null;
-    isEndDateEnabled = jobData?.startDate != null;
-    startDateController.text = jobData?.startDate ?? "";
-    endDateController.text = jobData?.startDate ?? "";
-
+    isEndDateEnabled = jobData?.closedAt != null;
+    startDateController.text =  di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(jobData?.startDate ?? "");
+    if (jobData?.closedAt != null) {
+      endDateController.text = di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
+          jobData?.closedAt ?? "");
+    }
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
             [];

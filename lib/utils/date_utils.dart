@@ -83,4 +83,57 @@ static String formatToTime(String dateTimeString) {
     return dateTimeString; // Return original if parsing fails
   }
 }
+
+static String formatDateYear(String dateTimeString) {
+  try {
+    DateTime dateTime;
+    // Try parsing as ISO format first
+    try {
+      dateTime = DateTime.parse(dateTimeString);
+    } catch (e) {
+      // If ISO parsing fails, try DD/M/YYYY or DD/MM/YYYY format
+      final parts = dateTimeString.split('/');
+      if (parts.length == 3) {
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        dateTime = DateTime(year, month, day);
+      } else {
+        return dateTimeString;
+      }
+    }
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
+
+static String formatDateToIso8601(String dateString) {
+  try {
+    DateTime dateTime;
+    // Try parsing DD/MM/YYYY or DD/M/YYYY format
+    final parts = dateString.split('/');
+    if (parts.length == 3) {
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      dateTime = DateTime(year, month, day);
+      return dateTime.toUtc().toIso8601String();
+    }
+    // Try parsing as ISO format
+    dateTime = DateTime.parse(dateString);
+    return dateTime.toUtc().toIso8601String();
+  } catch (e) {
+    return dateString;
+  }
+}
+
+static String formatYyyyMmDdToDdMmYyyy(String dateString) {
+  try {
+    final dateTime = DateTime.parse(dateString);
+    return DateFormat('dd/MM/yyyy').format(dateTime);
+  } catch (e) {
+    return dateString;
+  }
+}
 }
