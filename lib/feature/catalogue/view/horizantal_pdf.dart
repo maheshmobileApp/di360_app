@@ -47,9 +47,11 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
 
   Future<void> downloadPdf() async {
     if (widget.fileUrl.isEmpty) {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       return;
     }
 
@@ -62,15 +64,19 @@ class _HorizantalPdfState extends State<HorizantalPdf> {
       final file = File(filePath);
       await file.writeAsBytes(response.bodyBytes);
 
-      setState(() {
-        localPath = file.path;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          localPath = file.path;
+          isLoading = false;
+        });
+      }
     } catch (e) {
       debugPrint("PDF download error: $e");
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

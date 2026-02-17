@@ -146,7 +146,8 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //GET JOIN REQUEST
-  Future<void> getJoinRequest(BuildContext context, {bool loadMore = false}) async {
+  Future<void> getJoinRequest(BuildContext context,
+      {bool loadMore = false}) async {
     Loaders.circularShowLoader(context);
     if (loadMore) {
       if (isLoadingMore || !hasMoreData) return;
@@ -156,21 +157,22 @@ class CommunityViewModel extends ChangeNotifier {
       _currentPage = 0;
       hasMoreData = true;
     }
-    
+
     notifyListeners();
-    
+
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getJoinRequest(id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
-    
+    final res = await repo.getJoinRequest(
+        id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
+
     if (loadMore) {
       communityMembers?.communityMembers?.addAll(res.communityMembers ?? []);
       isLoadingMore = false;
     } else {
       communityMembers = res;
     }
-    
+
     hasMoreData = (res.communityMembers?.length ?? 0) >= _limitSize;
-     Loaders.circularHideLoader(context);
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
@@ -183,20 +185,23 @@ class CommunityViewModel extends ChangeNotifier {
       _partnershipCurrentPage = 0;
       hasMorePartnershipData = true;
     }
-    
+
     notifyListeners();
-    
+
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getPartnershipRequest(id, listingStatus ?? "", _limitSize, _partnershipCurrentPage * _limitSize);
-    
+    final res = await repo.getPartnershipRequest(id, listingStatus ?? "",
+        _limitSize, _partnershipCurrentPage * _limitSize);
+
     if (loadMore) {
-      partnershipMembers?.partnershipMembers?.addAll(res.partnershipMembers ?? []);
+      partnershipMembers?.partnershipMembers
+          ?.addAll(res.partnershipMembers ?? []);
       isLoadingMorePartnership = false;
     } else {
       partnershipMembers = res;
     }
-    
-    hasMorePartnershipData = (res.partnershipMembers?.length ?? 0) >= _limitSize;
+
+    hasMorePartnershipData =
+        (res.partnershipMembers?.length ?? 0) >= _limitSize;
     notifyListeners();
   }
 
@@ -321,7 +326,7 @@ class CommunityViewModel extends ChangeNotifier {
     };
     final res = await repo.getDirectory(variables);
     directoryData = res;
-      notifyListeners();
+    notifyListeners();
   }
 
   //Delete Category---------------------------------------------------------------
@@ -353,7 +358,7 @@ class CommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //UPDATE MEMBERSHIP LINK
+  //UPDATE PARTNERSHIP LINK
   Future<void> updatePartnershipLink(BuildContext context, String id) async {
     final variables = {
       "id": id,
@@ -362,9 +367,10 @@ class CommunityViewModel extends ChangeNotifier {
     final res = await repo.updatePartnershipLink(variables);
     if (res != null) {
       scaffoldMessenger("Registration link updated Sucessfully");
+      partnershipLinkController.text = "";
+      getPartnershipLink(context);
     }
-    partnershipLinkController.text = "";
-    getPartnershipLink(context);
+
     notifyListeners();
   }
 
@@ -395,7 +401,7 @@ class CommunityViewModel extends ChangeNotifier {
     };
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
-      //Loaders.circularHideLoader(context);
+    //Loaders.circularHideLoader(context);
 
     notifyListeners();
   }
@@ -456,7 +462,7 @@ class CommunityViewModel extends ChangeNotifier {
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
     getJoinedCommunityMembersData = res;
-      notifyListeners();
+    notifyListeners();
   }
 
   ContactsData? contactsRes;
@@ -467,7 +473,8 @@ class CommunityViewModel extends ChangeNotifier {
   bool get hasMoreContacts => _hasMoreContacts;
   bool get isLoadingMoreContacts => _isLoadingMoreContacts;
 
-  Future<void> getContacts(BuildContext context, {bool loadMore = false}) async {
+  Future<void> getContacts(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore) {
       if (_isLoadingMoreContacts || !_hasMoreContacts) return;
       _isLoadingMoreContacts = true;
@@ -490,9 +497,13 @@ class CommunityViewModel extends ChangeNotifier {
       whereClause["contact_type"] = {"_eq": "MEMBER"};
     }
 
-    final variables = {"where": whereClause, "limit": _limitSize, "offset": _contactsOffset};
+    final variables = {
+      "where": whereClause,
+      "limit": _limitSize,
+      "offset": _contactsOffset
+    };
     final res = await repo.getContacts(variables);
-    
+
     if (res.partnersContactBook != null) {
       if (loadMore) {
         contactsRes?.partnersContactBook?.addAll(res.partnersContactBook!);
@@ -502,7 +513,7 @@ class CommunityViewModel extends ChangeNotifier {
       _hasMoreContacts = (res.partnersContactBook?.length ?? 0) == _limitSize;
       _contactsOffset += res.partnersContactBook?.length ?? 0;
     }
-    
+
     if (loadMore) {
       _isLoadingMoreContacts = false;
     } else {
@@ -616,7 +627,8 @@ class CommunityViewModel extends ChangeNotifier {
         return;
       }
 
-      if (res != null && res.containsKey('update_partners_contact_book_by_pk')) {
+      if (res != null &&
+          res.containsKey('update_partners_contact_book_by_pk')) {
         await getContacts(context);
         navigationService.goBack();
         Loaders.circularHideLoader(context);

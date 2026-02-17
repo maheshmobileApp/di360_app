@@ -183,8 +183,9 @@ class Routes {
         );
       },
       RouteList.MyJobProfileScreen: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments as JobProfiles;
-        return MyJobProfileScreen(jobsListingData: args);
+        final args = ModalRoute.of(context)!.settings.arguments;
+        final jobProfile = args is List<JobProfiles> ? args.first : args as JobProfiles;
+        return MyJobProfileScreen(jobsListingData: jobProfile);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {

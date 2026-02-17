@@ -163,10 +163,10 @@ class SignupViewModel extends ChangeNotifier {
           "type": selectedType?['type'],
           "state": stateController.text,
           "business_name": companyNameController.text,
-          "status": "PENDING",
+          "status": "VERIFICATION_PENDING",
           "subscription_plan_id": selectedPlanId,
           "professionType": selectedCategory?.name,
-          "tracking_details": "mobile"
+          "tracking_details": "Web"
         }
       });
       if (res.isNotEmpty) {

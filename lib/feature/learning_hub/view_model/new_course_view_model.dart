@@ -878,6 +878,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  Future<void> setCoursePreviewData() async {
+
+  }
+
   void resetForm() {
     // Reset dropdowns & selections
 

@@ -85,7 +85,7 @@ class _PartnershipRegistrationViewState
                         },
                       ),
                     ),
-                    SizedBox(width: 16),
+                    /*SizedBox(width: 16),
                     Expanded(
                         child: CustomRoundedButton(
                       fontSize: 16,
@@ -102,7 +102,7 @@ class _PartnershipRegistrationViewState
                             viewModel.directoryData?.directories?.first.id ??
                                 "");
                       },
-                    )),
+                    )),*/
                   ],
                 ),
                 SizedBox(height: 40),

@@ -65,6 +65,13 @@ class DirectoryViewModel extends ChangeNotifier {
 
   String? selectedMembership;
 
+  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  String? selectedPhoneCode = "AU (+61)";
+  void setPhoneCode(String value) {
+    selectedPhoneCode = value;
+    notifyListeners();
+  }
+
   void setSelectedMembership(String? value) {
     selectedMembership = value;
     notifyListeners();
@@ -107,6 +114,23 @@ class DirectoryViewModel extends ChangeNotifier {
 
   void toggleShowMoreGallery() {
     showMoreOurGallery = !showMoreOurGallery;
+    notifyListeners();
+  }
+
+  List<String> states = [
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "South Australia",
+    "Western Australia",
+    "Tasmania",
+    "Northern Territory",
+    "Australian Capital Territory"
+  ];
+
+  String selectedState = "";
+  void setSelectedState(String value) {
+    selectedState = value;
     notifyListeners();
   }
 
@@ -325,12 +349,12 @@ class DirectoryViewModel extends ChangeNotifier {
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "email": emailController.text,
-        "phone": phoneController.text,
+        "phone": "$selectedPhoneCode${phoneController.text}",
         "membership_number": membershipNumberController.text,
         "status": "PENDING",
         "type": "COMMUNITY",
         "is_registered": false,
-        "state": "" // Add state field to satisfy NOT NULL constraint
+        "state": selectedState
       }
     };
     final res = await repository.communityRegister(variables);
@@ -349,6 +373,20 @@ class DirectoryViewModel extends ChangeNotifier {
     phoneController.clear();
     emailController.clear();
     membershipNumberController.clear();
+    selectedMembership = "";
+    selectedState = "";
+  }
+
+  bool validateJoinCommunityFields() {
+    if (emailController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        selectedState.isEmpty ||
+        selectedMembership == null ||
+        selectedMembership!.isEmpty ||
+        (selectedMembership == "Yes" && membershipNumberController.text.isEmpty)) {
+      return false;
+    }
+    return true;
   }
 
   Future<void> partnershipRegsiter(BuildContext context, String communityId,
