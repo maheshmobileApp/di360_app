@@ -60,8 +60,9 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                               widget.newsfeeds?.dentalPractice?.logo?.url ??
                               widget.newsfeeds?.dentalProfessional?.profileImage
                                   ?.url ??
-                              widget.newsfeeds?.dentalSupplier?.directories
-                                  ?.first.logo?.url ??
+                              (widget.newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+                                  ? widget.newsfeeds?.dentalSupplier?.directories?.first.logo?.url
+                                  : null) ??
                               '') ==
                           '')
                       ? SvgPicture.asset(ImageConst.logo)
@@ -73,8 +74,9 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                                           ?.url ??
                                       widget.newsfeeds?.dentalProfessional
                                           ?.profileImage?.url ??
-                                      widget.newsfeeds?.dentalSupplier
-                                          ?.directories?.first.logo?.url ??
+                                      (widget.newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+                                          ? widget.newsfeeds?.dentalSupplier?.directories?.first.logo?.url
+                                          : null) ??
                                       '',
                               errorWidget: SvgPicture.asset(ImageConst.logo)))),
             ),
