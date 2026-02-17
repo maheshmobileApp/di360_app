@@ -166,7 +166,7 @@ class SignupViewModel extends ChangeNotifier {
           "status": "VERIFICATION_PENDING",
           "subscription_plan_id": selectedPlanId,
           "professionType": selectedCategory?.name,
-          "tracking_details": "Web"
+          "tracking_details": "mobile"
         }
       });
       if (res.isNotEmpty) {
