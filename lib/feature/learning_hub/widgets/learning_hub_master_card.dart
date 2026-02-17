@@ -199,14 +199,16 @@ class ListingHubMasterCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(Icons.location_on_outlined,
-                              color: AppColors.primaryColor, size: 20),
-                          const SizedBox(width: 6),
+                      (location.isEmpty)
+                          ? SizedBox.shrink()
+                          : Row(
+                              children: [
+                                Icon(Icons.location_on_outlined,
+                                    color: AppColors.primaryColor, size: 20),
+                                const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              (location.isEmpty) ? "------" : "${location}",
+                              (location.isEmpty) ? "" : "${location}",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyles.medium2(

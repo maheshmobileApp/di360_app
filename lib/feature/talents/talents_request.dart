@@ -1,4 +1,5 @@
-String talentsRequest = r'''query GetJobProfileData($limit: Int!, $offset: Int!) {
+String talentsRequest =
+    r'''query GetJobProfileData($limit: Int!, $offset: Int!) {
   job_profiles(
     order_by: { created_at: desc }
     where: { active_status: { _eq: "ACTIVE" } }
@@ -67,20 +68,29 @@ String talentsRequest = r'''query GetJobProfileData($limit: Int!, $offset: Int!)
   }
 }''';
 
-String hireMeMutation =  r'''
+String hireMeMutation = r'''
 mutation insert_jobhirings($hireobject:jobhirings_insert_input!) {
   insert_jobhirings_one(object: $hireobject) {
     id
   }
 }''';
 
-String enquiryMutation = r'''mutation insert_Enquiry_one($object: talent_enquiries_insert_input!) {
+String hireMeTalentMutation =
+    r'''mutation insert_jobpost($jobHiringsDetails: jobhirings_insert_input!) {
+  insert_jobhirings_one(object: $jobHiringsDetails) {
+    id
+    __typename
+  }
+}''';
+
+String enquiryMutation =
+    r'''mutation insert_Enquiry_one($object: talent_enquiries_insert_input!) {
   insert_talent_enquiries_one(object: $object) {
     id
     __typename
   }
 } ''';
-String GetJobProfileFilterData = r''' 
+String GetJobProfileFilterData = r'''
 query getTalentList($limit: Int, $offset: Int, $where: job_profiles_bool_exp, $order_by: [job_profiles_order_by!]) {
   job_profiles(where: $where, order_by: $order_by, limit: $limit, offset: $offset) {
     id

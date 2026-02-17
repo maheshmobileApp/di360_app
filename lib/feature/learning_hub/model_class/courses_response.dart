@@ -54,7 +54,7 @@ class CoursesListingDetails {
   bool? isFeatured;
   String? activeStatus;
   String? type;
-  dynamic address;
+  List<Address>? address;
   String? scheduledAt;
   dynamic maxSubscribers;
   dynamic priceInAud;
@@ -176,7 +176,14 @@ class CoursesListingDetails {
     isFeatured = json['is_featured'];
     activeStatus = json['active_status'];
     type = json['type'];
-    address = json['address'];
+    if (json['address'] != null && json['address'] is List) {
+      address = <Address>[];
+      json['address'].forEach((v) {
+        address!.add(new Address.fromJson(v));
+      });
+    } else {
+      address = [Address(city: json['address'])];
+    }
     scheduledAt = json['scheduled_at'];
     maxSubscribers = json['max_subscribers'];
     priceInAud = json['price_in_aud'];
@@ -360,23 +367,47 @@ class Attachments {
 }
 
 class Address {
-  final String? city;
-  final String? country;
+  double? lat;
+  double? lng;
+  String? city;
+  String? state;
+  String? street;
+  String? country;
+  String? postalCode;
+  String? formattedAddress;
 
-  Address({this.city, this.country});
+  Address(
+      {this.lat,
+      this.lng,
+      this.city,
+      this.state,
+      this.street,
+      this.country,
+      this.postalCode,
+      this.formattedAddress});
 
-  factory Address.fromJson(Map<String, dynamic> json) {
-    return Address(
-      city: json['city'] as String?,
-      country: json['country'] as String?,
-    );
+  Address.fromJson(Map<String, dynamic> json) {
+    lat = json['lat'];
+    lng = json['lng'];
+    city = json['city'];
+    state = json['state'];
+    street = json['street'];
+    country = json['country'];
+    postalCode = json['postal_code'];
+    formattedAddress = json['formatted_address'];
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      "city": city,
-      "country": country,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['lat'] = this.lat;
+    data['lng'] = this.lng;
+    data['city'] = this.city;
+    data['state'] = this.state;
+    data['street'] = this.street;
+    data['country'] = this.country;
+    data['postal_code'] = this.postalCode;
+    data['formatted_address'] = this.formattedAddress;
+    return data;
   }
 }
 

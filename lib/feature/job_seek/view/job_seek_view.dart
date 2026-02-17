@@ -55,17 +55,18 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBarWidget(
-            searchWidget: false,
+              searchWidget: false,
               filterWidget: GestureDetector(
-            onTap: () {
-              if (jobSeekViewModel.selectedTabIndex == 0) {
-                navigationService.navigateTo(RouteList.JobSeekFilterScreen);
-              } else {
-                navigationService.navigateTo(RouteList.TalentFliterScreen);
-              }
-            },
-            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-          )),
+                onTap: () {
+                  if (jobSeekViewModel.selectedTabIndex == 0) {
+                    navigationService.navigateTo(RouteList.JobSeekFilterScreen);
+                  } else {
+                    navigationService.navigateTo(RouteList.TalentFliterScreen);
+                  }
+                },
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              )),
           body: jobSeekViewModel.selectedTabIndex == 0
               ? _buildJobsList(jobSeekViewModel)
               : const TalentsView(),
@@ -90,7 +91,8 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
               : GenericListViewWithBanners<Jobs>(
                   controller: _jobsScrollController,
                   items: vm.jobs,
-                  bannerIndices: BannerUtils.calculateBannerIndices(vm.jobs.length),
+                  bannerIndices:
+                      BannerUtils.calculateBannerIndices(vm.jobs.length),
                   itemBuilder: (context, dataIndex) {
                     final jobData = vm.jobs[dataIndex];
                     return InkWell(
@@ -109,12 +111,12 @@ class _JobSeekViewState extends State<JobSeekView> with BaseContextHelpers {
                   loadingWidget: vm.hasMoreJobs && vm.isLoadingMore
                       ? const Padding(
                           padding: EdgeInsets.all(16),
-                          child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                  color: AppColors.primaryColor)),
                         )
                       : null,
                 ),
     );
   }
-
-  
 }

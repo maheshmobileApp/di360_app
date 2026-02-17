@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_details_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_campaign_list_res.dart';
 import 'package:di360_flutter/feature/campaign/model/get_contact_count_res.dart';
@@ -371,6 +373,8 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   Future<void> createCampaign(BuildContext context) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userEmail = await LocalStorage.getStringVal(LocalStorageConst.emailId);
     Loaders.circularShowLoader(context);
     try {
       String messageChannel = selectedType;
@@ -382,7 +386,8 @@ class CampaignViewModel extends ChangeNotifier {
 
       final variables = {
         "fields": {
-          "from_email": null,
+          "from_email": userEmail,
+          "created_by_id": userId,
           "campaign_name": campaignNameController.text,
           "recipients_count": recipientsCount,
           "total_count": recipientsCount,
@@ -406,6 +411,7 @@ class CampaignViewModel extends ChangeNotifier {
           "message_channel": messageChannel
         }
       };
+      print("Create Campaign Variables: $variables");
       final res = await repo.createCampaign(variables);
       if (res != "") {
         await getCampaignListing();

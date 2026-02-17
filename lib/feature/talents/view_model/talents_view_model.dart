@@ -137,7 +137,8 @@ class TalentsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchTalentProfiles(BuildContext context, {bool loadMore = false}) async {
+  Future<void> fetchTalentProfiles(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreTalents)) return;
 
     if (loadMore) {
@@ -198,7 +199,8 @@ class TalentsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchTalentsForSelectedView(BuildContext context, {bool loadMore = false}) async {
+  Future<void> fetchTalentsForSelectedView(BuildContext context,
+      {bool loadMore = false}) async {
     final hasFilters = selectedProfessions.isNotEmpty ||
         selectedEmploymentTypes.isNotEmpty ||
         selectedExperiences.isNotEmpty ||
@@ -229,6 +231,21 @@ class TalentsViewModel extends ChangeNotifier {
       setHiringStatus(
           hiringStatusData?.updateJobhiringsByPk?.hiringStatus ?? '');
       print("Updated hiring status: $res");
+    } finally {
+      Loaders.circularHideLoader(context);
+      notifyListeners();
+    }
+  }
+
+  //get talent list by id
+  List<JobProfiles>? talentListById;
+  Future<void> getTalentListMutationById(
+      BuildContext context, String id) async {
+    Loaders.circularShowLoader(context);
+    final variables = {"id": id};
+    try {
+      final res = await repo.getTalentListMutationById(variables);
+      talentListById = res;
     } finally {
       Loaders.circularHideLoader(context);
       notifyListeners();
@@ -359,6 +376,22 @@ class TalentsViewModel extends ChangeNotifier {
   Future<bool> hireMe(HireMeRequest request) async {
     await repo.hireMe(request);
     return true;
+  }
+
+  Future<void> hireMeTalent(String id, String dentalProfessionalId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "jobHiringsDetails": {
+        "job_profiles_id": id,
+        "dental_professional_id": dentalProfessionalId,
+        "dental_supplier_id": type == "SUPPLIER" ? userId : null,
+        "dental_practice_id": type == "PRACTICE" ? userId : null,
+        "hiring_status": "PENDING"
+      }
+    };
+    final res = await repo.hireMeTalent(variables);
+    print("**************Hire Me Talent Response: $res");
   }
 
   Future<bool> enquire(EnquiryRequest request) async {

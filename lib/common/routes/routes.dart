@@ -83,6 +83,7 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/views/talent_preview.dart';
 import 'package:di360_flutter/feature/talents/views/talents_details_view.dart';
 import 'package:di360_flutter/feature/talents/views/talents_filter_screen.dart';
+import 'package:di360_flutter/feature/talents/views/talents_hire_me_screen.dart';
 import 'package:di360_flutter/feature/team_members/view/create_team_member_view.dart';
 import 'package:di360_flutter/feature/team_members/view/team_members_listing_view.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_view_profile_screen.dart';
@@ -272,6 +273,7 @@ class Routes {
             courseDetails: args as CoursesListingDetails);
       },
       RouteList.notificationScreen: (context) => NotificationScreen(),
+      RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
     };
   }
 }

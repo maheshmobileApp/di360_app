@@ -126,6 +126,7 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
               hintText: "Enter city / Post code",
               title: "City / Post Code",
               maxLength: 4,
+              keyboardType: TextInputType.number,
               isRequired: true,
               validator: validatePostalCode,
             ),
