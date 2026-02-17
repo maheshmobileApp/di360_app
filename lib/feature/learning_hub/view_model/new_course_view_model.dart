@@ -878,8 +878,82 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> setCoursePreviewData() async {
+  Future<CourseObject> setCoursePreviewData() async {
+    if (selectedPresentedImg != null || serverPresentedImg != null) {
+      await validatePresenterImg();
+    }
+    if (selectedCourseHeaderBanner != null || serverCourseHeaderBanner != null) {
+      await validateCourseHeaderBanner();
+    }
+    if ((selectedGallery?.isNotEmpty ?? false) || (serverGallery?.isNotEmpty ?? false)) {
+      await validateGallery();
+    }
+    if ((selectedCourseBannerImg?.isNotEmpty ?? false) || (serverCourseBannerImg?.isNotEmpty ?? false)) {
+      await validateCourseBanner();
+    }
+    if ((selectedsponsoredByImg?.isNotEmpty ?? false) || (serverSponsoredByImg?.isNotEmpty ?? false)) {
+      await validateSponsoredByImg();
+    }
+    if (sessions.isNotEmpty) {
+      await buildCourseInfoList();
+    }
 
+    return CourseObject(
+      courseName: courseNameController.text,
+      courseCategoryId: selectedCategoryId,
+      rsvpDate: rsvpDateController.text,
+      presentedByName: presenterNameController.text,
+      presentedByImage: PresentedByImage(url: presenter_image),
+      courseBannerImage: courseBannerImgList,
+      courseGallery: selectedGalleryList,
+      courseBannerVideo: courseBannerImageHeaderList,
+      description: courseDescController.text,
+      cpdPoints: cpdPointsController.text.isEmpty
+          ? null
+          : double.tryParse(cpdPointsController.text),
+      numberOfSeats: numberOfSeatsController.text.isEmpty
+          ? null
+          : int.tryParse(numberOfSeatsController.text),
+      priceInAud: 0,
+      priceInUsd: 0,
+      earlyBirdPrice: birdPriceController.text.isEmpty
+          ? null
+          : int.tryParse(birdPriceController.text),
+      earlyBirdEndDate: earlyBirdDateController.text,
+      topicsIncluded: topicsIncludedDescController.text,
+      learningObjectives: learningObjectivesDescController.text,
+      eventType: selectedEvent,
+      courseEventInfo: courseInfoList,
+      sponsorByImage: sponsoredByImgList,
+      terms: termsAndConditionsController.text,
+      refundPolicy: cancellationController.text,
+      contactName: nameController.text,
+      contactEmail: emailController.text,
+      contactPhone: phoneController.text,
+      contactWebsite: websiteUrlController.text,
+      afterwardsPrice: totalPriceController.text.isEmpty
+          ? null
+          : int.tryParse(totalPriceController.text),
+      registerLink: registerLinkController.text,
+      meetingLink: meetingLinkController.text,
+      userRole: null,
+      startDate: startDateController.text,
+      endDate: endDateController.text,
+      isFeatured: false,
+      activeStatus: "ACTIVE",
+      address: addressController.text,
+      maxSubscribers: 1000,
+      createdById: null,
+      companyName: null,
+      communityUserType: selectedCommunityType == "Community User"
+          ? "COMMUNITY_USER"
+          : "BOTH",
+      status: "PREVIEW",
+      type: selectedCourseType ?? "",
+      feedType: "LEARNHUB",
+      startTime: startTimeController.text.isEmpty ? null : startTimeController.text,
+      endTime: endTimeController.text.isEmpty ? null : endTimeController.text,
+    );
   }
 
   void resetForm() {

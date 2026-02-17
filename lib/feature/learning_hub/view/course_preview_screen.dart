@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_description_widget.dart';
@@ -10,11 +10,12 @@ import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
-  final CoursesListingDetails courseDetails;
+  final CourseObject courseDetails;
   final bool showRegisterButton;
   final VoidCallback? onRegisterPressed;
 
@@ -48,7 +49,6 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
     if (cpdPoints is int) return cpdPoints.toString();
     return "0";
   }
-
   @override
   Widget build(BuildContext context) {
     final bannerUrls = (courseDetails.courseBannerImage ?? [])
@@ -141,10 +141,10 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                     children: [
                       // Course Info Card
                       CourseInfoCardWidget(
-                        startTime: courseDetails.startTime ?? "",
-                        endTime: courseDetails.endTime ?? "",
-                        startDate: courseDetails.startDate ?? "",
-                        endDate: courseDetails.endDate ?? "",
+                        startTime: DateFormatUtils.convertTo24HourWithTimezone(courseDetails.startTime ?? ""),
+                        endTime: DateFormatUtils.convertTo24HourWithTimezone(courseDetails.endTime ?? ""),
+                        startDate: DateFormatUtils.formatDateYear(courseDetails.startDate ?? ""),
+                        endDate:  DateFormatUtils.formatDateYear(courseDetails.endDate ?? ""),
                         courseName: courseDetails.courseName ?? "",
                         profilePic: courseDetails.presentedByImage?.url ?? "",
                         presentByName: courseDetails.presentedByName ?? "",
@@ -195,7 +195,7 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               EventDayDataWidget(
-                                descriptions: [eventInfo],
+                                descriptions: [],
                                 images: images,
                               ),
                             ],

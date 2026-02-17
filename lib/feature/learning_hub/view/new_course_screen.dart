@@ -53,8 +53,11 @@ class _JobCreateViewState extends State<NewCourseScreen> {
         actions: [
           GestureDetector(
             onTap: () async {
-              await newCourseVM.setCoursePreviewData();
-              navigationService.navigateTo(RouteList.coursePreviewScreen);
+              final res = await newCourseVM.setCoursePreviewData();
+              navigationService.navigateToWithParams(
+                RouteList.coursePreviewScreen,
+                params: res,
+              );
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

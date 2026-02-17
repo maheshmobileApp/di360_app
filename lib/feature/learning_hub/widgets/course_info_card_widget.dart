@@ -92,14 +92,17 @@ class CourseInfoCardWidget extends StatelessWidget {
                           const SizedBox(height: 2),
                           Row(
                             children: [
-                              CircleAvatar(
-                                backgroundColor: AppColors.geryColor,
-                                radius: 20,
-                                child: CachedNetworkImageWidget(
-                                    imageUrl: profilePic,
-                                    fit: BoxFit.fill,
-                                    errorWidget:
-                                        Image.asset(ImageConst.prfImg)),
+                              ClipOval(
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  color: AppColors.geryColor,
+                                  child: CachedNetworkImageWidget(
+                                      imageUrl: profilePic,
+                                      fit: BoxFit.cover,
+                                      errorWidget:
+                                          Image.asset(ImageConst.prfImg)),
+                                ),
                               ),
                               const SizedBox(width: 10),
                               Flexible(
