@@ -103,7 +103,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                                 maxLines: 2,
                                                 style: TextStyles.medium2(
                                                     color: AppColors.black))),
-                                        ShareWidget(feedId: director.id ?? '',)
+                                        ShareWidget(feedId: director.id ?? '',padding: EdgeInsets.all(2),)
                                       ],
                                     ),
                                     addVertical(6)

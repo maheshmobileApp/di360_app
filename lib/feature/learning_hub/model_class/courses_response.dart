@@ -176,13 +176,15 @@ class CoursesListingDetails {
     isFeatured = json['is_featured'];
     activeStatus = json['active_status'];
     type = json['type'];
-    if (json['address'] != null && json['address'] is List) {
-      address = <Address>[];
-      json['address'].forEach((v) {
-        address!.add(new Address.fromJson(v));
-      });
-    } else {
-      address = [Address(city: json['address'])];
+    if (json['address'] != null) {
+      if (json['address'] is List) {
+        address = <Address>[];
+        json['address'].forEach((v) {
+          address!.add(new Address.fromJson(v));
+        });
+      } else if (json['address'] is String) {
+        address = [Address(city: json['address'])];
+      }
     }
     scheduledAt = json['scheduled_at'];
     maxSubscribers = json['max_subscribers'];

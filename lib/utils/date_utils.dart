@@ -25,6 +25,18 @@ class DateFormatUtils {
     }
   }
 
+  static String convertTo24HourWithTimezone(String time) {
+    if (time.isEmpty) return "";
+    try {
+      final cleaned = time.replaceAll(RegExp(r'\s+'), ' ').trim();
+      final dateFormat = DateFormat('h:mm a');
+      final dateTime = dateFormat.parse(cleaned);
+      return DateFormat('HH:mm:ss').format(dateTime) + '+00';
+    } catch (e) {
+      return time;
+    }
+  }
+
   static String convertToddmmm(String date) {
     final dateTime = DateTime.parse(date);
     return DateFormat('dd MMM').format(dateTime);

@@ -44,7 +44,7 @@ import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/view/apply_job_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_details.dart';
 import 'package:di360_flutter/feature/job_seek/view/job_seek_filter.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view/add_course.dart';
 import 'package:di360_flutter/feature/learning_hub/view/contacts.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_detail_screen.dart';
@@ -183,8 +183,9 @@ class Routes {
         );
       },
       RouteList.MyJobProfileScreen: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments as JobProfiles;
-        return MyJobProfileScreen(jobsListingData: args);
+        final args = ModalRoute.of(context)!.settings.arguments;
+        final jobProfile = args is List<JobProfiles> ? args.first : args as JobProfiles;
+        return MyJobProfileScreen(jobsListingData: jobProfile);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
       RouteList.jobdetailsScreen: (context) {
@@ -270,8 +271,9 @@ class Routes {
       RouteList.coursePreviewScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return CoursePreviewScreen(
-            courseDetails: args as CoursesListingDetails);
+            courseDetails: args as CourseObject);
       },
+      
       RouteList.notificationScreen: (context) => NotificationScreen(),
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
     };

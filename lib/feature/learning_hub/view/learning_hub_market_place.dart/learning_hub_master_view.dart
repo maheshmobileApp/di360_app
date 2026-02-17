@@ -29,11 +29,11 @@ class _JobListingScreenState extends State<LearningHubMasterView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    final viewModel =
-        Provider.of<LearningHubMasterViewModel>(context, listen: false);
+      final viewModel =
+          Provider.of<LearningHubMasterViewModel>(context, listen: false);
 
-    viewModel.clearFilterOptions();
-  });
+      viewModel.clearFilterOptions();
+    });
   }
 
   @override
@@ -103,10 +103,14 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             companyName: course.courseName ?? '',
                             description: course.description ?? '',
                             date: course.startDate ?? "",
-                            cpdHours:
-                                course.cpdPoints?.toStringAsFixed(0) ?? "0",
-                            location: course.address != null && course.address?.isNotEmpty == true
-                                ? course.address?.first.city ?? ""
+                            cpdHours: (course.cpdPoints ?? 0) % 1 == 0
+                                ? (course.cpdPoints ?? 0).toInt().toString()
+                                : (course.cpdPoints ?? 0).toString(),
+                            location: course.address != null &&
+                                    course.address?.isNotEmpty == true
+                                ? (course.address?.first.formattedAddress ??
+                                    course.address?.first.city ??
+                                    "")
                                 : "",
                             onTap: () async {
                               if (seats > 0) {

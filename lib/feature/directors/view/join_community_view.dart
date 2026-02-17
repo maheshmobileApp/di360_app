@@ -3,12 +3,14 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/radio_button_group.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,7 +42,7 @@ class JoinCommunityView extends StatelessWidget
                       controller: directorVM.firstNameController,
                       hintText: "Enter First Name",
                       title: "First Name",
-                      readOnly: true,
+                      //readOnly: true,
                       maxLength: 100,
                     ),
                     SizedBox(height: 8),
@@ -48,7 +50,7 @@ class JoinCommunityView extends StatelessWidget
                       controller: directorVM.lastNameController,
                       hintText: "Enter Last Name",
                       title: "Last Name",
-                      readOnly: true,
+                      //readOnly: true,
                       maxLength: 100,
                     ),
                     SizedBox(height: 8),
@@ -61,14 +63,31 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                    title: "Phone",
+                    hintText: "Enter phone number",
+                    keyboardType: TextInputType.phone,
+                    maxLength: 9,
+                    controller: directorVM.phoneController,
+                    validator: validateContactPhoneNumber,
+                    prefixIcon: PhonePrefixDropdown(
+                      value: directorVM.selectedPhoneCode??"",
+                      items: directorVM.phoneCodeList,
+                      onChanged: (value) {
+                        directorVM.setPhoneCode(value ?? "");
+                      },
+                    ),
+                  ),
+                   /* InputTextField(
                       controller: directorVM.phoneController,
                       hintText: "Enter Phone Number",
                       title: "Phone",
                       keyboardType: TextInputType.phone,
                       maxLength: 10,
                       validator: validatePhoneNumber,
-                    ),
+                    ),*/
                     SizedBox(height: 8),
+                    _buildStates(directorVM),
+                     SizedBox(height: 8),
                     CustomRadioGroup<String>(
                       title: "Do you have a membership number?",
                       options: const ["Yes", "No"],
@@ -86,6 +105,9 @@ class JoinCommunityView extends StatelessWidget
                             hintText: "Enter membership number",
                             title: "Membership Number",
                             maxLength: 100,
+                            onChange: (value) {
+                              directorVM.setMembershipNumber(value);
+                            },
                           )
                         : SizedBox.shrink(),
                     SizedBox(height: 30),
@@ -106,11 +128,13 @@ class JoinCommunityView extends StatelessWidget
                         const SizedBox(width: 12),
                         Expanded(
                           child: AppButton(
+                              btnColor: directorVM.validateJoinCommunityFields()
+                                  ? AppColors.primaryColor
+                                  : AppColors.greysecond,
                               height: 40,
-                              text: directorVM.selectedMembership == "Yes"
-                                  ? "Submit"
-                                  : 'Register Now',
+                              text: "Register Now",
                               onTap: () {
+                                if (!directorVM.validateJoinCommunityFields()) return;
                                 directorVM.selectedMembership == "Yes"
                                     ? directorVM.communityRegsiter(
                                         context,
@@ -140,6 +164,31 @@ class JoinCommunityView extends StatelessWidget
               ),
             ));
       },
+    );
+  }
+
+  Widget _buildStates(DirectoryViewModel viewModel) {
+    final uniqueStates = viewModel.states.toSet().toList();
+
+    return CustomDropDown(
+      isRequired: true,
+      value: uniqueStates.contains(viewModel.selectedState)
+          ? viewModel.selectedState
+          : null,
+      title: "State",
+      onChanged: (v) {
+        viewModel.setSelectedState(v as String);
+      },
+      items: uniqueStates.map<DropdownMenuItem<Object>>((String value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select State",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select state'
+          : null,
     );
   }
 }
