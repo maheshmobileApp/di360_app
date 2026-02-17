@@ -72,6 +72,11 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setMembershipNumber(String value) {
+    membershipNumberController.text = value;
+    notifyListeners();
+  }
+
   void setSelectedMembership(String? value) {
     selectedMembership = value;
     notifyListeners();

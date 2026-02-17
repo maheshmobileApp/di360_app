@@ -42,7 +42,7 @@ class JoinCommunityView extends StatelessWidget
                       controller: directorVM.firstNameController,
                       hintText: "Enter First Name",
                       title: "First Name",
-                      readOnly: true,
+                      //readOnly: true,
                       maxLength: 100,
                     ),
                     SizedBox(height: 8),
@@ -50,7 +50,7 @@ class JoinCommunityView extends StatelessWidget
                       controller: directorVM.lastNameController,
                       hintText: "Enter Last Name",
                       title: "Last Name",
-                      readOnly: true,
+                      //readOnly: true,
                       maxLength: 100,
                     ),
                     SizedBox(height: 8),
@@ -105,6 +105,9 @@ class JoinCommunityView extends StatelessWidget
                             hintText: "Enter membership number",
                             title: "Membership Number",
                             maxLength: 100,
+                            onChange: (value) {
+                              directorVM.setMembershipNumber(value);
+                            },
                           )
                         : SizedBox.shrink(),
                     SizedBox(height: 30),
