@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/toast.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/certificates_view.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
@@ -51,7 +52,7 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
           future: LocalStorage.getStringVal(LocalStorageConst.type),
           builder: (context, snapshot) {
             if (snapshot.hasData &&
-                (snapshot.data == "SUPPLIER" || snapshot.data == "PRACTICE")) {
+                (snapshot.data == UserRole.supplier.value || snapshot.data == UserRole.practice.value)) {
               return FutureBuilder<String>(
                 future: LocalStorage.getStringVal(LocalStorageConst.userId),
                 builder: (context, userSnapshot) {

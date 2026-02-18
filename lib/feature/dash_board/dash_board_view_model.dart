@@ -18,6 +18,7 @@ import 'package:di360_flutter/feature/news_feed_community/view/news_feed_communi
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,7 +50,7 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   void _updatePages() {
-    if (_userType == "SUPPLIER") {
+    if (_userType == UserRole.supplier.value) {
       _pages = [
         HomeScreen(),
         NewsFeedScreen(),
@@ -58,7 +59,7 @@ class DashBoardViewModel extends ChangeNotifier {
         CataloguePage(),
         AccountScreen(),
       ];
-    } else if (_userType == "PRACTICE") {
+    } else if (_userType == UserRole.practice.value) {
       _pages = [
         HomeScreen(),
         NewsFeedScreen(),
@@ -85,7 +86,7 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   updateIndex(int index, BuildContext context) async {
-    if (_userType == "SUPPLIER") {
+    if (_userType == UserRole.supplier.value) {
       switch (index) {
         case 0: // Home
           break;
@@ -109,7 +110,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 5: // Account
           break;
       }
-    } else if (_userType == "PRACTICE") {
+    } else if (_userType == UserRole.practice.value) {
       switch (index) {
         case 0: // Home
           break;

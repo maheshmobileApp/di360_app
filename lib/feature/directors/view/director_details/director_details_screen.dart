@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_directors/view/my_director/user_detail
 import 'package:di360_flutter/feature/directors/view/director_details/director_basic_info.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                 ),
               ],
             ),
-            (directionalVM.userType == "PROFESSIONAL" || directionalVM.userType  == "SUPPLIER") && (directionalVM.directorCommunityID != null) && (directionalVM.directorDetails?.dentalSupplierId != directionalVM.userId)
+            (directionalVM.userType == UserRole.professional.value || directionalVM.userType  == UserRole.supplier.value) && (directionalVM.directorCommunityID != null) && (directionalVM.directorDetails?.dentalSupplierId != directionalVM.userId)
                 ? Positioned(
                     top: 20,
                     right: 20,
@@ -85,7 +86,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                       onTap: () async {
                         directionalVM.clearCommunityFields();
 
-                        (directionalVM.userType  == "PROFESSIONAL")
+                        (directionalVM.userType  == UserRole.professional.value)
                             ? ((directionalVM.communityStatusString ==
                                     "Join Community")
                                 ? navigationService
@@ -105,7 +106,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                              directionalVM.userType  == "PROFESSIONAL"
+                              directionalVM.userType  == UserRole.professional.value
                                   ? directionalVM.communityStatusString
                                   : directionalVM.partnershipStatusString,
                               style: TextStyles.semiBold(

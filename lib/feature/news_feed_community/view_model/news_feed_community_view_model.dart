@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_c
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -188,7 +189,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "where": {
         "status": {"_eq": listingStatus},
         "community_id": {
-          "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
+          "_eq": (type == UserRole.professional.value) ? profCommunityId : communityId
         },
         if (searchController.text.isNotEmpty && searchBarOpen)
           "_or": [
@@ -242,7 +243,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (!loadMore) {
       Loaders.circularHideLoader(context);
     }
-    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
+    (type == UserRole.supplier.value) ? getAllStatusCounts() : () {};
 
     _isLoadingMore = false;
     notifyListeners();
@@ -273,7 +274,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           "_in": [selectedCategoryId]
         },
         "community_id": {
-          "_eq": (type == "PROFESSIONAL") ? profCommunityId : communityId
+          "_eq": (type == UserRole.professional.value) ? profCommunityId : communityId
         }
       },
       "limit": _newsFeedLimit,
@@ -299,7 +300,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (!loadMore) {
       Loaders.circularHideLoader(context);
     }
-    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
+    (type == UserRole.supplier.value) ? getAllStatusCounts() : () {};
 
     _isLoadingMore = false;
     notifyListeners();
@@ -332,7 +333,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "role_type": type,
     };
 
-    if (type == "PROFESSIONAL") {
+    if (type == UserRole.professional.value) {
       fields["dental_professional_id"] = userId;
     } else {
       fields["dental_supplier_id"] = userId;
@@ -376,12 +377,12 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "web_url": websiteLinkController.text,
       "user_role": type,
       "user_id": userId,
-      "status": (type == "PROFESSIONAL") ? "PENDING" : "PUBLISHED",
+      "status": (type == UserRole.professional.value) ? "PENDING" : "PUBLISHED",
       "feed_type": "NEWSFEED",
-      "community_id": (type == "PROFESSIONAL") ? profCommunityId : communityId,
+      "community_id": (type == UserRole.professional.value) ? profCommunityId : communityId,
     };
 
-    if (type == "PROFESSIONAL") {
+    if (type == UserRole.professional.value) {
       fields["dental_professional_id"] = userId;
     } else {
       fields["dental_supplier_id"] = userId;
@@ -444,7 +445,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           : scaffoldMessenger("News Feed Un-Published Successfully");
     }
     getAllNewsFeeds(context);
-    (type == "SUPPLIER") ? getAllStatusCounts() : () {};
+    (type == UserRole.supplier.value) ? getAllStatusCounts() : () {};
     notifyListeners();
   }
   /******************News Feed Upload ************************ */
@@ -551,10 +552,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "user_id": userId,
       "status": "PUBLISHED",
       "feed_type": "NEWSFEED",
-      "community_id": (type == "PROFESSIONAL") ? profCommunityId : communityId,
+      "community_id": (type == UserRole.professional.value) ? profCommunityId : communityId,
     };
 
-    if (type == "PROFESSIONAL") {
+    if (type == UserRole.professional.value) {
       fields["dental_professional_id"] = userId;
     } else {
       fields["dental_supplier_id"] = userId;
@@ -602,7 +603,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {
-      "value": type == "PROFESSIONAL" ? profCommunityId : communityId
+      "value": type == UserRole.professional.value ? profCommunityId : communityId
     };
     final res = await repo.getBannerUrl(variables);
     bannerData = res;

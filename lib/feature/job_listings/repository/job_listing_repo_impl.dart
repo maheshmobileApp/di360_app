@@ -23,6 +23,7 @@ import 'package:di360_flutter/feature/job_listings/quary/update_joblisting_statu
 import 'package:di360_flutter/feature/job_listings/quary/update_message_query.dart';
 import 'package:di360_flutter/feature/job_listings/repository/job_listing_repository.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class JobListingRepoImpl extends JobListingRepository {
   final HttpService http = HttpService();
@@ -40,12 +41,12 @@ class JobListingRepoImpl extends JobListingRepository {
         }
       },
     ];
-    if (type == "SUPPLIER") {
+    if (type == UserRole.supplier.value) {
       andList.add({
         "dental_supplier_id": {"_eq": userId}
       });
     }
-    if (type == "PRACTICE") {
+    if (type == UserRole.practice.value) {
       andList.add({
         "dental_practice_id": {"_eq": userId}
       });
@@ -76,16 +77,16 @@ class JobListingRepoImpl extends JobListingRepository {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final Map<String, dynamic> variables = {};
 
-    if (type == "SUPPLIER") {
+    if (type == UserRole.supplier.value) {
       variables["supplierId"] = userId;
     }
-    if (type == "PRACTICE") {
+    if (type == UserRole.practice.value) {
       variables["where"] = {
         "dental_practice_id": {"_eq": userId}
       };
     }
     final String query =
-        (type == "SUPPLIER") ? getJobStatusCount : getJobStatusCountPractice;
+        (type == UserRole.supplier.value) ? getJobStatusCount : getJobStatusCountPractice;
 
     final data = await http.query(query, variables: variables);
     final result = JobStatusCountData.fromJson(data);

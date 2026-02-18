@@ -19,6 +19,7 @@ import 'package:di360_flutter/feature/news_feed_community_comment/view/community
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -180,10 +181,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                 ?.url ??
                             "")
                         : "",
-                    title: type == "PROFESSIONAL"
+                    title: type == UserRole.professional.value
                         ? "${viewModel.profCommunityName} Community"
                         : "${businessname}Community",
-                    leaveButton: type == "PROFESSIONAL",
+                    leaveButton: type == UserRole.professional.value,
                     onLeaveTap: () async {
                       showAlertMessage(context,
                           'Are you sure you want to leave this Community?',
@@ -242,14 +243,14 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   feedUserRole: newsItem.userRole ?? "",
                                   imageUrls: newsItem.postImage ?? [],
                                   id: newsItem.id ?? '',
-                                  logoUrl: (newsItem.userRole == "PROFESSIONAL")
+                                  logoUrl: (newsItem.userRole == UserRole.professional.value)
                                       ? newsItem.dentalProfessional
                                               ?.profileImage?.url ??
                                           ''
                                       : newsItem.dentalSupplier?.logo?.url ??
                                           "",
                                   companyName: (newsItem.userRole ==
-                                          "PROFESSIONAL")
+                                          UserRole.professional.value)
                                       ? newsItem.dentalProfessional?.name ?? ''
                                       : newsItem.dentalSupplier?.businessName ??
                                           "",
@@ -279,7 +280,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     final feedTypeEnum =
                                         FeedType.fromString(newsItem.feedType);
                                     switch (feedTypeEnum) {
-                                      case FeedType.LEARNHUB:
+                                      case FeedType.learnhub:
                                         await courseListingVM.getCourseDetails(
                                           context,
                                           newsItem.courses?.first.id ?? "",
@@ -287,7 +288,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         navigationService.navigateTo(
                                             RouteList.courseDetailScreen);
                                         break;
-                                      case FeedType.JOBS:
+                                      case FeedType.jobs:
                                         await jobListingsViewModel
                                             .getJobListingById(context,
                                                 newsItem.jobs?.first.id ?? "");

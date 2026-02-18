@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_mo
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -49,13 +50,12 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
   gridOnTap(String title, BuildContext context,
       DashBoardViewModel dashBoardVM) async {
     final type = LocalStorage.getStringVal(LocalStorageConst.type);
-    print('****************Type: $type');
     if (title == 'News Feed') {
       dashBoardVM.setIndex(1, navigatorKey.currentContext!);
     } else if (title == 'Job Seek') {
       dashBoardVM.setIndex(2, navigatorKey.currentContext!);
     } else if (title == 'Catalogue') {
-      dashBoardVM.setIndex(type == "PRACTICE" ? 3 : 4, navigatorKey.currentContext!);
+      dashBoardVM.setIndex(type == UserRole.practice.value ? 3 : 4, navigatorKey.currentContext!);
     } else if (title == 'Support') {
       navigationService.navigateTo(RouteList.supportScreen);
     } else if (title == 'Directory') {

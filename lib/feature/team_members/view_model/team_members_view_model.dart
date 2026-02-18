@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/team_members/repository/team_members_repo_
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class TeamMembersViewModel extends ChangeNotifier {
@@ -230,7 +231,7 @@ class TeamMembersViewModel extends ChangeNotifier {
         "password": passwordController.text,
         "name": userNameController.text,
         "sub_type": "SUB_SUPPLIER",
-        "type": "SUPPLIER",
+        "type": UserRole.supplier.value,
         "supplier_access_id": id,
         "business_name": businessName,
         "professionType": professionType,
@@ -310,7 +311,7 @@ class TeamMembersViewModel extends ChangeNotifier {
         "password": passwordController.text,
         "name": userNameController.text,
         "sub_type": "SUB_SUPPLIER",
-        "type": "SUPPLIER",
+        "type": UserRole.supplier.value,
         "supplier_access_id": id,
         "business_name": businessName,
         "professionType": professionType,

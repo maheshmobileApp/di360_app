@@ -19,6 +19,7 @@ import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -289,7 +290,7 @@ class DirectoryViewModel extends ChangeNotifier {
       directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
       directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
       if (directorCommunityID != null) {
-        (type == "PROFESSIONAL")
+        (type == UserRole.professional.value)
             ? getCommunityStatus(directorCommunityID ?? "")
             : getPartnershipStatus(directorCommunityID ?? "");
       }

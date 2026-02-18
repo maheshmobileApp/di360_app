@@ -77,14 +77,6 @@ class JoinCommunityView extends StatelessWidget
                       },
                     ),
                   ),
-                   /* InputTextField(
-                      controller: directorVM.phoneController,
-                      hintText: "Enter Phone Number",
-                      title: "Phone",
-                      keyboardType: TextInputType.phone,
-                      maxLength: 10,
-                      validator: validatePhoneNumber,
-                    ),*/
                     SizedBox(height: 8),
                     _buildStates(directorVM),
                      SizedBox(height: 8),

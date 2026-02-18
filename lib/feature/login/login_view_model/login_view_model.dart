@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class LoginViewModel extends ChangeNotifier {
           final result = LogInData.fromJson(res);
           await getSuppliers(result.loginApi?.id ?? '');
 
-          (result.loginApi?.type == "SUPPLIER")
+          (result.loginApi?.type == UserRole.supplier.value)
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
               : () {};
           await LocalStorage.setStringVal(

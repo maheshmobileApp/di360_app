@@ -35,7 +35,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
-    final newsFeedTypeEnum = FeedType.fromString(newsfeeds?.feedType ?? '');
+    final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
     return Container(
         color: AppColors.whiteColor,
         child: GestureDetector(
@@ -83,7 +83,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             addVertical(5),
             if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
               LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-            if (newsFeedTypeEnum == FeedType.JOBS)
+            if (newsFeedTypeEnum == FeedType.jobs.value)
               BuildJobTypeWidget(
                   job: newsfeeds?.jobs?.isNotEmpty ?? false
                       ? newsfeeds?.jobs?.first
@@ -108,7 +108,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   if (newsfeeds?.webUrl != null &&
                       newsfeeds!.webUrl!.isNotEmpty)
                     addVertical(8),
-                  if (newsFeedTypeEnum == FeedType.CATALOGUE)
+                  if (newsFeedTypeEnum == FeedType.catalogue.value)
                     _buildCatalogueRow(catalogueViewModel, context),
                   Divider(color: AppColors.dividerColor),
                   addVertical(4),
