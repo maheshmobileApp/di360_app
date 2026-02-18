@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class YoutubeThumbnailPlayerWidget extends StatefulWidget {
   final String videoUrl;
@@ -16,81 +16,86 @@ class YoutubeThumbnailPlayerWidget extends StatefulWidget {
 
 class _YoutubeThumbnailPlayerWidgetState
     extends State<YoutubeThumbnailPlayerWidget> {
-  late String videoId;
-  bool isPlaying = false;
   late YoutubePlayerController _controller;
+  late String videoId;
+
+  bool showPlayer = false;
 
   @override
   void initState() {
     super.initState();
-    videoId = YoutubePlayer.convertUrlToId(widget.videoUrl) ?? '';
+
+    videoId = YoutubePlayerController.convertUrlToId(widget.videoUrl) ?? '';
+
     _controller = YoutubePlayerController(
-      initialVideoId: videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
+      params: const YoutubePlayerParams(
+        showControls: true,
+        showFullscreenButton: true,
+        enableCaption: true,
         mute: false,
+        strictRelatedVideos: true,
       ),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.close();
     super.dispose();
+  }
+
+  void _playVideo() {
+    setState(() {
+      showPlayer = true;
+    });
+
+    _controller.loadVideoById(videoId: videoId);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isPlaying) {
-      return YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
-      );
-    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: showPlayer
+          ? AspectRatio(
+              aspectRatio: 16 / 9,
+              child: YoutubePlayer(
+                controller: _controller,
+              ),
+            )
+          : GestureDetector(
+              onTap: _playVideo,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  /// Thumbnail
+                  Image.network(
+                    "https://img.youtube.com/vi/$videoId/0.jpg",
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          isPlaying = true;
-        });
-        _controller.play();
-      },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          /// Thumbnail
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              "https://img.youtube.com/vi/$videoId/0.jpg",
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
+                  /// Dark overlay
+                  Container(
+                    color: Colors.black.withOpacity(0.3),
+                  ),
 
-          /// Dark overlay
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(12),
+                  /// Play button
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          /// Play Button
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: const Icon(
-              Icons.play_arrow,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -185,11 +185,14 @@ class _JobProfileViewState extends State<JobProfileView> {
               text: 'Save Draft',
               height: 42,
               onPressed: () async {
+                if (!mounted) return;
                 (jobProfileListVM.editProfileEnable)
                     ? await jobProfileVM.updateJobProfile(
                         context, true, jobProfileListVM.jobProfileId ?? "")
                     : await jobProfileVM.createJobProfile(context, true);
+                if (!mounted) return;
                 await jobProfileListVM.fetchJobProfiles(context);
+                if (!mounted) return;
                 Loaders.circularHideLoader(context);
 
                 navigationService.goBack();
@@ -216,11 +219,14 @@ class _JobProfileViewState extends State<JobProfileView> {
                 final isValid = currentFormKey.currentState?.validate()??false;
                 if (isValid) {
                   if (isLastStep) {
+                    if (!mounted) return;
                     (jobProfileListVM.editProfileEnable)
                         ? await jobProfileVM.updateJobProfile(
                             context, false, jobProfileListVM.jobProfileId ?? "")
                         : await jobProfileVM.createJobProfile(context, false);
+                    if (!mounted) return;
                     await jobProfileListVM.fetchJobProfiles(context);
+                    if (!mounted) return;
                     Loaders.circularHideLoader(context);
 
                     navigationService.goBack();

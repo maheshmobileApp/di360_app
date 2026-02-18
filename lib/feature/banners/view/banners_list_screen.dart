@@ -26,7 +26,10 @@ class _BannersListScreenState extends State<BannersListScreen>
     final bannersVM = Provider.of<BannersViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBarWidget(),
+        appBar: AppBarWidget(
+          logo: false,
+          title: 'Banners',
+        ),
         body: Column(
           children: [
             SizedBox(

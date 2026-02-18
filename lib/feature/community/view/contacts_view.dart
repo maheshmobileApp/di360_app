@@ -52,6 +52,7 @@ class _ContactsViewState extends State<ContactsView> {
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
           title: "Contacts",
+           logo: false,
           searchWidget: false,
           filterWidget: GestureDetector(
             onTap: () =>

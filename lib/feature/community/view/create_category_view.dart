@@ -26,6 +26,7 @@ class _CreateCategoryViewState extends State<CreateCategoryView>
         appBar: AppBarWidget(
           title: "Partnership Registration",
           searchWidget: false,
+           logo: false,
         ),
         body: Form(
           key: _formKey,

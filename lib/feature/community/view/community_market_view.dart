@@ -28,6 +28,7 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
         title: "Community",
+         logo: false,
         searchWidget: false,
       ),
       body: Column(

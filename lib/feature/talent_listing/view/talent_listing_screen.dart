@@ -53,6 +53,8 @@ class _TalentListingScreenState extends State<TalentListingScreen>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
+        logo: false,
+        title: 'Talent Listing',
           searchWidget: false,
           filterWidget: Row(
             children: [

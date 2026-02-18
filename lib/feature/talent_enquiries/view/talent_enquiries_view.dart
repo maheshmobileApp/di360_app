@@ -29,7 +29,8 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       final vm = Provider.of<TalentEnquiryViewModel>(context, listen: false);
       vm.getCoursesListingData(loadMore: true);
     }
@@ -46,8 +47,11 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
     final vm = Provider.of<TalentEnquiryViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBarWidget(searchWidget: false,
-          ),
+      appBar: AppBarWidget(
+         logo: false,
+         title: "Talent Enquiries",
+        searchWidget: false,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -66,15 +70,20 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
                   )
                 : ListView.builder(
                     controller: _scrollController,
-                    itemCount: vm.talentEnquiryData!.talentEnquiries!.length + (vm.isLoadingMoreEnquiries ? 1 : 0),
+                    itemCount: vm.talentEnquiryData!.talentEnquiries!.length +
+                        (vm.isLoadingMoreEnquiries ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (index == vm.talentEnquiryData!.talentEnquiries!.length) {
-                        return Center(child: Padding(
+                      if (index ==
+                          vm.talentEnquiryData!.talentEnquiries!.length) {
+                        return Center(
+                            child: Padding(
                           padding: EdgeInsets.all(16),
-                          child: CircularProgressIndicator(color: AppColors.primaryColor),
+                          child: CircularProgressIndicator(
+                              color: AppColors.primaryColor),
                         ));
                       }
-                      final jobData = vm.talentEnquiryData?.talentEnquiries?[index];
+                      final jobData =
+                          vm.talentEnquiryData?.talentEnquiries?[index];
                       try {
                         return TalentEnquiryCard(
                           jobProfiles: jobData,

@@ -48,6 +48,7 @@ class _JoinRequestViewState extends State<JoinRequestView> {
       appBar: AppBarWidget(
         title: "Join Requests",
         searchWidget: false,
+         logo: false,
       ),
       body: Column(
         children: [

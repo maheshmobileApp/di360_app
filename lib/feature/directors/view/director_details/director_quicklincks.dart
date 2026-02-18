@@ -21,7 +21,7 @@ class _DirectorQuickLinksState extends State<DirectorQuickLinks> {
 
     return Scaffold(
       backgroundColor: Colors.white.withOpacity(0.95),
-      appBar: AppBarWidget(title: 'Quick Links', searchWidget: false),
+      appBar: AppBarWidget(title: 'Quick Links', logo: false, searchWidget: false),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(

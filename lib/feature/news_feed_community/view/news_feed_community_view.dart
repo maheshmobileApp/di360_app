@@ -101,6 +101,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
             return Scaffold(
               backgroundColor: AppColors.whiteColor,
               appBar: AppBarWidget(
+                 logo: false,
                 title: "Community",
                 searchAction: () =>
                     viewModel.setSearchBar(!viewModel.searchBarOpen),

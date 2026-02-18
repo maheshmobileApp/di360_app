@@ -155,7 +155,7 @@ class TeamMembersViewModel extends ChangeNotifier {
     final res = await repo.deleteSupplierAccess(variables);
     if (res != null) {
       scaffoldMessenger("Team Member Successfully Deleted");
-      getTeamMembers();
+      await getTeamMembers();
     }
     notifyListeners();
   }

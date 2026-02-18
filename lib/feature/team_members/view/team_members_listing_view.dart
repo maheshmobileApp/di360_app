@@ -73,6 +73,7 @@ class _JobListingScreenState extends State<TeamMembersListingView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+          logo: false,
           title: 'Team Members',
           searchWidget: false
         ),

@@ -50,6 +50,7 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
           return Scaffold(
             backgroundColor: AppColors.whiteColor,
             appBar: AppBarWidget(
+                logo: false,
                 title: "Conversations",
                 searchAction: () =>
                     supportVM.setSearchBar(!supportVM.searchBarOpen)),
@@ -180,11 +181,6 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
             ),
             floatingActionButton: GestureDetector(
                 onTap: () {
-                  print('FloatingActionButton tapped - showing notification');
-                  NotificationService.showNotification(
-                    title: 'Support Ticket',
-                    body: 'Ticket creation started',
-                  );
                   supportVM.getSupportRequestsReasons();
                   supportVM.clearData();
                   showModalBottomSheet(

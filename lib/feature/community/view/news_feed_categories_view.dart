@@ -43,6 +43,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
       appBar: AppBarWidget(
         title: "News Feed Categories",
         searchWidget: false,
+         logo: false,
       ),
       body: Column(
         children: [

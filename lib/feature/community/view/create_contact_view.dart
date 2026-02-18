@@ -24,6 +24,7 @@ class _CreateCategoryViewState extends State<CreateContactView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+           logo: false,
           title: (viewModel.contactEditMode) ? "Edit Contact":"Add Contact",
           searchWidget: false,
         ),

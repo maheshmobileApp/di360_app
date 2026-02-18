@@ -79,6 +79,7 @@ dependencies:
 
   http: any
   path_provider: any
+  youtube_player_iframe: ^5.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
