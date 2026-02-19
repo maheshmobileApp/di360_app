@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/professional_add_director/repositorys/add_
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
@@ -170,7 +171,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "education": getEducation,
         "hobbies": getHobbies,
         "special_interests": [],
-        "type": "PROFESSIONAL",
+        "type": UserRole.professional.value,
         "latitude": addDirectorVM.getBasicInfoData.isEmpty
             ? null
             : addDirectorVM.getBasicInfoData.first.latitude == null
@@ -230,7 +231,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "education": getEducation,
         "hobbies": getHobbies,
         "special_interests": [],
-        "type": "PROFESSIONAL"
+        "type": UserRole.professional.value
       }
     });
     if (result != null) {

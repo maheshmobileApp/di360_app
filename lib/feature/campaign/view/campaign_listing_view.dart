@@ -77,6 +77,7 @@ class _JobListingScreenState extends State<CampaignListingView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+          logo: false,
             title: 'Campaign management',
             searchAction: () {
               viewModel.toggleSearchBar();

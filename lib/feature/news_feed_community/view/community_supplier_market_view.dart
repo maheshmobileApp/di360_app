@@ -20,6 +20,7 @@ class _CreateCategoryViewState extends State<CommunitySupplierMarketView>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
+         logo: false,
         title:  "Community",
         searchWidget: false,
       ),

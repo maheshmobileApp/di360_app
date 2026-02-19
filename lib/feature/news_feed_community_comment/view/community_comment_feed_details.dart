@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -17,7 +18,8 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CommunityCommentFeedDetails extends StatelessWidget with BaseContextHelpers {
+class CommunityCommentFeedDetails extends StatelessWidget
+    with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
   const CommunityCommentFeedDetails({super.key, required this.newsfeeds});
 
@@ -53,7 +55,7 @@ class CommunityCommentFeedDetails extends StatelessWidget with BaseContextHelper
                 webSiteText(newsfeeds?.webUrl ?? ''),
               if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
                 addVertical(8),
-              if (newsfeeds?.feedType == 'CATALOGUE')
+              if (newsfeeds?.feedType == FeedType.catalogue.value)
                 _buildCatalogueRow(catalogueViewModel, context),
               Divider(color: AppColors.dividerColor),
               addVertical(4),
@@ -186,7 +188,7 @@ class CommunityCommentFeedDetails extends StatelessWidget with BaseContextHelper
 
   Widget _buildStatsRow(String likeCount, String commentCount,
       NewsFeedCommunityViewModel viewModel, BuildContext context) {
-    final isLiked = newsfeeds?.myLike?.isNotEmpty??false;
+    final isLiked = newsfeeds?.myLike?.isNotEmpty ?? false;
 
     return Row(
       children: [
@@ -248,7 +250,6 @@ class CommunityCommentFeedDetails extends StatelessWidget with BaseContextHelper
         false;
   }
 
-  
   Widget _buildCatalogueRow(
       CatalogueViewModel catalogueVM, BuildContext context) {
     return Row(

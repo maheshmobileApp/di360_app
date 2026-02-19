@@ -14,6 +14,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -96,9 +97,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> getTheViewProfileData() async {
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (userType == "PRACTICE") {
+    if (userType == UserRole.practice.value) {
       await getPracticeViewProfileData();
-    } else if (userType == "PROFESSIONAL") {
+    } else if (userType == UserRole.professional.value) {
       await getProfessionalViewProfileData();
     } else {
       await getSuppilerViewProfileData();
@@ -314,7 +315,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     Map<String, dynamic> requestData = {
       "id": userId,
     };
-    if (type == "PRACTICE") {
+    if (type == UserRole.practice.value) {
       requestData["practiceObj"] = {
         "name": nameController.text,
         "email": emailController.text,
@@ -331,7 +332,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "profession_type": selectedBusineestype?.name,
         "profile_completed": true
       };
-    } else if (type == "PROFESSIONAL") {
+    } else if (type == UserRole.professional.value) {
       requestData["_set"] = {
         "name": nameController.text,
         "email": emailController.text,
@@ -376,9 +377,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
     final result = await repo.updateViewProfileData(requestData);
     if (result != null) {
-      type == "PRACTICE"
+      type == UserRole.practice.value
           ? getPracticeViewProfileData()
-          : type == "PROFESSIONAL"
+          : type == UserRole.professional.value
               ? getProfessionalViewProfileData()
               : getSuppilerViewProfileData();
       Loaders.circularHideLoader(context);

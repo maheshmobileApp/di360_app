@@ -38,6 +38,7 @@ class _MembershipRegistrationViewState extends State<MembershipRegistrationView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+           logo: false,
           title: "Membership Registration",
           searchWidget: false,
         ),

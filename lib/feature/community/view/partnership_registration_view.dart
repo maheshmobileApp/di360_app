@@ -39,6 +39,7 @@ class _PartnershipRegistrationViewState
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+           logo: false,
           title: "Partnership Registration",
           searchWidget: false,
         ),

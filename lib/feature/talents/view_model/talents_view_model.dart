@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dart';
 import 'package:di360_flutter/feature/talents/repository/talent_repo_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -385,8 +386,8 @@ class TalentsViewModel extends ChangeNotifier {
       "jobHiringsDetails": {
         "job_profiles_id": id,
         "dental_professional_id": dentalProfessionalId,
-        "dental_supplier_id": type == "SUPPLIER" ? userId : null,
-        "dental_practice_id": type == "PRACTICE" ? userId : null,
+        "dental_supplier_id": type == UserRole.supplier.value ? userId : null,
+        "dental_practice_id": type == UserRole.practice.value ? userId : null,
         "hiring_status": "PENDING"
       }
     };

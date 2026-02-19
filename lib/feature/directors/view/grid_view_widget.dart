@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_directories_res.
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                   final type = await LocalStorage.getStringVal(
                                       LocalStorageConst.type);
                                   Loaders.circularShowLoader(context);
-                                  await (type == "SUPPLIER")
+                                  await (type == UserRole.supplier.value)
                                       ? value
                                           .getBusinessSupplierDetails(context)
                                       : value.getBusinessProfessionalDetails(

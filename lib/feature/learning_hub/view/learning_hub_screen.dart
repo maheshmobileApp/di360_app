@@ -73,6 +73,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
             title: 'Course Listing',
+            logo: false,
             searchAction: () =>
                 courseListingVM.setSearchBar(!courseListingVM.searchBarOpen)),
         body: Column(

@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_v
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -55,7 +56,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
                 webSiteText(newsfeeds?.webUrl ?? ''),
               if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
                 addVertical(8),
-              if (newsfeeds?.feedType == 'CATALOGUE')
+              if (newsfeeds?.feedType == FeedType.catalogue.value)
                 _buildCatalogueRow(catalogueViewModel, context),
               Divider(color: AppColors.dividerColor),
               addVertical(4),

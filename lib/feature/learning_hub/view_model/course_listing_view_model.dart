@@ -178,6 +178,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       if (isLoadingMoreCourses || !hasMoreCourses) return;
       isLoadingMoreCourses = true;
     } else {
+      Loaders.circularShowLoader(context);
       _courseListingOffset = 0;
       hasMoreCourses = true;
     }
@@ -201,6 +202,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     
     hasMoreCourses = (res?.length ?? 0) >= _courseListingLimit;
     _courseListingOffset += res?.length ?? 0;
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 

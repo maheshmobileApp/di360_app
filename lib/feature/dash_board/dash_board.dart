@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +67,7 @@ class DashBoard extends StatelessWidget {
                             height: 24, width: 24,
                             color: AppColors.primaryColor),
                         label: 'Job Seek'),
-                        if (type == "PROFESSIONAL" || type =="SUPPLIER")
+                        if (type == UserRole.professional.value || type == UserRole.supplier.value)
                       BottomNavigationBarItem(
                           icon: Icon(Icons.group, size: 24), label: 'Community'),
                     BottomNavigationBarItem(

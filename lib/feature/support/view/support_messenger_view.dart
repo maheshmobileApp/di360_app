@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/support/model/get_support_requests_res.dar
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/support/widgets/attachment_picker.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -50,7 +51,7 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                   // Avatar Circle
                   ClipOval(
                     child: CachedNetworkImageWidget(
-                      imageUrl: (type == "SUPPLIER")
+                      imageUrl: (type == UserRole.supplier.value)
                           ? widget.supportRequest?.dentalSupplier?.logo?.url ??
                               ""
                           : widget.supportRequest?.dentalProfessional
@@ -74,7 +75,7 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (type == "SUPPLIER")
+                        (type == UserRole.supplier.value)
                             ? widget.supportRequest?.dentalSupplier
                                     ?.businessName ??
                                 ""

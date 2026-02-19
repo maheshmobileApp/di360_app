@@ -46,6 +46,7 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
+         logo: false,
         title: "Partnership Requests",
         searchWidget: false,
       ),

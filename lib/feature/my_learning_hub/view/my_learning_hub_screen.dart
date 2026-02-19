@@ -33,8 +33,10 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      final myLearningHubVM = Provider.of<MyLearningHubViewModel>(context, listen: false);
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final myLearningHubVM =
+          Provider.of<MyLearningHubViewModel>(context, listen: false);
       myLearningHubVM.getCoursesWithMyRegistrations(context, loadMore: true);
     }
   }
@@ -54,6 +56,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+            logo: false,
             title: 'My Learning Hub',
             searchAction: () =>
                 myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen),
@@ -71,15 +74,17 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                         myLearningHubVM.getCoursesWithFilters(
                             context,
                             filterVM.selectedOptions['Filter by Type'],
-                            filterVM.selectedOptions['Category'], filterVM.selectedDate.toString());
+                            filterVM.selectedOptions['Category'],
+                            filterVM.selectedDate.toString());
                         navigationService.goBack();
                       },
                       onClear: () {
                         filterVM.clearAll();
-                         myLearningHubVM.getCoursesWithFilters(
+                        myLearningHubVM.getCoursesWithFilters(
                             context,
                             filterVM.selectedOptions['Filter by Type'],
-                            filterVM.selectedOptions['Category'], filterVM.selectedDate.toString());
+                            filterVM.selectedOptions['Category'],
+                            filterVM.selectedDate.toString());
                       },
                     ),
                   );
@@ -103,7 +108,9 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
               ),
             Expanded(
               child: myLearningHubVM.isLoading
-                  ? Center(child: CircularProgressIndicator(color: AppColors.primaryColor))
+                  ? Center(
+                      child: CircularProgressIndicator(
+                          color: AppColors.primaryColor))
                   : myLearningHubVM.myRegisteredCourses.isEmpty
                       ? Center(
                           child: Column(
@@ -111,24 +118,29 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                             children: [
                               Text(
                                 "No Data.",
-                                style: TextStyles.medium2(color: AppColors.black),
+                                style:
+                                    TextStyles.medium2(color: AppColors.black),
                               ),
                             ],
                           ),
                         )
                       : ListView.builder(
                           controller: _scrollController,
-                          itemCount: myLearningHubVM.myRegisteredCourses.length + (myLearningHubVM.isLoadingMore ? 1 : 0),
+                          itemCount:
+                              myLearningHubVM.myRegisteredCourses.length +
+                                  (myLearningHubVM.isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
-                            if (index == myLearningHubVM.myRegisteredCourses.length) {
+                            if (index ==
+                                myLearningHubVM.myRegisteredCourses.length) {
                               return Center(
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: CircularProgressIndicator(color: AppColors.primaryColor),
+                                  child: CircularProgressIndicator(
+                                      color: AppColors.primaryColor),
                                 ),
                               );
                             }
-                            
+
                             final courseData =
                                 myLearningHubVM.myRegisteredCourses[index];
                             return RegisterCourseCard(

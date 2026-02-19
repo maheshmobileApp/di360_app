@@ -1,19 +1,24 @@
 enum FeedType {
-  LEARNHUB,
-  CATALOGUE,
-  JOBS,
-  DEFAULT;
+  learnhub('LEARNHUB'),
+  catalogue('CATALOGUE'),
+  jobs('JOBS'),
+  newsfeed('NEWSFEED');
 
-  static FeedType fromString(String? value) {
-    switch (value?.toUpperCase()) {
-      case 'LEARNHUB':
-        return FeedType.LEARNHUB;
-      case 'CATALOGUE':
-        return FeedType.CATALOGUE;
-      case 'JOBS':
-        return FeedType.JOBS;
-      default:
-        return FeedType.DEFAULT;
+  const FeedType(this.value);
+
+  final String value;
+
+  static FeedType? fromString(String? value) {
+    if (value == null) return null;
+
+    for (FeedType type in FeedType.values) {
+      if (type.value == value) {
+        return type;
+      }
     }
+    return null;
   }
+
+  @override
+  String toString() => value;
 }

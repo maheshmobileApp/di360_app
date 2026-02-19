@@ -15,13 +15,15 @@ class AppBarWidget extends StatelessWidget
   final Widget? filterWidget;
   final String? title;
   final bool searchWidget;
+  final bool logo;
   final Function()? searchAction;
   const AppBarWidget(
       {super.key,
       this.filterWidget,
       this.title,
       this.searchAction,
-      this.searchWidget = true});
+      this.searchWidget = true,
+      this.logo = true});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,8 @@ class AppBarWidget extends StatelessWidget
         clipBehavior: Clip.none,
         children: [
           Text(title ?? 'Dental Interface',
-              style: TextStyles.bold4(color: AppColors.black)),
+              style: logo ?TextStyles.bold4(color: AppColors.black): TextStyles.bold3(color: AppColors.black)),
+          if (logo)
           Positioned(
               top: -9,
               right: -18,

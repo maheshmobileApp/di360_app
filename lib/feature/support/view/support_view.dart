@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/support/widgets/ticket_card.dart';
 import 'package:di360_flutter/feature/support/widgets/upload_image_field.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/services/notification_service.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -49,6 +50,7 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
           return Scaffold(
             backgroundColor: AppColors.whiteColor,
             appBar: AppBarWidget(
+                logo: false,
                 title: "Conversations",
                 searchAction: () =>
                     supportVM.setSearchBar(!supportVM.searchBarOpen)),
@@ -157,7 +159,7 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                             return Padding(
                               padding: EdgeInsets.only(bottom: 8),
                               child: TicketCard(
-                                userName: (type == "SUPPLIER")
+                                userName: (type == UserRole.supplier.value)
                                     ? ticket.dentalSupplier?.businessName ?? ""
                                     : ticket.dentalProfessional?.name ?? "",
                                 ticketNo:
@@ -179,11 +181,6 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
             ),
             floatingActionButton: GestureDetector(
                 onTap: () {
-                  print('FloatingActionButton tapped - showing notification');
-                  NotificationService.showNotification(
-                    title: 'Support Ticket',
-                    body: 'Ticket creation started',
-                  );
                   supportVM.getSupportRequestsReasons();
                   supportVM.clearData();
                   showModalBottomSheet(

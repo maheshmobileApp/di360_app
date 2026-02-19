@@ -33,6 +33,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
+         logo: false,
         title: 'Registered Users',
         searchWidget: false,
       ),

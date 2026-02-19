@@ -6,7 +6,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/talent_listing/view/talent_listing_card.dart';
 import 'package:di360_flutter/feature/talent_listing/view_model/talent_listing_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -54,6 +53,8 @@ class _TalentListingScreenState extends State<TalentListingScreen>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
+        logo: false,
+        title: 'Talent Listing',
           searchWidget: false,
           filterWidget: Row(
             children: [

@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/news_feed_community/widgets/youtube_player
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
@@ -81,7 +82,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final feedTypeEnum = FeedType.fromString(feedType);
+    final feedTypeEnum = feedType;
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
 
     return FutureBuilder<String>(
@@ -114,9 +115,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                             createdAt,
                           ),
                         ),
-                        if (type == "SUPPLIER" ||
-                            (type == "PROFESSIONAL" &&
-                                feedUserRole != "SUPPLIER" && newsfeeds?.userId == LocalStorage.getStringVal(LocalStorageConst.userId)))
+                        if (type == UserRole.supplier.value ||
+                            (type == UserRole.professional.value &&
+                                feedUserRole != UserRole.supplier.value &&
+                                newsfeeds?.userId ==
+                                    LocalStorage.getStringVal(
+                                        LocalStorageConst.userId)))
                           Row(
                             children: [
                               _menuWidget(context, type),
@@ -138,12 +142,14 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
                     if (newsfeeds?.videoUrl != null &&
-                        newsfeeds!.videoUrl!.isNotEmpty &&
-                        _isValidYoutubeUrl(newsfeeds!.videoUrl!))
-                      YoutubeThumbnailPlayerWidget(videoUrl: newsfeeds!.videoUrl!),
+                        newsfeeds?.videoUrl?.isNotEmpty == true &&
+                        _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
+                      YoutubeThumbnailPlayerWidget(
+                          videoUrl: newsfeeds?.videoUrl ?? ""),
                     const SizedBox(height: 8),
 
-                    if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
+                    if (newsfeeds?.webUrl != null &&
+                        newsfeeds?.webUrl?.isNotEmpty == true)
                       webSiteText(newsfeeds?.webUrl ?? ""),
 
                     if (course?.isNotEmpty == true)
@@ -161,12 +167,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                             )
                           : SizedBox.shrink(),
 
-                    if (feedTypeEnum == FeedType.LEARNHUB &&
+                    if (feedTypeEnum == FeedType.learnhub.value &&
                         course?.isNotEmpty == true)
                       _learnHubWidget(course?.first ?? Courses(), createdAt),
-                    if (feedTypeEnum == FeedType.CATALOGUE)
+                    if (feedTypeEnum == FeedType.catalogue.value)
                       _buildCatalogueRow(catelougeViewModel, context),
-                    if (feedTypeEnum == FeedType.JOBS &&
+                    if (feedTypeEnum == FeedType.jobs.value &&
                         job?.isNotEmpty == true)
                       _jobsWidget(job?.first ?? Jobs(), createdAt),
 
@@ -205,7 +211,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         ShareWidget(
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          size: 20, feedId: id,),
+                          size: 20,
+                          feedId: id,
+                        ),
 
                         const Spacer(),
 
@@ -464,7 +472,6 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ],
     );
   }
-
 
   Widget _sectionWidget(String title, String value) {
     return Column(
@@ -765,17 +772,21 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (type == "PROFESSIONAL" && (newsfeeds?.userId == LocalStorage.getStringVal(LocalStorageConst.userId)) ||
-            (type == "SUPPLIER" && feedUserRole == "SUPPLIER")) ...[
+        if (type == UserRole.professional.value &&
+                (newsfeeds?.userId ==
+                    LocalStorage.getStringVal(LocalStorageConst.userId)) ||
+            (type == UserRole.supplier.value &&
+                feedUserRole == UserRole.supplier.value)) ...[
           _popupItem("Edit", Icons.edit, AppColors.blueColor),
           _popupItem("Delete", Icons.delete, AppColors.redColor)
         ],
-        if (type == "SUPPLIER" && feedUserRole == "SUPPLIER") ...[
+        if (type == UserRole.supplier.value &&
+            feedUserRole == UserRole.supplier.value) ...[
           if (status == "UNPUBLISHED" || status == "PENDING")
             _popupItem("Publish", Icons.send, AppColors.blueColor),
           if (status == "PUBLISHED" || status == "PENDING")
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
-        ] else if (type != "PROFESSIONAL") ...[
+        ] else if (type != UserRole.professional.value) ...[
           if (status == "UNPUBLISHED" || status == "PENDING")
             _popupItem("Publish", Icons.send, AppColors.blueColor),
           if (status == "PUBLISHED" || status == "PENDING")
