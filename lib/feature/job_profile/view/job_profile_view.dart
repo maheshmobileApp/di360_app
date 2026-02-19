@@ -64,9 +64,9 @@ class _JobProfileViewState extends State<JobProfileView> {
             onTap: () async {
               await jobProfileVM.setJobProfilePreviewData();
               navigationService.navigateToWithParams(
-            RouteList.talentdetailsScreen,
-            params: jobProfileVM.jobProfilePreviewData,
-          );
+                RouteList.talentdetailsScreen,
+                params: jobProfileVM.jobProfilePreviewData,
+              );
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -192,11 +192,6 @@ class _JobProfileViewState extends State<JobProfileView> {
                     : await jobProfileVM.createJobProfile(context, true);
                 if (!mounted) return;
                 await jobProfileListVM.fetchJobProfiles(context);
-                if (!mounted) return;
-                Loaders.circularHideLoader(context);
-
-                navigationService.goBack();
-                jobProfileVM.clearAllData();
               },
               backgroundColor: AppColors.timeBgColor,
               textColor: AppColors.primaryColor,
@@ -216,7 +211,8 @@ class _JobProfileViewState extends State<JobProfileView> {
               onPressed: () async {
                 final currentFormKey =
                     jobProfileVM.formKeys[jobProfileVM.currentStep];
-                final isValid = currentFormKey.currentState?.validate()??false;
+                final isValid =
+                    currentFormKey.currentState?.validate() ?? false;
                 if (isValid) {
                   if (isLastStep) {
                     if (!mounted) return;
@@ -226,11 +222,7 @@ class _JobProfileViewState extends State<JobProfileView> {
                         : await jobProfileVM.createJobProfile(context, false);
                     if (!mounted) return;
                     await jobProfileListVM.fetchJobProfiles(context);
-                    if (!mounted) return;
-                    Loaders.circularHideLoader(context);
-
-                    navigationService.goBack();
-                    jobProfileVM.clearAllData();
+                    
                   } else {
                     jobProfileVM.goToNextStep();
                   }
