@@ -251,10 +251,21 @@ class CampaignViewModel extends ChangeNotifier {
   bool _hasMoreCampaigns = true;
   bool _isLoadingMoreCampaigns = false;
 
-  bool get hasMoreCampaigns => _hasMoreCampaigns;
+  bool get hasMoreCampaigns =>
+      _hasMoreCampaigns &&
+      searchController.text.isEmpty &&
+      !_hasActiveFilters();
   bool get isLoadingMoreCampaigns => _isLoadingMoreCampaigns;
 
+  bool _hasActiveFilters() {
+    return smsFilterStatus ||
+        emailFilterStatus ||
+        htmlFilterStatus ||
+        emailWithPdfFilterStatus;
+  }
+
   Future<void> getCampaignListing({bool loadMore = false}) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     try {
       if (loadMore) {
         if (_isLoadingMoreCampaigns || !_hasMoreCampaigns) return;
@@ -268,7 +279,9 @@ class CampaignViewModel extends ChangeNotifier {
       final variables = {
         "limit": _campaignLimit,
         "offset": _campaignOffset,
-        "where": {}
+        "where": {
+          "created_by_id": {"_eq": userId}
+        }
       };
       final res = await repo.getCampaignListData(variables);
 
@@ -309,6 +322,7 @@ class CampaignViewModel extends ChangeNotifier {
       campaignNameController.text = data?.campaignName ?? "";
       scheduleDateController.text = data?.scheduleDate ?? "";
       scheduleTimeController.text = "";
+      messageController.text = data?.messageText ?? "";
       selectedTimeZone = timeOptions.firstWhere(
         (element) => element.contains(data?.scheduleTimezone ?? ""),
         orElse: () => "",
@@ -374,7 +388,8 @@ class CampaignViewModel extends ChangeNotifier {
 
   Future<void> createCampaign(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final userEmail = await LocalStorage.getStringVal(LocalStorageConst.emailId);
+    final userEmail =
+        await LocalStorage.getStringVal(LocalStorageConst.emailId);
     Loaders.circularShowLoader(context);
     try {
       String messageChannel = selectedType;

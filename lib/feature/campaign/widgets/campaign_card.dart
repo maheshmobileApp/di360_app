@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 
 class CampaignCard extends StatelessWidget {
@@ -116,7 +115,6 @@ class CampaignCard extends StatelessWidget {
   }
 
   Widget _infoRow(String title, String value) {
-    String formattedValue = DateFormatUtils.formatDateTime(value);
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -127,7 +125,7 @@ class CampaignCard extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              formattedValue,
+              value,
               overflow: TextOverflow.ellipsis,
             ),
           ),

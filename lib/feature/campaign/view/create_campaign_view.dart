@@ -66,6 +66,7 @@ class CreateCampaignView extends StatelessWidget
                     controller: viewModel.campaignNameController,
                     hintText: "Enter Campaign name",
                     title: "Campaign Name",
+                    isRequired: true,
                     maxLength: 100,
                     //readOnly: viewModel.repeatMode,
                     validator: validationCampaignName,
@@ -75,6 +76,7 @@ class CreateCampaignView extends StatelessWidget
                     validator: validateScheduleDate,
                     controller: viewModel.scheduleDateController,
                     title: "Scheduled Date",
+                    isRequired: true,
                     hintText: "Select scheduled date",
                     onTap: () async {
                       final picked = await showDatePicker(
@@ -227,7 +229,8 @@ class CreateCampaignView extends StatelessWidget
                         textColor: Colors.white,
                       )
                     ],
-                  )
+                  ),
+                   addVertical(50),
                 ],
               ),
             ),
