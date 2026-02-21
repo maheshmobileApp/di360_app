@@ -133,6 +133,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                               if (count != 0) {
                                 Loaders.circularShowLoader(context);
                                 viewModel.jobId = jobsListingData?.id ?? '';
+                                
                                 viewModel.changeStatusforapplicatnts(
                                     "All", context);
                                 viewModel.selectedstatusesforapplicatnts =

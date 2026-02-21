@@ -149,8 +149,7 @@ class CreateCampaignView extends StatelessWidget
                         "Select Groups",
                         style: TextStyles.regular3(color: AppColors.black),
                       ),
-
-                       Text(
+                      Text(
                         " *",
                         style: TextStyles.bold2(color: Colors.red),
                       ),
@@ -203,34 +202,43 @@ class CreateCampaignView extends StatelessWidget
                     },
                   ),
                   addVertical(8),
-                  (viewModel.selectedType != "SMS" && viewModel.selectedType != "")?
-                  Text(
-                    "*For an improved email/HTML composition experience, we recommend using the web application.",
-                    style: TextStyles.regular2(color: AppColors.black),
-                  ):SizedBox.shrink(),
+                  (viewModel.selectedType != "SMS" &&
+                          viewModel.selectedType != "")
+                      ? Text(
+                          "*For an improved email/HTML composition experience, we recommend using the web application.",
+                          style: TextStyles.regular2(color: AppColors.black),
+                        )
+                      : SizedBox.shrink(),
                   addVertical(16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomRoundedButton(
-                        text: 'Cancel',
-                        onPressed: () {
-                          navigationService.goBack();
-                        },
-                        height: 42,
-                        backgroundColor: AppColors.geryColor,
-                        textColor: Colors.black,
-                      ),
-                      CustomRoundedButton(
-                        text: viewModel.repeatMode ? 'Repeat' : 'Save',
-                        onPressed: () => _validateAndSave(context, viewModel),
-                        height: 42,
-                        backgroundColor: AppColors.primaryColor,
-                        textColor: Colors.white,
-                      )
-                    ],
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 10,
+                      bottom: MediaQuery.of(context).padding.bottom + 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomRoundedButton(
+                          text: 'Cancel',
+                          onPressed: () {
+                            navigationService.goBack();
+                          },
+                          height: 42,
+                          backgroundColor: AppColors.geryColor,
+                          textColor: Colors.black,
+                        ),
+                        CustomRoundedButton(
+                          text: viewModel.repeatMode ? 'Repeat' : 'Save',
+                          onPressed: () => _validateAndSave(context, viewModel),
+                          height: 42,
+                          backgroundColor: AppColors.primaryColor,
+                          textColor: Colors.white,
+                        )
+                      ],
+                    ),
                   ),
-                   addVertical(50),
                 ],
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +46,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                   child: (jobCreateVM.isStartDateEnabled)
                       ? CustomDatePicker(
                           title: "",
+                          showIcon: false,
                           controller: jobCreateVM.startDateController,
                           text: null,
                           hintText: "Date",
@@ -53,22 +55,37 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                                 (value == null || value.isEmpty)) {
                               return 'Please select start date';
                             }
+                            if (value != null && value.isNotEmpty) {
+                              try {
+                                final parts = value.split('/');
+                                final selectedDate = DateTime(
+                                    int.parse(parts[2]),
+                                    int.parse(parts[1]),
+                                    int.parse(parts[0]));
+                                final today = DateTime.now();
+                                final todayDate = DateTime(
+                                    today.year, today.month, today.day);
+                                if (selectedDate.isBefore(todayDate)) {
+                                  return 'Start date cannot be earlier than today';
+                                }
+                              } catch (e) {}
+                            }
                             return null;
                           },
                           onTap: () async {
                             DateTime firstDate = DateTime.now();
                             DateTime lastDate = DateTime(2100);
-                            
+
                             // Set firstDate from startLocumDate
                             if (jobCreateVM.startLocumDate != null) {
                               firstDate = jobCreateVM.startLocumDate!;
                             }
-                            
+
                             // Set lastDate from endLocumDate
                             if (jobCreateVM.endLocumDate != null) {
                               lastDate = jobCreateVM.endLocumDate!;
                             }
-                            
+
                             final picked = await showDatePicker(
                               context: context,
                               initialDate: firstDate,
@@ -90,28 +107,50 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                           title: "",
                           controller: jobCreateVM.endDateController,
                           text: null,
+                          showIcon: false,
                           hintText: "Date",
                           validator: (value) {
                             if (jobCreateVM.isEndDateEnabled &&
                                 (value == null || value.isEmpty)) {
                               return 'Please select end date';
                             }
-                            if (_shouldShowDateError(jobCreateVM)) {
-                              return 'End date must be after start date';
+                            if (value != null && value.isNotEmpty) {
+                              try {
+                                final parts = value.split('/');
+                                final endDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+                                final today = DateTime.now();
+                                final todayDate = DateTime(today.year, today.month, today.day);
+                                
+                                if (endDate.isBefore(todayDate)) {
+                                  return 'End date cannot be earlier than today';
+                                }
+                                
+                                if (jobCreateVM.startDateController.text.isNotEmpty) {
+                                  final startParts = jobCreateVM.startDateController.text.split('/');
+                                  final startDate = DateTime(int.parse(startParts[2]), int.parse(startParts[1]), int.parse(startParts[0]));
+                                  if (endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate)) {
+                                    return 'The End Date cannot be before the Start Date.';
+                                  }
+                                }
+                              } catch (e) {}
                             }
                             return null;
                           },
                           onTap: () async {
                             DateTime startDate = DateTime.now();
-                             DateTime lastDate = DateTime(2100);
-                             // Set lastDate from endLocumDate
+                            DateTime lastDate = DateTime(2100);
+                            // Set lastDate from endLocumDate
                             if (jobCreateVM.endLocumDate != null) {
                               lastDate = jobCreateVM.endLocumDate!;
                             }
-                            if (jobCreateVM.startDateController.text.isNotEmpty) {
+                            if (jobCreateVM
+                                .startDateController.text.isNotEmpty) {
                               try {
-                                final parts = jobCreateVM.startDateController.text.split('/');
-                                startDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+                                final parts = jobCreateVM
+                                    .startDateController.text
+                                    .split('/');
+                                startDate = DateTime(int.parse(parts[2]),
+                                    int.parse(parts[1]), int.parse(parts[0]));
                               } catch (e) {
                                 startDate = DateTime.now();
                               }
@@ -123,14 +162,22 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                               lastDate: lastDate,
                             );
                             if (picked != null) {
-                              if (jobCreateVM.startDateController.text.isNotEmpty) {
+                              if (jobCreateVM
+                                  .startDateController.text.isNotEmpty) {
                                 try {
-                                  final startParts = jobCreateVM.startDateController.text.split('/');
-                                  final startDate = DateTime(int.parse(startParts[2]), int.parse(startParts[1]), int.parse(startParts[0]));
-                                  if (picked.isBefore(startDate) || picked.isAtSameMomentAs(startDate)) {
+                                  final startParts = jobCreateVM
+                                      .startDateController.text
+                                      .split('/');
+                                  final startDate = DateTime(
+                                      int.parse(startParts[2]),
+                                      int.parse(startParts[1]),
+                                      int.parse(startParts[0]));
+                                  if (picked.isBefore(startDate) ||
+                                      picked.isAtSameMomentAs(startDate)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('End date must be after start date'),
+                                        content: Text(
+                                            'End date must be after start date'),
                                         backgroundColor: Colors.red,
                                       ),
                                     );

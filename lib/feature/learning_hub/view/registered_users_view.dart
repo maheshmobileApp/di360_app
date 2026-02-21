@@ -68,7 +68,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                             horizontal: 8, vertical: 4),
                         child: RegisteredUserCard(
                             id: userData?.id ?? "",
-                            userPhone: userData?.phoneNumber.toString() ?? "",
+                            userPhone: userData?.phoneNumber ?? "",
                             userName:
                                 "${userData?.firstName ?? ""} ${userData?.lastName ?? ""}",
                             userMail: userData?.email ?? "",

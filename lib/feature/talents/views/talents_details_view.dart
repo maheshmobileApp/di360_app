@@ -54,7 +54,8 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
           future: LocalStorage.getStringVal(LocalStorageConst.type),
           builder: (context, snapshot) {
             if (snapshot.hasData &&
-                (snapshot.data == UserRole.supplier.value || snapshot.data == UserRole.practice.value)) {
+                (snapshot.data == UserRole.supplier.value ||
+                    snapshot.data == UserRole.practice.value)) {
               return FutureBuilder<String>(
                 future: LocalStorage.getStringVal(LocalStorageConst.userId),
                 builder: (context, userSnapshot) {
@@ -508,10 +509,17 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                     enquiryDescription: provider.enquiryData ?? '',
                     talentId: widget.talentList?.id ?? '',
                     enquiryFrom: userId);
-                await provider.enquire(enquire);
-                ToastMessage.show('Enquiry sent successfully!');
+                if (provider.enquiryData == null ||
+                    provider.enquiryData?.isEmpty == true) {
+                  ToastMessage.show(
+                      'Please enter your enquiry before sending.');
+                  return;
+                } else {
+                  await provider.enquire(enquire);
+                  ToastMessage.show('Enquiry sent successfully!');
+                }
               },
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
             ),
           ],

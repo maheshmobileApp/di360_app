@@ -59,6 +59,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     locumDateController.clear();
     startLocumDateController.clear();
     endLocumDateController.clear();
+    startDateController.clear();
+    endDateController.clear();
   }
 
   // Selected dropdown values
@@ -885,10 +887,13 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     serverBannerImg = jobData?.bannerImage?.url;
     isStartDateEnabled = jobData?.startDate != null;
     isEndDateEnabled = jobData?.closedAt != null;
-    startDateController.text =  di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(jobData?.startDate ?? "");
+    startDateController.text =
+        di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
+            jobData?.startDate ?? "");
     if (jobData?.closedAt != null) {
-      endDateController.text = di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
-          jobData?.closedAt ?? "");
+      endDateController.text =
+          di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
+              jobData?.closedAt ?? "");
     }
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
