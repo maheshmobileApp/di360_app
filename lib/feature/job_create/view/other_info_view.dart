@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -57,18 +58,16 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             }
                             if (value != null && value.isNotEmpty) {
                               try {
-                                final parts = value.split('/');
-                                final selectedDate = DateTime(
-                                    int.parse(parts[2]),
-                                    int.parse(parts[1]),
-                                    int.parse(parts[0]));
+                                final selectedDate = DateTime.parse(DateFormatUtils.formatDateYear(value));
                                 final today = DateTime.now();
                                 final todayDate = DateTime(
                                     today.year, today.month, today.day);
                                 if (selectedDate.isBefore(todayDate)) {
                                   return 'Start date cannot be earlier than today';
                                 }
-                              } catch (e) {}
+                              } catch (e) {
+                                return 'Invalid date format';
+                              }
                             }
                             return null;
                           },
@@ -116,23 +115,24 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             }
                             if (value != null && value.isNotEmpty) {
                               try {
-                                final parts = value.split('/');
-                                final endDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+                                final endDate = DateTime.parse(DateFormatUtils.formatDateYear(value));
                                 final today = DateTime.now();
-                                final todayDate = DateTime(today.year, today.month, today.day);
+                                final todayDate = DateTime(
+                                    today.year, today.month, today.day);
                                 
                                 if (endDate.isBefore(todayDate)) {
                                   return 'End date cannot be earlier than today';
                                 }
                                 
                                 if (jobCreateVM.startDateController.text.isNotEmpty) {
-                                  final startParts = jobCreateVM.startDateController.text.split('/');
-                                  final startDate = DateTime(int.parse(startParts[2]), int.parse(startParts[1]), int.parse(startParts[0]));
+                                  final startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
                                   if (endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate)) {
                                     return 'The End Date cannot be before the Start Date.';
                                   }
                                 }
-                              } catch (e) {}
+                              } catch (e) {
+                                return 'Invalid date format';
+                              }
                             }
                             return null;
                           },
@@ -146,11 +146,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             if (jobCreateVM
                                 .startDateController.text.isNotEmpty) {
                               try {
-                                final parts = jobCreateVM
-                                    .startDateController.text
-                                    .split('/');
-                                startDate = DateTime(int.parse(parts[2]),
-                                    int.parse(parts[1]), int.parse(parts[0]));
+                                startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
                               } catch (e) {
                                 startDate = DateTime.now();
                               }
@@ -165,13 +161,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                               if (jobCreateVM
                                   .startDateController.text.isNotEmpty) {
                                 try {
-                                  final startParts = jobCreateVM
-                                      .startDateController.text
-                                      .split('/');
-                                  final startDate = DateTime(
-                                      int.parse(startParts[2]),
-                                      int.parse(startParts[1]),
-                                      int.parse(startParts[0]));
+                                  final startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
                                   if (picked.isBefore(startDate) ||
                                       picked.isAtSameMomentAs(startDate)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -355,13 +345,8 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
     }
 
     try {
-      final startParts = jobCreateVM.startDateController.text.split('/');
-      final endParts = jobCreateVM.endDateController.text.split('/');
-
-      final startDate = DateTime(int.parse(startParts[2]),
-          int.parse(startParts[1]), int.parse(startParts[0]));
-      final endDate = DateTime(int.parse(endParts[2]), int.parse(endParts[1]),
-          int.parse(endParts[0]));
+      final startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
+      final endDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.endDateController.text));
 
       return endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate);
     } catch (e) {

@@ -272,7 +272,7 @@ class CreateCampaignView extends StatelessWidget
   }
 
   Widget _buildTimeZones(CampaignViewModel viewModel) {
-    final validRoles = viewModel.timeOptions;
+    final validRoles = viewModel.timeOptions.map((tz) => tz['value']!).toList();
 
     final selectedValue = validRoles.contains(viewModel.selectedTimeZone)
         ? viewModel.selectedTimeZone
