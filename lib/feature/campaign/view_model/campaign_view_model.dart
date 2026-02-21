@@ -165,7 +165,7 @@ class CampaignViewModel extends ChangeNotifier {
 
   List<String> typeOptions = ["SMS", "Email", "HTML", "Email with PDF"];
 
-  List<String> timeOptions = [
+  /*List<String> timeOptions = [
     "(UTC+10:00) Canberra,Melbourne, Sydney",
     "(UTC+10:00) Brisbane",
     "(UTC+09:00) Adelaide",
@@ -175,6 +175,18 @@ class CampaignViewModel extends ChangeNotifier {
     "(UTC+12:00) Auckland",
     "(UTC+12:45) Chatham Islands",
     "(UTC+05:30) India Standard Time"
+  ];*/
+
+  List<Map<String, String>> timeOptions = [
+    {'id': 'tz_1', 'value': 'Australia/Sydney', 'label': '(UTC+10:00) Canberra, Melbourne, Sydney'},
+    {'id': 'tz_2', 'value': 'Australia/Brisbane', 'label': '(UTC+10:00) Brisbane'},
+    {'id': 'tz_3', 'value': 'Australia/Adelaide', 'label': '(UTC+09:30) Adelaide'},
+    {'id': 'tz_4', 'value': 'Australia/Perth', 'label': '(UTC+08:00) Perth'},
+    {'id': 'tz_5', 'value': 'Australia/Hobart', 'label': '(UTC+10:00) Hobart'},
+    {'id': 'tz_6', 'value': 'Australia/Darwin', 'label': '(UTC+09:30) Darwin'},
+    {'id': 'tz_7', 'value': 'Pacific/Auckland', 'label': '(UTC+12:00) Auckland'},
+    {'id': 'tz_8', 'value': 'Pacific/Chatham', 'label': '(UTC+12:45) Chatham Islands'},
+    {'id': 'tz_9', 'value': 'Asia/Kolkata', 'label': '(UTC+05:30) India Standard Time'},
   ];
 
   String selectedTime = "";
@@ -251,10 +263,21 @@ class CampaignViewModel extends ChangeNotifier {
   bool _hasMoreCampaigns = true;
   bool _isLoadingMoreCampaigns = false;
 
-  bool get hasMoreCampaigns => _hasMoreCampaigns;
+  bool get hasMoreCampaigns =>
+      _hasMoreCampaigns &&
+      searchController.text.isEmpty &&
+      !_hasActiveFilters();
   bool get isLoadingMoreCampaigns => _isLoadingMoreCampaigns;
 
+  bool _hasActiveFilters() {
+    return smsFilterStatus ||
+        emailFilterStatus ||
+        htmlFilterStatus ||
+        emailWithPdfFilterStatus;
+  }
+
   Future<void> getCampaignListing({bool loadMore = false}) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     try {
       if (loadMore) {
         if (_isLoadingMoreCampaigns || !_hasMoreCampaigns) return;
@@ -268,7 +291,9 @@ class CampaignViewModel extends ChangeNotifier {
       final variables = {
         "limit": _campaignLimit,
         "offset": _campaignOffset,
-        "where": {}
+        "where": {
+          "created_by_id": {"_eq": userId}
+        }
       };
       final res = await repo.getCampaignListData(variables);
 
@@ -309,10 +334,11 @@ class CampaignViewModel extends ChangeNotifier {
       campaignNameController.text = data?.campaignName ?? "";
       scheduleDateController.text = data?.scheduleDate ?? "";
       scheduleTimeController.text = "";
+      messageController.text = data?.messageText ?? "";
       selectedTimeZone = timeOptions.firstWhere(
-        (element) => element.contains(data?.scheduleTimezone ?? ""),
-        orElse: () => "",
-      );
+        (tz) => tz['value'] == data?.scheduleTimezone,
+        orElse: () => {},
+      )['label'] ?? "";
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
@@ -374,7 +400,8 @@ class CampaignViewModel extends ChangeNotifier {
 
   Future<void> createCampaign(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final userEmail = await LocalStorage.getStringVal(LocalStorageConst.emailId);
+    final userEmail =
+        await LocalStorage.getStringVal(LocalStorageConst.emailId);
     Loaders.circularShowLoader(context);
     try {
       String messageChannel = selectedType;

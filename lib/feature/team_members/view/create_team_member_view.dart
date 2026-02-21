@@ -132,10 +132,18 @@ class CreateTeamMemberView extends StatelessWidget
                   ),
                   addVertical(4),
                   _buildPermissions(viewModel),
-                  AppButton(
-                    text: viewModel.editMode ? "Update":"Save",
-                    height: 50,
-                    onTap: () => _validateAndSave(context, viewModel),
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 10,
+                      bottom: MediaQuery.of(context).padding.bottom + 10,
+                    ),
+                    child: AppButton(
+                      text: viewModel.editMode ? "Update" : "Save",
+                      height: 50,
+                      onTap: () => _validateAndSave(context, viewModel),
+                    ),
                   )
                 ],
               ),
@@ -155,7 +163,7 @@ class CreateTeamMemberView extends StatelessWidget
         scaffoldMessenger('Please select at least one permission');
         return;
       }
-     viewModel.editMode
+      viewModel.editMode
           ? viewModel.updateTeamMember(context)
           : viewModel.createTeamMember(context);
     }

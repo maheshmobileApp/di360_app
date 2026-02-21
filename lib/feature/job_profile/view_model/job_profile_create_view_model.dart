@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_
 import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/toast.dart';
 import 'package:file_picker/file_picker.dart';
@@ -775,165 +776,11 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     };
     await validateProfileImg();
     final uploadedFiles = await uploadFiles(filePaths);
-    try {
-      final String? dentalProfessionalId =
-          await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final variables = {
-        "jobProfile": [
-          {
-            "dental_professional_id": dentalProfessionalId,
-            "full_name": fullNameController.text,
-            "mobile_number": mobileNumberController.text,
-            "email_address": emailAddressController.text,
-            "profession_type": selectedRole,
-            "work_type":
-                selectedEmploymentChips.map((toElement) => toElement).toList(),
-            "current_company": currentCompanyController.text,
-            "job_designation": jobDesignationController.text,
-            "state": stateController.text,
-            "location": locationController.text,
-            "country": countryController.text,
-            // "Year_of_experience": selectExperience ?? "",
-            "city": cityPostCodeController.text,
-            "radius": "0", //no option in mobile design, default to 0
-            "availabilityType": selectedAvailabilityType,
-            "profile_image": profileImg != null
-                ? [
-                    {
-                      "url": profileImg!.url,
-                      "name": profileImg!.name,
-                      "type": profileImg!.type,
-                      "extension": profileImg!.extension,
-                    }
-                  ]
-                : [],
-            "upload_resume": resumeFile != null
-                ? [
-                    {
-                      "url": uploadedFiles['resume'] != null
-                          ? uploadedFiles['resume']["url"]
-                          : resumeFile!.path,
-                      "name": resumeFile!.path.split("/").last,
-                      "type": "pdf",
-                      "extension": "pdf",
-                    }
-                  ]
-                : [],
-            "certificate": certificateFile != null
-                ? [
-                    {
-                      "url": uploadedFiles['certificate'] != null
-                          ? uploadedFiles['certificate']["url"]
-                          : profileFile!.path,
-                      "name": profileFile!.path.split("/").last,
-                      "type": "document",
-                      "extension": "pdf",
-                    }
-                  ]
-                : [],
-            "cover_letter": coverLetterFile != null
-                ? [
-                    {
-                      "url": uploadedFiles['coverLetter'] != null
-                          ? uploadedFiles['coverLetter']["url"]
-                          : profileFile!.path,
-                      "name": profileFile!.path.split("/").last,
-                      "type": "image",
-                      "extension": "jpeg",
-                    }
-                  ]
-                : [],
-            "abn_number": abnNumberController.text,
-            "availabilityOption": selectedAvailabilityType,
-            "current_ctc": "100000",
-            "post_anonymously": isPostAnonymous,
-            "admin_status": isDraft ? "DRAFT" : "PENDING",
-            "jobexperiences": experiences
-                .map((e) => {
-                      "company_name": e.companyName,
-                      "job_title": e.jobTitle,
-                      "ejobdesp": e.jobDescription,
-                      "startMonth": e.startMonth,
-                      "startYear": e.startYear,
-                      "isStillWorking": isStillWorking,
-                      "endMonth": e.endMonth,
-                      "endYear": e.endYear
-                    })
-                .toList(),
-            "educations": educations
-                .map((e) => {
-                      "institution": e.institution,
-                      "qualification": e.qualification,
-                      "selectedQualification": e.selectedQualification,
-                      "finishDate": e.finishDate,
-                      "qualificationFinished": false,
-                      "courseHighlights": e.courseHighlights,
-                    })
-                .toList(),
-            "work_rights": selectworkRight,
-            "languages_spoken": languages,
-            "areas_expertise": expertise,
-            "skills": selectskills.map((toElement) => toElement).toList(),
-            "salary_amount": salaryController.text.isNotEmpty
-                ? int.tryParse(salaryController.text) ?? 0
-                : 0,
-            "salary_type": selectedSalaryPer, // need to send dynamically
-            "travel_distance":
-                DistanceController.text, // need to send dynamically
-            "percentage": percentageController.text,
-            "aphra_number": aphraRegistrationNumberController.text,
-            "willing_to_travel": isWillingToTravel,
-            "about_yourself": aboutMeController.text,
-            "availabilityDay": selectedDays,
-            "Year_of_experiance": selectExperience,
-            "availabilityDate":
-                availabilityDates.map((d) => d.toIso8601String()).toList(),
-            "fromDate":
-                joiningDate != null ? [joiningDate!.toIso8601String()] : [],
-          }
-        ]
-      };
-      final result = await repo.createJobProfileListing(variables);
-
-      if (result.data?.insertJobProfiles != null) {
-        ToastMessage.show('Job Profile Created Successfully!');
-      }
-    } catch (e) {
-      ToastMessage.show('Job Profile Creation error $e ');
-      NavigationService().goBack();
-    } finally {
-      //Loaders.circularHideLoader(context);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateJobProfile(
-      BuildContext context, bool isDraft, String jobProfileId) async {
-    Loaders.circularShowLoader(context);
-    Map<String, String?> filePaths = {};
-
-    if (serverDocuments["Resume"]?.url == null && resumeFile?.path != null) {
-      filePaths['Resume'] = resumeFile!.path;
-    }
-
-    if (serverDocuments["Cover Letter"]?.url == null &&
-        coverLetterFile?.path != null) {
-      filePaths['Cover Letter'] = coverLetterFile!.path;
-    }
-
-    if (serverDocuments["Certificate"]?.url == null &&
-        certificateFile?.path != null) {
-      filePaths['Certificate'] = certificateFile!.path;
-    }
-
-    await validateProfileImg();
-    final uploadedFiles = await uploadFiles(filePaths);
-    try {
-      final String? dentalProfessionalId =
-          await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final result = await repo.updateJobProfileListing({
-        "id": jobProfileId,
-        "postjobObj": {
+    final String? dentalProfessionalId =
+        await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "jobProfile": [
+        {
           "dental_professional_id": dentalProfessionalId,
           "full_name": fullNameController.text,
           "mobile_number": mobileNumberController.text,
@@ -960,38 +807,42 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                   }
                 ]
               : [],
-          "upload_resume": [
-            {
-              "url": serverDocuments["Resume"]?.url ??
-                  uploadedFiles["Resume"]?["url"],
-              "name": serverDocuments["Resume"]?.name ??
-                  uploadedFiles["Resume"]?["name"],
-              "type": "pdf",
-              "extension": "pdf",
-            }
-          ],
-          "certificate": [
-            {
-              "url": serverDocuments["Certificate"]?.url ??
-                  uploadedFiles["Certificate"]?["url"],
-              "name": serverDocuments["Certificate"]?.name ??
-                  uploadedFiles["Certificate"]?["name"],
-              "type": "document",
-              "extension": "pdf",
-            }
-          ],
-          "cover_letter": [
-            {
-              "url": serverDocuments["Cover Letter"]?.url ??
-                  uploadedFiles["Cover Letter"]?["url"],
-              "name": serverDocuments["Cover Letter"]?.name ??
-                  uploadedFiles["Cover Letter"]?["name"],
-              "type": "image",
-              "extension": "jpeg",
-            }
-          ],
-          "Year_of_experiance": selectExperience,
-
+          "upload_resume": resumeFile != null
+              ? [
+                  {
+                    "url": uploadedFiles['resume'] != null
+                        ? uploadedFiles['resume']["url"]
+                        : resumeFile!.path,
+                    "name": resumeFile!.path.split("/").last,
+                    "type": "pdf",
+                    "extension": "pdf",
+                  }
+                ]
+              : [],
+          "certificate": certificateFile != null
+              ? [
+                  {
+                    "url": uploadedFiles['certificate'] != null
+                        ? uploadedFiles['certificate']["url"]
+                        : profileFile!.path,
+                    "name": profileFile!.path.split("/").last,
+                    "type": "document",
+                    "extension": "pdf",
+                  }
+                ]
+              : [],
+          "cover_letter": coverLetterFile != null
+              ? [
+                  {
+                    "url": uploadedFiles['coverLetter'] != null
+                        ? uploadedFiles['coverLetter']["url"]
+                        : profileFile!.path,
+                    "name": profileFile!.path.split("/").last,
+                    "type": "image",
+                    "extension": "jpeg",
+                  }
+                ]
+              : [],
           "abn_number": abnNumberController.text,
           "availabilityOption": selectedAvailabilityType,
           "current_ctc": "100000",
@@ -1023,39 +874,209 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "languages_spoken": languages,
           "areas_expertise": expertise,
           "skills": selectskills.map((toElement) => toElement).toList(),
-          "salary_amount": salaryController.text == ""
-              ? null
-              : salaryController.text, // need to send dynamically
+          "salary_amount": salaryController.text.isNotEmpty
+              ? int.tryParse(salaryController.text) ?? 0
+              : 0,
           "salary_type": selectedSalaryPer, // need to send dynamically
-          "travel_distance": DistanceController.text == ""
-              ? null
-              : DistanceController.text, // need to send dynamically
-          "percentage": percentageController.text == ""
-              ? null
-              : percentageController.text,
-          "aphra_number": aphraRegistrationNumberController.text == ""
-              ? null
-              : aphraRegistrationNumberController.text,
+          "travel_distance":
+              DistanceController.text, // need to send dynamically
+          "percentage": percentageController.text,
+          "aphra_number": aphraRegistrationNumberController.text,
           "willing_to_travel": isWillingToTravel,
           "about_yourself": aboutMeController.text,
           "availabilityDay": selectedDays,
+          "Year_of_experiance": selectExperience,
           "availabilityDate":
               availabilityDates.map((d) => d.toIso8601String()).toList(),
           "fromDate":
               joiningDate != null ? [joiningDate!.toIso8601String()] : [],
         }
-      });
+      ]
+    };
 
-      if (result.updateJobProfilesByPk?.id != null) {
-        ToastMessage.show('Job Profile Updated Successfully!');
+    try {
+      final res = await repo.createJobProfileListing(variables);
+      Loaders.circularHideLoader(context);
+
+      if (res != null && res['_error'] != null) {
+        final errorMessage = res['_error'] as String;
+        if (errorMessage.contains('job_profiles_email_address_key') ||
+            errorMessage.contains('Uniqueness violation')) {
+          scaffoldMessenger('Email already exists, use another one');
+        } else {
+          scaffoldMessenger(errorMessage);
+        }
+      } else {
+        scaffoldMessenger('Job Profile Created Successfully!');
+        navigationService.goBack();
+        clearAllData();
       }
     } catch (e) {
-      ToastMessage.show('Job Profile Creation error $e ');
-      //navigationService.goBack();
-    } finally {
-      //Loaders.circularHideLoader(context);
-      notifyListeners();
+      Loaders.circularHideLoader(context);
+      // Error message already shown by repository
+      // Stay on current screen to allow user to fix the issue
     }
+    notifyListeners();
+  }
+
+  Future<void> updateJobProfile(
+      BuildContext context, bool isDraft, String jobProfileId) async {
+    Loaders.circularShowLoader(context);
+    Map<String, String?> filePaths = {};
+
+    if (serverDocuments["Resume"]?.url == null && resumeFile?.path != null) {
+      filePaths['Resume'] = resumeFile!.path;
+    }
+
+    if (serverDocuments["Cover Letter"]?.url == null &&
+        coverLetterFile?.path != null) {
+      filePaths['Cover Letter'] = coverLetterFile!.path;
+    }
+
+    if (serverDocuments["Certificate"]?.url == null &&
+        certificateFile?.path != null) {
+      filePaths['Certificate'] = certificateFile!.path;
+    }
+
+    await validateProfileImg();
+    final uploadedFiles = await uploadFiles(filePaths);
+    final String? dentalProfessionalId =
+        await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "id": jobProfileId,
+      "postjobObj": {
+        "dental_professional_id": dentalProfessionalId,
+        "full_name": fullNameController.text,
+        "mobile_number": mobileNumberController.text,
+        "email_address": emailAddressController.text,
+        "profession_type": selectedRole,
+        "work_type":
+            selectedEmploymentChips.map((toElement) => toElement).toList(),
+        "current_company": currentCompanyController.text,
+        "job_designation": jobDesignationController.text,
+        "state": stateController.text,
+        "location": locationController.text,
+        "country": countryController.text,
+        // "Year_of_experience": selectExperience ?? "",
+        "city": cityPostCodeController.text,
+        "radius": "0", //no option in mobile design, default to 0
+        "availabilityType": selectedAvailabilityType,
+        "profile_image": profileImg != null
+            ? [
+                {
+                  "url": profileImg!.url,
+                  "name": profileImg!.name,
+                  "type": profileImg!.type,
+                  "extension": profileImg!.extension,
+                }
+              ]
+            : [],
+        "upload_resume": [
+          {
+            "url": serverDocuments["Resume"]?.url ??
+                uploadedFiles["Resume"]?["url"],
+            "name": serverDocuments["Resume"]?.name ??
+                uploadedFiles["Resume"]?["name"],
+            "type": "pdf",
+            "extension": "pdf",
+          }
+        ],
+        "certificate": [
+          {
+            "url": serverDocuments["Certificate"]?.url ??
+                uploadedFiles["Certificate"]?["url"],
+            "name": serverDocuments["Certificate"]?.name ??
+                uploadedFiles["Certificate"]?["name"],
+            "type": "document",
+            "extension": "pdf",
+          }
+        ],
+        "cover_letter": [
+          {
+            "url": serverDocuments["Cover Letter"]?.url ??
+                uploadedFiles["Cover Letter"]?["url"],
+            "name": serverDocuments["Cover Letter"]?.name ??
+                uploadedFiles["Cover Letter"]?["name"],
+            "type": "image",
+            "extension": "jpeg",
+          }
+        ],
+        "Year_of_experiance": selectExperience,
+
+        "abn_number": abnNumberController.text,
+        "availabilityOption": selectedAvailabilityType,
+        "current_ctc": "100000",
+        "post_anonymously": isPostAnonymous,
+        "admin_status": isDraft ? "DRAFT" : "PENDING",
+        "jobexperiences": experiences
+            .map((e) => {
+                  "company_name": e.companyName,
+                  "job_title": e.jobTitle,
+                  "ejobdesp": e.jobDescription,
+                  "startMonth": e.startMonth,
+                  "startYear": e.startYear,
+                  "isStillWorking": isStillWorking,
+                  "endMonth": e.endMonth,
+                  "endYear": e.endYear
+                })
+            .toList(),
+        "educations": educations
+            .map((e) => {
+                  "institution": e.institution,
+                  "qualification": e.qualification,
+                  "selectedQualification": e.selectedQualification,
+                  "finishDate": e.finishDate,
+                  "qualificationFinished": false,
+                  "courseHighlights": e.courseHighlights,
+                })
+            .toList(),
+        "work_rights": selectworkRight,
+        "languages_spoken": languages,
+        "areas_expertise": expertise,
+        "skills": selectskills.map((toElement) => toElement).toList(),
+        "salary_amount": salaryController.text == ""
+            ? null
+            : salaryController.text, // need to send dynamically
+        "salary_type": selectedSalaryPer, // need to send dynamically
+        "travel_distance": DistanceController.text == ""
+            ? null
+            : DistanceController.text, // need to send dynamically
+        "percentage":
+            percentageController.text == "" ? null : percentageController.text,
+        "aphra_number": aphraRegistrationNumberController.text == ""
+            ? null
+            : aphraRegistrationNumberController.text,
+        "willing_to_travel": isWillingToTravel,
+        "about_yourself": aboutMeController.text,
+        "availabilityDay": selectedDays,
+        "availabilityDate":
+            availabilityDates.map((d) => d.toIso8601String()).toList(),
+        "fromDate": joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+      }
+    };
+    try {
+      final res = await repo.updateJobProfileListing(variables);
+      Loaders.circularHideLoader(context);
+
+      if (res != null && res['_error'] != null) {
+        final errorMessage = res['_error'] as String;
+        if (errorMessage.contains('job_profiles_email_address_key') ||
+            errorMessage.contains('Uniqueness violation')) {
+          scaffoldMessenger('Email already exists, use another one');
+        } else {
+          scaffoldMessenger(errorMessage);
+        }
+      } else {
+        scaffoldMessenger('Job Profile Updated Successfully!');
+        navigationService.goBack();
+        clearAllData();
+      }
+    } catch (e) {
+      Loaders.circularHideLoader(context);
+      // Error message already shown by repository
+      // Stay on current screen to allow user to fix the issue
+    }
+    notifyListeners();
   }
 
   setTheProfileUpdateData(JobProfiles? profile) {
@@ -1101,7 +1122,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     };
     selectedAvailabilityType = profile?.availabilityType ?? "";
     selectedDays = profile?.availabilityDay ?? [];
-    
 
     availabilityDates = profile?.availabilityDate
             .map((dateStr) => DateTime.parse(dateStr))

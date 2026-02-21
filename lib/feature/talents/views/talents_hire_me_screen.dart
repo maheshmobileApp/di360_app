@@ -5,7 +5,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
-import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -52,7 +51,8 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
           future: LocalStorage.getStringVal(LocalStorageConst.type),
           builder: (context, snapshot) {
             if (snapshot.hasData &&
-                (snapshot.data == UserRole.supplier.value || snapshot.data == UserRole.practice.value)) {
+                (snapshot.data == UserRole.supplier.value ||
+                    snapshot.data == UserRole.practice.value)) {
               return FutureBuilder<String>(
                 future: LocalStorage.getStringVal(LocalStorageConst.userId),
                 builder: (context, userSnapshot) {
@@ -100,8 +100,7 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                       text: 'View CV',
                       onPressed: () {
                         navigationService.push(HorizantalPdf(
-                          fileUrl:
-                              talentList!.uploadResume.first.url ?? '',
+                          fileUrl: talentList!.uploadResume.first.url ?? '',
                           fileName: '',
                           isfullScreen: true,
                         ));
@@ -118,20 +117,15 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                   if (talentList?.yearOfExperience != null)
                     ExerinaceInfoIcons(
                         icon: Icons.work,
-                        text:
-                            '${talentList!.yearOfExperience} Yrs Experience'),
-                  if (talentList?.yearOfExperience != null)
-                    addVertical(12),
+                        text: '${talentList!.yearOfExperience} Yrs Experience'),
+                  if (talentList?.yearOfExperience != null) addVertical(12),
                   if (talentList?.location?.isNotEmpty == true)
                     ExerinaceInfoIcons(
-                        icon: Icons.location_on,
-                        text: talentList!.location!),
-                  if (talentList?.location?.isNotEmpty == true)
-                    addVertical(12),
+                        icon: Icons.location_on, text: talentList!.location!),
+                  if (talentList?.location?.isNotEmpty == true) addVertical(12),
                   if (talentList?.mobileNumber?.isNotEmpty == true)
                     ExerinaceInfoIcons(
-                        icon: Icons.call,
-                        text: talentList!.mobileNumber!),
+                        icon: Icons.call, text: talentList!.mobileNumber!),
                   if (talentList?.mobileNumber?.isNotEmpty == true)
                     addVertical(12),
                   if (talentList?.currentCompany?.isNotEmpty == true)
@@ -142,8 +136,7 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                     addVertical(12),
                   if (talentList?.emailAddress?.isNotEmpty == true)
                     ExerinaceInfoIcons(
-                        icon: Icons.email,
-                        text: talentList!.emailAddress!),
+                        icon: Icons.email, text: talentList!.emailAddress!),
                   if (talentList?.emailAddress?.isNotEmpty == true)
                     addVertical(12),
                   if (talentList?.languagesSpoken.isNotEmpty == true)
@@ -278,8 +271,10 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                   } else {
                     final provider =
                         Provider.of<TalentsViewModel>(context, listen: false);
-                    await provider.hireMeTalent(talentList?.id ?? "", talentList?.dentalProfessionalId ?? "");
-                    await provider.getTalentListMutationById(context, talentList?.dentalProfessionalId ?? "");
+                    await provider.hireMeTalent(talentList?.id ?? "",
+                        talentList?.dentalProfessionalId ?? "");
+                    await provider.getTalentListMutationById(
+                        context, talentList?.dentalProfessionalId ?? "");
                     ToastMessage.show('Hire Me Request sent successfully!');
                   }
                 },
@@ -317,7 +312,8 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
   }
 
   Future<void> _openLocationInMaps(BuildContext context) async {
-    final talentViewModel = Provider.of<TalentsViewModel>(context, listen: false);
+    final talentViewModel =
+        Provider.of<TalentsViewModel>(context, listen: false);
     final talentList = talentViewModel.talentListById?.firstOrNull;
     final location = talentList?.location;
     if (location == null || location.isEmpty) {
@@ -435,7 +431,8 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
   }
 
   bool _hasAnyProfessionalData() {
-    final talentViewModel = Provider.of<TalentsViewModel>(context, listen: false);
+    final talentViewModel =
+        Provider.of<TalentsViewModel>(context, listen: false);
     final talentList = talentViewModel.talentListById?.firstOrNull;
     return (talentList?.abnNumber?.isNotEmpty == true) ||
         (talentList?.professionType?.isNotEmpty == true) ||
@@ -444,7 +441,8 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
   }
 
   Widget _buildProfessionalSection() {
-    final talentViewModel = Provider.of<TalentsViewModel>(context, listen: false);
+    final talentViewModel =
+        Provider.of<TalentsViewModel>(context, listen: false);
     final talentList = talentViewModel.talentListById?.firstOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -503,7 +501,6 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
             CustomRoundedButton(
               text: "Send",
               onPressed: () async {
-                navigationService.goBack();
                 final provider =
                     Provider.of<TalentsViewModel>(context, listen: false);
                 final userId =
@@ -513,10 +510,19 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                     enquiryDescription: provider.enquiryData ?? '',
                     talentId: talentList?.id ?? '',
                     enquiryFrom: userId);
-                await provider.enquire(enquire);
-                ToastMessage.show('Enquiry sent successfully!');
+                if (provider.enquiryData == null ||
+                    provider.enquiryData?.isEmpty == true) {
+                  ToastMessage.show(
+                      'Please enter a message before sending an enquiry.');
+                  return;
+                } else {
+                  await provider.enquire(enquire);
+                  navigationService.goBack();
+
+                  ToastMessage.show('Enquiry sent successfully!');
+                }
               },
-              backgroundColor: Colors.orange,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
             ),
           ],

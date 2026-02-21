@@ -142,6 +142,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
         Flexible(
           child: Text(
             location,
+            maxLines: 2,
             style: TextStyles.regular1(
               fontSize: 14,
               color: AppColors.locationTextColor,

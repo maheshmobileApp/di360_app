@@ -283,13 +283,26 @@ class TeamMembersViewModel extends ChangeNotifier {
         "status": "VERIFICATION_PENDING"
       }
     };
-    final res = await repo.createTeamMember(variables);
-    if (res != null) {
-      await getTeamMembers();
+    try {
+      final res = await repo.createTeamMember(variables);
       Loaders.circularHideLoader(context);
-      navigationService.goBack();
-      clearFields();
-      scaffoldMessenger("Team Member Created Sucessfully!");
+      
+      if (res != null && res['_error'] != null) {
+        final errorMessage = res['_error'] as String;
+        if (errorMessage.contains('clients_email_key') || errorMessage.contains('Uniqueness violation')) {
+          scaffoldMessenger('Email already exists, use another one');
+        } else {
+          scaffoldMessenger(errorMessage);
+        }
+      } else if (res != null) {
+        await getTeamMembers();
+        navigationService.goBack();
+        clearFields();
+        scaffoldMessenger("Team Member Created Sucessfully!");
+      }
+    } catch (e) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('An error occurred. Please try again.');
     }
     notifyListeners();
   }

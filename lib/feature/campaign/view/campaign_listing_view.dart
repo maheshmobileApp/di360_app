@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/campaign/widgets/campaign_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -129,7 +130,7 @@ class _JobListingScreenState extends State<CampaignListingView>
                           return CampaignCard(
                             id: campaignData.id ?? "",
                             campaignName: campaignData.campaignName ?? "",
-                            date: campaignData.scheduleDate ?? "",
+                            date: DateFormatUtils.formatDateYear(campaignData.scheduleDate ?? ""),
                             type: campaignData.messageChannel ?? "",
                             status: campaignData.status ?? "",
                             repeat: campaignData.isRepeating ?? "",

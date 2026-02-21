@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 //
 class CustomDatePicker extends StatelessWidget {
   final TextEditingController controller;
@@ -12,6 +13,7 @@ class CustomDatePicker extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool? isRequired;
   final String? title;
+  final bool? showIcon;
 
   const CustomDatePicker({
     Key? key,
@@ -22,6 +24,7 @@ class CustomDatePicker extends StatelessWidget {
     this.validator,
     this.isRequired,
     this.title,
+    this.showIcon = true,
   }) : super(key: key);
 
   @override
@@ -50,16 +53,17 @@ class CustomDatePicker extends StatelessWidget {
         validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
-          prefixIcon: Padding(
+          prefixIcon: showIcon == true
+              ? Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: SvgPicture.asset(
                     ImageConst.calenderBlank,
                     width: 20,
                     height: 20,
-                  ),
-                ),
-          
-          suffixIcon: const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
+            ),
+          ):null,
+          suffixIcon:
+              const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
           contentPadding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
           hintText: hintText ?? "Date",
           hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),

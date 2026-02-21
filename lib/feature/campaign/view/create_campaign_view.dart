@@ -66,6 +66,7 @@ class CreateCampaignView extends StatelessWidget
                     controller: viewModel.campaignNameController,
                     hintText: "Enter Campaign name",
                     title: "Campaign Name",
+                    isRequired: true,
                     maxLength: 100,
                     //readOnly: viewModel.repeatMode,
                     validator: validationCampaignName,
@@ -75,6 +76,7 @@ class CreateCampaignView extends StatelessWidget
                     validator: validateScheduleDate,
                     controller: viewModel.scheduleDateController,
                     title: "Scheduled Date",
+                    isRequired: true,
                     hintText: "Select scheduled date",
                     onTap: () async {
                       final picked = await showDatePicker(
@@ -147,8 +149,7 @@ class CreateCampaignView extends StatelessWidget
                         "Select Groups",
                         style: TextStyles.regular3(color: AppColors.black),
                       ),
-
-                       Text(
+                      Text(
                         " *",
                         style: TextStyles.bold2(color: Colors.red),
                       ),
@@ -201,33 +202,43 @@ class CreateCampaignView extends StatelessWidget
                     },
                   ),
                   addVertical(8),
-                  (viewModel.selectedType != "SMS" && viewModel.selectedType != "")?
-                  Text(
-                    "*For an improved email/HTML composition experience, we recommend using the web application.",
-                    style: TextStyles.regular2(color: AppColors.black),
-                  ):SizedBox.shrink(),
+                  (viewModel.selectedType != "SMS" &&
+                          viewModel.selectedType != "")
+                      ? Text(
+                          "*For an improved email/HTML composition experience, we recommend using the web application.",
+                          style: TextStyles.regular2(color: AppColors.black),
+                        )
+                      : SizedBox.shrink(),
                   addVertical(16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomRoundedButton(
-                        text: 'Cancel',
-                        onPressed: () {
-                          navigationService.goBack();
-                        },
-                        height: 42,
-                        backgroundColor: AppColors.geryColor,
-                        textColor: Colors.black,
-                      ),
-                      CustomRoundedButton(
-                        text: viewModel.repeatMode ? 'Repeat' : 'Save',
-                        onPressed: () => _validateAndSave(context, viewModel),
-                        height: 42,
-                        backgroundColor: AppColors.primaryColor,
-                        textColor: Colors.white,
-                      )
-                    ],
-                  )
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 10,
+                      bottom: MediaQuery.of(context).padding.bottom + 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomRoundedButton(
+                          text: 'Cancel',
+                          onPressed: () {
+                            navigationService.goBack();
+                          },
+                          height: 42,
+                          backgroundColor: AppColors.geryColor,
+                          textColor: Colors.black,
+                        ),
+                        CustomRoundedButton(
+                          text: viewModel.repeatMode ? 'Repeat' : 'Save',
+                          onPressed: () => _validateAndSave(context, viewModel),
+                          height: 42,
+                          backgroundColor: AppColors.primaryColor,
+                          textColor: Colors.white,
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -261,7 +272,7 @@ class CreateCampaignView extends StatelessWidget
   }
 
   Widget _buildTimeZones(CampaignViewModel viewModel) {
-    final validRoles = viewModel.timeOptions;
+    final validRoles = viewModel.timeOptions.map((tz) => tz['value']!).toList();
 
     final selectedValue = validRoles.contains(viewModel.selectedTimeZone)
         ? viewModel.selectedTimeZone

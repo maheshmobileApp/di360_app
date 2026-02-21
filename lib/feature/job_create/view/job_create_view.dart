@@ -164,8 +164,12 @@ class _JobCreateViewState extends State<JobCreateView> {
     bool isFirstStep = currentStep == 0;
 
     return Container(
-      height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 10,
+        bottom: MediaQuery.of(context).padding.bottom + 10,
+      ),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
         boxShadow: [
