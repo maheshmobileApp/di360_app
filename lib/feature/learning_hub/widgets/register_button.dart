@@ -1,13 +1,16 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class RegisterButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
+  final bool isRegistered;
 
   const RegisterButton({
     super.key,
     required this.text,
     required this.onTap,
+    required this.isRegistered,
   });
 
   @override
@@ -17,10 +20,9 @@ class RegisterButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(30),
       child: Container(
         height: 40,
-
-        padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: isRegistered? AppColors.geryColor:AppColors.black,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -34,7 +36,9 @@ class RegisterButton extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Container(
               width: 28,
               height: 28,

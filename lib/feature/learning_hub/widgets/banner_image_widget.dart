@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class BannerImageWidget extends StatelessWidget {
@@ -7,18 +9,19 @@ class BannerImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      imageUrl,
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
       fit: BoxFit.cover,
       width: double.infinity,
       height: 180,
-      loadingBuilder: (context, child, progress) {
-        if (progress == null) return child;
-        return const Center(child: CircularProgressIndicator());
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return const Icon(Icons.broken_image, size: 50, color: Colors.red);
-      },
+      placeholder: (context, url) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryColor),
+      ),
+      errorWidget: (context, url, error) => const Icon(
+        Icons.broken_image,
+        size: 50,
+        color: Colors.red,
+      ),
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 
 class ListingHubMasterCard extends StatelessWidget {
-  final String?  feedId;
+  final String? feedId;
   final String imageUrl;
   final String companyName;
   final String description;
@@ -20,6 +20,7 @@ class ListingHubMasterCard extends StatelessWidget {
   final String presenterName;
   final VoidCallback registerTap;
   final dynamic remainingOfSeats;
+  final bool isRegistered;
 
   const ListingHubMasterCard(
       {super.key,
@@ -35,7 +36,8 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.profilePic,
       required this.presenterName,
       required this.registerTap,
-      required this.remainingOfSeats});
+      required this.remainingOfSeats,
+      required this.isRegistered});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,6 @@ class ListingHubMasterCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with tags overlay
             Stack(
               children: [
                 GestureDetector(
@@ -91,33 +92,6 @@ class ListingHubMasterCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                /*(date.isEmpty && date == "")
-                    ? SizedBox.shrink()
-                    : Positioned(
-                        left: 8,
-                        bottom: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(136, 141, 139, 139),
-                            border: Border.all(color: AppColors.whiteColor),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.calendar_today,
-                                  color: Colors.white, size: 14),
-                              const SizedBox(width: 4),
-                              Text(
-                                "$date",
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),*/
               ],
             ),
 
@@ -163,12 +137,20 @@ class ListingHubMasterCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 4),
-                        ],  
+                        ],
                       ),
-                      ShareWidget(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-                          size: 20, feedId: feedId??"",),
+                      Row(
+                        children: [
+                          _circleIcon(),
+                          SizedBox(width: 10),
+                          ShareWidget(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 8),
+                            size: 20,
+                            feedId: feedId ?? "",
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   const Divider(),
@@ -206,17 +188,17 @@ class ListingHubMasterCard extends StatelessWidget {
                                 Icon(Icons.location_on_outlined,
                                     color: AppColors.primaryColor, size: 20),
                                 const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              (location.isEmpty) ? "" : "${location}",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyles.medium2(
-                                  color: AppColors.primaryColor),
+                                Expanded(
+                                  child: Text(
+                                    (location.isEmpty) ? "" : "${location}",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyles.medium2(
+                                        color: AppColors.primaryColor),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
@@ -261,26 +243,29 @@ class ListingHubMasterCard extends StatelessWidget {
               ),
             ),
             //Spacer(),
-            (remainingOfSeats > 0)
-                ? RegisterButton(
-                    text: 'Register Now',
-                    onTap: registerTap,
-                  )
-                : SizedBox.shrink(),
+            RegisterButton(
+              text: isRegistered ? "Already Registered" : 'Register Now',
+              onTap: remainingOfSeats > 0 ? registerTap : () {},
+              isRegistered: isRegistered,
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _circleIcon({required Widget child}) {
+  Widget _circleIcon() {
     return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        shape: BoxShape.circle,
-      ),
-      child: child,
-    );
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: AppColors.backgroundColor),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Icon(
+            Icons.north_east,
+            color: AppColors.primaryColor,
+            size: 20,
+          ),
+        ));
   }
 }

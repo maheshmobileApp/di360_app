@@ -15,6 +15,7 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -133,7 +134,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                               if (count != 0) {
                                 Loaders.circularShowLoader(context);
                                 viewModel.jobId = jobsListingData?.id ?? '';
-                                
+
                                 viewModel.changeStatusforapplicatnts(
                                     "All", context);
                                 viewModel.selectedstatusesforapplicatnts =
@@ -193,7 +194,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-         
         ],
       ),
     );
@@ -230,7 +230,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               backgroundColor: AppColors.geryColor,
               radius: 30,
               child: ClipOval(
-                
                 child: CachedNetworkImageWidget(
                     imageUrl: logo ?? '',
                     width: 60,
@@ -292,11 +291,8 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     return SizedBox(
       // height: 36,
       width: double.infinity,
-      child: Text(
+      child: HtmlWidget(
         description,
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
       ),
     );
   }

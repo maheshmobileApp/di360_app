@@ -86,11 +86,15 @@ class CourseRegisteredUsers {
     createdAt = json['created_at'];
     webinarStatus = json['webinar_status'];
     status = json['status'];
-    directoriesPractice = json['directories_practice'];
+    directoriesPractice = json['directories_practice'] != null
+        ? new DirectoriesSupplier.fromJson(json['directories_practice'])
+        : null;
     directoriesSupplier = json['directories_supplier'] != null
         ? new DirectoriesSupplier.fromJson(json['directories_supplier'])
         : null;
-    directoriesProfessional = json['directories_professional'];
+    directoriesProfessional = json['directories_professional'] != null
+        ? new DirectoriesSupplier.fromJson(json['directories_professional'])
+        : null;
     sTypename = json['__typename'];
   }
 
@@ -107,11 +111,11 @@ class CourseRegisteredUsers {
     data['created_at'] = this.createdAt;
     data['webinar_status'] = this.webinarStatus;
     data['status'] = this.status;
-    data['directories_practice'] = this.directoriesPractice;
+    data['directories_practice'] = this.directoriesPractice?.toJson();
     if (this.directoriesSupplier != null) {
       data['directories_supplier'] = this.directoriesSupplier!.toJson();
     }
-    data['directories_professional'] = this.directoriesProfessional;
+    data['directories_professional'] = this.directoriesProfessional?.toJson();
     data['__typename'] = this.sTypename;
     return data;
   }
