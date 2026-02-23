@@ -246,7 +246,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                       await newCourseVM.updateCourseListing(
                           context, courseListVM.courseId, false);
                       courseListVM.editOptionEnable &&
-                              courseListVM.courseStatus == "Active"
+                              courseListVM.courseStatus == "APPROVE"
                           ? scaffoldMessenger("Course is updated Successfully")
                           : scaffoldMessenger("Course is Created Successfully");
                       courseListVM.selectedStatus = "All";

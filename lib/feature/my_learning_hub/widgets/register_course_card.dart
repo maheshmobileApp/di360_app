@@ -117,10 +117,14 @@ class RegisterCourseCard extends StatelessWidget {
             CircleAvatar(
               backgroundColor: AppColors.geryColor,
               radius: 30,
-              child: CachedNetworkImageWidget(
-                  imageUrl: profilePic,
-                  fit: BoxFit.fill,
-                  errorWidget: Image.asset(ImageConst.prfImg)),
+              child: ClipOval(
+                child: CachedNetworkImageWidget(
+                    width: 50,
+                    height: 50,
+                    imageUrl: profilePic,
+                    fit: BoxFit.fill,
+                    errorWidget: Image.asset(ImageConst.prfImg)),
+              ),
             ),
           ],
         ),
@@ -158,8 +162,7 @@ class RegisterCourseCard extends StatelessWidget {
             final url = Uri.parse(link);
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
-            } else {
-            }
+            } else {}
           },
           child: Text(
             "Meeting Link",

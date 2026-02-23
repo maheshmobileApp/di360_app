@@ -19,6 +19,7 @@ import 'package:di360_flutter/widgets/gallary_view.dart';
 import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -256,20 +257,24 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ],
           ),
         SizedBox(height: 10),
-        if (widget.job.availabilityDate != null && widget.job.availabilityDate?[0] != "" && widget.job.availabilityDate?[1] != "")
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Dates Required :",
-                style: TextStyles.medium2(color: AppColors.black),
-              ),
-              Text(
-                "${widget.job.availabilityDate?[0]} to ${widget.job.availabilityDate?[1]}",
-                style: TextStyles.medium2(color: AppColors.primaryColor),
-              ),
-            ],
-          ),
+        if (widget.job.availabilityDate != null &&
+            widget.job.availabilityDate!.isNotEmpty &&
+            widget.job.availabilityDate!.length >= 2)
+          if (widget.job.availabilityDate![0] != "" &&
+              widget.job.availabilityDate![1] != "")
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Dates Required :",
+                  style: TextStyles.medium2(color: AppColors.black),
+                ),
+                Text(
+                  "${widget.job.availabilityDate![0]} to ${widget.job.availabilityDate![1]}",
+                  style: TextStyles.medium2(color: AppColors.primaryColor),
+                ),
+              ],
+            ),
 
         Divider(height: 30),
         if (widget.job.hiringPeriod?.isNotEmpty == true)
@@ -540,7 +545,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 
   Widget _sectionText(String text) {
-    return Text(text, style: TextStyle(color: Colors.grey[700]));
+    return HtmlWidget(text);
   }
 }
 

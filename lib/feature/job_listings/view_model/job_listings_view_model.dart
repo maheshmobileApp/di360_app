@@ -195,6 +195,9 @@ class JobListingsViewModel extends ChangeNotifier {
     final res = await repo.getMyJobListing(listingStatus);
     if (res != null) {
       myJobListingList = res;
+      myJobListingList.sort((a, b) => 
+        (b.updatedAt ?? '').compareTo(a.updatedAt ?? '')
+      );
       //Loaders.circularHideLoader(context);
     }
     notifyListeners();

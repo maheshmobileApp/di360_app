@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -64,6 +65,9 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
             courseDetails!.courseBannerVideo!.isNotEmpty)
         ? courseDetails.courseBannerVideo?.first.name ?? ""
         : "";
+        
+    final isRegistered =
+        courseListingVM.isRegisteredCheck(courseDetails?.courseRegisteredUsers);
 
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
@@ -76,12 +80,14 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                   padding: const EdgeInsets.all(8.0),
                   child: RegisterNowWidget(
                     earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
-                    registerStatus: courseListingVM.courseRegistered,
+                    registerStatus: isRegistered,
                     currentPrice:
                         courseDetails?.earlyBirdPrice?.toString() ?? "0",
                     oldPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
-                    onPressed: courseListingVM.courseRegistered
-                        ? null
+                    onPressed: isRegistered
+                        ? () {
+                            scaffoldMessenger("Already Registered");
+                          }
                         : () {
                             courseListingVM
                                 .setCourseId(courseDetails?.id ?? "");
@@ -89,6 +95,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                               context,
                               courseDetails?.courseName ?? "",
                               courseDetails?.createdById ?? "",
+                              courseDetails?.id??""
                             );
                           },
                   ),
@@ -259,13 +266,16 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           child: Column(
                             children: [
                               ContactInfoWidget(
-                                location: _getAddressAsString(courseDetails?.address),
+                                location:
+                                    _getAddressAsString(courseDetails?.address),
                                 email: courseDetails?.contactEmail ?? "",
                                 phoneNumber: courseDetails?.contactPhone ?? "",
                               ),
-                              if (_getAddressAsString(courseDetails?.address).isNotEmpty)
+                              if (_getAddressAsString(courseDetails?.address)
+                                  .isNotEmpty)
                                 LocationViewWidget(
-                                    location: _getAddressAsString(courseDetails?.address)),
+                                    location: _getAddressAsString(
+                                        courseDetails?.address)),
                             ],
                           ),
                         ),

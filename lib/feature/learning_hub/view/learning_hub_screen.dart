@@ -38,8 +38,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      final courseListingVM = Provider.of<CourseListingViewModel>(context, listen: false);
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final courseListingVM =
+          Provider.of<CourseListingViewModel>(context, listen: false);
       courseListingVM.getCoursesListingData(context, loadMore: true);
     }
   }
@@ -172,12 +174,15 @@ class _JobListingScreenState extends State<LearningHubScreen>
             )
           : ListView.builder(
               controller: _scrollController,
-              itemCount: courseListingVM.coursesListingList.length + (courseListingVM.isLoadingMoreCourses ? 1 : 0),
+              itemCount: courseListingVM.coursesListingList.length +
+                  (courseListingVM.isLoadingMoreCourses ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == courseListingVM.coursesListingList.length) {
-                  return Center(child: Padding(
+                  return Center(
+                      child: Padding(
                     padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(color: AppColors.primaryColor),
+                    child: CircularProgressIndicator(
+                        color: AppColors.primaryColor),
                   ));
                 }
                 final jobData = courseListingVM.coursesListingList[index];
@@ -241,6 +246,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       case "Edit":
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
+                       /* if (courseListingVM.courseDetails.isEmpty) {
+                          scaffoldMessenger('Course details not found');
+                          break;
+                        }*/
                         courseListingVM.setEditOption(true);
                         newCourseVM.setCurrentStep(0);
                         courseListingVM.setCourseId(course.id ?? "");
@@ -278,6 +287,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       case "Re-Listing":
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
+                        if (courseListingVM.courseDetails.isEmpty) {
+                          scaffoldMessenger('Course details not found');
+                          break;
+                        }
                         courseListingVM.setEditOption(true);
                         newCourseVM.setCurrentStep(0);
                         courseListingVM.setCourseId(course.id ?? "");
@@ -363,9 +376,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   Future<void> loadCourseData(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
-    // Reset image/file selections
+    print("###########################${course.communityUserType}");
     newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
-    newCourseVM.selectedCommunityType = course.communityUserType ?? "Both";
+    newCourseVM.setCommunityType(
+        course.communityUserType == "BOTH" ? "Both" : "Community User");
 
     newCourseVM.serverCourseHeaderBanner =
         course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty

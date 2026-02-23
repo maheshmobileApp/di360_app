@@ -1,8 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
@@ -14,7 +16,6 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class LearningHubMasterView extends StatefulWidget {
   const LearningHubMasterView({super.key});
@@ -91,6 +92,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           final seats = (course.numberOfSeats -
                               course.courseRegisteredUsersAggregate?.aggregate
                                   ?.count);
+                          final isRegistered = courseListingVM
+                              .isRegisteredCheck(course.courseRegisteredUsers);
 
                           return ListingHubMasterCard(
                             feedId: course.id ?? "",
@@ -103,6 +106,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             companyName: course.courseName ?? '',
                             description: course.description ?? '',
                             date: course.startDate ?? "",
+                            isRegistered: isRegistered,
                             cpdHours: (course.cpdPoints ?? 0) % 1 == 0
                                 ? (course.cpdPoints ?? 0).toInt().toString()
                                 : (course.cpdPoints ?? 0).toString(),
@@ -131,17 +135,23 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 scaffoldMessenger('Seats are sold out!');
                               }
                             },
-                            registerTap: () async {
-                              if (seats > 0) {
-                                courseListingVM.setCourseId(course.id ?? "");
-                                RegistrationUserForm.show(
-                                    context,
-                                    course.courseName ?? "",
-                                    course.createdById ?? "");
-                              } else {
-                                scaffoldMessenger('Seats are sold out!');
-                              }
-                            },
+                            registerTap: isRegistered
+                                ? () {
+                                    scaffoldMessenger("Already Registered!");
+                                  }
+                                : () async {
+                                    if (seats > 0) {
+                                      courseListingVM
+                                          .setCourseId(course.id ?? "");
+                                      RegistrationUserForm.show(
+                                          context,
+                                          course.courseName ?? "",
+                                          course.createdById ?? "",
+                                          course.id??"");
+                                    } else {
+                                      scaffoldMessenger('Seats are sold out!');
+                                    }
+                                  },
                           );
                         },
                       )),

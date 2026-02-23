@@ -7,13 +7,12 @@ const String getAllListingDataQuery =
     where: {status: {_eq: "APPROVE"}, active_status: {_eq: "ACTIVE"}, _and: [$where]}
   ) {
     id
-    presented_by_name
     course_name
     cpd_points
+    created_by_id
     address
-    description
     company_name
-    presented_by_image
+    presenters
     max_subscribers
     endDate
     event_type
@@ -27,7 +26,13 @@ const String getAllListingDataQuery =
     number_of_seats
     startTime
     endTime
-    course_registered_users_aggregate {
+    course_registered_users {
+      course_id
+      from_id
+      status
+      __typename
+    }
+    course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {
       aggregate {
         count
         __typename
