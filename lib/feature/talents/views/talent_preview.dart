@@ -5,7 +5,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
-import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
@@ -18,6 +17,7 @@ import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/exerinace_info_icons.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,43 +33,25 @@ class TalentPreview extends StatefulWidget with BaseContextHelpers {
   State<TalentPreview> createState() => _TalentPreviewState();
 }
 
-class _TalentPreviewState extends State<TalentPreview>
-    with BaseContextHelpers {
+class _TalentPreviewState extends State<TalentPreview> with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final talentViewModel = Provider.of<TalentsViewModel>(context);
     return Scaffold(
-        backgroundColor: AppColors.whiteColor,
-        appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            leading: IconButton(
-                onPressed: () {
-                  navigationService.goBack();
-                },
-                icon: Icon(Icons.arrow_back_ios)),
-            title: Text(
-              "Talent Preview",
-              style: TextStyles.medium2(),
-            )),
-        body: _buildBodyContent(context, talentViewModel),
-        /*bottomNavigationBar: FutureBuilder<String>(
-          future: LocalStorage.getStringVal(LocalStorageConst.type),
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                (snapshot.data == "SUPPLIER" || snapshot.data == "PRACTICE")) {
-              return FutureBuilder<String>(
-                future: LocalStorage.getStringVal(LocalStorageConst.userId),
-                builder: (context, userSnapshot) {
-                  if (userSnapshot.hasData) {
-                    return _bottomButtons(context, userSnapshot.data!);
-                  }
-                  return const SizedBox.shrink();
-                },
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        )*/);
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          leading: IconButton(
+              onPressed: () {
+                navigationService.goBack();
+              },
+              icon: Icon(Icons.arrow_back_ios)),
+          title: Text(
+            "Talent Preview",
+            style: TextStyles.medium2(),
+          )),
+      body: _buildBodyContent(context, talentViewModel),
+    );
   }
 
   Widget _buildBodyContent(
@@ -359,10 +341,9 @@ class _TalentPreviewState extends State<TalentPreview>
   }
 
   Widget _sectionText(String text) {
-    return Text(text,
-        maxLines: null,
-        overflow: TextOverflow.visible,
-        style: TextStyles.regular1(color: AppColors.locationTextColor));
+    return HtmlWidget(
+      text,
+    );
   }
 
   bool _hasAnyProfessionalData() {

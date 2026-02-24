@@ -246,10 +246,10 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       case "Edit":
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
-                       /* if (courseListingVM.courseDetails.isEmpty) {
+                        if (courseListingVM.courseDetails.isEmpty) {
                           scaffoldMessenger('Course details not found');
                           break;
-                        }*/
+                        }
                         courseListingVM.setEditOption(true);
                         newCourseVM.setCurrentStep(0);
                         courseListingVM.setCourseId(course.id ?? "");

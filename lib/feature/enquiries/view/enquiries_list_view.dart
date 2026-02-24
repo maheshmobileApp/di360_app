@@ -1,15 +1,18 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
-
 
 class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
   final ApplicantEnquiryData? applicant;
   final String? profileImageUrl;
 
-  const EnquiriesListView({super.key, required this.applicant, this.profileImageUrl});
+  const EnquiriesListView(
+      {super.key, required this.applicant, this.profileImageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +34,13 @@ class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
-                        "Enquiry",
+                        "Enquiries",
                         style: TextStyle(
-                          fontSize: 18, 
+                          fontSize: 18,
+                          color: AppColors.primaryColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -47,16 +51,17 @@ class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
                     )
                   ],
                 ),
-
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
+                  color: AppColors.whiteColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
+                    
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         if (applicant?.jobEnquiries != null)
                           ListView.builder(
@@ -64,17 +69,42 @@ class EnquiriesListView extends StatelessWidget with BaseContextHelpers {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: applicant?.jobEnquiries!.length,
                             itemBuilder: (context, index) {
-                              
-
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  radius: 24,
-                                  child: CachedNetworkImageWidget(
-              imageUrl: profileImageUrl ?? '',
-              fit: BoxFit.fill,
-              errorWidget: Image.asset(ImageConst.prfImg)),
-                                ),
-                                title: Text(applicant?.jobEnquiries?[index].enquiryDescription??""),
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                    children: [
+                                      ClipOval(
+                                        child: SizedBox(
+                                          width: 48,
+                                          height: 48,
+                                          child: CachedNetworkImageWidget(
+                                            imageUrl: profileImageUrl ?? '',
+                                            fit: BoxFit.cover,
+                                            errorWidget: Image.asset(ImageConst.prfImg, fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        DateFormatUtils.formatDateTime(applicant
+                                                ?.jobEnquiries?[index]
+                                                .createdAt ??
+                                            ''),
+                                        style: TextStyles.regular1(),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    applicant?.jobEnquiries?[index]
+                                            .enquiryDescription ??
+                                        '',
+                                    style: TextStyles.medium2(),
+                                  )
+                                ],
                               );
                             },
                           )

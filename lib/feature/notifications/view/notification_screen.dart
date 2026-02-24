@@ -129,11 +129,12 @@ class _NotificationScreenState extends State<NotificationScreen>
                               context, notification.payload?.id ?? '');
                         } else if (notification.type ==
                             NotificationType.TALENT.name) {
-                          talentEnqVM.getTalentEnqPreviewData(
+                          await talentEnqVM.getTalentEnqPreviewData(
                               context, notification.payload?.id ?? '');
-                          navigationService.navigateToWithParams(
-                              RouteList.talentPreview,
-                              params: talentEnqVM.talentEnqPreviewData);
+                          if (talentEnqVM.talentEnqPreviewData.isNotEmpty)
+                            navigationService.navigateToWithParams(
+                                RouteList.talentPreview,
+                                params: talentEnqVM.talentEnqPreviewData.first);
                         }
                       },
                       child: _notificationCard(context, notification));

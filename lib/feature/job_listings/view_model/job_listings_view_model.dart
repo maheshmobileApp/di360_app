@@ -195,15 +195,15 @@ class JobListingsViewModel extends ChangeNotifier {
     final res = await repo.getMyJobListing(listingStatus);
     if (res != null) {
       myJobListingList = res;
-      myJobListingList.sort((a, b) => 
-        (b.updatedAt ?? '').compareTo(a.updatedAt ?? '')
-      );
+      myJobListingList
+          .sort((a, b) => (b.updatedAt ?? '').compareTo(a.updatedAt ?? ''));
       //Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
+
   List<Jobs>? jobListingData;
-  Future<void> getJobListingById(BuildContext context,String jobId) async {
+  Future<void> getJobListingById(BuildContext context, String jobId) async {
     Loaders.circularShowLoader(context);
     final variables = {"id": jobId};
 
@@ -242,7 +242,7 @@ class JobListingsViewModel extends ChangeNotifier {
 
     final res = await repo.getFilteredEnquiryData(variables);
     filteredEnquiryData = res;
-      notifyListeners();
+    notifyListeners();
   }
 
   Future<void> fetchJobStatusCounts() async {

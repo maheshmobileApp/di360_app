@@ -258,23 +258,23 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           ),
         SizedBox(height: 10),
         if (widget.job.availabilityDate != null &&
-            widget.job.availabilityDate!.isNotEmpty &&
-            widget.job.availabilityDate!.length >= 2)
-          if (widget.job.availabilityDate![0] != "" &&
-              widget.job.availabilityDate![1] != "")
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Dates Required :",
-                  style: TextStyles.medium2(color: AppColors.black),
-                ),
-                Text(
-                  "${widget.job.availabilityDate![0]} to ${widget.job.availabilityDate![1]}",
-                  style: TextStyles.medium2(color: AppColors.primaryColor),
-                ),
-              ],
-            ),
+            widget.job.availabilityDate?.isNotEmpty == true &&
+            widget.job.availabilityDate?.length == 2 &&
+            widget.job.availabilityDate?[0] != "" &&
+            widget.job.availabilityDate?[1] != "")
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Dates Required :",
+                style: TextStyles.medium2(color: AppColors.black),
+              ),
+              Text(
+                "${widget.job.availabilityDate![0]} to ${widget.job.availabilityDate![1]}",
+                style: TextStyles.medium2(color: AppColors.primaryColor),
+              ),
+            ],
+          ),
 
         Divider(height: 30),
         if (widget.job.hiringPeriod?.isNotEmpty == true)

@@ -327,7 +327,7 @@ class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
 
           if (vm.talentEnqPreviewData.isNotEmpty) {
             navigationService.navigateToWithParams(
-              RouteList.talentdetailsScreen,
+              RouteList.talentPreview,
               params: vm.talentEnqPreviewData.first,
             );
           } else {

@@ -10,7 +10,7 @@ query getMyEnquiryJobData($limit: Int, $offset: Int, $where: talent_enquiries_bo
     id
     created_at
     talent_id
-    enquiry_from
+    enq_sender_id
     dental_practices {
       logo
       __typename
@@ -42,7 +42,6 @@ query getMyEnquiryJobData($limit: Int, $offset: Int, $where: talent_enquiries_bo
     __typename
   }
 }
-
 ''';
 
 

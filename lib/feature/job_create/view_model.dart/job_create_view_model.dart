@@ -312,8 +312,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   getCompanyName() async {
-    CompanyName = await LocalStorage.getStringVal(LocalStorageConst.name);
-    companyNameController.text = CompanyName;
+    final companyName = await LocalStorage.getStringVal(LocalStorageConst.businessName);
+    companyNameController.text = companyName;
     notifyListeners();
   }
 
@@ -321,6 +321,12 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   bool validateCurrentStep() {
     if (_currentStep == 5) return validateOtherLinksStep();
     return formKeys[_currentStep].currentState?.validate() ?? false;
+  }
+
+  String? validateEmploymentTypes() {
+    return _selectedEmploymentChips.isEmpty
+        ? 'Please select at least one employment type'
+        : null;
   }
 
   Future<void> validateLogoAndBanner() async {

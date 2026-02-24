@@ -54,6 +54,7 @@ const String showCourseById = r'''query ShowCourseById($id: uuid!) {
     endDate
     startTime
     endTime
+    community_user_type
     course_registered_users {
       course_id
       from_id

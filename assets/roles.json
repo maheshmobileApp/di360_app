@@ -3,7 +3,7 @@
         "jobs_role_list": [
             {
                 "id": "ceb24d6f-33a1-408a-8014-14b94a5df55a",
-                "role_name": "Surgen",
+                "role_name": "Surgeon",
                 "created_at": "2025-05-08T06:14:40.163764+00:00",
                 "updated_at": "2025-05-08T06:14:40.163764+00:00",
                 "created_by": "ADMIN",
