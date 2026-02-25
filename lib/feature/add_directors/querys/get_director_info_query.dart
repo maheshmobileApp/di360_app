@@ -17,6 +17,8 @@ query getUeserPracDirectory($id: uuid!) {
     directory_category_id
     logo
     banner_image
+    phone_visibility
+    email_visibility
     directory_documents {
       id
       name
@@ -118,6 +120,8 @@ query getUeserPracDirectory($id: uuid!) {
     directory_category_id
     logo
     banner_image
+    phone_visibility
+    email_visibility
     directory_documents {
       id
       name

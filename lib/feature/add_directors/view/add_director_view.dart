@@ -90,8 +90,6 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         return AddDirectorTestmonal();
       case AddDirectoryStep.OtherInformation:
         return OtherInformationScreen();
-      default:
-        return Center(child: Text("Step ${stepIndex.value + 1}"));
     }
   }
 

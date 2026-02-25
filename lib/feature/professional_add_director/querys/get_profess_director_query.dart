@@ -24,6 +24,8 @@ query getUeserProfDirectory($id: uuid!) {
     latitude
     longitude
     designation
+    phone_visibility
+    email_visibility
     directory_documents {
       id
       name

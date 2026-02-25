@@ -76,8 +76,6 @@ class ProfessionalAddDirectorView extends StatelessWidget
       //   return AddDirectorTestmonal();
       case ProfessAddDirectoryStep.OtherInformation:
         return OtherInforScreen();
-      default:
-        return Center(child: Text("Step ${stepIndex.value + 1}"));
     }
   }
 

@@ -14,6 +14,7 @@ import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
@@ -245,7 +246,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         await context.read<DirectoryViewModel>().getFollowersCount(userId);
         await editVM.getAppointments(context);
         Loaders.circularHideLoader(context);
-        type == 'PROFESSIONAL'
+        type == UserRole.professional.value
             ? getBasicInfoData.isNotEmpty
                 ? navigationService
                     .navigateTo(RouteList.professionDirectorScreen)
@@ -259,7 +260,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         _currentStep = 0;
         clearBasicInfoData();
         Loaders.circularHideLoader(context);
-        type == 'PROFESSIONAL'
+        type == UserRole.professional.value
             ? navigationService.navigateTo(RouteList.professionAddDirectorView)
             : navigationService.navigateTo(RouteList.adddirectorview);
       }
@@ -267,7 +268,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       Loaders.circularHideLoader(context);
       clearBasicInfoData();
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-      type == 'PROFESSIONAL'
+      type == UserRole.professional.value
           ? navigationService.navigateTo(RouteList.professionAddDirectorView)
           : navigationService.navigateTo(RouteList.adddirectorview);
     }
