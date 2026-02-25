@@ -328,6 +328,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
       selectedItems: jobCreateVM.selectedBenefits,
       itemLabel: (item) => item,
       hintText: "Select Benefits",
+      showOptions: true,
       onSelectionChanged: (selected) {
         jobCreateVM.setSelectedBenefits(selected);
       },

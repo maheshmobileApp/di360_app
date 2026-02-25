@@ -59,21 +59,20 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                
                   CircleAvatar(
-              backgroundColor: AppColors.geryColor,
-              radius: 22,
-              child: ClipOval(
-                child: SizedBox(
-                  height: 60,
-                  width: 60,
-                  child: CachedNetworkImageWidget(
-                      imageUrl: professional?.profileImage?.url ?? '',
-                      fit: BoxFit.fill,
-                      errorWidget: Image.asset(ImageConst.prfImg)),
-                ),
-              ),
-            ),
+                    backgroundColor: AppColors.geryColor,
+                    radius: 22,
+                    child: ClipOval(
+                      child: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: CachedNetworkImageWidget(
+                            imageUrl: professional?.profileImage?.url ?? '',
+                            fit: BoxFit.fill,
+                            errorWidget: Image.asset(ImageConst.prfImg)),
+                      ),
+                    ),
+                  ),
                   addHorizontal(12),
                   Expanded(
                     child: Column(
@@ -107,21 +106,23 @@ class JobListingApplicantsCard extends StatelessWidget with BaseContextHelpers {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on_outlined,
-                          size: 16, color: AppColors.bottomNavUnSelectedColor),
-                      addHorizontal(6),
-                      Expanded(
-                        child: Text(
-                          applicant?.cityName ?? "",
-                          style: TextStyles.regular1(
-                              color: AppColors.bottomNavUnSelectedColor),
-                          overflow: TextOverflow.ellipsis,
+                  if (applicant?.cityName?.isNotEmpty == true)
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on_outlined,
+                            size: 16,
+                            color: AppColors.bottomNavUnSelectedColor),
+                        addHorizontal(6),
+                        Expanded(
+                          child: Text(
+                            applicant?.cityName ?? "",
+                            style: TextStyles.regular1(
+                                color: AppColors.bottomNavUnSelectedColor),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                   addVertical(6),
                   Row(children: [_statusChip(applicant?.status ?? "")]),
                 ],

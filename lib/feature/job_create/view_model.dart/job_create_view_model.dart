@@ -883,7 +883,6 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> loadJobData(Jobs? jobData) async {
-    print("*************print closed at  ${jobData?.closedAt}");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";
@@ -901,6 +900,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
               jobData?.closedAt ?? "");
     }
+    
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
             [];

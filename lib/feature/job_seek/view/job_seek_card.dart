@@ -8,18 +8,21 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 
 class JobSeekCard extends StatelessWidget with BaseContextHelpers {
   final Jobs? jobsData;
   final List<Widget>? children;
-  const JobSeekCard({super.key, this.children, this.jobsData,});
+  const JobSeekCard({
+    super.key,
+    this.children,
+    this.jobsData,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4,horizontal: 12),
+      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -37,72 +40,63 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
             ),
           ],
         ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _logoWithTitle(
-                context,
-                jobsData?.logo ?? "",
-                jobsData?.companyName ?? "",
-                jobsData?.jRole ?? "",
-                _getShortTime(jobsData?.createdAt ?? ""),
-                jobsData?.title ?? "",
-              ),
-              addVertical(10),
-            HtmlWidget(
-              jobsData?.description ?? "",
-              textStyle: TextStyles.regular2(color: AppColors.black),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _logoWithTitle(
+              context,
+              jobsData?.logo ?? "",
+              jobsData?.companyName ?? "",
+              jobsData?.jRole ?? "",
+              _getShortTime(jobsData?.createdAt ?? ""),
+              jobsData?.title ?? "",
             ),
-            // _descriptionWidget(jobsData?.description ?? ""),
-              addVertical(10),
-              _locationWidget(jobsData?.location ?? ""),
-              addVertical(10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(child: _chipWidget(jobsData?.typeofEmployment ?? [])),
-                  Row(
-                    children: [
-                      ShareWidget(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          size: 20, feedId: jobsData?.id ?? '',),
-                            addHorizontal(10),
-                            Row(
-                        children: [
-                          Text(
-                            "View Details",
-                            style: TextStyles.medium1(
-                                color: AppColors.primaryColor),
-                          ),
-                          SvgPicture.asset(
-                            ImageConst.nextArrow,
-                            width: 26,
-                            height: 26,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
+            addVertical(10),
+            Text(
+              _stripHtmlTags(jobsData?.description ?? ""),
+              style: TextStyles.regular2(color: AppColors.black),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            addVertical(10),
+            _locationWidget(jobsData?.location ?? ""),
+            addVertical(10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(child: _chipWidget(jobsData?.typeofEmployment ?? [])),
+                Row(
+                  children: [
+                    ShareWidget(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      size: 20,
+                      feedId: jobsData?.id ?? '',
+                    ),
+                    addHorizontal(10),
+                    Row(
+                      children: [
+                        Text(
+                          "View Details",
+                          style:
+                              TextStyles.medium1(color: AppColors.primaryColor),
+                        ),
+                        SvgPicture.asset(
+                          ImageConst.nextArrow,
+                          width: 26,
+                          height: 26,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
-      
+      ),
     );
   }
 
-  Widget _circleIcon({required Widget child}) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        shape: BoxShape.circle,
-      ),
-      child: child,
-    );
-  }
   Widget _chipWidget(List<dynamic> typeofEmployment) {
     return Wrap(
       direction: Axis.horizontal,
@@ -134,6 +128,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
       }).toList(),
     );
   }
+
   Widget _locationWidget(String location) {
     return Row(
       children: [
@@ -154,27 +149,8 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _descriptionWidget(String description) {
-    return SizedBox(
-      width: double.infinity,
-      height: 36,
-      child: Text(
-        description,
-        style: TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          height: 1,
-          color: Color.fromRGBO(116, 130, 148, 1),
-        ),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 3,
-      ),
-    );
-  }
-
   Widget _logoWithTitle(BuildContext context, String imageUrl, String title,
-      String role, String? time,String jobTitle) {
+      String role, String? time, String jobTitle) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,8 +188,10 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
               child: Text(
                 title,
                 maxLines: 2,
-                style:
-                    TextStyles.semiBold(fontSize: 16, color: AppColors.black,),
+                style: TextStyles.semiBold(
+                  fontSize: 16,
+                  color: AppColors.black,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -244,9 +222,12 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
- 
-
   String? _getShortTime(String createdAt) {
     return Jiffy.parse(createdAt).fromNow();
+  }
+
+  String _stripHtmlTags(String htmlString) {
+    final RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+    return htmlString.replaceAll(exp, '').replaceAll('&nbsp;', ' ').trim();
   }
 }

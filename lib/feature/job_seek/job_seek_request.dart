@@ -54,6 +54,21 @@ String job_list_request = r'''query getAllJobs($limit: Int, $offset: Int!) {
     pay_min
     pay_max
     offered_benefits
+    dental_practice {
+      directories {
+        description
+        __typename
+      }
+      __typename
+    }
+    dental_supplier {
+      directories {
+        description
+        __typename
+      }
+      __typename
+    }
+
   }
 }
 ''';
