@@ -85,10 +85,10 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           if (directionalVM.directorDetails?.directoryFaqs?.isNotEmpty ?? false)
             sectionTitle('FAQ', _faqSection(directionalVM),
                 key: directionalVM.sectionKeys['FAQ']),
-          if (directionalVM.directorDetails?.directoryLocations?.isNotEmpty ??
-              false)
-            sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM, context),
-                key: directionalVM.sectionKeys['Contact Us']),
+          // if (directionalVM.directorDetails?.directoryLocations?.isNotEmpty ??
+          //     false)
+          sectionTitle('GET IN TOUCH', _contactFAQs(directionalVM, context),
+              key: directionalVM.sectionKeys['Contact Us']),
         ],
       ),
     );
@@ -669,17 +669,17 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               ),
             ],
           ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
+          if (vm.emailVisibility) ...[
+            addVertical(15),
+            Row(children: [
               Icon(Icons.email, color: Colors.black),
               SizedBox(width: 10),
               Text(
                 vm.directorDetails?.email ?? '',
                 style: TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
+              )
+            ])
+          ],
           const SizedBox(height: 15),
           Row(
             children: [
@@ -691,18 +691,18 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: const [
-              Icon(Icons.facebook, color: Colors.black),
-              SizedBox(width: 15),
-              Icon(Icons.camera_alt, color: Colors.black),
-              SizedBox(width: 15),
-              Icon(Icons.link, color: Colors.black),
-              SizedBox(width: 15),
-              Icon(Icons.shop, color: Colors.black),
-            ],
-          ),
+          // const SizedBox(height: 20),
+          // Row(
+          //   children: const [
+          //     Icon(Icons.facebook, color: Colors.black),
+          //     SizedBox(width: 15),
+          //     Icon(Icons.camera_alt, color: Colors.black),
+          //     SizedBox(width: 15),
+          //     Icon(Icons.link, color: Colors.black),
+          //     SizedBox(width: 15),
+          //     Icon(Icons.shop, color: Colors.black),
+          //   ],
+          // ),
           const SizedBox(height: 20),
           InkWell(
               onTap: () => openLocationInMaps(

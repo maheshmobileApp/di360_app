@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,13 +41,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                       width: double.infinity,
                       height: 220,
                       fit: BoxFit.fill)),
-          Positioned(
-              left: 20,
-              top: 20,
-              child: GestureDetector(
-                  onTap: () => navigationService.goBack(),
-                  child:
-                      CircleAvatar(radius: 25, child: Icon(Icons.arrow_back)))),
+          
           Positioned(
               right: 1,
               left: 1,
