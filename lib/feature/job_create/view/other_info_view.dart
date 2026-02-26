@@ -5,7 +5,6 @@ import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +51,9 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                           text: null,
                           hintText: "Date",
                           validator: (value) {
+                            if (jobCreateVM.jobStatus == "APPROVE") {
+                              return null;
+                            }
                             if (jobCreateVM.isStartDateEnabled &&
                                 (value == null || value.isEmpty)) {
                               return 'Please select start date';

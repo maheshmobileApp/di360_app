@@ -28,9 +28,7 @@ class _JobListingScreenState extends State<JobListingScreen>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBarWidget(searchWidget: false
-           
-            ),
+        appBar: AppBarWidget(searchWidget: false),
         body: Column(
           children: [
             SizedBox(
@@ -106,8 +104,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                         ],
                       ),
                     )
-                  : 
-                  ListView.builder(
+                  : ListView.builder(
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
@@ -125,7 +122,6 @@ class _JobListingScreenState extends State<JobListingScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
             await navigationService.navigateTo(RouteList.jobCreate);
-           
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));

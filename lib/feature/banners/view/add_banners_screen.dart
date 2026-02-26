@@ -90,49 +90,55 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                       title: "Banner Image",
                       isRequired: true,
                       showPreview: true,
-                      serverImage: bannersVM.bannner_image,
-                      selectedFile: bannersVM.selectedPresentedImg,
+                      serverImageType: "image",
+                      serverImage: bannersVM.serverBannerImg,
+                      onServerFileRemoved: (value) {
+                        bannersVM.setPresentedImg(null);
+                      },
+                      selectedFile: bannersVM.selectedBannerImg,
                       onFilePicked: (file) async {
-                        if (file == null) return;
+                        if (file == null) {
+                          bannersVM.setPresentedImg(file);
+                        } else {
+                          // Decode image to get width & height
+                          final bytes = await file.readAsBytes();
+                          final decoded = img.decodeImage(bytes);
+                          if (decoded == null) return;
 
-                        // Decode image to get width & height
-                        final bytes = await file.readAsBytes();
-                        final decoded = img.decodeImage(bytes);
-                        if (decoded == null) return;
+                          final width = decoded.width;
+                          final height = decoded.height;
 
-                        final width = decoded.width;
-                        final height = decoded.height;
+                          // Expected from category
+                          final dimStr = bannersVM.requiredDimension ?? '';
+                          if (dimStr.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text("Please select category first")),
+                            );
+                            return;
+                          }
 
-                        // Expected from category
-                        final dimStr = bannersVM.requiredDimension ?? '';
-                        if (dimStr.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text("Please select category first")),
-                          );
-                          return;
+                          final parts = dimStr.split('x');
+                          final expectedWidth = int.tryParse(parts[0]) ?? 0;
+                          final expectedHeight = int.tryParse(parts[1]) ?? 0;
+
+                          // Validate
+                          if (width != expectedWidth ||
+                              height != expectedHeight) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Invalid banner size. Required: ${expectedWidth}x$expectedHeight, Got: ${width}x$height"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            bannersVM.setPresentedImg(null);
+                            return;
+                          } else {
+                            bannersVM.setPresentedImg(file);
+                          }
                         }
-
-                        final parts = dimStr.split('x');
-                        final expectedWidth = int.tryParse(parts[0]) ?? 0;
-                        final expectedHeight = int.tryParse(parts[1]) ?? 0;
-
-                        // Validate
-                        if (width != expectedWidth ||
-                            height != expectedHeight) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "Invalid banner size. Required: ${expectedWidth}x$expectedHeight, Got: ${width}x$height"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          bannersVM.setPresentedImg(null);
-                          return;
-                        }
-
-                        // ✅ valid image
-                        bannersVM.setPresentedImg(file);
                       },
                     ),
                     addVertical(15),
@@ -202,8 +208,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
   }
 
   bool validateURlAndData(BannersViewModel bannerVm) {
-    if (bannerVm.selectedPresentedImg != null ||
-        bannerVm.bannner_image == null) {
+    if (bannerVm.selectedBannerImg == null && bannerVm.serverBannerImg == null) {
       scaffoldMessenger('Please select Banner image');
       return false;
     } else if (bannerVm.scheduleDate == null) {

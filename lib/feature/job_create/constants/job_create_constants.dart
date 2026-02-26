@@ -47,10 +47,10 @@ final List<String> educationList = [
 ];
 final List<String> payList = ["Range"];
 final List<String> rateList = [
-  "Per year",
-  "Per month",
-  "Per week",
-  "Per hour",
+  "Per Year",
+  "Per Month",
+  "Per Week",
+  "Per Hour",
   "Commission"
 ];
 final List<String> stepsList = [

@@ -17,13 +17,13 @@ class BannersViewModel extends ChangeNotifier {
   final BannerRepositoryImpl repo = BannerRepositoryImpl();
   final HttpService _http = HttpService();
 
-  File? selectedPresentedImg;
+  File? selectedBannerImg;
   TextEditingController bannerNameController = TextEditingController();
   TextEditingController urlController = TextEditingController();
   List<BannerCategories> catagorysList = [];
   BannerCategories? selectedCatagory;
   List<Banners> bannersList = [];
-  dynamic bannner_image;
+  String? banner_image;
   dynamic banner_name;
   BannersByPk? bannerView;
   String? editBannerId;
@@ -39,8 +39,10 @@ class BannersViewModel extends ChangeNotifier {
 
   void updateSelectedCatagory(BannerCategories? catagory) {
     selectedCatagory = catagory;
-      requiredDimension = catagory?.dimensions; // store dimension
-    selectedPresentedImg = null; // reset old image
+    requiredDimension = catagory?.dimensions;
+    if (!isEditBanner && !isRelistBanner) {
+      selectedBannerImg = null;
+    }
     notifyListeners();
   }
   // void updateSelectedCatagory(BannerCategories category) {
@@ -98,7 +100,8 @@ class BannersViewModel extends ChangeNotifier {
   }
 
   void setPresentedImg(File? value) {
-    selectedPresentedImg = value;
+    selectedBannerImg = value;
+    serverBannerImg = null;
     notifyListeners();
   }
 
@@ -199,6 +202,7 @@ class BannersViewModel extends ChangeNotifier {
 
       if (res != null) {
         bannersList = res;
+        Loaders.circularHideLoader(context);
       }
       notifyListeners();
     } catch (e) {
@@ -210,14 +214,27 @@ class BannersViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> validateBannerImg() async {
-    dynamic value;
-    if (selectedPresentedImg?.path != null) {
-      value = await _http.uploadImage(selectedPresentedImg?.path);
-      bannner_image = value['url'];
-      banner_name = value['name'];
-    }
+  void setBannerImage(String value) {
+    serverBannerImg = value;
     notifyListeners();
+  }
+
+  void setBannerName(String value) {
+    banner_name = value;
+    notifyListeners();
+  }
+
+  String? serverBannerImg;
+  Future<void> validateBannerImg() async {
+    if (serverBannerImg == null) {
+      var value = await _http.uploadImage(selectedBannerImg?.path);
+      banner_image = value['url'];
+      banner_name = value['name'];
+      notifyListeners();
+    } else {
+      banner_image = serverBannerImg ?? "";
+      notifyListeners();
+    }
   }
 
 //add banner
@@ -230,7 +247,7 @@ class BannersViewModel extends ChangeNotifier {
       "banner": {
         "image": [
           {
-            "url": bannner_image,
+            "url": banner_image,
             "name": banner_name,
             "type": "image",
             "extension": "jpeg"
@@ -285,8 +302,10 @@ class BannersViewModel extends ChangeNotifier {
     bannerNameController.text = bannersView?.bannerName ?? '';
     assignTheSelectedCatagory(bannersView?.categoryName);
     editBannerId = bannersView?.id ?? "";
-    bannner_image = bannersView?.image?.first.url;
-    banner_name = bannersView?.image?.first.name;
+    if (bannersView?.image != null && bannersView?.image?.isNotEmpty == true) {
+      setBannerImage(bannersView?.image?.first.url ?? "");
+      setBannerName(bannersView?.image?.first.name ?? "");
+    }
     urlController.text = bannersView?.url ?? "";
     scheduleDate = DateTime.parse(bannersView?.scheduleDate ?? '');
     expiryDate = DateTime.parse(bannersView?.expiryDate ?? "");
@@ -310,6 +329,7 @@ class BannersViewModel extends ChangeNotifier {
 
   //update Banner
   Future<void> updateBannerData(BuildContext context, bool isDarft) async {
+
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
@@ -321,7 +341,7 @@ class BannersViewModel extends ChangeNotifier {
         "url": urlController.text,
         "image": [
           {
-            "url": bannner_image,
+            "url": banner_image,
             "name": banner_name,
             "type": "image",
             "extension": "jpeg"
@@ -354,12 +374,14 @@ class BannersViewModel extends ChangeNotifier {
     bannerNameController.text = bannersView?.bannerName ?? '';
     assignTheSelectedCatagory(bannersView?.categoryName);
     editBannerId = bannersView?.id ?? "";
-    bannner_image = bannersView?.image?.first.url;
+    if (bannersView?.image != null && bannersView!.image!.isNotEmpty) {
+      banner_image = bannersView.image!.first.url;
+    }
     urlController.text = bannersView?.url ?? "";
     scheduleDate = null;
     expiryDate = null;
 
-    isRelistBanner = true; // mark as relisting
+    isRelistBanner = true;
     notifyListeners();
   }
 
@@ -385,8 +407,8 @@ class BannersViewModel extends ChangeNotifier {
     selectedCatagory = null;
     scheduleDate = null;
     expiryDate = null;
-    selectedPresentedImg = null;
-    bannner_image = null;
+    selectedBannerImg = null;
+    banner_image = null;
     isEditBanner = false;
     isRelistBanner = false;
     notifyListeners();

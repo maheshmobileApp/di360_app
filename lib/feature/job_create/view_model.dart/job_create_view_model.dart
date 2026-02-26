@@ -312,7 +312,8 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   getCompanyName() async {
-    final companyName = await LocalStorage.getStringVal(LocalStorageConst.businessName);
+    final companyName =
+        await LocalStorage.getStringVal(LocalStorageConst.businessName);
     companyNameController.text = companyName;
     notifyListeners();
   }
@@ -882,7 +883,14 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
+  String jobStatus = "";
+  void setJobStatus(String status) {
+    jobStatus = status;
+    notifyListeners();
+  }
+
   Future<void> loadJobData(Jobs? jobData) async {
+    setJobStatus(jobData?.status ?? "");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";
@@ -900,7 +908,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
               jobData?.closedAt ?? "");
     }
-    
+
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
             [];
