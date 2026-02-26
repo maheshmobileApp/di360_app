@@ -28,26 +28,37 @@ class MyDirectorScreen extends StatelessWidget {
             },
             backgroundColor: AppColors.primaryColor,
             label: Text('Update directory',style: TextStyles.regular2(color: AppColors.whiteColor))),
-        body: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: UserDetailsWidget(
-                imageUrl: addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
-                userName: addDirectorVM.getBasicInfoData.first.professionType,
-                followerCount:
-                    '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
-                followingCount:
-                    '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
-                bannerImg:
-                    addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? '',
-              ),
+        body: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: UserDetailsWidget(
+                    imageUrl: addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
+                    userName: addDirectorVM.getBasicInfoData.first.professionType,
+                    followerCount:
+                        '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
+                    followingCount:
+                        '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
+                    bannerImg:
+                        addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? '',
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: DirectorDetailsView(),
+                  ),
+                ),
+              ],
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DirectorDetailsView(),
-              ),
-            ),
+            Positioned(
+                left: 20,
+                top: 20,
+                child: GestureDetector(
+                    onTap: () => navigationService.goBack(),
+                    child: CircleAvatar(
+                        radius: 25, child: Icon(Icons.arrow_back))))
           ],
         ),
       ),

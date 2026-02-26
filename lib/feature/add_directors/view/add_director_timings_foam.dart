@@ -183,33 +183,32 @@ class AddSocialAccountForm extends StatelessWidget
         ],
       ),
       addVertical(12),
-          CustomDropDown<String>(
-            title: 'Account',
-            hintText: 'Select Account',
-            isRequired: true,
-            value: addDirectorVM.selectedAccount,
-            items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
-                  value: e,
-                  child: Text(e),
-                )).toList(),
-            onChanged: (val) {
-              addDirectorVM.selectedAccount = val;
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty)
-                return 'Please Select Account';
-              try {
-                final socialList = addDirectorVM
-                    .getBasicInfoData.first.directoryLocations
-                    ?.firstWhere((v) => v.mediaName == value.toLowerCase());
-                return socialList != null
-                    ? 'This media account is already assigned. Please\n choose another.'
-                    : null;
-              } catch (e) {
-                return null;
-              }
-            },
-          ),
+      CustomDropDown<String>(
+        title: 'Account',
+        hintText: 'Select Account',
+        isRequired: true,
+        value: addDirectorVM.selectedAccount,
+        items: ConstantData.AccountList.map((e) => DropdownMenuItem<String>(
+              value: e,
+              child: Text(e),
+            )).toList(),
+        onChanged: (val) {
+          addDirectorVM.selectedAccount = val;
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Please Select Account';
+          try {
+            final socialList = addDirectorVM
+                .getBasicInfoData.first.directoryLocations
+                ?.firstWhere((v) => v.mediaName == value.toLowerCase());
+            return socialList != null
+                ? 'This media account is already assigned. Please\n choose another.'
+                : null;
+          } catch (e) {
+            return null;
+          }
+        },
+      ),
       addVertical(16),
       InputTextField(
           title: "Social Accounts URL",
@@ -221,14 +220,33 @@ class AddSocialAccountForm extends StatelessWidget
       AppButton(
         text: editVM.isEditSocialMed ? 'Update' : 'Add',
         onTap: () {
-          if (addDirectorVM.selectedAccount == null &&
-              addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
-            showTopMessage(context, 'select socail account & account url');
+          if (addDirectorVM.selectedAccount == null) {
+            showTopMessage(context, 'Please select account');
+          } else if (addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
+            showTopMessage(context, 'Please enter URL');
           } else {
-            editVM.isEditSocialMed
-                ? editVM.updateTheSocialurl(context, id ?? '')
-                : addDirectorVM.addSocialUrls(context);
-            navigationService.goBack();
+            final urlError =
+                validateOptionalUrl(addDirectorVM.socialAccountsurlCntr.text);
+            if (urlError != null) {
+              showTopMessage(context, urlError);
+            } else {
+              try {
+                final socialList = addDirectorVM
+                    .getBasicInfoData.first.directoryLocations
+                    ?.firstWhere((v) =>
+                        v.mediaName ==
+                        addDirectorVM.selectedAccount!.toLowerCase());
+                if (socialList != null) {
+                  showTopMessage(context,
+                      'This media account is already assigned. Please choose another.');
+                  return;
+                }
+              } catch (e) {}
+              editVM.isEditSocialMed
+                  ? editVM.updateTheSocialurl(context, id ?? '')
+                  : addDirectorVM.addSocialUrls(context);
+               navigationService.goBack();
+            }
           }
         },
       )

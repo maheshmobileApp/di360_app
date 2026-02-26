@@ -142,7 +142,7 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
                     top: false,
                     child: Column(
                       children: [
-                        AddDirectorTeamMemberFoam(hinttext: hintText),
+                        AddDirectorTeamMemberFoam(hinttext: hintText,fileName: imag,),
                         CustomBottomButton(
                           onFirst: () {
                             editVM.updateIsEditOurTeam(false);

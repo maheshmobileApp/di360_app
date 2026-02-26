@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_directors/widgets/custom_add_button.da
 import 'package:di360_flutter/feature/add_directors/widgets/custom_bottom_button.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -119,15 +120,76 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.achievementFile,
-            onTap: () => imagePickerSelection(
-              context,
-              () => addDirectorVM
-                  .pickAchievementImage(picker.ImageSource.gallery),
-              () =>
-                  addDirectorVM.pickAchievementImage(picker.ImageSource.camera),
-            ),
+            onTap: () {
+              imagePickerSelection(
+                context,
+                () => addDirectorVM
+                    .pickAchievementImage(picker.ImageSource.gallery),
+                () => addDirectorVM
+                    .pickAchievementImage(picker.ImageSource.camera),
+              );
+              setState(() {
+                fileName = null;
+              });
+            },
             hintText: fileName ?? 'JPEG, PNG up to 5 MB',
           ),
+          if (addDirectorVM.achievementFile != null) ...[
+            addVertical(10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Stack(children: [
+                Image.file(addDirectorVM.achievementFile!,
+                    width: 90, height: 70),
+                Positioned(
+                    right: 0,
+                    top: 0,
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            addDirectorVM.achievementFile = null;
+                          });
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.close,
+                                color: Colors.white, size: 16))))
+              ]),
+            )
+          ],
+          if (fileName != null) ...[
+            addVertical(10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Stack(children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: CachedNetworkImageWidget(
+                        imageUrl: img['url'] ?? '', width: 90, height: 70)),
+                Positioned(
+                    right: 0,
+                    top: 0,
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            fileName = null;
+                          });
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.close,
+                                color: Colors.white, size: 16))))
+              ]),
+            )
+          ],
           addVertical(20),
           CustomBottomButton(
             onFirst: () {

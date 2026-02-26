@@ -124,12 +124,75 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.documentFile,
-            onTap: () => imagePickerSelection(
+            onTap: () {
+              imagePickerSelection(
                 context,
                 () => addDirectorVM.pickDocumentsImage(),
-                () => addDirectorVM.pickDocumentsImage()),
+                () => addDirectorVM.pickDocumentsImage());
+                setState(() {
+                  docName = null;
+                });
+            },
             hintText: docName ?? 'JPEG, PNG, PDF formats, up to 5 MB',
           ),
+          if (addDirectorVM.documentFile != null) ...[
+            addVertical(10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Stack(children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Icon(Icons.picture_as_pdf,size: 60),
+                ),
+                Positioned(
+                    right: 0,
+                    top: 0,
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            addDirectorVM.documentFile = null;
+                          });
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.close,
+                                color: Colors.white, size: 16))))
+              ]),
+            )
+          ],
+          if (docName != null) ...[
+            addVertical(10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Stack(children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Icon(Icons.picture_as_pdf,size: 60),
+                ),
+                Positioned(
+                    right: 0,
+                    top: 0,
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            docName = null;
+                          });
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.close,
+                                color: Colors.white, size: 16))))
+              ]),
+            )
+          ],
           const SizedBox(height: 20),
           CustomBottomButton(
             onFirst: () {
