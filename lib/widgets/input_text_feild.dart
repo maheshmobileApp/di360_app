@@ -44,7 +44,7 @@ class InputTextField extends StatelessWidget {
 
   InputTextField({
     super.key,
-     this.title,
+    this.title,
     this.isRequired = false,
     this.controller,
     this.textAlign,
@@ -88,24 +88,26 @@ class InputTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              title ??"",
-              style: TextStyles.regular3(color: titleColor ?? AppColors.black),
-            ),
-            if (isRequired)
+        if (title?.isNotEmpty ?? false) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
               Text(
-                ' *',
+                title ?? "",
                 style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    TextStyles.regular3(color: titleColor ?? AppColors.black),
               ),
-          ],
-        ),
-        SizedBox(height: 10),
+              if (isRequired)
+                Text(
+                  ' *',
+                  style:
+                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+            ],
+          ),
+          SizedBox(height: 10)
+        ],
         TextFormField(
-
           obscuringCharacter: obscuringCharacter ?? '*',
           focusNode:
               focusNode ?? FocusNode(canRequestFocus: canRequestFocus ?? true),
@@ -155,7 +157,7 @@ class InputTextField extends StatelessWidget {
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ??8),
+              borderRadius: BorderRadius.circular(borderRadius ?? 8),
               borderSide: BorderSide(
                 width: 1.5,
                 color: borderColor ?? AppColors.inputBorderColor,

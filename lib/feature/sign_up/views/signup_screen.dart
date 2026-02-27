@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart'
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
+import 'package:di360_flutter/widgets/country_code_number_feild.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class SignupScreen extends StatelessWidget
                     addVertical(16),
                     if (viewModel.selectedType?['type'] == 'SUPPLIER') ...[
                       InputTextField(
-                          title: 'Company Name',
+                          title: 'Business Name',
                           controller: viewModel.companyNameController,
                           hintText: "Enter company name",
                           isRequired: true,
@@ -92,10 +93,11 @@ class SignupScreen extends StatelessWidget
                     addVertical(16),
                     if (viewModel.selectedType?['type'] == 'PRACTICE') ...[
                       InputTextField(
-                          title: 'Dental Practice Name',
+                          title: 'Business Name',
                           controller: viewModel.companyNameController,
                           hintText: "Enter dental practice name",
                           keyboardType: TextInputType.text,
+                          isRequired: true,
                           validator: validatePracticeName),
                       addVertical(16)
                     ],
@@ -107,54 +109,14 @@ class SignupScreen extends StatelessWidget
                         keyboardType: TextInputType.emailAddress,
                         validator: validateEmail),
                     addVertical(16),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 125,
-                            child: CustomDropDown(
-                              value: viewModel.countryCode,
-                              title: "Phone Number",
-                              onChanged: (v) => viewModel.setCountry(v!),
-                              items: [
-                                DropdownMenuItem(
-                                    value: '+61', child: Text('AU (+61)')),
-                                DropdownMenuItem(
-                                    value: '+64', child: Text('NZ (+64)')),
-                              ],
-                              hintText: "Select category",
-                              isRequired: true,
-                            ),
-                          ),
-                          addHorizontal(5),
-                          Expanded(
-                            child: TextFormField(
-                              controller: viewModel.numberController,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(9),
-                              ],
-                              validator: validateEmptyPhoneNumber,
-                              decoration: InputDecoration(
-                                  hintText: 'Enter phone number',
-                                  border: OutlineInputBorder(),
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(10, 10, 12, 0),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      width: 1.5,
-                                      color: AppColors.HINT_COLOR,
-                                    ),
-                                  )),
-                              onChanged: (value) {
-                                viewModel.setNumber(value);
-                              },
-                            ),
-                          )
-                        ]),
+                    CountryCodeNumberFeild(
+                      value: viewModel.countryCode,
+                      onChanged: (v) => viewModel.setCountry(v!),
+                      textController: viewModel.numberController,
+                      textFeildChanged: (value) {
+                        viewModel.setNumber(value);
+                      },
+                    ),
                     addVertical(16),
                     InputTextField(
                       title: 'Password',

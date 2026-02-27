@@ -3,9 +3,11 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/get_business_type.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/signup_res.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/subscription_res.dart';
+import 'package:di360_flutter/feature/sign_up/querys/signup_querys.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class SignupViewModel extends ChangeNotifier {
@@ -38,18 +40,6 @@ class SignupViewModel extends ChangeNotifier {
   void toggleConformPasswordVisibility() {
     _isconformPassVisible = !_isconformPassVisible;
     notifyListeners();
-  }
-
-  clearData() {
-    selectedType = null;
-    emailController.clear();
-    passController.clear();
-    nameController.clear();
-    conformController.clear();
-    companyNameController.clear();
-    numberController.clear();
-    stateController.clear();
-    postalCodeController.clear();
   }
 
   String _countryCode = '+61'; // default AU
@@ -152,7 +142,6 @@ class SignupViewModel extends ChangeNotifier {
   signUp(BuildContext context) async {
     Loaders.circularShowLoader(context);
     try {
-      
       final res = await _http.mutation(singUpQuery, {
         "signUpObj": {
           "name": nameController.text,
@@ -163,18 +152,26 @@ class SignupViewModel extends ChangeNotifier {
           "type": selectedType?['type'],
           "state": stateController.text,
           "business_name": companyNameController.text,
-          "status": "VERIFICATION_PENDING",
+          "status": selectedType?['type'] == UserRole.supplier.value
+              ? "PENDING"
+              : "VERIFICATION_PENDING",
           "subscription_plan_id": selectedPlanId,
           "professionType": selectedCategory?.name,
-          "tracking_details": "mobile"
+          "tracking_details": "Mobile"
         }
       });
-      if (res.isNotEmpty) {
-         SignUpData.fromJson(res);
+      if (res['insert_clients_one'].isNotEmpty) {
+        SignUpData.fromJson(res);
         Loaders.circularHideLoader(context);
-        showSignupSuccessDialog(context, emailController.text, () {
-          navigationService.pushNamedAndRemoveUntil(RouteList.login);
-        });
+        selectedType?['type'] == UserRole.supplier.value
+            ? alertPopup(context,
+                'Business Owner receives verification link without Admin approval')
+            : showSignupSuccessDialog(context, emailController.text, () {
+                navigationService.pushNamedAndRemoveUntil(RouteList.login);
+                clearSignupData();
+              });
+      } else {
+        scaffoldMessenger(res['_error']);
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
@@ -182,57 +179,18 @@ class SignupViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-}
 
-const String subscriptionQuery = '''
-    query getSubPlan {
-      subscription_plans(
-        where: {plan_type: {_eq: "REGULAR"}, plan_status: {_eq: "ACTIVE"}}
-      ) {
-        id
-        updated_at
-        name
-        price_in_aud
-        price_in_usd
-        tenure_in_days
-        tenure_type
-        terms_and_conditions
-        type
-        description
-        benefits
-        plan_type
-        monthy_price
-        yearly_price
-        plan_status
-        __typename
-      }
-    }
-  ''';
-
-const String businessQuery = '''
-      query getBusinessTypes(\$type: String!) {
-  directory_business_types(where: {type: {_eq: \$type}}) {
-    id
-    type
-    name
-    directory_categories {
-      id
-      name
-      __typename
-    }
-    __typename
+  clearSignupData() {
+    nameController.clear();
+    emailController.clear();
+    passController.clear();
+    numberController.clear();
+    postalCodeController.clear();
+    selectedType = null;
+    stateController.clear();
+    companyNameController.clear();
+    selectedCategory?.name = null;
+    selectedPlanId = null;
+    notifyListeners();
   }
 }
-  ''';
-
-const String singUpQuery = '''
-mutation signUp(\$signUpObj: clients_insert_input!) {  insert_clients_one(object: \$signUpObj) {  
-  id    
-  email   
-  phone
-  type
-  name   
-  __typename}
-
-}
-  ''';

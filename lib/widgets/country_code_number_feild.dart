@@ -1,11 +1,12 @@
-import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CountryCodeNumberFeild<T> extends StatelessWidget
-    with BaseContextHelpers {
+    with BaseContextHelpers, ValidationMixins {
   final T? value;
   final dynamic Function(T?)? onChanged;
   final TextEditingController? textController;
@@ -41,24 +42,17 @@ class CountryCodeNumberFeild<T> extends StatelessWidget
           ),
           addHorizontal(5),
           Expanded(
-            child: TextFormField(
-                controller: textController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(9),
-                ],
-                decoration: InputDecoration(
-                    hintText: 'Enter phone number',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.fromLTRB(10, 10, 12, 0),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                            width: 1.5, color: AppColors.HINT_COLOR)),
-                    suffixIcon: suffixIcon),
-                onChanged: textFeildChanged),
-          )
+              child: InputTextField(
+                  controller: textController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(9),
+                  ],
+                  hintText: 'Enter phone number',
+                  suffixIcon: suffixIcon,
+                  onChange: textFeildChanged,
+                  validator: validateEmptyPhoneNumber))
         ]);
   }
 }
