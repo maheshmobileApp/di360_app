@@ -18,6 +18,7 @@ import 'package:di360_flutter/feature/home/querys/get_followers_query.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
@@ -59,6 +60,8 @@ class DirectoryViewModel extends ChangeNotifier {
   bool showMoreOurDocument = false;
   bool showMoreOurAchievement = false;
   bool showMoreOurCertification = false;
+  bool emailVisibility = false;
+  bool phoneVisibility = false;
 
   final List<String> serviceList = ['Test'];
 
@@ -389,7 +392,8 @@ class DirectoryViewModel extends ChangeNotifier {
         selectedState.isEmpty ||
         selectedMembership == null ||
         selectedMembership!.isEmpty ||
-        (selectedMembership == "Yes" && membershipNumberController.text.isEmpty)) {
+        (selectedMembership == "Yes" &&
+            membershipNumberController.text.isEmpty)) {
       return false;
     }
     return true;
@@ -443,7 +447,6 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.directoriesDetailsQuery(id);
     if (res != null) {
       directorDetails = res;
-      print("############${directorDetails?.directoryPartners}");
       quickLinkItems = [
         if (directorDetails?.description != null)
           QuickLinkItem(label: 'Basic Info', icon: Icons.info),
@@ -468,12 +471,25 @@ class DirectoryViewModel extends ChangeNotifier {
           QuickLinkItem(label: 'Testimonials', icon: Icons.rate_review),
         if (directorDetails?.directoryFaqs?.length != 0)
           QuickLinkItem(label: 'FAQ', icon: Icons.insert_drive_file),
-        if (directorDetails?.directoryLocations?.length != 0)
-          QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
+        QuickLinkItem(label: 'Contact Us', icon: Icons.location_on),
       ];
-      getFollowersCount(directorDetails?.id ?? '');
-      getAppointmentSlots(id);
-      getTeamMembersData(id);
+      await getFollowersCount(directorDetails?.id ?? '');
+      await getAppointmentSlots(id);
+      await getTeamMembersData(id);
+      await emailVisibilityCheck(
+          directorDetails?.emailVisibility ?? '',
+          directorDetails?.dentalPracticeId ??
+              directorDetails?.dentalSupplierId ??
+              directorDetails?.dentalProfessionalId ??
+              '',
+          directorDetails?.type ?? '');
+      await phoneVisibilityCheck(
+          directorDetails?.phoneVisibility ?? '',
+          directorDetails?.dentalPracticeId ??
+              directorDetails?.dentalSupplierId ??
+              directorDetails?.dentalProfessionalId ??
+              '',
+          directorDetails?.type ?? '');
     } else {}
     notifyListeners();
   }
@@ -576,6 +592,60 @@ class DirectoryViewModel extends ChangeNotifier {
           businessProfDetails?.dentalProfessionalsByPk?.firstName ?? "";
       lastNameController.text =
           businessProfDetails?.dentalProfessionalsByPk?.lastName ?? "";
+    }
+    notifyListeners();
+  }
+
+  Future<bool> checkVisibility(String id, String type) async {
+    final res = await repository.checkVisibilitys(id, type);
+    if (res['directory_followers'] != null &&
+        res['directory_followers']!.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> emailVisibilityCheck(String val, String id, String type) async {
+    final publicName = VisibilityType.PUBLIC.name;
+    final followersName = VisibilityType.FOLLOWERS.name;
+    final privateName = VisibilityType.PRIVATE.name;
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    if (userId == id) {
+      emailVisibility = true;
+    } else if (val == publicName) {
+      emailVisibility = true;
+    } else if (val == followersName) {
+      final isFollow = await checkVisibility(id, type);
+      emailVisibility = isFollow;
+    } else if (val == privateName) {
+      if (userId == id) {
+        emailVisibility = true;
+      } else {
+        emailVisibility = false;
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> phoneVisibilityCheck(String val, String id, String type) async {
+    final publicName = VisibilityType.PUBLIC.name;
+    final followersName = VisibilityType.FOLLOWERS.name;
+    final privateName = VisibilityType.PRIVATE.name;
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    if (userId == id) {
+      phoneVisibility = true;
+    } else if (val == publicName) {
+      phoneVisibility = true;
+    } else if (val == followersName) {
+      final isFollow = await checkVisibility(id, type);
+      phoneVisibility = isFollow;
+    } else if (val == privateName) {
+      if (userId == id) {
+        phoneVisibility = true;
+      } else {
+        phoneVisibility = false;
+      }
     }
     notifyListeners();
   }

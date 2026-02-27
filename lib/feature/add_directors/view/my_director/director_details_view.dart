@@ -129,6 +129,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
           children: services
               .map((val) => _outlinedButton(context, val.name ?? ''))
               .toList()),
@@ -174,9 +175,9 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           },
           style: OutlinedButton.styleFrom(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             side: BorderSide(color: Colors.grey.shade300),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 10),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),

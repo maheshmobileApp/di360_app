@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,46 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     }
   }
 
+  String _countryCode = '+61';
+  String _number = '';
+
+  String get countryCode => _countryCode;
+  String get number => _number;
+
+  String get fullPhone => '$_countryCode$_number';
+
+  // last 3 digits
+  String get lastThree =>
+      _number.length >= 3 ? _number.substring(_number.length - 3) : _number;
+
+  void setCountry(String code) {
+    _countryCode = code;
+    notifyListeners();
+  }
+
+  void setNumber(String value) {
+    _number = value;
+    notifyListeners();
+  }
+
+  String? _emailVisibility;
+
+  String? get emailVisibility => _emailVisibility;
+
+  void setEmailVisibility(String? value) {
+    _emailVisibility = value;
+    notifyListeners();
+  }
+
+  String? _phoneVisibility;
+
+  String? get phoneVisibility => _phoneVisibility;
+
+  void setPhoneVisibility(String? value) {
+    _phoneVisibility = value;
+    notifyListeners();
+  }
+
   void addHobby(String value) {
     if (value.isNotEmpty) {
       getHobbies.add(Hobbies(name: value));
@@ -148,7 +189,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     final result = await repository.addProfesBasicInfo({
       "professinalObj": {
         "name": nameController.text,
-        "phone": mobileNumberCntr.text,
+        "phone": '$_countryCode${mobileNumberCntr.text}',
         "email": emailController.text,
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
@@ -183,7 +224,11 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
                 ? longitude
                 : addDirectorVM.getBasicInfoData.first.longitude,
         "pincode": "",
-        "dental_professional_id": userId
+        "dental_professional_id": userId,
+        "phone_visibility":
+            VisibilityType.fromDisplayName(phoneVisibility)?.name,
+        "email_visibility":
+            VisibilityType.fromDisplayName(emailVisibility)?.name
       }
     });
     if (result != null) {
@@ -211,7 +256,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       "id": addDirectorVM.getBasicInfoData.first.id,
       "professinalUpdateObj": {
         "name": nameController.text,
-        "phone": mobileNumberCntr.text,
+        "phone": '$_countryCode${mobileNumberCntr.text}',
         "email": emailController.text,
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
@@ -224,14 +269,17 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "profile_image": profile == null
             ? addDirectorVM.getBasicInfoData.first.profileImage
             : profile,
-        "university_school":
-            getUniversitys,
+        "university_school": getUniversitys,
         "working_at": getWorkingAt,
         "designation": designationCntr.text,
         "education": getEducation,
         "hobbies": getHobbies,
         "special_interests": [],
-        "type": UserRole.professional.value
+        "type": UserRole.professional.value,
+        "phone_visibility":
+            VisibilityType.fromDisplayName(phoneVisibility)?.name,
+        "email_visibility":
+            VisibilityType.fromDisplayName(emailVisibility)?.name
       }
     });
     if (result != null) {
@@ -249,7 +297,17 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     final data = addDirectorVM.getBasicInfoData.first;
     nameController.text = data.name ?? '';
-    mobileNumberCntr.text = data.phone ?? '';
+    final phone = data.phone ?? "";
+    if (phone.startsWith('+61')) {
+      _countryCode = '+61';
+      mobileNumberCntr.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      _countryCode = '+64';
+      mobileNumberCntr.text = phone.substring(3);
+    } else {
+      _countryCode = '+61';
+      mobileNumberCntr.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
     final document = parse(data.description ?? '');
     final String parsedString = document.body?.text ?? "";
     descController.text = parsedString;
@@ -257,6 +315,10 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     emailController.text = data.email ?? '';
     alternateNumberController.text = data.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
+    setEmailVisibility(
+        VisibilityType.fromEnumName(data.emailVisibility)?.displayName);
+    setPhoneVisibility(
+        VisibilityType.fromEnumName(data.phoneVisibility)?.displayName);
     getHobbies = data.hobbies ?? [];
     getUniversitys = data.universitySchool ?? [];
     getEducation = data.education ?? [];

@@ -128,20 +128,26 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.certificateFile,
-            onTap: () => imagePickerSelection(
-              context,
-              () => addDirectorVM
-                  .pickCertificateImage(picker.ImageSource.gallery),
-              () =>
-                  addDirectorVM.pickCertificateImage(picker.ImageSource.camera),
-            ),
+            onTap: () {
+              imagePickerSelection(
+                context,
+                () => addDirectorVM
+                    .pickCertificateImage(picker.ImageSource.gallery),
+                () => addDirectorVM
+                    .pickCertificateImage(picker.ImageSource.camera),
+              );
+              setState(() {
+                fileName = null;
+              });
+            },
             hintText: fileName ?? 'JPEG, PNG up to 5 MB',
           ),
           if (addDirectorVM.certificateFile != null) ...[
             addVertical(10),
             Stack(
               children: [
-                Image.file(addDirectorVM.certificateFile!, height: 70),
+                Image.file(addDirectorVM.certificateFile!,
+                    width: 90, height: 70),
                 Positioned(
                   right: 0,
                   top: 0,
@@ -166,33 +172,29 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
           ],
           if (fileName != null) ...[
             addVertical(10),
-            Stack(
-              children: [
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: CachedNetworkImageWidget(
-                        imageUrl: img['url'] ?? '', width: 50, height: 70)),
-                Positioned(
+            Stack(children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: CachedNetworkImageWidget(
+                      imageUrl: img['url'] ?? '', width: 90, height: 70)),
+              Positioned(
                   right: 0,
                   top: 0,
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        fileName = null;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.close, color: Colors.white, size: 16),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                      onTap: () {
+                        setState(() {
+                          fileName = null;
+                        });
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close,
+                              color: Colors.white, size: 16))))
+            ])
           ],
           addVertical(20),
           CustomBottomButton(

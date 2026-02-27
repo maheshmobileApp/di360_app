@@ -27,4 +27,5 @@ abstract class DirectorRepository {
   Future<dynamic> partnershipRegister(dynamic variables);
   Future<dynamic> communityRegister(dynamic variables);
   Future<GetDirectoryData> getDirectory(dynamic variables);
+  Future<dynamic> checkVisibilitys(String id,String type);
 }

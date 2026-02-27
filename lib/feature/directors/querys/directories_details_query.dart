@@ -17,6 +17,8 @@ query getDirectory($id: uuid!) {
     education
     profession_type
     designation
+    phone_visibility
+    email_visibility
     working_at
     banner_image
     logo

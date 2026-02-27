@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/add_directors/querys/get_director_info_que
 import 'package:di360_flutter/feature/add_directors/querys/partners_querys.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository.dart';
 import 'package:di360_flutter/feature/professional_add_director/querys/get_profess_director_query.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class AddDirectorRepositoryImpl extends AddDirectorRepository {
   final HttpService http = HttpService();
@@ -25,11 +26,11 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final businessType =
           await http.query(getBusinessTypeQuery, variables: {"type": type});
-      
+
       if (businessType == null) {
         return null;
       }
-      
+
       final result = BusinessTypeData.fromJson(businessType);
       return result;
     } catch (e) {
@@ -44,17 +45,17 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final res = await http.query(
-          type == 'SUPPLIER'
+          type == UserRole.supplier.value
               ? getSuppilerDirectorInfoQuery
-              : type == 'PROFESSIONAL'
+              : type == UserRole.professional.value
                   ? getProfessDirectorQuery
                   : getDirectorInfoQuery,
           variables: {"id": userId});
-      
+
       if (res == null) {
         return [];
       }
-      
+
       final result = GetDirectoriesData.fromJson(res);
       return result.directories ?? [];
     } catch (e) {
@@ -269,15 +270,15 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
     final res = await http.mutation(addPartnersQuery, variables);
     return res;
   }
-  
+
   @override
-  Future deletePartner(variables) async{
+  Future deletePartner(variables) async {
     final res = await http.mutation(deletePartnersQuery, variables);
     return res;
   }
-  
+
   @override
-  Future updatePartners(variables) async{
+  Future updatePartners(variables) async {
     final res = await http.mutation(updatePartnersQuery, variables);
     return res;
   }

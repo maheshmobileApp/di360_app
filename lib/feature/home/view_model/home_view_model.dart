@@ -92,7 +92,6 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllNewsfeeds(BuildContext context) async {
-    print('*****************getAllNewsFeeds calling');
     Loaders.circularShowLoader(context);
     resetPagination();
     try {

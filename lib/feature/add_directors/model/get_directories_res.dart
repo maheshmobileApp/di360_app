@@ -45,6 +45,8 @@ class GetDirectories {
   String? directoryCategoryId;
   Logo? logo;
   BannerLogo? bannerImage;
+  String? phoneVisibility;
+  String? emailVisibility;
   ProfileImage? profileImage;
   List<WorkingAt>? workingAt;
   List<Education>? education;
@@ -84,6 +86,8 @@ class GetDirectories {
       this.hobbies,
       this.logo,
       this.bannerImage,
+      this.phoneVisibility,
+      this.emailVisibility,
       this.profileImage,
       this.directoryDocuments,
       this.directoryLocations,
@@ -149,6 +153,8 @@ class GetDirectories {
     bannerImage = json['banner_image'] != null
         ? new BannerLogo.fromJson(json['banner_image'])
         : null;
+    phoneVisibility = json['phone_visibility'];
+    emailVisibility = json['email_visibility'];
     profileImage = json['profile_image'] != null
         ? new ProfileImage.fromJson(json['profile_image'])
         : null;
@@ -274,7 +280,7 @@ class Education {
   final String? selectedQualification;
   final String? courseHighlights;
   final bool? qualificationFinished;
-   String? name;
+  String? name;
 
   Education(
       {this.qualification,
@@ -294,14 +300,13 @@ class Education {
           json['qualificationFinished'].toLowerCase() == 'true';
     }
     return Education(
-      finishDate: json['finishDate'],
-      institution: json['institution'],
-      qualification: json['qualification'],
-      courseHighlights: json['courseHighlights'],
-      qualificationFinished: qualificationFinished,
-      selectedQualification: '',
-      name: json['name']
-    );
+        finishDate: json['finishDate'],
+        institution: json['institution'],
+        qualification: json['qualification'],
+        courseHighlights: json['courseHighlights'],
+        qualificationFinished: qualificationFinished,
+        selectedQualification: '',
+        name: json['name']);
   }
 
   Map<String, dynamic> toJson() => {

@@ -43,6 +43,8 @@ class DirectoriesByPk {
   List<Hobbies>? hobbies;
   String? professionType;
   dynamic designation;
+  String? phoneVisibility;
+  String? emailVisibility;
   BannerImage? bannerImage;
   Logo? logo;
   double? latitude;
@@ -81,6 +83,8 @@ class DirectoriesByPk {
       this.education,
       this.professionType,
       this.designation,
+      this.phoneVisibility,
+      this.emailVisibility,
       this.workingAt,
       this.bannerImage,
       this.logo,
@@ -148,6 +152,8 @@ class DirectoriesByPk {
     }
     professionType = json['profession_type'];
     designation = json['designation'];
+    phoneVisibility = json['phone_visibility'];
+    emailVisibility = json['email_visibility'];
     bannerImage = json['banner_image'] != null
         ? new BannerImage.fromJson(json['banner_image'])
         : null;

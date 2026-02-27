@@ -9,7 +9,10 @@ import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
+import 'package:di360_flutter/widgets/country_code_number_feild.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/privacy_visiablity_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -53,15 +56,40 @@ class ProfessBasicInfo extends StatelessWidget
             isRequired: true,
             hintText: 'Enter emailId',
             controller: professDirectorVM.emailController,
+            suffixIcon: InkWell(
+                onTap: () async {
+                  await showDialog<String>(
+                      context: context,
+                      builder: (context) => EmailVisibilityDialog(
+                          title: 'Email Visibility',
+                          selectedOption: professDirectorVM.emailVisibility,
+                          onSave: (displayName, enumValue) {
+                            professDirectorVM.setEmailVisibility(displayName);
+                            print(
+                                'Email visibility: ${VisibilityType.fromDisplayName(displayName)?.name} ($displayName)');
+                          }));
+                },
+                child: Icon(Icons.lock)),
           ),
           addVertical(20),
-          InputTextField(
-              hintText: "Enter Phone Number",
-              title: " Phone Number ",
-              controller: professDirectorVM.mobileNumberCntr,
-              isRequired: true,
-              keyboardType: TextInputType.number,
-              validator: validatePhoneNumber),
+          CountryCodeNumberFeild(
+            value: professDirectorVM.countryCode,
+            onChanged: (v) => professDirectorVM.setCountry(v!),
+            textController: professDirectorVM.mobileNumberCntr,
+            suffixIcon: InkWell(
+                onTap: () async {
+                  await showDialog<String>(
+                      context: context,
+                      builder: (context) => EmailVisibilityDialog(
+                          title: 'Phone Visibility',
+                          selectedOption: professDirectorVM.phoneVisibility,
+                          onSave: (displayName, enumValue) {
+                            professDirectorVM.setPhoneVisibility(displayName);
+                          }));
+                },
+                child: Icon(Icons.lock)),
+            textFeildChanged: (value) => professDirectorVM.setNumber(value),
+          ),
           addVertical(20),
           InputTextField(
             hintText: "Enter Alternate Phone Number",

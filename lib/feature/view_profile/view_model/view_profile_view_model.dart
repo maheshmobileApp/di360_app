@@ -56,8 +56,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   DirectoryCategories? selectedBusineestype;
   List<DirectoryBusinessTypes> directoryBusinessTypes = [];
 
-
-  String _countryCode = '+61'; // default AU
+  String _countryCode = '+61';
   String _number = '';
 
   String get countryCode => _countryCode;
@@ -312,9 +311,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    Map<String, dynamic> requestData = {
-      "id": userId,
-    };
+    final profileCompleted =
+        await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
+    Map<String, dynamic> requestData = {"id": userId};
     if (type == UserRole.practice.value) {
       requestData["practiceObj"] = {
         "name": nameController.text,
@@ -383,7 +382,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               ? getProfessionalViewProfileData()
               : getSuppilerViewProfileData();
       Loaders.circularHideLoader(context);
-      navigationService.goBack();
+      profileCompleted == false
+          ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+          : navigationService.goBack();
+      await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -393,7 +395,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> deleteAccount(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final result = await repo.deleteAccount();
-      Loaders.circularHideLoader(context);
+    Loaders.circularHideLoader(context);
     if (result['delete_clients'] != null) {
       navigationService.pushNamedAndRemoveUntil(RouteList.login);
       LocalStorage.clearAllData();
