@@ -117,7 +117,6 @@ class SupportViewModel extends ChangeNotifier {
   List uploadedAttachment = [];
 
   Future<void> sendMessage(String requestId) async {
-    print("********************send message calling");
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     if (selectedAttachments != null) {
@@ -139,7 +138,6 @@ class SupportViewModel extends ChangeNotifier {
         "created_at": DateTime.now().toIso8601String()
       }
     };
-    print("********************variables $variables");
     final res = await repo.insertMessage(variables);
 
     if (res != null) {
@@ -155,6 +153,7 @@ class SupportViewModel extends ChangeNotifier {
   Future<void> sendSupportRequest(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     for (var element in selectedFiles) {
       var value = await _http.uploadImage(element.path);
       print("resp from upload $value");
@@ -168,7 +167,9 @@ class SupportViewModel extends ChangeNotifier {
         "message": descriptionController.text,
         "attachments": uploadedFiles,
         "type": "GENERAL",
-        "dental_supplier_id": userId
+        if (type == 'SUPPLIER') "dental_supplier_id": userId,
+        if (type == 'PRACTICE') "dental_practice_id": userId,
+        if (type == 'PROFESSIONAL') "dental_professional_id": userId,
       }
     };
     final res = await repo.sendSupportRequest(variables);

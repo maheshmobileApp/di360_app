@@ -144,13 +144,7 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                             final courseData =
                                 myLearningHubVM.myRegisteredCourses[index];
                             return RegisterCourseCard(
-                              logo: courseData.presentedByImage?.url ?? "",
-                              cpdPoints: courseData.cpdPoints.toString(),
-                              courseName: courseData.courseName ?? "",
-                              name: courseData.presentedByName ?? "",
-                              status: courseData.status ?? "",
-                              types: courseData.type ?? "",
-                              link: courseData.webinarLink ?? "",
+                              courseData: courseData,
                               onCardTap: () async {
                                 await courseListingVM.getCourseDetails(
                                     context, courseData.id ?? "");
@@ -159,7 +153,6 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                                   RouteList.courseDetailScreen,
                                 );
                               },
-                              createdAt: courseData.createdAt ?? "",
                             );
                           },
                         ),

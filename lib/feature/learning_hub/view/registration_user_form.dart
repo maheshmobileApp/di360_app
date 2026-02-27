@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegistrationUserForm {
-  static void show(BuildContext context, String courseName,String createdById) {
+  static void show(BuildContext context, String courseName, String createdById,
+      String courseId) {
     final formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
@@ -127,7 +128,9 @@ class RegistrationUserForm {
                               await courseVM.userRegisterToCourse(context);
                               navigationService.goBack();
                               courseVM.clearAll();
-                              await courseVM.registerCourseHandler(context,createdById);
+                              await courseVM.registerCourseHandler(
+                                  context, createdById);
+
                               alertPopup(
                                 context,
                                 "You are being redirected to the registration link",
@@ -139,11 +142,13 @@ class RegistrationUserForm {
                                       mode: LaunchMode.externalApplication)) {
                                     throw "Could not launch $url";
                                   }
+                                  navigationService.goBack();
                                 },
                               );
-                               
-
                               await courseVM.getCoursesListingData(context);
+                              await courseVM.getAllListingData(context);
+                              await courseVM.getCourseDetails(
+                                  context, courseId);
                             }
                           },
                           backgroundColor: AppColors.primaryColor,

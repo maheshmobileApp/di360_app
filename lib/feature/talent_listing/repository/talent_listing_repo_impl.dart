@@ -1,10 +1,14 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_self_talent_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_talent_listing_status_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/delete_talent_message.dart';
+import 'package:di360_flutter/feature/talent_listing/quary/get_self_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_enquiry_query.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_quary.dart';
 import 'package:di360_flutter/feature/talent_listing/quary/get_talent_listing_status_count.dart';
@@ -55,10 +59,13 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
   @override
   Future<JobProfileEnquiriesResList> getTalentEnquiry(String talentId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "where": {
         "talent_id": {"_eq": talentId},
-      }
+        "enq_sender_id": {"_eq": userId}
+      },
+      "limit": 20
     };
 
     final response =
@@ -108,8 +115,7 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
   @override
   Future<List<JobProfiles>> getTalentPreviewData(variables) async {
-    final res =
-        await _http.query(getTalentPreviewQuery, variables: variables);
+    final res = await _http.query(getTalentPreviewQuery, variables: variables);
 
     if (res != null && res['job_profiles'] != null) {
       final List<dynamic> jobProfilesList = res['job_profiles'];
@@ -129,8 +135,13 @@ class TalentListingRepoImpl implements TalentListingRepository {
 
   @override
   Future updateTalentListing(variables) async {
-    final res =
-        await _http.mutation(updateTalentListingQuery, variables);
+    final res = await _http.mutation(updateTalentListingQuery, variables);
     return res;
+  }
+
+  @override
+  Future<JobProfileEnquiriesResList> getSelfTalentEnquiry(variables) async {
+    final res = await _http.query(getSelfTalentEnquiryQuery, variables:variables);
+    return JobProfileEnquiriesResList.fromJson(res);
   }
 }

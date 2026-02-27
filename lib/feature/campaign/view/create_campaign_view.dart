@@ -256,6 +256,12 @@ class CreateCampaignView extends StatelessWidget
         scaffoldMessenger('Please select refine by state option');
         return;
       }
+
+      if (viewModel.selectedStateChips.isEmpty &&
+          viewModel.selectStateCondition == "Yes") {
+        scaffoldMessenger('Please select atleast one state');
+        return;
+      }
       if (viewModel.selectedType.isEmpty) {
         scaffoldMessenger('Please select campaign type');
         return;
@@ -376,9 +382,17 @@ class CreateCampaignView extends StatelessWidget
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Select State",
-          style: TextStyles.regular3(color: AppColors.black),
+        Row(
+          children: [
+            Text(
+              "Select State",
+              style: TextStyles.regular3(color: AppColors.black),
+            ),
+            Text(
+              " *",
+              style: TextStyles.regular3(color: AppColors.redColor),
+            ),
+          ],
         ),
         addVertical(6),
         CustomMultiSelectDropDown<String>(

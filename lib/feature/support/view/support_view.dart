@@ -10,7 +10,6 @@ import 'package:di360_flutter/feature/support/view_model/support_view_model.dart
 import 'package:di360_flutter/feature/support/widgets/ticket_card.dart';
 import 'package:di360_flutter/feature/support/widgets/upload_image_field.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/services/notification_service.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -181,7 +180,7 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
             ),
             floatingActionButton: GestureDetector(
                 onTap: () {
-                  supportVM.getSupportRequestsReasons();
+                  //supportVM.getSupportRequestsReasons();
                   supportVM.clearData();
                   showModalBottomSheet(
                     backgroundColor: AppColors.whiteColor,
@@ -223,9 +222,10 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                                 UploadImageField(),
                                 AppButton(
                                   height: 50,
-                                  onTap: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      supportVM.sendSupportRequest(context);
+                                  onTap: () async {
+                                    if (_formKey.currentState!.validate())  {
+                                      await supportVM.sendSupportRequest(context);
+                                      supportVM.getSupportRequestsReasons();
                                     }
                                   },
                                   text: 'Submit',

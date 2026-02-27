@@ -37,17 +37,13 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
             InputTextField(
               controller: jobCreateVM.companyNameController,
               readOnly: true,
+              isRequired: true,
               hintText: "Enter Company Name",
               title: "Company Name",
             ),
             addVertical(16),
             _buildRoleTypes(jobCreateVM),
             addVertical(16),
-            Text(
-              "Type of employment ",
-              style: TextStyles.regular3(color: AppColors.black),
-            ),
-            addVertical(4),
             _buildEmpTypes(jobCreateVM),
             addVertical(16),
             if (jobCreateVM.showLocumDate) ...[
@@ -204,6 +200,19 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+         Row(
+           children: [
+             Text(
+                  "Type of employment ",
+                  style: TextStyles.regular3(color: AppColors.black),
+                ),
+             Text(
+                  "*",
+                  style: TextStyles.regular3(color: AppColors.redColor),
+                ),
+           ],
+         ),
+            addVertical(4),
         CustomMultiSelectDropDown<String>(
           items: jobCreateVM.empOptions,
           selectedItems: jobCreateVM.selectedEmploymentChips,
@@ -211,13 +220,15 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
           hintText: "Select employment type",
           greyOutCondition: (item) {
             if (jobCreateVM.selectedEmploymentChips.isEmpty) {
-              return false; // All black when nothing selected
+              return false;
             }
             if (jobCreateVM.selectedEmploymentChips.contains("Locum")) {
-              return item != "Locum"; // Grey out non-Locum items when Locum is selected
-            } else {
-              return item == "Locum"; // Grey out Locum when other items are selected
+              return item != "Locum";
             }
+            if (jobCreateVM.selectedEmploymentChips.contains("Full Time")) {
+              return item != "Full Time";
+            }
+            return item == "Locum" || item == "Full Time";
           },
           onSelectionChanged: (selected) {
             final current =
@@ -232,6 +243,22 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
                 jobCreateVM.addEmploymentTypeChip(emp);
               }
             }
+          },
+        ),
+        FormField<List<String>>(
+          key: ValueKey(jobCreateVM.selectedEmploymentChips.length),
+          initialValue: jobCreateVM.selectedEmploymentChips,
+          validator: (_) => jobCreateVM.validateEmploymentTypes(),
+          builder: (formFieldState) {
+            return formFieldState.hasError
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 6, left: 12),
+                    child: Text(
+                      formFieldState.errorText ?? '',
+                      style: TextStyles.regular1(color: AppColors.redColor),
+                    ),
+                  )
+                : const SizedBox.shrink();
           },
         ),
         addVertical(16),

@@ -24,27 +24,29 @@ class TalentEnquiryViewModel extends ChangeNotifier {
       _talentEnquiryOffset = 0;
       hasMoreEnquiries = true;
     }
-    
+
     notifyListeners();
-    
+
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
     final variables = {
       "limit": _talentEnquiryLimit,
       "offset": _talentEnquiryOffset,
       "where": {
-        "enquiry_from": {"_eq": userId}
+        "enq_sender_id": {"_eq": userId}
       }
     };
     final res = await repo.getTalentEnquiryData(variables);
-    
+
     if (loadMore) {
       talentEnquiryData?.talentEnquiries?.addAll(res.talentEnquiries ?? []);
       isLoadingMoreEnquiries = false;
     } else {
       talentEnquiryData = res;
     }
-    
-    hasMoreEnquiries = (res.talentEnquiries?.length ?? 0) >= _talentEnquiryLimit;
+
+    hasMoreEnquiries =
+        (res.talentEnquiries?.length ?? 0) >= _talentEnquiryLimit;
     _talentEnquiryOffset += res.talentEnquiries?.length ?? 0;
     notifyListeners();
   }
@@ -70,7 +72,7 @@ class TalentEnquiryViewModel extends ChangeNotifier {
       }
     };
     final res = await repo.getEnqMessagesData(variables);
-    if (res.talentEnquiries?.isNotEmpty ??false) {
+    if (res.talentEnquiries?.isNotEmpty ?? false) {
       talentEnqMessages = res;
     } else {}
     notifyListeners();

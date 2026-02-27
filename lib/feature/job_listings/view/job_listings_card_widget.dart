@@ -15,6 +15,7 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -83,7 +84,12 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 addVertical(12),
                 _chipWidget(jobsListingData?.typeofEmployment ?? []),
                 addVertical(10),
-                _descriptionWidget(jobsListingData?.description ?? ''),
+                Text(
+              _stripHtmlTags(jobsListingData?.description ?? ''),
+              style: TextStyles.regular2(color: AppColors.black),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,7 +139,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                               if (count != 0) {
                                 Loaders.circularShowLoader(context);
                                 viewModel.jobId = jobsListingData?.id ?? '';
-                                
+
                                 viewModel.changeStatusforapplicatnts(
                                     "All", context);
                                 viewModel.selectedstatusesforapplicatnts =
@@ -193,7 +199,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-         
         ],
       ),
     );
@@ -230,7 +235,6 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
               backgroundColor: AppColors.geryColor,
               radius: 30,
               child: ClipOval(
-                
                 child: CachedNetworkImageWidget(
                     imageUrl: logo ?? '',
                     width: 60,
@@ -288,17 +292,9 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _descriptionWidget(String description) {
-    return SizedBox(
-      // height: 36,
-      width: double.infinity,
-      child: Text(
-        description,
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
-      ),
-    );
+  String _stripHtmlTags(String htmlString) {
+    final RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+    return htmlString.replaceAll(exp, '').replaceAll('&nbsp;', ' ').trim();
   }
 
   Widget _chipWidget(List<dynamic> types) {

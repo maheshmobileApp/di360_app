@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+
 class CoursesResponse {
   CoursesListingData? data;
 
@@ -96,8 +98,11 @@ class CoursesListingDetails {
   String? startTime;
   String? endTime;
   String? meetingLink;
+  List<CourseRegisteredUsers>? courseRegisteredUsers;
   CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
+
   String? communityUserType;
+  List<Presenters>? presenters;
 
   CoursesListingDetails(
       {this.id,
@@ -156,8 +161,10 @@ class CoursesListingDetails {
       this.startTime,
       this.endTime,
       this.meetingLink,
+      this.courseRegisteredUsers,
       this.courseRegisteredUsersAggregate,
-      this.communityUserType});
+      this.communityUserType,
+      this.presenters});
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -257,6 +264,18 @@ class CoursesListingDetails {
     endTime = json['endTime'];
     meetingLink = json['meeting_link'];
     communityUserType = json['community_user_type'];
+    if (json['presenters'] != null) {
+      presenters = <Presenters>[];
+      json['presenters'].forEach((v) {
+        presenters!.add(new Presenters.fromJson(v));
+      });
+    }
+    if (json['course_registered_users'] != null) {
+      courseRegisteredUsers = <CourseRegisteredUsers>[];
+      json['course_registered_users'].forEach((v) {
+        courseRegisteredUsers!.add(new CourseRegisteredUsers.fromJson(v));
+      });
+    }
     courseRegisteredUsersAggregate =
         json['course_registered_users_aggregate'] != null
             ? new CourseRegisteredUsersAggregate.fromJson(
@@ -344,10 +363,43 @@ class CoursesListingDetails {
     data['endTime'] = this.endTime;
     data['community_user_type'] = this.communityUserType;
     data['meeting_link'] = this.meetingLink;
+    if (this.presenters != null) {
+      data['presenters'] = this.presenters!.map((v) => v.toJson()).toList();
+    }
+    if (this.courseRegisteredUsers != null) {
+      data['course_registered_users'] =
+          this.courseRegisteredUsers!.map((v) => v.toJson()).toList();
+    }
     if (this.courseRegisteredUsersAggregate != null) {
       data['course_registered_users_aggregate'] =
           this.courseRegisteredUsersAggregate!.toJson();
     }
+    return data;
+  }
+}
+
+class CourseRegisteredUsers {
+  String? courseId;
+  String? fromId;
+  String? status;
+  String? sTypename;
+
+  CourseRegisteredUsers(
+      {this.courseId, this.fromId, this.status, this.sTypename});
+
+  CourseRegisteredUsers.fromJson(Map<String, dynamic> json) {
+    courseId = json['course_id'];
+    fromId = json['from_id'];
+    status = json['status'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['course_id'] = this.courseId;
+    data['from_id'] = this.fromId;
+    data['status'] = this.status;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

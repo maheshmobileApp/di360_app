@@ -59,8 +59,13 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getCoursesListing(String? listingStatus,
-      String? activeStatus, String? userId, String? searchText, int limit, int offset) async {
+  Future<List<CoursesListingDetails>?> getCoursesListing(
+      String? listingStatus,
+      String? activeStatus,
+      String? userId,
+      String? searchText,
+      int limit,
+      int offset) async {
     final Map<String, dynamic> whereCondition = {};
 
     if (listingStatus != null &&
@@ -306,12 +311,11 @@ class LearningHubRepoImpl extends LearningHubRepository {
     final data = RegisterUserTabCountData.fromJson(res);
     return data;
   }
-  
+
   @override
-  Future updateRegUserStatus(variables)  async {
-    final res =
-        await http.mutation(updateRegUserStatusQuery, variables);
-   
+  Future updateRegUserStatus(variables) async {
+    final res = await http.mutation(updateRegUserStatusQuery, variables);
+
     return res;
   }
 

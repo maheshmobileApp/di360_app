@@ -19,6 +19,7 @@ import 'package:di360_flutter/widgets/gallary_view.dart';
 import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -256,7 +257,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ],
           ),
         SizedBox(height: 10),
-        if (widget.job.availabilityDate != null && widget.job.availabilityDate?[0] != "" && widget.job.availabilityDate?[1] != "")
+        if (widget.job.availabilityDate != null &&
+            widget.job.availabilityDate?.isNotEmpty == true &&
+            widget.job.availabilityDate?.length == 2 &&
+            widget.job.availabilityDate?[0] != "" &&
+            widget.job.availabilityDate?[1] != "")
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -265,7 +270,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 style: TextStyles.medium2(color: AppColors.black),
               ),
               Text(
-                "${widget.job.availabilityDate?[0]} to ${widget.job.availabilityDate?[1]}",
+                "${widget.job.availabilityDate![0]} to ${widget.job.availabilityDate![1]}",
                 style: TextStyles.medium2(color: AppColors.primaryColor),
               ),
             ],
@@ -307,7 +312,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Divider(height: 4),
-              _sectionHeader("Benifits"),
+              _sectionHeader("Benefits"),
               CustomChipView(typesList: widget.job.offeredBenefits ?? []),
             ],
           ),
@@ -322,10 +327,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           Text('${widget.job.location}'),
           locationView(context),
         ],
-        if (widget.job.description?.isNotEmpty == true) ...[
+        if ((widget.job.dentalSupplier?.directories?.isNotEmpty == true &&
+            widget.job.dentalSupplier?.directories?.first.description?.isNotEmpty == true) ||
+            (widget.job.dentalPractice?.directories?.isNotEmpty == true &&
+            widget.job.dentalPractice?.directories?.first.description?.isNotEmpty == true)) ...[
           Divider(height: 4),
           _sectionHeader('About Company'),
-          _sectionText('${widget.job.description}'),
+          _sectionText('${widget.job.dentalSupplier?.directories?.first.description ?? widget.job.dentalPractice?.directories?.first.description}'),
         ],
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(
@@ -540,7 +548,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 
   Widget _sectionText(String text) {
-    return Text(text, style: TextStyle(color: Colors.grey[700]));
+    return HtmlWidget(text);
   }
 }
 

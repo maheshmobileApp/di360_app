@@ -28,13 +28,7 @@ class _JobListingScreenState extends State<JobListingScreen>
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppBarWidget(searchWidget: false
-            /*filterWidget: GestureDetector(
-          onTap: () =>
-              navigationService.navigateTo(RouteList.JobSeekFilterScreen),
-          child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
-        )*/
-            ),
+        appBar: AppBarWidget(searchWidget: false),
         body: Column(
           children: [
             SizedBox(
@@ -110,8 +104,7 @@ class _JobListingScreenState extends State<JobListingScreen>
                         ],
                       ),
                     )
-                  : 
-                  ListView.builder(
+                  : ListView.builder(
                       itemCount: jobListingVM.myJobListingList.length,
                       itemBuilder: (context, index) {
                         final jobData = jobListingVM.myJobListingList[index];
@@ -129,11 +122,6 @@ class _JobListingScreenState extends State<JobListingScreen>
           backgroundColor: AppColors.primaryColor,
           onPressed: () async {
             await navigationService.navigateTo(RouteList.jobCreate);
-            /*NotificationService.showNotification(
-              title: 'Sale Order',
-              body: 'Invoice generated successfully',
-              filePath: '/storage/emulated/0/Download/invoice.pdf',
-            );*/
           },
           child: SvgPicture.asset(ImageConst.addFeed),
         ));

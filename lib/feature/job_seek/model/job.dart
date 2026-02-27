@@ -2,6 +2,10 @@
 
 //import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 
+import 'package:di360_flutter/feature/home/model_class/dental_practice_res.dart';
+
+import '../../home/model_class/dental_supplier_res.dart' show DentalSupplier;
+
 class Jobs {
   String? id;
   String? title;
@@ -47,53 +51,56 @@ class Jobs {
   String? updatedAt;
   JobApplicantsAggregate? jobApplicantsAggregate;
   JobEnquiriesAggregate? jobEnquiriesAggregate;
-  
-
-  Jobs(
-      {this.id,
-      this.title,
-      this.jType,
-      this.jRole,
-      this.description,
-      this.typeofEmployment,
-      this.availabilityDate,
-      this.autoExpiryDate,
-      this.yearsOfExperience,
-      this.dentalPracticeId,
-      this.dentalSupplierId,
-      this.activeStatus,
-      this.location,
-      this.logo,
-      this.state,
-      this.city,
-      this.salary,
-      this.companyName,
-      this.websiteUrl,
-      this.payRange,
-      this.education,
-      this.video,
-      this.closedAt,
-      this.startDate,
-      this.status,
-      this.offeredBenefits,
-      this.country,
-      this.endDateToggle,
-      this.payMax,
-      this.payMin,
-      this.hiringPeriod,
-      this.noOfPeople,
-      this.rateBilling,
-      this.linkedinUrl,
-      this.instagramUrl,
-      this.facebookUrl,
-      this.clinicLogo,
-      this.timings,
-      this.bannerImage,
-      this.timingtoggle,
-      this.createdAt,
-      this.updatedAt,
-      this.jobApplicantsAggregate,
-      this.jobEnquiriesAggregate});
+  DentalSupplier? dentalSupplier;
+  DentalPractice? dentalPractice;
+  Jobs({
+    this.id,
+    this.title,
+    this.jType,
+    this.jRole,
+    this.description,
+    this.typeofEmployment,
+    this.availabilityDate,
+    this.autoExpiryDate,
+    this.yearsOfExperience,
+    this.dentalPracticeId,
+    this.dentalSupplierId,
+    this.activeStatus,
+    this.location,
+    this.logo,
+    this.state,
+    this.city,
+    this.salary,
+    this.companyName,
+    this.websiteUrl,
+    this.payRange,
+    this.education,
+    this.video,
+    this.closedAt,
+    this.startDate,
+    this.status,
+    this.offeredBenefits,
+    this.country,
+    this.endDateToggle,
+    this.payMax,
+    this.payMin,
+    this.hiringPeriod,
+    this.noOfPeople,
+    this.rateBilling,
+    this.linkedinUrl,
+    this.instagramUrl,
+    this.facebookUrl,
+    this.clinicLogo,
+    this.timings,
+    this.bannerImage,
+    this.timingtoggle,
+    this.createdAt,
+    this.updatedAt,
+    this.jobApplicantsAggregate,
+    this.jobEnquiriesAggregate,
+    this.dentalSupplier,
+    this.dentalPractice,
+  });
 
   Jobs.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -175,9 +182,15 @@ class Jobs {
     jobApplicantsAggregate = json['job_applicants_aggregate'] != null
         ? JobApplicantsAggregate.fromJson(json['job_applicants_aggregate'])
         : null;
-    
+
     jobEnquiriesAggregate = json['job_enquiries_aggregate'] != null
         ? JobEnquiriesAggregate.fromJson(json['job_enquiries_aggregate'])
+        : null;
+    dentalSupplier = json['dental_supplier'] != null
+        ? new DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
+    dentalPractice = json['dental_practice'] != null
+        ? new DentalPractice.fromJson(json['dental_practice'])
         : null;
   }
 
@@ -233,9 +246,18 @@ class Jobs {
     if (this.jobEnquiriesAggregate != null) {
       data['job_enquiries_aggregate'] = this.jobEnquiriesAggregate!.toJson();
     }
+    if (this.dentalSupplier != null) {
+      data['dental_supplier'] = this.dentalSupplier!.toJson();
+    }
+
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
+
     return data;
   }
 }
+
 
 class ClinicLogo {
   String? url;

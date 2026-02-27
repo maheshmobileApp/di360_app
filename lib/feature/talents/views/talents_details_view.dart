@@ -19,6 +19,7 @@ import 'package:di360_flutter/widgets/custom_chip_view.dart';
 import 'package:di360_flutter/widgets/exerinace_info_icons.dart';
 import 'package:di360_flutter/widgets/logo_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -121,19 +122,19 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                     ExerinaceInfoIcons(
                         icon: Icons.work,
                         text:
-                            '${widget.talentList!.yearOfExperience} Yrs Experience'),
+                            '${widget.talentList?.yearOfExperience} Yrs Experience'),
                   if (widget.talentList?.yearOfExperience != null)
                     addVertical(12),
                   if (widget.talentList?.location?.isNotEmpty == true)
                     ExerinaceInfoIcons(
                         icon: Icons.location_on,
-                        text: widget.talentList!.location!),
+                        text: widget.talentList?.location??""),
                   if (widget.talentList?.location?.isNotEmpty == true)
                     addVertical(12),
                   if (widget.talentList?.mobileNumber?.isNotEmpty == true)
                     ExerinaceInfoIcons(
                         icon: Icons.call,
-                        text: widget.talentList!.mobileNumber!),
+                        text: widget.talentList?.mobileNumber??""),
                   if (widget.talentList?.mobileNumber?.isNotEmpty == true)
                     addVertical(12),
                   if (widget.talentList?.currentCompany?.isNotEmpty == true)
@@ -429,10 +430,9 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
   }
 
   Widget _sectionText(String text) {
-    return Text(text,
-        maxLines: null,
-        overflow: TextOverflow.visible,
-        style: TextStyles.regular1(color: AppColors.locationTextColor));
+    return HtmlWidget(
+      text,
+    );
   }
 
   bool _hasAnyProfessionalData() {

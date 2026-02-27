@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,45 +9,18 @@ import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterCourseCard extends StatelessWidget {
-  final String logo;
-  final String courseName;
-  final String cpdPoints;
-  final String name;
-  final String status;
-  final String types;
-  final String link;
-
-  final String createdAt;
-
-  /// Callbacks (parent view passes these)
   final VoidCallback? onCardTap;
-  final VoidCallback? onPreviewTap;
-  final VoidCallback? onEditTap;
-  final VoidCallback? onDeleteTap;
-  final VoidCallback? onActivateTap;
-  final VoidCallback? onDeactivateTap;
+  final CoursesListingDetails courseData;
 
   const RegisterCourseCard({
     super.key,
-    required this.logo,
-    required this.courseName,
-    required this.name,
-    required this.status,
-    required this.types,
-    required this.link,
-    required this.createdAt,
     this.onCardTap,
-    this.onPreviewTap,
-    this.onEditTap,
-    this.onDeleteTap,
-    this.onActivateTap,
-    this.onDeactivateTap,
-    required this.cpdPoints,
+    required this.courseData,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(createdAt) ?? '';
+    final String time = _getShortTime(courseData.createdAt ?? "") ?? '';
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -65,10 +39,18 @@ class RegisterCourseCard extends StatelessWidget {
                 _jobTimeChip(time),
               ],
             ),
-            _logoWithTitle(logo, courseName, name, status, types, link),
+            _logoWithTitle(
+                courseData.presenters?.first.presentedByImage?.url ?? "",
+                courseData.courseName ?? "",
+                courseData.presenters?.first.presentedByName ?? "",
+                courseData.status ?? "",
+                courseData.type ?? "",
+                courseData.meetingLink ?? ""),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                Text("View Details",
+                    style: TextStyles.medium2(color: AppColors.primaryColor)),
                 GestureDetector(
                   onTap: onCardTap,
                   child: SvgPicture.asset(
@@ -79,28 +61,6 @@ class RegisterCourseCard extends StatelessWidget {
                 ),
               ],
             ),
-
-            // right column
-            /* SizedBox(
-              // 👈 ensures column takes available vertical space
-              height: 120, // or double.infinity if inside flexible parent
-              child: Column(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween, // 👈 pushes apart
-                crossAxisAlignment: CrossAxisAlignment.end, // 👈 right aligned
-                children: [
-                  _jobTimeChip(time),
-                  GestureDetector(
-                    onTap: onCardTap,
-                    child: SvgPicture.asset(
-                      ImageConst.nextArrow,
-                      width: 26,
-                      height: 26,
-                    ),
-                  ),
-                ],
-              ),
-            ),*/
           ],
         ),
       ),
@@ -116,30 +76,41 @@ class RegisterCourseCard extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: AppColors.geryColor,
-              radius: 30,
-              child: CachedNetworkImageWidget(
-                  imageUrl: profilePic,
-                  fit: BoxFit.fill,
-                  errorWidget: Image.asset(ImageConst.prfImg)),
+              radius: 25,
+              child: ClipOval(
+                child: CachedNetworkImageWidget(
+                    width: 50,
+                    height: 50,
+                    imageUrl: profilePic,
+                    fit: BoxFit.fill,
+                    errorWidget: Image.asset(ImageConst.prfImg)),
+              ),
             ),
           ],
         ),
         SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(company,
-                maxLines: 2, style: TextStyles.bold2(color: AppColors.black)),
-            const SizedBox(height: 2),
-            Text(title, style: TextStyles.regular2(color: AppColors.black)),
-            const SizedBox(height: 2),
-            Text("CPD Points: ${cpdPoints}",
-                style: TextStyles.regular2(color: AppColors.black)),
-            const SizedBox(height: 2),
-            _chipWidget(types),
-            const SizedBox(height: 4),
-            if (link.isNotEmpty) _meetingLinkWidget(link)
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(company,
+                  maxLines: 2, style: TextStyles.bold2(color: AppColors.black)),
+              const SizedBox(height: 2),
+              Text(title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyles.regular2(
+                    color: AppColors.black,
+                  )),
+              const SizedBox(height: 2),
+              Text("CPD Points: ${courseData.cpdPoints ?? ""}",
+                  style: TextStyles.regular2(color: AppColors.black)),
+              const SizedBox(height: 2),
+              _chipWidget(types),
+              const SizedBox(height: 4),
+              if (link.isNotEmpty) _meetingLinkWidget(link)
+            ],
+          ),
         ),
       ],
     );
@@ -158,8 +129,7 @@ class RegisterCourseCard extends StatelessWidget {
             final url = Uri.parse(link);
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
-            } else {
-            }
+            } else {}
           },
           child: Text(
             "Meeting Link",
@@ -175,14 +145,15 @@ class RegisterCourseCard extends StatelessWidget {
   }
 
   Widget _chipWidget(String types) {
-    return Container(
-      height: 21,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.secondaryBlueColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Center(
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        height: 21,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.secondaryBlueColor,
+          borderRadius: BorderRadius.circular(30),
+        ),
         child: Text(
           types,
           style: TextStyles.regular1(
@@ -217,67 +188,6 @@ class RegisterCourseCard extends StatelessWidget {
             fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),
       ),
     );
-  }
-
-  Widget _menuWidget(String status) {
-    return PopupMenuButton<String>(
-      iconColor: AppColors.bottomNavUnSelectedColor,
-      color: AppColors.whiteColor,
-      padding: EdgeInsets.zero,
-      onSelected: (value) {
-        switch (value) {
-          case "Preview":
-            onPreviewTap?.call();
-            break;
-          case "Edit":
-            onEditTap?.call();
-            break;
-          case "Delete":
-            onDeleteTap?.call();
-            break;
-          case "Active":
-            onActivateTap?.call();
-            break;
-          case "Inactive":
-            onDeactivateTap?.call();
-            break;
-        }
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: "Preview",
-          child: _buildRow(Icons.remove_red_eye, AppColors.black, "Preview"),
-        ),
-        PopupMenuItem(
-          value: "Edit",
-          child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
-        ),
-        PopupMenuItem(
-          value: "Delete",
-          child: _buildRow(Icons.delete_outline, AppColors.redColor, "Delete"),
-        ),
-        if (status == "APPROVE")
-          PopupMenuItem(
-            value: "Inactive",
-            child: _buildRow(
-                Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
-          ),
-        if (status == "REJECT")
-          PopupMenuItem(
-            value: "Active",
-            child: _buildRow(
-                Icons.nightlight_outlined, AppColors.primaryColor, "Active"),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildRow(IconData? icon, Color? color, String? title) {
-    return Row(children: [
-      Icon(icon, color: color),
-      const SizedBox(width: 8),
-      Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color)),
-    ]);
   }
 
   String? _getShortTime(String createdAt) {

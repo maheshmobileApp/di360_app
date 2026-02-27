@@ -131,9 +131,9 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                     addHorizontal(10),
                     InkWell(
                         onTap: () async {
-                          await vm.getTalentEnquiry(
+                          await vm.getSelfTalentEnquiry(
                               context, jobProfiles?.jobProfilesId??"");
-                          if (vm.talentEnquiryData?.talentEnquiries?.length ==
+                          if (vm.selfTalentEnquiryData?.talentEnquiries?.length ==
                               0) {
                             scaffoldMessenger("No Enquiries found");
                             return;
@@ -145,7 +145,7 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
                                   top: Radius.circular(20)),
                             ),
                             builder: (context) => JobProfileEnquiriesView(
-                              applicant: vm.talentEnquiryData,
+                              applicant: vm.selfTalentEnquiryData,
                               profileImageUrl: "", // safe now
                             ),
                           );

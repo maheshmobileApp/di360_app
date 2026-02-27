@@ -3,7 +3,8 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
+    hide CourseRegisteredUsers;
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -27,6 +28,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   String? selectedCategoryId;
   bool editOptionEnable = false;
   bool courseRegistered = false;
+
+  String? currentUserId;
 
   int _courseListingLimit = 10;
   int _courseListingOffset = 0;
@@ -173,7 +176,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         'Cancelled': cancelledRegUsersCount,
       };
 
-  Future<void> getCoursesListingData(BuildContext context, {bool loadMore = false}) async {
+  Future<void> getCoursesListingData(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore) {
       if (isLoadingMoreCourses || !hasMoreCourses) return;
       isLoadingMoreCourses = true;
@@ -182,24 +186,35 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       _courseListingOffset = 0;
       hasMoreCourses = true;
     }
-    
+
     notifyListeners();
-    
+
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getCoursesListing(
-        listingStatus, activeStatus, userId, searchController.text, _courseListingLimit, _courseListingOffset);
+        listingStatus,
+        activeStatus,
+        userId,
+        searchController.text,
+        _courseListingLimit,
+        _courseListingOffset);
 
     if (!loadMore) {
       await fetchCourseStatusCounts(context);
     }
-    
+
     if (loadMore) {
       coursesListingList.addAll(res ?? []);
+      coursesListingList.sort((a, b) => 
+        (b.updatedAt ?? '').compareTo(a.updatedAt ?? '')
+      );
       isLoadingMoreCourses = false;
     } else {
       coursesListingList = res ?? [];
+      coursesListingList.sort((a, b) => 
+        (b.updatedAt ?? '').compareTo(a.updatedAt ?? '')
+      );
     }
-    
+
     hasMoreCourses = (res?.length ?? 0) >= _courseListingLimit;
     _courseListingOffset += res?.length ?? 0;
     Loaders.circularHideLoader(context);
@@ -207,6 +222,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> getAllListingData(BuildContext context) async {
+    currentUserId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getAllListingData(searchController.text);
 
     if (res != null) {
@@ -247,7 +263,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     registeredUsers = res;
     await getCourseRegisteredUsersTabCount(context, courseId);
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
   }
 
   Future<void> updateRegUserStatus(
@@ -384,6 +400,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
+  }
+
+  bool isRegisteredCheck(List<CourseRegisteredUsers>? courseRegisteredUsers) {
+    return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
+        false;
   }
 
   clearAll() {

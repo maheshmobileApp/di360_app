@@ -372,8 +372,8 @@ class ImagePickerField extends StatelessWidget {
   Widget _buildServerSingleFile(FormFieldState<List<dynamic>> field) => Stack(
         children: [
           serverImageType != "image"
-              ? NetworkVideoWidget(url: serverImage!)
-              : Image.network(serverImage!,
+              ? NetworkVideoWidget(url: serverImage??"")
+              : Image.network(serverImage??"",
                   fit: BoxFit.contain, width: double.infinity),
           Positioned(
             top: 4,
@@ -382,9 +382,9 @@ class ImagePickerField extends StatelessWidget {
               onTap: () {
                 onServerFileRemoved?.call(null);
                 field.didChange([
-                  if (selectedFile != null) selectedFile!,
-                  if (selectedFiles != null) ...selectedFiles!,
-                  if (serverImages != null) ...serverImages!,
+                  if (selectedFile != null) selectedFile??"",
+                  if (selectedFiles != null) ...selectedFiles??[],
+                  if (serverImages != null) ...serverImages??[],
                 ]);
               },
               child: const CircleAvatar(
