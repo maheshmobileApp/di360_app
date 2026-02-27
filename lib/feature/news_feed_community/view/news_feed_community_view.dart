@@ -40,6 +40,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
@@ -48,9 +49,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           Provider.of<CommunityViewModel>(context, listen: false);
       final newsFeedVM =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      (type == 'SUPPLIER')
-          ? await communityVM.getNewsFeedCategories(context)
-          : null;
+      if (type == 'SUPPLIER') {
+        await communityVM.getNewsFeedCategories(context);
+      }
       newsFeedVM.newsFeedCategoriesData = communityVM.newsFeedCategoriesData;
 
       newsFeedVM.newsFeedCategory = communityVM
@@ -101,7 +102,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
             return Scaffold(
               backgroundColor: AppColors.whiteColor,
               appBar: AppBarWidget(
-                 logo: false,
+                logo: false,
                 title: "Community",
                 searchAction: () =>
                     viewModel.setSearchBar(!viewModel.searchBarOpen),
@@ -232,7 +233,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                 return const Padding(
                                   padding: EdgeInsets.all(16),
                                   child: Center(
-                                      child: CircularProgressIndicator(color: AppColors.primaryColor,)),
+                                      child: CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                  )),
                                 );
                               }
                               final newsItem = joinRequests[index];
@@ -244,7 +247,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   feedUserRole: newsItem.userRole ?? "",
                                   imageUrls: newsItem.postImage ?? [],
                                   id: newsItem.id ?? '',
-                                  logoUrl: (newsItem.userRole == UserRole.professional.value)
+                                  logoUrl: (newsItem.userRole ==
+                                          UserRole.professional.value)
                                       ? newsItem.dentalProfessional
                                               ?.profileImage?.url ??
                                           ''

@@ -594,6 +594,15 @@ class CampaignViewModel extends ChangeNotifier {
     } catch (e) {}
   }
 
+  void clearGroupRelatedData() {
+    stateOptions = [];
+    _selectedStateChips = [];
+    sendOptions = [];
+    _selectedSendChips = [];
+    recipientsCount = "0";
+    notifyListeners();
+  }
+
   void resetListingState() {
     setSearchBar(false);
     clearAllFilters();

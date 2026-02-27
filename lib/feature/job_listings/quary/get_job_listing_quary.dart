@@ -59,5 +59,3 @@ query getalljobs($andList: [jobs_bool_exp!]) {
   }
 }
 ''';
-
-

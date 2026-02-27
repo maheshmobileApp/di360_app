@@ -414,7 +414,7 @@ class AddCourse extends StatelessWidget
                   isRequired: true,
                   validator: validatePositiveNumber),
               SizedBox(height: 8),
-              InputTextField(
+              /*InputTextField(
                 keyboardType: TextInputType.number,
                 controller: jobCreateVM.birdPriceController,
                 hintText: "Enter Early Bird Price",
@@ -477,8 +477,8 @@ class AddCourse extends StatelessWidget
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please Select Date'
                     : null,
-              ),
-              SizedBox(height: 8),
+              ),*/
+              //SizedBox(height: 8),
               /*
               InputTextField(
                 hintText: "Enter Description",

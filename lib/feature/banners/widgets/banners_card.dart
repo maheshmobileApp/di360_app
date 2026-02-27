@@ -175,7 +175,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
         }
          else if (value == "Delete") {
           showAlertMessage(
-              context, 'Are you sure you want to delete this catalogue?',
+              context, 'Are you sure you want to delete this Banner?',
               onBack: () {
             navigationService.goBack();
             vm.removeBanner(context, id);
@@ -195,7 +195,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
           ),
 
         // ✅ Only show Edit when NOT EXPIRED, NOT APPROVED, NOT REJECTED
-        if (item?.status == 'PENDING')
+        if (item?.status != 'REJECTED')
           PopupMenuItem(
             value: "Edit",
             child: _buildRow(
@@ -219,6 +219,7 @@ class BannersCard extends StatelessWidget with BaseContextHelpers {
         // ✅ Delete allowed in PENDING, EXPIRED, REJECTED
         if (item?.status == 'PENDING' ||
             item?.status == 'EXPIRED' ||
+            item?.status == 'DRAFT' ||
             item?.status == 'REJECTED')
           PopupMenuItem(
             value: "Delete",

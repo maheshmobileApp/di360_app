@@ -10,7 +10,6 @@ import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
-import 'package:di360_flutter/feature/news_feed_community/widgets/youtube_player_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
@@ -18,6 +17,7 @@ import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
+import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -144,8 +144,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     if (newsfeeds?.videoUrl != null &&
                         newsfeeds?.videoUrl?.isNotEmpty == true &&
                         _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
-                      YoutubeThumbnailPlayerWidget(
-                          videoUrl: newsfeeds?.videoUrl??""),
+                      LazyYoutubePlayer(
+                          youtubeUrl: newsfeeds?.videoUrl??""),
                     const SizedBox(height: 8),
 
                     if (newsfeeds?.webUrl != null &&

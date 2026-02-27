@@ -361,15 +361,19 @@ class CreateCampaignView extends StatelessWidget
                 viewModel.addGroupTypeChip(emp);
               }
             }
-            // Call API after selection is finalized
+            
             if (selected.isNotEmpty) {
               try {
                 await viewModel.getStatesByGroups();
-                await viewModel.getContacts();
+                if (viewModel.selectedType.isNotEmpty) {
+                  await viewModel.getContacts();
+                }
                 await viewModel.getContactCount();
               } catch (e) {
                 print('Error loading group data: $e');
               }
+            } else {
+              viewModel.clearGroupRelatedData();
             }
           },
         ),
