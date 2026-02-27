@@ -178,15 +178,39 @@ class CampaignViewModel extends ChangeNotifier {
   ];*/
 
   List<Map<String, String>> timeOptions = [
-    {'id': 'tz_1', 'value': 'Australia/Sydney', 'label': '(UTC+10:00) Canberra, Melbourne, Sydney'},
-    {'id': 'tz_2', 'value': 'Australia/Brisbane', 'label': '(UTC+10:00) Brisbane'},
-    {'id': 'tz_3', 'value': 'Australia/Adelaide', 'label': '(UTC+09:30) Adelaide'},
+    {
+      'id': 'tz_1',
+      'value': 'Australia/Sydney',
+      'label': '(UTC+10:00) Canberra, Melbourne, Sydney'
+    },
+    {
+      'id': 'tz_2',
+      'value': 'Australia/Brisbane',
+      'label': '(UTC+10:00) Brisbane'
+    },
+    {
+      'id': 'tz_3',
+      'value': 'Australia/Adelaide',
+      'label': '(UTC+09:30) Adelaide'
+    },
     {'id': 'tz_4', 'value': 'Australia/Perth', 'label': '(UTC+08:00) Perth'},
     {'id': 'tz_5', 'value': 'Australia/Hobart', 'label': '(UTC+10:00) Hobart'},
     {'id': 'tz_6', 'value': 'Australia/Darwin', 'label': '(UTC+09:30) Darwin'},
-    {'id': 'tz_7', 'value': 'Pacific/Auckland', 'label': '(UTC+12:00) Auckland'},
-    {'id': 'tz_8', 'value': 'Pacific/Chatham', 'label': '(UTC+12:45) Chatham Islands'},
-    {'id': 'tz_9', 'value': 'Asia/Kolkata', 'label': '(UTC+05:30) India Standard Time'},
+    {
+      'id': 'tz_7',
+      'value': 'Pacific/Auckland',
+      'label': '(UTC+12:00) Auckland'
+    },
+    {
+      'id': 'tz_8',
+      'value': 'Pacific/Chatham',
+      'label': '(UTC+12:45) Chatham Islands'
+    },
+    {
+      'id': 'tz_9',
+      'value': 'Asia/Kolkata',
+      'label': '(UTC+05:30) India Standard Time'
+    },
   ];
 
   String selectedTime = "";
@@ -336,9 +360,10 @@ class CampaignViewModel extends ChangeNotifier {
       scheduleTimeController.text = "";
       messageController.text = data?.messageText ?? "";
       selectedTimeZone = timeOptions.firstWhere(
-        (tz) => tz['value'] == data?.scheduleTimezone,
-        orElse: () => {},
-      )['label'] ?? "";
+            (tz) => tz['value'] == data?.scheduleTimezone,
+            orElse: () => {},
+          )['label'] ??
+          "";
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
@@ -352,6 +377,7 @@ class CampaignViewModel extends ChangeNotifier {
 
   ContactCountData? contactCountData;
   Future<void> getContactCount() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     try {
       List<String> sourceList = [];
       List<String> contactTypeList = [];
@@ -374,6 +400,7 @@ class CampaignViewModel extends ChangeNotifier {
       }
 
       final Map<String, dynamic> whereClause = {
+        "owner_id": {"_eq": userId},
         "source": {"_in": sourceList}
       };
 
@@ -386,6 +413,8 @@ class CampaignViewModel extends ChangeNotifier {
       }
 
       final variables = {"where": whereClause};
+      {}
+
       final res = await repo.getContactCount(variables);
 
       contactCountData = res;
@@ -518,6 +547,8 @@ class CampaignViewModel extends ChangeNotifier {
   }
 
   Future<void> getStatesByGroups() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    _selectedStateChips = [];
     try {
       List<String> sourceList = [];
       List<String> contactTypeList = [];
@@ -540,6 +571,7 @@ class CampaignViewModel extends ChangeNotifier {
       }
 
       final Map<String, dynamic> whereClause = {
+        "owner_id": {"_eq": userId},
         "source": {"_in": sourceList}
       };
 

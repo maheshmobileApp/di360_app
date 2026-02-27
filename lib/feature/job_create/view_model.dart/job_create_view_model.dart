@@ -312,8 +312,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   getCompanyName() async {
-    CompanyName = await LocalStorage.getStringVal(LocalStorageConst.name);
-    companyNameController.text = CompanyName;
+    final companyName =
+        await LocalStorage.getStringVal(LocalStorageConst.businessName);
+    companyNameController.text = companyName;
     notifyListeners();
   }
 
@@ -321,6 +322,12 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   bool validateCurrentStep() {
     if (_currentStep == 5) return validateOtherLinksStep();
     return formKeys[_currentStep].currentState?.validate() ?? false;
+  }
+
+  String? validateEmploymentTypes() {
+    return _selectedEmploymentChips.isEmpty
+        ? 'Please select at least one employment type'
+        : null;
   }
 
   Future<void> validateLogoAndBanner() async {
@@ -876,8 +883,14 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
+  String jobStatus = "";
+  void setJobStatus(String status) {
+    jobStatus = status;
+    notifyListeners();
+  }
+
   Future<void> loadJobData(Jobs? jobData) async {
-    print("*************print closed at  ${jobData?.closedAt}");
+    setJobStatus(jobData?.status ?? "");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";
@@ -895,6 +908,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
           di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
               jobData?.closedAt ?? "");
     }
+
     serverClinicImgs =
         jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
             [];

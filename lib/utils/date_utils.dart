@@ -143,7 +143,8 @@ static String formatDateToIso8601(String dateString) {
 static String formatYyyyMmDdToDdMmYyyy(String dateString) {
   try {
     final dateTime = DateTime.parse(dateString);
-    return DateFormat('dd/MM/yyyy').format(dateTime);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('dd/MM/yyyy').format(localDateTime);
   } catch (e) {
     return dateString;
   }

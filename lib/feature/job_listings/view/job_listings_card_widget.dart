@@ -84,7 +84,12 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 addVertical(12),
                 _chipWidget(jobsListingData?.typeofEmployment ?? []),
                 addVertical(10),
-                _descriptionWidget(jobsListingData?.description ?? ''),
+                Text(
+              _stripHtmlTags(jobsListingData?.description ?? ''),
+              style: TextStyles.regular2(color: AppColors.black),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -287,14 +292,9 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _descriptionWidget(String description) {
-    return SizedBox(
-      // height: 36,
-      width: double.infinity,
-      child: HtmlWidget(
-        description,
-      ),
-    );
+  String _stripHtmlTags(String htmlString) {
+    final RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+    return htmlString.replaceAll(exp, '').replaceAll('&nbsp;', ' ').trim();
   }
 
   Widget _chipWidget(List<dynamic> types) {

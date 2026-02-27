@@ -11,8 +11,8 @@ import 'package:di360_flutter/feature/job_profile/repository/create_job_profile_
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -102,6 +102,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   final TextEditingController salaryController = TextEditingController();
   List<String> _selectedEmploymentChips = [];
   final TextEditingController aboutMeController = TextEditingController();
+  final TextEditingController fromDateController = TextEditingController();
   File? profileFile;
   FileUpload? serverProfileFile;
   String profile_img = "";
@@ -164,6 +165,13 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     "Monthly",
     "Yearly"
   ];
+
+  void setFromDate(DateTime date) {
+    fromDateController.text =
+        di360_date_utils.DateFormatUtils.formatToYyyyMmDd(date);
+    notifyListeners();
+  }
+
   String? selectedSalaryPer;
 
   void setSelectSalaryPer(String value) {
@@ -889,7 +897,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "availabilityDate":
               availabilityDates.map((d) => d.toIso8601String()).toList(),
           "fromDate":
-              joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+              fromDateController.text,
         }
       ]
     };
@@ -1051,7 +1059,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         "availabilityDay": selectedDays,
         "availabilityDate":
             availabilityDates.map((d) => d.toIso8601String()).toList(),
-        "fromDate": joiningDate != null ? [joiningDate!.toIso8601String()] : [],
+        "fromDate":  fromDateController.text,
       }
     };
     try {

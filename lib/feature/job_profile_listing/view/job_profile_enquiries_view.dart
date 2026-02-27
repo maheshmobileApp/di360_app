@@ -94,7 +94,7 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                                       const SizedBox(width: 8),
                                       Text(
                                         DateFormatUtils.formatDateTime(applicant
-                                                ?.talentEnquiries![index]
+                                                ?.talentEnquiries?[index]
                                                 .createdAt ??
                                             ''),
                                         style: TextStyles.regular1(),
@@ -102,7 +102,7 @@ class JobProfileEnquiriesView extends StatelessWidget with BaseContextHelpers {
                                     ],
                                   ),
                                   Text(
-                                    applicant?.talentEnquiries![index]
+                                    applicant?.talentEnquiries?[index]
                                             .enquiryDescription ??
                                         '',
                                     style: TextStyles.medium2(),

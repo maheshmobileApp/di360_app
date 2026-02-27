@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
+import 'package:di360_flutter/feature/talent_listing/model/get_self_talent_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
@@ -298,15 +299,33 @@ class TalentListingViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await repo.getTalentEnquiry(talentId);
     talentEnquiryData = res;
-    print("***********************talent enquiries data: $talentId");
-    print("***********************talent enquiries data: $talentEnquiryData");
+
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+    return res;
+  }
+
+  JobProfileEnquiriesResList? selfTalentEnquiryData;
+  Future<JobProfileEnquiriesResList?> getSelfTalentEnquiry(
+      BuildContext context, String talentId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "where": {
+        "talent_id": {"_eq": talentId},
+        "enq_sender_id": {"_eq": userId}
+      },
+      "limit": 20
+    };
+    final res = await repo.getSelfTalentEnquiry(variables);
+    selfTalentEnquiryData = res;
+
     Loaders.circularHideLoader(context);
     notifyListeners();
     return res;
   }
 
   Future<TalentsMessageResData?> fetchTalentMessages(String talentId) async {
-    print("**********************************fetch talent message calling");
     try {
       isLoading = true;
       final res = await repo.fetchTalentMessages(talentId);

@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+
 class CoursesResponse {
   CoursesListingData? data;
 
@@ -100,6 +102,7 @@ class CoursesListingDetails {
   CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
 
   String? communityUserType;
+  List<Presenters>? presenters;
 
   CoursesListingDetails(
       {this.id,
@@ -160,7 +163,8 @@ class CoursesListingDetails {
       this.meetingLink,
       this.courseRegisteredUsers,
       this.courseRegisteredUsersAggregate,
-      this.communityUserType});
+      this.communityUserType,
+      this.presenters});
 
   CoursesListingDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -260,6 +264,12 @@ class CoursesListingDetails {
     endTime = json['endTime'];
     meetingLink = json['meeting_link'];
     communityUserType = json['community_user_type'];
+    if (json['presenters'] != null) {
+      presenters = <Presenters>[];
+      json['presenters'].forEach((v) {
+        presenters!.add(new Presenters.fromJson(v));
+      });
+    }
     if (json['course_registered_users'] != null) {
       courseRegisteredUsers = <CourseRegisteredUsers>[];
       json['course_registered_users'].forEach((v) {
@@ -353,7 +363,10 @@ class CoursesListingDetails {
     data['endTime'] = this.endTime;
     data['community_user_type'] = this.communityUserType;
     data['meeting_link'] = this.meetingLink;
-     if (this.courseRegisteredUsers != null) {
+    if (this.presenters != null) {
+      data['presenters'] = this.presenters!.map((v) => v.toJson()).toList();
+    }
+    if (this.courseRegisteredUsers != null) {
       data['course_registered_users'] =
           this.courseRegisteredUsers!.map((v) => v.toJson()).toList();
     }

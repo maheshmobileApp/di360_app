@@ -145,7 +145,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         newsfeeds?.videoUrl?.isNotEmpty == true &&
                         _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
                       YoutubeThumbnailPlayerWidget(
-                          videoUrl: newsfeeds?.videoUrl ?? ""),
+                          videoUrl: newsfeeds?.videoUrl??""),
                     const SizedBox(height: 8),
 
                     if (newsfeeds?.webUrl != null &&

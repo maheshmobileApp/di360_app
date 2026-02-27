@@ -1,31 +1,47 @@
 const String getMyRegisteredCourseQuery = r'''
-query getCoursesWithMyRegistrations(
-  $limit: Int
-  $offset: Int
-  $where: courses_bool_exp
-) {
+query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset: Int!, $loginId: uuid) {
   courses(
     where: $where
     limit: $limit
     offset: $offset
-    order_by: { created_at: desc }
+    order_by: {startDate: desc}
   ) {
     id
-    course_name
     type
-    startDate
     endDate
+    startDate
+    startTime
+    endTime
+    course_name
+    description
+    created_at
+    cpd_points
+    presenters
     presented_by_name
     presented_by_image
     company_name
+    webinar_link
+    afterwards_price
     cpd_points
-    status
-    active_status
-    created_at
-    course_registered_users_aggregate {
-      aggregate {
-        count
-      }
+    course_category_id
+    course_category {
+      id
+      name
+      __typename
     }
+    course_registered_users(where: {from_id: {_eq: $loginId}}) {
+      id
+      webinar_status
+      status
+      first_name
+      last_name
+      from_id
+      __typename
+    }
+    dental_supplier {
+      logo
+      __typename
+    }
+    __typename
   }
 }''';

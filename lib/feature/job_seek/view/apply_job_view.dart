@@ -176,6 +176,7 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               focusNode: _phoneFocus,
+              maxLength: 10,
             ),
             SizedBox(height: 16),
             ResumeUploadWidget(

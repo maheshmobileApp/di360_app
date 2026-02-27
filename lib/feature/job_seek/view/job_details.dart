@@ -258,23 +258,23 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           ),
         SizedBox(height: 10),
         if (widget.job.availabilityDate != null &&
-            widget.job.availabilityDate!.isNotEmpty &&
-            widget.job.availabilityDate!.length >= 2)
-          if (widget.job.availabilityDate![0] != "" &&
-              widget.job.availabilityDate![1] != "")
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Dates Required :",
-                  style: TextStyles.medium2(color: AppColors.black),
-                ),
-                Text(
-                  "${widget.job.availabilityDate![0]} to ${widget.job.availabilityDate![1]}",
-                  style: TextStyles.medium2(color: AppColors.primaryColor),
-                ),
-              ],
-            ),
+            widget.job.availabilityDate?.isNotEmpty == true &&
+            widget.job.availabilityDate?.length == 2 &&
+            widget.job.availabilityDate?[0] != "" &&
+            widget.job.availabilityDate?[1] != "")
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Dates Required :",
+                style: TextStyles.medium2(color: AppColors.black),
+              ),
+              Text(
+                "${widget.job.availabilityDate![0]} to ${widget.job.availabilityDate![1]}",
+                style: TextStyles.medium2(color: AppColors.primaryColor),
+              ),
+            ],
+          ),
 
         Divider(height: 30),
         if (widget.job.hiringPeriod?.isNotEmpty == true)
@@ -312,7 +312,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Divider(height: 4),
-              _sectionHeader("Benifits"),
+              _sectionHeader("Benefits"),
               CustomChipView(typesList: widget.job.offeredBenefits ?? []),
             ],
           ),
@@ -327,10 +327,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           Text('${widget.job.location}'),
           locationView(context),
         ],
-        if (widget.job.description?.isNotEmpty == true) ...[
+        if ((widget.job.dentalSupplier?.directories?.isNotEmpty == true &&
+            widget.job.dentalSupplier?.directories?.first.description?.isNotEmpty == true) ||
+            (widget.job.dentalPractice?.directories?.isNotEmpty == true &&
+            widget.job.dentalPractice?.directories?.first.description?.isNotEmpty == true)) ...[
           Divider(height: 4),
           _sectionHeader('About Company'),
-          _sectionText('${widget.job.description}'),
+          _sectionText('${widget.job.dentalSupplier?.directories?.first.description ?? widget.job.dentalPractice?.directories?.first.description}'),
         ],
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(

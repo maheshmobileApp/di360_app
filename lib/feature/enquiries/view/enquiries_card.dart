@@ -89,7 +89,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
               children: [
                 InkWell(
                   onTap: () async {
-                     if (enquiry?.id == null || enquiry?.jobId == null) {
+                    if (enquiry?.id == null || enquiry?.jobId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Applicant or Job ID not available"),
@@ -101,14 +101,13 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                     final userId = await LocalStorage.getStringVal(
                         LocalStorageConst.userId);
 
-                     navigationService.navigateToWithParams(
+                    navigationService.navigateToWithParams(
                       RouteList.enquiryMessagesView,
                       params: {
                         "jobId": enquiry?.jobId ?? "",
-                        "applicantId":enquiry?.id?? "",
+                        "applicantId": enquiry?.id ?? "",
                         "userId": userId,
                         "type": "applicant",
-                        
                       },
                     );
                   },

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_profile/view_model/job_profile_create_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/widget/multidatecalendarpicker.dart';
@@ -49,8 +50,8 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
                   maxLength: 3,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                 ),
               ],
               addVertical(20),
@@ -58,7 +59,10 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
               addVertical(6),
               Row(
                 children: [
-                  _radioButton("Immediate", true, jobProfileVM.isJoiningImmediate,
+                  _radioButton(
+                      "Immediate",
+                      true,
+                      jobProfileVM.isJoiningImmediate,
                       (_) => jobProfileVM.toggleJoiningImmediate(true)),
                   _radioButton(
                     "From Date",
@@ -68,88 +72,120 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
                   ),
                 ],
               ),
-              addVertical(20),
-              Text("Availability Type", style: TextStyles.regular2()),
-              addVertical(6),
-              CustomDropDown<String>(
-                title: '',
-                hintText: 'Select Availability Type',
-                value: jobProfileVM.availabilityTypes
-                        .contains(jobProfileVM.selectedAvailabilityType)
-                    ? jobProfileVM.selectedAvailabilityType
-                    : null, // ✅ Only assign if valid
-                items: jobProfileVM.availabilityTypes
-                    .map((e) => DropdownMenuItem<String>(
-                          value: e,
-                          child: Text(e),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  jobProfileVM.setAvailabilityType(val ?? '');
-                },
-              ),
               addVertical(16),
-              if (jobProfileVM.selectedAvailabilityType == 'Select Date') ...[
-                Text("Select Availability Date", style: TextStyles.regular2()),
-                  addVertical(6),
-                MultiDateCalendarPicker(
-                  selectedDates: jobProfileVM.availabilityDates,
-                  controller: jobProfileVM.availabilityDateController,
-                  onDatesChanged: (dates) {
-                    jobProfileVM.availabilityDates = dates;
-                    jobProfileVM.updateAvailabilityDateControllerText();
+              if (!jobProfileVM.isJoiningImmediate)
+                CustomDatePicker(
+                  controller: jobProfileVM.fromDateController,
+                  title: "",
+                  hintText: "Select From Date",
+                  onTap: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
+                    );
+                    if (picked != null) {
+                      jobProfileVM.setFromDate(picked);
+                    }
                   },
                 ),
-                addVertical(12),
-                if (jobProfileVM.availabilityDates.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
-                    children: jobProfileVM.availabilityDates.map((date) {
-                      return Chip(
-                        label: Text(DateFormat('MMM d, yyyy').format(date)),
-                        onDeleted: () {
-                          jobProfileVM.removeAvailabilityDate(date);
-      
-                          if (jobProfileVM.availabilityDates.isEmpty) {
-                            jobProfileVM.availabilityDateController.clear();
-                          } else {
-                            jobProfileVM.updateAvailabilityDateControllerText();
-                          }
+              addVertical(16),
+              if (!jobProfileVM.selectedEmploymentChips.contains("Full Time"))
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Availability Type", style: TextStyles.regular2()),
+                    addVertical(6),
+                    CustomDropDown<String>(
+                      title: '',
+                      hintText: 'Select Availability Type',
+                      value: jobProfileVM.availabilityTypes
+                              .contains(jobProfileVM.selectedAvailabilityType)
+                          ? jobProfileVM.selectedAvailabilityType
+                          : null, // ✅ Only assign if valid
+                      items: jobProfileVM.availabilityTypes
+                          .map((e) => DropdownMenuItem<String>(
+                                value: e,
+                                child: Text(e),
+                              ))
+                          .toList(),
+                      onChanged: (val) {
+                        jobProfileVM.setAvailabilityType(val ?? '');
+                      },
+                    ),
+                    addVertical(16),
+                    if (jobProfileVM.selectedAvailabilityType ==
+                        'Select Date') ...[
+                      Text("Select Availability Date",
+                          style: TextStyles.regular2()),
+                      addVertical(6),
+                      MultiDateCalendarPicker(
+                        selectedDates: jobProfileVM.availabilityDates,
+                        controller: jobProfileVM.availabilityDateController,
+                        onDatesChanged: (dates) {
+                          jobProfileVM.availabilityDates = dates;
+                          jobProfileVM.updateAvailabilityDateControllerText();
                         },
-                      );
-                    }).toList(),
-                  ),
-              ],
-              if (jobProfileVM.selectedAvailabilityType == 'Select Day') ...[
-                Text("Available Days *", style: TextStyles.regular2()),
-                 addVertical(6),
-                Wrap(
-                  spacing: 16,
-                  runSpacing: 6,
-                  children: jobProfileVM.weekDays.map((day) {
-                    final isSelected = jobProfileVM.selectedDays.contains(day);
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Checkbox(
-                          value: isSelected,
-                          activeColor: Colors.orange,
-                          onChanged: (checked) {
-                            jobProfileVM.toggleDay(day);
-                          },
+                      ),
+                      addVertical(12),
+                      if (jobProfileVM.availabilityDates.isNotEmpty)
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: jobProfileVM.availabilityDates.map((date) {
+                            return Chip(
+                              label:
+                                  Text(DateFormat('MMM d, yyyy').format(date)),
+                              onDeleted: () {
+                                jobProfileVM.removeAvailabilityDate(date);
+
+                                if (jobProfileVM.availabilityDates.isEmpty) {
+                                  jobProfileVM.availabilityDateController
+                                      .clear();
+                                } else {
+                                  jobProfileVM
+                                      .updateAvailabilityDateControllerText();
+                                }
+                              },
+                            );
+                          }).toList(),
                         ),
-                        Text(
-                          day,
-                          style: TextStyles.regular3(
-                            color: isSelected ? Colors.orange : Colors.black,
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                    ],
+                    if (jobProfileVM.selectedAvailabilityType ==
+                        'Select Day') ...[
+                      Text("Available Days *", style: TextStyles.regular2()),
+                      addVertical(6),
+                      Wrap(
+                        spacing: 16,
+                        runSpacing: 6,
+                        children: jobProfileVM.weekDays.map((day) {
+                          final isSelected =
+                              jobProfileVM.selectedDays.contains(day);
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Checkbox(
+                                value: isSelected,
+                                activeColor: Colors.orange,
+                                onChanged: (checked) {
+                                  jobProfileVM.toggleDay(day);
+                                },
+                              ),
+                              Text(
+                                day,
+                                style: TextStyles.regular3(
+                                  color:
+                                      isSelected ? Colors.orange : Colors.black,
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ],
                 ),
-              ],
             ],
           ),
         ),
@@ -170,7 +206,7 @@ class JobProfileAvailability extends StatelessWidget with BaseContextHelpers {
           onChanged: onChanged,
         ),
         Text(label, style: TextStyles.regular2()),
-         addHorizontal(20),
+        addHorizontal(20),
       ],
     );
   }

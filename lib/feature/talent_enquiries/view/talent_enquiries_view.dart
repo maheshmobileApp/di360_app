@@ -48,8 +48,8 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-         logo: false,
-         title: "Talent Enquiries",
+        logo: false,
+        title: "Talent Enquiries",
         searchWidget: false,
       ),
       body: Column(
@@ -70,11 +70,11 @@ class _TalentListingScreenState extends State<TalentEnquiriesView>
                   )
                 : ListView.builder(
                     controller: _scrollController,
-                    itemCount: vm.talentEnquiryData!.talentEnquiries!.length +
-                        (vm.isLoadingMoreEnquiries ? 1 : 0),
+                    itemCount: vm.talentEnquiryData?.talentEnquiries?.length ??
+                        0 + (vm.isLoadingMoreEnquiries ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index ==
-                          vm.talentEnquiryData!.talentEnquiries!.length) {
+                          vm.talentEnquiryData?.talentEnquiries?.length) {
                         return Center(
                             child: Padding(
                           padding: EdgeInsets.all(16),

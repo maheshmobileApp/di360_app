@@ -86,15 +86,27 @@ class CourseRegisteredUsers {
     createdAt = json['created_at'];
     webinarStatus = json['webinar_status'];
     status = json['status'];
-    directoriesPractice = json['directories_practice'] != null
-        ? new DirectoriesSupplier.fromJson(json['directories_practice'])
-        : null;
-    directoriesSupplier = json['directories_supplier'] != null
-        ? new DirectoriesSupplier.fromJson(json['directories_supplier'])
-        : null;
-    directoriesProfessional = json['directories_professional'] != null
-        ? new DirectoriesSupplier.fromJson(json['directories_professional'])
-        : null;
+    try {
+      directoriesPractice = json['directories_practice'] != null && json['directories_practice'] is Map
+          ? DirectoriesSupplier.fromJson(json['directories_practice'])
+          : null;
+    } catch (e) {
+      directoriesPractice = null;
+    }
+    try {
+      directoriesSupplier = json['directories_supplier'] != null && json['directories_supplier'] is Map
+          ? DirectoriesSupplier.fromJson(json['directories_supplier'])
+          : null;
+    } catch (e) {
+      directoriesSupplier = null;
+    }
+    try {
+      directoriesProfessional = json['directories_professional'] != null && json['directories_professional'] is Map
+          ? DirectoriesSupplier.fromJson(json['directories_professional'])
+          : null;
+    } catch (e) {
+      directoriesProfessional = null;
+    }
     sTypename = json['__typename'];
   }
 
@@ -124,14 +136,22 @@ class CourseRegisteredUsers {
 class DirectoriesSupplier {
   String? id;
   DentalSupplier? dentalSupplier;
+  DentalSupplier? dentalPractice;
+  DentalSupplier? dentalProfessional;
   String? sTypename;
 
-  DirectoriesSupplier({this.id, this.dentalSupplier, this.sTypename});
+  DirectoriesSupplier({this.id, this.dentalSupplier, this.dentalPractice, this.dentalProfessional, this.sTypename});
 
   DirectoriesSupplier.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    dentalSupplier = json['dental_supplier'] != null
-        ? new DentalSupplier.fromJson(json['dental_supplier'])
+    dentalSupplier = json['dental_supplier'] != null && json['dental_supplier'] is Map
+        ? DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
+    dentalPractice = json['dental_practice'] != null && json['dental_practice'] is Map
+        ? DentalSupplier.fromJson(json['dental_practice'])
+        : null;
+    dentalProfessional = json['dental_professional'] != null && json['dental_professional'] is Map
+        ? DentalSupplier.fromJson(json['dental_professional'])
         : null;
     sTypename = json['__typename'];
   }
@@ -141,6 +161,12 @@ class DirectoriesSupplier {
     data['id'] = this.id;
     if (this.dentalSupplier != null) {
       data['dental_supplier'] = this.dentalSupplier!.toJson();
+    }
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
+    if (this.dentalProfessional != null) {
+      data['dental_professional'] = this.dentalProfessional!.toJson();
     }
     data['__typename'] = this.sTypename;
     return data;

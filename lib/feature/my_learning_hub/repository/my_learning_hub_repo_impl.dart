@@ -23,8 +23,10 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
         ]
       },
       "limit": limit,
-      "offset": offset
+      "offset": offset,
+      "loginId": userId
     };
+    
     final getMyRegisteredCourses =
         await http.query(getMyRegisteredCourseQuery, variables: variables);
     final response = CoursesListingData.fromJson(getMyRegisteredCourses);

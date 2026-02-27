@@ -118,7 +118,11 @@ class _CustomMultiSelectDropDownState<T>
                                 if (checked == true) {
                                   // Handle Locum exclusivity
                                   if (widget.itemLabel(item) == "Locum") {
-                                    // If Locum is selected, clear all others
+                                    _selected.clear();
+                                    _selected.add(item);
+                                  }
+                                  // Handle Full Time exclusivity
+                                  else if (widget.itemLabel(item) == "Full Time") {
                                     _selected.clear();
                                     _selected.add(item);
                                   }
@@ -134,10 +138,10 @@ class _CustomMultiSelectDropDownState<T>
                                     _selected.add(item);
                                   }
                                   else {
-                                    // If other item is selected, remove Locum if present
+                                    // If other item is selected, remove Locum and Full Time if present
                                     _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) ==
-                                        "Locum");
+                                        widget.itemLabel(selectedItem) == "Locum" ||
+                                        widget.itemLabel(selectedItem) == "Full Time");
                                     _selected.add(item);
                                   }
                                 } else {
@@ -184,19 +188,23 @@ class _CustomMultiSelectDropDownState<T>
 
   Color _getItemColor(T item, List<T> currentSelection, bool isSelected) {
     if (widget.greyOutCondition != null) {
-      // Apply grey out logic based on current dialog selection
       if (currentSelection.isEmpty) {
         return isSelected ? AppColors.primaryColor : AppColors.black;
       }
 
       final hasLocum = currentSelection
           .any((selected) => widget.itemLabel(selected) == "Locum");
+      final hasFullTime = currentSelection
+          .any((selected) => widget.itemLabel(selected) == "Full Time");
       final isLocum = widget.itemLabel(item) == "Locum";
+      final isFullTime = widget.itemLabel(item) == "Full Time";
 
       if (hasLocum && !isLocum) {
-        return Colors.grey; // Grey out non-Locum when Locum is selected
-      } else if (!hasLocum && isLocum && currentSelection.isNotEmpty) {
-        return Colors.grey; // Grey out Locum when other items are selected
+        return Colors.grey;
+      } else if (hasFullTime && !isFullTime) {
+        return Colors.grey;
+      } else if (!hasLocum && !hasFullTime && (isLocum || isFullTime) && currentSelection.isNotEmpty) {
+        return Colors.grey;
       }
     }
 
