@@ -138,7 +138,7 @@ class GetDirectorPartners extends StatelessWidget with BaseContextHelpers {
                     top: false,
                     child: Column(
                       children: [
-                        AddPartners(hintText: hintText),
+                        AddPartners(hintText: hintText,fileName: imag),
                         CustomBottomButton(
                           onFirst: () {
                             editVM.updateIsEditPartner(false);

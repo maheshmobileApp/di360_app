@@ -7,16 +7,26 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 
-class AddDirectorTeamMemberFoam extends StatelessWidget
+// ignore: must_be_immutable
+class AddDirectorTeamMemberFoam extends StatefulWidget
     with BaseContextHelpers, ValidationMixins {
   final String? hinttext;
-  AddDirectorTeamMemberFoam({super.key, this.hinttext});
+  dynamic fileName;
+  AddDirectorTeamMemberFoam({super.key, this.hinttext, this.fileName});
 
+  @override
+  State<AddDirectorTeamMemberFoam> createState() =>
+      _AddDirectorTeamMemberFoamState();
+}
+
+class _AddDirectorTeamMemberFoamState extends State<AddDirectorTeamMemberFoam>
+    with BaseContextHelpers, ValidationMixins {
   @override
   Widget build(BuildContext context) {
     final AddDirectorVM = Provider.of<AddDirectoryViewModel>(context);
@@ -56,13 +66,12 @@ class AddDirectorTeamMemberFoam extends StatelessWidget
         ),
         addVertical(12),
         InputTextField(
-          hintText: "Enter Phone Number",
-          title: " Phone Number ",
-          controller: AddDirectorVM.teamNumberCntr,
-          isRequired: true,
-          keyboardType: TextInputType.number,
-           validator: validatePhoneNumber
-        ),
+            hintText: "Enter Phone Number",
+            title: " Phone Number ",
+            controller: AddDirectorVM.teamNumberCntr,
+            isRequired: true,
+            keyboardType: TextInputType.number,
+            validator: validatePhoneNumber),
         addVertical(12),
         InputTextField(
           hintText: "Enter  Email ID ",
@@ -78,13 +87,73 @@ class AddDirectorTeamMemberFoam extends StatelessWidget
           title: 'User picture ',
           isRequired: true,
           imageFile: AddDirectorVM.teamMemberFile,
-          onTap: () => imagePickerSelection(
+          onTap: () {
+            imagePickerSelection(
             context,
             () => AddDirectorVM.pickUserImage(picker.ImageSource.gallery),
             () => AddDirectorVM.pickUserImage(picker.ImageSource.camera),
-          ),
-          hintText: hinttext ?? 'JPEG, PNG, PDF formats, up to 5 MB',
+          );
+          setState(() {
+            widget.fileName = null;
+          });
+          },
+          hintText: widget.hinttext ?? 'JPEG, PNG, PDF formats, up to 5 MB',
         ),
+        if (AddDirectorVM.teamMemberFile != null) ...[
+          addVertical(10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Stack(children: [
+              Image.file(AddDirectorVM.teamMemberFile!, width: 90, height: 70),
+              Positioned(
+                  right: 0,
+                  top: 0,
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          AddDirectorVM.teamMemberFile = null;
+                        });
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              color: Colors.red, shape: BoxShape.circle),
+                          child: Icon(Icons.close,
+                              color: Colors.white, size: 16))))
+            ]),
+          )
+        ],
+        if (widget.fileName != null) ...[
+          addVertical(10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Stack(children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: CachedNetworkImageWidget(
+                      imageUrl: widget.fileName['url'] ?? '',
+                      width: 90,
+                      height: 70)),
+              Positioned(
+                  right: 0,
+                  top: 0,
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          widget.fileName = null;
+                        });
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close,
+                              color: Colors.white, size: 16))))
+            ]),
+          )
+        ],
         addVertical(12),
         InputTextField(
           hintText: "Enter  location",

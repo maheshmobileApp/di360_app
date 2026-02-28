@@ -70,13 +70,28 @@ class AddSocialForm extends StatelessWidget
           AppButton(
             text: editVM.isEditSocialMed ? 'Update' : 'Add',
             onTap: () async {
-              if (addDirectorVM.selectedAccount == null ||
-                  addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
-                showTopMessage(context, 'Please select account and enter URL');
+              if (addDirectorVM.selectedAccount == null) {
+                showTopMessage(context, 'Please select account');
+              } else if (addDirectorVM.socialAccountsurlCntr.text.isEmpty) {
+                showTopMessage(context, 'Please enter URL');
               } else {
-                editVM.isEditSocialMed
-                    ? editVM.updateTheSocialurl(context, id ?? '')
-                    : addDirectorVM.addSocialUrls(context);
+                final urlError = validateOptionalUrl(addDirectorVM.socialAccountsurlCntr.text);
+                if (urlError != null) {
+                  showTopMessage(context, urlError);
+                } else {
+                  try {
+                    final socialList = addDirectorVM
+                        .getBasicInfoData.first.directoryLocations
+                        ?.firstWhere((v) => v.mediaName == addDirectorVM.selectedAccount!.toLowerCase());
+                    if (socialList != null) {
+                      showTopMessage(context, 'This media account is already assigned. Please choose another.');
+                      return;
+                    }
+                  } catch (e) {}
+                  editVM.isEditSocialMed
+                      ? editVM.updateTheSocialurl(context, id ?? '')
+                      : addDirectorVM.addSocialUrls(context);
+                }
               }
             },
           )

@@ -1,4 +1,6 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_appointment_slots_res.dart';
@@ -11,6 +13,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_directory_res.da
 import 'package:di360_flutter/feature/directors/model_class/get_partnership_status.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 import 'package:di360_flutter/feature/directors/querys/book_appointment_query.dart';
+import 'package:di360_flutter/feature/directors/querys/check_visibility_query.dart';
 import 'package:di360_flutter/feature/directors/querys/community_register_query.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_community_status_query.dart';
@@ -25,6 +28,7 @@ import 'package:di360_flutter/feature/directors/querys/get_team_members.dart';
 import 'package:di360_flutter/feature/directors/querys/get_time_slots_query.dart';
 import 'package:di360_flutter/feature/directors/querys/partnership_request_query.dart';
 import 'package:di360_flutter/feature/directors/respository/director_repository.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class DirectorRepositoryImpl extends DirectorRepository {
   final HttpService http = HttpService();
@@ -113,7 +117,8 @@ class DirectorRepositoryImpl extends DirectorRepository {
   }
 
   @override
-  Future<GetBusinessProfDetailsData> getBusinessProfessionalDetails(variables) async {
+  Future<GetBusinessProfDetailsData> getBusinessProfessionalDetails(
+      variables) async {
     final res = await http.query(getDentalBusinessDetailsProfessionalQuery,
         variables: variables);
     final data = GetBusinessProfDetailsData.fromJson(res);
@@ -129,7 +134,8 @@ class DirectorRepositoryImpl extends DirectorRepository {
 
   @override
   Future<GetPartnershipStatusData> getPartnershipStatus(variables) async {
-    final res = await http.query(getPartnershipStatusQuery, variables: variables);
+    final res =
+        await http.query(getPartnershipStatusQuery, variables: variables);
     final data = GetPartnershipStatusData.fromJson(res);
     return data;
   }
@@ -153,5 +159,27 @@ class DirectorRepositoryImpl extends DirectorRepository {
     final data = GetDirectoryData.fromJson(res);
 
     return data;
+  }
+
+  @override
+  Future<dynamic> checkVisibilitys(String id, String type) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await http.query(checkVisibilityQuery, variables: {
+      "where": {
+        if (type == UserRole.professional.value)
+          "follower_dental_professional_id": {"_eq": id}
+        else if (type == UserRole.practice.value)
+          "follower_dental_practice_id": {"_eq": id}
+        else
+          "follower_dental_supplier_id": {"_eq": id},
+        if (type == UserRole.supplier.value)
+          "dental_supplier_id": {"_eq": userId}
+        else if (type == UserRole.professional.value)
+          "dental_professional_id": {"_eq": userId}
+        else
+          "dental_practice_id": {"_eq": userId}
+      }
+    });
+    return res;
   }
 }

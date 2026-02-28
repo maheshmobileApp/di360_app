@@ -7,15 +7,23 @@ import 'package:di360_flutter/feature/add_directors/widgets/director_partner_mul
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/radio_button_group.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 
-class AddPartners extends StatelessWidget with BaseContextHelpers {
+// ignore: must_be_immutable
+class AddPartners extends StatefulWidget {
   final String? hintText;
-  const AddPartners({super.key, this.hintText});
+  dynamic fileName;
+   AddPartners({super.key, this.hintText,this.fileName});
 
+  @override
+  State<AddPartners> createState() => _AddPartnersState();
+}
+
+class _AddPartnersState extends State<AddPartners> with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final AddDirectorVM = Provider.of<AddDirectoryViewModel>(context);
@@ -49,13 +57,73 @@ class AddPartners extends StatelessWidget with BaseContextHelpers {
           title: 'Image ',
           isRequired: true,
           imageFile: AddDirectorVM.partnerImgFile,
-          onTap: () => imagePickerSelection(
+          onTap: () {
+            imagePickerSelection(
             context,
             () => AddDirectorVM.pickPartnerImage(picker.ImageSource.gallery),
             () => AddDirectorVM.pickPartnerImage(picker.ImageSource.camera),
-          ),
-          hintText: hintText ?? 'Choose an image or drag',
+          );
+          setState(() {
+            widget.fileName = null;
+          });
+          },
+          hintText: widget.hintText ?? 'Choose an image or drag',
         ),
+        if (AddDirectorVM.partnerImgFile != null) ...[
+          addVertical(10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Stack(children: [
+              Image.file(AddDirectorVM.partnerImgFile!, width: 90, height: 70),
+              Positioned(
+                  right: 0,
+                  top: 0,
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          AddDirectorVM.partnerImgFile = null;
+                        });
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              color: Colors.red, shape: BoxShape.circle),
+                          child: Icon(Icons.close,
+                              color: Colors.white, size: 16))))
+            ]),
+          )
+        ],
+        if (widget.fileName != null) ...[
+          addVertical(10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Stack(children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: CachedNetworkImageWidget(
+                      imageUrl: widget.fileName['url'] ?? '',
+                      width: 90,
+                      height: 70)),
+              Positioned(
+                  right: 0,
+                  top: 0,
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          widget.fileName = null;
+                        });
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close,
+                              color: Colors.white, size: 16))))
+            ]),
+          )
+        ],
         addVertical(12),
         InputTextField(
           hintText: "Enter  Description",

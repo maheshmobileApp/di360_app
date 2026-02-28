@@ -49,6 +49,10 @@ mixin ValidationMixins {
     if (value == null || value.isEmpty) {
       return "Please enter your Mobile Number";
     }
+    if (value.length < 9) {
+      return "Enter valid number";
+    }
+
     return null;
   }
 
@@ -68,7 +72,14 @@ mixin ValidationMixins {
   }
 
   String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) return "Please enter password";
+    if (value == null || value.isEmpty) {
+      return "Please enter password";
+    }
+
+    if (value.length < 6) {
+      return "Password must be at least 6 characters";
+    }
+
     return null;
   }
 

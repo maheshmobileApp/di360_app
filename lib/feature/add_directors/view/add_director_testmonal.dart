@@ -197,13 +197,13 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
                                       context,
                                       data?.profileImage?.url,
                                       data?.msgPic?.url)) {
-                                // editVM.isEditTestimonal
-                                //     ? editVM.updateTheTestimonial(
-                                //         context,
-                                //         data?.id ?? '',
-                                //         data?.profileImage?.toJson(),
-                                //         data?.msgPic?.toJson())
-                                //     : addDirectorVM.addTestimonials(context);
+                                editVM.isEditTestimonal
+                                    ? editVM.updateTheTestimonial(
+                                        context,
+                                        data?.id ?? '',
+                                        data?.profileImage?.toJson(),
+                                        data?.msgPic?.toJson())
+                                    : addDirectorVM.addTestimonials(context);
                               }
                             },
                             btnText: editVM.isEditTestimonal ? 'Update' : 'Add')

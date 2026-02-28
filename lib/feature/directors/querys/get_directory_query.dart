@@ -26,6 +26,8 @@ query getDirectory($id: uuid!){
       profession_type
       designation
       working_at
+      phone_visibility
+      email_visibility
       banner_image
       logo
       latitude
@@ -34,7 +36,6 @@ query getDirectory($id: uuid!){
       dental_practice_id
       dental_professional_id
       dental_supplier_id
-
       dental_supplier {
         first_name
         last_name

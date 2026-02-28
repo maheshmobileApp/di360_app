@@ -21,7 +21,6 @@ class DirectorDetailsScreen extends StatefulWidget {
 }
 
 class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -29,7 +28,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
   }
 
   _loadUserType() async {
-    final directionalVM = Provider.of<DirectoryViewModel>(context, listen: false);
+    final directionalVM =
+        Provider.of<DirectoryViewModel>(context, listen: false);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -72,13 +72,16 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: DirectorBasicInfo()
-                  ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: DirectorBasicInfo()),
                 ),
               ],
             ),
-            (directionalVM.userType == UserRole.professional.value || directionalVM.userType  == UserRole.supplier.value) && (directionalVM.directorCommunityID != null) && (directionalVM.directorDetails?.dentalSupplierId != directionalVM.userId)
+            (directionalVM.userType == UserRole.professional.value ||
+                        directionalVM.userType == UserRole.supplier.value) &&
+                    (directionalVM.directorCommunityID != null) &&
+                    (directionalVM.directorDetails?.dentalSupplierId !=
+                        directionalVM.userId)
                 ? Positioned(
                     top: 20,
                     right: 20,
@@ -86,7 +89,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                       onTap: () async {
                         directionalVM.clearCommunityFields();
 
-                        (directionalVM.userType  == UserRole.professional.value)
+                        (directionalVM.userType == UserRole.professional.value)
                             ? ((directionalVM.communityStatusString ==
                                     "Join Community")
                                 ? navigationService
@@ -106,7 +109,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                              directionalVM.userType  == UserRole.professional.value
+                              directionalVM.userType ==
+                                      UserRole.professional.value
                                   ? directionalVM.communityStatusString
                                   : directionalVM.partnershipStatusString,
                               style: TextStyles.semiBold(
@@ -116,6 +120,13 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                     ),
                   )
                 : SizedBox.shrink(),
+            Positioned(
+                left: 20,
+                top: 20,
+                child: GestureDetector(
+                    onTap: () => navigationService.goBack(),
+                    child: CircleAvatar(
+                        radius: 25, child: Icon(Icons.arrow_back))))
           ],
         ),
       ),

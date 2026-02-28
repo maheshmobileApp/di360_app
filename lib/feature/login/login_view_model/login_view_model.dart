@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/login/model_class/get_supplier_community_o
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
 import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -14,6 +15,7 @@ import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final LoginRepoImpl repo = LoginRepoImpl();
@@ -65,7 +67,7 @@ class LoginViewModel extends ChangeNotifier {
     _variables['details']['emailOrPhone'] = emailController.text;
     _variables['details']['password'] = passController.text;
     if (Map.from(_variables['details']).containsValue("")) {
-       scaffoldMessenger("Please fill all the details");
+      scaffoldMessenger("Please fill all the details");
       /*BotToast.showSimpleNotification(title: "Please fill all the details");*/
       return "";
     }
@@ -105,8 +107,8 @@ class LoginViewModel extends ChangeNotifier {
               LocalStorageConst.token, result.loginApi?.accessToken ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.type, result.loginApi?.type ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.professionType, result.loginApi?.professionType ?? '');
+          await LocalStorage.setStringVal(LocalStorageConst.professionType,
+              result.loginApi?.professionType ?? '');
           await LocalStorage.setStringVal(
               LocalStorageConst.subType, result.loginApi?.subType ?? '');
           await LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
@@ -123,7 +125,9 @@ class LoginViewModel extends ChangeNotifier {
               result.loginApi?.subscriptionPermissions?.modules ?? []);
           _http.setToken(result.loginApi?.accessToken ?? '');
           updateDevieToken();
-          navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+          result.loginApi?.profileCompleted == true
+              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+              : viewProfileHandle(context);
         } else {
           Loaders.circularHideLoader(context);
           scaffoldMessenger('Account is ${res['login_api']['status']}');
@@ -137,6 +141,18 @@ class LoginViewModel extends ChangeNotifier {
       scaffoldMessenger('Login failed. Please try again.');
     }
     notifyListeners();
+  }
+
+  viewProfileHandle(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    await context.read<ViewProfileViewModel>().getBusinessTypes();
+    await context.read<ViewProfileViewModel>().getTheViewProfileData();
+    Loaders.circularHideLoader(context);
+    type == UserRole.professional.value
+        ? await navigationService
+            .navigateTo(RouteList.professionalViewProfileScreen)
+        : await navigationService.navigateTo(RouteList.viewProfileScreen);
   }
 
   Future<void> updateDevieToken() async {
