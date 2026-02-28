@@ -195,28 +195,29 @@ class _JobCreateViewState extends State<JobCreateView> {
               ),
             ),
           if (!isFirstStep) const SizedBox(width: 16),
-          Expanded(
-            child: CustomRoundedButton(
-              fontSize: 12,
-              text: 'Save Draft',
-              height: 42,
-              onPressed: () async {
-                (jobCreateVM.jobEditOptionEnable)
-                    ? await jobCreateVM.updateJobListing(
-                        context, true, jobCreateVM.jobId ?? "")
-                    : await jobCreateVM.createdJobListing(context, true);
-                //jobListingVM.selectedStatus = "All";
-                await jobListingVM.getMyJobListingData(context);
+          if (!jobCreateVM.isSaveDraft)
+            Expanded(
+              child: CustomRoundedButton(
+                fontSize: 12,
+                text: 'Save Draft',
+                height: 42,
+                onPressed: () async {
+                  (jobCreateVM.jobEditOptionEnable)
+                      ? await jobCreateVM.updateJobListing(
+                          context, true, jobCreateVM.jobId ?? "")
+                      : await jobCreateVM.createdJobListing(context, true);
+                  //jobListingVM.selectedStatus = "All";
+                  await jobListingVM.getMyJobListingData(context);
 
-                navigationService.goBack();
-                Loaders.circularHideLoader(context);
-                scaffoldMessenger("Course is Saved to Draft");
-              },
-              backgroundColor: AppColors.timeBgColor,
-              textColor: AppColors.primaryColor,
+                  navigationService.goBack();
+                  Loaders.circularHideLoader(context);
+                  scaffoldMessenger("Course is Saved to Draft");
+                },
+                backgroundColor: AppColors.timeBgColor,
+                textColor: AppColors.primaryColor,
+              ),
             ),
-          ),
-          SizedBox(width: 16),
+          if (!jobCreateVM.isSaveDraft) SizedBox(width: 16),
           Expanded(
             child: CustomRoundedButton(
               text: isLastStep
