@@ -184,6 +184,7 @@ class SignupViewModel extends ChangeNotifier {
     nameController.clear();
     emailController.clear();
     passController.clear();
+    conformController.clear();
     numberController.clear();
     postalCodeController.clear();
     selectedType = null;

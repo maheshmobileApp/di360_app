@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
+import 'package:di360_flutter/feature/login/query/login_querys.dart';
 import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -23,23 +24,6 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
 
-  // String get userType => _variables['details']['type'];
-
-  List<DropdownMenuItem<String>> get userTypeItems => [
-        DropdownMenuItem<String>(
-          value: 'PROFESSIONAL',
-          child: Text('Dental Professional'),
-        ),
-        DropdownMenuItem<String>(
-          value: 'SUPPLIER',
-          child: Text('Dental Business Owner'),
-        ),
-        DropdownMenuItem<String>(
-          value: 'PRACTICE',
-          child: Text('Dental Practice Owner'),
-        ),
-      ];
-
   final Map<String, dynamic> _variables = {
     "details": {"emailOrPhone": "", "password": ""}
   };
@@ -55,20 +39,10 @@ class LoginViewModel extends ChangeNotifier {
   List<Modules>? modulePermissions = [];
 
   submit(BuildContext context) async {
-    // Check connectivity first
-    /*final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
-      scaffoldMessenger("No internet connection. Please check your network.");
-      BotToast.showSimpleNotification(
-          title: "No internet connection. Please check your network.");
-      return "";
-    }*/
-
     _variables['details']['emailOrPhone'] = emailController.text;
     _variables['details']['password'] = passController.text;
     if (Map.from(_variables['details']).containsValue("")) {
       scaffoldMessenger("Please fill all the details");
-      /*BotToast.showSimpleNotification(title: "Please fill all the details");*/
       return "";
     }
     Loaders.circularShowLoader(context);
@@ -190,22 +164,22 @@ class LoginViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     var res = await _http.query(
-        type == 'SUPPLIER'
+        type == UserRole.supplier.value
             ? getSupplier
-            : type == 'PRACTICE'
+            : type == UserRole.practice.value
                 ? getPractice
-                : type == 'PROFESSIONAL'
+                : type == UserRole.professional.value
                     ? getProfessional
                     : '',
         variables: {"id": userId});
     if (res != null) {
       await LocalStorage.setStringVal(
           LocalStorageConst.profilePic,
-          type == 'SUPPLIER'
+          type == UserRole.supplier.value
               ? res['dental_suppliers_by_pk']['profile_image']
-              : type == 'PRACTICE'
+              : type == UserRole.practice.value
                   ? res['dental_practices_by_pk']['profile_image']
-                  : type == 'PROFESSIONAL'
+                  : type == UserRole.professional.value
                       ? res['dental_professionals_by_pk']['profile_image']
                       : '');
     } else {}
@@ -293,84 +267,3 @@ _modulePermissions(List<Modules> modules) async {
   }
 }
 
-String get loginSchema => """mutation loginApi(\$details: LoginInput!) {
-  login_api(details: \$details) {
-    id
-    accessToken
-    refreshToken
-    name
-    email
-    phone
-    logo
-    status
-    message
-    profile_completed
-    payment_completed
-    profile_image
-    type
-    address
-    directory_category_id
-    profession_type
-    second_hand
-    business_name
-    abn_number
-    gender
-    sell_products
-    dashboard_permissions
-    plan_id
-    payment_status
-    subscription_id
-    subscription_permissions
-    sub_type
-    owner_id
-    __typename
-  }
-}
-""";
-
-final String getSupplier = '''
-    query getSupplier(\$id: uuid!) {
-      dental_suppliers_by_pk(id: \$id) {
-        id
-        name
-        email
-        phone
-        type
-        subsciption_plan_id
-        present_subscription_id
-        profile_image
-      }
-    }
-  ''';
-
-final String getPractice = '''
-    query getPractice(\$id: uuid!) {
-      dental_practices_by_pk(id: \$id) {
-        id
-        name
-        email
-        phone
-        type
-        subsciption_plan_id
-        present_subscription_id
-        profile_image
-      }
-    }
-  ''';
-
-final String getProfessional = '''
-    query getProfessional(\$id: uuid!){
-    dental_professionals_by_pk(id:\$id){
-        id
-        email
-        name
-        phone
-        first_name
-        last_name
-        type
-        subsciption_plan_id
-        present_subscription_id
-        profile_image
- }
-}
-  ''';

@@ -1,3 +1,5 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
@@ -22,37 +24,59 @@ class CountryCodeNumberFeild<T> extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 125,
-            child: CustomDropDown(
-              value: value,
-              title: "Phone Number",
-              onChanged: (v) => onChanged?.call(v as T?),
-              items: [
-                DropdownMenuItem(value: '+61', child: Text('AU (+61)')),
-                DropdownMenuItem(value: '+64', child: Text('NZ (+64)')),
-              ],
-              hintText: "Select country code",
-              isRequired: true,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// 🔹 Label (like other fields)
+        RichText(
+          text: TextSpan(
+            text: "Phone Number ",
+            style: TextStyles.regular3(color: AppColors.black),
+            children: const [
+              TextSpan(text: "*", style: TextStyle(color: Colors.red))
+            ],
           ),
-          addHorizontal(5),
-          Expanded(
-              child: InputTextField(
-                  controller: textController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(9),
+        ),
+
+        SizedBox(height: 6),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 125,
+              child: CustomDropDown(
+                  value: value,
+                  title: '',
+                  onChanged: (v) => onChanged?.call(v as T?),
+                  items: const [
+                    DropdownMenuItem(value: '+61', child: Text('AU (+61)')),
+                    DropdownMenuItem(value: '+64', child: Text('NZ (+64)')),
                   ],
-                  hintText: 'Enter phone number',
-                  suffixIcon: suffixIcon,
-                  onChange: textFeildChanged,
-                  validator: validateEmptyPhoneNumber))
-        ]);
+                  hintText: "",
+                  isRequired: false),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  InputTextField(
+                      controller: textController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(9),
+                      ],
+                      hintText: 'Enter phone number',
+                      suffixIcon: suffixIcon,
+                      onChange: textFeildChanged,
+                      validator: validateEmptyPhoneNumber),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
