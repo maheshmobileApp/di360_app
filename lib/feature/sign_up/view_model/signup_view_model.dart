@@ -59,6 +59,13 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  String? selectedPhoneCode = "AU (+61)";
+  void setPhoneCode(String value) {
+    selectedPhoneCode = value;
+    notifyListeners();
+  }
+
   void setNumber(String value) {
     _number = value;
     notifyListeners();
@@ -141,13 +148,14 @@ class SignupViewModel extends ChangeNotifier {
 
   signUp(BuildContext context) async {
     Loaders.circularShowLoader(context);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     try {
       final res = await _http.mutation(singUpQuery, {
         "signUpObj": {
           "name": nameController.text,
           "email": emailController.text,
           "password": passController.text,
-          "phone": '$countryCode${numberController.text}',
+          "phone": '$phoneCode${numberController.text}',
           "postal_code": postalCodeController.text,
           "type": selectedType?['type'],
           "state": stateController.text,
@@ -160,9 +168,23 @@ class SignupViewModel extends ChangeNotifier {
           "tracking_details": "Mobile"
         }
       });
-      if (res['insert_clients_one'].isNotEmpty) {
+      Loaders.circularHideLoader(context);
+
+      if (res.containsKey('_error')) {
+        final error = res['_error'].toString();
+        if (error.contains('duplicate key') ||
+            error.contains('clients_email_key')) {
+          scaffoldMessenger(
+              "Email already exists. Please use a different email.");
+        } else {
+          scaffoldMessenger(error);
+        }
+        return;
+      }
+
+      if (res['insert_clients_one'] != null &&
+          res['insert_clients_one'].isNotEmpty) {
         SignUpData.fromJson(res);
-        Loaders.circularHideLoader(context);
         selectedType?['type'] == UserRole.supplier.value
             ? alertPopup(context,
                 'Business Owner receives verification link without Admin approval')
@@ -170,12 +192,10 @@ class SignupViewModel extends ChangeNotifier {
                 navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 clearSignupData();
               });
-      } else {
-        scaffoldMessenger(res['_error']);
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
-      scaffoldMessenger("Error removing like: $e");
+      scaffoldMessenger("Error: $e");
     }
     notifyListeners();
   }
