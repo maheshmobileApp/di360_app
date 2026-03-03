@@ -62,32 +62,6 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 title: "Learning Objectives",
                 controller: jobCreateVM.learningObjectivesDescController,
               ),
-              /*InputTextField(
-                controller: jobCreateVM.day1SessionNameController,
-                hintText: "Enter Session Name",
-                title: "Day 1 Session Name",
-                isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Session name'
-                    : null,
-              ),
-              SizedBox(height: 8),
-              InputTextField(
-                controller: jobCreateVM.sessioInfoController,
-                hintText: "Enter Information",
-                title: "Session Info",
-                isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Session Info'
-                    : null,
-              ),
-              SizedBox(height: 8),
-              ImagePickerField(
-                title: "Event Image",
-                isRequired: true,
-                showPreview: true, // show full image
-              ),
-              SizedBox(height: 8),*/
             ],
           ),
         ),
@@ -127,11 +101,39 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           text: null,
           hintText: "Date",
           onTap: () async {
+            DateTime initialDate = DateTime.now();
+            DateTime firstDate = DateTime.now();
+            DateTime lastDate = DateTime(2100);
+
+            // Parse start and end dates from controllers
+            if (jobCreateVM.startDateController.text.isNotEmpty) {
+              try {
+                final parts = jobCreateVM.startDateController.text.split('/');
+                firstDate = DateTime(
+                  int.parse(parts[2]),
+                  int.parse(parts[1]),
+                  int.parse(parts[0]),
+                );
+                initialDate = firstDate;
+              } catch (_) {}
+            }
+
+            if (jobCreateVM.endDateController.text.isNotEmpty) {
+              try {
+                final parts = jobCreateVM.endDateController.text.split('/');
+                lastDate = DateTime(
+                  int.parse(parts[2]),
+                  int.parse(parts[1]),
+                  int.parse(parts[0]),
+                );
+              } catch (_) {}
+            }
+
             final picked = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime(2100),
+              initialDate: initialDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
             );
             if (picked != null) {
               day.eventDateController.text =
@@ -173,6 +175,12 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
   /// Multiple Day
   Widget _buildMultipleDayUI(
       NewCourseViewModel jobCreateVM, BuildContext context) {
+    if (jobCreateVM.sessions.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        jobCreateVM.addNewDay();
+      });
+      return SizedBox.shrink();
+    }
     return Column(
       children: [
         ...jobCreateVM.sessions.asMap().entries.map((entry) {
@@ -205,7 +213,33 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                 onTap: () async {
                   DateTime initialDate = DateTime.now();
                   DateTime firstDate = DateTime.now();
+                  DateTime lastDate = DateTime(2100);
 
+                  // Parse start and end dates from controllers
+                  if (jobCreateVM.startDateController.text.isNotEmpty) {
+                    try {
+                      final parts = jobCreateVM.startDateController.text.split('/');
+                      firstDate = DateTime(
+                        int.parse(parts[2]),
+                        int.parse(parts[1]),
+                        int.parse(parts[0]),
+                      );
+                      initialDate = firstDate;
+                    } catch (_) {}
+                  }
+
+                  if (jobCreateVM.endDateController.text.isNotEmpty) {
+                    try {
+                      final parts = jobCreateVM.endDateController.text.split('/');
+                      lastDate = DateTime(
+                        int.parse(parts[2]),
+                        int.parse(parts[1]),
+                        int.parse(parts[0]),
+                      );
+                    } catch (_) {}
+                  }
+
+                  // For subsequent days, use previous day + 1 as initial
                   if (index > 0) {
                     final previousDateText = jobCreateVM
                         .sessions[index - 1].eventDateController.text;
@@ -218,11 +252,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                           int.parse(parts[0]),
                         );
                         initialDate = previousDate.add(const Duration(days: 1));
-                        firstDate = previousDate.add(const Duration(days: 1));
-                      } catch (_) {
-                        initialDate = DateTime.now();
-                        firstDate = DateTime.now();
-                      }
+                      } catch (_) {}
                     }
                   }
 
@@ -230,7 +260,7 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
                     context: context,
                     initialDate: initialDate,
                     firstDate: firstDate,
-                    lastDate: DateTime(2100),
+                    lastDate: lastDate,
                   );
 
                   if (picked != null) {
@@ -300,7 +330,18 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
           alignment: Alignment.bottomRight,
           child: AppButton(
             radius: 2,
-            onTap: () => jobCreateVM.addNewDay(),
+            onTap: () {
+              final lastDay = jobCreateVM.sessions.last;
+              if (lastDay.sessionNameController.text.isEmpty ||
+                  lastDay.eventDateController.text.isEmpty ||
+                  lastDay.sessionInfoController.text.isEmpty ||
+                  (lastDay.images?.isEmpty ?? true) && lastDay.serverImages.isEmpty) {
+                scaffoldMessenger(
+                    "Please fill all event day details correctly before adding a new day.");
+                return;
+              }
+              jobCreateVM.addNewDay();
+            },
             text: "Add Day",
             width: 100.0,
             height: 40.0,

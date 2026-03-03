@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.da
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -58,14 +59,14 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         .where((url) => url.isNotEmpty)
         .toList();
     final bannerUrl = (courseDetails?.courseBannerVideo != null &&
-            courseDetails!.courseBannerVideo!.isNotEmpty)
-        ? courseDetails.courseBannerVideo?.first.url ?? ""
+            courseDetails?.courseBannerVideo?.isNotEmpty == true)
+        ? courseDetails?.courseBannerVideo?.first.url ?? ""
         : "";
     final bannerName = (courseDetails?.courseBannerVideo != null &&
-            courseDetails!.courseBannerVideo!.isNotEmpty)
-        ? courseDetails.courseBannerVideo?.first.name ?? ""
+            courseDetails?.courseBannerVideo?.isNotEmpty == true)
+        ? courseDetails?.courseBannerVideo?.first.name ?? ""
         : "";
-        
+
     final isRegistered =
         courseListingVM.isRegisteredCheck(courseDetails?.courseRegisteredUsers);
 
@@ -92,11 +93,10 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             courseListingVM
                                 .setCourseId(courseDetails?.id ?? "");
                             RegistrationUserForm.show(
-                              context,
-                              courseDetails?.courseName ?? "",
-                              courseDetails?.createdById ?? "",
-                              courseDetails?.id??""
-                            );
+                                context,
+                                courseDetails?.courseName ?? "",
+                                courseDetails?.createdById ?? "",
+                                courseDetails?.id ?? "");
                           },
                   ),
                 ),
@@ -174,6 +174,9 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CourseInfoCardWidget(
+                        address: courseDetails?.address?.isNotEmpty == true
+                            ? courseDetails?.address?.first.country ?? ""
+                            : "",
                         startTime: courseDetails?.startTime ?? "",
                         endTime: courseDetails?.endTime ?? "",
                         startDate: courseDetails?.startDate ?? "",
@@ -212,8 +215,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             .asMap()
                             .entries
                             .map((entry) {
-                          // final index = entry.key; // 0,1,2...
-                          final eventInfo = entry.value; // actual event
+                          final index = entry.key + 1;
+                          final eventInfo = entry.value;
 
                           final images = (eventInfo.images ?? [])
                               .map((e) => e.url ?? "")
@@ -223,7 +226,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               EventDayDataWidget(
-                                // 👈 dynamic day title
+                                index: index.toString(),
                                 descriptions: [eventInfo],
                                 images: images,
                               ),
@@ -266,16 +269,28 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           child: Column(
                             children: [
                               ContactInfoWidget(
-                                location:
-                                    _getAddressAsString(courseDetails?.address),
+                                user: courseDetails?.contactName ?? "",
+                                website: courseDetails?.contactWebsite ?? "",
+                                location: courseDetails?.address?.isNotEmpty ==
+                                        true
+                                    ? courseDetails?.address?.first.country ??
+                                        ""
+                                    : "",
                                 email: courseDetails?.contactEmail ?? "",
                                 phoneNumber: courseDetails?.contactPhone ?? "",
                               ),
                               if (_getAddressAsString(courseDetails?.address)
                                   .isNotEmpty)
                                 LocationViewWidget(
-                                    location: _getAddressAsString(
-                                        courseDetails?.address)),
+                                    location:
+                                        courseDetails?.address?.first.country ??
+                                            ""),
+                              SocilaMediaIconsWidget(
+                                instagram: courseDetails?.instagramLink,
+                                facebook: courseDetails?.facebookLink,
+                                linkedin: courseDetails?.linkedinLink,
+                                youtube: courseDetails?.youtubeLink,
+                              )
                             ],
                           ),
                         ),

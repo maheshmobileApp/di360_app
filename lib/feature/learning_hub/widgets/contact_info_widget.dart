@@ -8,12 +8,16 @@ class ContactInfoWidget extends StatelessWidget {
   final String location;
   final String email;
   final String phoneNumber;
+  final String website;
+  final String user;
 
   const ContactInfoWidget({
     Key? key,
     required this.location,
     required this.email,
     required this.phoneNumber,
+    required this.website,
+    required this.user,
   }) : super(key: key);
 
   Widget _buildRow(String iconPath, String text) {
@@ -46,16 +50,24 @@ class ContactInfoWidget extends StatelessWidget {
           style: TextStyles.bold2(color: AppColors.primaryColor),
         ),
         const SizedBox(height: 6),
+        if (user.isNotEmpty) ...[
+          _buildRow(ImageConst.contactLocation, user),
+        ],
+        const SizedBox(height: 6),
         if (location.isNotEmpty) ...[
           _buildRow(ImageConst.contactLocation, location),
         ],
         const SizedBox(height: 6),
         if (email.isNotEmpty) ...[
-        _buildRow(ImageConst.contactMail, email),
+          _buildRow(ImageConst.contactMail, email),
         ],
         const SizedBox(height: 6),
         if (phoneNumber.isNotEmpty) ...[
-        _buildRow(ImageConst.contactPhone, phoneNumber),
+          _buildRow(ImageConst.contactPhone, phoneNumber),
+        ],
+        const SizedBox(height: 6),
+        if (website.isNotEmpty) ...[
+          _buildRow(ImageConst.contactLocation, website),
         ],
       ],
     );

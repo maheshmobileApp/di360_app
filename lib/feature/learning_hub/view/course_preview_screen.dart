@@ -141,6 +141,7 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                     children: [
                       // Course Info Card
                       CourseInfoCardWidget(
+                        address: "Online",
                         startTime: DateFormatUtils.convertTo24HourWithTimezone(courseDetails.startTime ?? ""),
                         endTime: DateFormatUtils.convertTo24HourWithTimezone(courseDetails.endTime ?? ""),
                         startDate: DateFormatUtils.formatDateYear(courseDetails.startDate ?? ""),
@@ -185,6 +186,7 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                             .asMap()
                             .entries
                             .map((entry) {
+                              final index = entry.key+1;
                           final eventInfo = entry.value;
                           final images = (eventInfo.images ?? [])
                               .map((e) => e.url ?? "")
@@ -195,6 +197,7 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               EventDayDataWidget(
+                                index: index.toString(),
                                 descriptions: [],
                                 images: images,
                               ),
@@ -254,6 +257,8 @@ class CoursePreviewScreen extends StatelessWidget with BaseContextHelpers {
                           child: Column(
                             children: [
                               ContactInfoWidget(
+                                user: courseDetails.contactName??"",
+                                website: courseDetails.contactWebsite??"",
                                 location: _getAddressAsString(courseDetails.address),
                                 email: courseDetails.contactEmail ?? "",
                                 phoneNumber: courseDetails.contactPhone ?? "",

@@ -7,6 +7,7 @@ import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class CourseInfoCardWidget extends StatelessWidget {
+  final String address;
   final String courseName;
   final String presentByName;
   final String cpdHours;
@@ -24,6 +25,7 @@ class CourseInfoCardWidget extends StatelessWidget {
 
   const CourseInfoCardWidget(
       {super.key,
+      required this.address,
       required this.courseName,
       required this.presentByName,
       required this.cpdHours,
@@ -196,7 +198,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                         _InfoTextWidget(
                           label: "Where",
                           first: false,
-                          value: "Online",
+                          value: address,
                         ),
 
                         /*_PriceTextWidget(

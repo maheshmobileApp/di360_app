@@ -238,7 +238,8 @@ class _JobCreateViewState extends State<NewCourseScreen> {
               height: 42,
               fontSize: 12,
               onPressed: () async {
-                if (courseListVM.editOptionEnable) {
+                if (courseListVM.editOptionEnable &&
+                          courseListVM.courseStatus == "APPROVE") {
                   final currentFormKey =
                       newCourseVM.formKeys[newCourseVM.currentStep];
                   if (currentFormKey.currentState?.validate() ?? false) {

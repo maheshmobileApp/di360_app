@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class EventDayDataWidget extends StatelessWidget {
   final List<CourseEventInfo> descriptions;
   final List<String> images;
+  final String index;
 
   const EventDayDataWidget({
     super.key,
     required this.descriptions,
     required this.images,
+    required this.index,
   });
 
   @override
@@ -28,6 +30,11 @@ class EventDayDataWidget extends StatelessWidget {
               (desc) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    "Day $index",
+                    style: TextStyles.bold2(color: AppColors.primaryColor),
+                  ),
+                  const SizedBox(height: 4),
                   Container(
                     color: AppColors.primaryColor.withOpacity(0.1),
                     child: Padding(
@@ -47,8 +54,7 @@ class EventDayDataWidget extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 desc.date ?? "",
-                                style:
-                                    TextStyles.bold2(color: AppColors.black),
+                                style: TextStyles.bold2(color: AppColors.black),
                               )
                             ],
                           ),
