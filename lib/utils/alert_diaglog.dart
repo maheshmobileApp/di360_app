@@ -27,6 +27,30 @@ alertPopup(BuildContext context, String message, {Function()? onBack}) {
       });
 }
 
+viewProfileAlertPopup(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+            title: Column(
+              children: [
+                Text('Welcome! Your Profile Is Incomplete',
+                    style: TextStyles.bold4(color: AppColors.primaryColor)),
+                SizedBox(height: 18),
+                Text(
+                    'To get the best experience, please update the required information to proceed.',
+                    style: TextStyles.medium2(color: AppColors.black)),
+                SizedBox(height: 12),
+              ],
+            ),
+            actions: [
+              AppButton(
+                width: 140,height: 44,
+                  text: 'Continue', onTap: () => navigationService.goBack()),
+            ]);
+      });
+}
+
 scaffoldMessenger(String msg, {Color? color}) {
   ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
     SnackBar(
@@ -187,7 +211,8 @@ void showTopMessage(BuildContext context, String message) {
   ).show(context);
 }
 
-showUserBlockPopup(BuildContext context, String message, {Function()? confirmAction}) {
+showUserBlockPopup(BuildContext context, String message,
+    {Function()? confirmAction}) {
   return showDialog(
       context: context,
       barrierDismissible: false,
