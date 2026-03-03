@@ -75,6 +75,9 @@ class HttpService {
       response = response['data'];
     } catch (e, s) {
       print("$e , $s");
+      if (e is HasuraRequestError) {
+        return {"_error": e.message, "_errorType": "hasura"};
+      }
       final err = showHasuraError(e);
       return {"_error": err};
     }

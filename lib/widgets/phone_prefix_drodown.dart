@@ -30,6 +30,7 @@ class PhonePrefixDropdown extends StatelessWidget {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
+          dropdownColor: AppColors.whiteColor,
           icon: const Icon(Icons.keyboard_arrow_down),
           items: items
               .map(
