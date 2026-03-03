@@ -7,6 +7,8 @@ import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_time_picker.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/presenters_widget.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:dio/dio.dart';
@@ -192,17 +194,7 @@ class AddCourse extends StatelessWidget
                 ],
               ),
               SizedBox(height: 8),
-              /*if (showAddress) ...[
-                InputTextField(
-                  controller: jobCreateVM.addressController,
-                  hintText: "Enter Address",
-                  title: "Address",
-                  isRequired: true,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter Address'
-                      : null,
-                ),
-              ],*/
+
               if (showAddress) ...[
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,8 +232,8 @@ class AddCourse extends StatelessWidget
                       // countries: ["in", "fr"], // optional by default null is set
                       isLatLngRequired:
                           true, // if you required coordinates from place detail
-                      getPlaceDetailWithLatLng: (Prediction prediction) {
-                      }, // this callback is called when isLatLngRequired is true
+                      getPlaceDetailWithLatLng: (Prediction
+                          prediction) {}, // this callback is called when isLatLngRequired is true
                       itemClick: (Prediction prediction) async {
                         final placeId = prediction.placeId;
                         if (placeId != null) {
@@ -298,29 +290,7 @@ class AddCourse extends StatelessWidget
                 },
               ),*/
               SizedBox(height: 8),
-              InputTextField(
-                controller: jobCreateVM.presenterNameController,
-                hintText: "Enter Presenter Name",
-                title: "Presented By (Name)",
-                maxLength: 75,
-                isRequired: true,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Presenter name'
-                    : null,
-              ),
-              SizedBox(height: 8),
-              ImagePickerField(
-                title: "Presented By (Image)",
-                isRequired: true,
-                serverImage: jobCreateVM.serverPresentedImg,
-                serverImageType: "image",
-                onServerFileRemoved: (value) {
-                  jobCreateVM.setPresentedImg(null);
-                },
-                showPreview: true,
-                selectedFile: jobCreateVM.selectedPresentedImg,
-                onFilePicked: (file) => jobCreateVM.setPresentedImg(file),
-              ),
+              PresentersWidget(viewModel: jobCreateVM),
               SizedBox(height: 8),
               //_sectionHeader("Images/Video"),
               SizedBox(height: 8),

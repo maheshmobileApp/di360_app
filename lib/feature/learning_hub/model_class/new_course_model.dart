@@ -62,6 +62,7 @@ class CourseObject {
   List<CourseBannerImage>? courseGallery;
   List<CourseBannerImage>? courseBannerVideo;
   List<CourseBannerImage>? courseBannerImage;
+  List<Presenters>? presenters;
   String? registerLink;
   String? meetingLink;
   String? feedType;
@@ -122,6 +123,7 @@ class CourseObject {
       this.courseGallery,
       this.courseBannerVideo,
       this.courseBannerImage,
+      this.presenters,
       this.registerLink,
       this.meetingLink,
       this.feedType,
@@ -213,6 +215,12 @@ class CourseObject {
         courseBannerImage!.add(new CourseBannerImage.fromJson(v));
       });
     }
+    if (json['presenters'] != null) {
+      presenters = <Presenters>[];
+      json['presenters'].forEach((v) {
+        presenters!.add(new Presenters.fromJson(v));
+      });
+    }
     registerLink = json['register_link'];
     meetingLink = json['meeting_link'];
     feedType = json['feed_type'];
@@ -296,6 +304,9 @@ class CourseObject {
       data['course_banner_image'] =
           this.courseBannerImage!.map((v) => v.toJson()).toList();
     }
+    if (this.presenters != null) {
+      data['presenters'] = this.presenters!.map((v) => v.toJson()).toList();
+    }
     data['register_link'] = this.registerLink;
     data['meeting_link'] = this.meetingLink;
     data['feed_type'] = this.feedType;
@@ -311,6 +322,29 @@ class CourseObject {
     data['instagram_link'] = this.instagramLink;
     data['linkedin_link'] = this.linkedinLink;
     data['youtube_link'] = this.youtubeLink;
+    return data;
+  }
+}
+
+class Presenters {
+  String? presentedByName;
+  CourseBannerImage? presentedByImage;
+
+  Presenters({this.presentedByName, this.presentedByImage});
+
+  Presenters.fromJson(Map<String, dynamic> json) {
+    presentedByName = json['presented_by_name'];
+    presentedByImage = json['presented_by_image'] != null
+        ? new CourseBannerImage.fromJson(json['presented_by_image'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['presented_by_name'] = this.presentedByName;
+    if (this.presentedByImage != null) {
+      data['presented_by_image'] = this.presentedByImage!.toJson();
+    }
     return data;
   }
 }

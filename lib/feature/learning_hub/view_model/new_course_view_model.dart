@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/filter_item.dart'
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/new_course_model.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/presenter_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
@@ -277,7 +278,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
           ? "Multiple Day"
           : "Single Day");
 
-      validatePresenterImg();
+      validatePresenters();
       validateCourseHeaderBanner();
       validateGallery();
       validateCourseBanner();
@@ -335,6 +336,33 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       presenter_image = serverPresentedImg ?? "";
       notifyListeners();
     }
+  }
+
+  List<Presenters>? presentersList = [];
+
+  Future<void> validatePresenters() async {
+    presentersList?.clear();
+    for (var presenter in presenters) {
+      String? imageUrl;
+      if (presenter.serverPresenterImage != null) {
+        imageUrl = presenter.serverPresenterImage;
+      } else if (presenter.presenterImage != null) {
+        final res = await _http.uploadImage(presenter.presenterImage!.path);
+        imageUrl = res['url'];
+      }
+
+      if (imageUrl != null) {
+        presentersList?.add(Presenters(
+            presentedByName: presenter.presenterNameController.text,
+            presentedByImage: CourseBannerImage(
+              url: imageUrl,
+              name: imageUrl.split('/').last,
+              type: "image/png",
+              size: 0,
+            )));
+      }
+    }
+    notifyListeners();
   }
 
   Future<void> validateCourseHeaderBanner() async {
@@ -538,6 +566,37 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     SessionModel(), // Always start with one session
   ];
 
+  List<PresenterModel> presenters = [
+    PresenterModel(), // Always start with one presenter
+  ];
+
+  void addPresenter() {
+    presenters.add(PresenterModel());
+    notifyListeners();
+  }
+
+  void removePresenter(int index) {
+    if (presenters.length > 1) {
+      presenters.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void setPresenterImage(int index, File? file) {
+    if (index < presenters.length) {
+      presenters[index].presenterImage = file;
+      presenters[index].serverPresenterImage = null;
+      notifyListeners();
+    }
+  }
+
+  void setServerPresenterImage(int index, String? url) {
+    if (index < presenters.length) {
+      presenters[index].serverPresenterImage = url;
+      notifyListeners();
+    }
+  }
+
   /// Change event type
   void setSelectedEvent(String? value) {
     if (value == null) return;
@@ -709,8 +768,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
               courseName: courseNameController.text,
               courseCategoryId: selectedCategoryId,
               rsvpDate: rsvpDate,
-              presentedByName: presenterNameController.text,
-              presentedByImage: PresentedByImage(url: presenter_image),
+              presenters: presentersList,
               courseBannerImage: courseBannerImgList,
               courseGallery: selectedGalleryList,
               courseBannerVideo: courseBannerImageHeaderList,
@@ -816,10 +874,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final result = await repo.updateCourseListing({
       "id": courseId,
       "changes": CourseObject(
-        
         courseName: courseNameController.text,
         courseCategoryId: selectedCategoryId,
         rsvpDate: rsvpDate,
+        presenters: presentersList,
         presentedByName: presenterNameController.text,
         presentedByImage: PresentedByImage(url: presenter_image),
         courseBannerImage: courseBannerImgList,

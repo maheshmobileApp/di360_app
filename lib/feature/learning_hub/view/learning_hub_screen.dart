@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/presenter_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -190,9 +191,13 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 return CouresListingCard(
                   id: course.id ?? "",
                   meetingLink: course.meetingLink ?? "",
-                  logoUrl: course.presentedByImage?.url ?? '',
+                  logoUrl: course.presenters != null
+                      ? course.presenters?.first.presentedByImage?.url ?? ''
+                      : "",
                   companyName: course.courseName ?? '',
-                  courseTitle: course.presentedByName ?? '',
+                  courseTitle: course.presenters != null
+                      ? course.presenters?.first.presentedByName ?? ''
+                      : "",
                   status: course.status ?? '',
                   activeStatus: course.activeStatus ?? "",
                   description: course.description ?? '',
@@ -376,7 +381,17 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   Future<void> loadCourseData(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
-    newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
+    newCourseVM.presenters.clear();
+    if (course.presenters != null && course.presenters?.isNotEmpty == true) {
+      for (var p in course.presenters!) {
+        final presenter = PresenterModel();
+        presenter.presenterNameController.text = p.presentedByName ?? "";
+        presenter.serverPresenterImage = p.presentedByImage?.url;
+        newCourseVM.presenters.add(presenter);
+      }
+    } else {
+      newCourseVM.presenters.add(PresenterModel());
+    }
     newCourseVM.setCommunityType(
         course.communityUserType == "BOTH" ? "Both" : "Community User");
 
@@ -489,8 +504,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
         newCourseVM.addressController.text = course.address as String;
       } else if (course.address is Map<String, dynamic>) {
         final addr = course.address as Map<String, dynamic>;
-        newCourseVM.addressController.text =
-            "${addr['country']}";
+        newCourseVM.addressController.text = "${addr['country']}";
       } else {
         newCourseVM.addressController.text = "";
       }

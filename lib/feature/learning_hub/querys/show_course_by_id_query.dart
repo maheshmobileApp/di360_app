@@ -21,6 +21,7 @@ const String showCourseById = r'''query ShowCourseById($id: uuid!) {
     webinar_link
     presented_by_image
     presented_by_name
+    presenters
     description
     course_event_info
     early_bird_end_date
