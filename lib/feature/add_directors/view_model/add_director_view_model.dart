@@ -65,7 +65,6 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   TextEditingController partnerNameCntr = TextEditingController();
   TextEditingController descriptionCntr = TextEditingController();
 
-  
   double? latitude;
   double? longitude;
 
@@ -435,6 +434,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     if (res != null) {
       getDirectories();
       Loaders.circularHideLoader(context);
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.directoryComplete, true);
       scaffoldMessenger('BasicInfo added successfully');
     } else {
       Loaders.circularHideLoader(context);
@@ -473,6 +474,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated Basic Information successfully');
     } else {
@@ -507,9 +510,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   void addCertificates(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments = certificateFile?.path != null && certificateFile!.path.isNotEmpty
-        ? await addDirectorRepositoryImpl.http.uploadImage(certificateFile!.path)
-        : null;
+    var attachments =
+        certificateFile?.path != null && certificateFile!.path.isNotEmpty
+            ? await addDirectorRepositoryImpl.http
+                .uploadImage(certificateFile!.path)
+            : null;
     final result = await addDirectorRepositoryImpl.addCertificates({
       "certiObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -531,7 +536,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> addDocument(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments = documentFile?.path != null && documentFile!.path.isNotEmpty
+    var attachments = documentFile?.path != null &&
+            documentFile!.path.isNotEmpty
         ? await addDirectorRepositoryImpl.http.uploadImage(documentFile!.path)
         : null;
     final result = await addDirectorRepositoryImpl.addDocu({
@@ -555,9 +561,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   void addAchievement(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments = achievementFile?.path != null && achievementFile!.path.isNotEmpty
-        ? await addDirectorRepositoryImpl.http.uploadImage(achievementFile!.path)
-        : null;
+    var attachments =
+        achievementFile?.path != null && achievementFile!.path.isNotEmpty
+            ? await addDirectorRepositoryImpl.http
+                .uploadImage(achievementFile!.path)
+            : null;
     final result = await addDirectorRepositoryImpl.addAchieve({
       "achObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -579,7 +587,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> addTeamMember(BuildContext context) async {
     Loaders.circularShowLoader(context);
-    var attachments = teamMemberFile?.path != null && teamMemberFile!.path.isNotEmpty
+    var attachments = teamMemberFile?.path != null &&
+            teamMemberFile!.path.isNotEmpty
         ? await addDirectorRepositoryImpl.http.uploadImage(teamMemberFile!.path)
         : null;
     final result = await addDirectorRepositoryImpl.addTeamMembers({

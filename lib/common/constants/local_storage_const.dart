@@ -16,6 +16,7 @@ class LocalStorageConst {
   static const String businessName = 'businessName';
   static const String profileCompleted = 'profileCompleted';
   static const String subType = "subType";
+  static const String directoryComplete = "directoryComplete";
   static const String directoryMinimalPermission = 'directoryMinimalPermission';
   static const String learninghubPermission = 'learninghubPermission';
   static const String cataloguePermission = 'cataloguePermission';

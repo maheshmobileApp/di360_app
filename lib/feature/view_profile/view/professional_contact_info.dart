@@ -54,7 +54,9 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
           InputTextField(
               controller: viewProfileVM.zipCodeController,
               hintText: "Enter post code",
-              title: "Post Code"),
+              title: "Post Code",
+              keyboardType: TextInputType.number
+              ),
           addVertical(10)
         ]));
   }

@@ -110,7 +110,8 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                         itemBuilder: (context, dataIndex) {
                           final newsData = homeViewModel
                               .allNewsFeedsData?.newsfeeds?[dataIndex];
-                          return NewsFeedDataCard(newsfeeds: newsData);
+                          return NewsFeedDataCard(
+                              newsfeeds: newsData, index: dataIndex);
                         },
                         bannerBuilder: (context, bannerPosition) {
                           return ListBanner();

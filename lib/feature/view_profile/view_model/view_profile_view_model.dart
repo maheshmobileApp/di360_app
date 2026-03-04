@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/model/practice_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/professional_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
@@ -17,6 +18,7 @@ import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final ViewProfileRepoImpl repo = ViewProfileRepoImpl();
@@ -201,14 +203,14 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     lastNameController.text = viewProfile?.lastName ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";
     alternatePhoneNoController.text = viewProfile?.altPhone ?? "";
-    addressController.text = viewProfile?.address?.addressName ?? "";
-    addressLineOneController.text = "";
-    addressLineTwoController.text = "";
-    cityController.text = viewProfile?.address?.city ?? "";
-    landmarkController.text = "";
-    countryController.text = viewProfile?.address?.country ?? "";
-    stateController.text = viewProfile?.address?.state ?? "";
-    zipCodeController.text = viewProfile?.address?.zipcode ?? "";
+    addressController.text = viewProfile?.address ?? "";
+    addressLineOneController.text = viewProfile?.addressLineOne ?? "";
+    addressLineTwoController.text = viewProfile?.addressLineTwo ?? "";
+    cityController.text = viewProfile?.city ?? "";
+    landmarkController.text = viewProfile?.landMark ?? "";
+    countryController.text = viewProfile?.country ?? "";
+    stateController.text = viewProfile?.state ?? "";
+    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
     if (viewProfile?.dateOfBirth != null) {
       final date = DateTime.parse(viewProfile!.dateOfBirth!);
       dateOfBirthController.text =
@@ -256,7 +258,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     if (pickedFile != null) {
       logoFile = File(pickedFile.path);
       navigationService.goBack();
-      type == 'PROFESSIONAL'
+      type == UserRole.professional.value
           ? uploadProfessLogo(context)
           : uploadBussinessLogo(context);
       notifyListeners();
@@ -275,7 +277,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       "id": id,
       "userImage": {
         "logo": logo ??
-            (type == 'PRACTICE'
+            (type == UserRole.practice.value
                 ? practiceViewProfileData?.logo?.toJson()
                 : viewProfile?.logo?.toJson())
       }
@@ -336,15 +338,14 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
-        "address": {
-          "city": cityController.text,
-          "state": stateController.text,
-          "country": countryController.text,
-          "zipcode": zipCodeController.text,
-          "latitude": professionalViewProfileData?.address?.latitude,
-          "longitude": professionalViewProfileData?.address?.longitude,
-          "addressName": addressController.text
-        },
+        "address": addressController.text,
+        "address_line_one": addressLineOneController.text,
+        "address_line_two": addressLineTwoController.text,
+        "land_mark": landmarkController.text,
+        "city": cityController.text,
+        "state": stateController.text,
+        "country": countryController.text,
+        "zipcode": int.tryParse(zipCodeController.text),
         "profession_type": selectedBusineestype?.name,
         "pro_details_aphra_registration_number": aphraNumberController.text,
         "first_name": firstNameController.text,
@@ -375,7 +376,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
 
     final result = await repo.updateViewProfileData(requestData);
-    if (result != null) {
+    if (result['dental_professionals_by_pk']['id'] != null) {
       type == UserRole.practice.value
           ? getPracticeViewProfileData()
           : type == UserRole.professional.value
@@ -383,13 +384,29 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               : getSuppilerViewProfileData();
       Loaders.circularHideLoader(context);
       profileCompleted == false
-          ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+          ? directorNavigationHandle(context)
           : navigationService.goBack();
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
     } else {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
+  }
+
+  directorNavigationHandle(BuildContext context) async {
+    final directorComplete =
+        await LocalStorage.getBoolValue(LocalStorageConst.directoryComplete);
+    directorComplete == false
+        ? await context
+            .read<AddDirectoryViewModel>()
+            .fetchTheDirectorData(context)
+        : navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+  }
+
+  Future<bool> profileCompletedValue() async {
+    final profile =
+        await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
+    return profile;
   }
 
   Future<void> deleteAccount(BuildContext context) async {

@@ -4,6 +4,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
@@ -232,6 +233,8 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       }
     });
     if (result != null) {
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
       goToNextStep();
@@ -283,6 +286,8 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       }
     });
     if (result != null) {
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
       goToNextStep();
@@ -295,9 +300,12 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   assignTheProfessBasic(BuildContext context) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
+    final viewProfileVM = context.read<ViewProfileViewModel>();
     final data = addDirectorVM.getBasicInfoData.first;
-    nameController.text = data.name ?? '';
-    final phone = data.phone ?? "";
+    final viewProfileData = viewProfileVM.professionalViewProfileData;
+    print('professional    $viewProfileData');
+    nameController.text = data.name ?? viewProfileData?.name ?? '';
+    final phone = data.phone ?? viewProfileData?.phone ?? "";
     if (phone.startsWith('+61')) {
       _countryCode = '+61';
       mobileNumberCntr.text = phone.substring(3);
@@ -311,9 +319,10 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     final document = parse(data.description ?? '');
     final String parsedString = document.body?.text ?? "";
     descController.text = parsedString;
-    addressController.text = data.address ?? '';
-    emailController.text = data.email ?? '';
-    alternateNumberController.text = data.altPhone ?? '';
+    addressController.text = data.address ?? viewProfileData?.address ?? '';
+    emailController.text = data.email ?? viewProfileData?.email ?? '';
+    alternateNumberController.text =
+        data.altPhone ?? viewProfileData?.altPhone ?? '';
     designationCntr.text = data.designation ?? '';
     setEmailVisibility(
         VisibilityType.fromEnumName(data.emailVisibility)?.displayName);

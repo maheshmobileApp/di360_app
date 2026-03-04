@@ -24,8 +24,9 @@ class ProfessionalViewProfileScreen extends StatelessWidget
     final provider = Provider.of<ViewProfileViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppbarTitleBackIconWidget(title: 'View Profile',
-        backAction: () async {
+        appBar: AppbarTitleBackIconWidget(
+            title: 'View Profile',
+            backAction: () async {
               final profileComplete = await LocalStorage.getBoolValue(
                   LocalStorageConst.profileCompleted);
               return profileComplete == true
@@ -46,15 +47,16 @@ class ProfessionalViewProfileScreen extends StatelessWidget
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppButton(
-                      text: 'Delete My Account',
-                      height: 45,
-                      width: 180,
-                      onTap: () {
-                        showDeleteAccountDialog(context, () {
-                          provider.deleteAccount(context);
-                        });
-                      }),
+                  if (provider.profileCompletedValue() == true)
+                    AppButton(
+                        text: 'Delete My Account',
+                        height: 45,
+                        width: 180,
+                        onTap: () {
+                          showDeleteAccountDialog(context, () {
+                            provider.deleteAccount(context);
+                          });
+                        }),
                   AppButton(
                       text: 'Save & Update',
                       height: 45,

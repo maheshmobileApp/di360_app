@@ -18,17 +18,19 @@ import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.d
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
-  const NewsFeedDataCard({super.key, required this.newsfeeds});
+  final int index;
+  const NewsFeedDataCard(
+      {super.key, required this.newsfeeds, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +90,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   job: newsfeeds?.jobs?.isNotEmpty ?? false
                       ? newsfeeds?.jobs?.first
                       : null,
+                  index: index,
                   newsfeeds: newsfeeds),
             addVertical(22),
             Padding(
@@ -96,13 +99,21 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (newsFeedTypeEnum != FeedType.jobs.value)
-                    HtmlWidget(
-                      (newsfeeds?.description == null ||
+                    ExpandableHtmlText(
+                      htmlData: (newsfeeds?.description == null ||
                               newsfeeds?.description == '')
                           ? newsfeeds?.title ?? ''
                           : newsfeeds?.description ?? '',
-                      textStyle: TextStyles.regular2(color: AppColors.black),
+                      index: index,
+                      maxLines: 6,
                     ),
+                  // HtmlWidget(
+                  //   (newsfeeds?.description == null ||
+                  //           newsfeeds?.description == '')
+                  //       ? newsfeeds?.title ?? ''
+                  //       : newsfeeds?.description ?? '',
+                  //   textStyle: TextStyles.regular2(color: AppColors.black),
+                  // ),
                   addVertical(10),
                   if (newsfeeds?.webUrl != null &&
                       newsfeeds!.webUrl!.isNotEmpty)

@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
 import 'package:di360_flutter/feature/login/query/login_querys.dart';
@@ -47,7 +48,7 @@ class LoginViewModel extends ChangeNotifier {
     }
     Loaders.circularShowLoader(context);
     try {
-      var res = await _http.mutation(loginSchema, _variables);
+      var res = await repo.login(_variables);
 
       if (res.isNotEmpty && res.containsKey('_error')) {
         Loaders.circularHideLoader(context);
@@ -100,7 +101,7 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(result.loginApi?.accessToken ?? '');
           updateDevieToken();
           result.loginApi?.profileCompleted == true
-              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+              ? directoryHandling(context)
               : viewProfileHandle(context);
         } else {
           Loaders.circularHideLoader(context);
@@ -127,6 +128,19 @@ class LoginViewModel extends ChangeNotifier {
         ? await navigationService
             .navigateTo(RouteList.professionalViewProfileScreen)
         : await navigationService.navigateTo(RouteList.viewProfileScreen);
+  }
+
+  Future<void> directoryHandling(BuildContext context) async {
+    final res = await repo.getDirectory();
+    if (res['directories'] == null) {
+      print('jkfvhfwfwe ${res['directories']}');
+      await context.read<AddDirectoryViewModel>().fetchTheDirectorData(context);
+    } else {
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.directoryComplete, true);
+      navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+    }
+    notifyListeners();
   }
 
   Future<void> updateDevieToken() async {
@@ -266,4 +280,3 @@ _modulePermissions(List<Modules> modules) async {
     }
   }
 }
-

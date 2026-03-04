@@ -12,7 +12,6 @@ query professionalDisplay($id: uuid!) {
     alt_email
     alt_phone
     profession_type
-    address
     pro_details_aphra_registration_number
     bank_details
     date_of_birth
@@ -21,6 +20,14 @@ query professionalDisplay($id: uuid!) {
     profile_image
     gender
     type
+    address
+    city
+    zipcode
+    state
+    country
+    address_line_one
+    address_line_two
+    land_mark
     clients {
       state
       postal_code
