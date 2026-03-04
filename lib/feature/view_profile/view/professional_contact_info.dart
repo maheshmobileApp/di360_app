@@ -24,14 +24,7 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
           InputTextField(
               controller: viewProfileVM.addressLineOneController,
               hintText: "Address Line 1",
-              title: "Address Line 1",
-              validator: (v) {
-                if (v!.isEmpty) {
-                  return "Please enter address";
-                } else {
-                  return null;
-                }
-              }),
+              title: "Address Line 1"),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.addressLineTwoController,

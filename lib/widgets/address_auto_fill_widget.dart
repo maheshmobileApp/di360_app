@@ -38,24 +38,13 @@ class AddressAutoFillWidget extends StatelessWidget {
           inputDecoration: InputDecoration(
             hintText: "Search Address",
             hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 8),
-              borderSide: BorderSide(
-                width: 1.5,
-                color: borderColor ?? AppColors.inputBorderColor,
-              ),
-            ),
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
             contentPadding: EdgeInsets.symmetric(vertical: 10),
           ),
           debounceTime: 800,
           isLatLngRequired: true,
-          validator: (v, context) {
-            if (v!.isEmpty) {
-              return "Please enter address";
-            } else {
-              return null;
-            }
-          },
           getPlaceDetailWithLatLng: getPlaceDetailWithLatLng,
           itemClick: itemClick,
           itemBuilder: (context, index, Prediction prediction) {
@@ -71,7 +60,8 @@ class AddressAutoFillWidget extends StatelessWidget {
               ),
             );
           },
-         // isCrossBtnShown: true,
+          isCrossBtnShown: true,
+          containerHorizontalPadding: 10,
         ),
       ],
     );

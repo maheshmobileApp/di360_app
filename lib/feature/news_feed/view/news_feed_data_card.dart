@@ -87,7 +87,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               BuildJobTypeWidget(
                   job: newsfeeds?.jobs?.isNotEmpty ?? false
                       ? newsfeeds?.jobs?.first
-                      : null),
+                      : null,
+                      newsfeeds: newsfeeds),
             addVertical(22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
