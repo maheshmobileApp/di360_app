@@ -132,8 +132,7 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<void> directoryHandling(BuildContext context) async {
     final res = await repo.getDirectory();
-    if (res['directories'] == null) {
-      print('jkfvhfwfwe ${res['directories']}');
+    if (res['directories'] == null || (res['directories'] as List).isEmpty) {
       await context.read<AddDirectoryViewModel>().fetchTheDirectorData(context);
     } else {
       await LocalStorage.setBoolValue(

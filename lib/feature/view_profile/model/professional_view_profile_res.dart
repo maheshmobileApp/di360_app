@@ -50,6 +50,7 @@ class DentalProfessionalsByPk {
   String? altEmail;
   dynamic altPhone;
   String? professionType;
+  String? directoryCategoryId;
   String? proDetailsAphraRegistrationNumber;
   BankDetails? bankDetails;
   String? dateOfBirth;
@@ -82,6 +83,7 @@ class DentalProfessionalsByPk {
       this.altEmail,
       this.altPhone,
       this.professionType,
+      this.directoryCategoryId,
       this.proDetailsAphraRegistrationNumber,
       this.bankDetails,
       this.dateOfBirth,
@@ -114,6 +116,7 @@ class DentalProfessionalsByPk {
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
     professionType = json['profession_type'];
+    directoryCategoryId = json['directory_category_id'];
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
     bankDetails = json['bank_details'] != null

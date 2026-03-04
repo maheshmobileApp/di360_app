@@ -258,6 +258,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       } else {
         _currentStep = 0;
         clearBasicInfoData();
+        assignBasicInfoData(context);
         Loaders.circularHideLoader(context);
         type == UserRole.professional.value
             ? navigationService.navigateTo(RouteList.professionAddDirectorView)
@@ -290,6 +291,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void assignBasicInfoData(BuildContext context) {
     final professVM = context.read<ProfessionalAddDirectorVm>();
     professVM.assignTheProfessBasic(context);
+    if (getBasicInfoData.isEmpty) return;
     final basic = getBasicInfoData.first;
     CompanyNameController.text = basic.companyName ?? '';
     nameController.text = basic.name ?? '';

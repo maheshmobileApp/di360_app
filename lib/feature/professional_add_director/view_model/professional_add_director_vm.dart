@@ -227,9 +227,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "pincode": "",
         "dental_professional_id": userId,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name,
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PUBLIC',
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PUBLIC'
       }
     });
     if (result != null) {
@@ -280,9 +280,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "special_interests": [],
         "type": UserRole.professional.value,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name,
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PUBLIC',
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PUBLIC'
       }
     });
     if (result != null) {
@@ -301,9 +301,12 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   assignTheProfessBasic(BuildContext context) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     final viewProfileVM = context.read<ViewProfileViewModel>();
+    if (addDirectorVM.getBasicInfoData.isEmpty) {
+      assignViewProfileData(context);
+      return;
+    }
     final data = addDirectorVM.getBasicInfoData.first;
     final viewProfileData = viewProfileVM.professionalViewProfileData;
-    print('professional    $viewProfileData');
     nameController.text = data.name ?? viewProfileData?.name ?? '';
     final phone = data.phone ?? viewProfileData?.phone ?? "";
     if (phone.startsWith('+61')) {
@@ -315,6 +318,16 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     } else {
       _countryCode = '+61';
       mobileNumberCntr.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    final allCategories = addDirectorVM.directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.id == data.directoryCategoryId,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      addDirectorVM.setSelectedBusineestype(businessType);
     }
     final document = parse(data.description ?? '');
     final String parsedString = document.body?.text ?? "";
@@ -332,6 +345,40 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     getUniversitys = data.universitySchool ?? [];
     getEducation = data.education ?? [];
     getWorkingAt = data.workingAt ?? [];
+    notifyListeners();
+  }
+
+  assignViewProfileData(BuildContext context) async {
+    final viewProfileVM = context.read<ViewProfileViewModel>();
+    await viewProfileVM.getTheViewProfileData();
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
+    final data = viewProfileVM.professionalViewProfileData;
+
+    nameController.text = data?.name ?? '';
+    final phone = data?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      _countryCode = '+61';
+      mobileNumberCntr.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      _countryCode = '+64';
+      mobileNumberCntr.text = phone.substring(3);
+    } else {
+      _countryCode = '+61';
+      mobileNumberCntr.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    final allCategories = addDirectorVM.directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.id == data?.directoryCategoryId,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      addDirectorVM.setSelectedBusineestype(businessType);
+    }
+    addressController.text = data?.address ?? '';
+    emailController.text = data?.email ?? '';
+    alternateNumberController.text = data?.altPhone ?? '';
     notifyListeners();
   }
 }

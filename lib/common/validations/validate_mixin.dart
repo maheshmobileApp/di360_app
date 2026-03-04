@@ -27,10 +27,14 @@ mixin ValidationMixins {
   }
 
   String? validateAphraNumber(String? value) {
-    if (value == null || value.isEmpty)
-      return "Please enter your Aphra Registration Number";
-    if (value.length != 13) return 'Enter valid Aphra Registration Number';
-
+    if (value == null || value.isEmpty) return null;
+    if (value.length != 13) {
+      return 'APHRA number must be 13 characters';
+    }
+    final regex = RegExp(r'^[A-Z]{3}[0-9]{10}$');
+    if (!regex.hasMatch(value)) {
+      return 'Format: 3 uppercase letters + 10 numbers';
+    }
     return null;
   }
 

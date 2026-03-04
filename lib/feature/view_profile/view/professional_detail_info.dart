@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
@@ -8,23 +9,35 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProfessionalDetailInfo extends StatelessWidget with BaseContextHelpers {
+class ProfessionalDetailInfo extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   const ProfessionalDetailInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewProfileVM = context.read<ViewProfileViewModel>();
+    final viewProfileVM = context.watch<ViewProfileViewModel>();
+    final excludedTypes = [
+      "Dental Receptionist",
+      "Dental Therapist",
+      "Dental Assistant",
+      "Dental Technician"
+    ];
+    final shouldShowAphra =
+        !excludedTypes.contains(viewProfileVM.selectedBusineestype?.name);
 
     return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             _buildBusineestype(viewProfileVM),
-            addVertical(10),
-            InputTextField(
-                controller: viewProfileVM.aphraNumberController,
-                hintText: "APHRA Registration Number",
-                title: "APHRA Registration Number"),
+            if (shouldShowAphra) ...[
+              addVertical(10),
+              InputTextField(
+                  controller: viewProfileVM.aphraNumberController,
+                  hintText: "AHPRA Registration Number",
+                  title: "AHPRA Registration Number",
+                  validator: validateAphraNumber),
+            ],
           ],
         ));
   }
@@ -36,8 +49,8 @@ class ProfessionalDetailInfo extends StatelessWidget with BaseContextHelpers {
         .toList();
 
     // Ensure selected value exists in the list
-    final selectedValue = allCategories.contains(viewVM.selectedBusineestype) 
-        ? viewVM.selectedBusineestype 
+    final selectedValue = allCategories.contains(viewVM.selectedBusineestype)
+        ? viewVM.selectedBusineestype
         : null;
 
     return CustomDropDown(
@@ -45,8 +58,8 @@ class ProfessionalDetailInfo extends StatelessWidget with BaseContextHelpers {
       title: "Profession Type",
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
-          isRequired: true,
-          validator: (v) => v == null ? 'Select profession type' : null,
+      isRequired: true,
+      validator: (v) => v == null ? 'Select profession type' : null,
       items: allCategories.map((cat) {
         return DropdownMenuItem<Object>(
           value: cat,

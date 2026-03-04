@@ -376,7 +376,14 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
 
     final result = await repo.updateViewProfileData(requestData);
-    if (result['dental_professionals_by_pk']['id'] != null) {
+    
+    final responseKey = type == UserRole.practice.value
+        ? 'update_dental_practices_by_pk'
+        : type == UserRole.professional.value
+            ? 'update_dental_professionals_by_pk'
+            : 'update_dental_suppliers_by_pk';
+    
+    if (result[responseKey]?['id'] != null) {
       type == UserRole.practice.value
           ? getPracticeViewProfileData()
           : type == UserRole.professional.value
@@ -406,6 +413,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   Future<bool> profileCompletedValue() async {
     final profile =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
+        notifyListeners();
     return profile;
   }
 

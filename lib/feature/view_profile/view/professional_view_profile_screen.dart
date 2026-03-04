@@ -47,16 +47,23 @@ class ProfessionalViewProfileScreen extends StatelessWidget
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (provider.profileCompletedValue() == true)
-                    AppButton(
-                        text: 'Delete My Account',
-                        height: 45,
-                        width: 180,
-                        onTap: () {
-                          showDeleteAccountDialog(context, () {
-                            provider.deleteAccount(context);
-                          });
-                        }),
+                  FutureBuilder<bool>(
+                    future: provider.profileCompletedValue(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == true) {
+                        return AppButton(
+                            text: 'Delete My Account',
+                            height: 45,
+                            width: 180,
+                            onTap: () {
+                              showDeleteAccountDialog(context, () {
+                                provider.deleteAccount(context);
+                              });
+                            });
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                   AppButton(
                       text: 'Save & Update',
                       height: 45,
