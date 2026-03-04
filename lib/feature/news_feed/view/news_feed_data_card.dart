@@ -88,20 +88,21 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   job: newsfeeds?.jobs?.isNotEmpty ?? false
                       ? newsfeeds?.jobs?.first
                       : null,
-                      newsfeeds: newsfeeds),
+                  newsfeeds: newsfeeds),
             addVertical(22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HtmlWidget(
-                    (newsfeeds?.description == null ||
-                            newsfeeds?.description == '')
-                        ? newsfeeds?.title ?? ''
-                        : newsfeeds?.description ?? '',
-                    textStyle: TextStyles.regular2(color: AppColors.black),
-                  ),
+                  if (newsFeedTypeEnum != FeedType.jobs.value)
+                    HtmlWidget(
+                      (newsfeeds?.description == null ||
+                              newsfeeds?.description == '')
+                          ? newsfeeds?.title ?? ''
+                          : newsfeeds?.description ?? '',
+                      textStyle: TextStyles.regular2(color: AppColors.black),
+                    ),
                   addVertical(10),
                   if (newsfeeds?.webUrl != null &&
                       newsfeeds!.webUrl!.isNotEmpty)
@@ -117,7 +118,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
                       '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
                       needFeedViewModel,
-                      context,newsfeeds?.id ?? ''),
+                      context,
+                      newsfeeds?.id ?? ''),
                   addVertical(10)
                 ],
               ),
@@ -343,7 +345,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildStatsRow(String likeCount, String commentCount,
-      NewsFeedViewModel viewModel, BuildContext context,String feedId) {
+      NewsFeedViewModel viewModel, BuildContext context, String feedId) {
     final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
 
     return Row(
@@ -374,7 +376,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           ),
         ),
         addHorizontal(10),
-        ShareWidget(feedId: feedId,),
+        ShareWidget(
+          feedId: feedId,
+        ),
         Spacer(),
         Container(
           decoration: BoxDecoration(
