@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/view_profile/query/update_profile_logo.dar
 import 'package:di360_flutter/feature/view_profile/query/update_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/repository/view_profile_repository.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class ViewProfileRepoImpl extends ViewProfileRepository {
   final HttpService http = HttpService();
@@ -28,9 +29,9 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
   Future<dynamic> updateViewProfileData(Map<String, dynamic> data) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final res = await http.mutation(
-        type == 'PRACTICE'
+        type == UserRole.practice.value
             ? updatePracticeViewProfileDataQuery
-            : type == 'PROFESSIONAL'
+            : type == UserRole.professional.value
                 ? updateProfessionalProfileDataQuery
                 : updateViewProfileDataQuery,
         data);

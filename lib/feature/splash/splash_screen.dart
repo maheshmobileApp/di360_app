@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -36,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
           await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
       userLogin == true
           ? profileCompleted == true
-              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+              ? directorNavigationHandle(context)
               : viewProfileHandle(context)
           : navigationService.pushNamedAndRemoveUntil(RouteList.preLogin);
     });
@@ -52,5 +53,15 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
         ? await navigationService
             .navigateTo(RouteList.professionalViewProfileScreen)
         : await navigationService.navigateTo(RouteList.viewProfileScreen);
+  }
+
+  directorNavigationHandle(BuildContext context) async {
+    final directorComplete =
+        await LocalStorage.getBoolValue(LocalStorageConst.directoryComplete);
+    directorComplete == false
+        ? await context
+            .read<AddDirectoryViewModel>()
+            .fetchTheDirectorData(context)
+        : navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
   }
 }

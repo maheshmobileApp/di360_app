@@ -10,11 +10,10 @@ import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart'
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
-import 'package:di360_flutter/widgets/country_code_number_feild.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -109,13 +108,30 @@ class SignupScreen extends StatelessWidget
                         keyboardType: TextInputType.emailAddress,
                         validator: validateEmail),
                     addVertical(16),
-                    CountryCodeNumberFeild(
+                    /*CountryCodeNumberFeild(
                       value: viewModel.countryCode,
                       onChanged: (v) => viewModel.setCountry(v!),
                       textController: viewModel.numberController,
                       textFeildChanged: (value) {
                         viewModel.setNumber(value);
                       },
+                    ),*/
+
+                    InputTextField(
+                      title: "Phone Number",
+                      isRequired: true,
+                      hintText: "Enter phone number",
+                      keyboardType: TextInputType.phone,
+                      maxLength: 9,
+                      controller: viewModel.numberController,
+                      validator: validateContactPhoneNumber,
+                      prefixIcon: PhonePrefixDropdown(
+                        value: viewModel.selectedPhoneCode ?? "",
+                        items: viewModel.phoneCodeList,
+                        onChanged: (value) {
+                          viewModel.setPhoneCode(value ?? "");
+                        },
+                      ),
                     ),
                     addVertical(16),
                     InputTextField(

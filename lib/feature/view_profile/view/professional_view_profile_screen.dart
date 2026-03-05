@@ -1,11 +1,14 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/view_profile/view/professinoal_basic_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_contact_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_detail_info.dart';
 import 'package:di360_flutter/feature/view_profile/view/professional_personal_details.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
@@ -21,7 +24,15 @@ class ProfessionalViewProfileScreen extends StatelessWidget
     final provider = Provider.of<ViewProfileViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: AppbarTitleBackIconWidget(title: 'View Profile'),
+        appBar: AppbarTitleBackIconWidget(
+            title: 'View Profile',
+            backAction: () async {
+              final profileComplete = await LocalStorage.getBoolValue(
+                  LocalStorageConst.profileCompleted);
+              return profileComplete == true
+                  ? navigationService.goBack()
+                  : await viewProfileAlertPopup(context);
+            }),
         body: SingleChildScrollView(
             child: Form(
           key: formKey,
@@ -36,15 +47,23 @@ class ProfessionalViewProfileScreen extends StatelessWidget
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppButton(
-                      text: 'Delete My Account',
-                      height: 45,
-                      width: 180,
-                      onTap: () {
-                        showDeleteAccountDialog(context, () {
-                          provider.deleteAccount(context);
-                        });
-                      }),
+                  FutureBuilder<bool>(
+                    future: provider.profileCompletedValue(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == true) {
+                        return AppButton(
+                            text: 'Delete My Account',
+                            height: 45,
+                            width: 180,
+                            onTap: () {
+                              showDeleteAccountDialog(context, () {
+                                provider.deleteAccount(context);
+                              });
+                            });
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                   AppButton(
                       text: 'Save & Update',
                       height: 45,

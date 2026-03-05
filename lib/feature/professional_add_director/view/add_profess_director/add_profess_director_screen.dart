@@ -1,6 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/edution_screen.dart';
@@ -23,7 +26,16 @@ class ProfessionalAddDirectorView extends StatelessWidget
     final professAddDirectVM = Provider.of<ProfessionalAddDirectorVm>(context);
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
-      appBar: AppbarTitleBackIconWidget(title: 'Add New Directory'),
+      appBar: AppbarTitleBackIconWidget(
+          title: 'Add New Directory',
+          backAction: () async {
+            final directorComplete = await LocalStorage.getBoolValue(
+                LocalStorageConst.directoryComplete);
+            return directorComplete == true
+                ? navigationService.goBack()
+                : navigationService
+                    .pushNamedAndRemoveUntil(RouteList.dashBoard);
+          }),
       body: Column(
         children: [
           _buildStepProgressBar(professAddDirectVM.currentStep,
@@ -133,10 +145,10 @@ class ProfessionalAddDirectorView extends StatelessWidget
                   if ((currentFormKey.currentState?.validate() ?? false)) {
                     if (isLastStep) {
                       scaffoldMessenger('Submitted Successfully');
-                      navigationService.goBack();
+                      navigationService
+                          .pushNamedAndRemoveUntil(RouteList.dashBoard);
                     } else {
                       if (currentStep == 0) {
-                        print(addDirectorVM.getBasicInfoData);
                         addDirectorVM.getBasicInfoData.isEmpty == true
                             ? await professAddDirectVM.addBasicData(context)
                             : await professAddDirectVM.updateBasicData(context);

@@ -50,7 +50,7 @@ class DentalProfessionalsByPk {
   String? altEmail;
   dynamic altPhone;
   String? professionType;
-  Address? address;
+  String? directoryCategoryId;
   String? proDetailsAphraRegistrationNumber;
   BankDetails? bankDetails;
   String? dateOfBirth;
@@ -59,6 +59,14 @@ class DentalProfessionalsByPk {
   ProfileImage? profileImage;
   String? gender;
   String? type;
+  String? address;
+  String? city;
+  int? zipcode;
+  String? state;
+  String? country;
+  String? addressLineOne;
+  String? addressLineTwo;
+  String? landMark;
   Clients? clients;
   List<Directories>? directories;
   String? sTypename;
@@ -75,7 +83,7 @@ class DentalProfessionalsByPk {
       this.altEmail,
       this.altPhone,
       this.professionType,
-      this.address,
+      this.directoryCategoryId,
       this.proDetailsAphraRegistrationNumber,
       this.bankDetails,
       this.dateOfBirth,
@@ -84,6 +92,14 @@ class DentalProfessionalsByPk {
       this.profileImage,
       this.gender,
       this.type,
+      this.address,
+      this.city,
+      this.zipcode,
+      this.state,
+      this.country,
+      this.addressLineOne,
+      this.addressLineTwo,
+      this.landMark,
       this.clients,
       this.directories,
       this.sTypename});
@@ -100,9 +116,7 @@ class DentalProfessionalsByPk {
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
     professionType = json['profession_type'];
-    address = json['address'] != null && json['address'] is Map<String, dynamic>
-        ? new Address.fromJson(json['address'])
-        : null;
+    directoryCategoryId = json['directory_category_id'];
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
     bankDetails = json['bank_details'] != null
@@ -116,6 +130,14 @@ class DentalProfessionalsByPk {
         : null;
     gender = json['gender'];
     type = json['type'];
+    address = json['address'];
+    city = json['city'];
+    zipcode = json['zipcode'];
+    state = json['state'];
+    country = json['country'];
+    addressLineOne = json['address_line_one'];
+    addressLineTwo = json['address_line_two'];
+    landMark = json['land_mark'];
     clients =
         json['clients'] != null ? new Clients.fromJson(json['clients']) : null;
     if (json['directories'] != null) {
@@ -140,9 +162,6 @@ class DentalProfessionalsByPk {
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
     data['profession_type'] = this.professionType;
-    if (this.address != null) {
-      data['address'] = this.address!.toJson();
-    }
     data['pro_details_aphra_registration_number'] =
         this.proDetailsAphraRegistrationNumber;
     if (this.bankDetails != null) {
@@ -156,6 +175,14 @@ class DentalProfessionalsByPk {
     }
     data['gender'] = this.gender;
     data['type'] = this.type;
+    data['address'] = this.address;
+    data['city'] = this.city;
+    data['zipcode'] = this.zipcode;
+    data['state'] = this.state;
+    data['country'] = this.country;
+    data['address_line_one'] = this.addressLineOne;
+    data['address_line_two'] = this.addressLineTwo;
+    data['land_mark'] = this.landMark;
     if (this.clients != null) {
       data['clients'] = this.clients!.toJson();
     }
@@ -167,43 +194,24 @@ class DentalProfessionalsByPk {
   }
 }
 
-class Address {
-  String? city;
+class Clients {
   String? state;
-  String? country;
-  String? zipcode;
-  double? latitude;
-  double? longitude;
-  String? addressName;
+  String? postalCode;
+  String? sTypename;
 
-  Address(
-      {this.city,
-      this.state,
-      this.country,
-      this.zipcode,
-      this.latitude,
-      this.longitude,
-      this.addressName});
+  Clients({this.state, this.postalCode, this.sTypename});
 
-  Address.fromJson(Map<String, dynamic> json) {
-    city = json['city'];
+  Clients.fromJson(Map<String, dynamic> json) {
     state = json['state'];
-    country = json['country'];
-    zipcode = json['zipcode'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
-    addressName = json['addressName'];
+    postalCode = json['postal_code'];
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['city'] = this.city;
     data['state'] = this.state;
-    data['country'] = this.country;
-    data['zipcode'] = this.zipcode;
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    data['addressName'] = this.addressName;
+    data['postal_code'] = this.postalCode;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }
@@ -279,28 +287,6 @@ class ProfileImage {
     data['directory'] = this.directory;
     data['extension'] = this.extension;
     data['mime_type'] = this.mimeType;
-    return data;
-  }
-}
-
-class Clients {
-  dynamic state;
-  dynamic postalCode;
-  String? sTypename;
-
-  Clients({this.state, this.postalCode, this.sTypename});
-
-  Clients.fromJson(Map<String, dynamic> json) {
-    state = json['state'];
-    postalCode = json['postal_code'];
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['state'] = this.state;
-    data['postal_code'] = this.postalCode;
-    data['__typename'] = this.sTypename;
     return data;
   }
 }

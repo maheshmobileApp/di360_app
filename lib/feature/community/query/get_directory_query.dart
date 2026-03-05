@@ -1,5 +1,5 @@
-const String getDirectoryQuery =
-    r'''query getDirectory($where: directories_bool_exp!) {
+const String getDirectoryQuery = r'''
+  query getDirectory($where: directories_bool_exp!) {
   directories(where: $where) {
     id
     dental_supplier_id

@@ -1,6 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_appoinment.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_archiement.dart';
 import 'package:di360_flutter/feature/add_directors/view/add_director_basic_info.dart';
@@ -28,7 +31,16 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     return Scaffold(
-      appBar: AppbarTitleBackIconWidget(title: 'Add New Directory'),
+      appBar: AppbarTitleBackIconWidget(
+          title: 'Add New Directory',
+          backAction: () async {
+            final directorComplete = await LocalStorage.getBoolValue(
+                LocalStorageConst.directoryComplete);
+            return directorComplete == true
+                ? navigationService.goBack()
+                : navigationService
+                    .pushNamedAndRemoveUntil(RouteList.dashBoard);
+          }),
       body: Column(
         children: [
           _buildStepProgressBar(addDirectorVM.currentStep,

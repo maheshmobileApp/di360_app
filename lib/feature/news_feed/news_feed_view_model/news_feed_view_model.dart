@@ -44,6 +44,19 @@ class NewsFeedViewModel extends ChangeNotifier {
   String? professionId;
   String? userID;
 
+  final Set<int> _expandedIndices = {};
+
+  bool isExpanded(int index) => _expandedIndices.contains(index);
+
+  void toggle(int index) {
+    if (_expandedIndices.contains(index)) {
+      _expandedIndices.remove(index);
+    } else {
+      _expandedIndices.add(index);
+    }
+    notifyListeners();
+  }
+
   bool applyCatageories = false;
 
   void updateApplyCatageories(bool val) {
@@ -294,7 +307,8 @@ class NewsFeedViewModel extends ChangeNotifier {
     Loaders.circularHideLoader(context);
     if (res.isNotEmpty) {
       final result = JobdList.fromJson(res);
-      final job = result.jobs?.isNotEmpty ?? false ? result.jobs?.first : Jobs();
+      final job =
+          result.jobs?.isNotEmpty ?? false ? result.jobs?.first : Jobs();
       navigationService.navigateToWithParams(RouteList.jobdetailsScreen,
           params: job);
     }

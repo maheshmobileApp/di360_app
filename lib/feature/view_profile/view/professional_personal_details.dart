@@ -77,11 +77,12 @@ class ProfessionalPersonalDetails extends StatelessWidget
                   ? 'Please select your date of birth'
                   : null,
               onTap: () async {
+                final eighteenYearsAgo = DateTime.now().subtract(const Duration(days: 365 * 18));
                 final picked = await showDatePicker(
                   context: context,
-                  initialDate: viewProfileVM.scheduleDate ?? DateTime.now(),
+                  initialDate: viewProfileVM.scheduleDate ?? eighteenYearsAgo,
                   firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
+                  lastDate: eighteenYearsAgo,
                 );
                 if (picked != null) {
                   viewProfileVM.setScheduleDate(picked);
