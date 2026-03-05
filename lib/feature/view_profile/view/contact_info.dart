@@ -1,10 +1,13 @@
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/widgets/address_auto_fill_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ContactInfo extends StatelessWidget with BaseContextHelpers {
+class ContactInfo extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   @override
   Widget build(BuildContext context) {
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
@@ -16,7 +19,8 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
               controller: viewProfileVM.firstNameController,
               hintText: "First Name",
               isRequired: true,
-              title: "first Name"),
+              title: "first Name",
+              validator: validateFirstName),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.middleNameController,
@@ -27,12 +31,8 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
               controller: viewProfileVM.lastNameController,
               hintText: "Last Name",
               isRequired: true,
-              title: "Last Name"),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.businessEmailController,
-              hintText: "Business Email",
-              title: "Business Email"),
+              title: "Last Name",
+              validator: validateLastName),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.faxNumberController,
@@ -49,53 +49,48 @@ class ContactInfo extends StatelessWidget with BaseContextHelpers {
               hintText: "Alternate Phone Number",
               title: "Alternate Phone NUmber"),
           addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.addressController,
-              hintText: "Address",
-              isRequired: true,
-              title: "Address"),
+          AddressAutoFillWidget(
+            textEditingController: viewProfileVM.addressController,
+            itemClick: (value) =>
+                viewProfileVM.addressController.text = value.description ?? '',
+          ),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.addressLineOneController,
               hintText: "Address Line 1",
-              title: "Address Line 1",
-              readOnly: true),
+              title: "Address Line 1"),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.addressLineTwoController,
               hintText: "Address Line 2",
-              title: "Address Line 2",
-              readOnly: true),
+              title: "Address Line 2"),
+          addVertical(10),
+          InputTextField(
+              controller: viewProfileVM.landmarkController,
+              hintText: "Landmark",
+              title: "Landmark"),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.cityController,
               hintText: "City",
               title: "City",
-              readOnly: true),
-          addVertical(10),
-          InputTextField(
-              controller: viewProfileVM.landmarkController,
-              hintText: "Landmark",
-              title: "Landmark",
-              readOnly: true),
+              isRequired: true,
+              validator: validateCity),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.countryController,
               hintText: "Country",
-              title: "Country",
-              readOnly: true),
+              title: "Country"),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.stateController,
               hintText: "State",
-              title: "State",
-              readOnly: true),
+              title: "State"),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.zipCodeController,
               hintText: "Enter post code",
-              title: "Post Code",
-              readOnly: true),
+              title: "Post Code"),
           addVertical(10)
         ]));
   }

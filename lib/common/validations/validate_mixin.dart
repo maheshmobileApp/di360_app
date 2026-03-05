@@ -118,6 +118,11 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateBusinessName(String? value) {
+    if (value == null || value.isEmpty) return "Please enter business name";
+    return null;
+  }
+
   String? validatePracticeName(String? value) {
     if (value == null || value.isEmpty) return "Please enter practice name";
     return null;
@@ -205,6 +210,11 @@ mixin ValidationMixins {
 
   String? validateCatagoryName(String? value) {
     if (value == null || value.isEmpty) return 'Please select category name';
+    return null;
+  }
+
+  String? validateCity(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter city';
     return null;
   }
 

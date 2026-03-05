@@ -4,7 +4,9 @@ class viewProfileDataRes {
   viewProfileDataRes({this.data});
 
   viewProfileDataRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new profileViewData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new profileViewData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +45,13 @@ class DentalSuppliersByPk {
   Logo? logo;
   String? phone;
   String? address;
+  String? city;
+  dynamic zipcode;
+  String? state;
+  String? country;
+  String? landMark;
+  String? addressLineOne;
+  String? addressLineTwo;
   String? proDetailsAphraRegistrationNumber;
   BankDetails? bankDetails;
   String? businessName;
@@ -61,6 +70,7 @@ class DentalSuppliersByPk {
   String? lastName;
   String? type;
   SecondaryContact? secondaryContact;
+//  List<Null>? directories;
   String? sTypename;
 
   DentalSuppliersByPk(
@@ -70,6 +80,13 @@ class DentalSuppliersByPk {
       this.logo,
       this.phone,
       this.address,
+      this.city,
+      this.zipcode,
+      this.state,
+      this.country,
+      this.landMark,
+      this.addressLineOne,
+      this.addressLineTwo,
       this.proDetailsAphraRegistrationNumber,
       this.bankDetails,
       this.businessName,
@@ -88,6 +105,7 @@ class DentalSuppliersByPk {
       this.lastName,
       this.type,
       this.secondaryContact,
+    //  this.directories,
       this.sTypename});
 
   DentalSuppliersByPk.fromJson(Map<String, dynamic> json) {
@@ -97,6 +115,13 @@ class DentalSuppliersByPk {
     logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
     phone = json['phone'];
     address = json['address'];
+    city = json['city'];
+    zipcode = json['zipcode'];
+    state = json['state'];
+    country = json['country'];
+    landMark = json['land_mark'];
+    addressLineOne = json['address_line_one'];
+    addressLineTwo = json['address_line_two'];
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
     bankDetails = json['bank_details'] != null
@@ -120,6 +145,12 @@ class DentalSuppliersByPk {
     secondaryContact = json['secondary_contact'] != null
         ? new SecondaryContact.fromJson(json['secondary_contact'])
         : null;
+    // if (json['directories'] != null) {
+    //   directories = <Null>[];
+    //   json['directories'].forEach((v) {
+    //     directories!.add(new Null.fromJson(v));
+    //   });
+    // }
     sTypename = json['__typename'];
   }
 
@@ -133,6 +164,13 @@ class DentalSuppliersByPk {
     }
     data['phone'] = this.phone;
     data['address'] = this.address;
+    data['city'] = this.city;
+    data['zipcode'] = this.zipcode;
+    data['state'] = this.state;
+    data['country'] = this.country;
+    data['land_mark'] = this.landMark;
+    data['address_line_one'] = this.addressLineOne;
+    data['address_line_two'] = this.addressLineTwo;
     data['pro_details_aphra_registration_number'] =
         this.proDetailsAphraRegistrationNumber;
     if (this.bankDetails != null) {
@@ -156,6 +194,9 @@ class DentalSuppliersByPk {
     if (this.secondaryContact != null) {
       data['secondary_contact'] = this.secondaryContact!.toJson();
     }
+    // if (this.directories != null) {
+    //   data['directories'] = this.directories!.map((v) => v.toJson()).toList();
+    // }
     data['__typename'] = this.sTypename;
     return data;
   }

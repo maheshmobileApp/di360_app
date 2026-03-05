@@ -20,6 +20,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/add_directory_enum.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -36,10 +37,17 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
           backAction: () async {
             final directorComplete = await LocalStorage.getBoolValue(
                 LocalStorageConst.directoryComplete);
-            return directorComplete == true
-                ? navigationService.goBack()
-                : navigationService
-                    .pushNamedAndRemoveUntil(RouteList.dashBoard);
+            final firstNavigation = await LocalStorage.getBoolValue(
+                LocalStorageConst.firstNavigationDirectory);
+            return addDirectorVM.getBasicInfoData.isEmpty
+                ? viewProfileAlertPopup(context,
+                    title: 'Welcome! Your Director Is Incomplete',
+                    subTitle:
+                        'To get the best experience, please update the required information to proceed.')
+                : (directorComplete == true && firstNavigation == false)
+                    ? navigationService.goBack()
+                    : navigationService
+                        .pushNamedAndRemoveUntil(RouteList.dashBoard);
           }),
       body: Column(
         children: [

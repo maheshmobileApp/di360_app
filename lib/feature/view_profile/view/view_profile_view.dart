@@ -19,6 +19,7 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ViewProfileViewModel>(context);
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppbarTitleBackIconWidget(
@@ -30,40 +31,53 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                   ? navigationService.goBack()
                   : await viewProfileAlertPopup(context);
             }),
-        body: SingleChildScrollView(
-            child: Column(children: [
-          _sectionTitle('Basic Info', BasicInfo()),
-          _sectionTitle('Contact Information', ContactInfo()),
-          addVertical(20),
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: AppButton(
-                        text: 'Delete My Account',
-                        height: 45,
-                        width: 180,
-                        onTap: () {
-                          showDeleteAccountDialog(context, () {
-                            provider.deleteAccount(context);
-                          });
-                        }),
-                  ),
-                  addHorizontal(4),
-                  Expanded(
-                      child: AppButton(
-                          text: 'Save & Update',
-                          height: 45,
-                          width: 180,
-                          onTap: () {
-                            provider.updateViewProfile(context);
-                          })),
-                ],
-              )),
-          addVertical(10)
-        ])));
+        body: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+              child: Column(children: [
+            _sectionTitle('Basic Info', BasicInfo()),
+            _sectionTitle('Contact Information', ContactInfo()),
+            addVertical(20),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    FutureBuilder<bool>(
+                      future: provider.profileCompletedValue(),
+                      builder: (context, snapshot) {
+                        if (snapshot.data == true) {
+                          return Expanded(
+                            child: AppButton(
+                                text: 'Delete My Account',
+                                height: 45,
+                                width: 180,
+                                onTap: () {
+                                  showDeleteAccountDialog(context, () {
+                                    provider.deleteAccount(context);
+                                  });
+                                }),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    addHorizontal(4),
+                    Expanded(
+                        child: AppButton(
+                            text: 'Save & Update',
+                            height: 45,
+                            width: 180,
+                            onTap: () {
+                              if (formKey.currentState!.validate()) {
+                                provider.updateViewProfile(context);
+                              }
+                            })),
+                  ],
+                )),
+            addVertical(10)
+          ])),
+        ));
   }
 
   Widget _sectionTitle(String title, Widget? child) {

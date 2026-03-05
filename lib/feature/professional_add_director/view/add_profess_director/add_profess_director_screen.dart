@@ -31,10 +31,17 @@ class ProfessionalAddDirectorView extends StatelessWidget
           backAction: () async {
             final directorComplete = await LocalStorage.getBoolValue(
                 LocalStorageConst.directoryComplete);
-            return directorComplete == true
-                ? navigationService.goBack()
-                : navigationService
-                    .pushNamedAndRemoveUntil(RouteList.dashBoard);
+            final firstNavigation = await LocalStorage.getBoolValue(
+                LocalStorageConst.firstNavigationDirectory);
+            return addDirectorVM.getBasicInfoData.isEmpty
+                ? viewProfileAlertPopup(context,
+                    title: 'Welcome! Your Director Is Incomplete',
+                    subTitle:
+                        'To get the best experience, please update the required information to proceed.')
+                : (directorComplete == true && firstNavigation == false)
+                    ? navigationService.goBack()
+                    : navigationService
+                        .pushNamedAndRemoveUntil(RouteList.dashBoard);
           }),
       body: Column(
         children: [

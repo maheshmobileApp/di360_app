@@ -227,14 +227,16 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "pincode": "",
         "dental_professional_id": userId,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PUBLIC',
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PUBLIC'
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
       }
     });
     if (result != null) {
       await LocalStorage.setBoolValue(
           LocalStorageConst.directoryComplete, true);
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.firstNavigationDirectory, true);
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
       goToNextStep();
@@ -280,9 +282,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "special_interests": [],
         "type": UserRole.professional.value,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PUBLIC',
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PUBLIC'
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
       }
     });
     if (result != null) {

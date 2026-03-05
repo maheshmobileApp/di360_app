@@ -33,7 +33,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final firstNameController = TextEditingController();
   final middleNameController = TextEditingController();
   final lastNameController = TextEditingController();
-  final businessEmailController = TextEditingController();
   final businessPhoneNoController = TextEditingController();
   final faxNumberController = TextEditingController();
   final alternateEmailController = TextEditingController();
@@ -50,7 +49,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final dateOfBirthController = TextEditingController();
   String? logoUrl;
 
-  DentalSuppliersByPk? viewProfile;
+  DentalSuppliersByPk? supplierViewProfileData;
   DentalPracticesByPk? practiceViewProfileData;
   DentalProfessionalsByPk? professionalViewProfileData;
   File? logoFile;
@@ -77,6 +76,12 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   void setNumber(String value) {
     _number = value;
+    notifyListeners();
+  }
+
+  String? selectedPhoneCode = "AU (+61)";
+  void setPhoneCode(String value) {
+    selectedPhoneCode = value;
     notifyListeners();
   }
 
@@ -111,8 +116,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getSuppilerViewProfileData() async {
     final res = await repo.getViewProfileData();
     if (res != null) {
-      viewProfile = res;
-      loadViewProfileData(viewProfile);
+      supplierViewProfileData = res;
+      loadViewProfileData(supplierViewProfileData);
     }
     notifyListeners();
   }
@@ -140,33 +145,33 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";
     if (phone.startsWith('+61')) {
-      _countryCode = '+61';
+      selectedPhoneCode = 'AU (+61)';
       phoneNoController.text = phone.substring(3);
     } else if (phone.startsWith('+64')) {
-      _countryCode = '+64';
+      selectedPhoneCode = 'NZ (+64)';
       phoneNoController.text = phone.substring(3);
     } else {
-      _countryCode = '+61';
+      selectedPhoneCode = 'AU (+61)';
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     abnNUmberController.text = viewProfile?.abnNumber ?? "";
-    firstNameController.text = viewProfile?.firstName ?? "";
+    firstNameController.text =
+        viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
-    businessEmailController.text = viewProfile?.businessEmail ?? "";
     businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
     faxNumberController.text = viewProfile?.faxNumber ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";
     alternatePhoneNoController.text = viewProfile?.altPhone ?? "";
     addressController.text = viewProfile?.address ?? "";
-    addressLineOneController.text = viewProfile?.address ?? "";
-    addressLineTwoController.text = viewProfile?.address ?? "";
-    cityController.text = "";
-    landmarkController.text = "";
-    countryController.text = "";
-    stateController.text = "";
-    zipCodeController.text = "";
+    addressLineOneController.text = viewProfile?.addressLineOne ?? "";
+    addressLineTwoController.text = viewProfile?.addressLineTwo ?? "";
+    cityController.text = viewProfile?.city ?? "";
+    landmarkController.text = viewProfile?.landMark ?? "";
+    countryController.text = viewProfile?.country ?? "";
+    stateController.text = viewProfile?.state ?? "";
+    zipCodeController.text = viewProfile?.zipcode.toString() ?? "";
     final allCategories = directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
@@ -198,7 +203,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       _countryCode = '+61';
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
-    firstNameController.text = viewProfile?.firstName ?? viewProfile?.name ?? "";
+    firstNameController.text =
+        viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";
@@ -279,7 +285,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "logo": logo ??
             (type == UserRole.practice.value
                 ? practiceViewProfileData?.logo?.toJson()
-                : viewProfile?.logo?.toJson())
+                : supplierViewProfileData?.logo?.toJson())
       }
     });
     Loaders.circularHideLoader(context);
@@ -311,6 +317,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> updateViewProfile(BuildContext context) async {
     Loaders.circularShowLoader(context);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final profileCompleted =
@@ -360,10 +367,17 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       requestData["supplierObj"] = {
         "name": nameController.text,
         "email": emailController.text,
-        "phone": '$countryCode${phoneNoController.text}',
+        "phone": '$phoneCode${phoneNoController.text}',
         "business_name": businessNameController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
+        "address_line_one": addressLineOneController.text,
+        "address_line_two": addressLineTwoController.text,
+        "land_mark": landmarkController.text,
+        "city": cityController.text,
+        "state": stateController.text,
+        "country": countryController.text,
+        "zipcode": int.tryParse(zipCodeController.text),
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "middle_name": middleNameController.text,
@@ -376,14 +390,14 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
 
     final result = await repo.updateViewProfileData(requestData);
-    
+
     final responseKey = type == UserRole.practice.value
         ? 'update_dental_practices_by_pk'
         : type == UserRole.professional.value
             ? 'update_dental_professionals_by_pk'
-            : 'update_dental_suppliers_by_pk';
-    
-    if (result[responseKey]?['id'] != null) {
+            : 'update_dental_suppliers';
+
+    if (result[responseKey]?['id'] != null || result[responseKey] != null) {
       type == UserRole.practice.value
           ? getPracticeViewProfileData()
           : type == UserRole.professional.value
@@ -413,7 +427,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   Future<bool> profileCompletedValue() async {
     final profile =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
-        notifyListeners();
+    notifyListeners();
     return profile;
   }
 
