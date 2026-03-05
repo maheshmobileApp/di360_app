@@ -198,7 +198,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       _countryCode = '+61';
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
-    firstNameController.text = viewProfile?.firstName ?? "";
+    firstNameController.text = viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";
@@ -351,7 +351,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "middle_name": middleNameController.text,
-        "gender": selectedGender,
+        "gender": selectedGender?.toLowerCase(),
         "date_of_birth": scheduleDate?.toIso8601String(),
         "salutation": selectedSalutation,
         "profile_completed": true

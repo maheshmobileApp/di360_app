@@ -69,19 +69,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
       Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Welcome Back!',
-                  style: TextStyles.dmsansLight(
-                      color: AppColors.black, fontSize: 12)),
-              // Row(
-              //   children: [
-              //     SvgPicture.asset(ImageConst.notification),
-              //     addHorizontal(28),
-              //     SvgPicture.asset(ImageConst.search)
-              //   ],
-              // )
-            ]),
-            addVertical(12),
+            addVertical(22),
             Divider(color: AppColors.dividerColor),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),

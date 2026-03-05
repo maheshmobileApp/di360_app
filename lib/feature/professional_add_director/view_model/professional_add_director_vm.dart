@@ -370,7 +370,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.id == data?.directoryCategoryId,
+      (cat) => cat.name == data?.professionType,
       orElse: () => null,
     );
     if (businessType != null) {
