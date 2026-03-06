@@ -171,7 +171,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     landmarkController.text = viewProfile?.landMark ?? "";
     countryController.text = viewProfile?.country ?? "";
     stateController.text = viewProfile?.state ?? "";
-    zipCodeController.text = viewProfile?.zipcode.toString() ?? "";
+    zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
     final allCategories = directoryBusinessTypes
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();

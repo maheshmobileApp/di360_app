@@ -14,12 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ViewProfileView extends StatelessWidget with BaseContextHelpers {
-  const ViewProfileView({super.key});
+  ViewProfileView({super.key});
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ViewProfileViewModel>(context);
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppbarTitleBackIconWidget(
