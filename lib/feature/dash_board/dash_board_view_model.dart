@@ -16,6 +16,7 @@ import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_v
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/services/app_reset_service.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -175,6 +176,7 @@ Future logOutAlert(BuildContext context) {
                 onPressed: () async {
                   await deleteToken();
                   await LocalStorage.clearAllData();
+                  AppResetService.resetAppState();
                   navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 },
                 child: const Text('Ok')),
