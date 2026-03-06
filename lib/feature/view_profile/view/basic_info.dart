@@ -94,7 +94,7 @@ class BasicInfo extends StatelessWidget
 
     return CustomDropDown(
       value: viewVM.selectedBusineestype,
-      title: "Profession Type",
+      title: "Business Type",
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
       items: allCategories.map((cat) {
