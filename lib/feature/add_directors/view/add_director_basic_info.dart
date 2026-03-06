@@ -139,6 +139,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           addVertical(20),
           LogoContainer(
             title: "Logo",
+            isRequired: true,
             imageFile: addDirectorVM.logoFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
@@ -152,6 +153,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           addVertical(20),
           LogoContainer(
             title: "Banner",
+            isRequired: true,
             imageFile: addDirectorVM.bannerFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? ''

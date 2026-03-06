@@ -320,7 +320,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     if (type == UserRole.professional.value)
       professVM.assignTheProfessBasic(context);
     if (getBasicInfoData.isEmpty) {
-      assignSupplierViewProfileData(context);
+      type == UserRole.supplier.value
+          ? assignSupplierViewProfileData(context)
+          : assignPracticeViewProfileData(context);
       return;
     }
     final basic = getBasicInfoData.first;
@@ -365,6 +367,41 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     final viewProfileVM = context.read<ViewProfileViewModel>();
     await viewProfileVM.getTheViewProfileData();
     final data = viewProfileVM.supplierViewProfileData;
+
+    final phone = data?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      MobileNumberController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.name == data?.professionType,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      setSelectedBusineestype(businessType);
+    }
+    CompanyNameController.text = data?.businessName ?? '';
+    nameController.text = data?.name ?? '';
+    emailController.text = data?.email ?? '';
+    ABNNumberController.text = data?.abnNumber ?? '';
+    alternateNumberController.text = data?.altPhone ?? '';
+    addressController.text = data?.address ?? '';
+    notifyListeners();
+  }
+
+  assignPracticeViewProfileData(BuildContext context) async {
+    final viewProfileVM = context.read<ViewProfileViewModel>();
+    await viewProfileVM.getTheViewProfileData();
+    final data = viewProfileVM.practiceViewProfileData;
 
     final phone = data?.phone ?? "";
     if (phone.startsWith('+61')) {
