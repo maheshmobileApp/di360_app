@@ -45,26 +45,26 @@ class LoginApi {
   String? phone;
   Logo? logo;
   String? status;
-  dynamic message;
+  String? message;
   bool? profileCompleted;
+  bool? paymentCompleted;
   ProfileImage? profileImage;
   String? type;
-  dynamic address;
+  dynamic address;//Not required in response
   dynamic directoryCategoryId;
-  dynamic professionType;
+  String? professionType;
   bool? secondHand;
   String? businessName;
-  dynamic abnNumber;
+  String? abnNumber;
   String? gender;
   bool? sellProducts;
-  dynamic dashboardPermissions;
+  dynamic dashboardPermissions;//Not required in response
   String? planId;
   String? paymentStatus;
   String? subscriptionId;
   SubscriptionPermissions? subscriptionPermissions;
   String? subType;
   String? ownerId;
-  String? sTypename;
 
   LoginApi(
       {this.id,
@@ -77,6 +77,7 @@ class LoginApi {
       this.status,
       this.message,
       this.profileCompleted,
+      this.paymentCompleted,
       this.profileImage,
       this.type,
       this.address,
@@ -93,8 +94,7 @@ class LoginApi {
       this.subscriptionId,
       this.subscriptionPermissions,
       this.subType,
-      this.ownerId,
-      this.sTypename});
+      this.ownerId});
 
   LoginApi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -107,6 +107,7 @@ class LoginApi {
     status = json['status'];
     message = json['message'];
     profileCompleted = json['profile_completed'];
+    paymentCompleted = json['payment_completed'];
     profileImage = json['profile_image'] != null
         ? new ProfileImage.fromJson(json['profile_image'])
         : null;
@@ -128,7 +129,6 @@ class LoginApi {
         : null;
     subType = json['sub_type'];
     ownerId = json['owner_id'];
-    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
@@ -145,6 +145,7 @@ class LoginApi {
     data['status'] = this.status;
     data['message'] = this.message;
     data['profile_completed'] = this.profileCompleted;
+    data['payment_completed'] = this.paymentCompleted;
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();
     }
@@ -166,7 +167,6 @@ class LoginApi {
     }
     data['sub_type'] = this.subType;
     data['owner_id'] = this.ownerId;
-    data['__typename'] = this.sTypename;
     return data;
   }
 }
@@ -328,6 +328,7 @@ class Logo {
   }
 }
 
+//TODO: Replace with LOGO class 
 class ProfileImage {
   String? directory;
   String? extension;
