@@ -43,24 +43,24 @@ class DentalPracticesByPk {
   Logo? logo;
   String? phone;
   String? address;
-  dynamic proDetailsAphraRegistrationNumber;
-  dynamic bankDetails;
+  String? proDetailsAphraRegistrationNumber;
+  dynamic bankDetails;//null
   String? businessName;
   String? abnNumber;
-  dynamic businessEmail;
-  dynamic businessPhone;
+  String? businessEmail;
+  String? businessPhone;
   String? faxNumber;
   String? altEmail;
   String? altPhone;
   String? professionType;
-  dynamic tgaNumber;
+  String? tgaNumber;
   bool? secondHand;
   bool? sellProducts;
   String? firstName;
   String? middleName;
   String? lastName;
   String? type;
-  dynamic secondaryContact;
+  dynamic secondaryContact;//skip it
   String? sTypename;
 
   DentalPracticesByPk(

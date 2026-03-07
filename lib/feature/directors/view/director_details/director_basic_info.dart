@@ -692,18 +692,42 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               ),
             ],
           ),
-          // const SizedBox(height: 20),
-          // Row(
-          //   children: const [
-          //     Icon(Icons.facebook, color: Colors.black),
-          //     SizedBox(width: 15),
-          //     Icon(Icons.camera_alt, color: Colors.black),
-          //     SizedBox(width: 15),
-          //     Icon(Icons.link, color: Colors.black),
-          //     SizedBox(width: 15),
-          //     Icon(Icons.shop, color: Colors.black),
-          //   ],
-          // ),
+           const SizedBox(height: 20),
+          Row(
+            children: vm.directorDetails?.directoryLocations!
+                .where((e) => ['facebook', 'instagram', 'linkedin', 'twitter'].contains(e.mediaName?.toLowerCase()))
+                .map((social) {
+              String icon;
+              switch (social.mediaName?.toLowerCase()) {
+                case 'facebook':
+                  icon = ImageConst.facebookSvg;
+                  break;
+                case 'instagram':
+                  icon = ImageConst.instagramSvg;
+                  break;
+                case 'linkedin':
+                  icon = ImageConst.linkedinSvg;
+                  break;
+                case 'twitter':
+                  icon = ImageConst.twitterSvg;
+                  break;
+                default:
+                  icon = ImageConst.facebookSvg;
+              }
+              return Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: InkWell(
+                  onTap: () async {
+                    final url = social.mediaLink ?? '';
+                    if (url.isNotEmpty && await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  child: Image.asset(icon, height: 25)
+                ),
+              );
+            }).toList() ?? [],
+          ),
           const SizedBox(height: 20),
           InkWell(
               onTap: () => openLocationInMaps(

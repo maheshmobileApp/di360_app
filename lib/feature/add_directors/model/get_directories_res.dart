@@ -44,7 +44,7 @@ class GetDirectories {
   String? professionType;
   String? directoryCategoryId;
   Logo? logo;
-  BannerLogo? bannerImage;
+  BannerLogo? bannerImage;// logo
   String? phoneVisibility;
   String? emailVisibility;
   ProfileImage? profileImage;

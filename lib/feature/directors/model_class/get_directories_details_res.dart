@@ -472,8 +472,8 @@ class DirectoryDocuments {
 
 class DirectoryLocations {
   String? id;
-  dynamic mediaName;
-  dynamic mediaLink;
+  String? mediaName;
+  String? mediaLink;
   String? status;
   String? weekName;
   String? clinicTime;
