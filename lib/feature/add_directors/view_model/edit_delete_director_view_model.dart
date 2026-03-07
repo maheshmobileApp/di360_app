@@ -580,7 +580,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     final res = await addDirectorRepositoryImpl
         .getAppts(addDirectorVM.getBasicInfoData.first.id ?? '');
     if (res != null) {
-      await getPartnersData(context);
+      await getPartnersData(addDirectorVM);
       appointmentsList = res;
       Loaders.circularHideLoader(context);
     } else {
@@ -589,8 +589,8 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getPartnersData(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
+  Future<void> getPartnersData(AddDirectoryViewModel addDirectorVM) async {
+    print("get partners calling");
     getCommunityDetails();
     final res = await addDirectorRepositoryImpl
         .getPartners(addDirectorVM.getBasicInfoData.first.id ?? '');
@@ -634,7 +634,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       }
     });
     if (res != null) {
-      await getPartnersData(context);
+      await getPartnersData(addDirectorVM);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Partners added successfully');
     } else {
@@ -679,7 +679,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       "id": id
     });
     if (res != null && context.mounted) {
-      await getPartnersData(context);
+      await getPartnersData(addDirectorVM);
       scaffoldMessenger('Updated partner successfully');
       updateIsEditPartner(false);
       addDirectorVM.partnerNameCntr.clear();
@@ -693,10 +693,11 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> deletePartner(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deletePartner({"id": id});
     if (res != null) {
-      await getPartnersData(context);
+      await getPartnersData(addDirectorVM);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Partner deleted successfully');
     } else {
