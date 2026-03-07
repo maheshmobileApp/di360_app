@@ -590,7 +590,6 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> getPartnersData(AddDirectoryViewModel addDirectorVM) async {
-    print("get partners calling");
     getCommunityDetails();
     final res = await addDirectorRepositoryImpl
         .getPartners(addDirectorVM.getBasicInfoData.first.id ?? '');
@@ -651,7 +650,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   Future<void> updatePartner(
       BuildContext context, String id, dynamic img) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-
+    Loaders.circularShowLoader(context);
     dynamic image;
     if (addDirectorVM.partnerImgFile != null) {
       image = await addDirectorRepositoryImpl.http
@@ -678,7 +677,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       },
       "id": id
     });
-    if (res != null && context.mounted) {
+    if (res != null) {
       await getPartnersData(addDirectorVM);
       scaffoldMessenger('Updated partner successfully');
       updateIsEditPartner(false);
@@ -689,6 +688,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       existingImages.clear();
       uploadedFiles.clear();
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 

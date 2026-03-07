@@ -49,7 +49,7 @@ class GetDirectories {
   String? emailVisibility;
   ProfileImage? profileImage;
   List<String>? workingAt;
-  List<Education>? education;
+  List<String>? education;
   List<String>? universitySchool;
   List<String>? hobbies;
   List<DirectoryDocuments>? directoryDocuments;
@@ -128,10 +128,12 @@ class GetDirectories {
       });
     }
     if (json['education'] != null) {
-      education = <Education>[];
+      education = <String>[];
       json['education'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          education!.add(new Education.fromJson(v));
+        if (v is String) {
+          education!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          education!.add(v['name']);
         }
       });
     }

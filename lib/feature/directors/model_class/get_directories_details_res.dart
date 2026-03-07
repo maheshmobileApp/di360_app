@@ -1,4 +1,3 @@
-import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 
 class GetDirectoryDetailsRes {
@@ -37,10 +36,10 @@ class DirectoriesByPk {
   String? companyName;
   dynamic profession;
   String? type;
-  List<WorkingAt>? workingAt;
-  List<Education>? education;
-  List<UniversitySchool>? universitySchool;
-  List<Hobbies>? hobbies;
+  List<String>? workingAt;
+  List<String>? education;
+  List<String>? universitySchool;
+  List<String>? hobbies;
   String? professionType;
   dynamic designation;
   String? phoneVisibility;
@@ -118,35 +117,44 @@ class DirectoriesByPk {
     abnAcn = json['abn_acn'];
     companyName = json['company_name'];
     profession = json['profession'];
-    type = json['type'];if (json['working_at'] != null) {
-      workingAt = <WorkingAt>[];
+    type = json['type'];
+    if (json['working_at'] != null) {
+      workingAt = <String>[];
       json['working_at'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          workingAt!.add(new WorkingAt.fromJson(v));
+        if (v is String) {
+          workingAt!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          workingAt!.add(v['name']);
         }
       });
     }
     if (json['education'] != null) {
-      education = <Education>[];
+      education = <String>[];
       json['education'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          education!.add(new Education.fromJson(v));
+        if (v is String) {
+          education!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          education!.add(v['name']);
         }
       });
     }
     if (json['university_school'] != null) {
-      universitySchool = <UniversitySchool>[];
+      universitySchool = <String>[];
       json['university_school'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          universitySchool!.add(new UniversitySchool.fromJson(v));
+        if (v is String) {
+          universitySchool!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          universitySchool!.add(v['name']);
         }
       });
     }
     if (json['hobbies'] != null) {
-      hobbies = <Hobbies>[];
+      hobbies = <String>[];
       json['hobbies'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          hobbies!.add(new Hobbies.fromJson(v));
+        if (v is String) {
+          hobbies!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          hobbies!.add(v['name']);
         }
       });
     }
@@ -1036,7 +1044,7 @@ class MsgPicImage {
     extension = json['extension'];
     mimeType = json['mime_type'];
   }
-  
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
@@ -1094,7 +1102,8 @@ class DirectoryPartners {
   DirectoryPartners.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     description = json['description'];
-    image = json['image'] != null ? new PartnerImage.fromJson(json['image']) : null;
+    image =
+        json['image'] != null ? new PartnerImage.fromJson(json['image']) : null;
     if (json['attachments'] != null) {
       attachments = <PostImage>[];
       json['attachments'].forEach((v) {
