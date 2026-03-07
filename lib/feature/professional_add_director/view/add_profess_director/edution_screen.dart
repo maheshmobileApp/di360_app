@@ -71,7 +71,7 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
                     (index) {
                   final work = professDirectorVM.getWorkingAt[index];
                   return Chip(
-                      label: Text(work.name ?? ''),
+                      label: Text(work),
                       deleteIcon: Icon(Icons.close),
                       onDeleted: () {
                         professDirectorVM.removeWorkAt(index);

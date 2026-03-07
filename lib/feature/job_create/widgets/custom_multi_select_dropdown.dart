@@ -48,6 +48,7 @@ class _CustomMultiSelectDropDownState<T>
   }
 
   void _toggleDropdown() {
+    _selected = List<T>.from(widget.selectedItems);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -60,7 +61,7 @@ class _CustomMultiSelectDropDownState<T>
                 style: TextStyles.bold3(color: AppColors.black),
               ),
               content: SizedBox(
-                width: double.infinity,
+                width: double.maxFinite,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -93,7 +94,9 @@ class _CustomMultiSelectDropDownState<T>
                         ],
                       ),
                       Divider(color: AppColors.black,),
-                    Flexible(
+                    SizedBox(
+                      height: 300,
+                      width: double.maxFinite,
                       child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: widget.items.length,
