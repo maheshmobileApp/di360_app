@@ -202,7 +202,7 @@ class ProfessBasicInfo extends StatelessWidget
                     List.generate(professDirectorVM.getHobbies.length, (index) {
                   final hobby = professDirectorVM.getHobbies[index];
                   return Chip(
-                    label: Text(hobby.name ?? ''),
+                    label: Text(hobby),
                     deleteIcon: Icon(Icons.close),
                     onDeleted: () {
                       professDirectorVM.removeHobby(index);
@@ -232,7 +232,7 @@ class ProfessBasicInfo extends StatelessWidget
                     (index) {
                   final university = professDirectorVM.getUniversitys[index];
                   return Chip(
-                    label: Text(university.name ?? ''),
+                    label: Text(university),
                     deleteIcon: Icon(Icons.close),
                     onDeleted: () {
                       professDirectorVM.removeUniversities(index);

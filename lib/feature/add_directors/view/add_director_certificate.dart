@@ -128,7 +128,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             title: 'Attachment',
             isRequired: true,
             imageFile: addDirectorVM.certificateFile,
-            onTap: () {
+            onTap: () async {
               imagePickerSelection(
                 context,
                 () => addDirectorVM
@@ -139,6 +139,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
               setState(() {
                 fileName = null;
               });
+              FocusScope.of(context).unfocus();
             },
             hintText: fileName ?? 'JPEG, PNG up to 5 MB',
           ),

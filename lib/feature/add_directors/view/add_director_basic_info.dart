@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
@@ -8,9 +9,11 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
+import 'package:di360_flutter/widgets/address_auto_fill_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
+import 'package:di360_flutter/widgets/privacy_visiablity_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +59,18 @@ class AddDirectorBasicInfo extends StatelessWidget
             hintText: 'Enter emailId',
             isRequired: true,
             controller: addDirectorVM.emailController,
+            suffixIcon: InkWell(
+                onTap: () async {
+                  await showDialog<String>(
+                      context: context,
+                      builder: (context) => EmailVisibilityDialog(
+                          title: 'Email Visibility',
+                          selectedOption: addDirectorVM.emailVisibility,
+                          onSave: (displayName, enumValue) {
+                            addDirectorVM.setEmailVisibility(displayName);
+                          }));
+                },
+                child: Icon(Icons.lock)),
           ),
           addVertical(20),
           InputTextField(
@@ -70,12 +85,33 @@ class AddDirectorBasicInfo extends StatelessWidget
           ),
           addVertical(20),
           InputTextField(
-              hintText: "Enter Phone Number",
-              title: " Phone Number ",
-              controller: addDirectorVM.MobileNumberController,
-              isRequired: true,
-              keyboardType: TextInputType.number,
-              validator: validateEmptyPhoneNumber),
+            title: "Phone Number",
+            isRequired: true,
+            hintText: "Enter phone number",
+            keyboardType: TextInputType.phone,
+            maxLength: 9,
+            controller: addDirectorVM.MobileNumberController,
+            validator: validateContactPhoneNumber,
+            prefixIcon: PhonePrefixDropdown(
+              value: addDirectorVM.selectedPhoneCode ?? "",
+              items: ConstantData.phoneCodeList,
+              onChanged: (value) {
+                addDirectorVM.setPhoneCode(value ?? "");
+              },
+            ),
+            suffixIcon: InkWell(
+                onTap: () async {
+                  await showDialog<String>(
+                      context: context,
+                      builder: (context) => EmailVisibilityDialog(
+                          title: 'Phone Visibility',
+                          selectedOption: addDirectorVM.phoneVisibility,
+                          onSave: (displayName, enumValue) {
+                            addDirectorVM.setPhoneVisibility(displayName);
+                          }));
+                },
+                child: Icon(Icons.lock)),
+          ),
           addVertical(20),
           InputTextField(
             hintText: "Enter Alternate Phone Number",
@@ -84,59 +120,26 @@ class AddDirectorBasicInfo extends StatelessWidget
             controller: addDirectorVM.alternateNumberController,
           ),
           addVertical(20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text('Address', style: TextStyles.regular3(color: AppColors.black)),
-                  Text(' *', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              SizedBox(height: 10),
-              GooglePlaceAutoCompleteTextField(
-                textEditingController: addDirectorVM.addressController,
-                googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
-                inputDecoration: InputDecoration(
-                  hintText: "Search Address",
-                  hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 10),
-                ),
-                debounceTime: 800,
-                isLatLngRequired: true,
-                getPlaceDetailWithLatLng: (Prediction prediction) {
-                  addDirectorVM.latitude = prediction.lat != null ? double.parse(prediction.lat!) : null;
-                  addDirectorVM.longitude = prediction.lng != null ? double.parse(prediction.lng!) : null;
-                },
-                itemClick: (Prediction prediction) {
-                  addDirectorVM.addressController.text = prediction.description ?? '';
-                },
-                itemBuilder: (context, index, Prediction prediction) {
-                  return Container(
-                    color: AppColors.whiteColor,
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Icon(Icons.location_on),
-                        SizedBox(width: 7),
-                        Expanded(child: Text(prediction.description ?? ""))
-                      ],
-                    ),
-                  );
-                },
-                isCrossBtnShown: true,
-                containerHorizontalPadding: 10
-              ),
-            ],
-          ),
+          AddressAutoFillWidget(
+              textEditingController: addDirectorVM.addressController,
+              getPlaceDetailWithLatLng: (Prediction prediction) {
+                addDirectorVM.latitude = prediction.lat != null
+                    ? double.parse(prediction.lat!)
+                    : null;
+                addDirectorVM.longitude = prediction.lng != null
+                    ? double.parse(prediction.lng!)
+                    : null;
+              },
+              itemClick: (Prediction prediction) {
+                addDirectorVM.addressController.text =
+                    prediction.description ?? '';
+              }),
           addVertical(20),
           sectionHeader("Logo & Banner"),
           addVertical(20),
           LogoContainer(
             title: "Logo",
+            isRequired: true,
             imageFile: addDirectorVM.logoFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
@@ -150,6 +153,7 @@ class AddDirectorBasicInfo extends StatelessWidget
           addVertical(20),
           LogoContainer(
             title: "Banner",
+            isRequired: true,
             imageFile: addDirectorVM.bannerFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? ''
@@ -162,12 +166,13 @@ class AddDirectorBasicInfo extends StatelessWidget
           ),
           addVertical(20),
           InputTextField(
-            hintText: "Enter your text here",
-            maxLength: 500,
-            maxLines: 5,
-            title: "Description",
-            controller: addDirectorVM.descController,
-          ),
+              hintText: "Enter your text here",
+              maxLength: 500,
+              maxLines: 5,
+              isRequired: true,
+              title: "Description",
+              controller: addDirectorVM.descController,
+              validator: validateDesc),
         ],
       ),
     ));

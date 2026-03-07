@@ -95,4 +95,6 @@ class ConstantData {
     {"name": "Dental Business Owner", "type": "SUPPLIER"},
     {"name": "Dental Practice Owner", "type": "PRACTICE"}
   ];
+
+  static List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
 }

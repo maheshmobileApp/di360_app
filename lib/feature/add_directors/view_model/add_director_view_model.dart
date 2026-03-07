@@ -10,9 +10,11 @@ import 'package:di360_flutter/feature/add_directors/repository/add_director_repo
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
@@ -163,6 +165,30 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     _selectedDaysList.clear();
   }
 
+  String? _emailVisibility;
+
+  String? get emailVisibility => _emailVisibility;
+
+  void setEmailVisibility(String? value) {
+    _emailVisibility = value;
+    notifyListeners();
+  }
+
+  String? _phoneVisibility;
+
+  String? get phoneVisibility => _phoneVisibility;
+
+  void setPhoneVisibility(String? value) {
+    _phoneVisibility = value;
+    notifyListeners();
+  }
+
+  String? selectedPhoneCode = "AU (+61)";
+  void setPhoneCode(String value) {
+    selectedPhoneCode = value;
+    notifyListeners();
+  }
+
   // Toggles
   bool serviceShowApmt = false;
   bool isEditService = false;
@@ -288,16 +314,33 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void assignBasicInfoData(BuildContext context) {
+  void assignBasicInfoData(BuildContext context) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final professVM = context.read<ProfessionalAddDirectorVm>();
-    professVM.assignTheProfessBasic(context);
-    if (getBasicInfoData.isEmpty) return;
+    if (type == UserRole.professional.value)
+      professVM.assignTheProfessBasic(context);
+    if (getBasicInfoData.isEmpty) {
+      type == UserRole.supplier.value
+          ? assignSupplierViewProfileData(context)
+          : assignPracticeViewProfileData(context);
+      return;
+    }
     final basic = getBasicInfoData.first;
     CompanyNameController.text = basic.companyName ?? '';
     nameController.text = basic.name ?? '';
     emailController.text = basic.email ?? '';
     ABNNumberController.text = basic.abnAcn ?? '';
-    MobileNumberController.text = basic.phone ?? '';
+    final phone = basic.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      MobileNumberController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
     alternateNumberController.text = basic.altPhone ?? '';
     addressController.text = basic.address ?? '';
     final allCategories = directoryBusinessTypes
@@ -313,6 +356,80 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     final document = parse(basic.description ?? '');
     final String parsedString = document.body?.text ?? "";
     descController.text = parsedString;
+    setEmailVisibility(
+        VisibilityType.fromEnumName(basic.emailVisibility)?.displayName);
+    setPhoneVisibility(
+        VisibilityType.fromEnumName(basic.phoneVisibility)?.displayName);
+    notifyListeners();
+  }
+
+  assignSupplierViewProfileData(BuildContext context) async {
+    final viewProfileVM = context.read<ViewProfileViewModel>();
+    await viewProfileVM.getTheViewProfileData();
+    final data = viewProfileVM.supplierViewProfileData;
+
+    final phone = data?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      MobileNumberController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.name == data?.professionType,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      setSelectedBusineestype(businessType);
+    }
+    CompanyNameController.text = data?.businessName ?? '';
+    nameController.text = data?.name ?? '';
+    emailController.text = data?.email ?? '';
+    ABNNumberController.text = data?.abnNumber ?? '';
+    alternateNumberController.text = data?.altPhone ?? '';
+    addressController.text = data?.address ?? '';
+    notifyListeners();
+  }
+
+  assignPracticeViewProfileData(BuildContext context) async {
+    final viewProfileVM = context.read<ViewProfileViewModel>();
+    await viewProfileVM.getTheViewProfileData();
+    final data = viewProfileVM.practiceViewProfileData;
+
+    final phone = data?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      MobileNumberController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      MobileNumberController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    final allCategories = directoryBusinessTypes
+        .expand((bt) => bt.directoryCategories ?? [])
+        .toList();
+    final businessType = allCategories.firstWhere(
+      (cat) => cat.name == data?.professionType,
+      orElse: () => null,
+    );
+    if (businessType != null) {
+      setSelectedBusineestype(businessType);
+    }
+    CompanyNameController.text = data?.businessName ?? '';
+    nameController.text = data?.name ?? '';
+    emailController.text = data?.email ?? '';
+    ABNNumberController.text = data?.abnNumber ?? '';
+    alternateNumberController.text = data?.altPhone ?? '';
+    addressController.text = data?.address ?? '';
     notifyListeners();
   }
 
@@ -404,6 +521,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     var logo = logoFile?.path != null && logoFile!.path.isNotEmpty
         ? await addDirectorRepositoryImpl.http.uploadImage(logoFile!.path)
         : null;
@@ -422,7 +540,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": banner,
         "logo": logo,
         "email": emailController.text,
-        "phone": MobileNumberController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
         "emergency_phone": null,
@@ -430,7 +548,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "longitude": longitude,
         "pincode": null,
         "name": nameController.text,
-        "profession_type": selectedBusineestype?.name
+        "profession_type": selectedBusineestype?.name,
+        "phone_visibility":
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
+        "email_visibility":
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
       }
     });
     if (res != null) {
@@ -438,6 +560,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       Loaders.circularHideLoader(context);
       await LocalStorage.setBoolValue(
           LocalStorageConst.directoryComplete, true);
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.firstNavigationDirectory, true);
       scaffoldMessenger('BasicInfo added successfully');
     } else {
       Loaders.circularHideLoader(context);
@@ -447,7 +571,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> updateBasicInfo(BuildContext context) async {
     Loaders.circularShowLoader(context);
-
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     var logo = logoFile == null
         ? null
         : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
@@ -471,8 +595,12 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "latitude": getBasicInfoData.first.latitude,
         "longitude": getBasicInfoData.first.longitude,
         "pincode": '',
-        "phone": MobileNumberController.text,
-        "email": emailController.text
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "email": emailController.text,
+        "phone_visibility":
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
+        "email_visibility":
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
       }
     });
     if (res != null) {

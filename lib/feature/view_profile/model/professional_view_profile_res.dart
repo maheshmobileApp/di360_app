@@ -4,7 +4,9 @@ class ProfessionalViewProfileRes {
   ProfessionalViewProfileRes({this.data});
 
   ProfessionalViewProfileRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new ProfessionalData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new ProfessionalData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -130,7 +132,9 @@ class DentalProfessionalsByPk {
         : null;
     gender = json['gender'];
     type = json['type'];
-    address = json['address'];
+    if (json['address'] is String) {
+      address = json['address'];
+    }
     city = json['city'];
     zipcode = json['zipcode'];
     state = json['state'];

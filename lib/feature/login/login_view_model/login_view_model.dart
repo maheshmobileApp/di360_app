@@ -123,6 +123,8 @@ class LoginViewModel extends ChangeNotifier {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     await context.read<ViewProfileViewModel>().getBusinessTypes();
     await context.read<ViewProfileViewModel>().getTheViewProfileData();
+    await LocalStorage.setBoolValue(
+        LocalStorageConst.firstNavigationDirectory, true);
     Loaders.circularHideLoader(context);
     type == UserRole.professional.value
         ? await navigationService
@@ -133,6 +135,8 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> directoryHandling(BuildContext context) async {
     final res = await repo.getDirectory();
     if (res['directories'] == null || (res['directories'] as List).isEmpty) {
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.firstNavigationDirectory, true);
       await context.read<AddDirectoryViewModel>().fetchTheDirectorData(context);
     } else {
       await LocalStorage.setBoolValue(

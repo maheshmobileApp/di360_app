@@ -186,8 +186,10 @@ class SignupViewModel extends ChangeNotifier {
           res['insert_clients_one'].isNotEmpty) {
         SignUpData.fromJson(res);
         selectedType?['type'] == UserRole.supplier.value
-            ? alertPopup(context,
-                'Business Owner receives verification link without Admin approval')
+            ? supplierUserAlertPopup(context, onBack: () {
+                navigationService.pushNamedAndRemoveUntil(RouteList.login);
+                clearSignupData();
+              })
             : showSignupSuccessDialog(context, emailController.text, () {
                 navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 clearSignupData();

@@ -7,6 +7,13 @@ query supplierDisplay($id: uuid!) {
     logo
     phone
     address
+    city
+    zipcode
+    state
+    country
+    land_mark
+    address_line_one
+    address_line_two
     pro_details_aphra_registration_number
     bank_details
     business_name
@@ -25,6 +32,16 @@ query supplierDisplay($id: uuid!) {
     last_name
     type
     secondary_contact
+    directories {
+      id
+      name
+      email
+      phone
+      profile_image
+      address
+      profession_type
+      __typename
+    }
     __typename
   }
 }

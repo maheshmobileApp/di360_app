@@ -48,10 +48,10 @@ class GetDirectories {
   String? phoneVisibility;
   String? emailVisibility;
   ProfileImage? profileImage;
-  List<WorkingAt>? workingAt;
+  List<String>? workingAt;
   List<Education>? education;
-  List<UniversitySchool>? universitySchool;
-  List<Hobbies>? hobbies;
+  List<String>? universitySchool;
+  List<String>? hobbies;
   List<DirectoryDocuments>? directoryDocuments;
   List<DirectoryLocations>? directoryLocations;
   List<DirectoryServices>? directoryServices;
@@ -118,10 +118,12 @@ class GetDirectories {
     professionType = json['profession_type'];
     directoryCategoryId = json['directory_category_id'];
     if (json['working_at'] != null) {
-      workingAt = <WorkingAt>[];
+      workingAt = <String>[];
       json['working_at'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          workingAt!.add(new WorkingAt.fromJson(v));
+        if (v is String) {
+          workingAt!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          workingAt!.add(v['name']);
         }
       });
     }
@@ -134,18 +136,22 @@ class GetDirectories {
       });
     }
     if (json['university_school'] != null) {
-      universitySchool = <UniversitySchool>[];
+      universitySchool = <String>[];
       json['university_school'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          universitySchool!.add(new UniversitySchool.fromJson(v));
+        if (v is String) {
+          universitySchool!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          universitySchool!.add(v['name']);
         }
       });
     }
     if (json['hobbies'] != null) {
-      hobbies = <Hobbies>[];
+      hobbies = <String>[];
       json['hobbies'].forEach((v) {
-        if (v is Map<String, dynamic>) {
-          hobbies!.add(new Hobbies.fromJson(v));
+        if (v is String) {
+          hobbies!.add(v);
+        } else if (v is Map<String, dynamic> && v['name'] != null) {
+          hobbies!.add(v['name']);
         }
       });
     }

@@ -39,6 +39,8 @@ class DashBoardViewModel extends ChangeNotifier {
 
   Future<void> _initializePages() async {
     _userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    await LocalStorage.setBoolValue(
+          LocalStorageConst.firstNavigationDirectory, false);
     _setupPages();
     _isInitialized = true;
     notifyListeners();

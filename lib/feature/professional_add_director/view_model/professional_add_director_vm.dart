@@ -33,10 +33,10 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   double? latitude;
   double? longitude;
 
-  List<Hobbies> getHobbies = [];
-  List<UniversitySchool> getUniversitys = [];
+  List<String> getHobbies = [];
+  List<String> getUniversitys = [];
   List<Education> getEducation = [];
-  List<WorkingAt> getWorkingAt = [];
+  List<String> getWorkingAt = [];
 
 // Navigation
   final PageController pageController = PageController();
@@ -126,7 +126,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addHobby(String value) {
     if (value.isNotEmpty) {
-      getHobbies.add(Hobbies(name: value));
+      getHobbies.add(value);
       hobbiesCntr.clear();
       notifyListeners();
     }
@@ -139,7 +139,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addUniversities(String value) {
     if (value.isNotEmpty) {
-      getUniversitys.add(UniversitySchool(name: value));
+      getUniversitys.add(value);
       universitiesCntr.clear();
     }
     notifyListeners();
@@ -165,7 +165,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addWorkAt(String value) {
     if (value.isNotEmpty) {
-      getWorkingAt.add(WorkingAt(name: value));
+      getWorkingAt.add(value);
       workAtCntr.clear();
     }
     notifyListeners();
@@ -227,14 +227,16 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "pincode": "",
         "dental_professional_id": userId,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PUBLIC',
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PUBLIC'
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
       }
     });
     if (result != null) {
       await LocalStorage.setBoolValue(
           LocalStorageConst.directoryComplete, true);
+      await LocalStorage.setBoolValue(
+          LocalStorageConst.firstNavigationDirectory, true);
       Loaders.circularHideLoader(context);
       addDirectorVM.getDirectories();
       goToNextStep();
@@ -280,9 +282,9 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "special_interests": [],
         "type": UserRole.professional.value,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PUBLIC',
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PUBLIC'
+            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
       }
     });
     if (result != null) {

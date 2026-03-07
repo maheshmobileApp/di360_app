@@ -528,8 +528,8 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> addAppointment(BuildContext context) async {
-    Loaders.circularShowLoader(context);
     final addDirectorVM = context.read<AddDirectoryViewModel>();
+    Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.addAppointment({
       "apptData": {
         "directory_id": addDirectorVM.getBasicInfoData.first.id,
@@ -541,13 +541,13 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
         "weekdays": addDirectorVM.selectedDaysList
       }
     });
-    if (res != null) {
-      getAppointments(context);
+    if (res != null && context.mounted) {
+      await getAppointments(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Appointment added successfully');
-      clearAppointmentFields(context);
+      clearAppointmentFields(addDirectorVM);
     } else {
-      Loaders.circularHideLoader(context);
+      if (context.mounted) Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -565,8 +565,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  clearAppointmentFields(BuildContext context) {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
+  clearAppointmentFields(AddDirectoryViewModel addDirectorVM) {
     addDirectorVM.serviceTimemInCntr.clear();
     addDirectorVM.selectedAccount = null;
     addDirectorVM.clearDaysList();
@@ -611,9 +610,9 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   }
 
   Future<void> addPartners(BuildContext context) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
 
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
     var img = await addDirectorRepositoryImpl.http
         .uploadImage(addDirectorVM.partnerImgFile?.path);
     for (var element in selectedFiles) {
@@ -635,7 +634,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       }
     });
     if (res != null) {
-      getPartnersData(context);
+      await getPartnersData(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Partners added successfully');
     } else {
@@ -679,8 +678,8 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       },
       "id": id
     });
-    if (res != null) {
-      getPartnersData(context);
+    if (res != null && context.mounted) {
+      await getPartnersData(context);
       scaffoldMessenger('Updated partner successfully');
       updateIsEditPartner(false);
       addDirectorVM.partnerNameCntr.clear();
@@ -697,7 +696,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deletePartner({"id": id});
     if (res != null) {
-      getPartnersData(context);
+      await getPartnersData(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Partner deleted successfully');
     } else {

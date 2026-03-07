@@ -27,26 +27,56 @@ alertPopup(BuildContext context, String message, {Function()? onBack}) {
       });
 }
 
-viewProfileAlertPopup(BuildContext context) {
+supplierUserAlertPopup(BuildContext context, {Function()? onBack}) {
+  return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+            title: Column(children: [
+              Icon(Icons.check_circle, color: AppColors.primaryColor, size: 60),
+              SizedBox(height: 10),
+              Text('Thank you for your interest!',
+                  style: TextStyles.bold3(color: AppColors.black)),
+              SizedBox(height: 10),
+              Text('Our team will be in touch with you shortly.',
+                  textAlign: TextAlign.center,
+                  style: TextStyles.medium2(color: AppColors.lightGeryColor))
+            ]),
+            actions: [
+              TextButton(
+                  onPressed: onBack ??
+                      () async {
+                        navigationService.goBack();
+                      },
+                  child: Text("Done", style: TextStyles.medium4())),
+            ]);
+      });
+}
+
+viewProfileAlertPopup(BuildContext context, {String? title, String? subTitle}) {
   return showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
             title: Column(
               children: [
-                Text('Welcome! Your Profile Is Incomplete',
+                Text(title ?? 'Welcome! Your Profile Is Incomplete',
                     style: TextStyles.bold4(color: AppColors.primaryColor)),
                 SizedBox(height: 18),
                 Text(
-                    'To get the best experience, please update the required information to proceed.',
+                    subTitle ??
+                        'To get the best experience, please update the required information to proceed.',
                     style: TextStyles.medium2(color: AppColors.black)),
                 SizedBox(height: 12),
               ],
             ),
             actions: [
               AppButton(
-                width: 140,height: 44,
-                  text: 'Continue', onTap: () => navigationService.goBack()),
+                  width: 140,
+                  height: 44,
+                  text: 'Continue',
+                  onTap: () => navigationService.goBack()),
             ]);
       });
 }

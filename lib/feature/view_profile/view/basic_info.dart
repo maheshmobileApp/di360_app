@@ -1,18 +1,21 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
-import 'package:di360_flutter/widgets/country_code_number_feild.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class BasicInfo extends StatelessWidget with BaseContextHelpers {
+class BasicInfo extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   @override
   Widget build(BuildContext context) {
     final viewProfileVM = context.read<ViewProfileViewModel>();
@@ -37,34 +40,49 @@ class BasicInfo extends StatelessWidget with BaseContextHelpers {
                 controller: viewProfileVM.businessNameController,
                 hintText: "Business Name",
                 isRequired: true,
-                title: "Business Name"),
+                title: "Business Name",
+                validator: validateBusinessName),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.nameController,
                 hintText: "Name",
                 isRequired: true,
-                title: "Contact Name"),
+                title: "Contact Name",
+                validator: validateName),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.abnNUmberController,
                 hintText: "ABN / ACN Number",
                 isRequired: true,
-                title: "ABN / ACN Number"),
+                title: "ABN / ACN Number",
+                validator: validateABNNumber),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.emailController,
                 hintText: "Email",
                 readOnly: true,
-                title: "Email"),
+                isRequired: true,
+                title: "Email",
+                validator: validateEmail),
             addVertical(10),
             _buildBusineestype(viewProfileVM),
             addVertical(10),
-            CountryCodeNumberFeild(
-              value: viewProfileVM.countryCode,
-              onChanged: (v) => viewProfileVM.setCountry(v!),
-              textController: viewProfileVM.phoneNoController,
-              textFeildChanged: (value) => viewProfileVM.setNumber(value),
-            ),
+            InputTextField(
+              title: "Phone Number",
+              isRequired: true,
+              hintText: "Enter phone number",
+              keyboardType: TextInputType.phone,
+              maxLength: 9,
+              controller: viewProfileVM.phoneNoController,
+              validator: validateContactPhoneNumber,
+              prefixIcon: PhonePrefixDropdown(
+                value: viewProfileVM.selectedPhoneCode ?? '',
+                items: ConstantData.phoneCodeList,
+                onChanged: (value) {
+                  viewProfileVM.setPhoneCode(value ?? "");
+                },
+              ),
+            )
           ],
         ));
   }
@@ -76,7 +94,7 @@ class BasicInfo extends StatelessWidget with BaseContextHelpers {
 
     return CustomDropDown(
       value: viewVM.selectedBusineestype,
-      title: "Profession Type",
+      title: "Business Type",
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
       items: allCategories.map((cat) {
