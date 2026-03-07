@@ -126,43 +126,52 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   void addTeamMemberList(String teamMember) {
     if (!_selectedTeamMemberList.contains(teamMember)) {
       _selectedTeamMemberList.add(teamMember);
+      notifyListeners();
     }
   }
 
   void removeTeamMemberList(String teamMember) {
     _selectedTeamMemberList.remove(teamMember);
+    notifyListeners();
   }
 
   void clearTeamMemberList() {
     _selectedTeamMemberList.clear();
+    notifyListeners();
   }
 
   void addServicesList(String services) {
     if (!_selectedServiceList.contains(services)) {
       _selectedServiceList.add(services);
+      notifyListeners();
     }
   }
 
   void removeServicesList(String services) {
     _selectedServiceList.remove(services);
+    notifyListeners();
   }
 
   void clearServicesList() {
     _selectedServiceList.clear();
+    notifyListeners();
   }
 
   void addDaysList(String days) {
     if (!_selectedDaysList.contains(days)) {
       _selectedDaysList.add(days);
+      notifyListeners();
     }
   }
 
   void removeDaysList(String days) {
     _selectedDaysList.remove(days);
+    notifyListeners();
   }
 
   void clearDaysList() {
     _selectedDaysList.clear();
+    notifyListeners();
   }
 
   String? _emailVisibility;
@@ -269,7 +278,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         _currentStep = 0;
         getBasicInfoData = res;
         await context.read<DirectoryViewModel>().getFollowersCount(userId);
-        await editVM.getAppointments(context);
+        await editVM.getAppointments(this);
         Loaders.circularHideLoader(context);
         type == UserRole.professional.value
             ? getBasicInfoData.isNotEmpty
@@ -786,6 +795,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
+       getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Business time added successfully');
     } else {
@@ -831,7 +841,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
-      getDirectories();
+      await getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Faqs added successfully');
     } else {

@@ -22,11 +22,7 @@ class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _viewModel?.clearTeamMemberList();
-      _viewModel?.clearServicesList();
-      _viewModel?.clearDaysList();
-    });
+    // Don't clear lists in initState - let the parent manage state
   }
 
   @override
@@ -111,17 +107,9 @@ class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
                       itemLabel: (item) => item,
                       hintText: "Select ",
                       onSelectionChanged: (selected) {
-                        final current =
-                            List<String>.from(addDirectorVM.selectedDaysList);
-                        for (final emp in current) {
-                          if (!selected.contains(emp)) {
-                            addDirectorVM.removeDaysList(emp);
-                          }
-                        }
-                        for (final emp in selected) {
-                          if (!current.contains(emp)) {
-                            addDirectorVM.addDaysList(emp);
-                          }
+                        addDirectorVM.clearDaysList();
+                        for (final item in selected) {
+                          addDirectorVM.addDaysList(item);
                         }
                       },
                     ),

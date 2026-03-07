@@ -7,6 +7,13 @@ query practiceDisplay($id: uuid!) {
     logo
     phone
     address
+    city
+    zipcode
+    state
+    country
+    land_mark
+    address_line_one
+    address_line_two
     pro_details_aphra_registration_number
     bank_details
     business_name
