@@ -399,7 +399,7 @@ Qa
 flutter pub get && flutter run --dart-define-from-file=.env/dev.json
 
 flutter run --dart-define-from-file=.env/prod.json
-
+flutter run --dart-define-from-file=.env/dev.json
 
 
   # For iOS Build 
@@ -419,17 +419,9 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
-1. DS5-T2054 
-2. DS5-T1569 
-3. DS5-T1605 
-4. DS5-T1631 
-5. DS5-T1582 
-6. DS5-T1586 
-7. DS5-T1602 
-8. DS5-T1636 
-9. DS5-T1609 
-10. DS5-T1612 
-11. DS5-T2059 
+1. Fixed the bugs and implemented the dental professional sign up
+2. Fixed the bugs and implemented the dental suppliers sign up
+3. Fixed the bugs and implemented the dental practice owner sign up
 "
   
 
