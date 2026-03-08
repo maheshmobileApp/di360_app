@@ -163,7 +163,7 @@ class SignupViewModel extends ChangeNotifier {
           "status": selectedType?['type'] == UserRole.supplier.value
               ? "PENDING"
               : "VERIFICATION_PENDING",
-          "subscription_plan_id": selectedPlanId,
+          "subscription_plan_id": selectedPlanId,//Null passing from mobile app 
           "professionType": selectedCategory?.name,
           "tracking_details": "Mobile"
         }

@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_menu_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
+import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -37,11 +38,13 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
+    final commentViewModel = Provider.of<CommentViewModel>(context);
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
     return Container(
         color: AppColors.whiteColor,
         child: GestureDetector(
-          onTap: () {
+          onTap: () async {
+            await commentViewModel.getComments(context, newsfeeds?.id ?? "");
             navigationService.push(CommentScreen(newsfeeds: newsfeeds));
           },
           child:
@@ -64,14 +67,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                 ''
                             : '',
                 newsfeeds?.dentalSupplier != null
-                    ? (newsfeeds?.dentalSupplier?.directories?.isNotEmpty ==
-                            true
-                        ? newsfeeds?.dentalSupplier?.directories?.first
-                                .companyName ??
-                            ''
-                        : '')
+                    ? newsfeeds?.dentalSupplier?.businessName ?? ''
                     : newsfeeds?.dentalPractice != null
-                        ? newsfeeds?.dentalPractice?.name ?? ''
+                        ? newsfeeds?.dentalPractice?.businessName ?? ''
                         : newsfeeds?.dentalProfessional != null
                             ? newsfeeds?.dentalProfessional?.name ?? ''
                             : '',

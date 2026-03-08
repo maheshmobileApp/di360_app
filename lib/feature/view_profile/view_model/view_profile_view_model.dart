@@ -331,6 +331,13 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "business_name": businessNameController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
+        "address_line_one": addressLineOneController.text,
+        "address_line_two": addressLineTwoController.text,
+        "land_mark": landmarkController.text,
+        "city": cityController.text,
+        "state": stateController.text,
+        "country": countryController.text,
+        "zipcode": int.tryParse(zipCodeController.text),
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "middle_name": middleNameController.text,
@@ -392,7 +399,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final result = await repo.updateViewProfileData(requestData);
 
     final responseKey = type == UserRole.practice.value
-        ? 'update_dental_practices_by_pk'
+        ? 'update_dental_practices'
         : type == UserRole.professional.value
             ? 'update_dental_professionals_by_pk'
             : 'update_dental_suppliers';

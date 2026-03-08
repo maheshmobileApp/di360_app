@@ -18,7 +18,7 @@ class HobbiesEducationWorkatWidget extends StatelessWidget
             'HOBBIES',
             Column(
                 children: directionalVM.directorDetails?.hobbies
-                        ?.map((e) => Text(e.name ?? ''))
+                        ?.map((e) => Text(e))
                         .toList() ??
                     []))
       ],
@@ -28,7 +28,7 @@ class HobbiesEducationWorkatWidget extends StatelessWidget
             'EDUCATION',
             Column(
                 children: directionalVM.directorDetails?.education
-                        ?.map((e) => Text(e.name ?? ''))
+                        ?.map((e) => Text(e))
                         .toList() ??
                     []))
       ],
@@ -39,7 +39,7 @@ class HobbiesEducationWorkatWidget extends StatelessWidget
             'university'.toUpperCase(),
             Column(
                 children: directionalVM.directorDetails?.hobbies
-                        ?.map((e) => Text(e.name ?? ''))
+                        ?.map((e) => Text(e))
                         .toList() ??
                     []))
       ],
@@ -49,7 +49,7 @@ class HobbiesEducationWorkatWidget extends StatelessWidget
             'WORKING AT',
             Column(
                 children: directionalVM.directorDetails?.workingAt
-                        ?.map((e) => Text(e.name ?? ''))
+                        ?.map((e) => Text(e))
                         .toList() ??
                     []))
       ],

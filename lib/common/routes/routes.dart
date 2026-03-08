@@ -62,6 +62,7 @@ import 'package:di360_flutter/feature/campaign/view/campaign_listing_view.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
+import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/notifications/view/notification_screen.dart';
@@ -276,6 +277,7 @@ class Routes {
       
       RouteList.notificationScreen: (context) => NotificationScreen(),
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
+      //RouteList.commentScreen: (context) => CommentScreen(),
     };
   }
 }

@@ -43,24 +43,31 @@ class DentalPracticesByPk {
   Logo? logo;
   String? phone;
   String? address;
-  dynamic proDetailsAphraRegistrationNumber;
-  dynamic bankDetails;
+  String? city;
+  int? zipcode;
+  String? state;
+  String? country;
+  String? landMark;
+  String? addressLineOne;
+  String? addressLineTwo;
+  String? proDetailsAphraRegistrationNumber;
+  dynamic bankDetails;//null
   String? businessName;
   String? abnNumber;
-  dynamic businessEmail;
-  dynamic businessPhone;
+  String? businessEmail;
+  String? businessPhone;
   String? faxNumber;
   String? altEmail;
   String? altPhone;
   String? professionType;
-  dynamic tgaNumber;
+  String? tgaNumber;
   bool? secondHand;
   bool? sellProducts;
   String? firstName;
   String? middleName;
   String? lastName;
   String? type;
-  dynamic secondaryContact;
+  dynamic secondaryContact;//skip it
   String? sTypename;
 
   DentalPracticesByPk(
@@ -70,6 +77,13 @@ class DentalPracticesByPk {
       this.logo,
       this.phone,
       this.address,
+      this.city,
+      this.zipcode,
+      this.state,
+      this.country,
+      this.landMark,
+      this.addressLineOne,
+      this.addressLineTwo,
       this.proDetailsAphraRegistrationNumber,
       this.bankDetails,
       this.businessName,
@@ -97,6 +111,13 @@ class DentalPracticesByPk {
     logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
     phone = json['phone'];
     address = json['address'];
+    city = json['city'];
+    zipcode = json['zipcode'];
+    state = json['state'];
+    country = json['country'];
+    landMark = json['land_mark'];
+    addressLineOne = json['address_line_one'];
+    addressLineTwo = json['address_line_two'];
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
     bankDetails = json['bank_details'];

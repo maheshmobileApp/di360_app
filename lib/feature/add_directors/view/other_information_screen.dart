@@ -200,7 +200,7 @@ class OtherInformationScreen extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(children: [
-                    Text(data?.mediaName, style: TextStyles.medium2()),
+                    Text(data?.mediaName ?? '', style: TextStyles.medium2()),
                     Spacer(),
                     MenuWidget(onSelected: (v) {
                       if (v == 'Edit') {
@@ -211,7 +211,7 @@ class OtherInformationScreen extends StatelessWidget {
                                     mediaName.substring(1)
                                 : null;
                         addDirectVM.socialAccountsurlCntr.text =
-                            data?.mediaLink;
+                            data?.mediaLink ?? '';
                         editVM.updateIsEditSocialMed(true);
                         showBusinessTimingsBottomSheet(context, data?.id ?? '');
                       } else if (v == 'Delete') {

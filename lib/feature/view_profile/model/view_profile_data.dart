@@ -46,14 +46,14 @@ class DentalSuppliersByPk {
   String? phone;
   String? address;
   String? city;
-  dynamic zipcode;
+  int? zipcode;
   String? state;
   String? country;
   String? landMark;
   String? addressLineOne;
   String? addressLineTwo;
   String? proDetailsAphraRegistrationNumber;
-  BankDetails? bankDetails;
+  BankDetails? bankDetails;//skip that
   String? businessName;
   String? abnNumber;
   String? businessEmail;
@@ -69,7 +69,7 @@ class DentalSuppliersByPk {
   String? middleName;
   String? lastName;
   String? type;
-  SecondaryContact? secondaryContact;
+  SecondaryContact? secondaryContact;//no data backend remove that
 //  List<Null>? directories;
   String? sTypename;
 

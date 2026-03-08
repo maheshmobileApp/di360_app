@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_sheet.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/feed_details.dart';
+import 'package:di360_flutter/feature/news_feed_comment/view/new_comment_sheet.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -86,8 +87,8 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      widget.newsfeeds?.dentalSupplier?.name ??
-                          widget.newsfeeds?.dentalPractice?.name ??
+                      widget.newsfeeds?.dentalSupplier?.businessName ??
+                          widget.newsfeeds?.dentalPractice?.businessName ??
                           widget.newsfeeds?.dentalProfessional?.name ??
                           'Dental Interface',
                       style: TextStyles.clashMedium(
@@ -114,7 +115,7 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FeedDetails(newsfeeds: widget.newsfeeds),
-                    CommentBottomSheet(newsfeeds: widget.newsfeeds),
+                    NewCommentSheet(newsfeeds: widget.newsfeeds,),
                   ],
                 ),
               ),
@@ -176,7 +177,7 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                             viewModel.replyFocusNode.canRequestFocus = false;
                             if (viewModel.isReply) {
                               viewModel.replyCommentTheFeed(
-                                  context, newsfeeds?.id ?? '');
+                                  context, newsfeeds?.id ?? '', viewModel.commentId ?? '',);
                             } else if (viewModel.replyCommentUpdate) {
                               viewModel.updateTheReplyCommentTheFeed(
                                   context, newsfeeds?.id ?? '');

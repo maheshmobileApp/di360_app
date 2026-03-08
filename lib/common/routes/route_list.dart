@@ -2,7 +2,6 @@ class RouteList {
   RouteList._();
 
   static const String initial = splash;
-
   static const String splash = '/splash';
   static const String preLogin = '/preLogin';
   static const String login = '/login';
@@ -94,4 +93,5 @@ class RouteList {
   static const String contactFilterView = '/contactFilterView';
   static const String notificationScreen = '/notificationScreen';
   static const String talentsHireMeScreen = '/talentsHireMeScreen';
+  static const String commentScreen = '/commentScreen';
 }

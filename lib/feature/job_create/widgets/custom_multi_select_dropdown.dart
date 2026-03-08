@@ -44,7 +44,9 @@ class _CustomMultiSelectDropDownState<T>
   @override
   void didUpdateWidget(covariant CustomMultiSelectDropDown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _selected = List<T>.from(widget.selectedItems);
+    if (widget.selectedItems != oldWidget.selectedItems) {
+      _selected = List<T>.from(widget.selectedItems);
+    }
   }
 
   void _toggleDropdown() {
@@ -216,9 +218,9 @@ class _CustomMultiSelectDropDownState<T>
 
   @override
   Widget build(BuildContext context) {
-    final displayText = _selected.isEmpty
+    final displayText = widget.selectedItems.isEmpty
         ? widget.hintText
-        : _selected.map((e) => widget.itemLabel(e)).join(", ");
+        : widget.selectedItems.map((e) => widget.itemLabel(e)).join(", ");
     return InkWell(
       onTap: widget.readOnly ? null : _toggleDropdown,
       child: Container(
@@ -236,7 +238,7 @@ class _CustomMultiSelectDropDownState<T>
                 displayText,
                 style: TextStyles.regular3(
                   color:
-                      _selected.isEmpty ? AppColors.geryColor : AppColors.black,
+                      widget.selectedItems.isEmpty ? AppColors.geryColor : AppColors.black,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
