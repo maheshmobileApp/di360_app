@@ -473,7 +473,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       "id": id
     });
     if (res != null) {
-      addDirectorVM.getDirectories();
+      await addDirectorVM.getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated Timings successfully');
       updateIsEditTimings(false);
@@ -541,22 +541,23 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
         "weekdays": addDirectorVM.selectedDaysList
       }
     });
-    if (res != null && context.mounted) {
-      await getAppointments(context);
+    if (res['insert_directory_appointment_slots_one'] != null) {
+      await getAppointments(addDirectorVM);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Appointment added successfully');
       clearAppointmentFields(addDirectorVM);
     } else {
-      if (context.mounted) Loaders.circularHideLoader(context);
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
 
   Future<void> deleteAppointment(BuildContext context, String id) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     final res = await addDirectorRepositoryImpl.deleteAppointment({"id": id});
     if (res != null) {
-      getAppointments(context);
+      await getAppointments(addDirectorVM);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Appointment deleted successfully');
     } else {
@@ -574,23 +575,17 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getAppointments(BuildContext context) async {
-    final addDirectorVM = context.read<AddDirectoryViewModel>();
-    Loaders.circularShowLoader(context);
+  Future<void> getAppointments(AddDirectoryViewModel addDirectorVM) async {
     final res = await addDirectorRepositoryImpl
         .getAppts(addDirectorVM.getBasicInfoData.first.id ?? '');
     if (res != null) {
       await getPartnersData(addDirectorVM);
       appointmentsList = res;
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
 
   Future<void> getPartnersData(AddDirectoryViewModel addDirectorVM) async {
-    print("get partners calling");
     getCommunityDetails();
     final res = await addDirectorRepositoryImpl
         .getPartners(addDirectorVM.getBasicInfoData.first.id ?? '');
@@ -651,7 +646,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
   Future<void> updatePartner(
       BuildContext context, String id, dynamic img) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
-
+    Loaders.circularShowLoader(context);
     dynamic image;
     if (addDirectorVM.partnerImgFile != null) {
       image = await addDirectorRepositoryImpl.http
@@ -678,7 +673,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       },
       "id": id
     });
-    if (res != null && context.mounted) {
+    if (res != null) {
       await getPartnersData(addDirectorVM);
       scaffoldMessenger('Updated partner successfully');
       updateIsEditPartner(false);
@@ -689,6 +684,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
       existingImages.clear();
       uploadedFiles.clear();
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 

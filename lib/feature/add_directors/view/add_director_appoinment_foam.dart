@@ -10,14 +10,44 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddDirectorAppoinmentFoam extends StatelessWidget
+class AddDirectorAppoinmentFoam extends StatefulWidget {
+  @override
+  State<AddDirectorAppoinmentFoam> createState() => _AddDirectorAppoinmentFoamState();
+}
+
+class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
     with BaseContextHelpers {
+  AddDirectoryViewModel? _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    // Don't clear lists in initState - let the parent manage state
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _viewModel ??= context.read<AddDirectoryViewModel>();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
-    final teamMemberList =
-        addDirectorVM.getBasicInfoData.first.directoryTeamMembers;
-    final serviceList = addDirectorVM.getBasicInfoData.first.directoryServices;
+    final teamMemberList = addDirectorVM.getBasicInfoData.first.directoryTeamMembers
+        ?.where((e) => e.showInAppointments == true)
+        .toList() ?? [];
+    final serviceList = addDirectorVM.getBasicInfoData.first.directoryServices
+        ?.where((e) {
+          final show = e.showInAppointments;
+          return show == true || (show is String && show.toLowerCase() == 'yes');
+        })
+        .toList() ?? [];
     final daysList = ConstantData.DaysList.toSet().toList();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -37,44 +67,28 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
           addVertical(12),
           dropdownTitle('Select Team Member'),
           CustomMultiSelectDropDown<String>(
-            items: teamMemberList?.map((e) => e.name ?? '').toList() ?? [],
+            items: teamMemberList.map((e) => e.name ?? '').toList(),
             selectedItems: addDirectorVM.selectedTeamMemberList,
             itemLabel: (item) => item,
             hintText: "Select ",
             onSelectionChanged: (selected) {
-              final current =
-                  List<String>.from(addDirectorVM.selectedTeamMemberList);
-              for (final emp in current) {
-                if (!selected.contains(emp)) {
-                  addDirectorVM.removeTeamMemberList(emp);
-                }
-              }
-              for (final emp in selected) {
-                if (!current.contains(emp)) {
-                  addDirectorVM.addTeamMemberList(emp);
-                }
+              addDirectorVM.clearTeamMemberList();
+              for (final item in selected) {
+                addDirectorVM.addTeamMemberList(item);
               }
             },
           ),
           addVertical(12),
           dropdownTitle('Select Services'),
           CustomMultiSelectDropDown<String>(
-            items: serviceList?.map((e) => e.name ?? '').toList() ?? [],
+            items: serviceList.map((e) => e.name ?? '').toList(),
             selectedItems: addDirectorVM.selectedServiceList,
             itemLabel: (item) => item,
             hintText: "Select ",
             onSelectionChanged: (selected) {
-              final current =
-                  List<String>.from(addDirectorVM.selectedServiceList);
-              for (final emp in current) {
-                if (!selected.contains(emp)) {
-                  addDirectorVM.removeServicesList(emp);
-                }
-              }
-              for (final emp in selected) {
-                if (!current.contains(emp)) {
-                  addDirectorVM.addServicesList(emp);
-                }
+              addDirectorVM.clearServicesList();
+              for (final item in selected) {
+                addDirectorVM.addServicesList(item);
               }
             },
           ),
@@ -93,17 +107,9 @@ class AddDirectorAppoinmentFoam extends StatelessWidget
                       itemLabel: (item) => item,
                       hintText: "Select ",
                       onSelectionChanged: (selected) {
-                        final current =
-                            List<String>.from(addDirectorVM.selectedDaysList);
-                        for (final emp in current) {
-                          if (!selected.contains(emp)) {
-                            addDirectorVM.removeDaysList(emp);
-                          }
-                        }
-                        for (final emp in selected) {
-                          if (!current.contains(emp)) {
-                            addDirectorVM.addDaysList(emp);
-                          }
+                        addDirectorVM.clearDaysList();
+                        for (final item in selected) {
+                          addDirectorVM.addDaysList(item);
                         }
                       },
                     ),

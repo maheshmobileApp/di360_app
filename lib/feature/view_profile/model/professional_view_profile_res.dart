@@ -54,11 +54,11 @@ class DentalProfessionalsByPk {
   String? professionType;
   String? directoryCategoryId;
   String? proDetailsAphraRegistrationNumber;
-  BankDetails? bankDetails;
+  BankDetails? bankDetails; //Todo remove this in feature
   String? dateOfBirth;
   String? salutation;
-  dynamic drivingLicence;
-  ProfileImage? profileImage;
+  dynamic drivingLicence; // Todo 
+  ProfileImage? profileImage; // Todo 
   String? gender;
   String? type;
   String? address;
@@ -69,7 +69,7 @@ class DentalProfessionalsByPk {
   String? addressLineOne;
   String? addressLineTwo;
   String? landMark;
-  Clients? clients;
+  Clients? clients;// table name is clients
   List<Directories>? directories;
   String? sTypename;
 
@@ -303,7 +303,7 @@ class Directories {
   ProfileImage? profileImage;
   String? address;
   String? professionType;
-  String? sTypename;
+  String? sTypename;// not need can remove this
 
   Directories(
       {this.id,

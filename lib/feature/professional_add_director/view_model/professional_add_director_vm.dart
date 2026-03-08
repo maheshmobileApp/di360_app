@@ -1,7 +1,6 @@
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/repositorys/add_profess_director_repository_impl.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
@@ -35,7 +34,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   List<String> getHobbies = [];
   List<String> getUniversitys = [];
-  List<Education> getEducation = [];
+  List<String> getEducation = [];
   List<String> getWorkingAt = [];
 
 // Navigation
@@ -152,7 +151,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addEducation(String value) {
     if (value.isNotEmpty) {
-      getEducation.add(Education(name: value));
+      getEducation.add(value);
       educationCntr.clear();
     }
     notifyListeners();
