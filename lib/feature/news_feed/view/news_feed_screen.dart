@@ -114,7 +114,10 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                               newsfeeds: newsData, index: dataIndex);
                         },
                         bannerBuilder: (context, bannerPosition) {
-                          return ListBanner();
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListBanner(),
+                          );
                         }))
           ],
         ),

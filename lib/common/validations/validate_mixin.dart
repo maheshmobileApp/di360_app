@@ -143,16 +143,34 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateOptionalPhoneNumber(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+      return 'Please enter only numbers';
+    }
+    if (value.trim().length < 9) {
+      return 'Phone number must be at least 9 digits';
+    }
+    return null;
+  }
+
   String? validateOptionalUrl(String? value) {
     if (value == null || value.trim().isEmpty) return 'Please enter URL';
     final trimmed = value.trim();
-    final uri = Uri.tryParse(trimmed);
+    
+    // Add http:// if no scheme is present
+    String urlToValidate = trimmed;
+    if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+      urlToValidate = 'https://$trimmed';
+    }
+    
+    final uri = Uri.tryParse(urlToValidate);
     if (uri == null ||
-        !(uri.isAbsolute &&
-            uri.hasScheme &&
-            (uri.scheme == 'http' || uri.scheme == 'https') &&
-            uri.host.isNotEmpty &&
-            uri.host.contains('.'))) {
+        !uri.isAbsolute ||
+        !uri.hasScheme ||
+        (uri.scheme != 'http' && uri.scheme != 'https') ||
+        uri.host.isEmpty ||
+        !uri.host.contains('.')) {
       return 'Please enter a valid URL';
     }
     return null;

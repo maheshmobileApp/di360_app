@@ -67,7 +67,7 @@ class _AddPartnersState extends State<AddPartners> with BaseContextHelpers {
             widget.fileName = null;
           });
           },
-          hintText: widget.hintText ?? 'Choose an image or drag',
+          hintText: widget.hintText ?? 'Choose an image',
         ),
         if (AddDirectorVM.partnerImgFile != null) ...[
           addVertical(10),

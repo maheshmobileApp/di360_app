@@ -22,7 +22,19 @@ class ProfessionalViewProfileScreen extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ViewProfileViewModel>(context);
-    return Scaffold(
+    return  WillPopScope(
+      onWillPop: () async {
+        final profileComplete = await LocalStorage.getBoolValue(
+            LocalStorageConst.profileCompleted);
+        if (profileComplete == true) {
+          return true;
+        } else {
+          await viewProfileAlertPopup(context);
+          return false;
+        }
+      },
+      child: 
+    Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppbarTitleBackIconWidget(
             title: 'View Profile',
@@ -78,7 +90,7 @@ class ProfessionalViewProfileScreen extends StatelessWidget
             ),
             addVertical(10)
           ]),
-        )));
+    ))));
   }
 
   Widget _sectionTitle(String title, Widget? child) {

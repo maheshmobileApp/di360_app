@@ -31,9 +31,29 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
-    return Scaffold(
+    return  WillPopScope(
+        onWillPop: () async {
+          final directorComplete = await LocalStorage.getBoolValue(
+              LocalStorageConst.directoryComplete);
+          final firstNavigation = await LocalStorage.getBoolValue(
+              LocalStorageConst.firstNavigationDirectory);
+          if (addDirectorVM.getBasicInfoData.isEmpty) {
+            await viewProfileAlertPopup(context,
+                title: 'Welcome! Your Director Is Incomplete',
+                subTitle:
+                    'To get the best experience, please update the required information to proceed.');
+            return false;
+          } else if (directorComplete == true && firstNavigation == false) {
+            navigationService.goBack();
+            return true;
+          } else {
+            navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+            return false;
+          }
+        },
+        child:  Scaffold(
       appBar: AppbarTitleBackIconWidget(
-          title: 'Add New Directory',
+          title: 'Add My Directory',
           backAction: () async {
             final directorComplete = await LocalStorage.getBoolValue(
                 LocalStorageConst.directoryComplete);
@@ -67,7 +87,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
           _bottomButtons(context, addDirectorVM),
         ],
       ),
-    );
+     ) );
   }
 
   Widget _buildStepProgressBar(
@@ -251,6 +271,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                         ? await addDirectorVM.addBasicInfo(context)
                         : await addDirectorVM.updateBasicInfo(context);
                     addDirectorVM.goToNextStep();
+                    await addDirectorVM.getDirectories();
                   } else {
                     if (isLastStep) {
                       navigationService.goBack();

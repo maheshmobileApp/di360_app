@@ -25,43 +25,63 @@ class ProfessionalAddDirectorView extends StatelessWidget
   Widget build(BuildContext context) {
     final professAddDirectVM = Provider.of<ProfessionalAddDirectorVm>(context);
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
-    return Scaffold(
-      appBar: AppbarTitleBackIconWidget(
-          title: 'Add New Directory',
-          backAction: () async {
-            final directorComplete = await LocalStorage.getBoolValue(
-                LocalStorageConst.directoryComplete);
-            final firstNavigation = await LocalStorage.getBoolValue(
-                LocalStorageConst.firstNavigationDirectory);
-            return addDirectorVM.getBasicInfoData.isEmpty
-                ? viewProfileAlertPopup(context,
-                    title: 'Welcome! Your Director Is Incomplete',
-                    subTitle:
-                        'To get the best experience, please update the required information to proceed.')
-                : (directorComplete == true && firstNavigation == false)
-                    ? navigationService.goBack()
-                    : navigationService
-                        .pushNamedAndRemoveUntil(RouteList.dashBoard);
-          }),
-      body: Column(
-        children: [
-          _buildStepProgressBar(professAddDirectVM.currentStep,
-              professAddDirectVM.totalSteps, professAddDirectVM),
-          Expanded(
-            child: PageView(
-              controller: professAddDirectVM.pageController,
-              physics: NeverScrollableScrollPhysics(),
-              children: List.generate(
-                professAddDirectVM.totalSteps,
-                (index) => _buildStep(ProfessAddDirectoryStep.values[index],
-                    professAddDirectVM.formKeys[index]),
+    return WillPopScope(
+        onWillPop: () async {
+          final directorComplete = await LocalStorage.getBoolValue(
+              LocalStorageConst.directoryComplete);
+          final firstNavigation = await LocalStorage.getBoolValue(
+              LocalStorageConst.firstNavigationDirectory);
+          if (addDirectorVM.getBasicInfoData.isEmpty) {
+            await viewProfileAlertPopup(context,
+                title: 'Welcome! Your Director Is Incomplete',
+                subTitle:
+                    'To get the best experience, please update the required information to proceed.');
+            return false;
+          } else if (directorComplete == true && firstNavigation == false) {
+            navigationService.goBack();
+            return true;
+          } else {
+            navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+            return false;
+          }
+        },
+        child: Scaffold(
+          appBar: AppbarTitleBackIconWidget(
+              title: 'Add My Directory',
+              backAction: () async {
+                final directorComplete = await LocalStorage.getBoolValue(
+                    LocalStorageConst.directoryComplete);
+                final firstNavigation = await LocalStorage.getBoolValue(
+                    LocalStorageConst.firstNavigationDirectory);
+                return addDirectorVM.getBasicInfoData.isEmpty
+                    ? viewProfileAlertPopup(context,
+                        title: 'Welcome! Your Director Is Incomplete',
+                        subTitle:
+                            'To get the best experience, please update the required information to proceed.')
+                    : (directorComplete == true && firstNavigation == false)
+                        ? navigationService.goBack()
+                        : navigationService
+                            .pushNamedAndRemoveUntil(RouteList.dashBoard);
+              }),
+          body: Column(
+            children: [
+              _buildStepProgressBar(professAddDirectVM.currentStep,
+                  professAddDirectVM.totalSteps, professAddDirectVM),
+              Expanded(
+                child: PageView(
+                  controller: professAddDirectVM.pageController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: List.generate(
+                    professAddDirectVM.totalSteps,
+                    (index) => _buildStep(ProfessAddDirectoryStep.values[index],
+                        professAddDirectVM.formKeys[index]),
+                  ),
+                ),
               ),
-            ),
+              _bottomButtons(context, professAddDirectVM, addDirectorVM),
+            ],
           ),
-          _bottomButtons(context, professAddDirectVM, addDirectorVM),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buildStepProgressBar(
@@ -159,6 +179,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
                         addDirectorVM.getBasicInfoData.isEmpty == true
                             ? await professAddDirectVM.addBasicData(context)
                             : await professAddDirectVM.updateBasicData(context);
+                        addDirectorVM.getDirectories();
                       } else if (currentStep == 1) {
                         await professAddDirectVM.updateBasicData(context);
                         professAddDirectVM.goToNextStep();

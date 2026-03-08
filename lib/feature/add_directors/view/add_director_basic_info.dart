@@ -117,6 +117,8 @@ class AddDirectorBasicInfo extends StatelessWidget
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
             keyboardType: TextInputType.number,
+            maxLength: 9,
+            validator: validateOptionalPhoneNumber,
             controller: addDirectorVM.alternateNumberController,
           ),
           addVertical(20),

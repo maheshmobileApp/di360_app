@@ -47,7 +47,10 @@ class ContactInfo extends StatelessWidget
           InputTextField(
               controller: viewProfileVM.alternatePhoneNoController,
               hintText: "Alternate Phone Number",
-              title: "Alternate Phone NUmber"),
+              title: "Alternate Phone Number",
+              maxLength: 9,
+              keyboardType: TextInputType.number,
+              validator: validateOptionalPhoneNumber),
           addVertical(10),
           AddressAutoFillWidget(
             textEditingController: viewProfileVM.addressController,

@@ -95,6 +95,8 @@ class ProfessBasicInfo extends StatelessWidget
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
             keyboardType: TextInputType.number,
+            maxLength: 9,
+            validator: validateOptionalPhoneNumber,
             controller: professDirectorVM.alternateNumberController,
           ),
           addVertical(20),
