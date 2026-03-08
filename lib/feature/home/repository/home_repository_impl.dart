@@ -62,7 +62,7 @@ class HomeRepositoryImpl extends HomeRepository {
       "limit": limit,
       "offset": offset,
       "userId": userId,
-      "roleType": roleType
+      //"roleType": roleType
     };
     final res = await _http.query(getAllNewsfeedsQuery, variables: variables);
     return res;

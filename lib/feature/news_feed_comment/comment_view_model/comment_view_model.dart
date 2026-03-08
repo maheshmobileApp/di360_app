@@ -3,12 +3,16 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
+import 'package:di360_flutter/feature/news_feed_comment/repository/news_feed_comment_repo_impl.dart';
+import 'package:di360_flutter/feature/news_feed_comment/repository/news_feed_comment_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CommentViewModel extends ChangeNotifier {
+  final NewsFeedCommentRepository repo = NewsFeedCommentRepoImpl();
   final HttpService _http = HttpService();
 
   CommentViewModel() {
@@ -31,6 +35,11 @@ class CommentViewModel extends ChangeNotifier {
   bool commentUpdate = false;
   bool removeReplyFeild = false;
   String? hintText;
+
+  NewsFeedCommentData? newsFeedComments;
+  NewsFeedCommentData? newsFeedReplies;
+  Map<String, bool> expandedReplies = {};
+  Map<String, List<NewsFeedsComments>> repliesDataCache = {};
 
   @override
   void dispose() {
@@ -58,9 +67,22 @@ class CommentViewModel extends ChangeNotifier {
     await getUserId();
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(commentQuery, {
+        "object": {
+          "comment_text": commentController.text,
+          "news_feeds_id": feedId,
+          "parent_comment_id": null,
+          "created_by_id": userId,
+          "role_type": userType,
+          "attachments": null
+        }
+      }
+
+          /*{
         "addCommentsData": {
           "dental_practice_id": practiceId ?? null,
           "dental_professional_id": professionId ?? null,
@@ -72,10 +94,12 @@ class CommentViewModel extends ChangeNotifier {
           "dental_supplier_id": supplierId ?? null,
           "news_feeds_id": feedId
         }
-      });
+      }*/
+          );
 
       if (res.isNotEmpty) {
         commentController.clear();
+        getComments(context, feedId);
         getNewsfeedComment(context, feedId);
       }
     } catch (e) {
@@ -129,7 +153,6 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
-    print("*****************getNewsfeedComment");
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
@@ -143,6 +166,39 @@ class CommentViewModel extends ChangeNotifier {
       scaffoldMessenger(e.toString());
       Loaders.circularHideLoader(context);
     }
+    notifyListeners();
+  }
+
+  Future<void> getComments(BuildContext context, String feedId) async {
+    print("*******************feed id is $feedId");
+    final variables = {"feedId": feedId, "limit": 10, "offset": 0};
+    try {
+      var res = await repo.getComments(variables);
+      if (res != null) {
+        newsFeedComments = res;
+      }
+    } catch (e) {
+      scaffoldMessenger(e.toString());
+    }
+    notifyListeners();
+  }
+
+  Future<void> getReplies(BuildContext context, String parentId) async {
+    final variables = {"parentId": parentId, "limit": 3, "offset": 0};
+    try {
+      var res = await repo.getReplies(variables);
+      if (res != null) {
+        newsFeedReplies = res;
+        repliesDataCache[parentId] = res.newsFeedsComments ?? [];
+      }
+    } catch (e) {
+      scaffoldMessenger(e.toString());
+    }
+    notifyListeners();
+  }
+
+  void toggleReplyExpansion(String commentId) {
+    expandedReplies[commentId] = !(expandedReplies[commentId] ?? false);
     notifyListeners();
   }
 
@@ -164,7 +220,6 @@ class CommentViewModel extends ChangeNotifier {
 
   Future<void> updateTheCommentObject(BuildContext context, String feedId,
       List<dynamic>? newsFeeds, dynamic count) async {
-        
     final homeVM = context.read<HomeViewModel>();
     final feed =
         homeVM.allNewsFeedsData?.newsfeeds?.firstWhere((v) => v.id == feedId);
@@ -177,11 +232,25 @@ class CommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  replyCommentTheFeed(BuildContext context, String feedId) async {
+  replyCommentTheFeed(
+      BuildContext context, String feedId, String parentId,) async {
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
-      var res = await _http.mutation(replyCommentQuery, {
+      var res = await _http.mutation(commentQuery, {
+        "object": {
+          "comment_text": commentController.text,
+          "news_feeds_id": feedId,
+          "parent_comment_id": parentId,
+          "created_by_id": userId,
+          "role_type": userType,
+          "attachments": null
+        }
+      }
+
+          /*{
         "addReplyData": {
           "dental_practice_id": practiceId ?? null,
           "dental_professional_id": professionId ?? null,
@@ -194,12 +263,14 @@ class CommentViewModel extends ChangeNotifier {
           "liked_count": 0,
           "reply_attachments": []
         }
-      });
-      print("***************************************$res");
+      }*/
+          );
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getComments(context, feedId);
+        await getReplies(context, parentId);
+        await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -303,36 +374,48 @@ mutation deleteNewsfeedReply(\$id: uuid!) {
 ''';
 
 final String commentQuery = '''
-    mutation addNewsFeedComment(\$addCommentsData: news_feeds_comments_insert_input!) {
-      insert_news_feeds_comments_one(object: \$addCommentsData) {
-        id
-        comments
-        created_at
-        dental_admin_id
-    comment_Pro_Img
-    commenter_name
-    comments_attachments
-    comment_reply {
-      id
-    }
-    dental_practice_id
-    dental_professional_id
-    dental_supplier_id
-    dental_supplier {
-      name
-    }
-    dental_practice {
-      name
+    mutation InsertComment(\$object: news_feeds_comments_insert_input!) {
+  insert_news_feeds_comments_one(object: \$object) {
+    id
+    parent_comment_id
+    comment_text
+    created_at
+    role_type
+    attachments
+    replies_aggregate {
+      aggregate {
+        count
+        __typename
+      }
+      __typename
     }
     dental_professional {
+      id
       name
+      profile_image
+      __typename
+    }
+    dental_practice {
+      id
+      business_name
+      logo
+      __typename
+    }
+    dental_supplier {
+      id
+      business_name
+      logo
+      __typename
     }
     admin_user {
+      id
       name
+      profile_image
+      __typename
     }
     __typename
-      }
-    }
+  }
+}
   ''';
 
 const String replyCommentQuery = '''

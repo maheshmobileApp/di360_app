@@ -15,10 +15,17 @@ class NewsFeedsComments {
   CommentDentalprofessional? dentalProfessional;
   CommentAdminUser? adminUser;
   String? sTypename;
+  String? commentText;
+  String? parentCommentId;
+  String? createdById;
+  String? roleType;
+  dynamic? attachments;
+  RepliesAggregate? repliesAggregate;
 
   NewsFeedsComments(
       {this.id,
       this.comments,
+      this.commentText,
       this.createdAt,
       this.dentalAdminId,
       this.commentProImg,
@@ -32,11 +39,17 @@ class NewsFeedsComments {
       this.dentalPractice,
       this.dentalProfessional,
       this.adminUser,
+      this.parentCommentId,
+      this.createdById,
+      this.roleType,
+      this.attachments,
+      this.repliesAggregate,
       this.sTypename});
 
   NewsFeedsComments.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     comments = json['comments'];
+    commentText = json['comment_text'];
     createdAt = json['created_at'];
     dentalAdminId = json['dental_admin_id'];
     commentProImg = json['comment_Pro_Img'];
@@ -65,6 +78,13 @@ class NewsFeedsComments {
     dentalPracticeId = json['dental_practice_id'];
     dentalProfessionalId = json['dental_professional_id'];
     dentalSupplierId = json['dental_supplier_id'];
+    parentCommentId = json['parent_comment_id'];
+    createdById = json['created_by_id'];
+    roleType = json['role_type'];
+    attachments = json['attachments'];
+    repliesAggregate = json['replies_aggregate'] != null
+        ? new RepliesAggregate.fromJson(json['replies_aggregate'])
+        : null;
     dentalSupplier = json['dental_supplier'] != null
         ? new CommentDentalSupplier.fromJson(json['dental_supplier'])
         : null;
@@ -84,10 +104,18 @@ class NewsFeedsComments {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['comments'] = this.comments;
+    data['comment_text'] = this.commentText;
     data['created_at'] = this.createdAt;
     data['dental_admin_id'] = this.dentalAdminId;
     data['comment_Pro_Img'] = this.commentProImg;
     data['commenter_name'] = this.commenterName;
+    data['parent_comment_id'] = this.parentCommentId;
+    data['created_by_id'] = this.createdById;
+    data['role_type'] = this.roleType;
+    data['attachments'] = this.attachments;
+    if (this.repliesAggregate != null) {
+      data['replies_aggregate'] = this.repliesAggregate!.toJson();
+    }
     if (this.commentsAttachments != null) {
       data['comments_attachments'] =
           this.commentsAttachments!.map((v) => null).toList();
@@ -111,6 +139,48 @@ class NewsFeedsComments {
     if (this.adminUser != null) {
       data['admin_user'] = this.adminUser!.toJson();
     }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class RepliesAggregate {
+  Aggregate? aggregate;
+  String? sTypename;
+
+  RepliesAggregate({this.aggregate, this.sTypename});
+
+  RepliesAggregate.fromJson(Map<String, dynamic> json) {
+    aggregate = json['aggregate'] != null
+        ? new Aggregate.fromJson(json['aggregate'])
+        : null;
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.aggregate != null) {
+      data['aggregate'] = this.aggregate!.toJson();
+    }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class Aggregate {
+  int? count;
+  String? sTypename;
+
+  Aggregate({this.count, this.sTypename});
+
+  Aggregate.fromJson(Map<String, dynamic> json) {
+    count = json['count'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['count'] = this.count;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -211,14 +281,17 @@ class CommentReply {
 
 class CommentDentalSupplier {
   String? name;
+  String? businessName;
   CommentSupplierLogo? logo;
 //  List<Directories>? directories;
   String? sTypename;
 
-  CommentDentalSupplier({this.name, this.logo, this.sTypename});
+  CommentDentalSupplier(
+      {this.name, this.businessName, this.logo, this.sTypename});
 
   CommentDentalSupplier.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    businessName = json['business_name'];
     logo = json['logo'] != null
         ? new CommentSupplierLogo.fromJson(json['logo'])
         : null;
@@ -234,6 +307,7 @@ class CommentDentalSupplier {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['business_name'] = this.businessName;
     if (this.logo != null) {
       data['logo'] = this.logo!.toJson();
     }
@@ -296,14 +370,16 @@ class CommentSupplierLogo {
 
 class CommentDentalPartice {
   String? name;
+  String? businessName;
   CommentParticeLogo? logo;
 //  List<Directories>? directories;
   String? sTypename;
 
-  CommentDentalPartice({this.name, this.logo, this.sTypename});
+  CommentDentalPartice({this.name, this.logo,this.businessName, this.sTypename});
 
   CommentDentalPartice.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    businessName = json['business_name'];
     logo = json['logo'] != null
         ? new CommentParticeLogo.fromJson(json['logo'])
         : null;
@@ -319,6 +395,7 @@ class CommentDentalPartice {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['business_name'] = this.businessName;
     if (this.logo != null) {
       data['logo'] = this.logo!.toJson();
     }
