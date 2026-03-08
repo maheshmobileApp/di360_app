@@ -90,7 +90,7 @@ class ImagePickerInputField extends StatelessWidget {
 }
 
 void imagePickerSelection(
-    BuildContext context, Function()? galleryOnTap, Function()? cameraOnTap) {
+    BuildContext context, Function()? galleryOnTap, Function()? cameraOnTap, {bool cameraAvailable = true}) {
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.white,
@@ -130,6 +130,7 @@ void imagePickerSelection(
                   color: Colors.blue,
                   onTap: galleryOnTap ?? () {},
                 ),
+                if(cameraAvailable)
                 buildOption(
                   icon: Icons.camera_alt,
                   label: "Camera",

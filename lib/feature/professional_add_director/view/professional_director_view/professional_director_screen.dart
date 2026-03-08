@@ -37,7 +37,7 @@ class ProfessionalDirectorScreen extends StatelessWidget {
               slivers: [
                 SliverToBoxAdapter(
                   child: UserDetailsWidget(
-                    imageUrl: addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
+                    imageUrl: addDirectorVM.getBasicInfoData.first.profileImage?.url ?? '',
                     userName: addDirectorVM.getBasicInfoData.first.professionType,
                     followerCount:
                         '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',

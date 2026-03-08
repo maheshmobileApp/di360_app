@@ -126,6 +126,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             imageFile: addDirectorVM.documentFile,
             onTap: () {
               imagePickerSelection(
+                cameraAvailable: false,
                 context,
                 () => addDirectorVM.pickDocumentsImage(),
                 () => addDirectorVM.pickDocumentsImage());
@@ -133,7 +134,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                   docName = null;
                 });
             },
-            hintText: docName ?? 'JPEG, PNG, PDF formats, up to 5 MB',
+            hintText: docName ?? 'PDF and Files up to 5 MB',
           ),
           if (addDirectorVM.documentFile != null) ...[
             addVertical(10),

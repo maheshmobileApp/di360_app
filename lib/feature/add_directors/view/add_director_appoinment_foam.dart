@@ -22,7 +22,6 @@ class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
   @override
   void initState() {
     super.initState();
-    // Don't clear lists in initState - let the parent manage state
   }
 
   @override

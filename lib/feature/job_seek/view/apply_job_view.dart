@@ -60,10 +60,10 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
   }
   void _submitApplication() async {
     if (_formKey.currentState!.validate()) {
-      if (_resumeFile == null) {
+      /*if (_resumeFile == null) {
         scaffoldMessenger('Please upload your resume');
         return;
-      }
+      }*/
       final dentalProfessionalId =
           await LocalStorage.getStringVal(LocalStorageConst.userId);
 
@@ -181,7 +181,6 @@ class _ApplyJobsViewState extends State<ApplyJobsView> with ValidationMixins {
             SizedBox(height: 16),
             ResumeUploadWidget(
               onFileSelected: _onResumeSelected,
-              isRequired: true,
             ),
             SizedBox(height: 16),
             InputTextField(

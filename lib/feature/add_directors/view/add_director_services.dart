@@ -205,9 +205,6 @@ class AddDirectorServicesFoam extends StatelessWidget with BaseContextHelpers {
           maxLength: 500,
           maxLines: 5,
           title: "Short Description",
-          validator: (value) => value == null || value.isEmpty
-              ? 'Please enter description'
-              : null,
         ),
         CustomBottomButton(
             onFirst: () {

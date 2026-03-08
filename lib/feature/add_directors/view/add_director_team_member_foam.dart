@@ -70,6 +70,7 @@ class _AddDirectorTeamMemberFoamState extends State<AddDirectorTeamMemberFoam>
             title: " Phone Number ",
             controller: AddDirectorVM.teamNumberCntr,
             isRequired: true,
+            maxLength: 9,
             keyboardType: TextInputType.number,
             validator: validatePhoneNumber),
         addVertical(12),
@@ -78,9 +79,7 @@ class _AddDirectorTeamMemberFoamState extends State<AddDirectorTeamMemberFoam>
           title: "Email ID",
           controller: AddDirectorVM.teamEmailIDCntr,
           isRequired: true,
-          validator: (value) => value == null || value.isEmpty
-              ? 'Please enter your email id '
-              : null,
+          validator: validateEmail,
         ),
         addVertical(12),
         ImagePickerInputField(
