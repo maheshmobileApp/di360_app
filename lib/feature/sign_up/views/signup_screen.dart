@@ -8,6 +8,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -72,7 +73,8 @@ class SignupScreen extends StatelessWidget
                           value == null ? 'Please select type' : null,
                     ),
                     addVertical(16),
-                    if (viewModel.selectedType?['type'] == 'SUPPLIER') ...[
+                    if (viewModel.selectedType?['type'] ==
+                        UserRole.supplier.value) ...[
                       InputTextField(
                           title: 'Business Name',
                           controller: viewModel.companyNameController,
@@ -90,7 +92,8 @@ class SignupScreen extends StatelessWidget
                         keyboardType: TextInputType.emailAddress,
                         validator: validateName),
                     addVertical(16),
-                    if (viewModel.selectedType?['type'] == 'PRACTICE') ...[
+                    if (viewModel.selectedType?['type'] ==
+                        UserRole.practice.value) ...[
                       InputTextField(
                           title: 'Business Name',
                           controller: viewModel.companyNameController,
@@ -108,15 +111,6 @@ class SignupScreen extends StatelessWidget
                         keyboardType: TextInputType.emailAddress,
                         validator: validateEmail),
                     addVertical(16),
-                    /*CountryCodeNumberFeild(
-                      value: viewModel.countryCode,
-                      onChanged: (v) => viewModel.setCountry(v!),
-                      textController: viewModel.numberController,
-                      textFeildChanged: (value) {
-                        viewModel.setNumber(value);
-                      },
-                    ),*/
-
                     InputTextField(
                       title: "Phone Number",
                       isRequired: true,
@@ -182,7 +176,7 @@ class SignupScreen extends StatelessWidget
                         onTap: () {
                           if (viewModel.formKey.currentState!.validate()) {
                             viewModel.selectedCategorys = null;
-                            viewModel.signUp(context);
+                            viewModel.businessType(context);
                           }
                         },
                         text: "Create new account",

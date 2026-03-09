@@ -23,7 +23,8 @@ class SignupViewModel extends ChangeNotifier {
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
-  final TextEditingController postalCodeController = TextEditingController();
+  final TextEditingController ahpraRegistrationNumber = TextEditingController();
+  final TextEditingController abnNumber = TextEditingController();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
@@ -130,11 +131,12 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  businessType() async {
+  businessType(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     _selectedIndex = 0;
     try {
       final res = await _http
-          .query(businessQuery, variables: {"type": selectedSubscriptionType});
+          .query(businessQuery, variables: {"type": selectedType?['type']});
       if (res != null) {
         final data = BusinessData.fromJson(res);
         directoryBusinessTypes = data.directoryBusinessTypes;
@@ -143,6 +145,7 @@ class SignupViewModel extends ChangeNotifier {
     } catch (e) {
       scaffoldMessenger("Error removing like: $e");
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
@@ -156,14 +159,15 @@ class SignupViewModel extends ChangeNotifier {
           "email": emailController.text,
           "password": passController.text,
           "phone": '$phoneCode${numberController.text}',
-          "postal_code": postalCodeController.text,
+          "aphra_registration_number": ahpraRegistrationNumber.text,
+          "abn_number": abnNumber.text,
           "type": selectedType?['type'],
           "state": stateController.text,
           "business_name": companyNameController.text,
           "status": selectedType?['type'] == UserRole.supplier.value
               ? "PENDING"
               : "VERIFICATION_PENDING",
-          "subscription_plan_id": selectedPlanId,//Null passing from mobile app 
+          "subscription_plan_id": selectedPlanId, //Null passing from mobile app
           "professionType": selectedCategory?.name,
           "tracking_details": "Mobile"
         }
@@ -208,7 +212,10 @@ class SignupViewModel extends ChangeNotifier {
     passController.clear();
     conformController.clear();
     numberController.clear();
-    postalCodeController.clear();
+    ahpraRegistrationNumber.clear();
+    abnNumber.clear();
+    selectedSubscriptionType = null;
+    setAgreeToTerms(false);
     selectedType = null;
     stateController.clear();
     companyNameController.clear();
