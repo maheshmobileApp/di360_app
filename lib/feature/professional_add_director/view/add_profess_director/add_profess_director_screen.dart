@@ -181,7 +181,6 @@ class ProfessionalAddDirectorView extends StatelessWidget
                             : await professAddDirectVM.updateBasicData(context);
                         addDirectorVM.getDirectories();
                       } else if (currentStep == 1) {
-                        if (professAddDirectVM.educationCntr.text.isNotEmpty || professAddDirectVM.workAtCntr.text.isNotEmpty)
                         await professAddDirectVM.updateBasicData(context);
                         professAddDirectVM.goToNextStep();
                       } else {

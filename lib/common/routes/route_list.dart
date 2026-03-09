@@ -93,4 +93,5 @@ class RouteList {
   static const String notificationScreen = '/notificationScreen';
   static const String talentsHireMeScreen = '/talentsHireMeScreen';
   static const String commentScreen = '/commentScreen';
+  static const String forgotPasswordScreen = '/forgotPasswordScreen';
 }
