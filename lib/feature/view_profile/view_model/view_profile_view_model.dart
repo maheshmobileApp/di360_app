@@ -47,6 +47,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final zipCodeController = TextEditingController();
   final aphraNumberController = TextEditingController();
   final dateOfBirthController = TextEditingController();
+  final FocusNode addressFocusNode1 = FocusNode();
+  final FocusNode addressFocusNode2 = FocusNode();
+  
   String? logoUrl;
 
   DentalSuppliersByPk? supplierViewProfileData;

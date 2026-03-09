@@ -66,6 +66,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   TextEditingController partnerNameCntr = TextEditingController();
   TextEditingController descriptionCntr = TextEditingController();
+  final FocusNode addressFocusNode = FocusNode();
 
   double? latitude;
   double? longitude;

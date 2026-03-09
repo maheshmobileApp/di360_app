@@ -5,18 +5,18 @@ import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 
 class AddressAutoFillWidget extends StatelessWidget {
-  final TextEditingController textEditingController;
+  final TextEditingController controller;
+  final FocusNode? focusNode;
   final Function(Prediction)? getPlaceDetailWithLatLng;
   final Function(Prediction)? itemClick;
-  final Color? borderColor;
-  final double? borderRadius;
-  const AddressAutoFillWidget(
-      {super.key,
-      required this.textEditingController,
-      this.getPlaceDetailWithLatLng,
-      this.itemClick,
-      this.borderColor,
-      this.borderRadius});
+
+  const AddressAutoFillWidget({
+    super.key,
+    required this.controller,
+    this.focusNode,
+    this.getPlaceDetailWithLatLng,
+    this.itemClick,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,43 +25,68 @@ class AddressAutoFillWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text('Address', style: TextStyles.regular3(color: AppColors.black)),
-            Text(' *',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            Text(
+              'Address',
+              style: TextStyles.regular3(color: AppColors.black),
+            ),
+            const Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         GooglePlaceAutoCompleteTextField(
-          textEditingController: textEditingController,
+          textEditingController: controller,
+          focusNode: focusNode,
           googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+          debounceTime: 600,
           inputDecoration: InputDecoration(
             hintText: "Search Address",
             hintStyle: TextStyles.regular4(color: AppColors.dropDownHint),
             border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           ),
-          debounceTime: 800,
           isLatLngRequired: true,
           getPlaceDetailWithLatLng: getPlaceDetailWithLatLng,
-          itemClick: itemClick,
+          itemClick: (Prediction prediction) {
+            controller.text = prediction.description ?? "";
+        
+            controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: controller.text.length),
+            );
+        
+            if (itemClick != null) {
+              itemClick!(prediction);
+            }
+        
+            FocusScope.of(context).unfocus();
+          },
           itemBuilder: (context, index, Prediction prediction) {
             return Container(
-              color: AppColors.whiteColor,
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  Icon(Icons.location_on),
-                  SizedBox(width: 7),
-                  Expanded(child: Text(prediction.description ?? ""))
+                  const Icon(Icons.location_on),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Text(
+                      prediction.description ?? "",
+                      style: TextStyles.regular4(
+                        color: AppColors.black,
+                      ),
+                    ),
+                  )
                 ],
               ),
             );
           },
           isCrossBtnShown: true,
-          containerHorizontalPadding: 10,
+          containerHorizontalPadding: 0,
         ),
       ],
     );
