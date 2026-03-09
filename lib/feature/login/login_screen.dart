@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
+import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -22,7 +23,10 @@ class LoginScreen extends StatelessWidget
   Widget build(BuildContext context) {
     final viewModel = Provider.of<LoginViewModel>(context);
     final profileVM = Provider.of<ProfileViewModel>(context);
+    final forgotPasswordViewModel =
+        Provider.of<ForgotPasswordViewModel>(context);
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       resizeToAvoidBottomInset: false,
       body: Form(
         key: viewModel.formKey,
@@ -76,10 +80,13 @@ class LoginScreen extends StatelessWidget
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {},
-                      child: Text("Forgot Password",
-                          style: TextStyles.dmsansLight(
-                              color: AppColors.lightGeryColor, fontSize: 16)))
+                      onPressed: () {
+                        forgotPasswordViewModel.emailController.clear();
+                        navigationService
+                            .navigateTo(RouteList.forgotPasswordScreen);
+                      },
+                      child: Text("Forgot Password ?",
+                          style: TextStyles.regular3(color: AppColors.black)))
                 ],
               ),
               Spacer(),

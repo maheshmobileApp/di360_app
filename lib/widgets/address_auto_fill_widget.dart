@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
@@ -42,7 +43,7 @@ class AddressAutoFillWidget extends StatelessWidget {
         GooglePlaceAutoCompleteTextField(
           textEditingController: controller,
           focusNode: focusNode,
-          googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+          googleAPIKey: ApiConst.googleAPIKey,
           debounceTime: 600,
           inputDecoration: InputDecoration(
             hintText: "Search Address",

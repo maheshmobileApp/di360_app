@@ -59,6 +59,7 @@ import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dar
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/campaign/view/campaign_listing_view.dart';
+import 'package:di360_flutter/feature/forgot_password/view/forgot_password_screen.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
@@ -274,7 +275,7 @@ class Routes {
       
       RouteList.notificationScreen: (context) => NotificationScreen(),
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
-      //RouteList.commentScreen: (context) => CommentScreen(),
+      RouteList.forgotPasswordScreen: (context) => ForgotPasswordScreen(),
     };
   }
 }
