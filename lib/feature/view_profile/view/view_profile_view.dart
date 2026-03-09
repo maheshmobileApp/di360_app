@@ -21,74 +21,78 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final provider = Provider.of<ViewProfileViewModel>(context);
     return WillPopScope(
-      onWillPop: () async {
-        final profileComplete = await LocalStorage.getBoolValue(
-            LocalStorageConst.profileCompleted);
-        if (profileComplete == true) {
-          return true;
-        } else {
-          await viewProfileAlertPopup(context);
-          return false;
-        }
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.whiteColor,
-        appBar: AppbarTitleBackIconWidget(
-            title: 'View Profile',
-            backAction: () async {
-              final profileComplete = await LocalStorage.getBoolValue(
-                  LocalStorageConst.profileCompleted);
-              return profileComplete == true
-                  ? navigationService.goBack()
-                  : await viewProfileAlertPopup(context);
-            }),
-        body: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-              child: Column(children: [
-            _sectionTitle('Basic Info', BasicInfo()),
-            _sectionTitle('Contact Information', ContactInfo()),
-            addVertical(20),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FutureBuilder<bool>(
-                      future: provider.profileCompletedValue(),
-                      builder: (context, snapshot) {
-                        if (snapshot.data == true) {
-                          return Expanded(
+        onWillPop: () async {
+          final profileComplete = await LocalStorage.getBoolValue(
+              LocalStorageConst.profileCompleted);
+          if (profileComplete == true) {
+            return true;
+          } else {
+            await viewProfileAlertPopup(context);
+            return false;
+          }
+        },
+        child: Scaffold(
+            backgroundColor: AppColors.whiteColor,
+            appBar: AppbarTitleBackIconWidget(
+                title: 'View Profile',
+                backAction: () async {
+                  final profileComplete = await LocalStorage.getBoolValue(
+                      LocalStorageConst.profileCompleted);
+                  return profileComplete == true
+                      ? navigationService.goBack()
+                      : await viewProfileAlertPopup(context);
+                }),
+            body: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                  child: Column(children: [
+                _sectionTitle('Basic Info', BasicInfo()),
+                _sectionTitle('Contact Information', ContactInfo()),
+                addVertical(20),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        FutureBuilder<bool>(
+                          future: provider.profileCompletedValue(),
+                          builder: (context, snapshot) {
+                            if (snapshot.data == true) {
+                              return Expanded(
+                                child: AppButton(
+                                    text: 'Delete My Account',
+                                    height: 45,
+                                    width: 180,
+                                    onTap: () {
+                                      showDeleteAccountDialog(context, () {
+                                        provider.deleteAccount(context);
+                                      });
+                                    }),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                        addHorizontal(4),
+                        Expanded(
                             child: AppButton(
-                                text: 'Delete My Account',
+                                text: 'Save & Update',
                                 height: 45,
                                 width: 180,
                                 onTap: () {
-                                  showDeleteAccountDialog(context, () {
-                                    provider.deleteAccount(context);
-                                  });
-                                }),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                    addHorizontal(4),
-                    Expanded(
-                        child: AppButton(
-                            text: 'Save & Update',
-                            height: 45,
-                            width: 180,
-                            onTap: () {
-                              if (formKey.currentState!.validate()) {
-                                provider.updateViewProfile(context);
-                              }
-                            })),
-                  ],
-                )),
-            addVertical(10)
-          ])),
-        )));
+                                  if (formKey.currentState!.validate()) {
+                                    if (provider.addressController.text.isEmpty) {
+                                      scaffoldMessenger("Please enter address");
+                                    } else {
+                                      provider.updateViewProfile(context);
+                                    }
+                                  }
+                                })),
+                      ],
+                    )),
+                addVertical(10)
+              ])),
+            )));
   }
 
   Widget _sectionTitle(String title, Widget? child) {
