@@ -25,6 +25,7 @@ class AddDirectorBasicInfo extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
+
     return SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -123,7 +124,8 @@ class AddDirectorBasicInfo extends StatelessWidget
           ),
           addVertical(20),
           AddressAutoFillWidget(
-              textEditingController: addDirectorVM.addressController,
+              controller: addDirectorVM.addressController,
+              focusNode: addDirectorVM.addressFocusNode,
               getPlaceDetailWithLatLng: (Prediction prediction) {
                 addDirectorVM.latitude = prediction.lat != null
                     ? double.parse(prediction.lat!)
@@ -132,10 +134,7 @@ class AddDirectorBasicInfo extends StatelessWidget
                     ? double.parse(prediction.lng!)
                     : null;
               },
-              itemClick: (Prediction prediction) {
-                addDirectorVM.addressController.text =
-                    prediction.description ?? '';
-              }),
+             ),
           addVertical(20),
           sectionHeader("Logo & Banner"),
           addVertical(20),

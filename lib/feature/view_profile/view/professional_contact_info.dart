@@ -16,9 +16,8 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
         padding: const EdgeInsets.all(16.0),
         child: Column(children: [
           AddressAutoFillWidget(
-            textEditingController: viewProfileVM.addressController,
-            itemClick: (value) =>
-                viewProfileVM.addressController.text = value.description ?? '',
+            controller: viewProfileVM.addressController,
+            focusNode: viewProfileVM.addressFocusNode2,
           ),
           addVertical(10),
           InputTextField(
