@@ -118,4 +118,6 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
+
+  
 }

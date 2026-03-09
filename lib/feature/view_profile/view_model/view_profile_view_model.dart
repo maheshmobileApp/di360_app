@@ -456,4 +456,39 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     notifyListeners();
   }
+
+  Future<void> clearProfileData() async{
+    nameController.clear();
+    emailController.clear();
+    phoneNoController.clear();
+    businessNameController.clear();
+    abnNUmberController.clear();
+    firstNameController.clear();
+    middleNameController.clear();
+    lastNameController.clear();
+    businessPhoneNoController.clear();
+    faxNumberController.clear();
+    alternateEmailController.clear();
+    alternatePhoneNoController.clear();
+    addressController.clear();
+    addressLineOneController.clear();
+    addressLineTwoController.clear();
+    cityController.clear();
+    landmarkController.clear();
+    countryController.clear();
+    stateController.clear();
+    zipCodeController.clear();
+    aphraNumberController.clear();
+    dateOfBirthController.clear();
+    logoUrl = null;
+    logoFile = null;
+    selectedBusineestype = null;
+    selectedPhoneCode = "AU (+61)";
+    selectedSalutation = null;
+    selectedGender = null;
+    scheduleDate = null;
+    _countryCode = '+61';
+    _number = '';
+    notifyListeners();
+  }
 }

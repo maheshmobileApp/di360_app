@@ -422,4 +422,30 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     alternateNumberController.text = data?.altPhone ?? '';
     notifyListeners();
   }
+
+  Future<void> clearProfessionalDirectorData() async{
+    mobileNumberCntr.clear();
+    designationCntr.clear();
+    nameController.clear();
+    emailController.clear();
+    descController.clear();
+    alternateNumberController.clear();
+    addressController.clear();
+    hobbiesCntr.clear();
+    universitiesCntr.clear();
+    educationCntr.clear();
+    workAtCntr.clear();
+    latitude = null;
+    longitude = null;
+    getHobbies.clear();
+    getUniversitys.clear();
+    getEducation.clear();
+    getWorkingAt.clear();
+    _currentStep = 0;
+    _countryCode = '+61';
+    _number = '';
+    _emailVisibility = null;
+    _phoneVisibility = null;
+    notifyListeners();
+  }
 }

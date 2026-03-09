@@ -123,10 +123,12 @@ void showSignupSuccessDialog(
     BuildContext context, String email, Function()? onTap,
     {String? title, String? subTitle}) {
   showDialog(
+    
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return Dialog(
+        backgroundColor: AppColors.whiteColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
