@@ -188,7 +188,7 @@ class ProfessBasicInfo extends StatelessWidget
           sectionHeader('Hobbies'),
           InputTextField(
               title: '',
-              hintText: 'Add hobby',
+              hintText: "Enter hobbies and enter ',' spearate hobbies",
               controller: professDirectorVM.hobbiesCntr,
               onSubmitted: (val) {
                 professDirectorVM.addHobby(val ?? '');
@@ -218,7 +218,7 @@ class ProfessBasicInfo extends StatelessWidget
           sectionHeader('Universities'),
           InputTextField(
               title: '',
-              hintText: 'Add universities',
+              hintText: "Enter universities and enter ',' spearate universities",
               controller: professDirectorVM.universitiesCntr,
               onSubmitted: (val) {
                 professDirectorVM.addUniversities(val ?? '');
