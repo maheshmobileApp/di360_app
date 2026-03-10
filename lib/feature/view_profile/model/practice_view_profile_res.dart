@@ -170,6 +170,8 @@ class DentalPracticesByPk {
     data['type'] = this.type;
     data['secondary_contact'] = this.secondaryContact;
     data['__typename'] = this.sTypename;
+    data['address_line_one'] = this.addressLineOne;
+    data['address_line_two'] = this.addressLineTwo;
     return data;
   }
 }

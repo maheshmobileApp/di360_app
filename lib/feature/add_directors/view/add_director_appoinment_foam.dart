@@ -6,13 +6,15 @@ import 'package:di360_flutter/feature/add_directors/view/add_director_view.dart'
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_multi_select_dropdown.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddDirectorAppoinmentFoam extends StatefulWidget {
   @override
-  State<AddDirectorAppoinmentFoam> createState() => _AddDirectorAppoinmentFoamState();
+  State<AddDirectorAppoinmentFoam> createState() =>
+      _AddDirectorAppoinmentFoamState();
 }
 
 class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
@@ -35,18 +37,42 @@ class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
     super.dispose();
   }
 
+  TimeOfDay? _parseTime(String timeStr) {
+    if (timeStr.isEmpty) return null;
+    try {
+      final parts = timeStr.split(':');
+      int hour = int.parse(parts[0]);
+      int minute = int.parse(parts[1].split(' ')[0]);
+      if (timeStr.contains('PM') && hour != 12) hour += 12;
+      if (timeStr.contains('AM') && hour == 12) hour = 0;
+      return TimeOfDay(hour: hour, minute: minute);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool _isTimeBetween(TimeOfDay time, TimeOfDay start, TimeOfDay end) {
+    final timeMinutes = time.hour * 60 + time.minute;
+    final startMinutes = start.hour * 60 + start.minute;
+    final endMinutes = end.hour * 60 + end.minute;
+    return timeMinutes >= startMinutes && timeMinutes <= endMinutes;
+  }
+
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
-    final teamMemberList = addDirectorVM.getBasicInfoData.first.directoryTeamMembers
-        ?.where((e) => e.showInAppointments == true)
-        .toList() ?? [];
-    final serviceList = addDirectorVM.getBasicInfoData.first.directoryServices
-        ?.where((e) {
-          final show = e.showInAppointments;
-          return show == true || (show is String && show.toLowerCase() == 'yes');
-        })
-        .toList() ?? [];
+    final teamMemberList = addDirectorVM
+            .getBasicInfoData.first.directoryTeamMembers
+            ?.where((e) => e.showInAppointments == true)
+            .toList() ??
+        [];
+    final serviceList =
+        addDirectorVM.getBasicInfoData.first.directoryServices?.where((e) {
+              final show = e.showInAppointments;
+              return show == true ||
+                  (show is String && show.toLowerCase() == 'yes');
+            }).toList() ??
+            [];
     final daysList = ConstantData.DaysList.toSet().toList();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -181,11 +207,28 @@ class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
                       controller: addDirectorVM.breakStartTimeCntr,
                       readOnly: true,
                       onTap: () async {
+                        final startTime =
+                            _parseTime(addDirectorVM.serviceStartTimeCntr.text);
+                        final endTime =
+                            _parseTime(addDirectorVM.serviceEndTimeCntr.text);
+
+                        if (startTime == null || endTime == null) {
+                          showTopMessage(context,
+                              'Please set service start and end time first');
+
+                          return;
+                        }
+
                         final picked = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
                         );
                         if (picked != null) {
+                          if (!_isTimeBetween(picked, startTime, endTime)) {
+                            showTopMessage(context,
+                                'Break start time must be between service start and end time');
+                            return;
+                          }
                           addDirectorVM.breakStartTimeCntr.text =
                               picked.format(context);
                           addDirectorVM.generateTimeSlots(context);
@@ -201,11 +244,42 @@ class _AddDirectorAppoinmentFoamState extends State<AddDirectorAppoinmentFoam>
                       controller: addDirectorVM.breakEndTimeCntr,
                       readOnly: true,
                       onTap: () async {
+                        final startTime =
+                            _parseTime(addDirectorVM.serviceStartTimeCntr.text);
+                        final endTime =
+                            _parseTime(addDirectorVM.serviceEndTimeCntr.text);
+                        final breakStart =
+                            _parseTime(addDirectorVM.breakStartTimeCntr.text);
+
+                        if (startTime == null || endTime == null) {
+                          showTopMessage(context,
+                              'Please set service start and end time first');
+                          ;
+                          return;
+                        }
+
                         final picked = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
                         );
                         if (picked != null) {
+                          if (!_isTimeBetween(picked, startTime, endTime)) {
+                            showTopMessage(context,
+                                'Break end time must be between service start and end time');
+
+                            return;
+                          }
+                          if (breakStart != null) {
+                            final breakStartMin =
+                                breakStart.hour * 60 + breakStart.minute;
+                            final pickedMin = picked.hour * 60 + picked.minute;
+                            if (pickedMin <= breakStartMin) {
+                              showTopMessage(context,
+                                  'Break end time must be after break start time');
+
+                              return;
+                            }
+                          }
                           addDirectorVM.breakEndTimeCntr.text =
                               picked.format(context);
                           addDirectorVM.generateTimeSlots(context);

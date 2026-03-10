@@ -3,12 +3,14 @@ import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';
@@ -27,6 +29,7 @@ import 'package:provider/provider.dart';
 class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   final AddDirectorRepositoryImpl addDirectorRepositoryImpl =
       AddDirectorRepositoryImpl();
+  HttpService _http = HttpService();
 
   AddDirectoryViewModel() {
     getBusinessTypes();
@@ -107,7 +110,20 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
   File? testimonialsFile;
   File? testimonialsPicFile;
   File? galleryFile;
+  List<File>? galleryFiles;
   File? partnerImgFile;
+
+  List<String>? serverGalleryFiles;
+  void setServerGalleryFiles(List<String>? value) {
+    serverGalleryFiles = value;
+    notifyListeners();
+  }
+
+  void setGalleryFiles(List<File>? value) {
+    galleryFiles = value;
+    notifyListeners();
+  }
+
   //
   // Selected dropdowns
   String? selectedDays;
@@ -760,6 +776,75 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     teamMemberFile = null;
     teamLocationCntr.clear();
     notifyListeners();
+  }
+
+  List<CourseBannerImage> galleryImgList = [];
+  bool editMode = false;
+  void setEditMode(bool value) {
+    editMode = value;
+    notifyListeners();
+  }
+
+  Future<void> validateGalleryImages() async {
+    if (editMode) {
+      galleryImgList = await uploadFiles(
+        galleryFiles,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+      final newUrls = galleryImgList
+          .map((img) => img.url)
+          .whereType<String>()
+          .toList();
+      if (serverGalleryFiles == null) {
+        serverGalleryFiles = newUrls;
+      } else {
+        serverGalleryFiles = [...serverGalleryFiles!, ...newUrls];
+      }
+      galleryImgList = serverGalleryFiles!
+          .map(
+            (url) => CourseBannerImage(
+              name: url.split('/').last,
+              url: url,
+              type: "image/jpeg", // you can adjust if you have type info
+              size: 0, // since we don’t know original file size
+            ),
+          )
+          .toList();
+    } else {
+      // Otherwise upload the new images
+      galleryImgList = await uploadFiles(
+        galleryFiles,
+        (file, res) => CourseBannerImage(
+          name: file.path.split('/').last,
+          url: res['url'],
+          type: res['type'] ?? "image/jpeg",
+          size: res['size'] ?? file.lengthSync(),
+        ),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  Future<List<T>> uploadFiles<T>(
+    List<File>? files,
+    T Function(File, Map<String, dynamic>) builder,
+  ) async {
+    if (files == null || files.isEmpty) return [];
+
+    final List<T> uploaded = [];
+
+    for (var file in files) {
+      final response = await _http.uploadImage(file.path);
+
+      uploaded.add(builder(file, response));
+    }
+    return uploaded;
   }
 
   void addGallery(BuildContext context) async {

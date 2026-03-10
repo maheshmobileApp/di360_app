@@ -72,7 +72,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           if (directionalVM
                   .directorDetails?.directoryAppointmentSlots?.isNotEmpty ??
               false)
-            sectionTitle('Book an appointment with <Clinic Name>',
+            sectionTitle('Book an appointment with ${directionalVM
+                  .directorDetails?.companyName}',
                 DirectorAppointmentform(),
                 key: directionalVM.sectionKeys['Book Appointment']),
           addVertical(10),

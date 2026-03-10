@@ -163,7 +163,7 @@ class ProfessBasicInfo extends StatelessWidget
             title: "Profile image",
             imageFile: addDirectorVM.logoFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
-                ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
+                ? addDirectorVM.getBasicInfoData.first.profileImage?.url ?? ''
                 : '',
             onTap: () => imagePickerSelection(
               context,

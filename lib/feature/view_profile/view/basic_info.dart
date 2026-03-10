@@ -73,6 +73,8 @@ class BasicInfo extends StatelessWidget
               hintText: "Enter phone number",
               keyboardType: TextInputType.phone,
               maxLength: 9,
+              readOnly: false,
+              canRequestFocus: true,
               controller: viewProfileVM.phoneNoController,
               validator: validateContactPhoneNumber,
               prefixIcon: PhonePrefixDropdown(

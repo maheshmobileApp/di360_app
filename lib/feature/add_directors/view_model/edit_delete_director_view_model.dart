@@ -340,6 +340,7 @@ class EditDeleteDirectorViewModel extends ChangeNotifier {
 
   Future<void> updateTheGallery(
       BuildContext context, String id, dynamic img) async {
+        
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
     dynamic attachments;
