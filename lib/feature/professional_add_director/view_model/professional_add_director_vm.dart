@@ -125,7 +125,12 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addHobby(String value) {
     if (value.isNotEmpty) {
-      getHobbies.add(value);
+      if (value.contains(',')) {
+        getHobbies.addAll(
+            value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty));
+      } else {
+        getHobbies.add(value);
+      }
       hobbiesCntr.clear();
       notifyListeners();
     }
@@ -138,7 +143,12 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addUniversities(String value) {
     if (value.isNotEmpty) {
-      getUniversitys.add(value);
+      if (value.contains(',')) {
+        getUniversitys.addAll(
+            value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty));
+      } else {
+        getUniversitys.add(value);
+      }
       universitiesCntr.clear();
     }
     notifyListeners();
@@ -151,7 +161,12 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addEducation(String value) {
     if (value.isNotEmpty) {
-      getEducation.add(value);
+      if (value.contains(',')) {
+        getEducation.addAll(
+            value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty));
+      } else {
+        getEducation.add(value);
+      }
       educationCntr.clear();
     }
     notifyListeners();
@@ -164,7 +179,12 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
 
   void addWorkAt(String value) {
     if (value.isNotEmpty) {
-      getWorkingAt.add(value);
+      if (value.contains(',')) {
+        getWorkingAt.addAll(
+            value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty));
+      } else {
+        getWorkingAt.add(value);
+      }
       workAtCntr.clear();
     }
     notifyListeners();
@@ -175,11 +195,31 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateTheHobbyEducationUniversityWorksListData() {
+    final hobby = hobbiesCntr.text;
+    final university = universitiesCntr.text;
+    final education = educationCntr.text;
+    final workAt = workAtCntr.text;
+    if (hobby.isNotEmpty) {
+      addHobby(hobby);
+    }
+    if (university.isNotEmpty) {
+      addUniversities(university);
+    }
+    if (education.isNotEmpty) {
+      addEducation(education);
+    }
+    if (workAt.isNotEmpty) {
+      addWorkAt(workAt);
+    }
+    notifyListeners();
+  }
+
   Future<void> addBasicData(BuildContext context) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
-
+    updateTheHobbyEducationUniversityWorksListData();
     var profile = addDirectorVM.logoFile == null
         ? null
         : await repository.http.uploadImage(addDirectorVM.logoFile?.path);
@@ -249,7 +289,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
   Future<void> updateBasicData(BuildContext context) async {
     final addDirectorVM = context.read<AddDirectoryViewModel>();
     Loaders.circularShowLoader(context);
-
+    updateTheHobbyEducationUniversityWorksListData();
     var profile = addDirectorVM.logoFile == null
         ? null
         : await repository.http.uploadImage(addDirectorVM.logoFile?.path);
@@ -380,6 +420,32 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     addressController.text = data?.address ?? '';
     emailController.text = data?.email ?? '';
     alternateNumberController.text = data?.altPhone ?? '';
+    notifyListeners();
+  }
+
+  Future<void> clearProfessionalDirectorData() async{
+    mobileNumberCntr.clear();
+    designationCntr.clear();
+    nameController.clear();
+    emailController.clear();
+    descController.clear();
+    alternateNumberController.clear();
+    addressController.clear();
+    hobbiesCntr.clear();
+    universitiesCntr.clear();
+    educationCntr.clear();
+    workAtCntr.clear();
+    latitude = null;
+    longitude = null;
+    getHobbies.clear();
+    getUniversitys.clear();
+    getEducation.clear();
+    getWorkingAt.clear();
+    _currentStep = 0;
+    _countryCode = '+61';
+    _number = '';
+    _emailVisibility = null;
+    _phoneVisibility = null;
     notifyListeners();
   }
 }

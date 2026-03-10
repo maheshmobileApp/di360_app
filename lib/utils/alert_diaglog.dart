@@ -120,12 +120,15 @@ showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
 }
 
 void showSignupSuccessDialog(
-    BuildContext context, String email, Function()? onTap) {
+    BuildContext context, String email, Function()? onTap,
+    {String? title, String? subTitle}) {
   showDialog(
+    
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return Dialog(
+        backgroundColor: AppColors.whiteColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -135,7 +138,7 @@ void showSignupSuccessDialog(
               Icon(Icons.check_circle, color: AppColors.primaryColor, size: 60),
               const SizedBox(height: 20),
               Text(
-                "Sign up successful",
+                title ?? "Sign up successful",
                 style: TextStyles.bold5(color: AppColors.black),
               ),
               const SizedBox(height: 15),
@@ -151,7 +154,7 @@ void showSignupSuccessDialog(
                       style: TextStyles.medium3(color: AppColors.primaryColor),
                     ),
                     TextSpan(
-                        text:
+                        text: subTitle ??
                             ". Please click on the link to activate the account."),
                   ],
                 ),

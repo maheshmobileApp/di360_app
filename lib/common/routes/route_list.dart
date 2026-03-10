@@ -10,7 +10,6 @@ class RouteList {
   static const String addNewsFeed = '/addNewsFeed';
   static const String subscribePlan = '/subscribePlan';
   static const String roleScreen = '/roleScreen';
-  static const String practiceDetailsScreen = '/practiceDetailsScreen';
   static const String jobdetailsScreen = '/jobdetailsScreen';
   static const String catalogueDetails = '/catalogueDetails';
   static const String talentdetailsScreen = '/talentdetailsScreen';
@@ -94,4 +93,5 @@ class RouteList {
   static const String notificationScreen = '/notificationScreen';
   static const String talentsHireMeScreen = '/talentsHireMeScreen';
   static const String commentScreen = '/commentScreen';
+  static const String forgotPasswordScreen = '/forgotPasswordScreen';
 }

@@ -149,17 +149,29 @@ class ProfessionalAddDirectorView extends StatelessWidget
                   textColor: Colors.black),
             ),
           if (!isFirstStep) const SizedBox(width: 16),
-          Expanded(
-            child: CustomRoundedButton(
-                fontSize: 12,
-                text: 'Skip',
-                height: 42,
-                onPressed: () {
-                  professAddDirectVM.goToNextStep();
-                },
-                backgroundColor: AppColors.timeBgColor,
-                textColor: AppColors.primaryColor),
-          ),
+          if (!isLastStep)
+            Expanded(
+              child: CustomRoundedButton(
+                  fontSize: 12,
+                  text: 'Skip',
+                  height: 42,
+                  onPressed: () async {
+                    final currentFormKey = professAddDirectVM
+                        .formKeys[professAddDirectVM.currentStep];
+                    if ((currentFormKey.currentState?.validate() ?? false)) {
+                      if (currentStep == 0) {
+                        addDirectorVM.getBasicInfoData.isEmpty == true
+                            ? await professAddDirectVM.addBasicData(context)
+                            : professAddDirectVM.goToNextStep();
+                        addDirectorVM.getDirectories();
+                      } else {
+                        professAddDirectVM.goToNextStep();
+                      }
+                    }
+                  },
+                  backgroundColor: AppColors.timeBgColor,
+                  textColor: AppColors.primaryColor),
+            ),
           addHorizontal(14),
           Expanded(
             child: CustomRoundedButton(

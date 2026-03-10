@@ -999,4 +999,70 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       notifyListeners();
     }
   }
+
+  Future<void> clearAllDirectorData() async{
+    MobileNumberController.clear();
+    CompanyNameController.clear();
+    nameController.clear();
+    emailController.clear();
+    descController.clear();
+    alternateNumberController.clear();
+    ABNNumberController.clear();
+    addressController.clear();
+    certificateNameController.clear();
+    serviceNameController.clear();
+    serviceDescController.clear();
+    achievementNameController.clear();
+    documentNameController.clear();
+    teamNameCntr.clear();
+    teamDesignationCntr.clear();
+    teamNumberCntr.clear();
+    teamEmailIDCntr.clear();
+    teamLocationCntr.clear();
+    questionCntr.clear();
+    answerCntr.clear();
+    messageCntr.clear();
+    testiNameCntr.clear();
+    socialAccountsurlCntr.clear();
+    SelectTimeController.clear();
+    roleCntr.clear();
+    selectWeekCntr.clear();
+    serviceStartTimeCntr.clear();
+    serviceEndTimeCntr.clear();
+    breakStartTimeCntr.clear();
+    breakEndTimeCntr.clear();
+    serviceTimemInCntr.clear();
+    partnerNameCntr.clear();
+    descriptionCntr.clear();
+    latitude = null;
+    longitude = null;
+    dayWiseTimeSlots.clear();
+    _currentStep = 0;
+    selectedShowPromotion = "All Users";
+    logoFile = null;
+    bannerFile = null;
+    serviefile = null;
+    certificateFile = null;
+    achievementFile = null;
+    documentFile = null;
+    teamMemberFile = null;
+    testimonialsFile = null;
+    testimonialsPicFile = null;
+    galleryFile = null;
+    partnerImgFile = null;
+    selectedDays = null;
+    selectedAccount = null;
+    selectedBusineestype = null;
+    _selectedTeamMemberList.clear();
+    _selectedServiceList.clear();
+    _selectedDaysList.clear();
+    _emailVisibility = null;
+    _phoneVisibility = null;
+    selectedPhoneCode = "AU (+61)";
+    serviceShowApmt = false;
+    isEditService = false;
+    appointmentShowVal = false;
+    ourTeamShowVal = false;
+    notifyListeners();
+  }
 }

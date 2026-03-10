@@ -25,7 +25,7 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
           sectionHeader('Education'),
           InputTextField(
               title: '',
-              hintText: 'Add Education',
+              hintText: "Enter education and enter ',' spearate education",
               controller: professDirectorVM.educationCntr,
               onSubmitted: (val) {
                 professDirectorVM.addEducation(val ?? '');
@@ -55,7 +55,8 @@ class EducationScreen extends StatelessWidget with BaseContextHelpers {
           sectionHeader('Work Experience'),
           InputTextField(
               title: '',
-              hintText: 'Add work experience',
+              hintText:
+                  "Enter work experience and enter ',' spearate work experience",
               controller: professDirectorVM.workAtCntr,
               onSubmitted: (val) {
                 professDirectorVM.addWorkAt(val ?? '');

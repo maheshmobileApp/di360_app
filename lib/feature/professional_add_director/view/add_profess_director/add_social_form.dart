@@ -62,8 +62,7 @@ class AddSocialForm extends StatelessWidget
           InputTextField(
               title: "Social Accounts URL",
               isRequired: true,
-              hintText: "Paste/enter link",
-              keyboardType: TextInputType.emailAddress,
+              hintText: "https://example.com",
               controller: addDirectorVM.socialAccountsurlCntr,
               validator: validateOptionalUrl),
           addVertical(20),

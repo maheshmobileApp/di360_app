@@ -145,10 +145,11 @@ mixin ValidationMixins {
 
   String? validateOptionalPhoneNumber(String? value) {
     if (value == null || value.trim().isEmpty) return null;
-    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+    final trimmed = value.trim();
+    if (!RegExp(r'^[0-9]+$').hasMatch(trimmed)) {
       return 'Please enter only numbers';
     }
-    if (value.trim().length < 9) {
+    if (trimmed.length < 9) {
       return 'Phone number must be at least 9 digits';
     }
     return null;

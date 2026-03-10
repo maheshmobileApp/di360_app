@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
+import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
@@ -16,6 +17,8 @@ import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_v
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
+import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -40,7 +43,7 @@ class DashBoardViewModel extends ChangeNotifier {
   Future<void> _initializePages() async {
     _userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     await LocalStorage.setBoolValue(
-          LocalStorageConst.firstNavigationDirectory, false);
+        LocalStorageConst.firstNavigationDirectory, false);
     _setupPages();
     _isInitialized = true;
     notifyListeners();
@@ -158,6 +161,12 @@ class DashBoardViewModel extends ChangeNotifier {
 }
 
 Future logOutAlert(BuildContext context) {
+  final addDirectoryVM =
+      Provider.of<AddDirectoryViewModel>(context, listen: false);
+  final viewProfileVM =
+      Provider.of<ViewProfileViewModel>(context, listen: false);
+  final professionalAddDirVM =
+      Provider.of<ProfessionalAddDirectorVm>(context, listen: false);
   return showDialog(
       context: context,
       builder: (context) {
@@ -175,6 +184,9 @@ Future logOutAlert(BuildContext context) {
                 onPressed: () async {
                   await deleteToken();
                   await LocalStorage.clearAllData();
+                  addDirectoryVM.clearAllDirectorData();
+                  viewProfileVM.clearProfileData();
+                  professionalAddDirVM.clearProfessionalDirectorData();
                   navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 },
                 child: const Text('Ok')),

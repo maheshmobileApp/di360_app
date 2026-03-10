@@ -59,10 +59,10 @@ import 'package:di360_flutter/feature/learning_hub/view/terms_and_conditions.dar
 import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/campaign/view/campaign_listing_view.dart';
+import 'package:di360_flutter/feature/forgot_password/view/forgot_password_screen.dart';
 import 'package:di360_flutter/feature/my_appointments/view/appoinment_screen.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view/my_learning_hub_screen.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
-import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/add_news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/notifications/view/notification_screen.dart';
@@ -70,7 +70,6 @@ import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
-import 'package:di360_flutter/feature/sign_up/views/practice_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
@@ -106,7 +105,6 @@ class Routes {
       RouteList.subscribePlan: (context) => SubscriptionPlanScreen(),
       RouteList.signup: (context) => SignupScreen(),
       RouteList.roleScreen: (context) => RoleSelectionScreen(),
-      RouteList.practiceDetailsScreen: (context) => PracticeDetailsScreen(),
       RouteList.jobCreate: (context) => ChangeNotifierProvider(
           create: (BuildContext context) => JobCreateViewModel(),
           child: JobCreateView()),
@@ -277,7 +275,7 @@ class Routes {
       
       RouteList.notificationScreen: (context) => NotificationScreen(),
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
-      //RouteList.commentScreen: (context) => CommentScreen(),
+      RouteList.forgotPasswordScreen: (context) => ForgotPasswordScreen(),
     };
   }
 }
