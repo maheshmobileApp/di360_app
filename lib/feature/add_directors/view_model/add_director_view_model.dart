@@ -796,7 +796,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (result != null) {
-       getDirectories();
+      getDirectories();
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Business time added successfully');
     } else {
@@ -1000,7 +1000,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  Future<void> clearAllDirectorData() async{
+  Future<void> clearAllDirectorData() async {
+    getBasicInfoData = [];
     MobileNumberController.clear();
     CompanyNameController.clear();
     nameController.clear();
