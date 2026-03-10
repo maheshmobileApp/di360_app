@@ -33,9 +33,9 @@ class ProfessionalAddDirectorView extends StatelessWidget
               LocalStorageConst.firstNavigationDirectory);
           if (addDirectorVM.getBasicInfoData.isEmpty) {
             await viewProfileAlertPopup(context,
-                title: 'Welcome! Your Director Is Incomplete',
+                title: 'Please complete your Directory Profile',
                 subTitle:
-                    'To get the best experience, please update the required information to proceed.');
+                    'This profile is visible in the Marketplace and must be filled and saved to continue using your services');
             return false;
           } else if (directorComplete == true && firstNavigation == false) {
             navigationService.goBack();
@@ -55,9 +55,9 @@ class ProfessionalAddDirectorView extends StatelessWidget
                     LocalStorageConst.firstNavigationDirectory);
                 return addDirectorVM.getBasicInfoData.isEmpty
                     ? viewProfileAlertPopup(context,
-                        title: 'Welcome! Your Director Is Incomplete',
+                        title: 'Please complete your Directory Profile',
                         subTitle:
-                            'To get the best experience, please update the required information to proceed.')
+                            'This profile is visible in the Marketplace and must be filled and saved to continue using your services')
                     : (directorComplete == true && firstNavigation == false)
                         ? navigationService.goBack()
                         : navigationService
