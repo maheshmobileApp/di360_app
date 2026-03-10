@@ -88,24 +88,37 @@ class BasicInfo extends StatelessWidget
   }
 
   Widget _buildBusineestype(ViewProfileViewModel viewVM) {
-    final allCategories = viewVM.directoryBusinessTypes
-        .expand((bt) => bt.directoryCategories ?? [])
-        .toList();
+    final items = <DropdownMenuItem<Object>>[];
+
+    for (var bt in viewVM.directoryBusinessTypes) {
+      items.add(DropdownMenuItem<Object>(
+        enabled: false,
+        value: bt.name,
+        child: Text(bt.name ?? '',
+            style: TextStyles.medium3(color: AppColors.black)),
+      ));
+      for (var cat in bt.directoryCategories ?? []) {
+        items.add(DropdownMenuItem<Object>(
+          value: cat,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(cat.name ?? '',
+                style: TextStyles.regular3(color: AppColors.secondaryColor)),
+          ),
+        ));
+      }
+    }
 
     return CustomDropDown(
       value: viewVM.selectedBusineestype,
       title: "Business Type",
+      isRequired: true,
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
-      items: allCategories.map((cat) {
-        return DropdownMenuItem<Object>(
-          value: cat,
-          child: Text(cat.name ?? "",
-              style: TextStyles.medium3(color: AppColors.black)),
-        );
-      }).toList(),
+      items: items,
       hintText: "Select category",
-      isRequired: true,
+      validator: (value) =>
+          viewVM.selectedBusineestype == null ? 'Please select category' : null,
     );
   }
 }

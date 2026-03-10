@@ -43,31 +43,37 @@ class ProfessionalDetailInfo extends StatelessWidget
   }
 
   Widget _buildBusineestype(ViewProfileViewModel viewVM) {
-    final allCategories = viewVM.directoryBusinessTypes
-        .expand((bt) => bt.directoryCategories ?? [])
-        .toSet()
-        .toList();
+    final items = <DropdownMenuItem<Object>>[];
 
-    // Ensure selected value exists in the list
-    final selectedValue = allCategories.contains(viewVM.selectedBusineestype)
-        ? viewVM.selectedBusineestype
-        : null;
+    for (var bt in viewVM.directoryBusinessTypes) {
+      items.add(DropdownMenuItem<Object>(
+        enabled: false,
+        value: bt.name,
+        child: Text(bt.name ?? '',
+            style: TextStyles.medium3(color: AppColors.black)),
+      ));
+      for (var cat in bt.directoryCategories ?? []) {
+        items.add(DropdownMenuItem<Object>(
+          value: cat,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(cat.name ?? '',
+                style: TextStyles.regular3(color: AppColors.secondaryColor)),
+          ),
+        ));
+      }
+    }
 
     return CustomDropDown(
-      value: selectedValue,
+      value: viewVM.selectedBusineestype,
       title: "Profession Type",
+      isRequired: true,
       onChanged: (v) =>
           viewVM.setSelectedBusineestype(v as DirectoryCategories),
-      isRequired: true,
-      validator: (v) => v == null ? 'Select profession type' : null,
-      items: allCategories.map((cat) {
-        return DropdownMenuItem<Object>(
-          value: cat,
-          child: Text(cat.name ?? "",
-              style: TextStyles.medium3(color: AppColors.black)),
-        );
-      }).toList(),
+      items: items,
       hintText: "Select category",
+      validator: (value) =>
+          viewVM.selectedBusineestype == null ? 'Please select category' : null,
     );
   }
 }

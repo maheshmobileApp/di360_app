@@ -655,6 +655,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             ? await addDirectorRepositoryImpl.http
                 .uploadImage(certificateFile!.path)
             : null;
+    if (attachments == null) {
+      scaffoldMessenger('Attachement not upload again select');
+      Loaders.circularHideLoader(context);
+      return;
+    }
     final result = await addDirectorRepositoryImpl.addCertificates({
       "certiObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -680,6 +685,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             documentFile!.path.isNotEmpty
         ? await addDirectorRepositoryImpl.http.uploadImage(documentFile!.path)
         : null;
+    if (attachments == null) {
+      scaffoldMessenger('Attachement not upload again select');
+      Loaders.circularHideLoader(context);
+      return;
+    }
     final result = await addDirectorRepositoryImpl.addDocu({
       "docsObj": {
         "directory_id": getBasicInfoData.first.id,
@@ -706,6 +716,11 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             ? await addDirectorRepositoryImpl.http
                 .uploadImage(achievementFile!.path)
             : null;
+    if (attachments == null) {
+      Loaders.circularHideLoader(context);
+      scaffoldMessenger('Attachement not upload again select');
+      return;
+    }
     final result = await addDirectorRepositoryImpl.addAchieve({
       "achObj": {
         "directory_id": getBasicInfoData.first.id,

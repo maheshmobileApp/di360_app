@@ -124,17 +124,15 @@ class AddDirectorBasicInfo extends StatelessWidget
           ),
           addVertical(20),
           AddressAutoFillWidget(
-              controller: addDirectorVM.addressController,
-              focusNode: addDirectorVM.addressFocusNode,
-              getPlaceDetailWithLatLng: (Prediction prediction) {
-                addDirectorVM.latitude = prediction.lat != null
-                    ? double.parse(prediction.lat!)
-                    : null;
-                addDirectorVM.longitude = prediction.lng != null
-                    ? double.parse(prediction.lng!)
-                    : null;
-              },
-             ),
+            controller: addDirectorVM.addressController,
+            focusNode: addDirectorVM.addressFocusNode,
+            getPlaceDetailWithLatLng: (Prediction prediction) {
+              addDirectorVM.latitude =
+                  prediction.lat != null ? double.parse(prediction.lat!) : null;
+              addDirectorVM.longitude =
+                  prediction.lng != null ? double.parse(prediction.lng!) : null;
+            },
+          ),
           addVertical(20),
           sectionHeader("Logo & Banner"),
           addVertical(20),
@@ -180,23 +178,38 @@ class AddDirectorBasicInfo extends StatelessWidget
   }
 
   Widget _buildBusineestype(AddDirectoryViewModel addDirectorVM) {
-    final allCategories = addDirectorVM.directoryBusinessTypes
-        .expand((bt) => bt.directoryCategories ?? [])
-        .toList();
+    final items = <DropdownMenuItem<Object>>[];
+
+    for (var bt in addDirectorVM.directoryBusinessTypes) {
+      items.add(DropdownMenuItem<Object>(
+        enabled: false,
+        value: bt.name,
+        child: Text(bt.name ?? '',
+            style: TextStyles.medium3(color: AppColors.black)),
+      ));
+      for (var cat in bt.directoryCategories ?? []) {
+        items.add(DropdownMenuItem<Object>(
+          value: cat,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(cat.name ?? '',
+                style: TextStyles.regular3(color: AppColors.secondaryColor)),
+          ),
+        ));
+      }
+    }
 
     return CustomDropDown(
-        value: addDirectorVM.selectedBusineestype,
-        title: "Profession Type",
-        isRequired: true,
-        onChanged: (v) =>
-            addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
-        items: allCategories.map((cat) {
-          return DropdownMenuItem<Object>(
-            value: cat,
-            child: Text(cat.name ?? "",
-                style: TextStyles.medium3(color: AppColors.black)),
-          );
-        }).toList(),
-        hintText: "Select category");
+      value: addDirectorVM.selectedBusineestype,
+      title: "Profession Type",
+      isRequired: true,
+      onChanged: (v) =>
+          addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
+      items: items,
+      hintText: "Select category",
+      validator: (value) => addDirectorVM.selectedBusineestype == null
+          ? 'Please select category'
+          : null,
+    );
   }
 }
