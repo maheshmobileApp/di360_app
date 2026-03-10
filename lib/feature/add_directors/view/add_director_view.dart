@@ -21,6 +21,7 @@ import 'package:di360_flutter/feature/job_create/view/steps_view.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/add_directory_enum.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,23 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
-    return  WillPopScope(
+    return FutureBuilder<String?>(
+      future: LocalStorage.getStringVal(LocalStorageConst.type),
+      builder: (context, snapshot) {
+        final userType = snapshot.data;
+        return _buildContent(context, addDirectorVM, userType);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, AddDirectoryViewModel addDirectorVM, String? userType) {
+    final isPractice = userType == UserRole.practice.value;
+    final steps = AddDirectoryStep.values.where((step) => 
+      !isPractice || step != AddDirectoryStep.Partners
+    ).toList();
+    final totalSteps = steps.length;
+    
+    return WillPopScope(
         onWillPop: () async {
           final directorComplete = await LocalStorage.getBoolValue(
               LocalStorageConst.directoryComplete);
@@ -39,9 +56,9 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
               LocalStorageConst.firstNavigationDirectory);
           if (addDirectorVM.getBasicInfoData.isEmpty) {
             await viewProfileAlertPopup(context,
-                title: 'Welcome! Your Director Is Incomplete',
+                title: 'Please complete your Directory Profile',
                 subTitle:
-                    'To get the best experience, please update the required information to proceed.');
+                    'This profile is visible in the Marketplace and must be filled and saved to continue using your services');
             return false;
           } else if (directorComplete == true && firstNavigation == false) {
             navigationService.goBack();
@@ -51,50 +68,50 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
             return false;
           }
         },
-        child:  Scaffold(
-      appBar: AppbarTitleBackIconWidget(
-          title: 'Add My Directory',
-          backAction: () async {
-            final directorComplete = await LocalStorage.getBoolValue(
-                LocalStorageConst.directoryComplete);
-            final firstNavigation = await LocalStorage.getBoolValue(
-                LocalStorageConst.firstNavigationDirectory);
-            return addDirectorVM.getBasicInfoData.isEmpty
-                ? viewProfileAlertPopup(context,
-                    title: 'Welcome! Your Director Is Incomplete',
-                    subTitle:
-                        'To get the best experience, please update the required information to proceed.')
-                : (directorComplete == true && firstNavigation == false)
-                    ? navigationService.goBack()
-                    : navigationService
-                        .pushNamedAndRemoveUntil(RouteList.dashBoard);
-          }),
-      body: Column(
-        children: [
-          _buildStepProgressBar(addDirectorVM.currentStep,
-              addDirectorVM.totalSteps, addDirectorVM),
-          Expanded(
-            child: PageView(
-              controller: addDirectorVM.pageController,
-              physics: NeverScrollableScrollPhysics(),
-              children: List.generate(
-                addDirectorVM.totalSteps,
-                (index) => _buildStep(AddDirectoryStep.values[index],
-                    addDirectorVM.formKeys[index]),
+        child: Scaffold(
+          appBar: AppbarTitleBackIconWidget(
+              title: 'Add My Directory',
+              backAction: () async {
+                final directorComplete = await LocalStorage.getBoolValue(
+                    LocalStorageConst.directoryComplete);
+                final firstNavigation = await LocalStorage.getBoolValue(
+                    LocalStorageConst.firstNavigationDirectory);
+                return addDirectorVM.getBasicInfoData.isEmpty
+                    ? viewProfileAlertPopup(context,
+                        title: 'Please complete your Directory Profile',
+                        subTitle:
+                            'This profile is visible in the Marketplace and must be filled and saved to continue using your services')
+                    : (directorComplete == true && firstNavigation == false)
+                        ? navigationService.goBack()
+                        : navigationService
+                            .pushNamedAndRemoveUntil(RouteList.dashBoard);
+              }),
+          body: Column(
+            children: [
+              _buildStepProgressBar(addDirectorVM.currentStep,
+                  totalSteps, addDirectorVM),
+              Expanded(
+                child: PageView(
+                  controller: addDirectorVM.pageController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: List.generate(
+                    totalSteps,
+                    (index) => _buildStep(steps[index],
+                        addDirectorVM.formKeys[steps[index].value]),
+                  ),
+                ),
               ),
-            ),
+              _bottomButtons(context, addDirectorVM, totalSteps),
+            ],
           ),
-          _bottomButtons(context, addDirectorVM),
-        ],
-      ),
-     ) );
+        ));
   }
 
   Widget _buildStepProgressBar(
       currentStep, totalSteps, AddDirectoryViewModel AddDirectorVM) {
     return StepsView(
         currentStep: AddDirectorVM.currentStep,
-        totalSteps: AddDirectorVM.totalSteps);
+        totalSteps: totalSteps);
   }
 
   Widget _buildStep(AddDirectoryStep stepIndex, GlobalKey<FormState> key) {
@@ -134,9 +151,9 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _bottomButtons(
-      BuildContext context, AddDirectoryViewModel addDirectorVM) {
+      BuildContext context, AddDirectoryViewModel addDirectorVM, int totalSteps) {
     int currentStep = addDirectorVM.currentStep;
-    bool isLastStep = currentStep == addDirectorVM.totalSteps - 1;
+    bool isLastStep = currentStep == totalSteps - 1;
     bool isFirstStep = currentStep == 0;
     return Container(
       height: 80,

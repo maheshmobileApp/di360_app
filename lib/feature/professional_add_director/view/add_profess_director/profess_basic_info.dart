@@ -163,7 +163,7 @@ class ProfessBasicInfo extends StatelessWidget
             title: "Profile image",
             imageFile: addDirectorVM.logoFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
-                ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
+                ? addDirectorVM.getBasicInfoData.first.profileImage?.url ?? ''
                 : '',
             onTap: () => imagePickerSelection(
               context,
@@ -218,7 +218,8 @@ class ProfessBasicInfo extends StatelessWidget
           sectionHeader('Universities'),
           InputTextField(
               title: '',
-              hintText: "Enter universities and enter ',' spearate universities",
+              hintText:
+                  "Enter universities and enter ',' spearate universities",
               controller: professDirectorVM.universitiesCntr,
               onSubmitted: (val) {
                 professDirectorVM.addUniversities(val ?? '');
@@ -262,24 +263,35 @@ class ProfessBasicInfo extends StatelessWidget
   }
 
   Widget _buildBusineestype(AddDirectoryViewModel addDirectorVM) {
-    final allCategories = addDirectorVM.directoryBusinessTypes
-        .expand((bt) => bt.directoryCategories ?? [])
-        .toList();
+    final items = <DropdownMenuItem<Object>>[];
+
+    for (var bt in addDirectorVM.directoryBusinessTypes) {
+      items.add(DropdownMenuItem<Object>(
+        enabled: false,
+        value: bt.name,
+        child: Text(bt.name ?? '',
+            style: TextStyles.medium3(color: AppColors.black)),
+      ));
+      for (var cat in bt.directoryCategories ?? []) {
+        items.add(DropdownMenuItem<Object>(
+          value: cat,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(cat.name ?? '',
+                style: TextStyles.regular3(color: AppColors.secondaryColor)),
+          ),
+        ));
+      }
+    }
 
     return CustomDropDown(
       value: addDirectorVM.selectedBusineestype,
       title: "Profession Type",
+      isRequired: true,
       onChanged: (v) =>
           addDirectorVM.setSelectedBusineestype(v as DirectoryCategories),
-      items: allCategories.map((cat) {
-        return DropdownMenuItem<Object>(
-          value: cat,
-          child: Text(cat.name ?? "",
-              style: TextStyles.medium3(color: AppColors.black)),
-        );
-      }).toList(),
+      items: items,
       hintText: "Select category",
-      isRequired: true,
       validator: (value) => addDirectorVM.selectedBusineestype == null
           ? 'Please select category'
           : null,

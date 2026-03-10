@@ -126,13 +126,13 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             imageFile: addDirectorVM.documentFile,
             onTap: () {
               imagePickerSelection(
-                cameraAvailable: false,
-                context,
-                () => addDirectorVM.pickDocumentsImage(),
-                () => addDirectorVM.pickDocumentsImage());
-                setState(() {
-                  docName = null;
-                });
+                  cameraAvailable: false,
+                  context,
+                  () => addDirectorVM.pickDocumentsImage(),
+                  () => addDirectorVM.pickDocumentsImage());
+              setState(() {
+                docName = null;
+              });
             },
             hintText: docName ?? 'PDF and Files up to 5 MB',
           ),
@@ -143,7 +143,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
               child: Stack(children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
-                  child: Icon(Icons.picture_as_pdf,size: 60),
+                  child: Icon(Icons.picture_as_pdf, size: 60),
                 ),
                 Positioned(
                     right: 0,
@@ -172,7 +172,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
               child: Stack(children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
-                  child: Icon(Icons.picture_as_pdf,size: 60),
+                  child: Icon(Icons.picture_as_pdf, size: 60),
                 ),
                 Positioned(
                     right: 0,
@@ -207,7 +207,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                 scaffoldMessenger('Enter document name');
               } else if (addDirectorVM.documentFile?.path.isEmpty ??
                   false || img == null) {
-                scaffoldMessenger('Enter attachement');
+                scaffoldMessenger('Please add attachement');
               } else {
                 editVM.isEditDocu
                     ? editVM.updateTheDocu(context, docEditId, img)

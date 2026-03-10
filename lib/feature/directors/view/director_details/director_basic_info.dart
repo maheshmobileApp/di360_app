@@ -72,7 +72,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           if (directionalVM
                   .directorDetails?.directoryAppointmentSlots?.isNotEmpty ??
               false)
-            sectionTitle('Book an appointment with <Clinic Name>',
+            sectionTitle(
+                'Book an appointment with <${directionalVM.directorDetails?.name?.toUpperCase() ?? 'Clinic Name'}>',
                 DirectorAppointmentform(),
                 key: directionalVM.sectionKeys['Book Appointment']),
           addVertical(10),
@@ -106,7 +107,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: services
               .map((val) => _outlinedButton(context, val.name ?? ''))
               .toList()),
@@ -391,7 +392,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     return Column(
       children: [
         CustomGrid(
-            childAspectRatio: 0.80,
+            childAspectRatio: 0.78,
             children: List.generate(docList?.length ?? 0, (index) {
               final doc = docList?[index];
               return Card(
@@ -692,41 +693,48 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               ),
             ],
           ),
-           const SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             children: vm.directorDetails?.directoryLocations!
-                .where((e) => ['facebook', 'instagram', 'linkedin', 'twitter'].contains(e.mediaName?.toLowerCase()))
-                .map((social) {
-              String icon;
-              switch (social.mediaName?.toLowerCase()) {
-                case 'facebook':
-                  icon = ImageConst.facebookSvg;
-                  break;
-                case 'instagram':
-                  icon = ImageConst.instagramSvg;
-                  break;
-                case 'linkedin':
-                  icon = ImageConst.linkedinSvg;
-                  break;
-                case 'twitter':
-                  icon = ImageConst.twitterSvg;
-                  break;
-                default:
-                  icon = ImageConst.facebookSvg;
-              }
-              return Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: InkWell(
-                  onTap: () async {
-                    final url = social.mediaLink ?? '';
-                    if (url.isNotEmpty && await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                    }
-                  },
-                  child: Image.asset(icon, height: 25)
-                ),
-              );
-            }).toList() ?? [],
+                    .where((e) => [
+                          'facebook',
+                          'instagram',
+                          'linkedin',
+                          'twitter'
+                        ].contains(e.mediaName?.toLowerCase()))
+                    .map((social) {
+                  String icon;
+                  switch (social.mediaName?.toLowerCase()) {
+                    case 'facebook':
+                      icon = ImageConst.facebookSvg;
+                      break;
+                    case 'instagram':
+                      icon = ImageConst.instagramSvg;
+                      break;
+                    case 'linkedin':
+                      icon = ImageConst.linkedinSvg;
+                      break;
+                    case 'twitter':
+                      icon = ImageConst.twitterSvg;
+                      break;
+                    default:
+                      icon = ImageConst.facebookSvg;
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: InkWell(
+                        onTap: () async {
+                          final url = social.mediaLink ?? '';
+                          if (url.isNotEmpty &&
+                              await canLaunchUrl(Uri.parse(url))) {
+                            await launchUrl(Uri.parse(url),
+                                mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        child: Image.asset(icon, height: 25)),
+                  );
+                }).toList() ??
+                [],
           ),
           const SizedBox(height: 20),
           InkWell(

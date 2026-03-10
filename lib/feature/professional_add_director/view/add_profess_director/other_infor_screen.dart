@@ -90,9 +90,11 @@ class OtherInforScreen extends StatelessWidget {
 
   Widget socialURLWidget(
       AddDirectoryViewModel addDirectVM, EditDeleteDirectorViewModel editVM) {
-    final socialList = addDirectVM.getBasicInfoData.first.directoryLocations
-        ?.where((v) => v.status == "SOCIAL")
-        .toList();
+    final socialList = addDirectVM.getBasicInfoData.isNotEmpty
+        ? addDirectVM.getBasicInfoData.first.directoryLocations
+            ?.where((v) => v.status == "SOCIAL")
+            .toList()
+        : null;
     return Container(
       decoration: BoxDecoration(
           color: AppColors.cardcolor, borderRadius: BorderRadius.circular(12)),

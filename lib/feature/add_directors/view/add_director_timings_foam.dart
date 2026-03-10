@@ -82,8 +82,8 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                   validator: (value) => value == null || value.isEmpty
                       ? 'Please enter service start time'
                       : null,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
+                  prefixIcon: Icon(Icons.access_time, size: 20),
+                  onTap: () async {
                       final picked = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.now(),
@@ -93,8 +93,6 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                             picked.format(context);
                       }
                     },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
                 ),
               ),
               addHorizontal(12),
@@ -107,8 +105,8 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                   validator: (value) => value == null || value.isEmpty
                       ? 'Please enter service end time'
                       : null,
-                  prefixIcon: GestureDetector(
-                    onTap: () async {
+                  prefixIcon: Icon(Icons.access_time, size: 20),
+                  onTap:  () async {
                       final picked = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.now(),
@@ -118,8 +116,6 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                             picked.format(context);
                       }
                     },
-                    child: Icon(Icons.access_time, size: 20),
-                  ),
                 ),
               ),
             ],
