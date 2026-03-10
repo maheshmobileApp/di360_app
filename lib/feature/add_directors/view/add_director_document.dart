@@ -207,7 +207,7 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
                 scaffoldMessenger('Enter document name');
               } else if (addDirectorVM.documentFile?.path.isEmpty ??
                   false || img == null) {
-                scaffoldMessenger('Enter attachement');
+                scaffoldMessenger('Please add attachement');
               } else {
                 editVM.isEditDocu
                     ? editVM.updateTheDocu(context, docEditId, img)
