@@ -41,13 +41,14 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildContent(BuildContext context, AddDirectoryViewModel addDirectorVM, String? userType) {
+  Widget _buildContent(BuildContext context,
+      AddDirectoryViewModel addDirectorVM, String? userType) {
     final isPractice = userType == UserRole.practice.value;
-    final steps = AddDirectoryStep.values.where((step) => 
-      !isPractice || step != AddDirectoryStep.Partners
-    ).toList();
+    final steps = AddDirectoryStep.values
+        .where((step) => !isPractice || step != AddDirectoryStep.Partners)
+        .toList();
     final totalSteps = steps.length;
-    
+
     return WillPopScope(
         onWillPop: () async {
           final directorComplete = await LocalStorage.getBoolValue(
@@ -88,8 +89,8 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
               }),
           body: Column(
             children: [
-              _buildStepProgressBar(addDirectorVM.currentStep,
-                  totalSteps, addDirectorVM),
+              _buildStepProgressBar(
+                  addDirectorVM.currentStep, totalSteps, addDirectorVM),
               Expanded(
                 child: PageView(
                   controller: addDirectorVM.pageController,
@@ -110,8 +111,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
   Widget _buildStepProgressBar(
       currentStep, totalSteps, AddDirectoryViewModel AddDirectorVM) {
     return StepsView(
-        currentStep: AddDirectorVM.currentStep,
-        totalSteps: totalSteps);
+        currentStep: AddDirectorVM.currentStep, totalSteps: totalSteps);
   }
 
   Widget _buildStep(AddDirectoryStep stepIndex, GlobalKey<FormState> key) {
@@ -150,8 +150,8 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
     }
   }
 
-  Widget _bottomButtons(
-      BuildContext context, AddDirectoryViewModel addDirectorVM, int totalSteps) {
+  Widget _bottomButtons(BuildContext context,
+      AddDirectoryViewModel addDirectorVM, int totalSteps) {
     int currentStep = addDirectorVM.currentStep;
     bool isLastStep = currentStep == totalSteps - 1;
     bool isFirstStep = currentStep == 0;
@@ -183,63 +183,64 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
               ),
             ),
           if (!isFirstStep) const SizedBox(width: 16),
-          Expanded(
-            child: CustomRoundedButton(
-                fontSize: 12,
-                text: 'Skip',
-                height: 42,
-                onPressed: () async {
-                  final currentFormKey =
-                      addDirectorVM.formKeys[addDirectorVM.currentStep];
-                  if (currentStep == 0) {
-                    if (!(currentFormKey.currentState?.validate() ?? false)) {
-                      return;
-                    }
-                    if (addDirectorVM.selectedBusineestype == null) {
-                      scaffoldMessenger('Please select business type');
-                      return;
-                    }
-                    if (addDirectorVM.getBasicInfoData.isEmpty) {
-                      if (addDirectorVM.logoFile == null) {
-                        scaffoldMessenger('Please upload logo');
+          if (!isLastStep)
+            Expanded(
+              child: CustomRoundedButton(
+                  fontSize: 12,
+                  text: 'Skip',
+                  height: 42,
+                  onPressed: () async {
+                    final currentFormKey =
+                        addDirectorVM.formKeys[addDirectorVM.currentStep];
+                    if (currentStep == 0) {
+                      if (!(currentFormKey.currentState?.validate() ?? false)) {
                         return;
                       }
-                      if (addDirectorVM.bannerFile == null) {
-                        scaffoldMessenger('Please upload banner image');
+                      if (addDirectorVM.selectedBusineestype == null) {
+                        scaffoldMessenger('Please select business type');
                         return;
                       }
+                      if (addDirectorVM.getBasicInfoData.isEmpty) {
+                        if (addDirectorVM.logoFile == null) {
+                          scaffoldMessenger('Please upload logo');
+                          return;
+                        }
+                        if (addDirectorVM.bannerFile == null) {
+                          scaffoldMessenger('Please upload banner image');
+                          return;
+                        }
+                      } else {
+                        final hasLogo = addDirectorVM.logoFile != null ||
+                            (addDirectorVM.getBasicInfoData.first.logo?.url
+                                    ?.isNotEmpty ??
+                                false);
+                        final hasBanner = addDirectorVM.bannerFile != null ||
+                            (addDirectorVM.getBasicInfoData.first.bannerImage
+                                    ?.url?.isNotEmpty ??
+                                false);
+                        if (!hasLogo) {
+                          scaffoldMessenger('Please upload logo');
+                          return;
+                        }
+                        if (!hasBanner) {
+                          scaffoldMessenger('Please upload banner image');
+                          return;
+                        }
+                      }
+                      addDirectorVM.getBasicInfoData.isEmpty
+                          ? await addDirectorVM.addBasicInfo(context)
+                          : addDirectorVM.goToNextStep();
                     } else {
-                      final hasLogo = addDirectorVM.logoFile != null ||
-                          (addDirectorVM.getBasicInfoData.first.logo?.url
-                                  ?.isNotEmpty ??
-                              false);
-                      final hasBanner = addDirectorVM.bannerFile != null ||
-                          (addDirectorVM.getBasicInfoData.first.bannerImage?.url
-                                  ?.isNotEmpty ??
-                              false);
-                      if (!hasLogo) {
-                        scaffoldMessenger('Please upload logo');
-                        return;
-                      }
-                      if (!hasBanner) {
-                        scaffoldMessenger('Please upload banner image');
-                        return;
+                      if (isLastStep) {
+                        navigationService.goBack();
+                      } else {
+                        addDirectorVM.goToNextStep();
                       }
                     }
-                    addDirectorVM.getBasicInfoData.isEmpty
-                        ? await addDirectorVM.addBasicInfo(context)
-                        : addDirectorVM.goToNextStep();
-                  } else {
-                    if (isLastStep) {
-                      navigationService.goBack();
-                    } else {
-                      addDirectorVM.goToNextStep();
-                    }
-                  }
-                },
-                backgroundColor: AppColors.timeBgColor,
-                textColor: AppColors.primaryColor),
-          ),
+                  },
+                  backgroundColor: AppColors.timeBgColor,
+                  textColor: AppColors.primaryColor),
+            ),
           addHorizontal(16),
           Expanded(
             child: CustomRoundedButton(
@@ -291,7 +292,8 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                     await addDirectorVM.getDirectories();
                   } else {
                     if (isLastStep) {
-                      navigationService.goBack();
+                      navigationService
+                          .pushNamedAndRemoveUntil(RouteList.dashBoard);
                     } else {
                       addDirectorVM.goToNextStep();
                     }

@@ -63,23 +63,23 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
-                    title: "Phone",
-                    hintText: "Enter phone number",
-                    keyboardType: TextInputType.phone,
-                    maxLength: 9,
-                    controller: directorVM.phoneController,
-                    validator: validateContactPhoneNumber,
-                    prefixIcon: PhonePrefixDropdown(
-                      value: directorVM.selectedPhoneCode??"",
-                      items: directorVM.phoneCodeList,
-                      onChanged: (value) {
-                        directorVM.setPhoneCode(value ?? "");
-                      },
+                      title: "Phone",
+                      hintText: "Enter phone number",
+                      keyboardType: TextInputType.phone,
+                      maxLength: 9,
+                      controller: directorVM.phoneController,
+                      validator: validateContactPhoneNumber,
+                      prefixIcon: PhonePrefixDropdown(
+                        value: directorVM.selectedPhoneCode ?? "",
+                        items: directorVM.phoneCodeList,
+                        onChanged: (value) {
+                          directorVM.setPhoneCode(value ?? "");
+                        },
+                      ),
                     ),
-                  ),
                     SizedBox(height: 8),
                     _buildStates(directorVM),
-                     SizedBox(height: 8),
+                    SizedBox(height: 8),
                     CustomRadioGroup<String>(
                       title: "Do you have a membership number?",
                       options: const ["Yes", "No"],
@@ -126,7 +126,8 @@ class JoinCommunityView extends StatelessWidget
                               height: 40,
                               text: "Register Now",
                               onTap: () {
-                                if (!directorVM.validateJoinCommunityFields()) return;
+                                if (!directorVM.validateJoinCommunityFields())
+                                  return;
                                 directorVM.selectedMembership == "Yes"
                                     ? directorVM.communityRegsiter(
                                         context,
@@ -137,13 +138,19 @@ class JoinCommunityView extends StatelessWidget
                                         context,
                                         "You are being redirected to the registration link",
                                         onBack: () async {
+                                          navigationService.goBack();
+
                                           final url = Uri.parse(
                                             "https://docs.google.com/forms/d/1j__p12VOITVXFpxTYQVr8XCMhzp-b5QqaJo5Pc_mdW8/viewform?edit_requested=true",
                                           );
-                                          if (!await launchUrl(url,
+
+                                          if (await launchUrl(url,
                                               mode: LaunchMode
                                                   .externalApplication)) {
-                                            throw "Could not launch $url";
+                                            navigationService.goBack();
+                                          } else {
+                                            scaffoldMessenger(
+                                                "Could not open the registration link");
                                           }
                                         },
                                       );
