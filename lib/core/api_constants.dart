@@ -7,8 +7,13 @@ class ApiConst {
 
   static const String baseUrl = '';
 
-  static const String _googleMapAPIKeyAndroid = "AIzaSyAoHGQktk5y--nUH7Q8ZHUcNuUa_rHTFQo";
-  static const String _googleMapAPIKeyIOS = "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
-  
-  static String get googleAPIKey => Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;
+  static const String _googleMapAPIKeyAndroid =
+      "AIzaSyAoHGQktk5y--nUH7Q8ZHUcNuUa_rHTFQo";
+  static const String _googleMapAPIKeyIOS =
+      "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
+  static const String googleAPIKey =
+      "AIzaSyAzaYcSFRWOySuMNQMzAYPIVhvvF3eieDY";
+
+  /*static String get googleAPIKey =>
+      Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;*/
 }
