@@ -65,8 +65,6 @@ class CommentViewModel extends ChangeNotifier {
 
   addCommentTheFeed(BuildContext context, String feedId) async {
     await getUserId();
-    final name = await LocalStorage.getStringVal(LocalStorageConst.name);
-    final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
@@ -170,10 +168,10 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getComments(BuildContext context, String feedId) async {
-    print("*******************feed id is $feedId");
     final variables = {"feedId": feedId, "limit": 10, "offset": 0};
     try {
       var res = await repo.getComments(variables);
+      // ignore: unnecessary_null_comparison
       if (res != null) {
         newsFeedComments = res;
       }
@@ -187,6 +185,7 @@ class CommentViewModel extends ChangeNotifier {
     final variables = {"parentId": parentId, "limit": 3, "offset": 0};
     try {
       var res = await repo.getReplies(variables);
+      // ignore: unnecessary_null_comparison
       if (res != null) {
         newsFeedReplies = res;
         repliesDataCache[parentId] = res.newsFeedsComments ?? [];

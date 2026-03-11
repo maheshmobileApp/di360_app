@@ -397,7 +397,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _mediaCard({
+ /* Widget _mediaCard({
     required Widget child,
     VoidCallback? onTap,
     bool isFullWidth = false,
@@ -417,7 +417,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _circleIcon({required Widget child}) {
     return Container(

@@ -9,7 +9,6 @@ import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.
 import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
-import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';

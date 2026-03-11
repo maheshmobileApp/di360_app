@@ -84,15 +84,15 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                       : null,
                   prefixIcon: Icon(Icons.access_time, size: 20),
                   onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        addDirectorVM.serviceStartTimeCntr.text =
-                            picked.format(context);
-                      }
-                    },
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (picked != null) {
+                      addDirectorVM.serviceStartTimeCntr.text =
+                          picked.format(context);
+                    }
+                  },
                 ),
               ),
               addHorizontal(12),
@@ -106,16 +106,16 @@ class AddDirectorTimingsFoam extends StatelessWidget with BaseContextHelpers {
                       ? 'Please enter service end time'
                       : null,
                   prefixIcon: Icon(Icons.access_time, size: 20),
-                  onTap:  () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        addDirectorVM.serviceEndTimeCntr.text =
-                            picked.format(context);
-                      }
-                    },
+                  onTap: () async {
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (picked != null) {
+                      addDirectorVM.serviceEndTimeCntr.text =
+                          picked.format(context);
+                    }
+                  },
                 ),
               ),
             ],
@@ -226,22 +226,24 @@ class AddSocialAccountForm extends StatelessWidget
             if (urlError != null) {
               showTopMessage(context, urlError);
             } else {
-              try {
-                final socialList = addDirectorVM
-                    .getBasicInfoData.first.directoryLocations
-                    ?.firstWhere((v) =>
-                        v.mediaName ==
-                        addDirectorVM.selectedAccount!.toLowerCase());
-                if (socialList != null) {
-                  showTopMessage(context,
-                      'This media account is already assigned. Please choose another.');
-                  return;
-                }
-              } catch (e) {}
+              if (!editVM.isEditSocialMed) {
+                try {
+                  final socialList = addDirectorVM
+                      .getBasicInfoData.first.directoryLocations
+                      ?.firstWhere((v) =>
+                          v.mediaName ==
+                          addDirectorVM.selectedAccount!.toLowerCase());
+                  if (socialList != null) {
+                    showTopMessage(context,
+                        'This media account is already assigned. Please choose another.');
+                    return;
+                  }
+                } catch (e) {}
+              }
               editVM.isEditSocialMed
                   ? editVM.updateTheSocialurl(context, id ?? '')
                   : addDirectorVM.addSocialUrls(context);
-               navigationService.goBack();
+              navigationService.goBack();
             }
           }
         },

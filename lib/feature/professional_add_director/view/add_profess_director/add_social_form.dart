@@ -78,17 +78,19 @@ class AddSocialForm extends StatelessWidget
                 if (urlError != null) {
                   showTopMessage(context, urlError);
                 } else {
-                  try {
-                    final socialList = addDirectorVM
-                        .getBasicInfoData.first.directoryLocations
-                        ?.firstWhere((v) => v.mediaName == addDirectorVM.selectedAccount!.toLowerCase());
-                    if (socialList != null) {
-                      showTopMessage(context, 'This media account is already assigned. Please choose another.');
-                      return;
-                    }
-                  } catch (e) {}
+                  if (!editVM.isEditSocialMed) {
+                    try {
+                      final socialList = addDirectorVM
+                          .getBasicInfoData.first.directoryLocations
+                          ?.firstWhere((v) => v.mediaName == addDirectorVM.selectedAccount!.toLowerCase());
+                      if (socialList != null) {
+                        showTopMessage(context, 'This media account is already assigned. Please choose another.');
+                        return;
+                      }
+                    } catch (e) {}
+                  }
                   editVM.isEditSocialMed
-                      ? editVM.updateTheSocialurl(context, id ?? '')
+                      ? await editVM.updateTheSocialurl(context, id ?? '')
                       : addDirectorVM.addSocialUrls(context);
                 }
               }
