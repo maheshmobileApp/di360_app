@@ -57,7 +57,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                       width: 120,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           errorWidget: Image.asset(ImageConst.prfImg)),
                     ),
                   ),

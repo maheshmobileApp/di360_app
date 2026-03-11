@@ -41,21 +41,20 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
               title: "City"),
           addVertical(10),
           InputTextField(
-              controller: viewProfileVM.countryController,
-              hintText: "Country",
-              title: "Country"),
-          addVertical(10),
-          InputTextField(
               controller: viewProfileVM.stateController,
               hintText: "State",
               title: "State"),
           addVertical(10),
           InputTextField(
+              controller: viewProfileVM.countryController,
+              hintText: "Country",
+              title: "Country"),
+          addVertical(10),
+          InputTextField(
               controller: viewProfileVM.zipCodeController,
               hintText: "Enter post code",
               title: "Post Code",
-              keyboardType: TextInputType.number
-              ),
+              keyboardType: TextInputType.number),
           addVertical(10)
         ]));
   }

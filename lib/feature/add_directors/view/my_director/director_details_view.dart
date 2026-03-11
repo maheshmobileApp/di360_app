@@ -4,8 +4,11 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_directories_res.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/pdf_view_widget.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
+import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
+import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +112,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
             addVertical(5),
             _buildRow('Type', directData.type ?? ''),
             addVertical(10),
-            Text('About Us',style: TextStyles.bold3(color: AppColors.primaryColor)),
+            Text('About Us',
+                style: TextStyles.bold3(color: AppColors.primaryColor)),
             HtmlWidget(directData.description ?? '',
                 textStyle: TextStyles.regular3(color: AppColors.black)),
           ],
@@ -129,7 +133,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: services
               .map((val) => _outlinedButton(context, val.name ?? ''))
               .toList()),
@@ -264,60 +268,67 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
     return CustomGrid(
       childAspectRatio: 0.75,
       children: List.generate(
-          vm.getBasicInfoData.first.directoryDocuments?.length ?? 0, (index) {
+          vm.getBasicInfoData.isNotEmpty
+              ? vm.getBasicInfoData.first.directoryDocuments?.length ?? 0
+              : 0, (index) {
         final doc = vm.getBasicInfoData.first.directoryDocuments?[index];
-        return Card(
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: AppColors.HINT_COLOR),
-              borderRadius: BorderRadius.circular(16)),
-          elevation: 0,
-          color: AppColors.hintColor,
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(ImageConst.pdf),
-                    const SizedBox(height: 12),
-                    Divider(),
-                    Text(
-                      doc?.name ?? '',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.2,
-                        color: Colors.black,
+        return GestureDetector(
+          onTap: () => navigationService.push(PdfViewWidget(
+              url: doc?.attachment?.url ?? "", name: doc?.name ?? "")),
+          child: Card(
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: AppColors.HINT_COLOR),
+                borderRadius: BorderRadius.circular(16)),
+            elevation: 0,
+            color: AppColors.hintColor,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(child: Image.asset(ImageConst.pdf)),
+                      const SizedBox(height: 12),
+                      Divider(),
+                      Text(
+                        doc?.name ?? '',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1.2,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () async {
-                      final url = doc?.attachment?.url ?? '';
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(
-                          Uri.parse(url),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      }
-                    },
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: Colors.black,
-                      child: Icon(
-                        Icons.download,
-                        size: 16,
-                        color: Colors.white,
+                    ],
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final url = doc?.attachment?.url ?? '';
+                        if (url.isNotEmpty &&
+                            await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(
+                            Uri.parse(url),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 14,
+                        backgroundColor: Colors.black,
+                        child: Icon(
+                          Icons.download,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -557,7 +568,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
           const SizedBox(height: 20),
           Row(
             children: vm.getBasicInfoData.first.directoryLocations!
-                .where((e) => ['facebook', 'instagram', 'linkedin', 'twitter'].contains(e.mediaName?.toLowerCase()))
+                .where((e) => ['facebook', 'instagram', 'linkedin', 'twitter']
+                    .contains(e.mediaName?.toLowerCase()))
                 .map((social) {
               String icon;
               switch (social.mediaName?.toLowerCase()) {
@@ -579,14 +591,15 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
               return Padding(
                 padding: const EdgeInsets.only(right: 15),
                 child: InkWell(
-                  onTap: () async {
-                    final url = social.mediaLink ?? '';
-                    if (url.isNotEmpty && await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                    }
-                  },
-                  child: Image.asset(icon, height: 25)
-                ),
+                    onTap: () async {
+                      final url = social.mediaLink ?? '';
+                      if (url.isNotEmpty &&
+                          await canLaunchUrl(Uri.parse(url))) {
+                        await launchUrl(Uri.parse(url),
+                            mode: LaunchMode.externalApplication);
+                      }
+                    },
+                    child: Image.asset(icon, height: 25)),
               );
             }).toList(),
           ),

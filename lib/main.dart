@@ -165,7 +165,12 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
           ],
           child: MaterialApp(
-            builder: EasyLoading.init(),
+            builder: (context, child) {
+              child = EasyLoading.init()(context, child);
+              return SafeArea(
+                child: child,
+              );
+            },
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: ThemeData(

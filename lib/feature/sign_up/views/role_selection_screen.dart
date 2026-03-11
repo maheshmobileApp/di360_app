@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/sign_up/view_model/signup_view_model.dart';
@@ -135,7 +136,6 @@ class RoleSelectionScreen extends StatelessWidget
                       InputTextField(
                           controller: viewModel.abnNumber,
                           hintText: "ABN / ACN Number",
-                          isRequired: true,
                           title: "ABN / ACN Number",
                           validator: validateABNNumber)
                     ],
@@ -147,12 +147,30 @@ class RoleSelectionScreen extends StatelessWidget
                               viewModel.setAgreeToTerms(value ?? false),
                           activeColor: AppColors.primaryColor,
                         ),
-                        Text('I agree to the Terms and Conditions',
-                            style: TextStyles.medium2(
-                              color: viewModel.agreeToTerms
-                                  ? AppColors.primaryColor
-                                  : AppColors.black,
-                            ))
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              navigationService
+                                  .navigateTo(RouteList.termsAndConditionsDetails);
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                text: 'I agree to the ',
+                                style: TextStyles.medium2(
+                                  color: AppColors.black,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'Terms and Conditions',
+                                    style: TextStyles.medium2(
+                                      color: AppColors.primaryColor,
+                                    ).copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     Row(children: [

@@ -1,7 +1,7 @@
 import 'package:di360_flutter/feature/home/model_class/dental_practice_res.dart';
 import 'package:di360_flutter/feature/home/model_class/dental_professional_res.dart';
 import 'package:di360_flutter/feature/home/model_class/dental_supplier_res.dart';
-import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart' hide DentalPractice;
+import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_like_res.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';

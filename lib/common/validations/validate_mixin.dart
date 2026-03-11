@@ -16,7 +16,7 @@ mixin ValidationMixins {
   }
 
   String? validateABNNumber(String? value) {
-    if (value == null || value.isEmpty) return "Please enter your ABN Number";
+    if (value == null || value.isEmpty) return null;
     if (!isValidateABNNumber(value)) return 'Enter valid ABN number';
     return null;
   }

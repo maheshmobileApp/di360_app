@@ -19,7 +19,7 @@ class NewsFeedsComments {
   String? parentCommentId;
   String? createdById;
   String? roleType;
-  dynamic? attachments;
+  dynamic attachments;
   RepliesAggregate? repliesAggregate;
 
   NewsFeedsComments(
