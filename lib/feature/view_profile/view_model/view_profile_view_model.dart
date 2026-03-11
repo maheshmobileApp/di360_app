@@ -437,7 +437,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   Future<bool> profileCompletedValue() async {
     final profile =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
-    notifyListeners();
     return profile;
   }
 

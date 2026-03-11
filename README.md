@@ -419,9 +419,8 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
-1. Fixed the bugs and implemented the dental professional sign up
-2. Fixed the bugs and implemented the dental suppliers sign up
-3. Fixed the bugs and implemented the dental practice owner sign up
+New sign up implemented
+Fixed the bugs 
 "
   
 
