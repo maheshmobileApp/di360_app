@@ -102,7 +102,9 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                   ),
                 ),
               ),
-              _bottomButtons(context, addDirectorVM, totalSteps),
+              SafeArea(
+                child: _bottomButtons(context, addDirectorVM, totalSteps),
+              ),
             ],
           ),
         ));

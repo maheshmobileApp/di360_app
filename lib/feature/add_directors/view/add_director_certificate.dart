@@ -209,7 +209,7 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
               if (addDirectorVM.certificateNameController.text.isEmpty) {
                 scaffoldMessenger('Enter certificate name');
               } else if (addDirectorVM.certificateFile == null && img == null) {
-                scaffoldMessenger('Enter attachement');
+                scaffoldMessenger('Please add attachment');
               } else {
                 editVM.showCertifiForm
                     ? editVM.updateTheCertifi(context, editId ?? '', img)

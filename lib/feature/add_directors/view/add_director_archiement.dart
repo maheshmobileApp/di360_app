@@ -204,7 +204,7 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
                 scaffoldMessenger('Enter achievement name');
               } else if (addDirectorVM.achievementFile?.path.isEmpty ??
                   false || img == null) {
-                scaffoldMessenger('Enter attachement');
+                scaffoldMessenger('Please add attachment');
               } else {
                 editVM.isEditAchieve
                     ? editVM.updateTheAchieve(context, editId ?? '', img)
