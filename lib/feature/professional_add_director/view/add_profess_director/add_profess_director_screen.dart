@@ -199,9 +199,7 @@ class ProfessionalAddDirectorView extends StatelessWidget
                         professAddDirectVM.goToNextStep();
                       }
                     }
-                  } else {
-                    //scaffoldMessenger('Please select business type');
-                  }
+                  } 
                 },
                 backgroundColor: AppColors.primaryColor,
                 textColor: AppColors.whiteColor),

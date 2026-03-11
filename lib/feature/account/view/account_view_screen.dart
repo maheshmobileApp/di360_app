@@ -25,6 +25,7 @@ import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -157,7 +158,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                                 .read<ViewProfileViewModel>()
                                 .getTheViewProfileData();
                             Loaders.circularHideLoader(context);
-                            type == 'PROFESSIONAL'
+                            type == UserRole.professional.value
                                 ? await navigationService.navigateTo(
                                     RouteList.professionalViewProfileScreen)
                                 : await navigationService
