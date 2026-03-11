@@ -1,5 +1,4 @@
-const String getJobDetailsById = r'''
-query getJobListMutationbyid($id: uuid!) {
+const String getJobDetailsById = r'''query getJobListMutationbyid($id: uuid!, $loginID: uuid!) {
   jobs(where: {id: {_eq: $id}}) {
     id
     title
@@ -39,6 +38,11 @@ query getJobListMutationbyid($id: uuid!) {
         description
         __typename
       }
+      __typename
+    }
+    job_applicants(where: {dental_professional_id: {_eq: $loginID}}) {
+      id
+      dental_professional_id
       __typename
     }
     dental_supplier {
