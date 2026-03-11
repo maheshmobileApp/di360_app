@@ -1,5 +1,4 @@
-const String getAllNewsfeedsQuery =
-    r'''query GetNewsfeedsByWhere(
+const String getAllNewsfeedsQuery = r'''query GetNewsfeedsByWhere(
     $where: newsfeeds_bool_exp!,
     $limit: Int,
     $offset: Int,
@@ -28,6 +27,7 @@ const String getAllNewsfeedsQuery =
       user_role
       community_id
       catalogues {
+        id
         status
 
         catalogue_category{
@@ -38,8 +38,23 @@ const String getAllNewsfeedsQuery =
         }
       }
         
-      courses { presenters  address  cpd_points type}
-      jobs{ j_role location TypeofEmployment }
+      courses {
+      id
+      presenters
+      address
+      cpd_points
+      type
+      course_banner_image
+      __typename
+    }
+      jobs {
+      id
+      banner_image
+      j_role
+      location
+      TypeofEmployment
+      __typename
+    }
 
       newsfeeds_likes_aggregate {
         aggregate { count }

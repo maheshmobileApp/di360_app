@@ -25,9 +25,7 @@ class NotificationViewModel extends ChangeNotifier {
       hasMoreData = true;
       notificationsList.clear();
     }
-
     if (!hasMoreData || isLoadingMore) return;
-
     if (currentPage == 0) {
       Loaders.circularShowLoader(context);
     } else {

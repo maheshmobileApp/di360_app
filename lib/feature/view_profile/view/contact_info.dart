@@ -80,14 +80,14 @@ class ContactInfo extends StatelessWidget
               validator: validateCity),
           addVertical(10),
           InputTextField(
-              controller: viewProfileVM.countryController,
-              hintText: "Country",
-              title: "Country"),
-          addVertical(10),
-          InputTextField(
               controller: viewProfileVM.stateController,
               hintText: "State",
               title: "State"),
+          addVertical(10),
+          InputTextField(
+              controller: viewProfileVM.countryController,
+              hintText: "Country",
+              title: "Country"),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.zipCodeController,

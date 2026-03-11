@@ -11,7 +11,6 @@ class HomeRepositoryImpl extends HomeRepository {
   @override
   Future<dynamic> getAllNewsFeed(int offset,int limit) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final roleType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
 
