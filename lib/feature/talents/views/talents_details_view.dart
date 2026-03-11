@@ -61,7 +61,7 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                 future: LocalStorage.getStringVal(LocalStorageConst.userId),
                 builder: (context, userSnapshot) {
                   if (userSnapshot.hasData) {
-                    return _bottomButtons(context, userSnapshot.data!);
+                    return SafeArea(child: _bottomButtons(context, userSnapshot.data!));
                   }
                   return const SizedBox.shrink();
                 },

@@ -102,9 +102,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                   ),
                 ),
               ),
-              SafeArea(
-                child: _bottomButtons(context, addDirectorVM, totalSteps),
-              ),
+              _bottomButtons(context, addDirectorVM, totalSteps),
             ],
           ),
         ));
@@ -158,7 +156,6 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
     bool isLastStep = currentStep == totalSteps - 1;
     bool isFirstStep = currentStep == 0;
     return Container(
-      height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
