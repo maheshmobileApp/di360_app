@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -47,7 +48,7 @@ class JobLocationView extends StatelessWidget with ValidationMixins {
                 SizedBox(height: 10),
                 GooglePlaceAutoCompleteTextField(
                   textEditingController: jobCreateVM.locationSearchController,
-                  googleAPIKey: "AIzaSyCN0aBdq3Yw6y7w7aBRb3uzLLGx3Zk7G70",
+                  googleAPIKey: ApiConst.googleAPIKey,
                   inputDecoration: InputDecoration(
                     hintText: "Search Location",
                     hintStyle:
