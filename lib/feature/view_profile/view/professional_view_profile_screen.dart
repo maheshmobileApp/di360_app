@@ -18,10 +18,11 @@ import 'package:provider/provider.dart';
 class ProfessionalViewProfileScreen extends StatelessWidget
     with BaseContextHelpers {
   ProfessionalViewProfileScreen({super.key});
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ViewProfileViewModel>(context);
+    final provider = context.read<ViewProfileViewModel>();
+    print("Building ProfessionalViewProfileScreen");
     return WillPopScope(
         onWillPop: () async {
           final profileComplete = await LocalStorage.getBoolValue(
@@ -46,13 +47,15 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                 }),
             body: SingleChildScrollView(
                 child: Form(
-              key: formKey,
+              key: _formKey,
               child: Column(children: [
-                _sectionTitle('Basic Info', ProfessinoalBasicInfo()),
+                _sectionTitle('Basic Info', const ProfessinoalBasicInfo()),
                 _sectionTitle(
-                    'Personal Details', ProfessionalPersonalDetails()),
-                _sectionTitle('Contact Information', ProfessionalContactInfo()),
-                _sectionTitle('Professional Details', ProfessionalDetailInfo()),
+                    'Personal Details', const ProfessionalPersonalDetails()),
+                _sectionTitle(
+                    'Contact Information', const ProfessionalContactInfo()),
+                _sectionTitle(
+                    'Professional Details', const ProfessionalDetailInfo()),
                 addVertical(20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -83,7 +86,7 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                             text: 'Save & Update',
                             height: 45,
                             onTap: () {
-                              if (formKey.currentState!.validate()) {
+                              if (_formKey.currentState!.validate()) {
                                 if (provider.addressController.text.isEmpty) {
                                   scaffoldMessenger("Please enter address");
                                 } else {

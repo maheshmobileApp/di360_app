@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class ViewProfileView extends StatelessWidget with BaseContextHelpers {
   ViewProfileView({super.key});
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                       : await viewProfileAlertPopup(context);
                 }),
             body: Form(
-              key: formKey,
+              key: _formKey,
               child: SingleChildScrollView(
                   child: Column(children: [
                 _sectionTitle('Basic Info', BasicInfo()),
@@ -80,7 +80,7 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                                 height: 45,
                                 width: 180,
                                 onTap: () {
-                                  if (formKey.currentState!.validate()) {
+                                  if (_formKey.currentState!.validate()) {
                                     if (provider.addressController.text.isEmpty) {
                                       scaffoldMessenger("Please enter address");
                                     } else {
