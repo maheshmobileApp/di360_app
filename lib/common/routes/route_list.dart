@@ -94,4 +94,5 @@ class RouteList {
   static const String talentsHireMeScreen = '/talentsHireMeScreen';
   static const String commentScreen = '/commentScreen';
   static const String forgotPasswordScreen = '/forgotPasswordScreen';
+  static const String termsAndConditionsDetails = '/termsAndConditionsDetails';
 }

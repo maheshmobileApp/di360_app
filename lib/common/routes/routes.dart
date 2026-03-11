@@ -72,6 +72,7 @@ import 'package:di360_flutter/feature/professional_add_director/view/professiona
 import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
+import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/feature/support/view/support_messenger_view.dart';
 import 'package:di360_flutter/feature/support/view/support_view.dart';
@@ -276,6 +277,7 @@ class Routes {
       RouteList.notificationScreen: (context) => NotificationScreen(),
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
       RouteList.forgotPasswordScreen: (context) => ForgotPasswordScreen(),
+      RouteList.termsAndConditionsDetails: (context) => TermsAndConditionsDetails()
     };
   }
 }

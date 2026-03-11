@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_directors/widgets/pdf_view_widget.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_details_res.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_appointmentform.dart';
@@ -9,6 +10,7 @@ import 'package:di360_flutter/feature/directors/view/director_details/hobbies_ed
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
+import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -395,51 +397,55 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
             childAspectRatio: 0.78,
             children: List.generate(docList?.length ?? 0, (index) {
               final doc = docList?[index];
-              return Card(
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: AppColors.HINT_COLOR),
-                      borderRadius: BorderRadius.circular(16)),
-                  elevation: 0,
-                  color: AppColors.hintColor,
-                  child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Stack(children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(ImageConst.pdf),
-                            const SizedBox(height: 12),
-                            Divider(),
-                            Text(
-                              doc?.name ?? '',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 1.2,
-                                color: Colors.black,
+              return GestureDetector(
+                onTap: () => navigationService.push(PdfViewWidget(
+                    url: doc?.attachment?.url ?? "", name: doc?.name ?? "")),
+                child: Card(
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: AppColors.HINT_COLOR),
+                        borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                    color: AppColors.hintColor,
+                    child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Stack(children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(child: Image.asset(ImageConst.pdf)),
+                              const SizedBox(height: 12),
+                              Divider(),
+                              Text(
+                                doc?.name ?? '',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 1.2,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Positioned(
-                            top: 0,
-                            right: 0,
-                            child: GestureDetector(
-                                onTap: () async {
-                                  final url = doc?.attachment?.url ?? '';
-                                  if (await canLaunchUrl(Uri.parse(url))) {
-                                    await launchUrl(
-                                      Uri.parse(url),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                  }
-                                },
-                                child: CircleAvatar(
-                                    radius: 14,
-                                    backgroundColor: Colors.black,
-                                    child: Icon(Icons.download,
-                                        size: 16, color: Colors.white))))
-                      ])));
+                            ],
+                          ),
+                          Positioned(
+                              top: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                  onTap: () async {
+                                    final url = doc?.attachment?.url ?? '';
+                                    if (await canLaunchUrl(Uri.parse(url))) {
+                                      await launchUrl(
+                                        Uri.parse(url),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    }
+                                  },
+                                  child: CircleAvatar(
+                                      radius: 14,
+                                      backgroundColor: Colors.black,
+                                      child: Icon(Icons.download,
+                                          size: 16, color: Colors.white))))
+                        ]))),
+              );
             })),
         addVertical(10),
         if ((vm.directorDetails?.directoryDocuments?.length ?? 0) > 2)
