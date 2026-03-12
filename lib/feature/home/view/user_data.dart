@@ -31,9 +31,20 @@ class UserData extends StatelessWidget with BaseContextHelpers {
       Stack(
         clipBehavior: Clip.none,
         children: [
-          BannerServices.instance.listBanner?.isEmpty ?? false
-              ? SvgPicture.asset(ImageConst.homeBG,
-                  width: getSize(context).width)
+          BannerServices.instance.listBanner?.isNotEmpty ?? false
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    color: AppColors.whiteColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(ImageConst.homePageBanner,
+                          width: getSize(context).width),
+                    ),
+                  ),
+                )
               : ListBanner(),
         ],
       ),
@@ -57,7 +68,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                               imageUrl:
                                   imageUrl ?? homeViewModel.profilePic ?? '',
                               fit: BoxFit.fill,
-                              errorWidget: Image.asset(ImageConst.prfImg))),
+                              errorWidget: Icon(Icons.person_2_sharp))),
                     ),
                   ),
                 ),

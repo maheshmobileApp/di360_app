@@ -6,6 +6,7 @@ class ImageConst {
   static const String googleSvg = "assets/svgs/google.svg";
   static const String emailSvg = "assets/svgs/email.svg";
   static const String homeBG = "assets/svgs/home_bg.svg";
+  static const String homePageBanner = "assets/pngs/home_page_banner.jpeg";
   static const String notification = "assets/svgs/Icon Notification.svg";
   static const String search = "assets/svgs/Icon_search.svg";
   static const String profile = "assets/svgs/profile.svg";

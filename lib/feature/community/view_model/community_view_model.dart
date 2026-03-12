@@ -393,7 +393,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   Future<void> getNewsFeedCategories(BuildContext context,
       [String? newsFeedId]) async {
-    //Loaders.circularShowLoader(context);
+    Loaders.circularShowLoader(context);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -402,7 +402,7 @@ class CommunityViewModel extends ChangeNotifier {
     };
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
-    //Loaders.circularHideLoader(context);
+    Loaders.circularHideLoader(context);
 
     notifyListeners();
   }

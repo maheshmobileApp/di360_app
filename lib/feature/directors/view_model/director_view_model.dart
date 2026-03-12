@@ -31,6 +31,15 @@ class DirectoryViewModel extends ChangeNotifier {
   DirectoryViewModel() {
     getBannerList();
     getDirectorCatagoryList();
+    _addListeners();
+  }
+
+  void _addListeners() {
+    firstNameController.addListener(notifyListeners);
+    lastNameController.addListener(notifyListeners);
+    emailController.addListener(notifyListeners);
+    phoneController.addListener(notifyListeners);
+    membershipNumberController.addListener(notifyListeners);
   }
   // Form key
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -83,6 +92,9 @@ class DirectoryViewModel extends ChangeNotifier {
 
   void setSelectedMembership(String? value) {
     selectedMembership = value;
+    if (value == "No") {
+      membershipNumberController.clear();
+    }
     notifyListeners();
   }
 
@@ -387,7 +399,9 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   bool validateJoinCommunityFields() {
-    if (emailController.text.isEmpty ||
+    if (firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        emailController.text.isEmpty ||
         phoneController.text.isEmpty ||
         selectedState.isEmpty ||
         selectedMembership == null ||
