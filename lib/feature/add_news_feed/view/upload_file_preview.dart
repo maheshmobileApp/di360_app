@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,12 +54,12 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
   }
 
   Widget _buildFilePreview(
-      PlatformFile file, int index, AddNewsFeedViewModel viewModel) {
-    final extension = file.extension?.toLowerCase();
+      XFile file, int index, AddNewsFeedViewModel viewModel) {
+    final extension = file.path.split('.').last.toLowerCase();
 
     if (['jpg', 'png', 'jpeg'].contains(extension)) {
       return _fileCard(
-          Image.file(File(file.path!), fit: BoxFit.cover), index, viewModel);
+          Image.file(File(file.path), fit: BoxFit.cover), index, viewModel);
     } else if (extension == 'pdf') {
       return _fileCard(
           Stack(

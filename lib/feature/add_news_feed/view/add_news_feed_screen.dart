@@ -25,8 +25,8 @@ class AddNewsFeedScreen extends StatelessWidget
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(
           title: viewModel.isEditNewsFeed == true
-              ? 'Edit NewsFeed'
-              : 'Add NewsFeed',
+              ? 'Edit News Feed'
+              : 'Add News Feed',
           backAction: () {
             navigationService.goBack();
             viewModel.clearFeedNews();

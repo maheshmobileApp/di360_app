@@ -8,7 +8,7 @@ import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +24,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   final TextEditingController desController = TextEditingController();
 
   List<NewsfeedCategories>? newsfeedCategories;
-  List<PlatformFile> selectedFiles = [];
+  List<XFile> selectedFiles = [];
   List uploadedFiles = [];
   bool? isEditNewsFeed = false;
   String? newsFeedId;
@@ -38,14 +38,11 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> pickFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'jpeg', 'pdf', 'mp4', 'mov', 'avi'],
-    );
+    final picker = ImagePicker();
+    final List<XFile> images = await picker.pickMultiImage();
 
-    if (result != null) {
-      selectedFiles.addAll(result.files);
+    if (images.isNotEmpty) {
+      selectedFiles.addAll(images);
       notifyListeners();
     }
   }
