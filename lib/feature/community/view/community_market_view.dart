@@ -16,7 +16,6 @@ class CommunityMarketView extends StatefulWidget {
 
 class _CreateCategoryViewState extends State<CommunityMarketView>
     with ValidationMixins {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,24 +54,27 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                    backgroundColor: AppColors.primaryColor,
-                                    radius: 20,
-                                    child: Icon(
-                                      Icons.group,
-                                      color: AppColors.whiteColor,
-                                    )),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  list[index].communityName ?? "",
-                                  style: TextStyles.medium3(
-                                      color: AppColors.black),
-                                ),
-                              ],
+                            child: Container(
+                              color: AppColors.whiteColor,
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                      backgroundColor: AppColors.primaryColor,
+                                      radius: 20,
+                                      child: Icon(
+                                        Icons.group,
+                                        color: AppColors.whiteColor,
+                                      )),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    list[index].communityName ?? "",
+                                    style: TextStyles.medium3(
+                                        color: AppColors.black),
+                                  ),
+                                ],
+                              ),
                             ),
                           ));
                     },
