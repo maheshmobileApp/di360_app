@@ -339,12 +339,17 @@ class CreateCampaignView extends StatelessWidget
   }
 
   Widget _buildEmpTypes(CampaignViewModel viewModel) {
+    final enabledGroups = viewModel.groupOptions
+        .where((g) => g['enabled'] == true)
+        .map((g) => g['label'] as String)
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomMultiSelectDropDown<String>(
           height: 50,
-          items: viewModel.groupOptions,
+          items: enabledGroups,
           selectedItems: viewModel.selectedGroupChips,
           itemLabel: (item) => item,
           hintText: "Select Groups",
