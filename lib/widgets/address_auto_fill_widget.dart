@@ -56,7 +56,6 @@ class AddressAutoFillWidget extends StatelessWidget {
           getPlaceDetailWithLatLng: getPlaceDetailWithLatLng,
           itemClick: (Prediction prediction) {
             controller.text = prediction.description ?? "";
-        
             controller.selection = TextSelection.fromPosition(
               TextPosition(offset: controller.text.length),
             );

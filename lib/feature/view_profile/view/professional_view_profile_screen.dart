@@ -22,7 +22,6 @@ class ProfessionalViewProfileScreen extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final provider = context.read<ViewProfileViewModel>();
-    print("Building ProfessionalViewProfileScreen");
     return WillPopScope(
         onWillPop: () async {
           final profileComplete = await LocalStorage.getBoolValue(

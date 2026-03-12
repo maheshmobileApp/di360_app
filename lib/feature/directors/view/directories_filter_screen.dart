@@ -56,6 +56,7 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
                     height: 40,
                     width: 150,
                     onTap: () async {
+                      filterProvider.updateTheRemoveIcon(true);
                       await filterProvider.getDirectorsList(context);
                       navigationService.goBack();
                     },
@@ -88,6 +89,7 @@ class DirectoriesFilterScreen extends StatelessWidget with BaseContextHelpers {
                   child: TextFormField(
                     controller: filterProvider.searchController,
                     onFieldSubmitted: (value) async {
+                      filterProvider.updateTheRemoveIcon(true);
                       await filterProvider.getDirectorsList(context);
                       navigationService.goBack();
                     },
