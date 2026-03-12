@@ -23,6 +23,7 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DirectoryViewModel extends ChangeNotifier {
   final DirectorRepositoryImpl repository = DirectorRepositoryImpl();
@@ -39,8 +40,8 @@ class DirectoryViewModel extends ChangeNotifier {
     lastNameController.addListener(notifyListeners);
     emailController.addListener(notifyListeners);
     phoneController.addListener(notifyListeners);
-    membershipNumberController.addListener(notifyListeners);
   }
+
   // Form key
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -361,6 +362,7 @@ class DirectoryViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
 
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
     final variables = {
       "fields": {
         "community_id": communityId,
@@ -374,23 +376,43 @@ class DirectoryViewModel extends ChangeNotifier {
         "membership_number": membershipNumberController.text,
         "status": "PENDING",
         "type": "COMMUNITY",
-        "is_registered": false,
+        "is_registered": selectedMembership == "Yes" ? false : true,
         "state": selectedState
       }
     };
     final res = await repository.communityRegister(variables);
+    Loaders.circularHideLoader(context);
+
     if (res != null) {
       scaffoldMessenger("Successfully Registered");
       setCommunityStatusString("Join Community Pending");
       navigationService.goBack();
+      if (selectedMembership == "No") {
+        alertPopup(
+          context,
+          "You are being redirected to the registration link",
+          onBack: () async {
+            navigationService.goBack();
+            final url = Uri.parse(
+              "https://docs.google.com/forms/d/1j__p12VOITVXFpxTYQVr8XCMhzp-b5QqaJo5Pc_mdW8/viewform?edit_requested=true",
+            );
+
+            if (await launchUrl(url, mode: LaunchMode.externalApplication)) {
+            } else {
+              scaffoldMessenger("Could not open the registration link");
+            }
+          },
+        );
+      }
+      clearCommunityFields();
     }
-    Loaders.circularHideLoader(context);
 
     notifyListeners();
   }
 
   clearCommunityFields() {
-    contactNameController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
     phoneController.clear();
     emailController.clear();
     membershipNumberController.clear();
@@ -399,18 +421,13 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   bool validateJoinCommunityFields() {
-    if (firstNameController.text.isEmpty ||
-        lastNameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        selectedState.isEmpty ||
-        selectedMembership == null ||
-        selectedMembership!.isEmpty ||
-        (selectedMembership == "Yes" &&
-            membershipNumberController.text.isEmpty)) {
-      return false;
-    }
-    return true;
+    return firstNameController.text.isNotEmpty &&
+        lastNameController.text.isNotEmpty &&
+        emailController.text.isNotEmpty &&
+        phoneController.text.isNotEmpty &&
+        selectedState.isNotEmpty &&
+        selectedMembership != null &&
+        selectedMembership?.isNotEmpty == true;
   }
 
   Future<void> partnershipRegsiter(BuildContext context, String communityId,
