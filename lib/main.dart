@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/routes/routes.dart';
 import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
@@ -167,6 +168,11 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
             builder: (context, child) {
               child = EasyLoading.init()(context, child);
+              SystemChrome.setSystemUIOverlayStyle(
+                const SystemUiOverlayStyle(
+                  statusBarColor: AppColors.whiteColor,
+                ),
+              );
               return SafeArea(
                 child: child,
               );

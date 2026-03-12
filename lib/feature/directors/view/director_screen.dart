@@ -42,7 +42,7 @@ class _DirectorScreenState extends State<DirectorScreen>
 
   void _onScroll() {
     if (!mounted) return;
-    
+
     if (_scrollController.offset > 700) {
       if (!_showScrollToTop) {
         setState(() => _showScrollToTop = true);
@@ -72,13 +72,8 @@ class _DirectorScreenState extends State<DirectorScreen>
             GestureDetector(
                 onTap: () =>
                     navigationService.navigateTo(RouteList.directoryFilter),
-                child: SvgPicture.asset(ImageConst.filter,
-                    color: AppColors.black)),
-            if (directorVM.removeIcon == true)
-              GestureDetector(
-                onTap: () => directorVM.clearFilter(),
-                child: Icon(Icons.close, color: AppColors.black),
-              )
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black))
           ])),
       body: Column(
         children: [
@@ -95,10 +90,22 @@ class _DirectorScreenState extends State<DirectorScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Text('ALL DIRECTORY',
-                              style: TextStyles.bold2(color: AppColors.black))),
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 20,bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('ALL DIRECTORY',
+                                  style:
+                                      TextStyles.bold2(color: AppColors.black)),
+                              if (directorVM.removeIcon == true)
+                                GestureDetector(
+                                    onTap: () => directorVM.clearFilter(),
+                                    child: Text('Reset Filter',
+                                        style: TextStyles.medium1(
+                                            color: AppColors.primaryColor)))
+                            ],
+                          )),
                       Divider(),
                       Expanded(
                         child: GridViewWidget(controller: _scrollController),

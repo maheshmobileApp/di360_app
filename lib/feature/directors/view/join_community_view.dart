@@ -39,6 +39,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       controller: directorVM.firstNameController,
                       hintText: "Enter First Name",
                       title: "First Name",
@@ -47,6 +48,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       controller: directorVM.lastNameController,
                       hintText: "Enter Last Name",
                       title: "Last Name",
@@ -55,6 +57,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       controller: directorVM.emailController,
                       hintText: "Enter Email",
                       title: "Email",
@@ -63,6 +66,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       title: "Phone",
                       hintText: "Enter phone number",
                       keyboardType: TextInputType.phone,
@@ -125,35 +129,15 @@ class JoinCommunityView extends StatelessWidget
                                   : AppColors.greysecond,
                               height: 40,
                               text: "Register Now",
-                              onTap: () {
+                              onTap: () async {
                                 if (!directorVM.validateJoinCommunityFields())
                                   return;
-                                directorVM.selectedMembership == "Yes"
-                                    ? directorVM.communityRegsiter(
-                                        context,
-                                        directorVM.directorCommunityID ?? "",
-                                        directorVM.directorCommunityName ?? "",
-                                        directorVM.directorSupplierID ?? "")
-                                    : alertPopup(
-                                        context,
-                                        "You are being redirected to the registration link",
-                                        onBack: () async {
-                                          navigationService.goBack();
 
-                                          final url = Uri.parse(
-                                            "https://docs.google.com/forms/d/1j__p12VOITVXFpxTYQVr8XCMhzp-b5QqaJo5Pc_mdW8/viewform?edit_requested=true",
-                                          );
-
-                                          if (await launchUrl(url,
-                                              mode: LaunchMode
-                                                  .externalApplication)) {
-                                            navigationService.goBack();
-                                          } else {
-                                            scaffoldMessenger(
-                                                "Could not open the registration link");
-                                          }
-                                        },
-                                      );
+                                await directorVM.communityRegsiter(
+                                    context,
+                                    directorVM.directorCommunityID ?? "",
+                                    directorVM.directorCommunityName ?? "",
+                                    directorVM.directorSupplierID ?? "");
                               }),
                         ),
                       ],

@@ -10,7 +10,6 @@ import 'package:di360_flutter/feature/directors/view/director_details/hobbies_ed
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
-import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';

@@ -147,11 +147,32 @@ class CampaignViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> groupOptions = [
-    "Community members",
-    "Contact-Partner",
-    "Contact-Member"
+  List<Map<String, dynamic>> groupOptions = [
+    {'id': 'DENTAL_SUPPLIERS', 'label': 'Dental Suppliers', 'enabled': false},
+    {
+      'id': 'DENTAL_PRACTICE_OWNERS',
+      'label': 'Dental Practice owners',
+      'enabled': false
+    },
+    {
+      'id': 'DENTAL_PROFESSIONALS',
+      'label': 'Dental Professionals',
+      'enabled': false
+    },
+    {'id': 'COMMUNITY_MEMBERS', 'label': 'Community members', 'enabled': true},
+    {'id': 'CONTACT_PARTNER', 'label': 'Contact–Partner', 'enabled': true},
+    {'id': 'CONTACT_MEMBER', 'label': 'Contact–Member', 'enabled': true},
   ];
+
+  String? getGroupIdByLabel(String label) {
+    try {
+      return groupOptions.firstWhere(
+        (g) => g['label'] == label,
+      )['id'] as String?;
+    } catch (e) {
+      return null;
+    }
+  }
 
   Map<String, bool> filterOptions = {
     "SMS": false,
@@ -440,6 +461,12 @@ class CampaignViewModel extends ChangeNotifier {
         messageChannel = "EMAIL_WITH_PDF";
       }
 
+      final List<String> selectedGroupIdChips = _selectedGroupChips
+          .map((label) => getGroupIdByLabel(label))
+          .where((id) => id != null)
+          .cast<String>()
+          .toList();
+
       final variables = {
         "fields": {
           "from_email": userEmail,
@@ -457,7 +484,7 @@ class CampaignViewModel extends ChangeNotifier {
           "is_repeating": "no",
           "is_refined_by_state": selectStateCondition == "Yes" ? "yes" : "no",
           "refine_state": selectedStateChips,
-          "groups": selectedGroupChips,
+          "groups": selectedGroupIdChips,
           "message_text": messageController.text,
           "send_to_numbers": selectedSendChips,
           "send_to_emails": null,
