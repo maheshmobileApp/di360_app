@@ -39,6 +39,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       controller: directorVM.firstNameController,
                       hintText: "Enter First Name",
                       title: "First Name",
@@ -47,6 +48,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       controller: directorVM.lastNameController,
                       hintText: "Enter Last Name",
                       title: "Last Name",
@@ -55,6 +57,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       controller: directorVM.emailController,
                       hintText: "Enter Email",
                       title: "Email",
@@ -63,6 +66,7 @@ class JoinCommunityView extends StatelessWidget
                     ),
                     SizedBox(height: 8),
                     InputTextField(
+                      isRequired: true,
                       title: "Phone",
                       hintText: "Enter phone number",
                       keyboardType: TextInputType.phone,
