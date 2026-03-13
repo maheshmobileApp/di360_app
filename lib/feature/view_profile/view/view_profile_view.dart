@@ -80,12 +80,16 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
                                   text: 'Save & Update',
                                   height: 45,
                                   width: 180,
-                                  onTap: () {
+                                  onTap: () async {
                                     if (_formKey.currentState!.validate()) {
-                                      if (provider.addressController.text.isEmpty) {
-                                        scaffoldMessenger("Please enter address");
+                                      if (provider
+                                          .addressController.text.isEmpty) {
+                                        scaffoldMessenger(
+                                            "Please enter address");
                                       } else {
-                                        provider.updateViewProfile(context);
+                                        await provider
+                                            .updateViewProfile(context);
+                                        await provider.getTheViewProfileData();
                                       }
                                     }
                                   })),
@@ -120,6 +124,4 @@ class ViewProfileView extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-
-  
 }

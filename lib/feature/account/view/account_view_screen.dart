@@ -32,14 +32,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class AccountScreen extends StatelessWidget with BaseContextHelpers {
+class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
+
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ViewProfileViewModel>().getTheViewProfileData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final homeViewModel = Provider.of<HomeViewModel>(context);
     final profileVM = Provider.of<ProfileViewModel>(context);
+    final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
     return ChangeNotifierProvider(
       create: (_) => ProfileViewModel(ProfileRepositoryImpl())
         ..fetchProfileSections(profileVM.communityStatus),
@@ -54,7 +68,7 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                       style: TextStyles.regular3(color: AppColors.redColor)));
             }
             return ListView(padding: const EdgeInsets.all(16), children: [
-              _buildProfileHeader(homeViewModel),
+              _buildProfileHeader(homeViewModel, viewProfileVM),
               addVertical(16),
               ...vm.visibleSections
                   .map((section) =>
@@ -69,7 +83,8 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildProfileHeader(HomeViewModel vm) {
+  Widget _buildProfileHeader(
+      HomeViewModel vm, ViewProfileViewModel viewProfileVM) {
     return Column(children: [
       addVertical(20),
       CircleAvatar(
@@ -82,11 +97,11 @@ class AccountScreen extends StatelessWidget with BaseContextHelpers {
                       height: 100,
                       width: 100,
                       child: CachedNetworkImageWidget(
-                          imageUrl: vm.profilePic ?? '',
+                          imageUrl: viewProfileVM.logoUrl ?? '',
                           fit: BoxFit.fill,
-                          errorWidget: Image.asset(ImageConst.prfImg)))))),
+                          errorWidget: Icon(Icons.person_2_sharp)))))),
       addVertical(8),
-      Text(vm.userName ?? "Profile Name",
+      Text(viewProfileVM.userName ?? "Profile Name",
           style: TextStyles.medium3(color: AppColors.black, fontSize: 15)),
       Text(vm.userType ?? "Job Designation",
           style:
