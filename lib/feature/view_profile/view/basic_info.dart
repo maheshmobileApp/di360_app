@@ -25,7 +25,7 @@ class BasicInfo extends StatelessWidget
         child: Column(
           children: [
             LogoContainer(
-              title: "Logo",
+              title: "Profile Image",
               imageFile: viewProfileVM.logoFile,
               serverImg: viewProfileVM.logoUrl ?? '',
               onTap: () => imagePickerSelection(

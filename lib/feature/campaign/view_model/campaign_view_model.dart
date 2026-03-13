@@ -160,8 +160,8 @@ class CampaignViewModel extends ChangeNotifier {
       'enabled': false
     },
     {'id': 'COMMUNITY_MEMBERS', 'label': 'Community members', 'enabled': true},
-    {'id': 'CONTACT_PARTNER', 'label': 'Contact–Partner', 'enabled': true},
-    {'id': 'CONTACT_MEMBER', 'label': 'Contact–Member', 'enabled': true},
+    {'id': 'CONTACT_PARTNER', 'label': 'Contact-Partner', 'enabled': true},
+    {'id': 'CONTACT_MEMBER', 'label': 'Contact-Member', 'enabled': true},
   ];
 
   String? getGroupIdByLabel(String label) {

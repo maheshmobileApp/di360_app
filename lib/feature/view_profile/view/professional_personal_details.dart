@@ -25,7 +25,7 @@ class ProfessionalPersonalDetails extends StatelessWidget
         padding: const EdgeInsets.all(16.0),
         child: Column(children: [
           LogoContainer(
-            title: "Logo",
+            title: "Profile Image",
             imageFile: viewProfileVM.logoFile,
             serverImg: viewProfileVM.logoUrl ?? '',
             onTap: () => imagePickerSelection(
