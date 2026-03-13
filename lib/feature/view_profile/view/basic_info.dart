@@ -6,8 +6,8 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/widgets/image_picker_widget.dart';
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
-import 'package:di360_flutter/feature/job_create/widgets/logo_container.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/feature/view_profile/widgets/profile_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class BasicInfo extends StatelessWidget
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            LogoContainer(
+            ProfileImageWidget(
               title: "Profile Image",
               imageFile: viewProfileVM.logoFile,
               serverImg: viewProfileVM.logoUrl ?? '',

@@ -49,8 +49,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final dateOfBirthController = TextEditingController();
   final FocusNode addressFocusNode1 = FocusNode();
   final FocusNode addressFocusNode2 = FocusNode();
-  
+
   String? logoUrl;
+  String? userName;
 
   DentalSuppliersByPk? supplierViewProfileData;
   DentalPracticesByPk? practiceViewProfileData;
@@ -186,8 +187,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       setSelectedBusineestype(businessType);
     }
     logoUrl = viewProfile?.logo?.url ?? "";
+    userName = viewProfile?.name ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
+    await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
     notifyListeners();
   }
 
@@ -221,7 +224,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     stateController.text = viewProfile?.state ?? "";
     zipCodeController.text = '${viewProfile?.zipcode ?? ""}';
     if (viewProfile?.dateOfBirth != null) {
-      final date = DateTime.parse(viewProfile!.dateOfBirth!);
+      final date = DateTime.parse(viewProfile?.dateOfBirth ?? "");
       dateOfBirthController.text =
           "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
     } else {
@@ -247,8 +250,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       setSelectedBusineestype(businessType);
     }
     logoUrl = viewProfile?.profileImage?.url ?? "";
+    userName = viewProfile?.name ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
+    await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
     notifyListeners();
   }
 
@@ -267,9 +272,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     if (pickedFile != null) {
       logoFile = File(pickedFile.path);
       navigationService.goBack();
-      type == UserRole.professional.value
+      /*type == UserRole.professional.value
           ? uploadProfessLogo(context)
-          : uploadBussinessLogo(context);
+          : uploadBussinessLogo(context);*/
       notifyListeners();
     }
   }
@@ -317,7 +322,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     notifyListeners();
   }
-
   Future<void> updateViewProfile(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
@@ -325,6 +329,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final profileCompleted =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
+    type == UserRole.professional.value
+        ? await uploadProfessLogo(context)
+        : await uploadBussinessLogo(context);
     Map<String, dynamic> requestData = {"id": userId};
     if (type == UserRole.practice.value) {
       requestData["practiceObj"] = {
@@ -369,7 +376,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "last_name": lastNameController.text,
         "middle_name": middleNameController.text,
         "gender": selectedGender?.toLowerCase(),
-        "date_of_birth": scheduleDate?.toIso8601String(),
+        "date_of_birth": dateOfBirthController.text,
         "salutation": selectedSalutation,
         "profile_completed": true
       };
@@ -413,14 +420,14 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
           : type == UserRole.professional.value
               ? getProfessionalViewProfileData()
               : getSuppilerViewProfileData();
-      Loaders.circularHideLoader(context);
+
       profileCompleted == false
           ? directorNavigationHandle(context)
           : navigationService.goBack();
+      
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
-    } else {
-      Loaders.circularHideLoader(context);
-    }
+    } 
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
@@ -456,7 +463,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> clearProfileData() async{
+  Future<void> clearProfileData() async {
     nameController.clear();
     emailController.clear();
     phoneNoController.clear();

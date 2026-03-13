@@ -84,12 +84,13 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                         child: AppButton(
                             text: 'Save & Update',
                             height: 45,
-                            onTap: () {
+                            onTap: () async {
                               if (_formKey.currentState!.validate()) {
                                 if (provider.addressController.text.isEmpty) {
                                   scaffoldMessenger("Please enter address");
                                 } else {
-                                  provider.updateViewProfile(context);
+                                  await provider.updateViewProfile(context);
+                                  await provider.getTheViewProfileData();
                                 }
                               }
                             }),
