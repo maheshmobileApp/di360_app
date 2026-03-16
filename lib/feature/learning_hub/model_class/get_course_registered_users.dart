@@ -45,7 +45,7 @@ class CourseRegisteredUsers {
   String? firstName;
   String? lastName;
   String? email;
-  String? phoneNumber;
+  dynamic phoneNumber;
   String? description;
   String? courseId;
   String? fromId;

@@ -419,7 +419,8 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
- Keyboard issues fixed and bugs fixed
+SMS Campgine issue
+Alinment in Android
 "
   
 

@@ -183,7 +183,7 @@ class RoleSelectionScreen extends StatelessWidget
                       addHorizontal(12),
                       Expanded(
                           child: AppButton(
-                              text: 'Sumbit',
+                              text: 'Submit',
                               height: 48,
                               onTap: () {
                                 if (formKey.currentState!.validate()) {
