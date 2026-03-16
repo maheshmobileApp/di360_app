@@ -344,13 +344,21 @@ class CreateCampaignView extends StatelessWidget
         .map((g) => g['label'] as String)
         .toList();
 
+    final preSelectedGroupChips = viewModel.selectedGroupChips.map((idOrLabel) {
+      final match = viewModel.groupOptions.firstWhere(
+        (g) => g['id'] == idOrLabel || g['label'] == idOrLabel,
+        orElse: () => {},
+      );
+      return (match['label'] as String?) ?? idOrLabel;
+    }).where((label) => enabledGroups.contains(label)).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomMultiSelectDropDown<String>(
           height: 50,
           items: enabledGroups,
-          selectedItems: viewModel.selectedGroupChips,
+          selectedItems: preSelectedGroupChips,
           itemLabel: (item) => item,
           hintText: "Select Groups",
           //readOnly: viewModel.repeatMode,
