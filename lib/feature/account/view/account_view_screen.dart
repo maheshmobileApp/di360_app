@@ -192,6 +192,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await context
                                 .read<JobListingsViewModel>()
                                 .getMyJobListingData(context);
+                            context
+                                .read<JobListingsViewModel>()
+                                .updateSelectedStatus("All");
                             Loaders.circularHideLoader(context);
                             navigationService
                                 .navigateTo(RouteList.JobListingScreen);

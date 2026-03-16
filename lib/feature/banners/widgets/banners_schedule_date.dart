@@ -33,12 +33,18 @@ class BannersScheduleExpiryPage extends StatelessWidget {
       return;
     }
 
+    final maxDate = DateTime(
+      provider.scheduleDate!.year,
+      provider.scheduleDate!.month + 1,
+      provider.scheduleDate!.day,
+    );
+
     final picked = await showDatePicker(
       context: context,
       initialDate: provider.expiryDate ??
           provider.scheduleDate!.add(const Duration(days: 1)),
       firstDate: provider.scheduleDate!.add(const Duration(days: 1)),
-      lastDate: DateTime(2100),
+      lastDate: maxDate,
     );
 
     if (picked != null) {

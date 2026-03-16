@@ -1,56 +1,50 @@
 const String getBannersCountQuery = r'''
-query getBannersCount($from_id: uuid!) {
-   ALL: banners_aggregate(
-    where: { from_id: { _eq: $from_id } }
+query GetBannerCounts($adminId: uuid!) {
+  all: banners_aggregate(
+    where: {_or: [{status: {_neq: "DRAFT"}}, {status: {_eq: "DRAFT"}, from_id: {_eq: $adminId}}]}
   ) {
     aggregate {
       count
+      __typename
     }
+    __typename
   }
-  approved: banners_aggregate(
-    where: { status: { _eq: "APPROVED" }, from_id: { _eq: $from_id } }
+  draft: banners_aggregate(
+    where: {status: {_eq: "DRAFT"}, from_id: {_eq: $adminId}}
   ) {
     aggregate {
       count
+      __typename
     }
+    __typename
   }
-
-  rejected: banners_aggregate(
-    where: { status: { _eq: "REJECTED" }, from_id: { _eq: $from_id } }
-  ) {
+  pending: banners_aggregate(where: {status: {_eq: "PENDING"}}) {
     aggregate {
       count
+      __typename
     }
+    __typename
   }
-
-  pending: banners_aggregate(
-    where: { status: { _eq: "PENDING" }, from_id: { _eq: $from_id } }
-  ) {
+  approved: banners_aggregate(where: {status: {_eq: "APPROVED"}}) {
     aggregate {
       count
+      __typename
     }
+    __typename
   }
-
-  expired: banners_aggregate(
-    where: { status: { _eq: "EXPIRED" }, from_id: { _eq: $from_id } }
-  ) {
+  rejected: banners_aggregate(where: {status: {_eq: "REJECTED"}}) {
     aggregate {
       count
+      __typename
     }
+    __typename
   }
-    shecduled: banners_aggregate(
-    where: { status: { _eq: "SCHEDULED" }, from_id: { _eq: $from_id } }
-  ) {
+  expired: banners_aggregate(where: {status: {_eq: "EXPIRED"}}) {
     aggregate {
       count
+      __typename
     }
-  }
-   draft: banners_aggregate(
-    where: { status: { _eq: "DRAFT" }, from_id: { _eq: $from_id } }
-  ) {
-    aggregate {
-      count
-    }
+    __typename
   }
 }
 ''';

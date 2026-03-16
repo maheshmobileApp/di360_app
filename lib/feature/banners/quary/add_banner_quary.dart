@@ -1,7 +1,9 @@
 const String addBannerQuery = r''' 
- mutation InsertBannerCategory($banner: banners_insert_input!) {
-    insert_banners(objects: [$banner]) {
-      affected_rows
-    }
+ mutation insertRecord($fields: banners_insert_input!) {
+  insert_banners_one(object: $fields) {
+    id
+    __typename
   }
+}
 ''';
+

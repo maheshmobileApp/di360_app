@@ -144,10 +144,14 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                     addVertical(15),
                     InputTextField(
                       title: 'URL',
-                      isRequired: true,
                       hintText: 'Enter URL',
                       controller: bannersVM.urlController,
-                      validator: validateUrl,
+                      validator: (value) {
+                        if (value != null && value.isNotEmpty) {
+                          return validateUrl(value);
+                        }
+                        return null;
+                      },
                     ),
                     addVertical(15),
                     BannersScheduleExpiryPage(),
@@ -160,14 +164,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                             text: 'Save as Draft',
                             height: 42,
                             onTap: () {
-                              if (formKey.currentState!.validate() &&
-                                  validateURlAndData(bannersVM)) {
-                                if (bannersVM.isEditBanner) {
-                                  bannersVM.updateBannerData(context, false);
-                                } else {
-                                  bannersVM.addBannersData(context, false);
-                                }
-                              }
+                              bannersVM.addBannersData(context, true);
                             },
                           ),
                         ),
@@ -185,14 +182,7 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                                     bannersVM.addBannersData(context, false);
                                   }
                                 }
-                                // if (formKey.currentState!.validate() &&
-                                //     validateURlAndData(bannersVM)) {
-                                //   bannersVM.isEditBanner
-                                //       ? bannersVM.updateBannerData(
-                                //           context, false)
-                                //       : bannersVM.addBannersData(
-                                //           context, false);
-                                // }
+                               
                               }),
                         )
                       ],
@@ -208,7 +198,8 @@ class _AddBannersScreenState extends State<AddBannersScreen>
   }
 
   bool validateURlAndData(BannersViewModel bannerVm) {
-    if (bannerVm.selectedBannerImg == null && bannerVm.serverBannerImg == null) {
+    if (bannerVm.selectedBannerImg == null &&
+        bannerVm.serverBannerImg == null) {
       scaffoldMessenger('Please select Banner image');
       return false;
     } else if (bannerVm.scheduleDate == null) {

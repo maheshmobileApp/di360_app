@@ -95,7 +95,7 @@ class _TalentListingMessageScreenState
         final messages = vm.talentMessages?.talentsMessage;
         return Scaffold(
           backgroundColor: AppColors.whiteColor,
-          appBar: AppbarTitleBackIconWidget(title: 'Messages'),
+          appBar: AppbarTitleBackIconWidget(title: 'Talent Messages'),
           body: Column(
             children: [
               Expanded(

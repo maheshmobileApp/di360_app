@@ -90,6 +90,7 @@ class ImageConst {
 
   // Social Mediaassets/svgs/locationsvg.svg
   static const String facebookSvg = '${_svgBasePath}social/facebook.png';
+  static const String youtubeSvg = '${_svgBasePath}social/youtube.png';
   static const String instagramSvg = '${_svgBasePath}social/instagram.png';
   static const String linkedinSvg = '${_svgBasePath}social/linkedin.png';
   static const String twitterSvg = '${_svgBasePath}social/twitter.png';

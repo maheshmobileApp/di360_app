@@ -64,8 +64,9 @@ class BannerRepositoryImpl extends BannersRepository {
   Future<BannersCountData> bannersCounts() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final data = await http.query(getBannersCountQuery,
-        variables: {"from_id": userId}
+        variables: {"adminId": userId}
         );
+        
     final result = BannersCountData.fromJson(data);
     return result;
   }

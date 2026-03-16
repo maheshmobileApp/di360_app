@@ -204,15 +204,13 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     if (loadMore) {
       coursesListingList.addAll(res ?? []);
-      coursesListingList.sort((a, b) => 
-        (b.updatedAt ?? '').compareTo(a.updatedAt ?? '')
-      );
+      coursesListingList
+          .sort((a, b) => (b.updatedAt ?? '').compareTo(a.updatedAt ?? ''));
       isLoadingMoreCourses = false;
     } else {
       coursesListingList = res ?? [];
-      coursesListingList.sort((a, b) => 
-        (b.updatedAt ?? '').compareTo(a.updatedAt ?? '')
-      );
+      coursesListingList
+          .sort((a, b) => (b.updatedAt ?? '').compareTo(a.updatedAt ?? ''));
     }
 
     hasMoreCourses = (res?.length ?? 0) >= _courseListingLimit;
@@ -257,25 +255,32 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> getCourseRegisteredUsers(
       BuildContext context, String courseId) async {
+    if (courseId.isEmpty) return;
     Loaders.circularShowLoader(context);
     final res = await repo.getCourseRegisteredUsers(
         courseId, listingRegUsersStatus ?? "");
-    registeredUsers = res;
+    if (res != null) {
+      registeredUsers = res;
+    }
     await getCourseRegisteredUsersTabCount(context, courseId);
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
   Future<void> updateRegUserStatus(
-      BuildContext context, String regUserId, String status) async {
+      BuildContext context, String regUserId, String status, String courseId) async {
+    if (courseId.isEmpty) return;
+    Loaders.circularShowLoader(context);
     final variables = {
       "id": regUserId,
       "fields": {"webinar_status": status, "status": status}
     };
     final res = await repo.updateRegUserStatus(variables);
     if (res != null) {
-      await getCourseRegisteredUsers(context, courseId ?? "");
+      await getCourseRegisteredUsers(context, courseId);
       scaffoldMessenger("Status Updated Successfully");
+    } else {
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -283,14 +288,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   RegisterUserTabCountData? registerUserTabCount;
   Future<void> getCourseRegisteredUsersTabCount(
       BuildContext context, String courseId) async {
-    Loaders.circularShowLoader(context);
+    if (courseId.isEmpty) return;
     final variables = {
       "where": {
         "course_id": {"_eq": courseId}
       }
     };
     final res = await repo.getRegisterUserTabCountData(variables);
-    if (res != "") {
+    if (res != null && res != "") {
       registerUserTabCount = res;
       allRegUsersCount = registerUserTabCount?.all?.aggregate?.count ?? 0;
       pendingRegUsersCount =
@@ -301,7 +306,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
           registerUserTabCount?.completed?.aggregate?.count ?? 0;
       cancelledRegUsersCount =
           registerUserTabCount?.cancelled?.aggregate?.count ?? 0;
-      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

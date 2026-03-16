@@ -743,6 +743,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
                   : int.parse(totalPriceController.text),
               registerLink: registerLinkController.text,
               meetingLink: meetingLinkController.text,
+              facebookLink: facebookController.text,
+              instagramLink: instagramController.text,
+              youtubeLink: youtubeController.text,
+              linkedinLink: linkedinController.text,
               userRole: type,
               startDate: startDate,
               endDate: endDate,
@@ -812,6 +816,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     final result = await repo.updateCourseListing({
       "id": courseId,
       "changes": CourseObject(
+        
         courseName: courseNameController.text,
         courseCategoryId: selectedCategoryId,
         rsvpDate: rsvpDate,
@@ -849,6 +854,10 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
             : int.parse(totalPriceController.text),
         registerLink: registerLinkController.text,
         meetingLink: meetingLinkController.text,
+        facebookLink: facebookController.text,
+        instagramLink: instagramController.text,
+        youtubeLink: youtubeController.text,
+        linkedinLink: linkedinController.text,
         userRole: type,
         startDate: startDate,
         endDate: endDate,
@@ -882,16 +891,20 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     if (selectedPresentedImg != null || serverPresentedImg != null) {
       await validatePresenterImg();
     }
-    if (selectedCourseHeaderBanner != null || serverCourseHeaderBanner != null) {
+    if (selectedCourseHeaderBanner != null ||
+        serverCourseHeaderBanner != null) {
       await validateCourseHeaderBanner();
     }
-    if ((selectedGallery?.isNotEmpty ?? false) || (serverGallery?.isNotEmpty ?? false)) {
+    if ((selectedGallery?.isNotEmpty ?? false) ||
+        (serverGallery?.isNotEmpty ?? false)) {
       await validateGallery();
     }
-    if ((selectedCourseBannerImg?.isNotEmpty ?? false) || (serverCourseBannerImg?.isNotEmpty ?? false)) {
+    if ((selectedCourseBannerImg?.isNotEmpty ?? false) ||
+        (serverCourseBannerImg?.isNotEmpty ?? false)) {
       await validateCourseBanner();
     }
-    if ((selectedsponsoredByImg?.isNotEmpty ?? false) || (serverSponsoredByImg?.isNotEmpty ?? false)) {
+    if ((selectedsponsoredByImg?.isNotEmpty ?? false) ||
+        (serverSponsoredByImg?.isNotEmpty ?? false)) {
       await validateSponsoredByImg();
     }
     if (sessions.isNotEmpty) {
@@ -945,13 +958,13 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
       maxSubscribers: 1000,
       createdById: null,
       companyName: null,
-      communityUserType: selectedCommunityType == "Community User"
-          ? "COMMUNITY_USER"
-          : "BOTH",
+      communityUserType:
+          selectedCommunityType == "Community User" ? "COMMUNITY_USER" : "BOTH",
       status: "PREVIEW",
       type: selectedCourseType ?? "",
       feedType: "LEARNHUB",
-      startTime: startTimeController.text.isEmpty ? null : startTimeController.text,
+      startTime:
+          startTimeController.text.isEmpty ? null : startTimeController.text,
       endTime: endTimeController.text.isEmpty ? null : endTimeController.text,
     );
   }
@@ -1040,6 +1053,4 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
     }
     return false;
   }
-
-  
 }

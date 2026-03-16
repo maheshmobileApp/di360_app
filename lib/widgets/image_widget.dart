@@ -13,6 +13,8 @@ double? width = 20;
   Widget build(BuildContext context){
     return  Image.asset(
       imageUrl,
+      height: height ?? 40,
+      width: width ?? 40,
     );
   }
 }
