@@ -54,6 +54,7 @@ class BasicInfo extends StatelessWidget
                 controller: viewProfileVM.abnNUmberController,
                 hintText: "ABN / ACN Number",
                 isRequired: true,
+                maxLength: 11,
                 title: "ABN / ACN Number",
                 validator: validateABNNumber),
             addVertical(10),
@@ -68,9 +69,9 @@ class BasicInfo extends StatelessWidget
             _buildBusineestype(viewProfileVM),
             addVertical(10),
             InputTextField(
-              title: "Phone Number",
+              title: "Mobile Number",
               isRequired: true,
-              hintText: "Enter phone number",
+              hintText: "Enter Mobile Number",
               keyboardType: TextInputType.phone,
               maxLength: 9,
               readOnly: false,
@@ -84,7 +85,40 @@ class BasicInfo extends StatelessWidget
                   viewProfileVM.setPhoneCode(value ?? "");
                 },
               ),
-            )
+            ),
+            addVertical(10),
+            InputTextField(
+              title: "Business Phone Number",
+              isRequired: true,
+              hintText: "Enter Mobile Number",
+              keyboardType: TextInputType.phone,
+              maxLength: 10,
+              readOnly: false,
+              canRequestFocus: true,
+              controller: viewProfileVM.businessPhoneNoController,
+              validator: validateBusinessPhoneNumber,
+              prefixIcon: PhonePrefixDropdown(
+                value: viewProfileVM.selectedPhoneCode ?? '',
+                items: ConstantData.phoneCodeList,
+                onChanged: (value) {
+                  viewProfileVM.setPhoneCode(value ?? "");
+                },
+              ),
+            ),
+            addVertical(10),
+            InputTextField(
+                controller: viewProfileVM.businessEmailController,
+                hintText: "Enter Business Email",
+                isRequired: true,
+                title: "Business Email",
+                validator: validateEmail),
+            addVertical(10),
+            InputTextField(
+                controller: viewProfileVM.websiteUrlController,
+                hintText: "Enter Website URL",
+                isRequired: true,
+                title: "Website URL",
+                validator: validateOptionalUrl),
           ],
         ));
   }

@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class ProfessionalDetailInfo extends StatelessWidget
     with BaseContextHelpers, ValidationMixins {
-  const ProfessionalDetailInfo({super.key});
+  const   ProfessionalDetailInfo({super.key});
 
   @override
   Widget build(BuildContext context) {

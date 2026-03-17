@@ -11,7 +11,14 @@ mixin ValidationMixins {
   String? validateContactPhoneNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Mobile Number";
-    if (!isValidContactPhoneNumber(value)) return 'Enter valid mobile number';
+    if (!isValidContactPhoneNumber(value)) return 'Enter valid Mobile Number';
+    return null;
+  }
+
+  String? validateBusinessPhoneNumber(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please enter your Business Phone Number";
+    if (!isValidBusinessPhoneNumber(value)) return 'Enter valid Business Phone Number';
     return null;
   }
 

@@ -39,8 +39,9 @@ class ProfessionalPersonalDetails extends StatelessWidget
               title: "Select Type",
               isRequired: true,
               onChanged: (v) => viewProfileVM.selectedSalutation = v,
-              validator: (v) =>
-                  viewProfileVM.selectedSalutation == null ? 'Please select your type' : null,
+              validator: (v) => viewProfileVM.selectedSalutation == null
+                  ? 'Please select your type'
+                  : null,
               items: ConstantData.salutationList
                   .map((e) => DropdownMenuItem<String>(
                       value: e,
@@ -77,7 +78,8 @@ class ProfessionalPersonalDetails extends StatelessWidget
                   ? 'Please select your date of birth'
                   : null,
               onTap: () async {
-                final eighteenYearsAgo = DateTime.now().subtract(const Duration(days: 365 * 18));
+                final eighteenYearsAgo =
+                    DateTime.now().subtract(const Duration(days: 365 * 18));
                 final picked = await showDatePicker(
                   context: context,
                   initialDate: viewProfileVM.scheduleDate ?? eighteenYearsAgo,
@@ -101,8 +103,16 @@ class ProfessionalPersonalDetails extends StatelessWidget
                           style: TextStyles.medium3(color: AppColors.black))))
                   .toList(),
               hintText: "Select gender",
-              validator: (v) =>
-                  viewProfileVM.selectedGender == null ? 'Please select your gender' : null),
+              validator: (v) => viewProfileVM.selectedGender == null
+                  ? 'Please select your gender'
+                  : null),
+          addVertical(10),
+          InputTextField(
+              controller: viewProfileVM.aboutUsController,
+              maxLines: 4,
+              hintText: "Enter About Us",
+              title: "About Us"),
+          addVertical(10),
         ]));
   }
 }

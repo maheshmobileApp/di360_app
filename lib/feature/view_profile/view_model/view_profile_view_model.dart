@@ -27,6 +27,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final businessEmailController = TextEditingController();
+  final websiteUrlController = TextEditingController();
+  final aboutUsController = TextEditingController();
   final phoneNoController = TextEditingController();
   final businessNameController = TextEditingController();
   final abnNUmberController = TextEditingController();
@@ -159,6 +162,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
     businessNameController.text = viewProfile?.businessName ?? "";
+    businessEmailController.text = viewProfile?.businessEmail;
+    businessPhoneNoController.text = viewProfile.businessPhone;
+    //websiteUrlController.text = viewProfile?.website ?? "";
     abnNUmberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
         viewProfile?.firstName ?? viewProfile?.name ?? "";
@@ -322,6 +328,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     notifyListeners();
   }
+
   Future<void> updateViewProfile(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
@@ -339,6 +346,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "business_name": businessNameController.text,
+        "business_phone": businessPhoneNoController.text,
+        "business_email": businessEmailController.text,
+        //"website": websiteUrlController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
@@ -378,7 +388,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "gender": selectedGender?.toLowerCase(),
         "date_of_birth": dateOfBirthController.text,
         "salutation": selectedSalutation,
-        "profile_completed": true
+        "profile_completed": true,
+        //"about_us": aboutUsController.text,
       };
     } else {
       requestData["supplierObj"] = {
@@ -386,6 +397,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$phoneCode${phoneNoController.text}',
         "business_name": businessNameController.text,
+        "business_phone": businessPhoneNoController.text,
+        "business_email": businessEmailController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
@@ -424,9 +437,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       profileCompleted == false
           ? directorNavigationHandle(context)
           : navigationService.goBack();
-      
+
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
-    } 
+    }
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
@@ -468,6 +481,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     emailController.clear();
     phoneNoController.clear();
     businessNameController.clear();
+    businessPhoneNoController.clear();
+    businessEmailController.clear();
+    websiteUrlController.clear();
+    aboutUsController.clear();
     abnNUmberController.clear();
     firstNameController.clear();
     middleNameController.clear();

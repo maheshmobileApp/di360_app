@@ -137,6 +137,7 @@ class RoleSelectionScreen extends StatelessWidget
                           controller: viewModel.abnNumber,
                           hintText: "ABN / ACN Number",
                           title: "ABN / ACN Number",
+                          maxLength: 11,
                           validator: validateABNNumber)
                     ],
                     Row(
