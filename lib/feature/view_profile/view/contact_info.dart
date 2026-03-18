@@ -53,9 +53,10 @@ class ContactInfo extends StatelessWidget
               validator: validateOptionalPhoneNumber),
           addVertical(10),
           AddressAutoFillWidget(
-            controller: viewProfileVM.addressController,
-            focusNode: viewProfileVM.addressFocusNode1,
-          ),
+              controller: viewProfileVM.addressController,
+              focusNode: viewProfileVM.addressFocusNode1,
+              itemClick: (val) async =>
+                  await viewProfileVM.getPlaceDetails(val.placeId ?? '')),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.addressLineOneController,

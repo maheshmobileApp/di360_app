@@ -170,7 +170,7 @@ class MyApp extends StatelessWidget {
               child = EasyLoading.init()(context, child);
               SystemChrome.setSystemUIOverlayStyle(
                 const SystemUiOverlayStyle(
-                  statusBarColor: AppColors.whiteColor,
+                  statusBarColor: AppColors.primaryColor,
                 ),
               );
               return SafeArea(

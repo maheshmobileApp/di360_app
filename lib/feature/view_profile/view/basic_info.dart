@@ -68,9 +68,9 @@ class BasicInfo extends StatelessWidget
             _buildBusineestype(viewProfileVM),
             addVertical(10),
             InputTextField(
-              title: "Phone Number",
+              title: "Mobile Number",
               isRequired: true,
-              hintText: "Enter phone number",
+              hintText: "Enter mobile number",
               keyboardType: TextInputType.phone,
               maxLength: 9,
               readOnly: false,

@@ -59,11 +59,10 @@ class AddressAutoFillWidget extends StatelessWidget {
             controller.selection = TextSelection.fromPosition(
               TextPosition(offset: controller.text.length),
             );
-        
             if (itemClick != null) {
               itemClick!(prediction);
             }
-        
+
             FocusScope.of(context).unfocus();
           },
           itemBuilder: (context, index, Prediction prediction) {

@@ -156,7 +156,7 @@ class SignupViewModel extends ChangeNotifier {
       final res = await _http.mutation(singUpQuery, {
         "signUpObj": {
           "name": nameController.text,
-          "email": emailController.text,
+          "email": emailController.text.toLowerCase(),
           "password": passController.text,
           "phone": '$phoneCode${numberController.text}',
           "aphra_registration_number": ahpraRegistrationNumber.text,
@@ -165,10 +165,11 @@ class SignupViewModel extends ChangeNotifier {
           "state": stateController.text,
           "business_name": companyNameController.text,
           "status": selectedType?['type'] == UserRole.supplier.value
-              ? "PENDING"
+              ? "VERIFICATION_PENDING"
               : "VERIFICATION_PENDING",
-          "subscription_plan_id": selectedPlanId, //Null passing from mobile app
+          "subscription_plan_id": selectedType?['subscription_plan_id'],
           "professionType": selectedCategory?.name,
+          "payload": {"subscriptionId": selectedType?['subscription_plan_id']},
           "tracking_details": "Mobile"
         }
       });
@@ -189,15 +190,16 @@ class SignupViewModel extends ChangeNotifier {
       if (res['insert_clients_one'] != null &&
           res['insert_clients_one'].isNotEmpty) {
         SignUpData.fromJson(res);
-        selectedType?['type'] == UserRole.supplier.value
+        /*  selectedType?['type'] == UserRole.supplier.value
             ? supplierUserAlertPopup(context, onBack: () {
                 navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 clearSignupData();
               })
-            : showSignupSuccessDialog(context, emailController.text, () {
-                navigationService.pushNamedAndRemoveUntil(RouteList.login);
-                clearSignupData();
-              });
+            :*/
+        showSignupSuccessDialog(context, emailController.text, () {
+          navigationService.pushNamedAndRemoveUntil(RouteList.login);
+          clearSignupData();
+        });
       }
     } catch (e) {
       Loaders.circularHideLoader(context);

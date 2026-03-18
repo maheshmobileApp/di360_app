@@ -92,7 +92,8 @@ scaffoldMessenger(String msg, {Color? color}) {
   );
 }
 
-showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
+showAlertMessage(BuildContext context, String message,
+    {Function()? onBack, Function()? onCancel, String? yes, String? no}) {
   return showDialog(
       context: context,
       builder: (_) {
@@ -102,19 +103,14 @@ showAlertMessage(BuildContext context, String message, {Function()? onBack}) {
                 style: TextStyles.medium3(color: AppColors.black)),
             actions: [
               TextButton(
-                  onPressed: () async {
-                    navigationService.goBack();
-                  },
-                  child: Text(
-                    "Cancel",
-                    style: TextStyles.medium4(),
-                  )),
+                  onPressed: onCancel ??
+                      () async {
+                        navigationService.goBack();
+                      },
+                  child: Text(no ?? "Cancel", style: TextStyles.medium4())),
               TextButton(
                   onPressed: onBack,
-                  child: Text(
-                    "Ok",
-                    style: TextStyles.medium4(),
-                  )),
+                  child: Text(yes ?? "Ok", style: TextStyles.medium4())),
             ]);
       });
 }
@@ -123,7 +119,6 @@ void showSignupSuccessDialog(
     BuildContext context, String email, Function()? onTap,
     {String? title, String? subTitle}) {
   showDialog(
-    
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {

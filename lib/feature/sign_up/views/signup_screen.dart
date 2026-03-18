@@ -112,9 +112,9 @@ class SignupScreen extends StatelessWidget
                         validator: validateEmail),
                     addVertical(16),
                     InputTextField(
-                      title: "Phone Number",
+                      title: "Mobile Number",
                       isRequired: true,
-                      hintText: "Enter phone number",
+                      hintText: "Enter mobile number",
                       keyboardType: TextInputType.phone,
                       maxLength: 9,
                       controller: viewModel.numberController,

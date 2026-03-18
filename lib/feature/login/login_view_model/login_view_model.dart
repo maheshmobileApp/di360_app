@@ -101,7 +101,7 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(result.loginApi?.accessToken ?? '');
           updateDevieToken();
           result.loginApi?.profileCompleted == true
-              ? directoryHandling(context)
+              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
               : viewProfileHandle(context);
         } else {
           Loaders.circularHideLoader(context);
