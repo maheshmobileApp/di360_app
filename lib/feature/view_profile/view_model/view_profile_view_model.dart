@@ -438,7 +438,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
           : type == UserRole.professional.value
               ? await getProfessionalViewProfileData()
               : await getSuppilerViewProfileData();
-      await insertDirectories();
+      if (profileCompleted == false) await insertDirectories(); 
       profileCompleted == false
           ? showAlertMessage(
               context, 'Would you like to complete My directory?',

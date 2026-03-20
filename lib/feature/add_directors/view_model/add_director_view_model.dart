@@ -377,7 +377,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.id == basic.directoryCategoryId,
+      (cat) => cat.name == basic.professionType,
       orElse: () => null,
     );
     if (businessType != null) {
