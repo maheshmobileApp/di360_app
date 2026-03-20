@@ -56,69 +56,69 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
               strokeWidth: 2,
               dashPattern: [6, 4],
               borderType: BorderType.Circle,
-              child: Container(
-                width: 140,
-                height: 140,
-                child: ((serverImg != null && serverImg != '') ||
-                        imageFile != null)
-                    ? Stack(alignment: Alignment.center, children: [
-                        ClipOval(
-                          child: imageFile == null
-                              ? CachedNetworkImageWidget(
-                                  imageUrl: serverImg ?? '',
-                                  fit: BoxFit.fill,
-                                  width: 140,
-                                  height: 140,
-                                )
-                              : Image.file(
-                                  imageFile??File(""),
-                                  width: 140,
-                            height: 140,
-                            fit: BoxFit.fill,
+              child: ClipOval(
+                child: SizedBox(
+                  width: 140,
+                  height: 140,
+                  child: ((serverImg != null && serverImg != '') ||
+                          imageFile != null)
+                      ? Stack(alignment: Alignment.center, children: [
+                          ClipOval(
+                            child: imageFile == null
+                                ? CachedNetworkImageWidget(
+                                    imageUrl: serverImg ?? '',
+                                    fit: BoxFit.fill,
+                                    width: 140,
+                                    height: 140,
+                                  )
+                                : Image.file(
+                                    imageFile ?? File(""),
+                                    width: 140,
+                                    height: 140,
+                                    fit: BoxFit.fill,
+                                  ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: onRemove,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                    shape: BoxShape.circle),
+                                padding: const EdgeInsets.all(4),
+                                child: const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 18,
                                 ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: onRemove,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  shape: BoxShape.circle),
-                              padding: const EdgeInsets.all(4),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 18,
                               ),
                             ),
-                          ),
-                        )
-                      ])
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: AppColors.timeBgColor,
+                          )
+                        ])
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(ImageConst.upload,
+                                width: 28, height: 28),
+                            const SizedBox(height: 6),
+                            Text(
+                              "Click to upload",
+                              textAlign: TextAlign.center,
+                              style: TextStyles.medium2(
+                                  color: AppColors.black),
                             ),
-                            child: Image.asset(ImageConst.upload),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            "Click here to Choose a file.",
-                            style: TextStyles.medium2(color: AppColors.black),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "JPEG, PNG formats, up to 5 MB",
-                            style: TextStyles.regular2(
-                                color: AppColors.dropDownHint),
-                          ),
-                        ],
-                      ),
+                            const SizedBox(height: 2),
+                            Text(
+                              "JPEG, PNG, 5MB",
+                              textAlign: TextAlign.center,
+                              style: TextStyles.regular2(
+                                  color: AppColors.dropDownHint),
+                            ),
+                          ],
+                        ),
+                ),
               ),
             ),
           ),
