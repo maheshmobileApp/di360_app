@@ -81,9 +81,8 @@ class AddDirectorBasicInfo extends StatelessWidget
             isRequired: true,
             controller: addDirectorVM.ABNNumberController,
             keyboardType: TextInputType.number,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter  ABN/ACN Number'
-                : null,
+            validator: validateABNNumber,
+            maxLength: 11,
           ),
           addVertical(20),
           InputTextField(
