@@ -1,8 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/view/grid_widget.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
+import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,13 +18,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String type = '';
+
   @override
   Widget build(BuildContext context) {
+    final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(searchWidget: false),
       body: Column(
-        children: [UserData(), Expanded(child: GridWidget())],
+        children: [
+          UserData(
+            type: type,
+            gender: viewProfileVM.gender,
+          ),
+          Expanded(child: GridWidget())
+        ],
       ),
     );
   }
@@ -31,6 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final viewModel = Provider.of<HomeViewModel>(context, listen: false);
     viewModel.getFollowersCount(context);
     context.read<NotificationViewModel>().getNotificationsCount();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.read<ViewProfileViewModel>().getTheViewProfileData();
+      final t = await LocalStorage.getStringVal(LocalStorageConst.type);
+      setState(() => type = t);
+    });
     super.initState();
   }
 }

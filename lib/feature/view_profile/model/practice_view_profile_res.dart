@@ -4,7 +4,9 @@ class PracticesViewProfileRes {
   PracticesViewProfileRes({this.data});
 
   PracticesViewProfileRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new PracticeProfileData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new PracticeProfileData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -51,7 +53,7 @@ class DentalPracticesByPk {
   String? addressLineOne;
   String? addressLineTwo;
   String? proDetailsAphraRegistrationNumber;
-  dynamic bankDetails;//null
+  dynamic bankDetails; //null
   String? businessName;
   String? abnNumber;
   String? businessEmail;
@@ -67,8 +69,10 @@ class DentalPracticesByPk {
   String? middleName;
   String? lastName;
   String? type;
-  dynamic secondaryContact;//skip it
+  dynamic secondaryContact; //skip it
   String? sTypename;
+  String? websiteLink;
+  String? mobileNumber;
 
   DentalPracticesByPk(
       {this.id,
@@ -102,6 +106,9 @@ class DentalPracticesByPk {
       this.lastName,
       this.type,
       this.secondaryContact,
+      this.mobileNumber,
+      this.websiteLink,
+
       this.sTypename});
 
   DentalPracticesByPk.fromJson(Map<String, dynamic> json) {
@@ -138,6 +145,8 @@ class DentalPracticesByPk {
     type = json['type'];
     secondaryContact = json['secondary_contact'];
     sTypename = json['__typename'];
+    mobileNumber = json['mobile_number'];
+    websiteLink = json['website_link'];
   }
 
   Map<String, dynamic> toJson() {
@@ -172,6 +181,8 @@ class DentalPracticesByPk {
     data['__typename'] = this.sTypename;
     data['address_line_one'] = this.addressLineOne;
     data['address_line_two'] = this.addressLineTwo;
+    data['mobile_number'] = this.mobileNumber;
+    data['website_link'] = this.websiteLink;
     return data;
   }
 }

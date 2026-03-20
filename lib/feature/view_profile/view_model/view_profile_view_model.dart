@@ -55,6 +55,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   String? logoUrl;
   String? userName;
+  String? gender;
 
   DentalSuppliersByPk? supplierViewProfileData;
   DentalPracticesByPk? practiceViewProfileData;
@@ -163,14 +164,13 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     businessNameController.text = viewProfile?.businessName ?? "";
     businessEmailController.text = viewProfile?.businessEmail;
-    businessPhoneNoController.text = viewProfile.businessPhone;
-    //websiteUrlController.text = viewProfile?.website ?? "";
+    businessPhoneNoController.text = viewProfile.mobileNumber;
+    websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNUmberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
         viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
-    businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
     faxNumberController.text = viewProfile?.faxNumber ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";
     alternatePhoneNoController.text = viewProfile?.altPhone ?? "";
@@ -203,6 +203,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   void loadProfessionalViewProfileData(
       DentalProfessionalsByPk? viewProfile) async {
     nameController.text = viewProfile?.name ?? "";
+    aboutUsController.text = "";
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";
     if (phone.startsWith('+61')) {
@@ -257,6 +258,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     logoUrl = viewProfile?.profileImage?.url ?? "";
     userName = viewProfile?.name ?? "";
+    gender = viewProfile?.gender ?? "";
+
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
     await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
@@ -346,9 +349,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "business_name": businessNameController.text,
-        "business_phone": businessPhoneNoController.text,
+        "mobile_number": businessPhoneNoController.text,
         "business_email": businessEmailController.text,
-        //"website": websiteUrlController.text,
+        "website_link": websiteUrlController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
@@ -397,8 +400,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$phoneCode${phoneNoController.text}',
         "business_name": businessNameController.text,
-        "business_phone": businessPhoneNoController.text,
+        "mobile_number": businessPhoneNoController.text,
         "business_email": businessEmailController.text,
+        "website_link": websiteUrlController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,

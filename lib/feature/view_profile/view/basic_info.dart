@@ -88,36 +88,22 @@ class BasicInfo extends StatelessWidget
             ),
             addVertical(10),
             InputTextField(
-              title: "Business Phone Number",
-              isRequired: true,
-              hintText: "Enter Mobile Number",
-              keyboardType: TextInputType.phone,
-              maxLength: 10,
-              readOnly: false,
-              canRequestFocus: true,
-              controller: viewProfileVM.businessPhoneNoController,
-              validator: validateBusinessPhoneNumber,
-              prefixIcon: PhonePrefixDropdown(
-                value: viewProfileVM.selectedPhoneCode ?? '',
-                items: ConstantData.phoneCodeList,
-                onChanged: (value) {
-                  viewProfileVM.setPhoneCode(value ?? "");
-                },
-              ),
-            ),
+                controller: viewProfileVM.businessPhoneNoController,
+                hintText: "Enter Business Phone",
+                title: "Business Phone",
+                maxLength: 10,
+                validator: validateBusinessPhoneNumber),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.businessEmailController,
                 hintText: "Enter Business Email",
-                isRequired: true,
                 title: "Business Email",
                 validator: validateEmail),
             addVertical(10),
             InputTextField(
                 controller: viewProfileVM.websiteUrlController,
-                hintText: "Enter Website URL",
-                isRequired: true,
-                title: "Website URL",
+                hintText: "Enter Website Link",
+                title: "Website Link",
                 validator: validateOptionalUrl),
           ],
         ));

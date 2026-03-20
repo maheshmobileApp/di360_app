@@ -113,6 +113,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     print("*****************addCommentfee");
     await getUserId();
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
+     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     Loaders.circularShowLoader(context);
     try {
@@ -121,6 +122,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
       var res = await _http.mutation(addNewsFeedCommentQuery, {
         "addCommentsData": {
+          "created_by_id": userId,
           "dental_practice_id": practiceId ?? null,
           "dental_professional_id": professionId ?? null,
           "commenter_name": name,

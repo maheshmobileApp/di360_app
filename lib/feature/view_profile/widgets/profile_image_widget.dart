@@ -104,18 +104,16 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
                               borderRadius: BorderRadius.circular(8),
                               color: AppColors.timeBgColor,
                             ),
-                            child: Image.asset(ImageConst.upload, width: 32, height: 32),
+                            child: Image.asset(ImageConst.upload),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 20),
                           Text(
-                            "Click here to\nChoose a file.",
-                            textAlign: TextAlign.center,
+                            "Click here to Choose a file.",
                             style: TextStyles.medium2(color: AppColors.black),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 8),
                           Text(
-                            "JPEG, PNG\nup to 5 MB",
-                            textAlign: TextAlign.center,
+                            "JPEG, PNG formats, up to 5 MB",
                             style: TextStyles.regular2(
                                 color: AppColors.dropDownHint),
                           ),

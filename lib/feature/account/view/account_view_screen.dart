@@ -40,11 +40,15 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
+  String type = '';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<ViewProfileViewModel>().getTheViewProfileData();
+      final t = await LocalStorage.getStringVal(LocalStorageConst.type);
+      setState(() => type = t);
     });
   }
 
@@ -68,7 +72,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                       style: TextStyles.regular3(color: AppColors.redColor)));
             }
             return ListView(padding: const EdgeInsets.all(16), children: [
-              _buildProfileHeader(homeViewModel, viewProfileVM),
+              _buildProfileHeader(homeViewModel, viewProfileVM, type),
               addVertical(16),
               ...vm.visibleSections
                   .map((section) =>
@@ -84,7 +88,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
   }
 
   Widget _buildProfileHeader(
-      HomeViewModel vm, ViewProfileViewModel viewProfileVM) {
+      HomeViewModel vm, ViewProfileViewModel viewProfileVM, String type) {
     return Column(children: [
       addVertical(20),
       CircleAvatar(
@@ -99,7 +103,11 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                       child: CachedNetworkImageWidget(
                           imageUrl: viewProfileVM.logoUrl ?? '',
                           fit: BoxFit.fill,
-                          errorWidget: Icon(Icons.person_2_sharp)))))),
+                          errorWidget: type == UserRole.professional.value
+                              ? viewProfileVM.gender?.toLowerCase() == "male"
+                                  ? Image.asset(ImageConst.man)
+                                  : Image.asset(ImageConst.woman)
+                              : Image.asset(ImageConst.man)))))),
       addVertical(8),
       Text(viewProfileVM.userName ?? "Profile Name",
           style: TextStyles.medium3(color: AppColors.black, fontSize: 15)),
@@ -369,14 +377,14 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
   }
 
   Widget _buildLogoutTile(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: GestureDetector(
-        onTap: () => logOutAlert(context),
+    return GestureDetector(
+      onTap: () => logOutAlert(context),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.backgroundColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Row(
           children: [
             SvgPicture.asset(
