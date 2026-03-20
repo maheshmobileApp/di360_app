@@ -98,6 +98,7 @@ class BasicInfo extends StatelessWidget
                 controller: viewProfileVM.businessEmailController,
                 hintText: "Enter Business Email",
                 title: "Business Email",
+                keyboardType: TextInputType.emailAddress,
                 validator: validateEmail),
             addVertical(10),
             InputTextField(
