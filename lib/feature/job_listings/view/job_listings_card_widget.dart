@@ -85,11 +85,11 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                 _chipWidget(jobsListingData?.typeofEmployment ?? []),
                 addVertical(10),
                 Text(
-              _stripHtmlTags(jobsListingData?.description ?? ''),
-              style: TextStyles.regular2(color: AppColors.black),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+                  _stripHtmlTags(jobsListingData?.description ?? ''),
+                  style: TextStyles.regular2(color: AppColors.black),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -399,7 +399,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             value: "Edit",
             child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit"),
           ),
-        if (status != "APPROVE")
+        if (status == "DRAFT" || status == "REJECT")
           PopupMenuItem(
             value: "Delete",
             child:

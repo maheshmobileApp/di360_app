@@ -73,6 +73,10 @@ class CourseObject {
   String? startTime;
   String? endTime;
   String? communityUserType;
+  String? youtubeLink;
+  String? facebookLink;
+  String? instagramLink;
+  String? linkedinLink;
 
   CourseObject(
       {this.courseCategoryId,
@@ -128,7 +132,11 @@ class CourseObject {
       this.endDate,
       this.startTime,
       this.endTime,
-      this.communityUserType});
+      this.communityUserType,
+      this.youtubeLink,
+      this.facebookLink,
+      this.instagramLink,
+      this.linkedinLink});
 
   CourseObject.fromJson(Map<String, dynamic> json) {
     courseCategoryId = json['course_category_id'];
@@ -216,6 +224,10 @@ class CourseObject {
     startTime = json['startTime'];
     endTime = json['endTime'];
     communityUserType = json['community_user_type'];
+    facebookLink = json['facebook_link'];
+    youtubeLink = json['youtube_link'];
+    instagramLink = json['instagram_link'];
+    linkedinLink = json['linkedin_link'];
   }
 
   Map<String, dynamic> toJson() {
@@ -295,6 +307,10 @@ class CourseObject {
     data['startTime'] = this.startTime;
     data['endTime'] = this.endTime;
     data['community_user_type'] = this.communityUserType;
+    data['facebook_link'] = this.facebookLink;
+    data['instagram_link'] = this.instagramLink;
+    data['linkedin_link'] = this.linkedinLink;
+    data['youtube_link'] = this.youtubeLink;
     return data;
   }
 }

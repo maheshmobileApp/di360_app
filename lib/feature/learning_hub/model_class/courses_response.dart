@@ -89,6 +89,10 @@ class CoursesListingDetails {
   List<CourseBannerImage>? courseBannerVideo;
   List<CourseBannerImage>? courseBannerImage;
   String? registerLink;
+  String? facebookLink;
+  String? instagramLink;
+  String? linkedinLink;
+  String? youtubeLink;
   String? feedType;
   String? activeStatusFeed;
   String? userRole;
@@ -152,6 +156,10 @@ class CoursesListingDetails {
       this.courseBannerVideo,
       this.courseBannerImage,
       this.registerLink,
+      this.facebookLink,
+      this.instagramLink,
+      this.linkedinLink,
+      this.youtubeLink,
       this.feedType,
       this.activeStatusFeed,
       this.userRole,
@@ -254,6 +262,10 @@ class CoursesListingDetails {
       });
     }
     registerLink = json['register_link'];
+    facebookLink = json['facebook_link'];
+    instagramLink = json['instagram_link'];
+    linkedinLink = json['linkedin_link'];
+    youtubeLink = json['youtube_link'];
     feedType = json['feed_type'];
     activeStatusFeed = json['active_status_feed'];
     userRole = json['user_role'];
@@ -353,6 +365,10 @@ class CoursesListingDetails {
           this.courseBannerImage!.map((v) => v.toJson()).toList();
     }
     data['register_link'] = this.registerLink;
+    data['facebook_link'] = this.facebookLink;
+    data['instagram_link'] = this.instagramLink;
+    data['youtube_link'] = this.youtubeLink;
+    data['linkedin_link'] = this.linkedinLink;
     data['feed_type'] = this.feedType;
     data['active_status_feed'] = this.activeStatusFeed;
     data['user_role'] = this.userRole;

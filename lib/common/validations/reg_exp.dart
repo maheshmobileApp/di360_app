@@ -19,7 +19,7 @@ bool phoneNoValid(String phoneNo) {
 
 bool checkEmailValidation(String email) {
   return RegExp(
-    r"^[a-zA-Z0-9.a-zA-Z0-9.!#\$%&'*+\-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$"
+    r"^[a-z0-9.!#\$%&'*+\-/=?^_`{|}~]+@[a-z0-9.-]+\.[a-z]+$"
   ).hasMatch(email);
 }
 
@@ -45,6 +45,10 @@ bool isValidContactPhoneNumber(String phone) {
   return RegExp(r'^[0-9]{9}$').hasMatch(phone);
 }
 
+bool isValidBusinessPhoneNumber(String phone) {
+  return RegExp(r'^[0-9]{10}$').hasMatch(phone);
+}
+
 bool isValidateABNNumber(String abn) {
-  return RegExp(r'^[0-9]{10}$').hasMatch(abn);
+  return RegExp(r'^[0-9]{9,11}$').hasMatch(abn);
 }

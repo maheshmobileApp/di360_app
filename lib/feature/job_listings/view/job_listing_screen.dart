@@ -19,6 +19,7 @@ class JobListingScreen extends StatefulWidget {
   State<JobListingScreen> createState() => _JobListingScreenState();
 }
 
+
 class _JobListingScreenState extends State<JobListingScreen>
     with BaseContextHelpers {
   @override

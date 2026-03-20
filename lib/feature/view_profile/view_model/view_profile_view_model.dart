@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
@@ -16,6 +17,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +29,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final businessEmailController = TextEditingController();
+  final websiteUrlController = TextEditingController();
+  final aboutUsController = TextEditingController();
   final phoneNoController = TextEditingController();
   final businessNameController = TextEditingController();
   final abnNUmberController = TextEditingController();
@@ -52,6 +57,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
   String? logoUrl;
   String? userName;
+  String? gender;
 
   DentalSuppliersByPk? supplierViewProfileData;
   DentalPracticesByPk? practiceViewProfileData;
@@ -159,12 +165,14 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
     businessNameController.text = viewProfile?.businessName ?? "";
+    businessEmailController.text = viewProfile?.businessEmail;
+    businessPhoneNoController.text = viewProfile.mobileNumber;
+    websiteUrlController.text = viewProfile?.websiteLink ?? "";
     abnNUmberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
         viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
-    businessPhoneNoController.text = viewProfile?.businessPhone ?? "";
     faxNumberController.text = viewProfile?.faxNumber ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";
     alternatePhoneNoController.text = viewProfile?.altPhone ?? "";
@@ -197,6 +205,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   void loadProfessionalViewProfileData(
       DentalProfessionalsByPk? viewProfile) async {
     nameController.text = viewProfile?.name ?? "";
+    aboutUsController.text = "";
     emailController.text = viewProfile?.email ?? "";
     final phone = viewProfile?.phone ?? "";
     if (phone.startsWith('+61')) {
@@ -251,6 +260,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     logoUrl = viewProfile?.profileImage?.url ?? "";
     userName = viewProfile?.name ?? "";
+    gender = viewProfile?.gender ?? "";
+
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
     await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
@@ -266,7 +277,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> pickLogoImage(ImageSource source, BuildContext context) async {
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
@@ -322,6 +332,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     notifyListeners();
   }
+
   Future<void> updateViewProfile(BuildContext context) async {
     Loaders.circularShowLoader(context);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
@@ -339,6 +350,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
         "business_name": businessNameController.text,
+        "mobile_number": businessPhoneNoController.text,
+        "business_email": businessEmailController.text,
+        "website_link": websiteUrlController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
@@ -378,7 +392,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "gender": selectedGender?.toLowerCase(),
         "date_of_birth": dateOfBirthController.text,
         "salutation": selectedSalutation,
-        "profile_completed": true
+        "profile_completed": true,
+        //"about_us": aboutUsController.text,
       };
     } else {
       requestData["supplierObj"] = {
@@ -386,6 +401,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$phoneCode${phoneNoController.text}',
         "business_name": businessNameController.text,
+        "mobile_number": businessPhoneNoController.text,
+        "business_email": businessEmailController.text,
+        "website_link": websiteUrlController.text,
         "abn_number": abnNUmberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
@@ -422,11 +440,17 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               : getSuppilerViewProfileData();
 
       profileCompleted == false
-          ? directorNavigationHandle(context)
+          ? showAlertMessage(
+              context, 'Would you like to complete My directory?',
+              onBack: () => directorNavigationHandle(context),
+              onCancel: () => navigationService
+                  .pushNamedAndRemoveUntil(RouteList.dashBoard),
+              yes: 'Yes',
+              no: 'No')
           : navigationService.goBack();
-      
+
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
-    } 
+    }
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
@@ -445,6 +469,47 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final profile =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
     return profile;
+  }
+
+  Future<void> getPlaceDetails(String placeId) async {
+    final String apiKey = ApiConst.googleAPIKey;
+    final String url =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
+
+    try {
+      final response = await Dio().get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data["status"] == "OK") {
+          final result = data["result"];
+
+          String? city;
+          String? state;
+          String? country;
+          String? postalCode;
+
+          for (var component in result["address_components"]) {
+            var types = component["types"] as List;
+            if (types.contains("locality")) {
+              city = component["long_name"];
+            } else if (types.contains("administrative_area_level_1")) {
+              state = component["long_name"];
+            } else if (types.contains("country")) {
+              country = component["long_name"];
+            } else if (types.contains("postal_code")) {
+              postalCode = component["long_name"];
+            }
+          }
+
+          cityController.text = city ?? '';
+          stateController.text = state ?? '';
+          countryController.text = country ?? '';
+          zipCodeController.text = postalCode ?? '';
+        } else {}
+      }
+    } catch (e) {}
   }
 
   Future<void> deleteAccount(BuildContext context) async {
@@ -468,6 +533,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     emailController.clear();
     phoneNoController.clear();
     businessNameController.clear();
+    businessPhoneNoController.clear();
+    businessEmailController.clear();
+    websiteUrlController.clear();
+    aboutUsController.clear();
     abnNUmberController.clear();
     firstNameController.clear();
     middleNameController.clear();

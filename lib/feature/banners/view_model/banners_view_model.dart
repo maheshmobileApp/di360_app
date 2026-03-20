@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/banners/model/get_category_list.dart';
 import 'package:di360_flutter/feature/banners/repository/banner_repository_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -74,13 +75,13 @@ class BannersViewModel extends ChangeNotifier {
   int? expiredBannersCount = 0;
   int? rejectBannersCount = 0;
   File? bannerFile;
-  Map<String, int?> get statusCountMap => {
-        'All': allBannersCount,
-        'Draft': draftBannersCount,
-        'Pending Approval': pendingApprovalBannersCount,
-        'Approved & Scheduled': approvedScheduledBannersCount,
-        'Expired': expiredBannersCount,
-        'Reject': rejectBannersCount,
+  Map<String, int> get statusCountMap => {
+        'All': allBannersCount ?? 0,
+        'Draft': draftBannersCount ?? 0,
+        'Pending Approval': pendingApprovalBannersCount ?? 0,
+        'Approved & Scheduled': approvedScheduledBannersCount ?? 0,
+        'Expired': expiredBannersCount ?? 0,
+        'Reject': rejectBannersCount ?? 0,
       };
   DateTime? scheduleDate;
   DateTime? expiryDate;
@@ -180,7 +181,7 @@ class BannersViewModel extends ChangeNotifier {
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       await getBannersCounts();
 
-      final res = await repo.getMyBanners({
+      final variables = {
         "where": {
           "status": {
             "_in": bannersStatus?.isEmpty == true
@@ -198,7 +199,9 @@ class BannersViewModel extends ChangeNotifier {
         },
         "limit": 10000,
         "offset": 0,
-      });
+      };
+
+      final res = await repo.getMyBanners(variables);
 
       if (res != null) {
         bannersList = res;
@@ -227,14 +230,17 @@ class BannersViewModel extends ChangeNotifier {
   String? serverBannerImg;
   Future<void> validateBannerImg() async {
     if (serverBannerImg == null) {
-      var value = await _http.uploadImage(selectedBannerImg?.path);
-      banner_image = value['url'];
-      banner_name = value['name'];
-      notifyListeners();
+      if (selectedBannerImg?.path != null) {
+        var value = await _http.uploadImage(selectedBannerImg?.path);
+        if (value != null) {
+          banner_image = value['url'];
+          banner_name = value['name'];
+        }
+      }
     } else {
       banner_image = serverBannerImg ?? "";
-      notifyListeners();
     }
+    notifyListeners();
   }
 
 //add banner
@@ -243,8 +249,12 @@ class BannersViewModel extends ChangeNotifier {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
     await validateBannerImg();
+
+    final scheduleStr = scheduleDate != null ? DateFormatUtils.formatToYyyyMmDd(scheduleDate!) : null;
+    final expiryStr = expiryDate != null ? DateFormatUtils.formatToYyyyMmDd(expiryDate!) : null;
+
     final res = await repo.addBanners({
-      "banner": {
+      "fields": {
         "image": [
           {
             "url": banner_image,
@@ -257,17 +267,16 @@ class BannersViewModel extends ChangeNotifier {
         "banner_name": bannerNameController.text,
         "category_name": selectedCatagory?.name,
         "from_id": id,
-        //"views": 9,
         "company_name": name,
         "url": urlController.text,
-        "schedule_date":
-            '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
-        "expiry_date":
-            '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}'
+        "schedule_date": scheduleStr,
+        "expiry_date": expiryStr
       }
     });
     if (res != null) {
       Loaders.circularHideLoader(context);
+      await getBannersList(context);
+
       navigationService.goBack();
       clearAddBannerData();
     } else {
@@ -293,22 +302,52 @@ class BannersViewModel extends ChangeNotifier {
 
   //data assign in editfields
   assignTheSelectedCatagory(String? name) {
-    final obj = catagorysList.firstWhere((v) => v.name == name);
-    updateSelectedCatagory(obj);
+    if (name == null || name.isEmpty) return;
+    try {
+      final obj = catagorysList.firstWhere(
+        (v) => v.name == name,
+        orElse: () => catagorysList.first,
+      );
+      updateSelectedCatagory(obj);
+    } catch (e) {
+      debugPrint("Category not found: $name");
+    }
+    notifyListeners();
+  }
+
+  void setEditBannerId(String? id) {
+    editBannerId = id;
     notifyListeners();
   }
 
   Future<void> editDataAssign(BannersByPk? bannersView) async {
     bannerNameController.text = bannersView?.bannerName ?? '';
     assignTheSelectedCatagory(bannersView?.categoryName);
-    editBannerId = bannersView?.id ?? "";
+    setEditBannerId(bannersView?.id ?? "");
     if (bannersView?.image != null && bannersView?.image?.isNotEmpty == true) {
       setBannerImage(bannersView?.image?.first.url ?? "");
       setBannerName(bannersView?.image?.first.name ?? "");
     }
     urlController.text = bannersView?.url ?? "";
-    scheduleDate = DateTime.parse(bannersView?.scheduleDate ?? '');
-    expiryDate = DateTime.parse(bannersView?.expiryDate ?? "");
+
+    if (bannersView?.scheduleDate != null &&
+        bannersView?.scheduleDate?.isNotEmpty == true) {
+      try {
+        scheduleDate = DateTime.parse(bannersView?.scheduleDate ?? "");
+      } catch (e) {
+        scheduleDate = null;
+      }
+    }
+
+    if (bannersView?.expiryDate != null &&
+        bannersView?.expiryDate?.isNotEmpty == true) {
+      try {
+        expiryDate = DateTime.parse(bannersView?.expiryDate ?? "");
+      } catch (e) {
+        expiryDate = null;
+      }
+    }
+
     notifyListeners();
   }
 
@@ -329,14 +368,17 @@ class BannersViewModel extends ChangeNotifier {
 
   //update Banner
   Future<void> updateBannerData(BuildContext context, bool isDarft) async {
-
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
     await validateBannerImg();
-    final res = await repo.updateBanner({
+
+    final scheduleStr = scheduleDate != null ? DateFormatUtils.formatToYyyyMmDd(scheduleDate!) : null;
+    final expiryStr = expiryDate != null ? DateFormatUtils.formatToYyyyMmDd(expiryDate!) : null;
+
+    final variables = {
       "id": editBannerId,
-      "data": {
+      "fields": {
         "banner_name": bannerNameController.text,
         "url": urlController.text,
         "image": [
@@ -347,16 +389,16 @@ class BannersViewModel extends ChangeNotifier {
             "extension": "jpeg"
           }
         ],
-        "schedule_date":
-            '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
-        "expiry_date":
-            '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
+        "schedule_date": scheduleStr,
+        "expiry_date": expiryStr,
         "category_name": selectedCatagory?.name,
         "from_id": id,
-        "status": isDarft ? "DRAFT" : "PENDING",
+        "status": "PENDING",
         "company_name": name
       }
-    });
+    };
+
+    final res = await repo.updateBanner(variables);
     if (res != null) {
       getBannersCounts();
       Loaders.circularHideLoader(context);

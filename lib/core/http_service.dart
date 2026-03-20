@@ -38,11 +38,12 @@ class HttpService {
       print("Upload failed: File path is null or empty");
       return null;
     }
-    
+
     try {
       MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
       var _data = {"file": _uploadImage, "directory": 'project'};
-      return await post('/api/v1/file-upload/upload-s3', FormData.fromMap(_data));
+      return await post(
+          '/api/v1/file-upload/upload-s3', FormData.fromMap(_data));
     } catch (e) {
       print("Upload image error: $e");
       return null;
@@ -59,6 +60,20 @@ class HttpService {
         return Map<String, dynamic>.from(result.data);
       }
       print("Upload failed with status code: ${result.statusCode}");
+      return null;
+    } catch (e, s) {
+      print("Post request error: $e, $s");
+      return null;
+    }
+  }
+
+  Future<dynamic> get(url) async {
+    try {
+      final result = await _dio.get(url);
+      if (result.statusCode == 201 || result.statusCode == 200) {
+        return Map<String, dynamic>.from(result.data);
+      }
+      print("Get request failed with status code: ${result.statusCode}");
       return null;
     } catch (e, s) {
       print("Post request error: $e, $s");

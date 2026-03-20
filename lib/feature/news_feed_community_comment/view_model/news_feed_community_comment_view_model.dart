@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_c
 import 'package:di360_flutter/feature/news_feed_community_comment/query/add_news_feed_comment_query.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -112,6 +113,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     print("*****************addCommentfee");
     await getUserId();
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
+     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     Loaders.circularShowLoader(context);
     try {
@@ -120,6 +122,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
       var res = await _http.mutation(addNewsFeedCommentQuery, {
         "addCommentsData": {
+          "created_by_id": userId,
           "dental_practice_id": practiceId ?? null,
           "dental_professional_id": professionId ?? null,
           "commenter_name": name,
@@ -216,13 +219,13 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     userID = userId;
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == 'PROFESSIONAL') {
+    if (type == UserRole.professional.value) {
       professionId = userId;
-    } else if (type == 'ADMIN') {
+    } else if (type == UserRole.admin.value) {
       adminId = userId;
-    } else if (type == 'SUPPLIER') {
+    } else if (type == UserRole.supplier.value) {
       supplierId = userId;
-    } else if (type == 'PRACTICE') {
+    } else if (type == UserRole.practice.value) {
       practiceId = userId;
     }
     notifyListeners();
@@ -230,7 +233,6 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
 
   Future<void> updateTheCommentObject(BuildContext context, String feedId,
       List<dynamic>? newsFeeds, dynamic count) async {
-    print("*****************updateTheCommentObject$newsFeeds");
     final homeVM = context.read<NewsFeedCommunityViewModel>();
     final feed = homeVM.newsFeedCommunityData?.newsfeeds
         ?.firstWhere((v) => v.id == feedId);
@@ -240,7 +242,6 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     feed?.newsFeedsCommentsAggregate?.aggregate?.count = count;
     updateIsReply(false, '', '', isedit: false, commentupdate: false);
     homeVM.notifyListeners();
-    print("******************************${feed?.newsFeedsComments}");
     notifyListeners();
   }
 
@@ -263,7 +264,6 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
           "reply_attachments": uploadedFiles
         }
       });
-      print("***************************************$res");
 
       if (res.isNotEmpty) {
         commentController.clear();

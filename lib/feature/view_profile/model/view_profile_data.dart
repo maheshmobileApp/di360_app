@@ -53,7 +53,7 @@ class DentalSuppliersByPk {
   String? addressLineOne;
   String? addressLineTwo;
   String? proDetailsAphraRegistrationNumber;
-  BankDetails? bankDetails;//skip that
+  BankDetails? bankDetails; //skip that
   String? businessName;
   String? abnNumber;
   String? businessEmail;
@@ -69,9 +69,11 @@ class DentalSuppliersByPk {
   String? middleName;
   String? lastName;
   String? type;
-  SecondaryContact? secondaryContact;//no data backend remove that
+  SecondaryContact? secondaryContact; //no data backend remove that
 //  List<Null>? directories;
   String? sTypename;
+  String? websiteLink;
+  String? mobileNumber;
 
   DentalSuppliersByPk(
       {this.id,
@@ -105,7 +107,9 @@ class DentalSuppliersByPk {
       this.lastName,
       this.type,
       this.secondaryContact,
-    //  this.directories,
+      this.websiteLink,
+      this.mobileNumber,
+
       this.sTypename});
 
   DentalSuppliersByPk.fromJson(Map<String, dynamic> json) {
@@ -142,6 +146,8 @@ class DentalSuppliersByPk {
     middleName = json['middle_name'];
     lastName = json['last_name'];
     type = json['type'];
+    websiteLink = json['website_link'];
+    mobileNumber = json['mobile_number'];
     secondaryContact = json['secondary_contact'] != null
         ? new SecondaryContact.fromJson(json['secondary_contact'])
         : null;
@@ -191,6 +197,8 @@ class DentalSuppliersByPk {
     data['middle_name'] = this.middleName;
     data['last_name'] = this.lastName;
     data['type'] = this.type;
+    data['website_link'] = this.websiteLink;
+    data['mobile_number'] = this.mobileNumber;
     if (this.secondaryContact != null) {
       data['secondary_contact'] = this.secondaryContact!.toJson();
     }

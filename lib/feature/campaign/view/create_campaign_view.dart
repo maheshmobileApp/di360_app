@@ -344,13 +344,21 @@ class CreateCampaignView extends StatelessWidget
         .map((g) => g['label'] as String)
         .toList();
 
+    final preSelectedGroupChips = viewModel.selectedGroupChips.map((idOrLabel) {
+      final match = viewModel.groupOptions.firstWhere(
+        (g) => g['id'] == idOrLabel || g['label'] == idOrLabel,
+        orElse: () => {},
+      );
+      return (match['label'] as String?) ?? idOrLabel;
+    }).where((label) => enabledGroups.contains(label)).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomMultiSelectDropDown<String>(
           height: 50,
           items: enabledGroups,
-          selectedItems: viewModel.selectedGroupChips,
+          selectedItems: preSelectedGroupChips,
           itemLabel: (item) => item,
           hintText: "Select Groups",
           //readOnly: viewModel.repeatMode,
@@ -366,15 +374,19 @@ class CreateCampaignView extends StatelessWidget
                 viewModel.addGroupTypeChip(emp);
               }
             }
-            // Call API after selection is finalized
+            
             if (selected.isNotEmpty) {
               try {
                 await viewModel.getStatesByGroups();
-                await viewModel.getContacts();
+                if (viewModel.selectedType.isNotEmpty) {
+                  await viewModel.getContacts();
+                }
                 await viewModel.getContactCount();
               } catch (e) {
                 print('Error loading group data: $e');
               }
+            } else {
+              viewModel.clearGroupRelatedData();
             }
           },
         ),

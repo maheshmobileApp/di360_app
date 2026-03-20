@@ -202,11 +202,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       course.courseRegisteredUsersAggregate?.aggregate?.count ??
                           0,
                   onDetailView: () async {
-                    await courseListingVM.getCourseRegisteredUsers(
+                    /*await courseListingVM.getCourseRegisteredUsers(
                         context, course.id ?? "");
 
                     await courseListingVM.registerCourseHandler(
-                        context, course.createdById ?? "");
+                        context, course.createdById ?? "");*/
 
                     await courseListingVM.getCourseDetails(
                       context,
@@ -376,7 +376,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   Future<void> loadCourseData(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
-    print("###########################${course.communityUserType}");
     newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
     newCourseVM.setCommunityType(
         course.communityUserType == "BOTH" ? "Both" : "Community User");
@@ -431,6 +430,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     // Text controllers
     newCourseVM.courseNameController.text = course.courseName ?? "";
+    newCourseVM.facebookController.text = course.facebookLink ?? "";
+    newCourseVM.linkedinController.text = course.linkedinLink ?? "";
+    newCourseVM.youtubeController.text = course.youtubeLink ?? "";
+    newCourseVM.instagramController.text = course.instagramLink ?? "";
+
     newCourseVM.presenterNameController.text = course.presentedByName ?? "";
     newCourseVM.cpdPointsController.text =
         (course.cpdPoints != null) ? course.cpdPoints!.toStringAsFixed(0) : "";
@@ -486,7 +490,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
       } else if (course.address is Map<String, dynamic>) {
         final addr = course.address as Map<String, dynamic>;
         newCourseVM.addressController.text =
-            "${addr['city'] ?? ''}, ${addr['country'] ?? ''}".trim();
+            "${addr['country']}";
       } else {
         newCourseVM.addressController.text = "";
       }

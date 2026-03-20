@@ -20,6 +20,8 @@ query practiceDisplay($id: uuid!) {
     abn_number
     business_email
     business_phone
+    mobile_number
+    website_link
     fax_number
     alt_email
     alt_phone

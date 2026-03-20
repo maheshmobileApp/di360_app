@@ -46,20 +46,20 @@ class RegisterCourseCard extends StatelessWidget {
                 courseData.status ?? "",
                 courseData.type ?? "",
                 courseData.meetingLink ?? ""),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text("View Details",
-                    style: TextStyles.medium2(color: AppColors.primaryColor)),
-                GestureDetector(
-                  onTap: onCardTap,
-                  child: SvgPicture.asset(
+            GestureDetector(
+              onTap: onCardTap,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text("View Details",
+                      style: TextStyles.medium2(color: AppColors.primaryColor)),
+                  SvgPicture.asset(
                     ImageConst.nextArrow,
                     width: 26,
                     height: 26,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

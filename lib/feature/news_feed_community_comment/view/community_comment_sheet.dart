@@ -188,7 +188,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
                           Row(
                             children: [
                               Text(
-                                DateFormatUtils.formatDateTime(
+                                DateFormatUtils.formatDate(
                                   comments.createdAt ?? '',
                                 ),
                                 style: TextStyles.regular1(

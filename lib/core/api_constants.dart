@@ -7,6 +7,8 @@ class ApiConst {
 
   static const String baseUrl = '';
 
+  static const String subscriptionsEndPoint = '/api/v1/subscriptions/plans';
+
   static const String _googleMapAPIKeyAndroid =
       "AIzaSyAoHGQktk5y--nUH7Q8ZHUcNuUa_rHTFQo";
   static const String _googleMapAPIKeyIOS =

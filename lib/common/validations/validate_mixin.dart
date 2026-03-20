@@ -11,7 +11,14 @@ mixin ValidationMixins {
   String? validateContactPhoneNumber(String? value) {
     if (value == null || value.isEmpty)
       return "Please enter your Mobile Number";
-    if (!isValidContactPhoneNumber(value)) return 'Enter valid mobile number';
+    if (!isValidContactPhoneNumber(value)) return 'Enter valid Mobile Number';
+    return null;
+  }
+
+  String? validateBusinessPhoneNumber(String? value) {
+    if (value == null || value.isEmpty) return null;
+    if (!isValidBusinessPhoneNumber(value))
+      return 'Enter valid Business Phone Number';
     return null;
   }
 
@@ -98,7 +105,7 @@ mixin ValidationMixins {
   }
 
   String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) return "Please enter your email";
+    if (value == null || value.isEmpty) return null;
     if (!checkEmailValidation(value)) return 'Enter valid email';
     return null;
   }
@@ -156,15 +163,15 @@ mixin ValidationMixins {
   }
 
   String? validateOptionalUrl(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Please enter URL';
+    if (value == null || value.isEmpty) return null;
     final trimmed = value.trim();
-    
+
     // Add http:// if no scheme is present
     String urlToValidate = trimmed;
     if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
       urlToValidate = 'https://$trimmed';
     }
-    
+
     final uri = Uri.tryParse(urlToValidate);
     if (uri == null ||
         !uri.isAbsolute ||

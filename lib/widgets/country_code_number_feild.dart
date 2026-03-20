@@ -30,7 +30,7 @@ class CountryCodeNumberFeild<T> extends StatelessWidget
         /// 🔹 Label (like other fields)
         RichText(
           text: TextSpan(
-            text: "Phone Number ",
+            text: "Mobile Number ",
             style: TextStyles.regular3(color: AppColors.black),
             children: const [
               TextSpan(text: "*", style: TextStyle(color: Colors.red))
@@ -67,7 +67,7 @@ class CountryCodeNumberFeild<T> extends StatelessWidget
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(9),
                       ],
-                      hintText: 'Enter phone number',
+                      hintText: 'Enter mobile number',
                       suffixIcon: suffixIcon,
                       onChange: textFeildChanged,
                       validator: validateEmptyPhoneNumber),

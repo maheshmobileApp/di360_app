@@ -54,6 +54,12 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   DateTime? startLocumDate;
   DateTime? endLocumDate;
   bool showLocumDate = false;
+  bool isSaveDraft = false;
+
+  void setSaveDraft(bool value) {
+    isSaveDraft = value;
+    notifyListeners();
+  }
 
   void clearDateFields() {
     locumDateController.clear();
@@ -891,6 +897,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> loadJobData(Jobs? jobData) async {
     setJobStatus(jobData?.status ?? "");
+    setSaveDraft(jobData?.status != "DRAFT");
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
     selectedRole = jobData?.jRole ?? "";

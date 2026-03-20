@@ -54,6 +54,7 @@ class BasicInfo extends StatelessWidget
                 controller: viewProfileVM.abnNUmberController,
                 hintText: "ABN / ACN Number",
                 isRequired: true,
+                maxLength: 11,
                 title: "ABN / ACN Number",
                 validator: validateABNNumber),
             addVertical(10),
@@ -68,9 +69,9 @@ class BasicInfo extends StatelessWidget
             _buildBusineestype(viewProfileVM),
             addVertical(10),
             InputTextField(
-              title: "Phone Number",
+              title: "Mobile Number",
               isRequired: true,
-              hintText: "Enter phone number",
+              hintText: "Enter mobile number",
               keyboardType: TextInputType.phone,
               maxLength: 9,
               readOnly: false,
@@ -84,7 +85,26 @@ class BasicInfo extends StatelessWidget
                   viewProfileVM.setPhoneCode(value ?? "");
                 },
               ),
-            )
+            ),
+            addVertical(10),
+            InputTextField(
+                controller: viewProfileVM.businessPhoneNoController,
+                hintText: "Enter Business Phone",
+                title: "Business Phone",
+                maxLength: 10,
+                validator: validateBusinessPhoneNumber),
+            addVertical(10),
+            InputTextField(
+                controller: viewProfileVM.businessEmailController,
+                hintText: "Enter Business Email",
+                title: "Business Email",
+                validator: validateEmail),
+            addVertical(10),
+            InputTextField(
+                controller: viewProfileVM.websiteUrlController,
+                hintText: "Enter Website Link",
+                title: "Website Link",
+                validator: validateOptionalUrl),
           ],
         ));
   }

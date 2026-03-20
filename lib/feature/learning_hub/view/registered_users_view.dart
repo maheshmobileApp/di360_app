@@ -81,10 +81,10 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                             onMenuAction: (action, id) async {
                               switch (action) {
                                 case "Approve":
-                                  courseListingVM.updateRegUserStatus(context,id,"APPROVED");
+                                  courseListingVM.updateRegUserStatus(context,id,"APPROVED",userData?.courseId??"");
                                   break;
                                 case "Cancel":
-                                courseListingVM.updateRegUserStatus(context,id,"CANCELLED");
+                                courseListingVM.updateRegUserStatus(context,id,"CANCELLED",userData?.courseId??"");
                                   break;
                               }
                             }),

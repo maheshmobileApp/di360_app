@@ -61,6 +61,8 @@ class ImageConst {
   static const String Inactive = "assets/pngs/inactive.png";
   static const String _svgBasePath = 'assets/svgs/';
   static const String noImage = 'assets/pngs/noImage.jpg';
+  static const String man = 'assets/pngs/man.png';
+  static const String woman = 'assets/pngs/woman.png';
   static const String noSupport = 'assets/svgs/supportHome.svg';
   static const String createSupport = 'assets/svgs/createSupport.svg';
   static const String download = 'assets/svgs/Download.svg';
@@ -90,6 +92,7 @@ class ImageConst {
 
   // Social Mediaassets/svgs/locationsvg.svg
   static const String facebookSvg = '${_svgBasePath}social/facebook.png';
+  static const String youtubeSvg = '${_svgBasePath}social/youtube.png';
   static const String instagramSvg = '${_svgBasePath}social/instagram.png';
   static const String linkedinSvg = '${_svgBasePath}social/linkedin.png';
   static const String twitterSvg = '${_svgBasePath}social/twitter.png';
