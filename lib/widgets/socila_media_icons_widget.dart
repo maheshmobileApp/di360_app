@@ -1,7 +1,6 @@
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/widgets/image_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SocilaMediaIconsWidget extends StatelessWidget {

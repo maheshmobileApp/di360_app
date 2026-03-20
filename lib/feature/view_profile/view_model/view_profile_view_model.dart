@@ -34,7 +34,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final aboutUsController = TextEditingController();
   final phoneNoController = TextEditingController();
   final businessNameController = TextEditingController();
-  final abnNUmberController = TextEditingController();
+  final abnNumberController = TextEditingController();
   final firstNameController = TextEditingController();
   final middleNameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -165,10 +165,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
     businessNameController.text = viewProfile?.businessName ?? "";
-    businessEmailController.text = viewProfile?.businessEmail;
-    businessPhoneNoController.text = viewProfile.mobileNumber;
+    businessEmailController.text = viewProfile?.businessEmail ?? "";
+    businessPhoneNoController.text = viewProfile.mobileNumber ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
-    abnNUmberController.text = viewProfile?.abnNumber ?? "";
+    abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
         viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
@@ -345,7 +345,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         : await uploadBussinessLogo(context);
     Map<String, dynamic> requestData = {"id": userId};
     if (type == UserRole.practice.value) {
-      requestData["practiceObj"] = {
+      requestData["set"] = {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
@@ -353,7 +353,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "mobile_number": businessPhoneNoController.text,
         "business_email": businessEmailController.text,
         "website_link": websiteUrlController.text,
-        "abn_number": abnNUmberController.text,
+        "abn_number": abnNumberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
         "address_line_two": addressLineTwoController.text,
@@ -372,7 +372,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "profile_completed": true
       };
     } else if (type == UserRole.professional.value) {
-      requestData["_set"] = {
+      requestData["set"] = {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
@@ -396,7 +396,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         //"about_us": aboutUsController.text,
       };
     } else {
-      requestData["supplierObj"] = {
+      requestData["set"] = {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$phoneCode${phoneNoController.text}',
@@ -404,7 +404,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "mobile_number": businessPhoneNoController.text,
         "business_email": businessEmailController.text,
         "website_link": websiteUrlController.text,
-        "abn_number": abnNUmberController.text,
+        "abn_number": abnNumberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
         "address_line_two": addressLineTwoController.text,
@@ -434,11 +434,11 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
     if (result[responseKey]?['id'] != null || result[responseKey] != null) {
       type == UserRole.practice.value
-          ? getPracticeViewProfileData()
+          ? await getPracticeViewProfileData()
           : type == UserRole.professional.value
-              ? getProfessionalViewProfileData()
-              : getSuppilerViewProfileData();
-
+              ? await getProfessionalViewProfileData()
+              : await getSuppilerViewProfileData();
+      if (profileCompleted == false) await insertDirectories(); 
       profileCompleted == false
           ? showAlertMessage(
               context, 'Would you like to complete My directory?',
@@ -453,6 +453,60 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
+  }
+
+  Future<void> insertDirectories() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+
+    await repo.insertDirectory(type == UserRole.professional.value
+        ? {
+            "object": {
+              "name": nameController.text,
+              "email": emailController.text,
+              "phone": '$phoneCode${phoneNoController.text}',
+              "address": addressController.text,
+              "profession_type": selectedBusineestype?.name,
+              "type": type,
+              "dental_professional_id": userId,
+              "profile_image":
+                  professionalViewProfileData?.profileImage?.toJson()
+            }
+          }
+        : type == UserRole.supplier.value
+            ? {
+                "object": {
+                  "name": nameController.text,
+                  "email": emailController.text,
+                  "business_name": businessNameController.text,
+                  "business_email": businessEmailController.text,
+                  "phone": '$phoneCode${phoneNoController.text}',
+                  "mobile_number": businessPhoneNoController.text,
+                  "profession_type": selectedBusineestype?.name,
+                  "abn_acn": abnNumberController.text,
+                  "address": addressController.text,
+                  "type": type,
+                  "dental_supplier_id": userId,
+                  "logo": supplierViewProfileData?.logo?.toJson()
+                }
+              }
+            : {
+                "object": {
+                  "name": nameController.text,
+                  "email": emailController.text,
+                  "business_name": businessNameController.text,
+                  "business_email": businessEmailController.text,
+                  "phone": '$phoneCode${phoneNoController.text}',
+                  "mobile_number": businessPhoneNoController.text,
+                  "profession_type": selectedBusineestype?.name,
+                  "abn_acn": abnNumberController.text,
+                  "address": addressController.text,
+                  "type": type,
+                  "dental_practice_id": userId,
+                  "logo": practiceViewProfileData?.logo?.toJson()
+                }
+              });
   }
 
   directorNavigationHandle(BuildContext context) async {
@@ -472,7 +526,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> getPlaceDetails(String placeId) async {
-    final String apiKey = ApiConst.googleAPIKey;
+    final String apiKey = ApiConst.staticGoogleAPIKey;
     final String url =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
 
@@ -537,7 +591,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     businessEmailController.clear();
     websiteUrlController.clear();
     aboutUsController.clear();
-    abnNUmberController.clear();
+    abnNumberController.clear();
     firstNameController.clear();
     middleNameController.clear();
     lastNameController.clear();

@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/widgets/address_auto_fill_widget.dart';
@@ -5,7 +6,7 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
+class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers,ValidationMixins {
   const ProfessionalContactInfo({super.key});
 
   @override
@@ -39,7 +40,9 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
           InputTextField(
               controller: viewProfileVM.cityController,
               hintText: "City",
-              title: "City"),
+              isRequired: true,
+              title: "City",
+              validator: validateCity),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.stateController,

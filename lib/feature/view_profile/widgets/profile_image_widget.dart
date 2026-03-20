@@ -56,7 +56,7 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
               strokeWidth: 2,
               dashPattern: [6, 4],
               borderType: BorderType.Circle,
-              child: Container(
+              child: SizedBox(
                 width: 140,
                 height: 140,
                 child: ((serverImg != null && serverImg != '') ||
@@ -71,19 +71,19 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
                                   height: 140,
                                 )
                               : Image.file(
-                                  imageFile??File(""),
+                                  imageFile ?? File(""),
                                   width: 140,
-                            height: 140,
-                            fit: BoxFit.fill,
+                                  height: 140,
+                                  fit: BoxFit.fill,
                                 ),
                         ),
                         Positioned(
-                          top: 0,
+                          top: 10,
                           right: 0,
                           child: GestureDetector(
                             onTap: onRemove,
                             child: Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   color: Colors.black54,
                                   shape: BoxShape.circle),
                               padding: const EdgeInsets.all(4),
@@ -99,21 +99,19 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: AppColors.timeBgColor,
-                            ),
-                            child: Image.asset(ImageConst.upload),
-                          ),
-                          const SizedBox(height: 20),
+                          Image.asset(ImageConst.upload,
+                              width: 28, height: 28),
+                          const SizedBox(height: 6),
                           Text(
-                            "Click here to Choose a file.",
-                            style: TextStyles.medium2(color: AppColors.black),
+                            "Click to upload",
+                            textAlign: TextAlign.center,
+                            style: TextStyles.medium2(
+                                color: AppColors.black),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 2),
                           Text(
-                            "JPEG, PNG formats, up to 5 MB",
+                            "JPEG, PNG, 5MB",
+                            textAlign: TextAlign.center,
                             style: TextStyles.regular2(
                                 color: AppColors.dropDownHint),
                           ),

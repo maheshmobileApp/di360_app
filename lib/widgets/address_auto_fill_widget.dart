@@ -43,7 +43,7 @@ class AddressAutoFillWidget extends StatelessWidget {
         GooglePlaceAutoCompleteTextField(
           textEditingController: controller,
           focusNode: focusNode,
-          googleAPIKey: ApiConst.googleAPIKey,
+          googleAPIKey: ApiConst.staticGoogleAPIKey,
           debounceTime: 600,
           inputDecoration: InputDecoration(
             hintText: "Search Address",
@@ -75,9 +75,7 @@ class AddressAutoFillWidget extends StatelessWidget {
                   Expanded(
                     child: Text(
                       prediction.description ?? "",
-                      style: TextStyles.regular4(
-                        color: AppColors.black,
-                      ),
+                      style: TextStyles.regular4(color: AppColors.black),
                     ),
                   )
                 ],

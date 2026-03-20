@@ -13,6 +13,8 @@ query getUeserPracDirectory($id: uuid!) {
     type
     abn_acn
     company_name
+    business_email
+    mobile_number
     profession_type
     directory_category_id
     logo
@@ -115,6 +117,8 @@ query getUeserPracDirectory($id: uuid!) {
     alt_phone
     type
     abn_acn
+    business_email
+    mobile_number
     company_name
     profession_type
     directory_category_id

@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 class ApiConst {
@@ -13,9 +14,10 @@ class ApiConst {
       "AIzaSyAoHGQktk5y--nUH7Q8ZHUcNuUa_rHTFQo";
   static const String _googleMapAPIKeyIOS =
       "AIzaSyA5vRiUsDawykjIT0GpCKgJ_20f-6eHWFA";
-  static const String googleAPIKey =
+      
+  static const String staticGoogleAPIKey =
       "AIzaSyAzaYcSFRWOySuMNQMzAYPIVhvvF3eieDY";
 
-  /*static String get googleAPIKey =>
-      Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;*/
+  static String get googleAPIKey =>
+      Platform.isIOS ? _googleMapAPIKeyIOS : _googleMapAPIKeyAndroid;
 }

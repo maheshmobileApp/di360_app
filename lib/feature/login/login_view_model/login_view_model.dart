@@ -101,7 +101,7 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(result.loginApi?.accessToken ?? '');
           updateDevieToken();
           result.loginApi?.profileCompleted == true
-              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+              ? homeNavigation()
               : viewProfileHandle(context);
         } else {
           Loaders.circularHideLoader(context);
@@ -116,6 +116,13 @@ class LoginViewModel extends ChangeNotifier {
       scaffoldMessenger('Login failed. Please try again.');
     }
     notifyListeners();
+  }
+
+  homeNavigation() async {
+    navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+    await LocalStorage.setBoolValue(
+        LocalStorageConst.firstNavigationDirectory, true);
+    await LocalStorage.setBoolValue(LocalStorageConst.directoryComplete, true);
   }
 
   viewProfileHandle(BuildContext context) async {

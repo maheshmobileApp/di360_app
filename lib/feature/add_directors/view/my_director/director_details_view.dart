@@ -52,7 +52,6 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                 _testimonialCard(addDirectVM)),
           if (directData.directoryFaqs?.length != 0)
             _sectionTitle('FAQ', _faqSection(addDirectVM)),
-          if (directData.directoryLocations?.length != 0)
             _sectionTitle('GET IN TOUCH', _contactFAQs(addDirectVM, context)),
         ],
       ),

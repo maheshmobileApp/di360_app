@@ -53,15 +53,13 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
         onWillPop: () async {
           final directorComplete = await LocalStorage.getBoolValue(
               LocalStorageConst.directoryComplete);
-          final firstNavigation = await LocalStorage.getBoolValue(
-              LocalStorageConst.firstNavigationDirectory);
           if (addDirectorVM.getBasicInfoData.isEmpty) {
             await viewProfileAlertPopup(context,
                 title: 'Please complete your Directory Profile',
                 subTitle:
                     'This profile is visible in the Marketplace and must be filled and saved to continue using your services');
             return false;
-          } else if (directorComplete == true && firstNavigation == false) {
+          } else if (directorComplete == true) {
             navigationService.goBack();
             return true;
           } else {
@@ -75,14 +73,12 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
               backAction: () async {
                 final directorComplete = await LocalStorage.getBoolValue(
                     LocalStorageConst.directoryComplete);
-                final firstNavigation = await LocalStorage.getBoolValue(
-                    LocalStorageConst.firstNavigationDirectory);
                 return addDirectorVM.getBasicInfoData.isEmpty
                     ? viewProfileAlertPopup(context,
                         title: 'Please complete your Directory Profile',
                         subTitle:
                             'This profile is visible in the Marketplace and must be filled and saved to continue using your services')
-                    : (directorComplete == true && firstNavigation == false)
+                    : (directorComplete == true)
                         ? navigationService.goBack()
                         : navigationService
                             .pushNamedAndRemoveUntil(RouteList.dashBoard);
