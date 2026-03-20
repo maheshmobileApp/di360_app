@@ -88,7 +88,7 @@ class ConstantData {
       "subscription_plan_id": "7014ced9-df28-4775-bdba-3b7ac9a70fc8"
     },
     {
-      "name": "Dental Supplier",
+      "name": "Industry Partners",
       "type": "SUPPLIER",
       "subscription_plan_id": "cea36963-68fe-44d4-b94a-265ae4031405"
     },
