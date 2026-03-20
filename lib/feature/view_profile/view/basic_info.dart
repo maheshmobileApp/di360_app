@@ -51,7 +51,7 @@ class BasicInfo extends StatelessWidget
                 validator: validateName),
             addVertical(10),
             InputTextField(
-                controller: viewProfileVM.abnNUmberController,
+                controller: viewProfileVM.abnNumberController,
                 hintText: "ABN / ACN Number",
                 isRequired: true,
                 maxLength: 11,

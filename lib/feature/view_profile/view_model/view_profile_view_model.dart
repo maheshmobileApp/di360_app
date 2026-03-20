@@ -34,7 +34,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   final aboutUsController = TextEditingController();
   final phoneNoController = TextEditingController();
   final businessNameController = TextEditingController();
-  final abnNUmberController = TextEditingController();
+  final abnNumberController = TextEditingController();
   final firstNameController = TextEditingController();
   final middleNameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -165,10 +165,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
     businessNameController.text = viewProfile?.businessName ?? "";
-    businessEmailController.text = viewProfile?.businessEmail;
-    businessPhoneNoController.text = viewProfile.mobileNumber;
+    businessEmailController.text = viewProfile?.businessEmail ?? "";
+    businessPhoneNoController.text = viewProfile.mobileNumber ?? "";
     websiteUrlController.text = viewProfile?.websiteLink ?? "";
-    abnNUmberController.text = viewProfile?.abnNumber ?? "";
+    abnNumberController.text = viewProfile?.abnNumber ?? "";
     firstNameController.text =
         viewProfile?.firstName ?? viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
@@ -353,7 +353,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "mobile_number": businessPhoneNoController.text,
         "business_email": businessEmailController.text,
         "website_link": websiteUrlController.text,
-        "abn_number": abnNUmberController.text,
+        "abn_number": abnNumberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
         "address_line_two": addressLineTwoController.text,
@@ -404,7 +404,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "mobile_number": businessPhoneNoController.text,
         "business_email": businessEmailController.text,
         "website_link": websiteUrlController.text,
-        "abn_number": abnNUmberController.text,
+        "abn_number": abnNumberController.text,
         "address": addressController.text,
         "address_line_one": addressLineOneController.text,
         "address_line_two": addressLineTwoController.text,
@@ -537,7 +537,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     businessEmailController.clear();
     websiteUrlController.clear();
     aboutUsController.clear();
-    abnNUmberController.clear();
+    abnNumberController.clear();
     firstNameController.clear();
     middleNameController.clear();
     lastNameController.clear();
