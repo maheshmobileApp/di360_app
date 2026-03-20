@@ -1,6 +1,6 @@
 const String updateViewProfileDataQuery = r'''
-mutation addSupplier($id: uuid!, $supplierObj: dental_suppliers_set_input!) {
-  update_dental_suppliers(where: {id: {_eq: $id}}, _set: $supplierObj) {
+mutation UpdateSupplier($id: uuid!, $set: dental_suppliers_set_input!) {
+  update_dental_suppliers(where: {id: {_eq: $id}}, _set: $set) {
     affected_rows
     __typename
   }
@@ -8,8 +8,8 @@ mutation addSupplier($id: uuid!, $supplierObj: dental_suppliers_set_input!) {
 ''';
 
 const String updatePracticeViewProfileDataQuery = r'''
-mutation addPractice($id: uuid!, $practiceObj: dental_practices_set_input!) {
-  update_dental_practices(where: {id: {_eq: $id}}, _set: $practiceObj) {
+mutation UpdatePractice($id: uuid!, $set: dental_practices_set_input!) {
+  update_dental_practices(where: {id: {_eq: $id}}, _set: $set) {
     affected_rows
     __typename
   }
@@ -17,8 +17,8 @@ mutation addPractice($id: uuid!, $practiceObj: dental_practices_set_input!) {
 ''';
 
 const String updateProfessionalProfileDataQuery = r'''
-mutation update_dental_professionals_by_pk($id: uuid!, $_set: dental_professionals_set_input!) {
-  update_dental_professionals_by_pk(pk_columns: {id: $id}, _set: $_set) {
+mutation UpdateDentalProfessional($id: uuid!, $set: dental_professionals_set_input!) {
+  update_dental_professionals_by_pk(pk_columns: {id: $id}, _set: $set) {
     id
     __typename
   }

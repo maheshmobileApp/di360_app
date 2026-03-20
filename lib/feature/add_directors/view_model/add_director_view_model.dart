@@ -69,6 +69,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   TextEditingController partnerNameCntr = TextEditingController();
   TextEditingController descriptionCntr = TextEditingController();
+  TextEditingController businessEmailCntr = TextEditingController();
+  TextEditingController businessPhoneCntr = TextEditingController();
   final FocusNode addressFocusNode = FocusNode();
 
   double? latitude;
@@ -356,6 +358,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     nameController.text = basic.name ?? '';
     emailController.text = basic.email ?? '';
     ABNNumberController.text = basic.abnAcn ?? '';
+    businessEmailCntr.text = basic.businessEmail ?? '';
+    businessPhoneCntr.text = basic.mobileNumber ?? '';
     final phone = basic.phone ?? "";
     if (phone.startsWith('+61')) {
       selectedPhoneCode = 'AU (+61)';
@@ -469,6 +473,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     addressController.clear();
     selectedBusineestype = null;
     descController.clear();
+    businessEmailCntr.clear();
+    businessPhoneCntr.clear();
     notifyListeners();
   }
 
@@ -574,6 +580,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "longitude": longitude,
         "pincode": null,
         "name": nameController.text,
+        "business_email": businessEmailCntr.text,
+        "mobile_number": businessPhoneCntr.text,
         "profession_type": selectedBusineestype?.name,
         "phone_visibility":
             VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
@@ -620,9 +628,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "address": addressController.text,
         "latitude": getBasicInfoData.first.latitude,
         "longitude": getBasicInfoData.first.longitude,
-        "pincode": '',
         "phone": '$phoneCode${MobileNumberController.text}',
         "email": emailController.text,
+        "business_email": businessEmailCntr.text,
+        "mobile_number": businessPhoneCntr.text,
         "phone_visibility":
             VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
         "email_visibility":
@@ -811,10 +820,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
           size: res['size'] ?? file.lengthSync(),
         ),
       );
-      final newUrls = galleryImgList
-          .map((img) => img.url)
-          .whereType<String>()
-          .toList();
+      final newUrls =
+          galleryImgList.map((img) => img.url).whereType<String>().toList();
       if (serverGalleryFiles == null) {
         serverGalleryFiles = newUrls;
       } else {

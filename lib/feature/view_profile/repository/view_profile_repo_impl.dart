@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/view_profile/model/practice_view_profile_r
 import 'package:di360_flutter/feature/view_profile/model/professional_view_profile_res.dart';
 import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart';
 import 'package:di360_flutter/feature/view_profile/query/delete_account_querys.dart';
+import 'package:di360_flutter/feature/view_profile/query/insert_directors_querys.dart';
 import 'package:di360_flutter/feature/view_profile/query/pratice_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/professional_view_profile_query.dart';
 import 'package:di360_flutter/feature/view_profile/query/update_profile_logo.dart';
@@ -76,12 +77,25 @@ class ViewProfileRepoImpl extends ViewProfileRepository {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await http.mutation(
-        type == 'PRACTICE'
+        type == UserRole.practice.value
             ? deletePracticeAccountQuery
-            : type == 'PROFESSIONAL'
+            : type == UserRole.professional.value
                 ? deleteProfessionalAccountQuery
                 : deleteSupplierAccountQuery,
         {"id": userId});
+    return res;
+  }
+
+  @override
+  Future<dynamic> insertDirectory(dynamic variables) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final res = await http.mutation(
+        type == UserRole.practice.value
+            ? practiceInsertDirectory
+            : type == UserRole.professional.value
+                ? professionalInsertDirectory
+                : supplierInsertDirectory,
+        variables);
     return res;
   }
 }

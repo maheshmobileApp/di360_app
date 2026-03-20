@@ -59,6 +59,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             validator: validateEmail,
             hintText: 'Enter emailId',
             isRequired: true,
+            readOnly: true,
             controller: addDirectorVM.emailController,
             suffixIcon: InkWell(
                 onTap: () async {
@@ -91,6 +92,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             hintText: "Enter phone number",
             keyboardType: TextInputType.phone,
             maxLength: 9,
+            readOnly: true,
             controller: addDirectorVM.MobileNumberController,
             validator: validateContactPhoneNumber,
             prefixIcon: PhonePrefixDropdown(
@@ -112,6 +114,23 @@ class AddDirectorBasicInfo extends StatelessWidget
                           }));
                 },
                 child: Icon(Icons.lock)),
+          ),
+          addVertical(20),
+          InputTextField(
+            hintText: "Enter Business Phone Number",
+            title: " Business Phone Number ",
+            keyboardType: TextInputType.number,
+            maxLength: 10,
+            validator: validateOptionalPhoneNumber,
+            controller: addDirectorVM.businessPhoneCntr,
+          ),
+          addVertical(20),
+          InputTextField(
+            hintText: "Enter business email",
+            title: " Business Email ",
+            keyboardType: TextInputType.emailAddress,
+            validator: validateEmail,
+            controller: addDirectorVM.businessEmailCntr,
           ),
           addVertical(20),
           InputTextField(

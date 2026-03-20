@@ -687,18 +687,20 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               )
             ])
           ],
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Icon(Icons.phone, color: Colors.black),
-              SizedBox(width: 10),
-              Text(
-                vm.directorDetails?.phone ?? '',
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+          if (vm.phoneVisibility) ...[
+            addVertical(15),
+            Row(
+              children: [
+                Icon(Icons.phone, color: Colors.black),
+                SizedBox(width: 10),
+                Text(
+                  vm.directorDetails?.phone ?? '',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            )
+          ],
+          addVertical(20),
           Row(
             children: vm.directorDetails?.directoryLocations!
                     .where((e) => [

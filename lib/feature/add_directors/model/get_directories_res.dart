@@ -41,6 +41,8 @@ class GetDirectories {
   String? type;
   String? abnAcn;
   String? companyName;
+  String? businessEmail;
+  String? mobileNumber;
   String? professionType;
   String? directoryCategoryId;
   Logo? logo;
@@ -78,6 +80,8 @@ class GetDirectories {
       this.type,
       this.abnAcn,
       this.companyName,
+      this.businessEmail,
+      this.mobileNumber,
       this.professionType,
       this.directoryCategoryId,
       this.workingAt,
@@ -115,6 +119,8 @@ class GetDirectories {
     type = json['type'];
     abnAcn = json['abn_acn'];
     companyName = json['company_name'];
+    businessEmail = json['business_email'];
+    mobileNumber = json['mobile_number'];
     professionType = json['profession_type'];
     directoryCategoryId = json['directory_category_id'];
     if (json['working_at'] != null) {

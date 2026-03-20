@@ -13,6 +13,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class AddDirectorService extends StatelessWidget with BaseContextHelpers {
@@ -84,11 +85,11 @@ class AddDirectorService extends StatelessWidget with BaseContextHelpers {
                   style: TextStyles.bold3(color: AppColors.black),
                 ),
                 addVertical(8),
-                Text(
+                HtmlWidget(
                   service.description ?? '',
-                  style: TextStyles.medium2(color: Colors.grey.shade800),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  textStyle: TextStyles.medium2(color: Colors.grey.shade800),
+                  // maxLines: 2,
+                  // overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
