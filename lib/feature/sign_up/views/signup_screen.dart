@@ -18,9 +18,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class SignupScreen extends StatelessWidget
-    with BaseContextHelpers, ValidationMixins {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen>
+    with BaseContextHelpers, ValidationMixins {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SignupViewModel>().subscriptionPlans();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +125,9 @@ class SignupScreen extends StatelessWidget
                         validator: validateEmail),
                     addVertical(16),
                     InputTextField(
-                      title: "Phone Number",
+                      title: "Mobile Number",
                       isRequired: true,
-                      hintText: "Enter phone number",
+                      hintText: "Enter mobile number",
                       keyboardType: TextInputType.phone,
                       maxLength: 9,
                       controller: viewModel.numberController,

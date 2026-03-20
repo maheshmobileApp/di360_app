@@ -16,9 +16,10 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers {
         padding: const EdgeInsets.all(16.0),
         child: Column(children: [
           AddressAutoFillWidget(
-            controller: viewProfileVM.addressController,
-            focusNode: viewProfileVM.addressFocusNode2,
-          ),
+              controller: viewProfileVM.addressController,
+              focusNode: viewProfileVM.addressFocusNode2,
+              itemClick: (val) async =>
+                  await viewProfileVM.getPlaceDetails(val.placeId ?? '')),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.addressLineOneController,

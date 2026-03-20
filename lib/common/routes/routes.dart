@@ -69,7 +69,6 @@ import 'package:di360_flutter/feature/notifications/view/notification_screen.dar
 import 'package:di360_flutter/feature/pre_login/pre_login_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/add_profess_director/add_profess_director_screen.dart';
 import 'package:di360_flutter/feature/professional_add_director/view/professional_director_view/professional_director_screen.dart';
-import 'package:di360_flutter/feature/sign_up/views/plan_details_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/role_selection_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/signup_screen.dart';
 import 'package:di360_flutter/feature/sign_up/views/terms_and_conditions.dart';
@@ -103,7 +102,6 @@ class Routes {
       RouteList.dashBoard: (context) => ChangeNotifierProvider(
           create: (context) => DashBoardViewModel(), child: DashBoard()),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
-      RouteList.subscribePlan: (context) => SubscriptionPlanScreen(),
       RouteList.signup: (context) => SignupScreen(),
       RouteList.roleScreen: (context) => RoleSelectionScreen(),
       RouteList.jobCreate: (context) => ChangeNotifierProvider(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/core/api_constants.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
@@ -16,6 +17,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -275,7 +277,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> pickLogoImage(ImageSource source, BuildContext context) async {
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final pickedFile =
         await ImagePicker().pickImage(source: source, imageQuality: 85);
     if (pickedFile != null) {
@@ -439,7 +440,13 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               : getSuppilerViewProfileData();
 
       profileCompleted == false
-          ? directorNavigationHandle(context)
+          ? showAlertMessage(
+              context, 'Would you like to complete My directory?',
+              onBack: () => directorNavigationHandle(context),
+              onCancel: () => navigationService
+                  .pushNamedAndRemoveUntil(RouteList.dashBoard),
+              yes: 'Yes',
+              no: 'No')
           : navigationService.goBack();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
@@ -462,6 +469,47 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final profile =
         await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
     return profile;
+  }
+
+  Future<void> getPlaceDetails(String placeId) async {
+    final String apiKey = ApiConst.googleAPIKey;
+    final String url =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey";
+
+    try {
+      final response = await Dio().get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data["status"] == "OK") {
+          final result = data["result"];
+
+          String? city;
+          String? state;
+          String? country;
+          String? postalCode;
+
+          for (var component in result["address_components"]) {
+            var types = component["types"] as List;
+            if (types.contains("locality")) {
+              city = component["long_name"];
+            } else if (types.contains("administrative_area_level_1")) {
+              state = component["long_name"];
+            } else if (types.contains("country")) {
+              country = component["long_name"];
+            } else if (types.contains("postal_code")) {
+              postalCode = component["long_name"];
+            }
+          }
+
+          cityController.text = city ?? '';
+          stateController.text = state ?? '';
+          countryController.text = country ?? '';
+          zipCodeController.text = postalCode ?? '';
+        } else {}
+      }
+    } catch (e) {}
   }
 
   Future<void> deleteAccount(BuildContext context) async {

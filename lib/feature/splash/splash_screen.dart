@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
           await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
       userLogin == true
           ? profileCompleted == true
-              ? directorNavigationHandle(context)
+              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
               : viewProfileHandle(context)
           : navigationService.pushNamedAndRemoveUntil(RouteList.preLogin);
     });

@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/sign_up/model_class/get_business_type.dart
 import 'package:di360_flutter/feature/sign_up/model_class/signup_res.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/subscription_res.dart';
 import 'package:di360_flutter/feature/sign_up/querys/signup_querys.dart';
+import 'package:di360_flutter/feature/sign_up/repository/sign_up_repository_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -12,8 +13,9 @@ import 'package:flutter/material.dart';
 
 class SignupViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
+  final SignUpRepositoryImpl signUpRepo = SignUpRepositoryImpl();
 
-  List<SubscriptionPlans>? subscriptionPlanList;
+  List<SubscriptionData>? subscriptionPlanList;
   List<DirectoryBusinessTypes>? directoryBusinessTypes;
 
   final TextEditingController emailController = TextEditingController();
@@ -72,21 +74,15 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? selectedSubscriptionType;
-  String? selectedPlanId;
-  String? selectedPlanName;
+  String? selectedSubscriptionPlanId;
   Map<String, String>? selectedType;
 
   void setSelectedType(Map<String, String>? type) {
     selectedType = type;
-    notifyListeners();
-  }
-
-  void setSelectedSubscriptionType(
-      String? type, String? planId, String? planName) {
-    selectedSubscriptionType = type;
-    selectedPlanId = planId;
-    selectedPlanName = planName;
+    final planList =
+        subscriptionPlanList?.where((v) => v.type == type?['type']).toList() ??
+            [];
+    selectedSubscriptionPlanId = planList.first.id;
     notifyListeners();
   }
 
@@ -120,15 +116,14 @@ class SignupViewModel extends ChangeNotifier {
 
   subscriptionPlans() async {
     try {
-      final res = await _http.query(subscriptionQuery);
+      final res = await signUpRepo.getSubscription();
       if (res != null) {
-        final data = SubscriptionData.fromJson(res);
-        subscriptionPlanList = data.subscriptionPlans;
+        final data = SubscriptionPlanRes.fromJson(res);
+        subscriptionPlanList = data.data;
       }
     } catch (e) {
       scaffoldMessenger("Error removing like: $e");
     }
-    notifyListeners();
   }
 
   businessType(BuildContext context) async {
@@ -156,7 +151,7 @@ class SignupViewModel extends ChangeNotifier {
       final res = await _http.mutation(singUpQuery, {
         "signUpObj": {
           "name": nameController.text,
-          "email": emailController.text,
+          "email": emailController.text.toLowerCase(),
           "password": passController.text,
           "phone": '$phoneCode${numberController.text}',
           "aphra_registration_number": ahpraRegistrationNumber.text,
@@ -165,10 +160,15 @@ class SignupViewModel extends ChangeNotifier {
           "state": stateController.text,
           "business_name": companyNameController.text,
           "status": selectedType?['type'] == UserRole.supplier.value
-              ? "PENDING"
+              ? "VERIFICATION_PENDING"
               : "VERIFICATION_PENDING",
-          "subscription_plan_id": selectedPlanId, //Null passing from mobile app
+          "subscription_plan_id": selectedSubscriptionPlanId ??
+              selectedType?['subscription_plan_id'],
           "professionType": selectedCategory?.name,
+          "payload": {
+            "subscriptionId": selectedSubscriptionPlanId ??
+                selectedType?['subscription_plan_id']
+          },
           "tracking_details": "Mobile"
         }
       });
@@ -189,15 +189,16 @@ class SignupViewModel extends ChangeNotifier {
       if (res['insert_clients_one'] != null &&
           res['insert_clients_one'].isNotEmpty) {
         SignUpData.fromJson(res);
-        selectedType?['type'] == UserRole.supplier.value
+        /*  selectedType?['type'] == UserRole.supplier.value
             ? supplierUserAlertPopup(context, onBack: () {
                 navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 clearSignupData();
               })
-            : showSignupSuccessDialog(context, emailController.text, () {
-                navigationService.pushNamedAndRemoveUntil(RouteList.login);
-                clearSignupData();
-              });
+            :*/
+        showSignupSuccessDialog(context, emailController.text, () {
+          navigationService.pushNamedAndRemoveUntil(RouteList.login);
+          clearSignupData();
+        });
       }
     } catch (e) {
       Loaders.circularHideLoader(context);
@@ -214,13 +215,12 @@ class SignupViewModel extends ChangeNotifier {
     numberController.clear();
     ahpraRegistrationNumber.clear();
     abnNumber.clear();
-    selectedSubscriptionType = null;
+    selectedSubscriptionPlanId = null;
     setAgreeToTerms(false);
     selectedType = null;
     stateController.clear();
     companyNameController.clear();
     selectedCategory?.name = null;
-    selectedPlanId = null;
     notifyListeners();
   }
 }

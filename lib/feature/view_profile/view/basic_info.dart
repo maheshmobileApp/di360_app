@@ -71,7 +71,7 @@ class BasicInfo extends StatelessWidget
             InputTextField(
               title: "Mobile Number",
               isRequired: true,
-              hintText: "Enter Mobile Number",
+              hintText: "Enter mobile number",
               keyboardType: TextInputType.phone,
               maxLength: 9,
               readOnly: false,
