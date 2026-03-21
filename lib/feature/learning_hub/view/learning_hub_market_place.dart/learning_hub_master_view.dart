@@ -89,9 +89,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               courseListingVM.marketPlaceCoursesList[index];
                           final course = jobData;
 
-                          final seats = (course.numberOfSeats -
-                              course.courseRegisteredUsersAggregate?.aggregate
-                                  ?.count);
+                          final seats = (course.numberOfSeats ?? 0) -
+                              (course.courseRegisteredUsersAggregate?.aggregate
+                                  ?.count ?? 0);
                           final isRegistered = courseListingVM
                               .isRegisteredCheck(course.courseRegisteredUsers);
 

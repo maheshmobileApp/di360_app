@@ -47,6 +47,7 @@ class AddDirectorTestmonal extends StatelessWidget with BaseContextHelpers {
               ],
             ),
             addVertical(16),
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
             _testimonialCard(addDirectorVM, context, editVM),
           ],
         ),

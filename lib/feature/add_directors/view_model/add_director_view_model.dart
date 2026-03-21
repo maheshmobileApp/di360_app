@@ -565,9 +565,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "company_name": CompanyNameController.text,
         "description": descController.text,
         "directory_category_id": selectedBusineestype?.id,
-        "dental_practice_id": type == 'PRACTICE' ? userId : null,
-        "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
-        "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
+        "dental_practice_id": type == UserRole.practice.value ? userId : null,
+        "dental_professional_id":
+            type == UserRole.professional.value ? userId : null,
+        "dental_supplier_id": type == UserRole.supplier.value ? userId : null,
         "type": type,
         "banner_image": banner,
         "logo": logo,
@@ -575,18 +576,18 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
-        "emergency_phone": null,
         "latitude": latitude,
         "longitude": longitude,
-        "pincode": null,
         "name": nameController.text,
         "business_email": businessEmailCntr.text,
         "mobile_number": businessPhoneCntr.text,
         "profession_type": selectedBusineestype?.name,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
+            VisibilityType.fromDisplayName(emailVisibility)?.name ??
+                VisibilityType.PRIVATE.name
       }
     });
     if (res != null) {
@@ -629,13 +630,15 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "latitude": getBasicInfoData.first.latitude,
         "longitude": getBasicInfoData.first.longitude,
         "phone": '$phoneCode${MobileNumberController.text}',
-        "email": emailController.text,
+        //"email": emailController.text,
         "business_email": businessEmailCntr.text,
         "mobile_number": businessPhoneCntr.text,
         "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
         "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
+            VisibilityType.fromDisplayName(emailVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
       }
     });
     if (res != null) {
@@ -972,6 +975,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       msgPic = await addDirectorRepositoryImpl.http
           .uploadImage(testimonialsPicFile!.path);
     }
+
     final res = await addDirectorRepositoryImpl.addTestimonials({
       "testiObj": {
         "name": testiNameCntr.text,

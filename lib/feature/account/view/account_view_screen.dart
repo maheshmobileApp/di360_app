@@ -92,22 +92,19 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
     return Column(children: [
       addVertical(20),
       CircleAvatar(
-          backgroundColor: AppColors.whiteColor,
-          radius: 52,
-          child: CircleAvatar(
-              radius: 50,
-              child: ClipOval(
-                  child: SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: CachedNetworkImageWidget(
-                          imageUrl: viewProfileVM.logoUrl ?? '',
-                          fit: BoxFit.fill,
-                          errorWidget: type == UserRole.professional.value
-                              ? viewProfileVM.gender?.toLowerCase() == "male"
-                                  ? Image.asset(ImageConst.man)
-                                  : Image.asset(ImageConst.woman)
-                              : Image.asset(ImageConst.man)))))),
+          radius: 50,
+          child: ClipOval(
+              child: SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: CachedNetworkImageWidget(
+                      imageUrl: viewProfileVM.logoUrl ?? '',
+                      fit: BoxFit.cover,
+                      errorWidget: type == UserRole.professional.value
+                          ? viewProfileVM.gender?.toLowerCase() == "male"
+                              ? Image.asset(ImageConst.man)
+                              : Image.asset(ImageConst.woman)
+                          : Image.asset(ImageConst.man))))),
       addVertical(8),
       Text(viewProfileVM.userName ?? "Profile Name",
           style: TextStyles.medium3(color: AppColors.black, fontSize: 15)),

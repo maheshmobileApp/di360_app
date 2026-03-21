@@ -56,43 +56,44 @@ class _AddDirectorDocumentState extends State<AddDirectorDocument>
             ),
             if (showForm) _buildDocumentForm(addDirectorVM, editVM),
             Divider(thickness: 2),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM
-                  .getBasicInfoData.first.directoryDocuments?.length,
-              itemBuilder: (context, index) {
-                final doc = addDirectorVM
-                    .getBasicInfoData.first.directoryDocuments?[index];
-                return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: AddDirectoryDocumentCard(
-                        title: doc?.name ?? '',
-                        imageFile: doc?.attachment?.url,
-                        onSelected: (val) async {
-                          if (val == 'Edit') {
-                            addDirectorVM.documentNameController.text =
-                                doc?.name ?? '';
-                            setState(() {
-                              showForm = true;
-                              docEditId = doc?.id ?? '';
-                              docName = doc?.attachment?.name;
-                              img = doc?.attachment?.toJson();
-                            });
-                            editVM.updateIsEditDocu(true);
-                          } else if (val == 'Delete') {
-                            editVM.deleteTheDocument(context, doc?.id ?? '');
-                          } else if (val == 'Download') {
-                            if (await canLaunchUrl(
-                                Uri.parse(doc?.attachment?.url ?? ''))) {
-                              await launchUrl(
-                                  Uri.parse(doc?.attachment?.url ?? ''),
-                                  mode: LaunchMode.externalApplication);
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: addDirectorVM
+                    .getBasicInfoData.first.directoryDocuments?.length,
+                itemBuilder: (context, index) {
+                  final doc = addDirectorVM
+                      .getBasicInfoData.first.directoryDocuments?[index];
+                  return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: AddDirectoryDocumentCard(
+                          title: doc?.name ?? '',
+                          imageFile: doc?.attachment?.url,
+                          onSelected: (val) async {
+                            if (val == 'Edit') {
+                              addDirectorVM.documentNameController.text =
+                                  doc?.name ?? '';
+                              setState(() {
+                                showForm = true;
+                                docEditId = doc?.id ?? '';
+                                docName = doc?.attachment?.name;
+                                img = doc?.attachment?.toJson();
+                              });
+                              editVM.updateIsEditDocu(true);
+                            } else if (val == 'Delete') {
+                              editVM.deleteTheDocument(context, doc?.id ?? '');
+                            } else if (val == 'Download') {
+                              if (await canLaunchUrl(
+                                  Uri.parse(doc?.attachment?.url ?? ''))) {
+                                await launchUrl(
+                                    Uri.parse(doc?.attachment?.url ?? ''),
+                                    mode: LaunchMode.externalApplication);
+                              }
                             }
-                          }
-                        }));
-              },
-            ),
+                          }));
+                },
+              ),
           ],
         ),
       ),

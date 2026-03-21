@@ -91,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen>
                       InputTextField(
                           title: 'Business Name',
                           controller: viewModel.companyNameController,
-                          hintText: "Enter company name",
+                          hintText: "Enter business name",
                           isRequired: true,
                           keyboardType: TextInputType.text,
                           validator: validateCompanyName),

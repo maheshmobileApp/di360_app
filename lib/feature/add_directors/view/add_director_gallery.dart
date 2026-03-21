@@ -56,41 +56,43 @@ class _AddDirectorGalleryState extends State<AddDirectorGallery>
             ),
             if (showForm) _buildGalleryForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-            addDirectorVM
-                        .getBasicInfoData.first.directoryGalleryPosts?.length ==
-                    0
-                ? Center(child: Text('No gallery'))
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: addDirectorVM
-                        .getBasicInfoData.first.directoryGalleryPosts?.length,
-                    itemBuilder: (context, index) {
-                      final galleryItem = addDirectorVM
-                          .getBasicInfoData.first.directoryGalleryPosts?[index];
-                      final hasImages = galleryItem?.image != null &&
-                          galleryItem!.image!.isNotEmpty;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: AddDirectoryGalleryCard(
-                          imageUrl:
-                              hasImages ? galleryItem.image?.first.url : '',
-                          onEdit: () {
-                            editVM.updateIsEditGallery(true);
-                            setState(() {
-                              id = galleryItem?.id;
-                              serverImg =
-                                  hasImages ? galleryItem.image?.first.url : '';
-                              galleryImg = hasImages
-                                  ? galleryItem.image?.first.toJson()
-                                  : null;
-                              showForm = true;
-                            });
-                          },
-                        ),
-                      );
-                    },
-                  ),
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              addDirectorVM.getBasicInfoData.first.directoryGalleryPosts
+                          ?.length ==
+                      0
+                  ? Center(child: Text('No gallery'))
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: addDirectorVM
+                          .getBasicInfoData.first.directoryGalleryPosts?.length,
+                      itemBuilder: (context, index) {
+                        final galleryItem = addDirectorVM.getBasicInfoData.first
+                            .directoryGalleryPosts?[index];
+                        final hasImages = galleryItem?.image != null &&
+                            galleryItem!.image!.isNotEmpty;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: AddDirectoryGalleryCard(
+                            imageUrl:
+                                hasImages ? galleryItem.image?.first.url : '',
+                            onEdit: () {
+                              editVM.updateIsEditGallery(true);
+                              setState(() {
+                                id = galleryItem?.id;
+                                serverImg = hasImages
+                                    ? galleryItem.image?.first.url
+                                    : '';
+                                galleryImg = hasImages
+                                    ? galleryItem.image?.first.toJson()
+                                    : null;
+                                showForm = true;
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
           ],
         ),
       ),

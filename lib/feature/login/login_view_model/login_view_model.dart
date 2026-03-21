@@ -40,7 +40,7 @@ class LoginViewModel extends ChangeNotifier {
   List<Modules>? modulePermissions = [];
 
   submit(BuildContext context) async {
-    _variables['details']['emailOrPhone'] = emailController.text;
+    _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
     _variables['details']['password'] = passController.text;
     if (Map.from(_variables['details']).containsValue("")) {
       scaffoldMessenger("Please fill all the details");

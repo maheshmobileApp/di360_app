@@ -65,37 +65,38 @@ class _AddDirectorCertificateState extends State<AddDirectorCertificate>
             ),
             if (showForm) _buildCertificateForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM
-                  .getBasicInfoData.first.directoryCertifications?.length,
-              itemBuilder: (context, index) {
-                final cert = addDirectorVM
-                    .getBasicInfoData.first.directoryCertifications?[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: AddDirectoryCertificateCard(
-                      title: cert?.title ?? '',
-                      imageFile: cert?.attachments?.url,
-                      onSelected: (val) {
-                        if (val == 'Edit') {
-                          addDirectorVM.certificateNameController.text =
-                              cert?.title ?? '';
-                          setState(() {
-                            fileName = cert?.attachments?.name ?? '';
-                            editId = cert?.id;
-                            img = cert?.attachments?.toJson();
-                            editVM.updateShowCertifiForm(true);
-                            showForm = true;
-                          });
-                        } else if (val == 'Delete') {
-                          editVM.deleteTheCertifi(context, cert?.id ?? '');
-                        }
-                      }),
-                );
-              },
-            ),
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: addDirectorVM
+                    .getBasicInfoData.first.directoryCertifications?.length,
+                itemBuilder: (context, index) {
+                  final cert = addDirectorVM
+                      .getBasicInfoData.first.directoryCertifications?[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: AddDirectoryCertificateCard(
+                        title: cert?.title ?? '',
+                        imageFile: cert?.attachments?.url,
+                        onSelected: (val) {
+                          if (val == 'Edit') {
+                            addDirectorVM.certificateNameController.text =
+                                cert?.title ?? '';
+                            setState(() {
+                              fileName = cert?.attachments?.name ?? '';
+                              editId = cert?.id;
+                              img = cert?.attachments?.toJson();
+                              editVM.updateShowCertifiForm(true);
+                              showForm = true;
+                            });
+                          } else if (val == 'Delete') {
+                            editVM.deleteTheCertifi(context, cert?.id ?? '');
+                          }
+                        }),
+                  );
+                },
+              ),
           ],
         ),
       ),

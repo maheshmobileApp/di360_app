@@ -37,17 +37,18 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
               ],
             ),
             addVertical(16),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount:
-                  addDirectorVM.getBasicInfoData.first.directoryFaqs?.length,
-              itemBuilder: (context, index) {
-                final data =
-                    addDirectorVM.getBasicInfoData.first.directoryFaqs?[index];
-                return _faqItem(context, addDirectorVM, data, editVM);
-              },
-            )
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount:
+                    addDirectorVM.getBasicInfoData.first.directoryFaqs?.length,
+                itemBuilder: (context, index) {
+                  final data = addDirectorVM
+                      .getBasicInfoData.first.directoryFaqs?[index];
+                  return _faqItem(context, addDirectorVM, data, editVM);
+                },
+              )
           ],
         ),
       ),
@@ -123,44 +124,44 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
         //   minChildSize: 0.5,
         //   expand: false,
         //   builder: (context, scrollController) {
-            return Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: SingleChildScrollView(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(24))),
-                    child: SafeArea(
-                      top: false,
-                      child: Column(
-                        children: [
-                          addfaqsWidget(addDirectorVM),
-                          CloseAddButtonWidget(
-                            closeBtn: () {
-                              navigationService.goBack();
-                              editVM.updateIsEditFAQ(false);
-                            },
-                            addBtn: () {
-                              if (_formKey.currentState!.validate()) {
-                                editVM.isEditFAQ
-                                    ? editVM.updateTheFAQ(context, id ?? '')
-                                    : addDirectorVM.addFAQs(context);
-                                navigationService.goBack();
-                              }
-                            },
-                            btnText: editVM.isEditFAQ ? 'Update' : 'Add',
-                          )
-                        ],
-                      ),
-                    ),
+        return Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: SingleChildScrollView(
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24))),
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    children: [
+                      addfaqsWidget(addDirectorVM),
+                      CloseAddButtonWidget(
+                        closeBtn: () {
+                          navigationService.goBack();
+                          editVM.updateIsEditFAQ(false);
+                        },
+                        addBtn: () {
+                          if (_formKey.currentState!.validate()) {
+                            editVM.isEditFAQ
+                                ? editVM.updateTheFAQ(context, id ?? '')
+                                : addDirectorVM.addFAQs(context);
+                            navigationService.goBack();
+                          }
+                        },
+                        btnText: editVM.isEditFAQ ? 'Update' : 'Add',
+                      )
+                    ],
                   ),
                 ),
               ),
-            );
+            ),
+          ),
+        );
         //   },
         // );
       },
@@ -169,7 +170,7 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
 
   Widget addfaqsWidget(AddDirectoryViewModel addDirectorVM) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
         children: [
           addVertical(10),
@@ -198,8 +199,9 @@ class AddDirectorFqs extends StatelessWidget with BaseContextHelpers {
               maxLines: 5,
               title: "Answer",
               controller: addDirectorVM.answerCntr,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter  answer' : null),
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Please enter  answer'
+                  : null),
         ],
       ),
     );

@@ -195,7 +195,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                         scaffoldMessenger('Please select business type');
                         return;
                       }
-                      if (addDirectorVM.getBasicInfoData.isEmpty) {
+                      /*if (addDirectorVM.getBasicInfoData.isEmpty) {
                         if (addDirectorVM.logoFile == null) {
                           scaffoldMessenger('Please upload logo');
                           return;
@@ -221,7 +221,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                           scaffoldMessenger('Please upload banner image');
                           return;
                         }
-                      }
+                      }*/
                       addDirectorVM.getBasicInfoData.isEmpty
                           ? await addDirectorVM.addBasicInfo(context)
                           : addDirectorVM.goToNextStep();
@@ -253,7 +253,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                       scaffoldMessenger('Please select business type');
                       return;
                     }
-                    if (addDirectorVM.getBasicInfoData.isEmpty) {
+                   /* if (addDirectorVM.getBasicInfoData.isEmpty) {
                       if (addDirectorVM.logoFile == null) {
                         scaffoldMessenger('Please upload logo');
                         return;
@@ -279,7 +279,7 @@ class AddDirectorView extends StatelessWidget with BaseContextHelpers {
                         scaffoldMessenger('Please upload banner image');
                         return;
                       }
-                    }
+                    }*/
                     addDirectorVM.getBasicInfoData.isEmpty
                         ? await addDirectorVM.addBasicInfo(context)
                         : await addDirectorVM.updateBasicInfo(context);

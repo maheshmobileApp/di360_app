@@ -27,21 +27,25 @@ class MyDirectorScreen extends StatelessWidget {
               navigationService.navigateTo(RouteList.adddirectorview);
             },
             backgroundColor: AppColors.primaryColor,
-            label: Text('Update directory',style: TextStyles.regular2(color: AppColors.whiteColor))),
+            label: Text('Update directory',
+                style: TextStyles.regular2(color: AppColors.whiteColor))),
         body: Stack(
           children: [
             CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
                   child: UserDetailsWidget(
-                    imageUrl: addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
-                    userName: addDirectorVM.getBasicInfoData.first.professionType,
+                    imageUrl:
+                        addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
+                    userName:
+                        addDirectorVM.getBasicInfoData.first.professionType,
                     followerCount:
                         '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
                     followingCount:
                         '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
                     bannerImg:
-                        addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? '',
+                        addDirectorVM.getBasicInfoData.first.bannerImage?.url ??
+                            '',
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -56,7 +60,7 @@ class MyDirectorScreen extends StatelessWidget {
                 left: 20,
                 top: 20,
                 child: GestureDetector(
-                    onTap: () => navigationService.goBack(),
+                    onTap: () => navigationService.replaceWith(RouteList.dashBoard),
                     child: CircleAvatar(
                         radius: 25, child: Icon(Icons.arrow_back))))
           ],
