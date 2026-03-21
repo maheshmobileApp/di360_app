@@ -38,7 +38,7 @@ class ContactInfo extends StatelessWidget
               controller: viewProfileVM.faxNumberController,
               hintText: "Fax Number",
               title: "Fax Number"),
-          addVertical(10),
+        /*  addVertical(10),
           InputTextField(
               controller: viewProfileVM.alternateEmailController,
               hintText: "Alternate Email",
@@ -50,7 +50,7 @@ class ContactInfo extends StatelessWidget
               title: "Alternate Phone Number",
               maxLength: 9,
               keyboardType: TextInputType.number,
-              validator: validateOptionalPhoneNumber),
+              validator: validateOptionalPhoneNumber),*/
           addVertical(10),
           AddressAutoFillWidget(
               controller: viewProfileVM.addressController,

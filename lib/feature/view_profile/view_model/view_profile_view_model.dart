@@ -439,7 +439,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
           : type == UserRole.professional.value
               ? await getProfessionalViewProfileData()
               : await getSuppilerViewProfileData();
-      if (profileCompleted == false) await insertDirectories();
       profileCompleted == false
           ? showAlertMessage(context,
               'Great Job! 🎉\n\nYou’ve completed your profile. \n\nWant to continue and complete your directory for better visibility?',
@@ -449,6 +448,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               yes: "Yes, Let's Go",
               no: "Maybe Later")
           : navigationService.goBack();
+      if (profileCompleted == false) await insertDirectories();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
     }
@@ -483,7 +483,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "name": nameController.text,
                   "email": emailController.text,
                   "business_name": businessNameController.text,
-                  "business_email": businessEmailController.text,
+                  "business_email": businessEmailController.text.isEmpty
+                      ? null
+                      : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
                   "profession_type": selectedBusineestype?.name,
@@ -499,7 +501,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "name": nameController.text,
                   "email": emailController.text,
                   "business_name": businessNameController.text,
-                  "business_email": businessEmailController.text,
+                  "business_email": businessEmailController.text.isEmpty
+                      ? null
+                      : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
                   "profession_type": selectedBusineestype?.name,
