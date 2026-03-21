@@ -40,7 +40,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                       imageUrl: bannerImg ?? '',
                       width: double.infinity,
                       height: 220,
-                      fit: BoxFit.fill)),
+                      fit: BoxFit.cover)),
           
           Positioned(
               right: 1,

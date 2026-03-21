@@ -68,8 +68,7 @@ class MyDirectorScreen extends StatelessWidget {
                     onTap: () async {
                       final type = await LocalStorage.getStringVal(
                           LocalStorageConst.type);
-                      navigationService
-                          .navigateTo(RouteList.dashBoard);
+                      navigationService.navigateTo(RouteList.dashBoard);
                       dashBoardVM.setIndex(
                           type == UserRole.practice.value ? 5 : 6, context);
                     },
