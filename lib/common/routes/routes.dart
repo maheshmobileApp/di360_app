@@ -99,8 +99,7 @@ class Routes {
       RouteList.preLogin: (context) => PreLoginScreen(),
       RouteList.login: (context) => ChangeNotifierProvider(
           create: (_) => LoginViewModel(), child: LoginScreen()),
-      RouteList.dashBoard: (context) => ChangeNotifierProvider(
-          create: (context) => DashBoardViewModel(), child: DashBoard()),
+      RouteList.dashBoard: (context) => DashBoard(),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
       RouteList.signup: (context) => SignupScreen(),
       RouteList.roleScreen: (context) => RoleSelectionScreen(),

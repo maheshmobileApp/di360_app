@@ -68,10 +68,10 @@ class MyDirectorScreen extends StatelessWidget {
                     onTap: () async {
                       final type = await LocalStorage.getStringVal(
                           LocalStorageConst.type);
+                      dashBoardVM.setIndex(
+                          type == UserRole.practice.value ? 4 : 5, context);
                       navigationService
                           .navigateTo(RouteList.dashBoard);
-                      dashBoardVM.setIndex(
-                          type == UserRole.practice.value ? 5 : 6, context);
                     },
                     child: CircleAvatar(
                         radius: 25, child: Icon(Icons.arrow_back))))
