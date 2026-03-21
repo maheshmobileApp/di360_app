@@ -90,23 +90,25 @@ class BuildJobTypeWidget extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: job?.typeofEmployment
-                          ?.map((e) => Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColors.blueColor.withOpacity(0.1)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 4),
-                                child: Text(e,
-                                    style: TextStyles.regular2(
-                                        color: AppColors.blueColor)),
-                              )))
-                          .toList() ??
-                      []),
+              Expanded(
+                child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: job?.typeofEmployment
+                            ?.map((e) => Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.blueColor.withOpacity(0.1)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 4),
+                                  child: Text(e,
+                                      style: TextStyles.regular2(
+                                          color: AppColors.blueColor)),
+                                )))
+                            .toList() ??
+                        []),
+              ),
               AppButton(
                   text: 'View',
                   height: 40,

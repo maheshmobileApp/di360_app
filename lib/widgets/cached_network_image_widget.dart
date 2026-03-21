@@ -29,10 +29,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
       imageUrl: imageUrl,
       fit: fit ?? BoxFit.cover,
       progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-          child: CupertinoActivityIndicator(
-        // value: downloadProgress.progress,
-              // color: AppColors.primaryColor,
-      )),
+          child: CupertinoActivityIndicator()),
       errorWidget: (context, url, error) {
         return errorWidget ?? Icon(Icons.error);
       },

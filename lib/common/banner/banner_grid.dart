@@ -3,7 +3,7 @@ import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 
 const double _bannerGridPadding = 16.0;
-const double _bannerGridItemHeight = 180.0;
+//const double _bannerGridItemHeight = 180.0;
 const int _bannerGridCrossAxisCount = 2;
 
 class BannerGrid extends StatelessWidget {

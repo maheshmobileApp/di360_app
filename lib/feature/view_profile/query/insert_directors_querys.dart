@@ -10,6 +10,8 @@ mutation InsertDirectory($object: directories_insert_input!) {
     type
     dental_professional_id
     profile_image
+    phone_visibility
+    email_visibility
   }
 }
 ''';

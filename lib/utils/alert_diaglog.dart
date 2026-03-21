@@ -59,6 +59,7 @@ viewProfileAlertPopup(BuildContext context, {String? title, String? subTitle}) {
       context: context,
       builder: (_) {
         return AlertDialog(
+            backgroundColor: AppColors.whiteColor,
             title: Column(
               children: [
                 Text(title ?? 'Welcome! Your Profile Is Incomplete',
@@ -107,10 +108,10 @@ showAlertMessage(BuildContext context, String message,
                       () async {
                         navigationService.goBack();
                       },
-                  child: Text(no ?? "Cancel", style: TextStyles.medium4())),
+                  child: Text(no ?? "Cancel", style: TextStyles.medium3())),
               TextButton(
                   onPressed: onBack,
-                  child: Text(yes ?? "Ok", style: TextStyles.medium4())),
+                  child: Text(yes ?? "Ok", style: TextStyles.medium3())),
             ]);
       });
 }
@@ -133,7 +134,7 @@ void showSignupSuccessDialog(
               Icon(Icons.check_circle, color: AppColors.primaryColor, size: 60),
               const SizedBox(height: 20),
               Text(
-                title ?? "Sign up successful",
+                title ?? "Verification Email Sent",
                 style: TextStyles.bold5(color: AppColors.black),
               ),
               const SizedBox(height: 15),
@@ -143,14 +144,14 @@ void showSignupSuccessDialog(
                   style:
                       TextStyles.medium3(color: AppColors.PRIMARY_BLACK_COLOR),
                   children: [
-                    TextSpan(text: "A verification link has been sent to "),
+                    TextSpan(text: "A verification email has been sent to "),
                     TextSpan(
                       text: email,
                       style: TextStyles.medium3(color: AppColors.primaryColor),
                     ),
                     TextSpan(
                         text: subTitle ??
-                            ". Please click on the link to activate the account."),
+                            ". Please click the link to activate your account."),
                   ],
                 ),
               ),

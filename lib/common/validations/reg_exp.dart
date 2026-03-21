@@ -19,7 +19,8 @@ bool phoneNoValid(String phoneNo) {
 
 bool checkEmailValidation(String email) {
   return RegExp(
-    r"^[a-z0-9.!#\$%&'*+\-/=?^_`{|}~]+@[a-z0-9.-]+\.[a-z]+$"
+    r"^[a-z0-9.!#\$%&'*+\-/=?^_`{|}~]+@[a-z0-9.-]+\.[a-z]+$",
+    caseSensitive: false,
   ).hasMatch(email);
 }
 

@@ -32,7 +32,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
               ? SizedBox(
                   height: 220,
                   child: Center(
-                      child: Text('No Banner Image',
+                      child: Text('',
                           style: TextStyles.medium4(color: AppColors.black))))
               : ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -40,7 +40,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                       imageUrl: bannerImg ?? '',
                       width: double.infinity,
                       height: 220,
-                      fit: BoxFit.fill)),
+                      fit: BoxFit.cover)),
           
           Positioned(
               right: 1,

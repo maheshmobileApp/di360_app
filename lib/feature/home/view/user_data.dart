@@ -61,23 +61,20 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundColor: AppColors.whiteColor,
                   radius: 30,
-                  child: CircleAvatar(
-                    radius: 30,
-                    child: ClipOval(
-                      child: SizedBox(
-                          height: 60,
-                          child: CachedNetworkImageWidget(
-                              imageUrl:
-                                  imageUrl ?? homeViewModel.profilePic ?? '',
-                              fit: BoxFit.fill,
-                              errorWidget: type == UserRole.professional.value
-                                  ? gender?.toLowerCase() == 'male'
-                                      ? Image.asset(ImageConst.man)
-                                      : Image.asset(ImageConst.woman)
-                                  : Image.asset(ImageConst.man))),
-                    ),
+                  child: ClipOval(
+                    child: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: CachedNetworkImageWidget(
+                            imageUrl:
+                                imageUrl ?? homeViewModel.profilePic ?? '',
+                            fit: BoxFit.cover,
+                            errorWidget: type == UserRole.professional.value
+                                ? gender?.toLowerCase() == 'male'
+                                    ? Image.asset(ImageConst.man)
+                                    : Image.asset(ImageConst.woman)
+                                : Image.asset(ImageConst.man))),
                   ),
                 ),
                 addHorizontal(12),

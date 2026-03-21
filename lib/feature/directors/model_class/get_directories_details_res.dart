@@ -34,6 +34,8 @@ class DirectoriesByPk {
   String? altPhone;
   dynamic abnAcn;
   String? companyName;
+  String? businessEmail;
+  String? mobileNumber;
   dynamic profession;
   String? type;
   List<String>? workingAt;
@@ -77,6 +79,8 @@ class DirectoriesByPk {
       this.universitySchool,
       this.abnAcn,
       this.companyName,
+      this.businessEmail,
+      this.mobileNumber,
       this.profession,
       this.type,
       this.education,
@@ -116,6 +120,8 @@ class DirectoriesByPk {
     altPhone = json['alt_phone'];
     abnAcn = json['abn_acn'];
     companyName = json['company_name'];
+    businessEmail = json['business_email'];
+    mobileNumber = json['mobile_number'];
     profession = json['profession'];
     type = json['type'];
     if (json['working_at'] != null) {

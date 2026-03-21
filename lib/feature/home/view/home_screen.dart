@@ -29,10 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBarWidget(searchWidget: false),
       body: Column(
         children: [
-          UserData(
-            type: type,
-            gender: viewProfileVM.gender,
-          ),
+          UserData(type: type, gender: viewProfileVM.gender),
           Expanded(child: GridWidget())
         ],
       ),

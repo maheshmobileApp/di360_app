@@ -57,38 +57,39 @@ class _AddDirectorAchievementState extends State<AddDirectorAchievement>
             ),
             if (showForm) _buildAchievementForm(addDirectorVM, editVM),
             const Divider(thickness: 2),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: addDirectorVM
-                  .getBasicInfoData.first.directoryAchievements?.length,
-              itemBuilder: (context, index) {
-                final achievement = addDirectorVM
-                    .getBasicInfoData.first.directoryAchievements?[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: AddDirectoryAchievementCard(
-                      title: achievement?.title ?? '',
-                      imageFile: achievement?.attachments?.url,
-                      onSelected: (val) {
-                        if (val == 'Edit') {
-                          addDirectorVM.achievementNameController.text =
-                              achievement?.title ?? '';
-                          editVM.updateIsEditAchieve(true);
-                          setState(() {
-                            fileName = achievement?.attachments?.name;
-                            editId = achievement?.id;
-                            img = achievement?.attachments?.toJson();
-                            showForm = true;
-                          });
-                        } else if (val == 'Delete') {
-                          editVM.deleteTheAchieve(
-                              context, achievement?.id ?? '');
-                        }
-                      }),
-                );
-              },
-            ),
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: addDirectorVM
+                    .getBasicInfoData.first.directoryAchievements?.length,
+                itemBuilder: (context, index) {
+                  final achievement = addDirectorVM
+                      .getBasicInfoData.first.directoryAchievements?[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: AddDirectoryAchievementCard(
+                        title: achievement?.title ?? '',
+                        imageFile: achievement?.attachments?.url,
+                        onSelected: (val) {
+                          if (val == 'Edit') {
+                            addDirectorVM.achievementNameController.text =
+                                achievement?.title ?? '';
+                            editVM.updateIsEditAchieve(true);
+                            setState(() {
+                              fileName = achievement?.attachments?.name;
+                              editId = achievement?.id;
+                              img = achievement?.attachments?.toJson();
+                              showForm = true;
+                            });
+                          } else if (val == 'Delete') {
+                            editVM.deleteTheAchieve(
+                                context, achievement?.id ?? '');
+                          }
+                        }),
+                  );
+                },
+              ),
           ],
         ),
       ),

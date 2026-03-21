@@ -36,6 +36,7 @@ class ProfessionalDetailInfo extends StatelessWidget
                   controller: viewProfileVM.aphraNumberController,
                   hintText: "AHPRA Registration Number",
                   title: "AHPRA Registration Number",
+                  helperText: '3 letters and 10 digits (e.g., MED0001234567)',
                   validator: validateAphraNumber),
             ],
           ],

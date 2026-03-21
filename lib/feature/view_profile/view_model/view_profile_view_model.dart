@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/view_profile/model/view_profile_data.dart'
 import 'package:di360_flutter/feature/view_profile/repository/view_profile_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/email_phone_visiable_enums.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/date_utils.dart' as di360_date_utils;
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -438,16 +439,16 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
           : type == UserRole.professional.value
               ? await getProfessionalViewProfileData()
               : await getSuppilerViewProfileData();
-      if (profileCompleted == false) await insertDirectories(); 
       profileCompleted == false
-          ? showAlertMessage(
-              context, 'Would you like to complete My directory?',
+          ? showAlertMessage(context,
+              'Great Job! 🎉\n\nYou’ve completed your profile. \n\nWant to continue and complete your directory for better visibility?',
               onBack: () => directorNavigationHandle(context),
               onCancel: () => navigationService
                   .pushNamedAndRemoveUntil(RouteList.dashBoard),
-              yes: 'Yes',
-              no: 'No')
+              yes: "Yes, Let's Go",
+              no: "Maybe Later")
           : navigationService.goBack();
+      if (profileCompleted == false) await insertDirectories();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
     }
@@ -471,7 +472,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               "type": type,
               "dental_professional_id": userId,
               "profile_image":
-                  professionalViewProfileData?.profileImage?.toJson()
+                  professionalViewProfileData?.profileImage?.toJson(),
+              "phone_visibility": VisibilityType.PRIVATE.name,
+              "email_visibility": VisibilityType.PRIVATE.name,
             }
           }
         : type == UserRole.supplier.value
@@ -480,7 +483,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "name": nameController.text,
                   "email": emailController.text,
                   "business_name": businessNameController.text,
-                  "business_email": businessEmailController.text,
+                  "business_email": businessEmailController.text.isEmpty
+                      ? null
+                      : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
                   "profession_type": selectedBusineestype?.name,
@@ -488,7 +493,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "address": addressController.text,
                   "type": type,
                   "dental_supplier_id": userId,
-                  "logo": supplierViewProfileData?.logo?.toJson()
+                  "logo": supplierViewProfileData?.logo?.toJson(),
                 }
               }
             : {
@@ -496,7 +501,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "name": nameController.text,
                   "email": emailController.text,
                   "business_name": businessNameController.text,
-                  "business_email": businessEmailController.text,
+                  "business_email": businessEmailController.text.isEmpty
+                      ? null
+                      : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
                   "profession_type": selectedBusineestype?.name,
@@ -504,7 +511,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "address": addressController.text,
                   "type": type,
                   "dental_practice_id": userId,
-                  "logo": practiceViewProfileData?.logo?.toJson()
+                  "logo": practiceViewProfileData?.logo?.toJson(),
                 }
               });
   }

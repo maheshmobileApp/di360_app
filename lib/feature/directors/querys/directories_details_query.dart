@@ -12,6 +12,8 @@ query getDirectory($id: uuid!) {
     university_school
     abn_acn
     company_name
+    business_email
+    mobile_number
     profession
     type
     education

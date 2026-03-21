@@ -41,15 +41,16 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
               ],
             ),
             addVertical(16),
-            ...addDirectorVM.getBasicInfoData.first.directoryTeamMembers
-                    ?.asMap()
-                    .entries
-                    .map((data) {
-                  final teamData = data.value;
-                  return _TeamMemberCard(
-                      context, teamData, addDirectorVM, editVM);
-                }).toList() ??
-                [],
+            if (addDirectorVM.getBasicInfoData.isNotEmpty)
+              ...addDirectorVM.getBasicInfoData.first.directoryTeamMembers
+                      ?.asMap()
+                      .entries
+                      .map((data) {
+                    final teamData = data.value;
+                    return _TeamMemberCard(
+                        context, teamData, addDirectorVM, editVM);
+                  }).toList() ??
+                  [],
           ],
         ),
       ),
@@ -142,7 +143,10 @@ class AddDirectorTeamMember extends StatelessWidget with BaseContextHelpers {
                     top: false,
                     child: Column(
                       children: [
-                        AddDirectorTeamMemberFoam(hinttext: hintText,fileName: imag,),
+                        AddDirectorTeamMemberFoam(
+                          hinttext: hintText,
+                          fileName: imag,
+                        ),
                         CustomBottomButton(
                           onFirst: () {
                             editVM.updateIsEditOurTeam(false);

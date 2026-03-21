@@ -41,6 +41,7 @@ class InputTextField extends StatelessWidget {
   final String? obscuringCharacter;
   final TextCapitalization? textCapitalization;
   final String? suffixText;
+  final String? helperText;
 
   InputTextField({
     super.key,
@@ -81,6 +82,7 @@ class InputTextField extends StatelessWidget {
     this.suffixText,
     this.label,
     this.focusNode,
+    this.helperText
   });
 
   @override
@@ -130,6 +132,7 @@ class InputTextField extends StatelessWidget {
           decoration: InputDecoration(
             counterText: '',
             labelStyle: labelstyle,
+            helperText: helperText,
             fillColor: fillcolor,
             filled: isfilled ?? false,
             enabledBorder: enableborder ??

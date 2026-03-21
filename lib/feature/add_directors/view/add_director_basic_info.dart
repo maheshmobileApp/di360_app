@@ -37,8 +37,8 @@ class AddDirectorBasicInfo extends StatelessWidget
           _buildBusineestype(addDirectorVM),
           addVertical(20),
           InputTextField(
-            hintText: "Enter Company Name",
-            title: "Company Name",
+            hintText: "Enter Business Name",
+            title: "Business Name",
             isRequired: true,
             controller: addDirectorVM.CompanyNameController,
             validator: (value) => value == null || value.isEmpty
@@ -131,7 +131,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             validator: validateEmail,
             controller: addDirectorVM.businessEmailCntr,
           ),
-          addVertical(20),
+         /* addVertical(20),
           InputTextField(
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
@@ -139,7 +139,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             maxLength: 9,
             validator: validateOptionalPhoneNumber,
             controller: addDirectorVM.alternateNumberController,
-          ),
+          ),*/
           addVertical(20),
           AddressAutoFillWidget(
             controller: addDirectorVM.addressController,
@@ -156,7 +156,6 @@ class AddDirectorBasicInfo extends StatelessWidget
           addVertical(20),
           LogoContainer(
             title: "Logo",
-            isRequired: true,
             imageFile: addDirectorVM.logoFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.logo?.url ?? ''
@@ -170,7 +169,6 @@ class AddDirectorBasicInfo extends StatelessWidget
           addVertical(20),
           LogoContainer(
             title: "Banner",
-            isRequired: true,
             imageFile: addDirectorVM.bannerFile,
             serverImg: addDirectorVM.getBasicInfoData.isNotEmpty
                 ? addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? ''
@@ -186,10 +184,8 @@ class AddDirectorBasicInfo extends StatelessWidget
               hintText: "Enter your text here",
               maxLength: 500,
               maxLines: 5,
-              isRequired: true,
               title: "Description",
-              controller: addDirectorVM.descController,
-              validator: validateDesc),
+              controller: addDirectorVM.descController,),
         ],
       ),
     ));

@@ -22,7 +22,6 @@ import 'package:di360_flutter/feature/community/view/news_feed_categories_view.d
 import 'package:di360_flutter/feature/community/view/partnership_registration_view.dart';
 import 'package:di360_flutter/feature/community/view/partnership_request_view.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board.dart';
-import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_details_screen.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/director_quicklincks.dart';
 import 'package:di360_flutter/feature/directors/view/director_screen.dart';
@@ -99,8 +98,7 @@ class Routes {
       RouteList.preLogin: (context) => PreLoginScreen(),
       RouteList.login: (context) => ChangeNotifierProvider(
           create: (_) => LoginViewModel(), child: LoginScreen()),
-      RouteList.dashBoard: (context) => ChangeNotifierProvider(
-          create: (context) => DashBoardViewModel(), child: DashBoard()),
+      RouteList.dashBoard: (context) => DashBoard(),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
       RouteList.signup: (context) => SignupScreen(),
       RouteList.roleScreen: (context) => RoleSelectionScreen(),

@@ -89,16 +89,19 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               courseListingVM.marketPlaceCoursesList[index];
                           final course = jobData;
 
-                          final seats = (course.numberOfSeats -
-                              course.courseRegisteredUsersAggregate?.aggregate
-                                  ?.count);
+                          final seats = (course.numberOfSeats ?? 0) -
+                              (course.courseRegisteredUsersAggregate?.aggregate
+                                      ?.count ??
+                                  0);
                           final isRegistered = courseListingVM
                               .isRegisteredCheck(course.courseRegisteredUsers);
 
                           return ListingHubMasterCard(
                             feedId: course.id ?? "",
                             remainingOfSeats: seats,
-                            presenterName: course.presentedByName ?? "",
+                            presenterName: course.presenters?.isNotEmpty == true
+                                ? course.presenters?.first.presentedByName ?? ""
+                                : "",
                             profilePic: course.presentedByImage?.url ?? '',
                             imageUrl: (course.courseBannerImage!.isNotEmpty)
                                 ? course.courseBannerImage?.first.url ?? ''
@@ -147,7 +150,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                           context,
                                           course.courseName ?? "",
                                           course.createdById ?? "",
-                                          course.id??"");
+                                          course.id ?? "");
                                     } else {
                                       scaffoldMessenger('Seats are sold out!');
                                     }
