@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/services/banner_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const double _bannerHorizontalPadding = 24.0;
 const double _bannerHeight = 180.0;
@@ -85,22 +86,30 @@ class _ListBannerState extends State<ListBanner> {
           return SizedBox(
             width: bannerWidth,
             height: _bannerHeight,
-            child: Card(
-              elevation: 4,
-              color: AppColors.whiteColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (imageUrl != null && imageUrl.isNotEmpty)
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImageWidget(imageUrl: imageUrl),
+            child: GestureDetector(
+              onTap: () async {
+                if (await canLaunchUrl(Uri.parse(banner.url ?? ''))) {
+                  await launchUrl(Uri.parse(banner.url ?? ''),
+                      mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Card(
+                elevation: 4,
+                color: AppColors.whiteColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (imageUrl != null && imageUrl.isNotEmpty)
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImageWidget(imageUrl: imageUrl),
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

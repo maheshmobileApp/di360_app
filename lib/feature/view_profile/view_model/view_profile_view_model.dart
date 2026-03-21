@@ -438,7 +438,6 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
           : type == UserRole.professional.value
               ? await getProfessionalViewProfileData()
               : await getSuppilerViewProfileData();
-      if (profileCompleted == false) await insertDirectories(); 
       profileCompleted == false
           ? showAlertMessage(
               context, 'Would you like to complete My directory?',
@@ -448,6 +447,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
               yes: 'Yes',
               no: 'No')
           : navigationService.goBack();
+      if (profileCompleted == false) await insertDirectories();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
     }
@@ -480,7 +480,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "name": nameController.text,
                   "email": emailController.text,
                   "business_name": businessNameController.text,
-                  "business_email": businessEmailController.text,
+                  "business_email": businessEmailController.text.isEmpty
+                      ? null
+                      : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
                   "profession_type": selectedBusineestype?.name,
@@ -496,7 +498,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "name": nameController.text,
                   "email": emailController.text,
                   "business_name": businessNameController.text,
-                  "business_email": businessEmailController.text,
+                  "business_email": businessEmailController.text.isEmpty
+                      ? null
+                      : businessEmailController.text,
                   "phone": '$phoneCode${phoneNoController.text}',
                   "mobile_number": businessPhoneNoController.text,
                   "profession_type": selectedBusineestype?.name,

@@ -1,11 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/director_details_view.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/user_details_widget.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +20,7 @@ class MyDirectorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final directionalVM = Provider.of<DirectoryViewModel>(context);
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -27,21 +32,25 @@ class MyDirectorScreen extends StatelessWidget {
               navigationService.navigateTo(RouteList.adddirectorview);
             },
             backgroundColor: AppColors.primaryColor,
-            label: Text('Update directory',style: TextStyles.regular2(color: AppColors.whiteColor))),
+            label: Text('Update directory',
+                style: TextStyles.regular2(color: AppColors.whiteColor))),
         body: Stack(
           children: [
             CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
                   child: UserDetailsWidget(
-                    imageUrl: addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
-                    userName: addDirectorVM.getBasicInfoData.first.professionType,
+                    imageUrl:
+                        addDirectorVM.getBasicInfoData.first.logo?.url ?? '',
+                    userName:
+                        addDirectorVM.getBasicInfoData.first.professionType,
                     followerCount:
                         '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
                     followingCount:
                         '${directionalVM.getFollowersData?.toWhomeIAmFollowingAggregate?.aggregate?.count ?? 0}',
                     bannerImg:
-                        addDirectorVM.getBasicInfoData.first.bannerImage?.url ?? '',
+                        addDirectorVM.getBasicInfoData.first.bannerImage?.url ??
+                            '',
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -56,7 +65,14 @@ class MyDirectorScreen extends StatelessWidget {
                 left: 20,
                 top: 20,
                 child: GestureDetector(
-                    onTap: () => navigationService.goBack(),
+                    onTap: () async {
+                      final type = await LocalStorage.getStringVal(
+                          LocalStorageConst.type);
+                      navigationService
+                          .navigateTo(RouteList.dashBoard);
+                      dashBoardVM.setIndex(
+                          type == UserRole.practice.value ? 5 : 6, context);
+                    },
                     child: CircleAvatar(
                         radius: 25, child: Icon(Icons.arrow_back))))
           ],

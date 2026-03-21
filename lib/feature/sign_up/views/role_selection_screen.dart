@@ -36,7 +36,10 @@ class RoleSelectionScreen extends StatelessWidget
         !excludedTypes.contains(viewModel.selectedCategory?.name);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppbarTitleBackIconWidget(title: 'Know Your Role'),
+      appBar: AppbarTitleBackIconWidget(
+          title: viewModel.selectedType?['type'] == UserRole.professional.value
+              ? 'Know Your Role'
+              : 'Select Your Service Type'),
       body: Form(
         key: formKey,
         child: SingleChildScrollView(
@@ -151,8 +154,8 @@ class RoleSelectionScreen extends StatelessWidget
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              navigationService
-                                  .navigateTo(RouteList.termsAndConditionsDetails);
+                              navigationService.navigateTo(
+                                  RouteList.termsAndConditionsDetails);
                             },
                             child: RichText(
                               text: TextSpan(

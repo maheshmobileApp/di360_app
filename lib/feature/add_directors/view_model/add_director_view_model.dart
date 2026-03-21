@@ -574,13 +574,14 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "email": emailController.text,
         "phone": '$phoneCode${MobileNumberController.text}',
         "address": addressController.text,
-        "alt_phone": alternateNumberController.text,
+        // "alt_phone": alternateNumberController.text,
         "emergency_phone": null,
         "latitude": latitude,
         "longitude": longitude,
         "pincode": null,
         "name": nameController.text,
-        "business_email": businessEmailCntr.text,
+        "business_email":
+            businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "mobile_number": businessPhoneCntr.text,
         "profession_type": selectedBusineestype?.name,
         "phone_visibility":
@@ -590,6 +591,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
+      print('printed......... $res');
       getDirectories();
       Loaders.circularHideLoader(context);
       await LocalStorage.setBoolValue(
@@ -630,7 +632,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "longitude": getBasicInfoData.first.longitude,
         "phone": '$phoneCode${MobileNumberController.text}',
         "email": emailController.text,
-        "business_email": businessEmailCntr.text,
+        "business_email":
+            businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "mobile_number": businessPhoneCntr.text,
         "phone_visibility":
             VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',

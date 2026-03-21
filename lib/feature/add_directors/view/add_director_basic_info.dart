@@ -131,7 +131,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             validator: validateEmail,
             controller: addDirectorVM.businessEmailCntr,
           ),
-          addVertical(20),
+         /* addVertical(20),
           InputTextField(
             hintText: "Enter Alternate Phone Number",
             title: " Alternate Phone Number ",
@@ -139,7 +139,7 @@ class AddDirectorBasicInfo extends StatelessWidget
             maxLength: 9,
             validator: validateOptionalPhoneNumber,
             controller: addDirectorVM.alternateNumberController,
-          ),
+          ),*/
           addVertical(20),
           AddressAutoFillWidget(
             controller: addDirectorVM.addressController,

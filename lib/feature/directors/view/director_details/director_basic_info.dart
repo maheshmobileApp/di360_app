@@ -676,6 +676,30 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
               ),
             ],
           ),
+          if (vm.directorDetails?.businessEmail != null) ...[
+            addVertical(8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              Text('Business Email :',
+                  style: TextStyles.medium2(
+                      color: AppColors.bottomNavUnSelectedColor)),
+              addVertical(2),
+              Text(vm.directorDetails?.businessEmail ?? '')
+            ])
+          ],
+          if (vm.directorDetails?.mobileNumber != null) ...[
+            addVertical(8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              Text('Business Phone :',
+                  style: TextStyles.medium2(
+                      color: AppColors.bottomNavUnSelectedColor)),
+              addVertical(2),
+              Text(vm.directorDetails?.mobileNumber ?? '')
+            ])
+          ],
           if (vm.emailVisibility) ...[
             addVertical(15),
             Row(children: [

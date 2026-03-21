@@ -1,12 +1,16 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/director_details_view.dart';
 import 'package:di360_flutter/feature/add_directors/view/my_director/user_details_widget.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +62,14 @@ class ProfessionalDirectorScreen extends StatelessWidget {
                 left: 20,
                 top: 20,
                 child: GestureDetector(
-                    onTap: () => navigationService.goBack(),
+                    onTap: () async{
+                      final type = await LocalStorage.getStringVal(
+                          LocalStorageConst.type);
+                      navigationService
+                          .pushNamedAndRemoveUntil(RouteList.dashBoard);
+                      context.read<DashBoardViewModel>().setIndex(
+                          type == UserRole.practice.value ? 5 : 6, context);
+                    },
                     child: CircleAvatar(
                         radius: 25, child: Icon(Icons.arrow_back))))
           ],
