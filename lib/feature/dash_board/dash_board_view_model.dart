@@ -32,6 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DashBoardViewModel extends ChangeNotifier {
   int _currentIndex = 0;
+  // int? _pendingIndex;
   List<Widget> _pages = [];
   String _userType = '';
   bool _isInitialized = false;
@@ -39,6 +40,7 @@ class DashBoardViewModel extends ChangeNotifier {
   int get currentIndex => _currentIndex;
   List<Widget> get pages => _pages;
   bool get isInitialized => _isInitialized;
+  String get userType => _userType;
 
   DashBoardViewModel() {
     _initializePages();
@@ -50,6 +52,10 @@ class DashBoardViewModel extends ChangeNotifier {
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, false);
     _setupPages();
+    // if (_pendingIndex != null && _pendingIndex! < _pages.length) {
+    //   _currentIndex = _pendingIndex!;
+    //   _pendingIndex = null;
+    // }
     _isInitialized = true;
     notifyListeners();
   }
@@ -90,6 +96,11 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   void setIndex(int index, BuildContext context) {
+    // if (_pages.isEmpty) {
+    //   _pendingIndex = index;
+    //   return;
+    // }
+    if (index < 0 || index >= _pages.length) return;
     _currentIndex = index;
     updateIndex(index, context);
     notifyListeners();
