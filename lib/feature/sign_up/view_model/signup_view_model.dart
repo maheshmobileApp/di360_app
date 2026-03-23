@@ -82,7 +82,7 @@ class SignupViewModel extends ChangeNotifier {
     final planList =
         subscriptionPlanList?.where((v) => v.type == type?['type']).toList() ??
             [];
-    selectedSubscriptionPlanId = planList.first.id;
+    selectedSubscriptionPlanId = planList.isNotEmpty ? planList.first.id : null;
     notifyListeners();
   }
 
