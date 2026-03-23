@@ -2,6 +2,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_file/open_file.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await NotificationService.showNotification(
+    title: message.notification?.title ?? '',
+    body: message.notification?.body ?? '',
+    filePath: message.data['filePath'],
+  );
+}
+
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -21,12 +30,6 @@ class NotificationService {
         }
       },
     );
-
-    // Request notification permissions
-    await _notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
   }
 
   static Future<void> showNotification({
@@ -34,17 +37,16 @@ class NotificationService {
     required String body,
     String? filePath,
   }) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-      'sale_order_app',
-      'BioFactor',
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'dentalinterface360',
+      'dentalinterface360',
       importance: Importance.high,
       priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
+      icon: filePath,
       largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
 
-    const NotificationDetails platformDetails = NotificationDetails(
+     NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
     );
 
@@ -65,11 +67,22 @@ class NotificationService {
     final messaging = FirebaseMessaging.instance;
 
     // Permission
-    await messaging.requestPermission();
+    final settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+      print('Notification permission denied');
+      return;
+    }
 
     // Token
     final token = await messaging.getToken();
     print('FCM Token: $token');
+
+    // Background handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     // Foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {

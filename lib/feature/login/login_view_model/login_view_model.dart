@@ -63,7 +63,8 @@ class LoginViewModel extends ChangeNotifier {
       }
 
       if (res.isNotEmpty && res.containsKey('login_api')) {
-        Provider.of<DashBoardViewModel>(context, listen: false).setIndex(0,context);
+        Provider.of<DashBoardViewModel>(context, listen: false)
+            .setIndex(0, context);
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
@@ -101,7 +102,7 @@ class LoginViewModel extends ChangeNotifier {
           _modulePermissions(
               result.loginApi?.subscriptionPermissions?.modules ?? []);
           _http.setToken(result.loginApi?.accessToken ?? '');
-          updateDevieToken();
+          await updateDevieToken();
           result.loginApi?.profileCompleted == true
               ? homeNavigation()
               : viewProfileHandle(context);
@@ -157,7 +158,6 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<void> updateDevieToken() async {
     try {
-      if (!hasListeners) return;
       if (Firebase.apps.isEmpty) return;
       await Future.delayed(Duration(seconds: 2));
 
