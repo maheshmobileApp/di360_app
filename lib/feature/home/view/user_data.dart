@@ -61,6 +61,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
+                  backgroundColor: AppColors.greyLight,
                   radius: 30,
                   child: ClipOval(
                     child: SizedBox(
@@ -69,7 +70,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                         child: CachedNetworkImageWidget(
                             imageUrl:
                                 imageUrl ?? homeViewModel.profilePic ?? '',
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             errorWidget: type == UserRole.professional.value
                                 ? gender?.toLowerCase() == 'male'
                                     ? Image.asset(ImageConst.man)

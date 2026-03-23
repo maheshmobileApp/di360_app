@@ -58,7 +58,7 @@ class SupportRequests {
   dynamic replyAttachments;
   int? supportRequestNumber;
   String? type;
-  dynamic dentalPractice;
+  DentalPractice? dentalPractice;
   DentalSupplier? dentalSupplier;
   DentalProfessional? dentalProfessional;
   String? sTypename;
@@ -105,7 +105,9 @@ class SupportRequests {
     replyAttachments = json['reply_attachments'];
     supportRequestNumber = json['support_request_number'];
     type = json['type'];
-    dentalPractice = json['dental_practice'];
+    dentalPractice = json['dental_practice'] != null
+        ? new DentalPractice.fromJson(json['dental_practice'])
+        : null;
     dentalSupplier = json['dental_supplier'] != null
         ? new DentalSupplier.fromJson(json['dental_supplier'])
         : null;
@@ -134,7 +136,9 @@ class SupportRequests {
     data['reply_attachments'] = this.replyAttachments;
     data['support_request_number'] = this.supportRequestNumber;
     data['type'] = this.type;
-    data['dental_practice'] = this.dentalPractice;
+    if (this.dentalPractice != null) {
+      data['dental_practice'] = this.dentalPractice!.toJson();
+    }
     if (this.dentalSupplier != null) {
       data['dental_supplier'] = this.dentalSupplier!.toJson();
     }
@@ -292,6 +296,37 @@ class DentalSupplier {
       {this.type, this.businessName, this.email, this.logo, this.sTypename});
 
   DentalSupplier.fromJson(Map<String, dynamic> json) {
+    type = json['type'];
+    businessName = json['business_name'];
+    email = json['email'];
+    logo = json['logo'] != null ? new Logo.fromJson(json['logo']) : null;
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['type'] = this.type;
+    data['business_name'] = this.businessName;
+    data['email'] = this.email;
+    if (this.logo != null) {
+      data['logo'] = this.logo!.toJson();
+    }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class DentalPractice {
+  String? type;
+  String? businessName;
+  String? email;
+  Logo? logo;
+  String? sTypename;
+
+  DentalPractice(
+      {this.type, this.businessName, this.email, this.logo, this.sTypename});
+
+  DentalPractice.fromJson(Map<String, dynamic> json) {
     type = json['type'];
     businessName = json['business_name'];
     email = json['email'];

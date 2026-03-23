@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/talent_enquiries/model/get_talent_enquiry_
 import 'package:di360_flutter/feature/talent_enquiries/repository/talent_enquiry_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_enquiries/repository/talent_enquiry_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class TalentEnquiryViewModel extends ChangeNotifier {
@@ -64,17 +65,21 @@ class TalentEnquiryViewModel extends ChangeNotifier {
 
   JobProfileEnquiriesResList? talentEnqMessages;
   Future<void> getEnqMessagesData(BuildContext context, String talentId) async {
+    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "where": {
         "talent_id": {"_eq": talentId},
-        "enquiry_from": {"_eq": userId}
-      }
+        "enq_sender_id": {"_eq": userId}
+      },
+      "limit": 20
     };
     final res = await repo.getEnqMessagesData(variables);
     if (res.talentEnquiries?.isNotEmpty ?? false) {
       talentEnqMessages = res;
     } else {}
+    Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 }

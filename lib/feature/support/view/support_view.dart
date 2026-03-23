@@ -158,9 +158,11 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                             return Padding(
                               padding: EdgeInsets.only(bottom: 8),
                               child: TicketCard(
-                                userName: (type == UserRole.supplier.value)
+                                userName: type == UserRole.supplier.value
                                     ? ticket.dentalSupplier?.businessName ?? ""
-                                    : ticket.dentalProfessional?.name ?? "",
+                                    : type == UserRole.practice.value
+                                        ? ticket.dentalPractice?.businessName ?? ""
+                                        : ticket.dentalProfessional?.name ?? "",
                                 ticketNo:
                                     ticket.supportRequestNumber.toString(),
                                 dateTime: ticket.createdAt ?? "",

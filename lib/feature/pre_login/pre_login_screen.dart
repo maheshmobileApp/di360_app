@@ -64,9 +64,11 @@ class PreLoginScreen extends StatelessWidget with BaseContextHelpers {
                         },
                       ),
                       addVertical(20),
-                      richText(
-                        color1: AppColors.hintColor,
-                        color2: AppColors.hintColor,
+                      SigninButton(
+                        text: 'Don’t have an account? Sign up',
+                        onTap: () {
+                          navigationService.navigateTo(RouteList.signup);
+                        },
                       ),
                     ],
                   ),

@@ -505,11 +505,16 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                     Provider.of<TalentsViewModel>(context, listen: false);
                 final userId =
                     await LocalStorage.getStringVal(LocalStorageConst.userId);
+                final type =
+                    await LocalStorage.getStringVal(LocalStorageConst.type);
                 final talentList = provider.talentListById?.firstOrNull;
                 final enquire = EnquiryRequest(
                     enquiryDescription: provider.enquiryData ?? '',
                     talentId: talentList?.id ?? '',
-                    enquiryFrom: userId);
+                    enquirySenderId: userId,
+                    enquirySenderType: type,
+                    enquiryReceiverId: talentList?.dentalProfessionalId ?? "",
+                    enquiryReceiverType: UserRole.professional.value);
                 if (provider.enquiryData == null ||
                     provider.enquiryData?.isEmpty == true) {
                   ToastMessage.show(

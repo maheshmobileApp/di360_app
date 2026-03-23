@@ -157,7 +157,7 @@ class CreateCampaignView extends StatelessWidget
                   ),
                   addVertical(6),
                   _buildEmpTypes(viewModel),
-                  _buildTypes(viewModel),
+                  _buildTypes(context, viewModel),
                   addVertical(10),
                   CustomRadioGroup<String>(
                     title: "Refine by State",
@@ -230,7 +230,7 @@ class CreateCampaignView extends StatelessWidget
                           textColor: Colors.black,
                         ),
                         CustomRoundedButton(
-                          text: viewModel.repeatMode ? 'Repeat' : 'Save',
+                          text: viewModel.repeatMode ? 'Repeat' : 'Submit',
                           onPressed: () => _validateAndSave(context, viewModel),
                           height: 42,
                           backgroundColor: AppColors.primaryColor,
@@ -307,7 +307,7 @@ class CreateCampaignView extends StatelessWidget
     );
   }
 
-  Widget _buildTypes(CampaignViewModel viewModel) {
+  Widget _buildTypes(BuildContext context, CampaignViewModel viewModel) {
     final validRoles = viewModel.typeOptions;
 
     final selectedValue = validRoles.contains(viewModel.selectedType)
@@ -321,6 +321,9 @@ class CreateCampaignView extends StatelessWidget
       //readOnly: viewModel.repeatMode,
       onChanged: (v) {
         viewModel.setSelectedType(v as String);
+        if (v != 'SMS') {
+          _showEmailInfoPopup(context,viewModel);
+        }
       },
       items: validRoles.map<DropdownMenuItem<Object>>((String value) {
         return DropdownMenuItem<Object>(
@@ -344,13 +347,16 @@ class CreateCampaignView extends StatelessWidget
         .map((g) => g['label'] as String)
         .toList();
 
-    final preSelectedGroupChips = viewModel.selectedGroupChips.map((idOrLabel) {
-      final match = viewModel.groupOptions.firstWhere(
-        (g) => g['id'] == idOrLabel || g['label'] == idOrLabel,
-        orElse: () => {},
-      );
-      return (match['label'] as String?) ?? idOrLabel;
-    }).where((label) => enabledGroups.contains(label)).toList();
+    final preSelectedGroupChips = viewModel.selectedGroupChips
+        .map((idOrLabel) {
+          final match = viewModel.groupOptions.firstWhere(
+            (g) => g['id'] == idOrLabel || g['label'] == idOrLabel,
+            orElse: () => {},
+          );
+          return (match['label'] as String?) ?? idOrLabel;
+        })
+        .where((label) => enabledGroups.contains(label))
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,7 +380,7 @@ class CreateCampaignView extends StatelessWidget
                 viewModel.addGroupTypeChip(emp);
               }
             }
-            
+
             if (selected.isNotEmpty) {
               try {
                 await viewModel.getStatesByGroups();
@@ -438,6 +444,18 @@ class CreateCampaignView extends StatelessWidget
         addVertical(16),
       ],
     );
+  }
+
+  void _showEmailInfoPopup(BuildContext context, CampaignViewModel viewModel) {
+    showAlertMessage(context,
+        'Email Marketing is currently supported on web version only for a better experience.',
+        onBack: () {
+      navigationService.goBack();
+      navigationService.goBack();
+    }, onCancel: () {
+      viewModel.setSelectedType("");
+      navigationService.goBack();
+    }, yes: "Ok");
   }
 
   Widget _buildNumbersAndEmails(CampaignViewModel viewModel) {
