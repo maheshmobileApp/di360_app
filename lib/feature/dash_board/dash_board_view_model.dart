@@ -18,12 +18,17 @@ import 'package:di360_flutter/feature/news_feed/view/news_feed_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/view/news_feed_community_view.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
+import 'package:di360_flutter/feature/splash/model/app_config_model.dart';
+import 'package:di360_flutter/feature/splash/repository/app_config_repo_impl.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DashBoardViewModel extends ChangeNotifier {
   int _currentIndex = 0;
@@ -168,6 +173,59 @@ class DashBoardViewModel extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  Future<void> checkForUpdate(BuildContext context) async {
+    try {
+      final appConfigRepo = AppConfigRepoImpl();
+      final platform =
+          defaultTargetPlatform == TargetPlatform.iOS ? 'iOS' : 'android';
+
+      final appConfig = await appConfigRepo.getAppConfig(platform);
+      if (appConfig == null) {
+        return;
+      }
+
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersion = packageInfo.version.trim();
+      final targetVersion = appConfig.latestVersion.trim();
+
+      if (currentVersion != targetVersion && appConfig.forceUpdate) {
+        _showUpdateDialog(appConfig, context);
+      }
+    } catch (_) {
+      // Silently ignore update check errors
+    }
+  }
+
+  void _showUpdateDialog(AppConfigModel appConfig, BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Update Needed'),
+          content: Text(appConfig.message.isNotEmpty
+              ? appConfig.message
+              : 'A new version of the app is available.'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await _openStore(appConfig.storeUrl);
+              },
+              child: const Text('Update Now'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _openStore(String storeUrl) async {
+    final uri = Uri.tryParse(storeUrl);
+    if (uri == null) return;
+
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }
 

@@ -391,7 +391,7 @@ Test@123
 
 
 Dev -> url 
-Prod -> url 
+Prod -> url q
 Stag
 Qa
 
@@ -419,8 +419,34 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
-SMS Campgine issue
-Alinment in Android
+DS5-T2321
+DS5-T2323
+DS5-T2324
+DS5-T2325
+DS5-T2326
+DS5-T2327
+DS5-T2328
+DS5-T2329
+DS5-T2330
+1 No description in view profile 
+2 if no banner why are you showing no banner in main fronted pages no banner remove it 
+4 image is compressed
+When banner is clicked it should redirect to url linked with
+For dental professional 
+Can't show email and phone as info filled in view profile passes the info to my directory and email phone is by default privacy settjng only me
+Change pop up content: Verification Email Sent
+For business and practice owner. Name should be logo not profile images
+Replace content: Great Job! 🎉
+You’ve completed your profile.
+
+Want to continue and complete your directory for better visibility?
+For a better experience, we recommend using the web version.
+
+[Yes, Let’s Go] [Maybe Later]
+FOR INDUSTRY PARTNERS AND  DENTAL PRACTICES DURING SUGN UP 2 PAGE HIGHLIGHTED. CHange content [select your service type]
+After view profile yes to directory when I want to go back take to dashboard rather than to view profile pop up pages pls
+Industry partners after log jn can't see learning hub
+User: kunnal@yopmail.com
 "
   
 
