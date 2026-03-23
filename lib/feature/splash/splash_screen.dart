@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -20,6 +22,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
+  bool _isNavigating = false;
+  Timer? _startupTimer;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,17 +35,47 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () async {
-      final userLogin =
-          await LocalStorage.getBoolValue(LocalStorageConst.isAuth);
-      final profileCompleted =
-          await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
-      userLogin == true
-          ? profileCompleted == true
-              ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
-              : viewProfileHandle(context)
-          : navigationService.pushNamedAndRemoveUntil(RouteList.preLogin);
-    });
+    _startupTimer = Timer(const Duration(seconds: 3), _bootstrap);
+  }
+
+  @override
+  void dispose() {
+    _startupTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _bootstrap() async {
+    if (!mounted) {
+      return;
+    }
+
+    await _continueNavigation();
+  }
+
+  Future<void> _continueNavigation() async {
+    if (_isNavigating) {
+      return;
+    }
+    _isNavigating = true;
+
+    final userLogin = await LocalStorage.getBoolValue(LocalStorageConst.isAuth);
+    final profileCompleted =
+        await LocalStorage.getBoolValue(LocalStorageConst.profileCompleted);
+
+    if (!mounted) {
+      return;
+    }
+
+    if (userLogin == true) {
+      if (profileCompleted == true) {
+        navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+        return;
+      }
+      await viewProfileHandle(context);
+      return;
+    }
+
+    navigationService.pushNamedAndRemoveUntil(RouteList.preLogin);
   }
 
   viewProfileHandle(BuildContext context) async {
