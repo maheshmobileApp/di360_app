@@ -68,7 +68,8 @@ class LoginViewModel extends ChangeNotifier {
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);
-          await getSuppliers(result.loginApi?.id ?? '');
+          if (result.loginApi?.type == UserRole.supplier.value)
+            await getSuppliers(result.loginApi?.id ?? '');
 
           (result.loginApi?.type == UserRole.supplier.value)
               ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
