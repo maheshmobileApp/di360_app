@@ -51,5 +51,5 @@ bool isValidBusinessPhoneNumber(String phone) {
 }
 
 bool isValidateABNNumber(String abn) {
-  return RegExp(r'^[0-9]{9,11}$').hasMatch(abn);
+  return RegExp(r'^\d{9,11}$').hasMatch(abn);
 }

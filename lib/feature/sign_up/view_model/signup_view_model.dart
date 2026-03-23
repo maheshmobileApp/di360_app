@@ -28,7 +28,7 @@ class SignupViewModel extends ChangeNotifier {
   final TextEditingController ahpraRegistrationNumber = TextEditingController();
   final TextEditingController abnNumber = TextEditingController();
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  
   bool _isPasswordVisible = false;
   bool get isPasswordVisible => _isPasswordVisible;
 
