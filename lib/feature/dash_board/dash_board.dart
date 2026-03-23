@@ -7,9 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class DashBoard extends StatelessWidget {
+class DashBoard extends StatefulWidget {
   DashBoard({super.key});
 
+  @override
+  State<DashBoard> createState() => _DashBoardState();
+}
+
+class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     final dashBoardVM = Provider.of<DashBoardViewModel>(context);
@@ -80,5 +85,12 @@ class DashBoard extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
+    dashBoardVM.checkForUpdate(context);
   }
 }
