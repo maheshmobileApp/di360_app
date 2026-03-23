@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/toast.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/certificates_view.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/custom_chip_view.dart';
@@ -416,10 +417,16 @@ class _TalentPreviewState extends State<TalentPreview> with BaseContextHelpers {
                     Provider.of<TalentsViewModel>(context, listen: false);
                 final userId =
                     await LocalStorage.getStringVal(LocalStorageConst.userId);
+                final type =
+                    await LocalStorage.getStringVal(LocalStorageConst.type);
                 final enquire = EnquiryRequest(
                     enquiryDescription: provider.enquiryData ?? '',
                     talentId: widget.talentList?.id ?? '',
-                    enquiryFrom: userId);
+                    enquirySenderId: userId,
+                    enquirySenderType: type,
+                    enquiryReceiverId:
+                        widget.talentList?.dentalProfessionalId ?? "",
+                    enquiryReceiverType: UserRole.professional.value);
                 await provider.enquire(enquire);
                 ToastMessage.show('Enquiry sent successfully!');
               },

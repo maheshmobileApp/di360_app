@@ -34,6 +34,7 @@ class _SignupScreenState extends State<SignupScreen>
       context.read<SignupViewModel>().subscriptionPlans();
     });
   }
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _SignupScreenState extends State<SignupScreen>
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(title: 'Sign Up'),
       body: Form(
-        key: viewModel.formKey,
+        key: formKey,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SingleChildScrollView(
@@ -187,7 +188,7 @@ class _SignupScreenState extends State<SignupScreen>
                     Center(
                       child: AppButton(
                         onTap: () {
-                          if (viewModel.formKey.currentState!.validate()) {
+                          if (formKey.currentState!.validate()) {
                             viewModel.selectedCategorys = null;
                             viewModel.businessType(context);
                           }

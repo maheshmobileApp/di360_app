@@ -227,14 +227,14 @@ class TalentListingCard extends StatelessWidget with BaseContextHelpers {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                role,
+                title,
                 style:
                     TextStyles.semiBold(fontSize: 16, color: AppColors.black),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
               addVertical(4),
-              Text(title,
+              Text(role,
                   style: TextStyles.regular2(color: AppColors.black),
                   overflow: TextOverflow.ellipsis),
             ],

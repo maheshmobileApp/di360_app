@@ -16,6 +16,7 @@ import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GridViewWidget extends StatelessWidget with BaseContextHelpers {
   final ScrollController? controller;
@@ -85,7 +86,8 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                             height: 170,
                                             errorWidget: Container(
                                                 height: 170,
-                                                color: AppColors.geryColor.withOpacity(0.5)),
+                                                color: AppColors.geryColor
+                                                    .withOpacity(0.5)),
                                             fit: BoxFit.contain)),
                                     Container(
                                         height: 1,
@@ -104,7 +106,9 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                                 maxLines: 2,
                                                 style: TextStyles.medium2(
                                                     color: AppColors.black))),
-                                        ShareWidget(feedId: director.id ?? '',padding: EdgeInsets.all(2))
+                                        ShareWidget(
+                                            feedId: director.id ?? '',
+                                            padding: EdgeInsets.all(2))
                                       ],
                                     ),
                                     addVertical(6)
@@ -122,13 +126,20 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                 } else if (item is Banners) {
                   return Padding(
                     padding: const EdgeInsets.all(8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImageWidget(
-                        imageUrl: item.image?.first.url ?? '',
-                        fit: BoxFit.contain,
-                        width: double.infinity,
-                        height: 170,
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (await canLaunchUrl(Uri.parse(item.url ?? ''))) {
+                          await launchUrl(Uri.parse(item.url ?? ''),
+                              mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: CachedNetworkImageWidget(
+                            imageUrl: item.image?.first.url ?? '',
+                            fit: BoxFit.contain,
+                            width: double.infinity,
+                            height: 170),
                       ),
                     ),
                   );

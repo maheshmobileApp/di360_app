@@ -152,17 +152,19 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-            backgroundColor: AppColors.black,
+            backgroundColor: AppColors.greyLight,
             radius: 26.5,
-            child: CircleAvatar(
-                radius: 26,
-                backgroundColor: AppColors.whiteColor,
-                child: (imageUrl != '' || imageUrl != null)
-                    ? ClipOval(
+            child: (imageUrl != '' || imageUrl != null)
+                ? SizedBox(
+                    height: 52,
+                    width: 52,
+                    child: ClipOval(
                         child: CachedNetworkImageWidget(
                             imageUrl: imageUrl ?? '',
-                            errorWidget: SvgPicture.asset(ImageConst.logo)))
-                    : SvgPicture.asset(ImageConst.logo)),
+                            fit: BoxFit.contain,
+                            errorWidget: SvgPicture.asset(ImageConst.logo))),
+                  )
+                : SvgPicture.asset(ImageConst.logo),
           ),
           addHorizontal(16),
           Expanded(

@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
 import 'package:di360_flutter/feature/login/query/login_querys.dart';
@@ -62,6 +63,7 @@ class LoginViewModel extends ChangeNotifier {
       }
 
       if (res.isNotEmpty && res.containsKey('login_api')) {
+        Provider.of<DashBoardViewModel>(context, listen: false).setIndex(0,context);
         if (res['login_api']['status'] == 'ACTIVE' ||
             res['login_api']['status'] == 'UNBLOCKED') {
           final result = LogInData.fromJson(res);

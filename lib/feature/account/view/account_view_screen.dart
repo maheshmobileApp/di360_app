@@ -92,6 +92,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
     return Column(children: [
       addVertical(20),
       CircleAvatar(
+          backgroundColor: AppColors.greyLight,
           radius: 50,
           child: ClipOval(
               child: SizedBox(
@@ -99,7 +100,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                   width: 100,
                   child: CachedNetworkImageWidget(
                       imageUrl: viewProfileVM.logoUrl ?? '',
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       errorWidget: type == UserRole.professional.value
                           ? viewProfileVM.gender?.toLowerCase() == "male"
                               ? Image.asset(ImageConst.man)

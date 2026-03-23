@@ -50,6 +50,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                 backgroundColor: AppColors.whiteColor,
                 radius: 63,
                 child: CircleAvatar(
+                  backgroundColor: AppColors.greyLight,
                   radius: 60,
                   child: ClipOval(
                     child: SizedBox(
@@ -57,7 +58,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                       width: 120,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorWidget: Image.asset(ImageConst.prfImg)),
                     ),
                   ),

@@ -2,13 +2,13 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
-import 'package:di360_flutter/feature/talent_listing/model/get_self_talent_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repo_impl.dart';
 import 'package:di360_flutter/feature/talent_listing/repository/talent_listing_repository.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class TalentListingViewModel extends ChangeNotifier {
@@ -184,10 +184,14 @@ class TalentListingViewModel extends ChangeNotifier {
 
   Future<void> fetchTalentListingStatusCounts() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
     try {
       final variables = {
         "where": {
-          "dental_supplier_id": {"_eq": userId}
+          (type == UserRole.supplier.value)
+              ? "dental_supplier_id"
+              : "dental_practice_id": {"_eq": userId}
         }
       };
       print("***************************variables: $variables");
@@ -224,11 +228,15 @@ class TalentListingViewModel extends ChangeNotifier {
     notifyListeners();
 
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
     print("talents calling");
 
     final List<Map<String, dynamic>> whereConditions = [
       {
-        "dental_supplier_id": {"_eq": userId}
+        (type == UserRole.supplier.value)
+            ? "dental_supplier_id"
+            : "dental_practice_id": {"_eq": userId}
       }
     ];
 

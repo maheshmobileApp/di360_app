@@ -505,10 +505,17 @@ class _TalentsDetailsViewState extends State<TalentsDetailsView>
                     Provider.of<TalentsViewModel>(context, listen: false);
                 final userId =
                     await LocalStorage.getStringVal(LocalStorageConst.userId);
+                 final type =
+                    await LocalStorage.getStringVal(LocalStorageConst.type);
+                
+
                 final enquire = EnquiryRequest(
                     enquiryDescription: provider.enquiryData ?? '',
                     talentId: widget.talentList?.id ?? '',
-                    enquiryFrom: userId);
+                    enquirySenderId: userId,
+                    enquirySenderType: type,
+                    enquiryReceiverId: widget.talentList?.dentalProfessionalId ?? "",
+                    enquiryReceiverType: UserRole.professional.value);
                 if (provider.enquiryData == null ||
                     provider.enquiryData?.isEmpty == true) {
                   ToastMessage.show(

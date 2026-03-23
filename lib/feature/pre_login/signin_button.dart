@@ -6,10 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class SigninButton extends StatelessWidget with BaseContextHelpers {
   final String text;
-  final String img;
+  final String? img;
   final Function()? onTap;
-  const SigninButton(
-      {super.key, required this.text, required this.img, this.onTap});
+  const SigninButton({super.key, required this.text, this.img, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +23,9 @@ class SigninButton extends StatelessWidget with BaseContextHelpers {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(text, style: TextStyles.medium3(color: AppColors.whiteColor)),
+            if (img != null)
             addHorizontal(13),
-            SvgPicture.asset(img)
+            SvgPicture.asset(img ?? "")
           ],
         ),
       ),

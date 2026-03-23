@@ -66,7 +66,7 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
                           child: imageFile == null
                               ? CachedNetworkImageWidget(
                                   imageUrl: serverImg ?? '',
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   width: 140,
                                   height: 140,
                                 )
@@ -74,7 +74,7 @@ class ProfileImageWidget extends StatelessWidget with BaseContextHelpers {
                                   imageFile ?? File(""),
                                   width: 140,
                                   height: 140,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 ),
                         ),
                         Positioned(

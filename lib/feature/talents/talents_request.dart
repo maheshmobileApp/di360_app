@@ -90,6 +90,7 @@ String enquiryMutation =
     __typename
   }
 } ''';
+
 String GetJobProfileFilterData = r'''
 query getTalentList($limit: Int, $offset: Int, $where: job_profiles_bool_exp, $order_by: [job_profiles_order_by!]) {
   job_profiles(where: $where, order_by: $order_by, limit: $limit, offset: $offset) {

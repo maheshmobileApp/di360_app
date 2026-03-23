@@ -99,7 +99,6 @@ class SupportViewModel extends ChangeNotifier {
           .map((e) => e.name ?? '')
           .where((name) => name.isNotEmpty)
           .toList();
-
     }
     notifyListeners();
   }
@@ -116,14 +115,15 @@ class SupportViewModel extends ChangeNotifier {
 
   List uploadedAttachment = [];
 
-  Future<void> sendMessage(String requestId) async {
+  Future<void> sendMessage(BuildContext context, String requestId) async {
+    Loaders.circularShowLoader(context);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    if (selectedAttachments != null) {
-      var value = await _http.uploadImage(selectedAttachments?.path);
+    for (var element in selectedFiles) {
+      var value = await _http.uploadImage(element.path);
       print("resp from upload $value");
       if (value != null) {
-        uploadedAttachment.add(value);
+        uploadedFiles.add(value);
       }
     }
 
@@ -134,17 +134,19 @@ class SupportViewModel extends ChangeNotifier {
         "sender_id": userId,
         "sender_type": type,
         "message": messageController.text,
-        "attachments": uploadedAttachment,
+        "attachments": uploadedFiles,
         "created_at": DateTime.now().toIso8601String()
       }
     };
     final res = await repo.insertMessage(variables);
 
     if (res != null) {
+      Loaders.circularHideLoader(context);
       getSupportMessages(requestId);
       messageController.clear();
       selectedAttachments = null;
-      uploadedAttachment = [];
+      uploadedFiles.clear();
+      selectedFiles.clear();
     }
     notifyListeners();
   }

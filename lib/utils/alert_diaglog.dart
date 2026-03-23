@@ -123,48 +123,51 @@ void showSignupSuccessDialog(
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: AppColors.whiteColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.check_circle, color: AppColors.primaryColor, size: 60),
-              const SizedBox(height: 20),
-              Text(
-                title ?? "Verification Email Sent",
-                style: TextStyles.bold5(color: AppColors.black),
-              ),
-              const SizedBox(height: 15),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style:
-                      TextStyles.medium3(color: AppColors.PRIMARY_BLACK_COLOR),
-                  children: [
-                    TextSpan(text: "A verification email has been sent to "),
-                    TextSpan(
-                      text: email,
-                      style: TextStyles.medium3(color: AppColors.primaryColor),
-                    ),
-                    TextSpan(
-                        text: subTitle ??
-                            ". Please click the link to activate your account."),
-                  ],
+      return PopScope(
+        canPop: false,
+        child: Dialog(
+          backgroundColor: AppColors.whiteColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.check_circle, color: AppColors.primaryColor, size: 60),
+                const SizedBox(height: 20),
+                Text(
+                  title ?? "Verification Email Sent",
+                  style: TextStyles.bold5(color: AppColors.black),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.topRight,
-                child: GestureDetector(
-                  onTap: onTap,
-                  child: Text('ok',
-                      style: TextStyles.medium4(color: AppColors.primaryColor)),
+                const SizedBox(height: 15),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style:
+                        TextStyles.medium3(color: AppColors.PRIMARY_BLACK_COLOR),
+                    children: [
+                      TextSpan(text: "A verification email has been sent to "),
+                      TextSpan(
+                        text: email,
+                        style: TextStyles.medium3(color: AppColors.primaryColor),
+                      ),
+                      TextSpan(
+                          text: subTitle ??
+                              ". Please click the link to activate your account."),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: onTap,
+                    child: Text('ok',
+                        style: TextStyles.medium4(color: AppColors.primaryColor)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

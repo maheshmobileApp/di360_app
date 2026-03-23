@@ -1,13 +1,14 @@
-import 'dart:io';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/support/model/chat_message_model.dart';
 import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
 import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
-import 'package:di360_flutter/feature/support/widgets/attachment_picker.dart';
+import 'package:di360_flutter/feature/support/widgets/media_attachment_widget.dart';
+import 'package:di360_flutter/feature/support/widgets/media_view_widget.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -79,8 +80,13 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                             ? widget.supportRequest?.dentalSupplier
                                     ?.businessName ??
                                 ""
-                            : widget.supportRequest?.dentalProfessional?.name ??
-                                "",
+                            : (type == UserRole.practice.value)
+                                ? widget.supportRequest?.dentalPractice
+                                        ?.businessName ??
+                                    ""
+                                : widget.supportRequest?.dentalProfessional
+                                        ?.name ??
+                                    "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -126,7 +132,8 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                   // Show selected attachment above TextField
                   if (supportVM.selectedAttachments != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -137,7 +144,9 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                         child: Row(
                           children: [
                             Icon(
-                              supportVM.selectedAttachments!.extension == 'pdf' ? Icons.picture_as_pdf : Icons.image,
+                              supportVM.selectedAttachments!.extension == 'pdf'
+                                  ? Icons.picture_as_pdf
+                                  : Icons.image,
                               color: Colors.orange,
                               size: 24,
                             ),
@@ -188,66 +197,122 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                       ),
                     ),
 
-                  // Bottom input area
                   Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 46,
+                      decoration: BoxDecoration(
+                          color: AppColors.backgroundColor,
+                          borderRadius: BorderRadius.circular(12)),
                       child: Row(
                         children: [
-                          AttachmentPicker(
-                            icon: ImageConst.attachment,
-                            onPick: (file) {
-                              supportVM.setSelectedAttachments(file);
-                            },
+                          SizedBox(
+                            width: 10,
                           ),
                           Expanded(
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextField(
-                                      controller: supportVM.messageController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Start typing...',
-                                        border: InputBorder.none,
-                                        contentPadding:
-                                            EdgeInsets.symmetric(vertical: 12),
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (supportVM.messageController.text.trim().isNotEmpty || 
-                                          supportVM.selectedAttachments != null) {
-                                        supportVM.sendMessage(
-                                            widget.supportRequest?.id ?? "");
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 6),
-                                      child: SvgPicture.asset(
-                                        ImageConst.send,
-                                        height: 20,
-                                        width: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            child: TextFormField(
+                              controller: supportVM.messageController,
+                              decoration: InputDecoration(
+                                  hintText: "Enter your request...",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyles.regular1(
+                                      color: AppColors.lightGeryColor)),
                             ),
                           ),
+                          GestureDetector(
+                            child: Icon(Icons.attachment,
+                                color: AppColors.lightGeryColor),
+                            onTap: () {
+                              supportVM.pickFiles();
+                            },
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                              child: Image.asset(ImageConst.sendIcon,
+                                  color: AppColors.black),
+                              onTap: () {
+                                if (supportVM.messageController.text
+                                        .trim()
+                                        .isNotEmpty ||
+                                    supportVM.selectedAttachments != null) {
+                                  supportVM.sendMessage(
+                                      context, widget.supportRequest?.id ?? "");
+                                }
+                              }),
+                          SizedBox(
+                            width: 10,
+                          )
                         ],
-                      )),
+                      ),
+                    ),
+                  ),
+
+                  if (supportVM.selectedFiles.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 8),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: List.generate(
+                          supportVM.selectedFiles.length,
+                          (index) => _buildFilePreview(
+                              supportVM.selectedFiles[index], index, supportVM),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           );
         });
+  }
+
+  Widget _buildFilePreview(
+      dynamic file, int index, SupportViewModel supportVM) {
+    final extension = file.extension?.toLowerCase();
+    return Stack(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          margin: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: _getFileIcon(extension),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => supportVM.removeFile(index),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.close, color: Colors.white, size: 14),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _getFileIcon(String? extension) {
+    if (['jpg', 'png', 'jpeg'].contains(extension)) {
+      return Icon(Icons.image, size: 30, color: Colors.blue);
+    } else if (extension == 'pdf') {
+      return Icon(Icons.picture_as_pdf, size: 30, color: Colors.red);
+    } else if (['mp4', 'mov', 'avi'].contains(extension)) {
+      return Icon(Icons.videocam, size: 30, color: Colors.purple);
+    } else {
+      return Icon(Icons.insert_drive_file, size: 30, color: Colors.grey);
+    }
   }
 
   Widget _buildTextBubble(SupportRequestsConversations? msg) {
@@ -305,65 +370,16 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                         style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 8),
-                      (msg?.attachments != null &&
-                              msg!.attachments!.isNotEmpty)
-                          ?
-                      Container(
-                        width: 200,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF6F0),
-                          borderRadius: radius,
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon((msg.attachments?.first.type!="image")?Icons.picture_as_pdf:Icons.image,
-                                      color: Colors.orange, size: 30),
-                                  Text(msg.attachments?.first.name ?? '',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w600)),
-                                  const SizedBox(height: 6),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                final attachment = msg.attachments?.first;
-                                if (attachment?.url != null && attachment?.name != null) {
-                                  
-                                }
+                      (msg?.attachments != null && msg!.attachments!.isNotEmpty)
+                          ? MediaAttachmentsWidget(
+                              mediaList: msg.attachments,
+                              onTap: (list) {
+                                navigationService.push(
+                                  MediaViewWidget(postImage: list),
+                                );
                               },
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 16),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Download',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600)),
-                                    SizedBox(width: 8),
-                                    Icon(Icons.file_download,
-                                        color: Colors.white, size: 18),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ): const SizedBox.shrink(),
+                            )
+                          : const SizedBox.shrink(),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -388,130 +404,4 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
     );
   }
 
-  Widget _buildFileBubble(ChatMessage msg) {
-    // File card style similar to reference image
-    final alignment =
-        msg.isMine ? MainAxisAlignment.end : MainAxisAlignment.start;
-    final radius = msg.isMine
-        ? const BorderRadius.only(
-            topLeft: Radius.circular(14),
-            topRight: Radius.circular(14),
-            bottomLeft: Radius.circular(14),
-          )
-        : const BorderRadius.only(
-            topLeft: Radius.circular(14),
-            topRight: Radius.circular(14),
-            bottomRight: Radius.circular(14),
-          );
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8.0,
-      ),
-      child: Row(
-        mainAxisAlignment: alignment,
-        children: [
-          if (!msg.isMine) const SizedBox(width: 8),
-          if (!msg.isMine)
-            CircleAvatar(radius: 14, backgroundColor: Colors.grey.shade300),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: msg.isMine
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 250,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF6F0),
-                    borderRadius: radius,
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(msg.fileName ?? '',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600)),
-                            const SizedBox(height: 6),
-                            Text(msg.fileSize ?? '',
-                                style: const TextStyle(
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.w700)),
-                            const SizedBox(height: 10),
-                            const SizedBox(height: 6),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(_formatTime(msg.timestamp),
-                                      style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey[700])),
-                                  const SizedBox(width: 6),
-                                  if (msg.isMine)
-                                    const Icon(Icons.done_all,
-                                        size: 16, color: Colors.orange),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // TODO: implement download
-                          // For preview, try opening local file path if exists
-                          final path = msg.filePath;
-                          if (path != null) {
-                            final file = File(path);
-                            if (file.existsSync()) {
-                              // In a real app you'd launch or save file
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('File exists (preview)')));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('File not found')));
-                            }
-                          }
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Download',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600)),
-                              SizedBox(width: 8),
-                              Icon(Icons.file_download,
-                                  color: Colors.white, size: 18),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

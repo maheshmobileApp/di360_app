@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/view_profile/widgets/profile_image_widget.
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -56,6 +57,8 @@ class BasicInfo extends StatelessWidget
                 isRequired: true,
                 maxLength: 11,
                 title: "ABN / ACN Number",
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.number,
                 validator: validateABNNumber),
             addVertical(10),
             InputTextField(
