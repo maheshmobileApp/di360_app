@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class EventDayDataWidget extends StatelessWidget {
   final List<CourseEventInfo> descriptions;
@@ -63,7 +64,7 @@ class EventDayDataWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(desc.info ?? ""),
+                  HtmlWidget(desc.info ?? ""),
                 ],
               ),
             ),

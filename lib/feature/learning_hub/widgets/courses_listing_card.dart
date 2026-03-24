@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -196,11 +197,8 @@ class CouresListingCard extends StatelessWidget {
   Widget _descriptionWidget(String description) {
     return SizedBox(
       width: double.infinity,
-      child: Text(
+      child: HtmlWidget(
         description,
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
       ),
     );
   }
