@@ -74,6 +74,7 @@ void main() async {
     
     await NotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
+    await NotificationService.captureInitialMessage();
   } catch (e) {
 
   }

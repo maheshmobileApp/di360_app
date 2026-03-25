@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/notificatoin_type_enum.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_file/open_file.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -90,6 +91,7 @@ class NotificationService {
   static void _handleNavigation(String type, String id) {
     final navigator = navigatorKey.currentState;
     final context = navigatorKey.currentContext;
+    print('[FCM-NAV] _handleNavigation type=$type id=$id navigator=$navigator context=$context');
     if (navigator == null || context == null) return;
 
     final notificationType = NotificationType.values.firstWhere(
@@ -150,6 +152,35 @@ class NotificationService {
         break;
     }
   }
+
+  // Stores the terminated-state message until the app is ready to navigate
+  static RemoteMessage? _pendingInitialMessage;
+
+  static Future<void> captureInitialMessage() async {
+    _pendingInitialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    print('[FCM-KILLED] captureInitialMessage: $_pendingInitialMessage');
+    if (_pendingInitialMessage != null) {
+      print('[FCM-KILLED] data: ${_pendingInitialMessage!.data}');
+      print('[FCM-KILLED] title: ${_pendingInitialMessage!.notification?.title}');
+    }
+  }
+
+  /// Call this from dashboard (after login/splash) to handle terminated-state tap
+  static void handlePendingInitialMessage(BuildContext context) {
+    final message = _pendingInitialMessage;
+    print('[FCM-KILLED] handlePendingInitialMessage called, message: $message');
+    if (message == null) return;
+    _pendingInitialMessage = null;
+    final type = message.data['type'] as String? ?? message.notification?.title;
+    final id = message.data['id'] as String? ?? '';
+    print('[FCM-KILLED] type=$type id=$id');
+    if (type != null) {
+      _handleNavigation(type, id);
+    } else if (message.data['filePath'] != null) {
+      OpenFile.open(message.data['filePath']);
+    }
+  }
+
 
   static Future<void> initFirebaseMessaging() async {
     final messaging = FirebaseMessaging.instance;
