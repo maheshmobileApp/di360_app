@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_
 import 'package:di360_flutter/widgets/address_auto_fill_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ContactInfo extends StatelessWidget
@@ -38,7 +39,7 @@ class ContactInfo extends StatelessWidget
               controller: viewProfileVM.faxNumberController,
               hintText: "Fax Number",
               title: "Fax Number"),
-        /*  addVertical(10),
+          /*  addVertical(10),
           InputTextField(
               controller: viewProfileVM.alternateEmailController,
               hintText: "Alternate Email",
@@ -83,7 +84,11 @@ class ContactInfo extends StatelessWidget
           InputTextField(
               controller: viewProfileVM.stateController,
               hintText: "State",
-              title: "State"),
+              title: "State",
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]'))
+              ],
+              keyboardType: TextInputType.text),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.countryController,
