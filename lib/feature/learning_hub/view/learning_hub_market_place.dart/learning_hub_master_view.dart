@@ -120,29 +120,29 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     "")
                                 : "",
                             onTap: () async {
-                              if (seats > 0) {
-                                await courseListingVM.getCourseDetails(
-                                  context,
-                                  course.id ?? "",
-                                );
+                              //if (seats > 0) {
+                              await courseListingVM.getCourseDetails(
+                                context,
+                                course.id ?? "",
+                              );
 
-                                await courseListingVM.getCourseRegisteredUsers(
-                                    context, course.id ?? "");
+                              await courseListingVM.getCourseRegisteredUsers(
+                                  context, course.id ?? "");
 
-                                await courseListingVM.registerCourseHandler(
-                                    context, course.createdById ?? "");
-                                navigationService.navigateTo(
-                                  RouteList.courseDetailScreen,
-                                );
-                              } else {
+                              await courseListingVM.registerCourseHandler(
+                                  context, course.createdById ?? "");
+                              navigationService.navigateTo(
+                                RouteList.courseDetailScreen,
+                              );
+                              /*} else {
                                 scaffoldMessenger('Seats are sold out!');
-                              }
+                              }*/
                             },
                             registerTap: isRegistered
                                 ? () {
                                     scaffoldMessenger("Already Registered!");
                                   }
-                                : () async {
+                                : () {
                                     if (seats > 0) {
                                       courseListingVM
                                           .setCourseId(course.id ?? "");
@@ -152,6 +152,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                           course.createdById ?? "",
                                           course.id ?? "");
                                     } else {
+            
                                       scaffoldMessenger('Seats are sold out!');
                                     }
                                   },

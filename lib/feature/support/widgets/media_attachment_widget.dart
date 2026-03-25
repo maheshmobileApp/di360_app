@@ -1,15 +1,17 @@
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
-import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
+import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class MediaAttachmentsWidget extends StatelessWidget {
   final List<Attachments>? mediaList;
   final Function(List<Attachments>)? onTap;
+  final double width;
 
   const MediaAttachmentsWidget({
     super.key,
     required this.mediaList,
+    this.width = double.infinity,
     this.onTap,
   });
 
@@ -20,7 +22,7 @@ class MediaAttachmentsWidget extends StatelessWidget {
     if (list.isEmpty) return const SizedBox();
 
     return Container(
-      width: 200,
+      width: width,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: list.length == 1
           ? _buildSingleMedia(context, list)
@@ -80,7 +82,7 @@ class MediaAttachmentsWidget extends StatelessWidget {
 
   /// ---------------- MEDIA HANDLER ----------------
   Widget _buildMediaWidget(Attachments media, {bool isFullSize = false}) {
-    final type = media.type ?? '';
+    final type = media.fileType ?? '';
     final url = media.url ?? '';
     final name = media.name ?? '';
 
