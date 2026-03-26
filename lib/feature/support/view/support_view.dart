@@ -161,13 +161,15 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                                 userName: type == UserRole.supplier.value
                                     ? ticket.dentalSupplier?.businessName ?? ""
                                     : type == UserRole.practice.value
-                                        ? ticket.dentalPractice?.businessName ?? ""
+                                        ? ticket.dentalPractice?.businessName ??
+                                            ""
                                         : ticket.dentalProfessional?.name ?? "",
                                 ticketNo:
                                     ticket.supportRequestNumber.toString(),
                                 dateTime: ticket.createdAt ?? "",
                                 reason: ticket.reason ?? "",
                                 onTap: () async {
+                                  supportVM.setShowMore(false);
                                   await supportVM
                                       .getSupportMessages(ticket.id ?? "");
                                   navigationService.push(SupportMessengerView(
@@ -225,8 +227,9 @@ class _SupportViewState extends State<SupportView> with ValidationMixins {
                                 AppButton(
                                   height: 50,
                                   onTap: () async {
-                                    if (_formKey.currentState!.validate())  {
-                                      await supportVM.sendSupportRequest(context);
+                                    if (_formKey.currentState!.validate()) {
+                                      await supportVM
+                                          .sendSupportRequest(context);
                                       supportVM.getSupportRequestsReasons();
                                     }
                                   },

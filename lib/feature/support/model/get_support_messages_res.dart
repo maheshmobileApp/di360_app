@@ -1,10 +1,14 @@
+import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
+
 class GetSupportMessageRes {
   SupportMessagesData? data;
 
   GetSupportMessageRes({this.data});
 
   GetSupportMessageRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new SupportMessagesData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new SupportMessagesData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -93,7 +97,7 @@ class SupportRequestsConversations {
   }
 }
 
-class Attachments {
+/*class Attachments {
   String? url;
   String? name;
   String? type;
@@ -115,5 +119,4 @@ class Attachments {
     data['type'] = this.type;
     data['extension'] = this.extension;
     return data;
-  }
-}
+  }*/
