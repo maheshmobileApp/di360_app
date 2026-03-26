@@ -28,7 +28,6 @@ class SignupViewModel extends ChangeNotifier {
   final TextEditingController ahpraRegistrationNumber = TextEditingController();
   final TextEditingController abnNumber = TextEditingController();
 
-  
   bool _isPasswordVisible = false;
   bool get isPasswordVisible => _isPasswordVisible;
 
@@ -77,8 +76,9 @@ class SignupViewModel extends ChangeNotifier {
   String? selectedSubscriptionPlanId;
   Map<String, String>? selectedType;
 
-  void setSelectedType(Map<String, String>? type) {
+  void setSelectedType(Map<String, String>? type) async {
     selectedType = type;
+    if (subscriptionPlanList?.isEmpty ?? false) await subscriptionPlans();
     final planList =
         subscriptionPlanList?.where((v) => v.type == type?['type']).toList() ??
             [];
@@ -162,13 +162,9 @@ class SignupViewModel extends ChangeNotifier {
           "status": selectedType?['type'] == UserRole.supplier.value
               ? "VERIFICATION_PENDING"
               : "VERIFICATION_PENDING",
-          "subscription_plan_id": selectedSubscriptionPlanId ??
-              selectedType?['subscription_plan_id'],
+          "subscription_plan_id": selectedSubscriptionPlanId,
           "professionType": selectedCategory?.name,
-          "payload": {
-            "subscriptionId": selectedSubscriptionPlanId ??
-                selectedType?['subscription_plan_id']
-          },
+          "payload": {"subscriptionId": selectedSubscriptionPlanId},
           "tracking_details": "Mobile"
         }
       });
