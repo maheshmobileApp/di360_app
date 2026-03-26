@@ -17,6 +17,33 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   @override
+  void initState() {
+    super.initState();
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
+    dashBoardVM.checkForUpdate(context);
+    if (dashBoardVM.isInitialized) {
+      _handlePendingNotification();
+    } else {
+      dashBoardVM.addListener(_onDashBoardInitialized);
+    }
+  }
+
+  void _onDashBoardInitialized() {
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
+    if (dashBoardVM.isInitialized) {
+      dashBoardVM.removeListener(_onDashBoardInitialized);
+      _handlePendingNotification();
+    }
+  }
+
+  void _handlePendingNotification() {
+    // Use Future.delayed to ensure the full widget tree + navigator is settled
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) NotificationService.handlePendingInitialMessage(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final dashBoardVM = Provider.of<DashBoardViewModel>(context);
 
@@ -88,13 +115,4 @@ class _DashBoardState extends State<DashBoard> {
         ));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
-    dashBoardVM.checkForUpdate(context);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      NotificationService.handlePendingInitialMessage(context);
-    });
-  }
 }

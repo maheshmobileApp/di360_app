@@ -175,7 +175,6 @@ class LoginViewModel extends ChangeNotifier {
         await repo.updateDeviceToken(variables);
       }
     } catch (e) {}
-
     if (hasListeners) {
       notifyListeners();
     }

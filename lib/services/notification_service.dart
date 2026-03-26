@@ -15,17 +15,17 @@ import 'package:provider/provider.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await NotificationService.showNotification(
+  /*await NotificationService.showNotification(
     title: message.notification?.title ?? '',
     body: message.notification?.body ?? '',
     payload: _buildPayload(message.data, message.notification?.title ?? ''),
-  );
+  );*/
 }
 
 String? _buildPayload(Map<String, dynamic> data, String types) {
-  final type = types as String?;
+  final type = data['type'] as String? ?? types;
   final id = data['id'] as String?;
-  if (type != null) return '$type|${id ?? ''}';
+  if (type.isNotEmpty) return '$type|${id ?? ''}';
   return data['filePath'] as String?;
 }
 
@@ -88,10 +88,11 @@ class NotificationService {
   }
 
   /// Called from FCM background tap (no BuildContext available)
-  static void _handleNavigation(String type, String id) {
+  static void _handleNavigation(String type, String id, {BuildContext? ctx}) {
     final navigator = navigatorKey.currentState;
-    final context = navigatorKey.currentContext;
-    print('[FCM-NAV] _handleNavigation type=$type id=$id navigator=$navigator context=$context');
+    final context = ctx ?? navigatorKey.currentContext;
+    print(
+        '[FCM-NAV] _handleNavigation type=$type id=$id navigator=$navigator context=$context');
     if (navigator == null || context == null) return;
 
     final notificationType = NotificationType.values.firstWhere(
@@ -155,32 +156,37 @@ class NotificationService {
 
   // Stores the terminated-state message until the app is ready to navigate
   static RemoteMessage? _pendingInitialMessage;
+  static bool _pendingHandled = false;
 
   static Future<void> captureInitialMessage() async {
-    _pendingInitialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    _pendingInitialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    _pendingHandled = false;
     print('[FCM-KILLED] captureInitialMessage: $_pendingInitialMessage');
     if (_pendingInitialMessage != null) {
       print('[FCM-KILLED] data: ${_pendingInitialMessage!.data}');
-      print('[FCM-KILLED] title: ${_pendingInitialMessage!.notification?.title}');
+      print(
+          '[FCM-KILLED] title: ${_pendingInitialMessage!.notification?.title}');
     }
   }
 
   /// Call this from dashboard (after login/splash) to handle terminated-state tap
   static void handlePendingInitialMessage(BuildContext context) {
+    if (_pendingHandled) return;
     final message = _pendingInitialMessage;
     print('[FCM-KILLED] handlePendingInitialMessage called, message: $message');
     if (message == null) return;
+    _pendingHandled = true;
     _pendingInitialMessage = null;
     final type = message.data['type'] as String? ?? message.notification?.title;
     final id = message.data['id'] as String? ?? '';
     print('[FCM-KILLED] type=$type id=$id');
     if (type != null) {
-      _handleNavigation(type, id);
+      _handleNavigation(type, id, ctx: context);
     } else if (message.data['filePath'] != null) {
       OpenFile.open(message.data['filePath']);
     }
   }
-
 
   static Future<void> initFirebaseMessaging() async {
     final messaging = FirebaseMessaging.instance;
@@ -212,13 +218,16 @@ class NotificationService {
       );
     });
 
-    // App opened from background
+    // App opened from background (recent apps / background state)
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      final type = message.notification?.title;
+      final type =
+          message.data['type'] as String? ?? message.notification?.title;
       final id = message.data['id'] as String? ?? '';
       if (type != null) {
-        print('typresssss $type');
-        _handleNavigation(type, id);
+        // Delay to ensure navigator is ready after app resumes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _handleNavigation(type, id);
+        });
       } else if (message.data['filePath'] != null) {
         OpenFile.open(message.data['filePath']);
       }
