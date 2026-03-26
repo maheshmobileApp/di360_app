@@ -376,8 +376,9 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
               _detailRow('Message', req?.message ?? '-'),
               _detailRow('Created',
                   DateFormatUtils.formatDateTime(req?.createdAt ?? '-')),
-              Text('Attachments: ',
-                  style: TextStyles.bold2(color: AppColors.primaryColor)),
+              if (req?.attachments?.isNotEmpty == true)
+                Text('Attachments: ',
+                    style: TextStyles.bold2(color: AppColors.primaryColor)),
               MediaAttachmentsWidget(
                 mediaList: req?.attachments,
               )
