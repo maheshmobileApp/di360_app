@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/services/notification_service.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +16,33 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  @override
+  void initState() {
+    super.initState();
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
+    dashBoardVM.checkForUpdate(context);
+    if (dashBoardVM.isInitialized) {
+      _handlePendingNotification();
+    } else {
+      dashBoardVM.addListener(_onDashBoardInitialized);
+    }
+  }
+
+  void _onDashBoardInitialized() {
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
+    if (dashBoardVM.isInitialized) {
+      dashBoardVM.removeListener(_onDashBoardInitialized);
+      _handlePendingNotification();
+    }
+  }
+
+  void _handlePendingNotification() {
+    // Use Future.delayed to ensure the full widget tree + navigator is settled
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) NotificationService.handlePendingInitialMessage(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final dashBoardVM = Provider.of<DashBoardViewModel>(context);
@@ -87,10 +115,4 @@ class _DashBoardState extends State<DashBoard> {
         ));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
-    dashBoardVM.checkForUpdate(context);
-  }
 }

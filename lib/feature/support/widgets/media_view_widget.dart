@@ -4,6 +4,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
+import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -117,7 +118,7 @@ class _ImageViewerScreenState extends State<MediaViewWidget>
   bool isScrollablePage(Attachments? media) {
     if (media == null) return true;
     final name = media.name?.toLowerCase() ?? '';
-    final type = media.type ?? media.type ?? '';
+    final type = media.fileType ?? media.fileType ?? '';
 
     if (name.endsWith('.pdf') || type == 'application/pdf') {
       return false;
@@ -135,7 +136,7 @@ class _ImageViewerScreenState extends State<MediaViewWidget>
       return Center(child: Icon(Icons.broken_image, color: Colors.white));
     }
 
-    final type = media.type ?? media.type ?? '';
+    final type = media.fileType ?? media.fileType ?? '';
     final url = media.url ?? '';
     final name = media.name ?? '';
 

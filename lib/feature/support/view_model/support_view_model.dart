@@ -20,6 +20,12 @@ class SupportViewModel extends ChangeNotifier {
   String? selectedReasonId;
   List<String> requestReasons = [];
   GetSupportRequestReasonData? supportRequestReasonsList;
+  bool showViewMore = false;
+
+  void setShowMore(bool value) {
+    showViewMore = value;
+    notifyListeners();
+  }
 
   void setSelectedTab(String tab) {
     selectedTab = tab;
@@ -174,9 +180,12 @@ class SupportViewModel extends ChangeNotifier {
         if (type == 'PROFESSIONAL') "dental_professional_id": userId,
       }
     };
+    
     final res = await repo.sendSupportRequest(variables);
 
     if (res != null) {
+      selectedFiles = [];
+
       await getSupportRequests(context);
 
       Loaders.circularHideLoader(context);

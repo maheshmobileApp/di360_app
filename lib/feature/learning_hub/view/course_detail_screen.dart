@@ -69,6 +69,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     final isRegistered =
         courseListingVM.isRegisteredCheck(courseDetails?.courseRegisteredUsers);
+    final seats = courseDetails?.numberOfSeats ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
@@ -90,6 +91,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             scaffoldMessenger("Already Registered");
                           }
                         : () {
+                          if (seats > 0) {
                             courseListingVM
                                 .setCourseId(courseDetails?.id ?? "");
                             RegistrationUserForm.show(
@@ -97,6 +99,11 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                 courseDetails?.courseName ?? "",
                                 courseDetails?.createdById ?? "",
                                 courseDetails?.id ?? "");
+
+                          } else {
+                            scaffoldMessenger('Seats are sold out!');
+                          }
+                            
                           },
                   ),
                 ),
@@ -175,7 +182,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     children: [
                       CourseInfoCardWidget(
                         address: courseDetails?.address?.isNotEmpty == true
-                            ? courseDetails?.address?.first.country ?? ""
+                            ? courseDetails?.address?.first.city ?? ""
                             : "",
                         startTime: courseDetails?.startTime ?? "",
                         endTime: courseDetails?.endTime ?? "",

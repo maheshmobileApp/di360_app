@@ -4,7 +4,8 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/support/model/get_support_messages_res.dart';
-import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart';
+import 'package:di360_flutter/feature/support/model/get_support_requests_res.dart'
+    hide Attachments;
 import 'package:di360_flutter/feature/support/view_model/support_view_model.dart';
 import 'package:di360_flutter/feature/support/widgets/media_attachment_widget.dart';
 import 'package:di360_flutter/feature/support/widgets/media_view_widget.dart';
@@ -14,7 +15,6 @@ import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SupportMessengerView extends StatefulWidget {
@@ -27,8 +27,6 @@ class SupportMessengerView extends StatefulWidget {
 
 class _TicketChatScreenState extends State<SupportMessengerView> {
   final ScrollController _scrollController = ScrollController();
-
-  String _formatTime(DateTime dt) => DateFormat('hh:mm a').format(dt);
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +44,28 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context),
               ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      supportVM.setShowMore(!supportVM.showViewMore);
+                    },
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            supportVM.showViewMore ? "View Less" : "View More",
+                            style:
+                                TextStyles.medium1(color: AppColors.whiteColor),
+                          ),
+                        )),
+                  ),
+                )
+              ],
               titleSpacing: 0, // removes default gap
               title: Row(
                 children: [
@@ -107,162 +127,170 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
               ),
             ),
             body: SafeArea(
-              child: Column(
+              child: Stack(
                 children: [
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      itemCount: supportVM.supportMessagesData
-                          ?.supportRequestsConversations?.length,
-                      itemBuilder: (context, index) {
-                        final msg = supportVM.supportMessagesData
-                            ?.supportRequestsConversations?[index];
-                        return _buildTextBubble(msg);
-                        /*if (msg.type == ChatMessageType.text) {
+                  Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          itemCount: supportVM.supportMessagesData
+                              ?.supportRequestsConversations?.length,
+                          itemBuilder: (context, index) {
+                            final msg = supportVM.supportMessagesData
+                                ?.supportRequestsConversations?[index];
+                            return _buildTextBubble(msg);
+                            /*if (msg.type == ChatMessageType.text) {
                           return _buildTextBubble(msg);
                         } else {
                           return _buildFileBubble(msg);
                         }*/
-                      },
-                    ),
-                  ),
-
-                  // Show selected attachment above TextField
-                  if (supportVM.selectedAttachments != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
+                          },
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              supportVM.selectedAttachments!.extension == 'pdf'
-                                  ? Icons.picture_as_pdf
-                                  : Icons.image,
-                              color: Colors.orange,
-                              size: 24,
+                      ),
+
+                      // Show selected attachment above TextField
+                      if (supportVM.selectedAttachments != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade300),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    supportVM.selectedAttachments!.name,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    '${(supportVM.selectedAttachments!.size / 1024).toStringAsFixed(1)} KB',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                supportVM.selectedAttachments = null;
-                                supportVM.notifyListeners();
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.red.shade100,
-                                  borderRadius: BorderRadius.circular(4),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  supportVM.selectedAttachments!.extension ==
+                                          'pdf'
+                                      ? Icons.picture_as_pdf
+                                      : Icons.image,
+                                  color: Colors.orange,
+                                  size: 24,
                                 ),
-                                child: Icon(
-                                  Icons.close,
-                                  color: Colors.red.shade700,
-                                  size: 16,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        supportVM.selectedAttachments!.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        '${(supportVM.selectedAttachments!.size / 1024).toStringAsFixed(1)} KB',
+                                        style: TextStyle(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    supportVM.setSelectedAttachments(null);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.shade100,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.red.shade700,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 46,
+                          decoration: BoxDecoration(
+                              color: AppColors.backgroundColor,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: supportVM.messageController,
+                                  decoration: InputDecoration(
+                                      hintText: "Enter your request...",
+                                      border: InputBorder.none,
+                                      hintStyle: TextStyles.regular1(
+                                          color: AppColors.lightGeryColor)),
                                 ),
                               ),
-                            ),
-                          ],
+                              GestureDetector(
+                                child: Icon(Icons.attachment,
+                                    color: AppColors.lightGeryColor),
+                                onTap: () {
+                                  supportVM.pickFiles();
+                                },
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              GestureDetector(
+                                  child: Image.asset(ImageConst.sendIcon,
+                                      color: AppColors.black),
+                                  onTap: () {
+                                    if (supportVM.messageController.text
+                                            .trim()
+                                            .isNotEmpty ||
+                                        supportVM.selectedAttachments != null) {
+                                      supportVM.sendMessage(context,
+                                          widget.supportRequest?.id ?? "");
+                                    }
+                                  }),
+                              SizedBox(
+                                width: 10,
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 46,
-                      decoration: BoxDecoration(
-                          color: AppColors.backgroundColor,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              controller: supportVM.messageController,
-                              decoration: InputDecoration(
-                                  hintText: "Enter your request...",
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyles.regular1(
-                                      color: AppColors.lightGeryColor)),
+                      if (supportVM.selectedFiles.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 18, vertical: 8),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: List.generate(
+                              supportVM.selectedFiles.length,
+                              (index) => _buildFilePreview(
+                                  supportVM.selectedFiles[index],
+                                  index,
+                                  supportVM),
                             ),
                           ),
-                          GestureDetector(
-                            child: Icon(Icons.attachment,
-                                color: AppColors.lightGeryColor),
-                            onTap: () {
-                              supportVM.pickFiles();
-                            },
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                              child: Image.asset(ImageConst.sendIcon,
-                                  color: AppColors.black),
-                              onTap: () {
-                                if (supportVM.messageController.text
-                                        .trim()
-                                        .isNotEmpty ||
-                                    supportVM.selectedAttachments != null) {
-                                  supportVM.sendMessage(
-                                      context, widget.supportRequest?.id ?? "");
-                                }
-                              }),
-                          SizedBox(
-                            width: 10,
-                          )
-                        ],
-                      ),
-                    ),
+                        ),
+                    ],
                   ),
-
-                  if (supportVM.selectedFiles.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 8),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: List.generate(
-                          supportVM.selectedFiles.length,
-                          (index) => _buildFilePreview(
-                              supportVM.selectedFiles[index], index, supportVM),
-                        ),
-                      ),
-                    ),
+                  if (supportVM.showViewMore) _viewMoreOverlay(supportVM),
                 ],
               ),
             ),
@@ -313,6 +341,68 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
     } else {
       return Icon(Icons.insert_drive_file, size: 30, color: Colors.grey);
     }
+  }
+
+  Widget _viewMoreOverlay(SupportViewModel supportVM) {
+    final req = widget.supportRequest;
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Material(
+        elevation: 4,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Support Request Details',
+                      style: TextStyles.bold2(color: AppColors.primaryColor)),
+                  GestureDetector(
+                    onTap: () {
+                      supportVM.setShowMore(false);
+                    },
+                    child: const Icon(Icons.close, size: 18),
+                  ),
+                ],
+              ),
+              const Divider(),
+              _detailRow('Reason', req?.reason ?? '-'),
+              _detailRow('Message', req?.message ?? '-'),
+              _detailRow('Created',
+                  DateFormatUtils.formatDateTime(req?.createdAt ?? '-')),
+              if (req?.attachments?.isNotEmpty == true)
+                Text('Attachments: ',
+                    style: TextStyles.bold2(color: AppColors.primaryColor)),
+              MediaAttachmentsWidget(
+                mediaList: req?.attachments,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _detailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('$label: ',
+              style: TextStyles.bold2(color: AppColors.primaryColor)),
+          Expanded(
+              child: Text(value,
+                  style: TextStyles.medium2(color: AppColors.black))),
+        ],
+      ),
+    );
   }
 
   Widget _buildTextBubble(SupportRequestsConversations? msg) {
@@ -372,6 +462,7 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
                       const SizedBox(height: 8),
                       (msg?.attachments != null && msg!.attachments!.isNotEmpty)
                           ? MediaAttachmentsWidget(
+                              width: 200,
                               mediaList: msg.attachments,
                               onTap: (list) {
                                 navigationService.push(
@@ -403,5 +494,4 @@ class _TicketChatScreenState extends State<SupportMessengerView> {
       ),
     );
   }
-
 }

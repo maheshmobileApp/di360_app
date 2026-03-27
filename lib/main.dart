@@ -46,6 +46,7 @@ import 'package:di360_flutter/firebase_options.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   
   try {
     await Firebase.initializeApp(
@@ -72,6 +74,7 @@ void main() async {
     
     await NotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
+    await NotificationService.captureInitialMessage();
   } catch (e) {
 
   }
@@ -106,90 +109,82 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<ConnectivityResult>>(
-      stream: Connectivity().onConnectivityChanged,
-      builder: (context, snapshot) {
-        final hasConnection = snapshot.data != null &&
-            snapshot.data!.isNotEmpty &&
-            snapshot.data!.first != ConnectivityResult.none;
-
-        if (snapshot.hasData && !hasConnection) {
-          return const MaterialApp(
-            home: NoInternetView(),
-            debugShowCheckedModeBanner: false,
-          );
-        }
-
-        return MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => HomeViewModel()),
-            ChangeNotifierProvider(create: (_) => NewsFeedViewModel()),
-            ChangeNotifierProvider(create: (_) => CommentViewModel()),
-            ChangeNotifierProvider(create: (_) => AddNewsFeedViewModel()),
-            ChangeNotifierProvider(create: (_) => SignupViewModel()),
-            ChangeNotifierProvider(create: (_) => NotificationViewModel()),
-            ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
-            ChangeNotifierProvider(create: (_) => TalentsViewModel()),
-            ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
-            ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
-            ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
-            ChangeNotifierProvider(create: (_) => DirectoryViewModel()),
-            ChangeNotifierProvider(create: (_) => TalentListingViewModel()),
-            ChangeNotifierProvider(create: (_) => AddDirectoryViewModel()),
-            ChangeNotifierProvider(create: (_) => AppliedJobViewModel()),
-            ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
-            ChangeNotifierProvider(
-                create: (_) => EditDeleteDirectorViewModel()),
-            ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
-            ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
-            ChangeNotifierProvider(create: (_) => ProfessionalAddDirectorVm()),
-            ChangeNotifierProvider(create: (_) => MyLearningHubViewModel()),
-            ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
-            ChangeNotifierProvider(create: (_) => BannersViewModel()),
-            ChangeNotifierProvider(create: (_) => LearningHubMasterViewModel()),
-            ChangeNotifierProvider(create: (_) => FilterViewModel()),
-            ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
-            ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
-            ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
-            ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
-            ChangeNotifierProvider(create: (_) => SupportViewModel()),
-            ChangeNotifierProvider(create: (_) => CommunityViewModel()),
-            ChangeNotifierProvider(
-                create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
-            ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel()),
-            ChangeNotifierProvider(create: (_) => DashBoardViewModel()),
-            ChangeNotifierProvider(create: (_) => TalentEnquiryViewModel()),
-            ChangeNotifierProvider(
-                create: (_) => NewsFeedCommunityCommentViewModel()),
-            ChangeNotifierProvider(create: (_) => CampaignViewModel()),
-            ChangeNotifierProvider(create: (_) => TeamMembersViewModel()),
-            ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
-          ],
-          child: MaterialApp(
-            builder: (context, child) {
-              child = EasyLoading.init()(context, child);
-              SystemChrome.setSystemUIOverlayStyle(
-                const SystemUiOverlayStyle(
-                  statusBarColor: AppColors.primaryColor,
-                ),
-              );
-              return SafeArea(
-                child: child,
-              );
-            },
-            navigatorKey: navigatorKey,
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              fontFamily: 'dmSans',
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => NewsFeedViewModel()),
+        ChangeNotifierProvider(create: (_) => CommentViewModel()),
+        ChangeNotifierProvider(create: (_) => AddNewsFeedViewModel()),
+        ChangeNotifierProvider(create: (_) => SignupViewModel()),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
+        ChangeNotifierProvider(create: (_) => JobSeekViewModel()),
+        ChangeNotifierProvider(create: (_) => TalentsViewModel()),
+        ChangeNotifierProvider(create: (_) => CatalogueViewModel()),
+        ChangeNotifierProvider(create: (_) => AddCatalogueViewModel()),
+        ChangeNotifierProvider(create: (_) => JobListingsViewModel()),
+        ChangeNotifierProvider(create: (_) => DirectoryViewModel()),
+        ChangeNotifierProvider(create: (_) => TalentListingViewModel()),
+        ChangeNotifierProvider(create: (_) => AddDirectoryViewModel()),
+        ChangeNotifierProvider(create: (_) => AppliedJobViewModel()),
+        ChangeNotifierProvider(create: (_) => JobProfileListingViewModel()),
+        ChangeNotifierProvider(create: (_) => EditDeleteDirectorViewModel()),
+        ChangeNotifierProvider(create: (_) => NewCourseViewModel()),
+        ChangeNotifierProvider(create: (_) => CourseListingViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfessionalAddDirectorVm()),
+        ChangeNotifierProvider(create: (_) => MyLearningHubViewModel()),
+        ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
+        ChangeNotifierProvider(create: (_) => BannersViewModel()),
+        ChangeNotifierProvider(create: (_) => LearningHubMasterViewModel()),
+        ChangeNotifierProvider(create: (_) => FilterViewModel()),
+        ChangeNotifierProvider(create: (_) => JobCreateViewModel()),
+        ChangeNotifierProvider(create: (_) => ViewProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
+        ChangeNotifierProvider(create: (_) => EnquiriesViewModel()),
+        ChangeNotifierProvider(create: (_) => SupportViewModel()),
+        ChangeNotifierProvider(create: (_) => CommunityViewModel()),
+        ChangeNotifierProvider(
+            create: (_) => ProfileViewModel(ProfileRepositoryImpl())),
+        ChangeNotifierProvider(create: (_) => NewsFeedCommunityViewModel()),
+        ChangeNotifierProvider(create: (_) => DashBoardViewModel()),
+        ChangeNotifierProvider(create: (_) => TalentEnquiryViewModel()),
+        ChangeNotifierProvider(
+            create: (_) => NewsFeedCommunityCommentViewModel()),
+        ChangeNotifierProvider(create: (_) => CampaignViewModel()),
+        ChangeNotifierProvider(create: (_) => TeamMembersViewModel()),
+        ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
+      ],
+      child: MaterialApp(
+        builder: (context, child) {
+          child = EasyLoading.init()(context, child);
+          SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(
+              statusBarColor: AppColors.primaryColor,
             ),
-            navigatorObservers: [navigationService],
-            initialRoute: RouteList.initial,
-            routes: Routes.routes,
-          ),
-        );
-      },
+          );
+          return StreamBuilder<List<ConnectivityResult>>(
+            stream: Connectivity().onConnectivityChanged,
+            builder: (context, snapshot) {
+              final hasConnection = snapshot.data != null &&
+                  snapshot.data!.isNotEmpty &&
+                  snapshot.data!.first != ConnectivityResult.none;
+              if (snapshot.hasData && !hasConnection) {
+                return const SafeArea(child: NoInternetView());
+              }
+              return SafeArea(child: child!);
+            },
+          );
+        },
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'dmSans',
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        navigatorObservers: [navigationService],
+        initialRoute: RouteList.initial,
+        routes: Routes.routes,
+      ),
     );
   }
 }

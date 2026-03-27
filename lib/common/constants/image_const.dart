@@ -82,6 +82,7 @@ class ImageConst {
   static const String locationsvg = '${_svgBasePath}locationsvg.svg';
   static const String copySvg = '${_svgBasePath}copy.svg';
   static const String contactLocation = '${_svgBasePath}contactLocation.svg';
+  static const String contactPerson = '${_svgBasePath}profile.svg';
   static const String contactMail = '${_svgBasePath}contactMail.svg';
   static const String contactPhone = '${_svgBasePath}contactPhone.svg';
   static const String clock = '${_svgBasePath}Clock.svg';
