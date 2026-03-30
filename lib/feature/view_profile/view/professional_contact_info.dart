@@ -4,9 +4,11 @@ import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_
 import 'package:di360_flutter/widgets/address_auto_fill_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers,ValidationMixins {
+class ProfessionalContactInfo extends StatelessWidget
+    with BaseContextHelpers, ValidationMixins {
   const ProfessionalContactInfo({super.key});
 
   @override
@@ -47,7 +49,11 @@ class ProfessionalContactInfo extends StatelessWidget with BaseContextHelpers,Va
           InputTextField(
               controller: viewProfileVM.stateController,
               hintText: "State",
-              title: "State"),
+              title: "State",
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]'))
+              ],
+              keyboardType: TextInputType.text),
           addVertical(10),
           InputTextField(
               controller: viewProfileVM.countryController,
