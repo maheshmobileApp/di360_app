@@ -65,12 +65,12 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  removeNewsFeedLike(BuildContext context, String feedId) async {
+  removeNewsFeedLike(BuildContext context, String feedId, String likeId) async {
     updateTheNewsFeedLikeCount(context, feedId, false);
     removeTheLikeObject(context, feedId);
     try {
       var res =
-          await _http.mutation(removeNewsFeedLikeMutation, {"id": feedId});
+          await _http.mutation(removeNewsFeedLikeMutation, {"id": likeId});
       if (res.isNotEmpty) {
         // updateTheNewsFeedLikeCount(context, feedId, false);
         // removeTheLikeObject(context, feedId);
@@ -83,6 +83,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   addNewsFeedLike(BuildContext context, String newsFeedId) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     updateTheNewsFeedLikeCount(context, newsFeedId, true);
+    updateTheLikeObject(context, newsFeedId, '34');
     try {
       var res = await _http.mutation(addNewsFeedLikeMutation, {
         "fields": {
@@ -107,7 +108,8 @@ class NewsFeedViewModel extends ChangeNotifier {
   Future updateTheNewsFeedLikeCount(
       BuildContext context, String feedId, bool isIncrement) async {
     final newsFeedList = context.read<HomeViewModel>().allNewsFeedsData;
-    final post = newsFeedList?.newsfeeds?.firstWhere((v) => v.id == feedId);
+    final post = newsFeedList?.newsfeeds
+        ?.firstWhere((v) => v.id == feedId, orElse: () => Newsfeeds());
     post?.newsfeedsLikesAggregate?.aggregate?.count = isIncrement
         ? post.newsfeedsLikesAggregate!.aggregate!.count! + 1
         : post.newsfeedsLikesAggregate!.aggregate!.count! - 1;
@@ -115,7 +117,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> updateTheLikeObject(
-      BuildContext context, String feedId, likeId) async {
+      BuildContext context, String feedId,String likeId) async {
     final newsFeedList =
         context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
     final feed = newsFeedList?.firstWhere((v) => v.id == feedId);
@@ -126,8 +128,8 @@ class NewsFeedViewModel extends ChangeNotifier {
   Future<void> removeTheLikeObject(BuildContext context, String feedId) async {
     final newsFeedList =
         context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
-    final feed = newsFeedList?.firstWhere((v) => v.id == feedId);
-    feed?.myLike?.removeAt(0);
+    final feed = newsFeedList?.firstWhere((v) => v.id == feedId, orElse: () => Newsfeeds());
+    feed?.myLike?.clear();
     notifyListeners();
   }
 

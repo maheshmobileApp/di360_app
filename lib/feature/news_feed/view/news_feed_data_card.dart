@@ -364,7 +364,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         GestureDetector(
           onTap: () {
             isLiked
-                ? viewModel.removeNewsFeedLike(context, newsfeeds?.myLike?.first.id ?? '')
+                ? viewModel.removeNewsFeedLike(context, newsfeeds?.id ?? '',
+                    newsfeeds?.myLike?.first.id ?? '')
                 : viewModel.addNewsFeedLike(context, newsfeeds?.id ?? '');
           },
           child: Container(
@@ -412,6 +413,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    return newsfeed?.myLike?.any((e) => e.id != null && e.id!.isNotEmpty) ?? false;
+    return newsfeed?.myLike?.any((e) => e.id != null && e.id!.isNotEmpty) ??
+        false;
   }
 }
