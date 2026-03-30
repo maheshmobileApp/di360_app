@@ -154,13 +154,13 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           CircleAvatar(
             backgroundColor: AppColors.greyLight,
             radius: 26.5,
-            child: (imageUrl != '' || imageUrl != null)
+            child: (imageUrl != null && imageUrl.isNotEmpty)
                 ? SizedBox(
                     height: 52,
                     width: 52,
                     child: ClipOval(
                         child: CachedNetworkImageWidget(
-                            imageUrl: imageUrl ?? '',
+                            imageUrl: imageUrl,
                             fit: BoxFit.contain,
                             errorWidget: SvgPicture.asset(ImageConst.logo))),
                   )
@@ -364,7 +364,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         GestureDetector(
           onTap: () {
             isLiked
-                ? viewModel.removeNewsFeedLike(context, newsfeeds?.id ?? '')
+                ? viewModel.removeNewsFeedLike(context, newsfeeds?.myLike?.first.id ?? '')
                 : viewModel.addNewsFeedLike(context, newsfeeds?.id ?? '');
           },
           child: Container(
@@ -412,11 +412,6 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    return newsfeed?.newsfeedsLikes?.any((e) =>
-            e.adminUser?.id == userId ||
-            e.dentalPractice?.id == userId ||
-            e.dentalProfessional?.id == userId ||
-            e.dentalSupplier?.id == userId) ??
-        false;
+    return newsfeed?.myLike?.any((e) => e.id != null && e.id!.isNotEmpty) ?? false;
   }
 }

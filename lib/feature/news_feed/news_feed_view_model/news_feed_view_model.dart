@@ -2,8 +2,8 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_catalogues/querys/catalogue_filter_options_query.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
-import 'package:di360_flutter/feature/home/model_class/news_feed_like_res.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
@@ -17,6 +17,7 @@ import 'package:di360_flutter/feature/news_feed/querys/report_query.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -65,15 +66,11 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   removeNewsFeedLike(BuildContext context, String feedId) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     updateTheNewsFeedLikeCount(context, feedId, false);
     removeTheLikeObject(context, feedId);
     try {
-      var res = await _http.mutation(removeNewsFeedLikeMutation, {
-        "userId": userId,
-        "feedId": feedId,
-      });
-
+      var res =
+          await _http.mutation(removeNewsFeedLikeMutation, {"id": feedId});
       if (res.isNotEmpty) {
         // updateTheNewsFeedLikeCount(context, feedId, false);
         // removeTheLikeObject(context, feedId);
@@ -84,22 +81,23 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   addNewsFeedLike(BuildContext context, String newsFeedId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     updateTheNewsFeedLikeCount(context, newsFeedId, true);
-    updateTheLikeObject(context, newsFeedId);
     try {
       var res = await _http.mutation(addNewsFeedLikeMutation, {
-        "addLikes": {
+        "fields": {
+          "news_feeds_id": newsFeedId,
+          "created_by_id": userID ?? null,
+          "role_type": type,
+          "dental_supplier_id": supplierId ?? null,
           "dental_practice_id": practiceId ?? null,
           "dental_professional_id": professionId ?? null,
           "dental_admin_id": adminId ?? null,
-          "dental_supplier_id": supplierId ?? null,
-          "news_feeds_id": newsFeedId
         }
       });
-
-      if (res.isNotEmpty) {
-        // updateTheNewsFeedLikeCount(context, newsFeedId, true);
-        // updateTheLikeObject(context, newsFeedId);
+      if (res['insert_newsfeeds_likes_one'] != null) {
+        updateTheLikeObject(
+            context, newsFeedId, res['insert_newsfeeds_likes_one']['id']);
       }
     } catch (e) {}
 
@@ -116,98 +114,31 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateTheLikeObject(BuildContext context, String feedId) async {
+  Future<void> updateTheLikeObject(
+      BuildContext context, String feedId, likeId) async {
     final newsFeedList =
         context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
     final feed = newsFeedList?.firstWhere((v) => v.id == feedId);
-    final newLike = await insertNewsFeedLikeObj();
-    feed?.newsfeedsLikes?.insert(0, newLike);
+    feed?.myLike?.insert(0, MyLike(id: likeId));
     notifyListeners();
-  }
-
-  Future<NewsfeedsLikes> insertNewsFeedLikeObj() async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-
-    if (type == 'PROFESSIONAL') {
-      return NewsfeedsLikes(
-        dentalAdminId: null,
-        adminUser: null,
-        dentalPractice: null,
-        dentalSupplier: null,
-        dentalProfessional: NewsFeedLikeProfessional(
-            id: userId, profileImage: null, type: type),
-      );
-    } else if (type == 'ADMIN') {
-      return NewsfeedsLikes(
-        adminUser: NewsLikeAdminUser(id: userId),
-        dentalAdminId: null,
-        dentalPractice: null,
-        dentalProfessional: null,
-        dentalSupplier: null,
-      );
-    } else if (type == 'SUPPLIER') {
-      return NewsfeedsLikes(
-        dentalAdminId: null,
-        adminUser: null,
-        dentalPractice: null,
-        dentalSupplier:
-            NewsFeedLikeSupplier(id: userId, logo: null, type: type),
-        dentalProfessional: null,
-      );
-    } else if (type == 'PRACTICE') {
-      return NewsfeedsLikes(
-        dentalAdminId: null,
-        adminUser: null,
-        dentalPractice:
-            NewsFeedLikePractice(id: userId, logo: null, type: type),
-        dentalSupplier: null,
-        dentalProfessional: null,
-      );
-    }
-
-    // Default fallback
-    throw Exception("Invalid user type");
   }
 
   Future<void> removeTheLikeObject(BuildContext context, String feedId) async {
     final newsFeedList =
         context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
     final feed = newsFeedList?.firstWhere((v) => v.id == feedId);
-    feed?.newsfeedsLikes?.removeWhere((v) =>
-        v.dentalProfessional?.id == userID ||
-        v.dentalSupplier?.id == userID ||
-        v.dentalAdminId == userID ||
-        v.dentalPractice?.id == userID);
+    feed?.myLike?.removeAt(0);
     notifyListeners();
   }
 
   Future<void> getFilterCategories() async {
-    const String query = '''
-    query getAllNewsfeedCategories {
-      newsfeed_categories(order_by: {created_at: desc}) {
-        id
-        category_name
-        created_at
-        updated_at
-        created_by
-        created_by_user_id
-        __typename
-      }
-    }
-  ''';
-
     try {
-      final response = await _http.query(query);
+      final response = await _http.query(getFilterCategoriesQuery);
       if (response != null) {
         final res = CategoriesData.fromJson(response);
         newsfeedCategories = res.newsfeedCategories;
         newsfeedCategories?.insert(
-            0,
-            NewsfeedCategories(
-              id: '',
-              categoryName: 'Catalog',
-            ));
+            0, NewsfeedCategories(id: '', categoryName: 'Catalog'));
       }
     } catch (e) {}
     notifyListeners();
@@ -242,13 +173,13 @@ class NewsFeedViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     userID = userId;
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == 'PROFESSIONAL') {
+    if (type == UserRole.professional.value) {
       professionId = userId;
-    } else if (type == 'ADMIN') {
+    } else if (type == UserRole.admin.value) {
       adminId = userId;
-    } else if (type == 'SUPPLIER') {
+    } else if (type == UserRole.supplier.value) {
       supplierId = userId;
-    } else if (type == 'PRACTICE') {
+    } else if (type == UserRole.practice.value) {
       practiceId = userId;
     }
     notifyListeners();
