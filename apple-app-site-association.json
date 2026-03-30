@@ -1,0 +1,21 @@
+ {
+  "applinks": {
+    "details": [
+      {
+        "appID": "2837GMTT8C.com.dentalinterface360.app",
+        "paths": [
+          "/newfeed/*",
+          "/catalogue/*",
+          "/learninghub/*",
+          "/profile/*",
+          "/directory/*",
+          "/jobs/*",
+          "/talents/*",
+          "/banners/*",
+          "/campaign/*",
+          "/join-community/*"
+        ]
+      }
+    ]
+  }
+}

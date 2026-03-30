@@ -440,3 +440,15 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   
 
 
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.dentalinterface360.app",
+      "sha256_cert_fingerprints": [
+        "BE:5B:47:14:F4:80:F5:59:52:4C:D2:CA:D0:96:06:76:BB:99:23:0C:5A:8D:FB:7E:B9:C9:16:7B:86:27:33:AB"
+      ]
+    }
+  }
+]

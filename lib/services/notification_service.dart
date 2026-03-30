@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
@@ -36,9 +38,16 @@ class NotificationService {
   static Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
     );
     await _notificationsPlugin.initialize(
       initializationSettings,
@@ -67,6 +76,11 @@ class NotificationService {
 
     NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
     );
 
     await _notificationsPlugin.show(
@@ -202,6 +216,13 @@ class NotificationService {
       return;
     }
 
+    // iOS does not show foreground banners unless this is explicitly enabled.
+    await messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
     // Token
     final token = await messaging.getToken();
     print('FCM Token: $token');
@@ -211,11 +232,16 @@ class NotificationService {
 
     // Foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      showNotification(
-        title: message.notification?.title ?? '',
-        body: message.notification?.body ?? '',
-        payload: _buildPayload(message.data, message.notification?.title ?? ''),
-      );
+      // On iOS, FCM can render the foreground banner itself once presentation
+      // options are enabled. Keep local rendering for Android.
+      if (Platform.isAndroid) {
+        showNotification(
+          title: message.notification?.title ?? '',
+          body: message.notification?.body ?? '',
+          payload:
+              _buildPayload(message.data, message.notification?.title ?? ''),
+        );
+      }
     });
 
     // App opened from background (recent apps / background state)
