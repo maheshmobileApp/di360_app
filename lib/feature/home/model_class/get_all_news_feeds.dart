@@ -261,6 +261,8 @@ class Newsfeeds {
 class MyLike {
   String? id;
 
+  MyLike({this.id});
+
   MyLike.fromJson(Map<String, dynamic> json) {
     id = json['id'];
   }

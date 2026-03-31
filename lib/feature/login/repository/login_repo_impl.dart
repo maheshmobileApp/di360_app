@@ -4,6 +4,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
 import 'package:di360_flutter/feature/login/query/get_directory_query.dart';
+import 'package:di360_flutter/feature/login/query/get_my_community_data_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_community_owner_query.dart';
 import 'package:di360_flutter/feature/login/query/get_supplier_query.dart';
 import 'package:di360_flutter/feature/login/query/login_querys.dart';
@@ -41,14 +42,24 @@ class LoginRepoImpl extends LoginRepository {
   @override
   Future<dynamic> getDirectory() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res =
-        await http.query(getDirectorQuery, variables: {"id": userId});
+    final res = await http.query(getDirectorQuery, variables: {"id": userId});
     return res;
   }
-  
+
   @override
-  Future<dynamic> login(dynamic _variables) async{
-   final res = await http.mutation(loginSchema, _variables);
+  Future<dynamic> login(dynamic _variables) async {
+    final res = await http.mutation(loginSchema, _variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> getMyCommunityData(String userId) async {
+    final res = await http.query(getMyCommunityDataQuery, variables: {
+      "where": {
+        "member_id": {"_eq": userId},
+        "status": {"_eq": "APPROVED"}
+      }
+    });
     return res;
   }
 }

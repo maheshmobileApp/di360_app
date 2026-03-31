@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_community_owner_res.dart';
 import 'package:di360_flutter/feature/login/model_class/get_supplier_model.dart';
+import 'package:di360_flutter/feature/login/model_class/my_community_data_response.dart';
 import 'package:di360_flutter/feature/login/query/login_querys.dart';
 import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
@@ -39,6 +40,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   List<Modules>? modulePermissions = [];
+  List<CommunityMembers> communityMembers = [];
 
   submit(BuildContext context) async {
     _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
@@ -100,6 +102,7 @@ class LoginViewModel extends ChangeNotifier {
                   result.loginApi?.profileImage?.url ??
                   '');
           await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
+          await getMyCommunityData(result.loginApi?.id ?? '');
           _modulePermissions(
               result.loginApi?.subscriptionPermissions?.modules ?? []);
           _http.setToken(result.loginApi?.accessToken ?? '');
@@ -246,6 +249,19 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityName, supplier?.businessName ?? '');
       await LocalStorage.setStringVal(
           LocalStorageConst.businessName, supplier?.businessName ?? "");
+    }
+    notifyListeners();
+  }
+
+  Future<void> getMyCommunityData(String userId) async {
+    final res = await repo.getMyCommunityData(userId);
+    if (res['community_members'] != null) {
+      final data = CommunityData.fromJson(res);
+      communityMembers = data.communityMembers ?? [];
+      List<String> communityIds =
+          communityMembers.map((e) => e.communityId ?? '').toList();
+      await LocalStorage.setStringList(
+          LocalStorageConst.myCommunityIds, communityIds);
     }
     notifyListeners();
   }

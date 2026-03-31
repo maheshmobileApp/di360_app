@@ -164,7 +164,10 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                             text: 'Save as Draft',
                             height: 42,
                             onTap: () {
-                              bannersVM.addBannersData(context, true);
+                              if (formKey.currentState!.validate() &&
+                                  validateURlAndData(bannersVM)) {
+                                bannersVM.addBannersData(context, true);
+                              }
                             },
                           ),
                         ),
@@ -182,7 +185,6 @@ class _AddBannersScreenState extends State<AddBannersScreen>
                                     bannersVM.addBannersData(context, false);
                                   }
                                 }
-                               
                               }),
                         )
                       ],

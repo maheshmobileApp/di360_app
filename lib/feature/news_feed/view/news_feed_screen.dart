@@ -67,12 +67,12 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                           [],
                     ).then((value) {
                       newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
-                      if ((value as dynamic)?.categoryName == 'Catalog') {
+                    /*  if ((value as dynamic)?.categoryName == 'Catalog') {
                         newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
                       } else {
                         newsFeedVM.basedOnCategoriesGetFeeds(
                             context, false, value?.id ?? '');
-                      }
+                      }*/
                     });
                   },
                   child: SvgPicture.asset(ImageConst.filter,
