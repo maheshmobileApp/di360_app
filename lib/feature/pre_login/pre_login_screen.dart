@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/login/login_screen.dart';
 import 'package:di360_flutter/feature/pre_login/signin_button.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';

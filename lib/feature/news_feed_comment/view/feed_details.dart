@@ -196,7 +196,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
         GestureDetector(
           onTap: () {
             isLiked
-                ? viewModel.removeNewsFeedLike(context, newsfeeds?.id ?? '')
+                ? viewModel.removeNewsFeedLike(context, newsfeeds?.id ?? '',
+                    newsfeeds?.myLike?.first.id ?? '')
                 : viewModel.addNewsFeedLike(context, newsfeeds?.id ?? '');
           },
           child: Container(
@@ -251,7 +252,6 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
         false;
   }
 
-  
   Widget _buildCatalogueRow(
       CatalogueViewModel catalogueVM, BuildContext context) {
     return Row(

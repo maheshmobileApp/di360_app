@@ -54,10 +54,7 @@ class NewsMenuWidget extends StatelessWidget {
         }
       },
       itemBuilder: (context) => [
-        if (newsfeeds?.dentalAdminId == needFeedViewModel.userID ||
-            newsfeeds?.dentalPracticeId == needFeedViewModel.userID ||
-            newsfeeds?.dentalProfessionalId == needFeedViewModel.userID ||
-            newsfeeds?.dentalSupplierId == needFeedViewModel.userID) ...[
+        if (newsfeeds?.userId == needFeedViewModel.userID) ...[
           PopupMenuItem(
               value: "edit",
               child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),
@@ -65,7 +62,7 @@ class NewsMenuWidget extends StatelessWidget {
               value: "delete",
               child: buildRow(Icons.delete, AppColors.redColor, "Delete"))
         ],
-        if (newsfeeds?.dentalAdminId != needFeedViewModel.userID ||
+        if (newsfeeds?.userId != needFeedViewModel.userID ||
             newsfeeds?.dentalPracticeId != needFeedViewModel.userID ||
             newsfeeds?.dentalProfessionalId != needFeedViewModel.userID ||
             newsfeeds?.dentalSupplierId != needFeedViewModel.userID) ...[

@@ -8,4 +8,5 @@ abstract class LoginRepository {
   Future<dynamic> updateDeviceToken(dynamic variables);
   Future<dynamic> getDirectory();
   Future<dynamic> login(dynamic _variables);
+  Future<dynamic> getMyCommunityData(String userId);
 }

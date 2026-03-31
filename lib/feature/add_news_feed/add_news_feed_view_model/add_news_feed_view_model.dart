@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -101,10 +102,11 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "user_role": type,
           "user_id": userId,
           "status": "PENDING",
-          "dental_practice_id": type == 'PRACTICE' ? userId : null,
-          "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
-          "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
-          "dental_admin_id": type == 'ADMIN' ? userId : null
+          "dental_practice_id": type == UserRole.practice.value ? userId : null,
+          "dental_supplier_id": type == UserRole.supplier.value ? userId : null,
+          "dental_professional_id":
+              type == UserRole.professional.value ? userId : null,
+          "dental_admin_id": type == UserRole.admin.value ? userId : null
         }
       });
 
