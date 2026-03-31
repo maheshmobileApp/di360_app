@@ -63,7 +63,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         JobTimeChip(time: time),
                         addHorizontal(4),
-                        _EnquiriesMenu(),
+                        _EnquiriesMenu(vm, enquiry?.jobId ?? ''),
                       ],
                     ),
                   ],
@@ -272,18 +272,19 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _EnquiriesMenu() {
+  Widget _EnquiriesMenu(EnquiriesViewModel vm, String jobEnquiryId) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == "Preview") {
           if (enquiry?.jobs != null) {
+            await vm.getJobEnquiryDetails(jobEnquiryId);
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
-              params: enquiry?.jobs,
+              params: vm.jobEnquiryDetails?.isNotEmpty == true ? vm.jobEnquiryDetails?.first : null,
             );
           }
         }

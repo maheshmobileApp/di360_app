@@ -177,7 +177,7 @@ class Routes {
       RouteList.JobListingApplicantscreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
         return JobListingApplicantsScreen(
-          jobsListingData: args as Jobs,
+          jobsListingData: args is Jobs ? args : null,
         );
       },
       RouteList.MyJobProfileScreen: (context) {
