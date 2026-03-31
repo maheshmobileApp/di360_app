@@ -78,17 +78,22 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: CachedNetworkImageWidget(
-                                            imageUrl: director.logo?.url ??
-                                                director.profileImage?.url ??
-                                                '',
-                                            height: 170,
-                                            errorWidget: Container(
-                                                height: 170,
-                                                color: AppColors.geryColor
-                                                    .withOpacity(0.5)),
-                                            fit: BoxFit.contain)),
+                                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                      child: CachedNetworkImageWidget(
+                                        imageUrl: director.logo?.url ?? director.profileImage?.url ?? '',
+                                        height: 150,
+                                        width: double.infinity,
+                                        fit: BoxFit.contain,
+                                        errorWidget: Container(
+                                          height: 150,
+                                          width: double.infinity,
+                                          color: AppColors.greyLight,
+                                          child: Center(
+                                            child: Image.asset(ImageConst.man, height: 80, width: 80, fit: BoxFit.contain),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                     Container(
                                         height: 1,
                                         color: AppColors.dividerColor),

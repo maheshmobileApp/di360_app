@@ -200,7 +200,9 @@ class ListingHubMasterCard extends StatelessWidget {
                               ],
                             ),
                       const SizedBox(height: 4),
-                      Row(
+                      (date.isEmpty)
+                          ? SizedBox.shrink()
+                          : Row(
                         children: [
                           Icon(Icons.calendar_month_outlined,
                               color: AppColors.primaryColor, size: 20),

@@ -102,7 +102,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             presenterName: course.presenters?.isNotEmpty == true
                                 ? course.presenters?.first.presentedByName ?? ""
                                 : "",
-                            profilePic: course.presentedByImage?.url ?? '',
+                            profilePic: course.presenters?.isNotEmpty == true
+                                ? course.presenters?.first.presentedByImage?.url ?? ""
+                                : "",
                             imageUrl: (course.courseBannerImage!.isNotEmpty)
                                 ? course.courseBannerImage?.first.url ?? ''
                                 : '',
