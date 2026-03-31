@@ -5,7 +5,9 @@ import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res
 import 'package:di360_flutter/feature/enquiries/query/enquiries_list_query.dart';
 import 'package:di360_flutter/feature/enquiries/query/get_applicant_enquiry_query.dart';
 import 'package:di360_flutter/feature/enquiries/query/get_enquiry_messages_query.dart';
+import 'package:di360_flutter/feature/enquiries/query/get_job_enquiry_details.dart';
 import 'package:di360_flutter/feature/enquiries/repository/enquiries_repository.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 
 class EnquiriesRepoImpl extends EnquiriesRepository {
   final http = HttpService();
@@ -44,6 +46,13 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
     final res =
         await http.query(getEnquiriesMessagesQuery, variables: variables);
     final data = EnquiriesMessagesData.fromJson(res);
+    return data;
+  }
+
+  @override
+  Future<List<Jobs>> getJobEnquiryDetails(variables) async {
+    final res = await http.query(getJobDetailsQuery, variables: variables);
+    final data = List<Jobs>.from((res['jobs'] as List).map((e) => Jobs.fromJson(e)));
     return data;
   }
 }

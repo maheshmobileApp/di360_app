@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart
 import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
 import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
 import 'package:di360_flutter/feature/enquiries/repository/enquiries_repo_impl.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class EnquiriesViewModel extends ChangeNotifier {
   final EnquiriesRepoImpl repo = EnquiriesRepoImpl();
   EnquiriesListResData? enquiriesListData;
   ApplicantEnquiryData? applicantEnquiriesListData;
+  List<Jobs>? jobEnquiryDetails;
 
   Future<EnquiriesListResData?> getMyEnquiryJobData(
       BuildContext context) async {
@@ -19,7 +21,7 @@ class EnquiriesViewModel extends ChangeNotifier {
     final res = await repo.getMyEnquiryJobData(userId);
     enquiriesListData = res;
     Loaders.circularHideLoader(context);
-      notifyListeners();
+    notifyListeners();
     return res;
   }
 
@@ -61,14 +63,14 @@ class EnquiriesViewModel extends ChangeNotifier {
 
   Future<void> fetchEnquiriesMessages(String jobId) async {
     final variables = {
-        "job_enquiry_id": {"_eq": jobId}
-      };
+      "job_enquiry_id": {"_eq": jobId}
+    };
     try {
       isLoading = true;
 
       final res = await repo.fetchEnquiriesMessages(variables);
       if (res.jobApplicantMessages != null) {
-        messages = res.jobApplicantMessages??[];
+        messages = res.jobApplicantMessages ?? [];
       }
     } catch (e) {
       errorMessage = e.toString();
@@ -77,6 +79,19 @@ class EnquiriesViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> getJobEnquiryDetails(String jobEnquiryId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {"id": jobEnquiryId, "loginID": userId};
+
+    final res = await repo.getJobEnquiryDetails(variables);
+    if (res != null) {
+      jobEnquiryDetails = res;
+    }
+    notifyListeners();
+  }
+
+
 /*
   Future<void> updateApplicantMessage(
       BuildContext context, String applicantId) async {
