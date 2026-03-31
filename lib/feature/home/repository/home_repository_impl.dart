@@ -9,10 +9,12 @@ class HomeRepositoryImpl extends HomeRepository {
   final HttpService _http = HttpService();
 
   @override
-  Future<dynamic> getAllNewsFeed(int offset,int limit) async {
+  Future<dynamic> getAllNewsFeed(int offset, int limit) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final myCommunityIds =
+        await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
 
     final variables = {
       "where": {
@@ -26,10 +28,11 @@ class HomeRepositoryImpl extends HomeRepository {
               {
                 "user_id": {"_eq": userId}
               },
-              if (communityId.isNotEmpty)
+              if (communityId.isNotEmpty || myCommunityIds.isNotEmpty)
                 {
                   "community_id": {
-                    "_in": [communityId]
+                    "_in":
+                        communityId.isNotEmpty ? [communityId] : myCommunityIds
                   }
                 }
             ]

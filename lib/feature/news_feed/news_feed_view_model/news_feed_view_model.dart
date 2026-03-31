@@ -2,16 +2,14 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/add_catalogues/querys/catalogue_filter_options_query.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/get_news_feed_categories.dart';
 import 'package:di360_flutter/feature/news_feed/querys/edit_feed_query.dart';
+import 'package:di360_flutter/feature/news_feed/querys/get_all_news_feed_categories_query.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_job_details_by_id.dart';
-import 'package:di360_flutter/feature/news_feed/querys/get_news_feed_by_catalog.dart';
-import 'package:di360_flutter/feature/news_feed/querys/get_news_feed_catagories.dart';
 import 'package:di360_flutter/feature/news_feed/querys/news_feed_like_querys.dart';
 import 'package:di360_flutter/feature/news_feed/querys/report_query.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -135,18 +133,22 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> getFilterCategories() async {
     try {
-      final response = await _http.query(getFilterCategoriesQuery);
-      if (response != null) {
+      final response = await _http.query(getAllNewsfeedCategoriesQuery);
+      if (response['newsfeed_categories'] != null) {
         final res = CategoriesData.fromJson(response);
         newsfeedCategories = res.newsfeedCategories;
         newsfeedCategories?.insert(
-            0, NewsfeedCategories(id: '', categoryName: 'Catalog'));
+            0, NewsfeedCategories(id: '', categoryName: 'Catalogue'));
+        newsfeedCategories?.insert(
+            1, NewsfeedCategories(id: '', categoryName: 'Jobs'));
+        newsfeedCategories?.insert(
+            2, NewsfeedCategories(id: '', categoryName: 'Learning Hub'));
       }
     } catch (e) {}
     notifyListeners();
   }
 
-  Future<void> basedOnCategoriesGetFeeds(
+/*  Future<void> basedOnCategoriesGetFeeds(
       BuildContext context, bool isCatalog, String id) async {
     Loaders.circularShowLoader(context);
     try {
@@ -169,7 +171,7 @@ class NewsFeedViewModel extends ChangeNotifier {
       print("Error fetching categories: $e");
     }
     notifyListeners();
-  }
+  }*/
 
   getUserId() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
