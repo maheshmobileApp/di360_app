@@ -9,7 +9,8 @@ class HomeRepositoryImpl extends HomeRepository {
   final HttpService _http = HttpService();
 
   @override
-  Future<dynamic> getAllNewsFeed(int offset, int limit) async {
+  Future<dynamic> getAllNewsFeed(int offset, int limit,
+      {String? feedType, String? categoryType}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
@@ -37,6 +38,14 @@ class HomeRepositoryImpl extends HomeRepository {
                 }
             ]
           },
+          if (feedType != null)
+            {
+              "feed_type": {"_eq": feedType}
+            },
+          if (categoryType != null)
+            {
+              "category_type": {"_eq": categoryType}
+            },
           {
             "_not": {
               "newsfeed_user_actions": {
