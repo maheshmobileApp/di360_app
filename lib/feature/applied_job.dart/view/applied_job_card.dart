@@ -5,12 +5,14 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
+import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
   final AppliedJob appliedJob;
@@ -27,6 +29,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     final Jobs? job = appliedJob.job;
     final String time = _getShortTime(job?.updatedAt ?? '') ?? '';
     final applicant = appliedJob;
+    final vm = Provider.of<EnquiriesViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
@@ -59,7 +62,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         _statusChip(appliedJob.status ?? ''),
                         addHorizontal(4),
-                        _appliedJobMenu(),
+                        _appliedJobMenu(context,vm, appliedJob.jobId ?? ''),
                       ],
                     ),
                   ],
@@ -277,19 +280,28 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _appliedJobMenu() {
+  Widget _appliedJobMenu(
+      BuildContext context, EnquiriesViewModel vm, String jobEnquiryId) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == "Preview") {
-          if (appliedJob.job != null)
+          if (appliedJob.job != null) {
+            await vm.getJobEnquiryDetails(context, jobEnquiryId);
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
-              params: appliedJob.job,
+              params: vm.jobEnquiryDetails?.isNotEmpty == true
+                  ? vm.jobEnquiryDetails?.first
+                  : null,
             );
+          }
+          /*navigationService.navigateToWithParams(
+              RouteList.jobdetailsScreen,
+              params: appliedJob.job,
+            );*/
         }
       },
       itemBuilder: (context) => [

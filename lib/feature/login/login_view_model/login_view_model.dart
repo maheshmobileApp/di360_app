@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/login/query/login_querys.dart';
 import 'package:di360_flutter/feature/login/repository/login_repo_impl.dart';
 import 'package:di360_flutter/feature/login/model_class/login_res.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/services/deep_link_service.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -108,7 +109,7 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(result.loginApi?.accessToken ?? '');
           await updateDevieToken();
           result.loginApi?.profileCompleted == true
-              ? homeNavigation()
+              ? homeNavigation(context)
               : viewProfileHandle(context);
         } else {
           Loaders.circularHideLoader(context);
@@ -125,11 +126,12 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  homeNavigation() async {
+  homeNavigation(BuildContext context) async {
     navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     await LocalStorage.setBoolValue(LocalStorageConst.directoryComplete, true);
+    Future.microtask(() => DeepLinkService.consumePendingLink(context));
   }
 
   viewProfileHandle(BuildContext context) async {
