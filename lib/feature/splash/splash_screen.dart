@@ -7,6 +7,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/services/deep_link_service.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -69,9 +70,11 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
     if (userLogin == true) {
       if (profileCompleted == true) {
         navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+        Future.microtask(() => DeepLinkService.consumePendingLink(context));
         return;
       }
       await viewProfileHandle(context);
+      Future.microtask(() => DeepLinkService.consumePendingLink(context));
       return;
     }
 

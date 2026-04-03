@@ -43,6 +43,8 @@ import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart
 import 'package:di360_flutter/feature/team_members/view_model/team_members_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/firebase_options.dart';
+import 'package:di360_flutter/feature/splash/splash_screen.dart';
+import 'package:di360_flutter/services/deep_link_service.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -84,6 +86,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   runApp(const MyApp());
+  DeepLinkService.init();
   configLoading();
 }
 
@@ -184,6 +187,9 @@ class MyApp extends StatelessWidget {
         navigatorObservers: [navigationService],
         initialRoute: RouteList.initial,
         routes: Routes.routes,
+        onUnknownRoute: (settings) => MaterialPageRoute(
+          builder: (_) => SplashScreen(),
+        ),
       ),
     );
   }

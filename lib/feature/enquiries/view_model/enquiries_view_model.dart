@@ -80,17 +80,24 @@ class EnquiriesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getJobEnquiryDetails(String jobEnquiryId) async {
+  Future<void> getJobEnquiryDetails(
+      BuildContext context, String jobEnquiryId) async {
+    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"id": jobEnquiryId, "loginID": userId};
+/*{
+    "id": "d5359067-f2b2-4dfb-9f0e-6653a6a232c0",
+    "loginID": "0b62fae9-cd87-4a6b-923d-31d507e037c2"
+}*/
+    print("variables $variables");
 
     final res = await repo.getJobEnquiryDetails(variables);
     if (res != null) {
       jobEnquiryDetails = res;
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
-
 
 /*
   Future<void> updateApplicantMessage(
