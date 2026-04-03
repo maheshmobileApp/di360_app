@@ -280,6 +280,11 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       addDirectorVM.getDirectories();
       goToNextStep();
       scaffoldMessenger('Add BasicInfo successfully');
+      await updateViewProfile(
+          addDirectorVM.selectedBusineestype?.name ?? '',
+          profile == null
+              ? addDirectorVM.getBasicInfoData.first.profileImage
+              : profile);
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -333,10 +338,28 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       addDirectorVM.getDirectories();
       goToNextStep();
       scaffoldMessenger('Updated Basic Information successfully');
+      await updateViewProfile(
+          addDirectorVM.selectedBusineestype?.name ?? '',
+          profile == null
+              ? addDirectorVM.getBasicInfoData.first.profileImage
+              : profile);
     } else {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
+  }
+
+  Future<void> updateViewProfile(String profesType, dynamic prfImg) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    await repository.updateProfesViewProfile({
+      "id": userId,
+      "changes": {
+        "name": nameController.text,
+        "address": addressController.text,
+        "profession_type": profesType,
+        "profile_image": prfImg
+      }
+    });
   }
 
   assignTheProfessBasic(BuildContext context) async {
@@ -423,7 +446,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> clearProfessionalDirectorData() async{
+  Future<void> clearProfessionalDirectorData() async {
     mobileNumberCntr.clear();
     designationCntr.clear();
     nameController.clear();

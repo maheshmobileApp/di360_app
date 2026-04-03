@@ -451,9 +451,53 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       if (profileCompleted == false) await insertDirectories();
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
+      if (type == UserRole.professional.value) updateTheDirectorViewProfile();
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
+  }
+
+  Future<void> updateTheDirectorViewProfile() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+    await repo
+        .updateDirectoryFromViewProfile(type == UserRole.professional.value
+            ? {
+                "id": professionalViewProfileData?.directories?.isEmpty == true
+                    ? ''
+                    : professionalViewProfileData?.directories?.first.id,
+                "changes": {
+                  "name": nameController.text,
+                  "email": emailController.text,
+                  "phone": '$phoneCode${phoneNoController.text}',
+                  "address": addressController.text,
+                  "profession_type": selectedBusineestype?.name,
+                  "type": type,
+                  "dental_professional_id": userId,
+                  "profile_image":
+                      professionalViewProfileData?.profileImage?.toJson(),
+                }
+              }
+            :  {
+                "id": practiceViewProfileData?.directories?.isEmpty == true
+                    ? ''
+                    : practiceViewProfileData?.directories?.first.id,
+                "changes": {
+                  "name": nameController.text,
+                  "email": emailController.text,
+                  "business_name": businessNameController.text,
+                  "business_email": businessEmailController.text,
+                  "phone": '$phoneCode${phoneNoController.text}',
+                  "mobile_number": businessPhoneNoController.text,
+                  "profession_type": selectedBusineestype?.name,
+                  "abn_acn": abnNumberController.text,
+                  "address": addressController.text,
+                  "type": type,
+                  type == UserRole.practice.value ?
+                  "dental_practice_id": userId : "dental_supplier_id": userId
+                }
+              });
   }
 
   Future<void> insertDirectories() async {

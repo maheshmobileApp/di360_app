@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/add_directors/querys/appoinment_timings_qu
 import 'package:di360_flutter/feature/add_directors/querys/get_business_type_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/get_director_info_query.dart';
 import 'package:di360_flutter/feature/add_directors/querys/partners_querys.dart';
+import 'package:di360_flutter/feature/add_directors/querys/update_view_profile_querys.dart';
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository.dart';
 import 'package:di360_flutter/feature/professional_add_director/querys/get_profess_director_query.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -280,6 +281,17 @@ class AddDirectorRepositoryImpl extends AddDirectorRepository {
   @override
   Future updatePartners(variables) async {
     final res = await http.mutation(updatePartnersQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> updateViewProfileData(variables) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final res = await http.mutation(
+        type == UserRole.supplier.value
+            ? updateSupplierViewProfileQuery
+            : updatePracticeViewProfileQuery,
+        variables);
     return res;
   }
 }

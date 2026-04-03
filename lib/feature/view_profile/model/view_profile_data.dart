@@ -70,7 +70,7 @@ class DentalSuppliersByPk {
   String? lastName;
   String? type;
   SecondaryContact? secondaryContact; //no data backend remove that
-//  List<Null>? directories;
+  List<Directories>? directories;
   String? sTypename;
   String? websiteLink;
   String? mobileNumber;
@@ -109,7 +109,7 @@ class DentalSuppliersByPk {
       this.secondaryContact,
       this.websiteLink,
       this.mobileNumber,
-
+      this.directories,
       this.sTypename});
 
   DentalSuppliersByPk.fromJson(Map<String, dynamic> json) {
@@ -151,12 +151,12 @@ class DentalSuppliersByPk {
     secondaryContact = json['secondary_contact'] != null
         ? new SecondaryContact.fromJson(json['secondary_contact'])
         : null;
-    // if (json['directories'] != null) {
-    //   directories = <Null>[];
-    //   json['directories'].forEach((v) {
-    //     directories!.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['directories'] != null) {
+      directories = <Directories>[];
+      json['directories'].forEach((v) {
+        directories!.add(new Directories.fromJson(v));
+      });
+    }
     sTypename = json['__typename'];
   }
 
@@ -202,9 +202,9 @@ class DentalSuppliersByPk {
     if (this.secondaryContact != null) {
       data['secondary_contact'] = this.secondaryContact!.toJson();
     }
-    // if (this.directories != null) {
-    //   data['directories'] = this.directories!.map((v) => v.toJson()).toList();
-    // }
+    if (this.directories != null) {
+      data['directories'] = this.directories!.map((v) => v.toJson()).toList();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -299,6 +299,51 @@ class SecondaryContact {
     data['name'] = this.name;
     data['email'] = this.email;
     data['phone'] = this.phone;
+    return data;
+  }
+}
+
+class Directories {
+  String? id;
+  String? name;
+  String? email;
+  String? phone;
+  Null? profileImage;
+  String? address;
+  String? professionType;
+  String? sTypename;
+
+  Directories(
+      {this.id,
+      this.name,
+      this.email,
+      this.phone,
+      this.profileImage,
+      this.address,
+      this.professionType,
+      this.sTypename});
+
+  Directories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    email = json['email'];
+    phone = json['phone'];
+    profileImage = json['profile_image'];
+    address = json['address'];
+    professionType = json['profession_type'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['phone'] = this.phone;
+    data['profile_image'] = this.profileImage;
+    data['address'] = this.address;
+    data['profession_type'] = this.professionType;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }
