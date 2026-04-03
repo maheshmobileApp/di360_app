@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -11,6 +12,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +64,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         _statusChip(appliedJob.status ?? ''),
                         addHorizontal(4),
-                        _appliedJobMenu(context,vm, appliedJob.jobId ?? ''),
+                        _appliedJobMenu(context, vm, appliedJob.jobId ?? ''),
                       ],
                     ),
                   ],
@@ -83,6 +85,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
             //_descriptionWidget(job?.description ?? ''),
             const Divider(),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
                   onTap: () async {
@@ -107,6 +110,32 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                     );
                   },
                   child: _roundedButton("Message"),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    await vm.getJobEnquiryDetails(
+                        context, applicant.jobId ?? '');
+                    navigationService.navigateToWithParams(
+                      RouteList.jobdetailsScreen,
+                      params: vm.jobEnquiryDetails?.isNotEmpty == true
+                          ? vm.jobEnquiryDetails?.first
+                          : null,
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        "View Details",
+                        style:
+                            TextStyles.medium1(color: AppColors.primaryColor),
+                      ),
+                      SvgPicture.asset(
+                        ImageConst.nextArrow,
+                        width: 26,
+                        height: 26,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

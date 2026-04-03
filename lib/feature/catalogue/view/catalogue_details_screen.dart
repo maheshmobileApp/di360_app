@@ -28,110 +28,112 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
             await catalogueVM.fetchCatalogue(context);
             navigationService.goBack();
           }),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            addVertical(3),
-            SizedBox(
-              height: 400,
-              child: Card(
-                color: AppColors.whiteColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                child: Column(
-                  children: [
-                    addVertical(10),
-                    SizedBox(
-                      height: 330,
-                      child: GestureDetector(
-                        onTap: () {
-                          final pdf =
-                              catalogueVM.cataloguesByIdData?.attachment;
-                          navigationService.push(HorizantalPdf(
-                            key: ValueKey(
-                              pdf?.url ?? '',
-                            ),
-                            fileUrl: pdf?.url ?? '',
-                            fileName: pdf?.name ?? '',
-                            isfullScreen: true,
-                          ));
-                        },
-                        child: CachedNetworkImageWidget(
-                          imageUrl: catalogueVM
-                                  .cataloguesByIdData?.thumbnailImage?.url ??
-                              '',
-                          fit: BoxFit.contain,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              addVertical(3),
+              SizedBox(
+                height: 400,
+                child: Card(
+                  color: AppColors.whiteColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    children: [
+                      addVertical(10),
+                      SizedBox(
+                        height: 330,
+                        child: GestureDetector(
+                          onTap: () {
+                            final pdf =
+                                catalogueVM.cataloguesByIdData?.attachment;
+                            navigationService.push(HorizantalPdf(
+                              key: ValueKey(
+                                pdf?.url ?? '',
+                              ),
+                              fileUrl: pdf?.url ?? '',
+                              fileName: pdf?.name ?? '',
+                              isfullScreen: true,
+                            ));
+                          },
+                          child: CachedNetworkImageWidget(
+                            imageUrl: catalogueVM
+                                    .cataloguesByIdData?.thumbnailImage?.url ??
+                                '',
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
-                    ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              final pdf =
-                                  catalogueVM.cataloguesByIdData?.attachment;
-                              navigationService.push(HorizantalPdf(
-                                key: ValueKey(
-                                  pdf?.url ?? '',
-                                ),
-                                fileUrl: pdf?.url ?? '',
-                                fileName: pdf?.name ?? '',
-                                isfullScreen: true,
-                              ));
-                            },
-                            child: Row(
-                              children: [
-                                Icon(Icons.remove_red_eye,
-                                    color: AppColors.primaryColor),
-                                addHorizontal(5),
-                                Text('View PDF',
-                                    style: TextStyles.regular4(
-                                        color: AppColors.black)),
-                              ],
+                      Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                final pdf =
+                                    catalogueVM.cataloguesByIdData?.attachment;
+                                navigationService.push(HorizantalPdf(
+                                  key: ValueKey(
+                                    pdf?.url ?? '',
+                                  ),
+                                  fileUrl: pdf?.url ?? '',
+                                  fileName: pdf?.name ?? '',
+                                  isfullScreen: true,
+                                ));
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.remove_red_eye,
+                                      color: AppColors.primaryColor),
+                                  addHorizontal(5),
+                                  Text('View PDF',
+                                      style: TextStyles.regular4(
+                                          color: AppColors.black)),
+                                ],
+                              ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              final url = catalogueVM
-                                      .cataloguesByIdData?.attachment?.url ??
-                                  '';
-                              if (await canLaunchUrl(Uri.parse(url))) {
-                                await launchUrl(
-                                  Uri.parse(url),
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            },
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: AppColors.primaryColor,
-                                  child: Icon(Icons.download_rounded,
-                                      size: 16, color: AppColors.whiteColor),
-                                ),
-                                addHorizontal(8),
-                                Text('DOWNLOAD CATALOGUE',
-                                    style: TextStyles.regular1(
-                                        color: AppColors.black)),
-                              ],
+                            GestureDetector(
+                              onTap: () async {
+                                final url = catalogueVM
+                                        .cataloguesByIdData?.attachment?.url ??
+                                    '';
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                  await launchUrl(
+                                    Uri.parse(url),
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor: AppColors.primaryColor,
+                                    child: Icon(Icons.download_rounded,
+                                        size: 16, color: AppColors.whiteColor),
+                                  ),
+                                  addHorizontal(8),
+                                  Text('DOWNLOAD CATALOGUE',
+                                      style: TextStyles.regular1(
+                                          color: AppColors.black)),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    addVertical(10),
-                  ],
+                      addVertical(10),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            buildCatalogueSection(context, catalogueVM),
-          ],
+              buildCatalogueSection(context, catalogueVM),
+            ],
+          ),
         ),
       ),
     );
