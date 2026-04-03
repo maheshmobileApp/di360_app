@@ -1,9 +1,10 @@
 
 enum DeepLinkingTypesEnum {
-  NEWS_FEED,
+  NEWSFEED,
   COMMUNITY,
   CATALOGUE,
   COURSE,
   JOB,
-  TALENT
+  TALENT,
+  LEARNHUB
 }

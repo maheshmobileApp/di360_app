@@ -41,7 +41,7 @@
                 <!-- QA -->
                 <data
                     android:scheme="https"
-                    android:host="qa.dentalinterface360.com"
+                    android:host="qabeta.dentalinterface360.com.au"
                     android:pathPrefix="/" />
 
                 <!-- PROD -->

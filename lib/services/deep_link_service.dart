@@ -26,7 +26,7 @@ class DeepLinkService {
 
   // Called by SplashScreen after it finishes auth navigation
   static void consumePendingLink(BuildContext context) {
-    if (_pendingUri != null) {
+    if (_pendingUri != null ) {
       _handleUri(_pendingUri!, context);
       _pendingUri = null;
     }
@@ -40,7 +40,6 @@ class DeepLinkService {
   }
 
   static void _handleNavigation(String type, String id, BuildContext context) {
-    print("*******************{$type --- $id}");
     final navigator = navigatorKey.currentState;
     final urlType = DeepLinkingTypesEnum.values.firstWhere(
       (e) => e.name == type,
@@ -52,7 +51,12 @@ class DeepLinkService {
         Provider.of<NewsFeedViewModel>(context, listen: false)
             .getJobDetailsByIds(context, id);
         break;
-      case DeepLinkingTypesEnum.NEWS_FEED:
+      case DeepLinkingTypesEnum.NEWSFEED:
+        Provider.of<NotificationViewModel>(context, listen: false)
+            .getNewsFeedData(context, id);
+        break;
+
+      case DeepLinkingTypesEnum.LEARNHUB:
         Provider.of<NotificationViewModel>(context, listen: false)
             .getNewsFeedData(context, id);
         break;
