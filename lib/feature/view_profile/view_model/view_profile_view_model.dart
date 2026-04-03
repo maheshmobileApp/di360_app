@@ -479,7 +479,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                       professionalViewProfileData?.profileImage?.toJson(),
                 }
               }
-            :  {
+            : {
                 "id": practiceViewProfileData?.directories?.isEmpty == true
                     ? ''
                     : practiceViewProfileData?.directories?.first.id,
@@ -494,8 +494,10 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
                   "abn_acn": abnNumberController.text,
                   "address": addressController.text,
                   "type": type,
-                  type == UserRole.practice.value ?
-                  "dental_practice_id": userId : "dental_supplier_id": userId
+                  if (type == UserRole.practice.value)
+                    "dental_practice_id": userId
+                  else
+                    "dental_supplier_id": userId
                 }
               });
   }
