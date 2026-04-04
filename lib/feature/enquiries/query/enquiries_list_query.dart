@@ -11,6 +11,7 @@ const String enquiriesListQuery =
     job_id
     created_at
     enquiry_userid
+    enq_sender_id
     dental_professional {
       profile_image
       __typename

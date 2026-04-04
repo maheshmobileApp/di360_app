@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -8,10 +9,12 @@ import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
 import 'package:di360_flutter/feature/enquiries/view/enquiries_list_view.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +33,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     final Jobs? job = enquiry?.jobs;
     final String time = _getShortTime(enquiry?.createdAt ?? '') ?? '';
     final vm = Provider.of<EnquiriesViewModel>(context);
+    final jobSeekVM = Provider.of<JobSeekViewModel>(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -63,7 +67,8 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         JobTimeChip(time: time),
                         addHorizontal(4),
-                        _EnquiriesMenu(context, vm, enquiry?.jobId ?? ''),
+                        _EnquiriesMenu(
+                            context, vm, enquiry?.jobId ?? '', jobSeekVM),
                       ],
                     ),
                   ],
@@ -106,6 +111,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       params: {
                         "jobId": enquiry?.jobId ?? "",
                         "applicantId": enquiry?.id ?? "",
+                        "receiverId": enquiry?.enqSenderId ?? "",
                         "userId": userId,
                         "type": "applicant",
                       },
@@ -135,6 +141,29 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                     );
                   },
                   child: _roundedButton("Enquiry"),
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    await vm.getJobEnquiryDetails(
+                        context, enquiry?.jobId ?? '');
+                    jobSeekVM.setHideFloatingButton(true);
+                    navigationService.navigateToWithParams(
+                      RouteList.jobdetailsScreen,
+                      params: vm.jobEnquiryDetails?.isNotEmpty == true
+                          ? vm.jobEnquiryDetails?.first
+                          : null,
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        ImageConst.nextArrow,
+                        width: 26,
+                        height: 26,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -272,7 +301,8 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _EnquiriesMenu(BuildContext context,EnquiriesViewModel vm, String jobEnquiryId) {
+  Widget _EnquiriesMenu(BuildContext context, EnquiriesViewModel vm,
+      String jobEnquiryId, JobSeekViewModel jobSeekVM) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -282,9 +312,12 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
         if (value == "Preview") {
           if (enquiry?.jobs != null) {
             await vm.getJobEnquiryDetails(context, jobEnquiryId);
+            jobSeekVM.setHideFloatingButton(true);
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
-              params: vm.jobEnquiryDetails?.isNotEmpty == true ? vm.jobEnquiryDetails?.first : null,
+              params: vm.jobEnquiryDetails?.isNotEmpty == true
+                  ? vm.jobEnquiryDetails?.first
+                  : null,
             );
           }
         }

@@ -48,6 +48,7 @@ class JobEnquiries {
   String? jobId;
   String? createdAt;
   String? enquiryUserid;
+  String? enqSenderId;
   DentalProfessional? dentalProfessional;
   Jobs? jobs;
   JobApplicantsFind? jobApplicantsFind;
@@ -68,6 +69,7 @@ class JobEnquiries {
     jobId = json['job_id'];
     createdAt = json['created_at'];
     enquiryUserid = json['enquiry_userid'];
+    enqSenderId = json['enq_sender_id'];
     dentalProfessional = json['dental_professional'] != null
         ? new DentalProfessional.fromJson(json['dental_professional'])
         : null;
@@ -83,6 +85,7 @@ class JobEnquiries {
     data['id'] = this.id;
     data['job_id'] = this.jobId;
     data['created_at'] = this.createdAt;
+    data['enq_sender_id'] = this.enqSenderId;
     data['enquiry_userid'] = this.enquiryUserid;
     if (this.dentalProfessional != null) {
       data['dental_professional'] = this.dentalProfessional!.toJson();

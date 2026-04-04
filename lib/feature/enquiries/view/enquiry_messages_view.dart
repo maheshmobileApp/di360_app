@@ -16,6 +16,7 @@ class EnquiryMessagesView extends StatefulWidget
     with BaseContextHelpers {
   final String jobId;
   final String applicantId;
+  final String receiverId;
   final String userId;
   final String profilePic;
   final JobApplicants? applicant;
@@ -25,6 +26,7 @@ class EnquiryMessagesView extends StatefulWidget
     super.key,
     required this.jobId,
     required this.applicantId,
+    required this.receiverId,
     required this.userId,
     required this.profilePic,
     this.applicant,
@@ -87,6 +89,7 @@ class _JobListingApplicantsMessegeState
     return Consumer<EnquiriesViewModel>(
       builder: (context, vm, child) {
         final vm = Provider.of<EnquiriesViewModel>(context);
+        final messages = vm.messages.reversed.toList();
         return Scaffold(
           backgroundColor: AppColors.whiteColor,
           appBar: AppbarTitleBackIconWidget(title: 'Messages'),
@@ -98,10 +101,10 @@ class _JobListingApplicantsMessegeState
                     : ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.all(12),
-                        itemCount: vm.messages.length,
+                        itemCount: messages.length,
                         itemBuilder: (context, index) {
-                          final JobApplicantMessages msg = vm.messages[index];
-                          final bool isMe = msg.messageFrom == widget.userId;
+                          final JobApplicantMessages msg = messages[index];
+                          final bool isMe = msg.senderId == widget.userId;
                           final avatarWidget = _buildAvatar(isMe);
 
                           return Padding(
@@ -117,17 +120,16 @@ class _JobListingApplicantsMessegeState
                                       : MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    if (!isMe) avatarWidget,
-                                    if (!isMe) const SizedBox(width: 6),
+                                    avatarWidget,
+                                    const SizedBox(width: 6),
                                     Text(
-                                      formatDateTime(""),
+                                      formatDateTime(msg.createdAt),
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey[600],
                                       ),
                                     ),
                                     if (isMe) const SizedBox(width: 6),
-                                    if (isMe) avatarWidget,
                                     if (isMe)
                                       _MessegeMenu(
                                           context,
@@ -155,11 +157,12 @@ class _JobListingApplicantsMessegeState
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        msg.message ?? "",
+                                       msg.deletedStatus == true ? "This message was deleted" : msg.message ?? "",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                    //if (msg.updatedAt != msg.createdAt)
+                                    if (msg.deletedStatus == false)
+                                    if (msg.updatedAt != msg.createdAt)
                                       const Padding(
                                         padding: EdgeInsets.only(top: 2),
                                         child: Text(
@@ -197,17 +200,17 @@ class _JobListingApplicantsMessegeState
                       ),
                       IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed: () {/*
+                        onPressed: () async {
                           final text = vm.messageController.text.trim();
                           if (text.isNotEmpty) {
                             if (vm.editMessage) {
-                              vm.updateApplicantMessage(
+                              await vm.updateApplicantMessage(
                                   context, widget.applicantId);
                               vm.messageController.clear();
                             } else {
-                              vm.sendApplicantMessage(
-                                  context, widget.applicantId, text,  widget.typeName != null ? widget.typeName : "");
-                              vm.messageController.clear();
+                              await vm.sendApplicantMessage(
+                                  context,widget.jobId, widget.applicantId, widget.receiverId);
+                             // vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
                                 if (scrollController.hasClients) {
@@ -219,7 +222,7 @@ class _JobListingApplicantsMessegeState
                                 }
                               });
                             }
-                          }*/
+                          }
                         },
                       ),
                     ],
@@ -241,14 +244,13 @@ class _JobListingApplicantsMessegeState
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onSelected: (value) {
-        /*if (value == "Delete") {
+        if (value == "Delete") {
           vm.deleteapplicantMessage(context, id, applicantId, true);
         } else if (value == "Edit") {
           vm.setEditMessage(true);
           vm.setEditMessageDetails(id, vm.messageController.text);
           vm.messageController.text = oldMessage;
-          //vm.updateApplicantMessage(context, id, applicantId, message);
-        }*/
+        }
       },
       itemBuilder: (context) => [
         PopupMenuItem(

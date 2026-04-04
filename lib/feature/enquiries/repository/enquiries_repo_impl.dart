@@ -3,6 +3,9 @@ import 'package:di360_flutter/feature/enquiries/model/applicant_enquiry_res.dart
 import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
 import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
 import 'package:di360_flutter/feature/enquiries/query/enquiries_list_query.dart';
+import 'package:di360_flutter/feature/enquiries/query/enquiry_message_delete_query.dart';
+import 'package:di360_flutter/feature/enquiries/query/enquiry_message_query.dart';
+import 'package:di360_flutter/feature/enquiries/query/enquiry_update_message_query.dart';
 import 'package:di360_flutter/feature/enquiries/query/get_applicant_enquiry_query.dart';
 import 'package:di360_flutter/feature/enquiries/query/get_enquiry_messages_query.dart';
 import 'package:di360_flutter/feature/enquiries/query/get_job_enquiry_details.dart';
@@ -13,14 +16,8 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
   final http = HttpService();
 
   @override
-  Future<EnquiriesListResData> getMyEnquiryJobData(String enquiryId) async {
-    final variables = {
-      "limit": 5,
-      "offset": 0,
-      "where": {
-        "enquiry_userid": {"_eq": enquiryId}
-      }
-    };
+  Future<EnquiriesListResData> getMyEnquiryJobData(dynamic variables) async {
+   
     final res = await http.query(enquiriesListQuery, variables: variables);
     final output = EnquiriesListResData.fromJson(res);
     return output;
@@ -52,7 +49,26 @@ class EnquiriesRepoImpl extends EnquiriesRepository {
   @override
   Future<List<Jobs>> getJobEnquiryDetails(variables) async {
     final res = await http.query(getJobDetailsQuery, variables: variables);
-    final data = List<Jobs>.from((res['jobs'] as List).map((e) => Jobs.fromJson(e)));
+    final data =
+        List<Jobs>.from((res['jobs'] as List).map((e) => Jobs.fromJson(e)));
     return data;
+  }
+
+  @override
+  Future<dynamic> sendApplicantMessage(variables) async {
+    final res = await http.mutation(EnquiryMessageQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> updateApplicantMessage(variables) async {
+    final res = await http.mutation(EnquiryUpdateMessageQuery, variables);
+    return res;
+  }
+
+   @override
+  Future<dynamic> deleteApplicantMessage(variables) async {
+    final res = await http.mutation(EnquiryMessageDeleteQuery, variables);
+    return res;
   }
 }

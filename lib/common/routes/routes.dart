@@ -162,6 +162,7 @@ class Routes {
         return EnquiryMessagesView(
           jobId: args['jobId'],
           applicantId: args['applicantId'],
+          receiverId: args['receiverId'],
           userId: args['userId'],
           profilePic: args['profilePic'] ?? "",
           applicant: args['applicant'],
