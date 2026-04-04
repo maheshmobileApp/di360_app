@@ -3,7 +3,6 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_profile_listing/model/job_profile_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_hiring_talent_list_res.dart';
-import 'package:di360_flutter/feature/talent_listing/model/get_self_talent_enquiries_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/get_talent_listing_status_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_listing_count_res.dart';
 import 'package:di360_flutter/feature/talent_listing/model/talent_messages_res.dart';

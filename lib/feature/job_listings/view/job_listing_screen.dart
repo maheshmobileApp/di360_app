@@ -22,6 +22,26 @@ class JobListingScreen extends StatefulWidget {
 
 class _JobListingScreenState extends State<JobListingScreen>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        final vm = Provider.of<JobListingsViewModel>(context, listen: false);
+        vm.getMyJobListingData(context, reset: false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final jobListingVM = Provider.of<JobListingsViewModel>(context);
@@ -106,8 +126,16 @@ class _JobListingScreenState extends State<JobListingScreen>
                       ),
                     )
                   : ListView.builder(
-                      itemCount: jobListingVM.myJobListingList.length,
+                      controller: _scrollController,
+                      itemCount: jobListingVM.myJobListingList.length +
+                          (jobListingVM.isPaginating ? 1 : 0),
                       itemBuilder: (context, index) {
+                        if (index == jobListingVM.myJobListingList.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
                         final jobData = jobListingVM.myJobListingList[index];
                         return JobListingCard(
                             jobsListingData: jobData,

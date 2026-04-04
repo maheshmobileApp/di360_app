@@ -17,6 +17,7 @@ class TalentListingMessageScreen extends StatefulWidget
   final String jobId;
   final String applicantId;
   final String userId;
+  final String? userImg;
   final String profilePic;
   final JobApplicants? applicant;
   final String? typeName;
@@ -26,6 +27,7 @@ class TalentListingMessageScreen extends StatefulWidget
     required this.jobId,
     required this.applicantId,
     required this.userId,
+    required this.userImg,
     required this.profilePic,
     this.applicant,
     required this.typeName,
@@ -61,22 +63,20 @@ class _TalentListingMessageScreenState
                     imageUrl: profileUrl,
                     width: 44,
                     height: 44,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 )
               : const Icon(Icons.person, color: AppColors.whiteColor),
         );
       }
     } else {
-      final professional = widget.applicant?.dentalProfessional;
-      final profileUrl = professional?.profileImage?.url;
       return CircleAvatar(
         radius: 22,
         backgroundColor: AppColors.geryColor,
-        child: (profileUrl != null && profileUrl.isNotEmpty)
+        child: (widget.userImg != null && widget.userImg?.isNotEmpty == true)
             ? ClipOval(
                 child: CachedNetworkImageWidget(
-                  imageUrl: profileUrl,
+                  imageUrl: widget.userImg ?? "",
                   width: 44,
                   height: 44,
                   fit: BoxFit.cover,
@@ -126,7 +126,8 @@ class _TalentListingMessageScreenState
                                     if (!isMe) avatarWidget,
                                     if (!isMe) const SizedBox(width: 6),
                                     Text(
-                                      DateFormatUtils.formatDateTime(msg?.createdAt??""),
+                                      DateFormatUtils.formatDateTime(
+                                          msg?.createdAt ?? ""),
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey[600],
@@ -161,19 +162,23 @@ class _TalentListingMessageScreenState
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        msg?.message ?? "",
+                                        msg?.deletedStatus == true
+                                            ? "This message has been deleted"
+                                            : msg?.message ?? "",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                    /*if (msg?.updatedAt != msg?.createdAt)
-                                      const Padding(
-                                        padding: EdgeInsets.only(top: 2),
-                                        child: Text(
-                                          "Edited",
-                                          style: TextStyle(
-                                              fontSize: 12, color: Colors.grey),
+                                    if (msg?.deletedStatus == false)
+                                      if (msg?.updatedAt != msg?.createdAt)
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: Text(
+                                            "Edited",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          ),
                                         ),
-                                      ),*/
                                   ],
                                 ),
                               ],

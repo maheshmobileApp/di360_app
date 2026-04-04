@@ -7,7 +7,7 @@ import 'package:di360_flutter/feature/job_listings/model/job_status_count_model.
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 
 abstract class JobListingRepository {
-  Future<List<Jobs>?> getMyJobListing(List<String>? listingStatus);
+  Future<List<Jobs>?> getMyJobListing(List<String>? listingStatus, String? activeStatus, int limit, int offset);
   Future<void> removeJobListing(String? id);
   Future<void> updateJobListing(String? id, String status);
   Future<JobStatusCountData> jobListingStatusCount();

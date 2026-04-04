@@ -113,6 +113,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                         "applicantId": enquiry?.id ?? "",
                         "receiverId": enquiry?.enqSenderId ?? "",
                         "userId": userId,
+                        "profilePic": enquiry?.jobs?.logo ?? "",
                         "type": "applicant",
                       },
                     );

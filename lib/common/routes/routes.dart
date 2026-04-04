@@ -151,6 +151,7 @@ class Routes {
           jobId: args['jobId'],
           applicantId: args['applicantId'],
           userId: args['userId'],
+          userImg: args['userImg'] ?? "",
           profilePic: args['profilePic'] ?? "",
           applicant: args['applicant'],
           typeName: args['type'],

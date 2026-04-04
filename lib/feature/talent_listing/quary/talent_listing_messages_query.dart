@@ -6,7 +6,9 @@ const String talentListingMessagesQuery =
   ) {
     id
     created_at
-message
-  message_from
+    message
+    message_from
+    deleted_status
+    updated_at
 attachments}
 }''';

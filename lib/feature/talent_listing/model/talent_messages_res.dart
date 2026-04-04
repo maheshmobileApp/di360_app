@@ -48,6 +48,7 @@ class TalentsMessage {
   String? updatedAt;
   String? message;
   String? messageFrom;
+  bool? deletedStatus;
   dynamic attachments;
 
   TalentsMessage(
@@ -56,6 +57,7 @@ class TalentsMessage {
       this.updatedAt,
       this.message,
       this.messageFrom,
+      this.deletedStatus,
       this.attachments});
 
   TalentsMessage.fromJson(Map<String, dynamic> json) {
@@ -65,6 +67,7 @@ class TalentsMessage {
     message = json['message'];
     messageFrom = json['message_from'];
     attachments = json['attachments'];
+    deletedStatus = json['deleted_status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,6 +78,7 @@ class TalentsMessage {
     data['message'] = this.message;
     data['message_from'] = this.messageFrom;
     data['attachments'] = this.attachments;
+    data['deleted_status'] = this.deletedStatus;
     return data;
   }
 }

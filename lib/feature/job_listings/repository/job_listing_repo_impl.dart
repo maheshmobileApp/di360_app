@@ -29,31 +29,31 @@ class JobListingRepoImpl extends JobListingRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<Jobs>?> getMyJobListing(List<String>? listingStatus) async {
+  Future<List<Jobs>?> getMyJobListing(List<String>? listingStatus, String? activeStatus,int limit, int offset ) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final andList = <Map<String, dynamic>>[
-      {
-        "status": {
-          "_in": listingStatus?.isEmpty == true
-              ? ["APPROVE", "PENDING", "INACTIVE", "EXPIRED", "REJECT", "DRAFT"]
-              : listingStatus
-        }
-      },
-    ];
+
+    final where = <String, dynamic>{};
+
     if (type == UserRole.supplier.value) {
-      andList.add({
-        "dental_supplier_id": {"_eq": userId}
-      });
-    }
-    if (type == UserRole.practice.value) {
-      andList.add({
-        "dental_practice_id": {"_eq": userId}
-      });
+      where["dental_supplier_id"] = {"_eq": userId};
+    } else if (type == UserRole.practice.value) {
+      where["dental_practice_id"] = {"_eq": userId};
     }
 
-    final listingData =
-        await http.query(getJobListingQuary, variables: {"andList": andList});
+    if (listingStatus != null && listingStatus.isNotEmpty) {
+      where["status"] = {"_eq": listingStatus.first};
+    }
+
+    if (activeStatus != null && activeStatus.isNotEmpty) {
+      where["active_status"] = {"_eq": activeStatus};
+    }
+
+    final listingData = await http.query(
+      getJobListingQuary,
+      variables: {"limit": limit, "offset": offset, "where": where},
+    );
+
     final result = JobListing.fromJson(listingData);
     return result.jobs ?? [];
   }
@@ -78,7 +78,9 @@ class JobListingRepoImpl extends JobListingRepository {
     final Map<String, dynamic> variables = {};
 
     if (type == UserRole.supplier.value) {
-      variables["supplierId"] = userId;
+      variables["where"] = {
+        "dental_supplier_id": {"_eq": userId}
+      };
     }
     if (type == UserRole.practice.value) {
       variables["where"] = {

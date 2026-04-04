@@ -71,13 +71,11 @@ class _JobListingApplicantsMessegeState
         );
       }
     } else {
-      final professional = widget.applicant?.dentalProfessional;
-      final profileUrl = professional?.profileImage?.url;
       return CircleAvatar(
         radius: 22,
         backgroundColor: AppColors.geryColor,
         child: CachedNetworkImageWidget(
-              imageUrl: profileUrl ?? '',
+              imageUrl: widget.profilePic,
               fit: BoxFit.fill,
               errorWidget: Image.asset(ImageConst.prfImg)),
       );
@@ -131,6 +129,7 @@ class _JobListingApplicantsMessegeState
                                     ),
                                     if (isMe) const SizedBox(width: 6),
                                     if (isMe)
+                                    if (msg.deletedStatus == false)
                                       _MessegeMenu(
                                           context,
                                           vm,

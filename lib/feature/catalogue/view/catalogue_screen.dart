@@ -297,8 +297,9 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                       CatalogueLikeWidget(cat: c, catalogues: catalogues),
                       addVertical(4),
                       ShareWidget(
+                        category: "catalogue",
                           padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                              EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                           size: 20, feedId: c.id??"",)
                     ],
                   )

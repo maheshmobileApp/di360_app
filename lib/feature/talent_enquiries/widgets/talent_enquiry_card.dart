@@ -121,6 +121,7 @@ class TalentEnquiryCard extends StatelessWidget with BaseContextHelpers {
                             "jobId": jobId,
                             "applicantId": profileId,
                             "userId": userId,
+                            "userImg": profileImageUrl ?? "",
                           },
                         );
                       },
