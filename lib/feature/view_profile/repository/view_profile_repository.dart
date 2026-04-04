@@ -10,4 +10,5 @@ abstract class ViewProfileRepository {
   Future<DentalProfessionalsByPk?> getProfessionalViewProfile();
   Future<dynamic> deleteAccount();
   Future<dynamic> insertDirectory(dynamic variables);
+  Future<dynamic> updateDirectoryFromViewProfile(dynamic variable);
 }

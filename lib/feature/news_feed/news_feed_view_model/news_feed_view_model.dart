@@ -138,40 +138,15 @@ class NewsFeedViewModel extends ChangeNotifier {
         final res = CategoriesData.fromJson(response);
         newsfeedCategories = res.newsfeedCategories;
         newsfeedCategories?.insert(
-            0, NewsfeedCategories(id: '', categoryName: 'Catalogue'));
+            0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
         newsfeedCategories?.insert(
-            1, NewsfeedCategories(id: '', categoryName: 'Jobs'));
+            1, NewsfeedCategories(id: '2', categoryName: 'Jobs'));
         newsfeedCategories?.insert(
-            2, NewsfeedCategories(id: '', categoryName: 'Learning Hub'));
+            2, NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
       }
     } catch (e) {}
     notifyListeners();
   }
-
-/*  Future<void> basedOnCategoriesGetFeeds(
-      BuildContext context, bool isCatalog, String id) async {
-    Loaders.circularShowLoader(context);
-    try {
-      final response = isCatalog
-          ? await _http
-              .query(getNewsFeedsByCatalog, variables: {"status": "PUBLISHED"})
-          : await _http.query(getNewsFeedsByCategories,
-              variables: {"status": "PUBLISHED", "category_type": id});
-      if (response != null) {
-        final result = AllNewsFeedData.fromJson(response);
-        context.read<HomeViewModel>().allNewsFeedsData = result;
-        feedScrollController.jumpTo(0);
-        updateApplyCatageories(true);
-        Loaders.circularHideLoader(context);
-      } else {
-        Loaders.circularHideLoader(context);
-      }
-    } catch (e) {
-      Loaders.circularHideLoader(context);
-      print("Error fetching categories: $e");
-    }
-    notifyListeners();
-  }*/
 
   getUserId() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);

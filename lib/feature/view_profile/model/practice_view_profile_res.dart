@@ -73,6 +73,7 @@ class DentalPracticesByPk {
   String? sTypename;
   String? websiteLink;
   String? mobileNumber;
+  List<Directories>? directories;
 
   DentalPracticesByPk(
       {this.id,
@@ -108,8 +109,7 @@ class DentalPracticesByPk {
       this.secondaryContact,
       this.mobileNumber,
       this.websiteLink,
-
-      this.sTypename});
+      this.directories});
 
   DentalPracticesByPk.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -147,6 +147,12 @@ class DentalPracticesByPk {
     sTypename = json['__typename'];
     mobileNumber = json['mobile_number'];
     websiteLink = json['website_link'];
+    if (json['directories'] != null) {
+      directories = <Directories>[];
+      json['directories'].forEach((v) {
+        directories!.add(new Directories.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -183,6 +189,9 @@ class DentalPracticesByPk {
     data['address_line_two'] = this.addressLineTwo;
     data['mobile_number'] = this.mobileNumber;
     data['website_link'] = this.websiteLink;
+    if (this.directories != null) {
+      data['directories'] = this.directories!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
@@ -232,6 +241,51 @@ class Logo {
     data['directory'] = this.directory;
     data['extension'] = this.extension;
     data['mime_type'] = this.mimeType;
+    return data;
+  }
+}
+
+class Directories {
+  String? id;
+  String? name;
+  String? email;
+  String? phone;
+  dynamic profileImage;
+  String? address;
+  String? professionType;
+  String? sTypename;
+
+  Directories(
+      {this.id,
+      this.name,
+      this.email,
+      this.phone,
+      this.profileImage,
+      this.address,
+      this.professionType,
+      this.sTypename});
+
+  Directories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    email = json['email'];
+    phone = json['phone'];
+    profileImage = json['profile_image'];
+    address = json['address'];
+    professionType = json['profession_type'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['phone'] = this.phone;
+    data['profile_image'] = this.profileImage;
+    data['address'] = this.address;
+    data['profession_type'] = this.professionType;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

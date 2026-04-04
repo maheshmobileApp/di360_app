@@ -91,11 +91,13 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getAllNewsfeeds(BuildContext context) async {
+  Future<void> getAllNewsfeeds(BuildContext context,
+      {String? feedType, String? categoryType}) async {
     Loaders.circularShowLoader(context);
     resetPagination();
     try {
-      var res = await homeRepositoryImpl.getAllNewsFeed(offset, limit);
+      var res = await homeRepositoryImpl.getAllNewsFeed(offset, limit,
+          feedType: feedType, categoryType: categoryType);
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         allNewsFeedsData = result;

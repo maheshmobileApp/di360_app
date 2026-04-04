@@ -66,13 +66,23 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                               .toList() ??
                           [],
                     ).then((value) {
+                      homeViewModel.resetPagination();
+                      newsFeedVM.updateApplyCatageories(true);
                       newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
-                    /*  if ((value as dynamic)?.categoryName == 'Catalog') {
-                        newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
+                      if ((value as dynamic)?.categoryName == 'Catalogue') {
+                        homeViewModel.getAllNewsfeeds(context,
+                            feedType: 'CATALOGUE', categoryType: null);
+                      } else if ((value as dynamic)?.categoryName == 'Jobs') {
+                        homeViewModel.getAllNewsfeeds(context,
+                            feedType: 'JOBS', categoryType: null);
+                      } else if ((value as dynamic)?.categoryName ==
+                          'Learning Hub') {
+                        homeViewModel.getAllNewsfeeds(context,
+                            feedType: 'LEARNHUB', categoryType: null);
                       } else {
-                        newsFeedVM.basedOnCategoriesGetFeeds(
-                            context, false, value?.id ?? '');
-                      }*/
+                        homeViewModel.getAllNewsfeeds(context,
+                            feedType: null, categoryType: value?.id);
+                      }
                     });
                   },
                   child: SvgPicture.asset(ImageConst.filter,
@@ -82,7 +92,9 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                   padding: const EdgeInsets.only(left: 10),
                   child: GestureDetector(
                       onTap: () {
-                        homeViewModel.getAllNewsfeeds(context);
+                        homeViewModel.resetPagination();
+                        homeViewModel.getAllNewsfeeds(context,
+                            feedType: null, categoryType: null);
                         newsFeedVM.updateApplyCatageories(false);
                         newsFeedVM.updateSelectedCategory(null);
                       },

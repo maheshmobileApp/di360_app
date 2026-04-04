@@ -593,14 +593,14 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       }
     });
     if (res != null) {
-      print('printed......... $res');
-      getDirectories();
+      await getDirectories();
       Loaders.circularHideLoader(context);
       await LocalStorage.setBoolValue(
           LocalStorageConst.directoryComplete, true);
       await LocalStorage.setBoolValue(
           LocalStorageConst.firstNavigationDirectory, true);
       scaffoldMessenger('BasicInfo added successfully');
+      await updateViewProfileData();
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -650,10 +650,31 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
           LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated Basic Information successfully');
+      await updateViewProfileData();
     } else {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
+  }
+
+  Future<void> updateViewProfileData() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    await addDirectorRepositoryImpl.updateViewProfileData({
+      "id": userId,
+      "changes": {
+        "name": nameController.text,
+        "address": addressController.text,
+        "profession_type": selectedBusineestype?.name,
+        "business_email":
+            businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
+        "business_name": CompanyNameController.text,
+        "mobile_number": businessPhoneCntr.text,
+        "logo": getBasicInfoData.isNotEmpty
+            ? getBasicInfoData.first.logo?.toJson()
+            : null,
+        "abn_number": ABNNumberController.text,
+      }
+    });
   }
 
   Future<void> addService(BuildContext context) async {
