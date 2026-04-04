@@ -398,7 +398,8 @@ class CommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final variables = {
-      "communityId": (type == UserRole.professional.value) ? newsFeedId : communityId
+      "communityId":
+          (type == UserRole.professional.value) ? newsFeedId : communityId
     };
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;

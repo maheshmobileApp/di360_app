@@ -56,16 +56,18 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   Future<void> fetchNewsfeedCategories() async {
     const String query = '''
     query getAllNewsfeedCategories {
-      newsfeed_categories(order_by: {created_at: desc}) {
-        id
-        category_name
-        created_at
-        updated_at
-        created_by
-        created_by_user_id
-        __typename
-      }
-    }
+  newsfeed_categories(
+    where: {community_id: {_is_null: true}}
+    order_by: {created_at: desc}
+  ) {
+    id
+    category_name
+    created_at
+    updated_at
+    created_by
+    created_by_user_id
+  }
+}
   ''';
 
     try {

@@ -11,7 +11,6 @@ const String getNewsFeedCategoriesQuery =
     created_by
     created_by_user_id
     community_id
-    __typename
   }
 }
 ''';
