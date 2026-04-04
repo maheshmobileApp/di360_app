@@ -63,7 +63,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         JobTimeChip(time: time),
                         addHorizontal(4),
-                        _EnquiriesMenu(vm, enquiry?.jobId ?? ''),
+                        _EnquiriesMenu(context, vm, enquiry?.jobId ?? ''),
                       ],
                     ),
                   ],
@@ -272,7 +272,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _EnquiriesMenu(EnquiriesViewModel vm, String jobEnquiryId) {
+  Widget _EnquiriesMenu(BuildContext context,EnquiriesViewModel vm, String jobEnquiryId) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -281,7 +281,7 @@ class EnquiriesCard extends StatelessWidget with BaseContextHelpers {
       onSelected: (value) async {
         if (value == "Preview") {
           if (enquiry?.jobs != null) {
-            await vm.getJobEnquiryDetails(jobEnquiryId);
+            await vm.getJobEnquiryDetails(context, jobEnquiryId);
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
               params: vm.jobEnquiryDetails?.isNotEmpty == true ? vm.jobEnquiryDetails?.first : null,
