@@ -187,14 +187,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                           } else if (item.title == 'Job Listings') {
                             Loaders.circularShowLoader(context);
                             context.read<JobListingsViewModel>().listingStatus =
-                                [
-                              "APPROVE",
-                              "PENDING",
-                              "INACTIVE",
-                              "EXPIRED",
-                              "REJECT",
-                              "DRAFT"
-                            ];
+                                [];
+                            context.read<JobListingsViewModel>().activeStatus =
+                                "";
                             await context
                                 .read<JobListingsViewModel>()
                                 .getMyJobListingData(context);

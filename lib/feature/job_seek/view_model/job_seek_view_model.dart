@@ -120,6 +120,11 @@ class JobSeekViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setHideFloatingButton(bool value) {
+    isHidleFolatingButton = value;
+    notifyListeners();
+  }
+
   void toggleFloatingButtonVisibility() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userRole = UserRole.fromString(type);

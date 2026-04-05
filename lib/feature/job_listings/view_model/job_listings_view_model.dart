@@ -18,6 +18,7 @@ class JobListingsViewModel extends ChangeNotifier {
   final TextEditingController enquiryController = TextEditingController();
   final Map<String, bool> _jobActiveStatus = {};
   String selectedStatus = 'All';
+  String activeStatus = "";
   String selectedstatusesforapplicatnts = 'All';
   String? jobId;
   Jobs? jobDataById;
@@ -93,6 +94,10 @@ class JobListingsViewModel extends ChangeNotifier {
   String? suppliersId;
   String? practiceId;
   List<Jobs> myJobListingList = [];
+  int _jobListingOffset = 0;
+  bool hasMoreJobs = true;
+  bool isPaginating = false;
+  static const int _pageLimit = 10;
   List<JobApplicants> myApplicantsList = [];
 
   void changeStatusforapplicatnts(String status, BuildContext context) {
@@ -137,26 +142,26 @@ class JobListingsViewModel extends ChangeNotifier {
 
     selectedStatus = status;
     if (status == 'All') {
-      listingStatus = [
-        "APPROVE",
-        "PENDING",
-        "INACTIVE",
-        "EXPIRED",
-        "REJECT",
-        "DRAFT"
-      ];
+      listingStatus = [];
+      activeStatus = '';
     } else if (status == 'Draft') {
       listingStatus = ['DRAFT'];
+      activeStatus = '';
     } else if (status == 'Pending Approval') {
       listingStatus = ['PENDING'];
+      activeStatus = '';
     } else if (status == 'Active') {
       listingStatus = ["APPROVE"];
+      activeStatus = 'ACTIVE';
     } else if (status == 'InActive') {
-      listingStatus = ['INACTIVE'];
+      listingStatus = ['APPROVE'];
+      activeStatus = 'INACTIVE';
     } else if (status == 'Expired') {
       listingStatus = ['EXPIRED'];
+      activeStatus = '';
     } else if (status == 'Reject') {
       listingStatus = ['REJECT'];
+      activeStatus = '';
     }
 
     await getMyJobListingData(context);
@@ -188,17 +193,36 @@ class JobListingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getMyJobListingData(BuildContext context) async {
-    await fetchJobStatusCounts();
-    //Loaders.circularShowLoader(context);
+  Future<void> getMyJobListingData(BuildContext context,
+      {bool reset = true}) async {
+    if (isPaginating || (!reset && !hasMoreJobs)) return;
 
-    final res = await repo.getMyJobListing(listingStatus);
+    if (reset) {
+      await fetchJobStatusCounts();
+      _jobListingOffset = 0;
+      hasMoreJobs = true;
+    }
+
+    isPaginating = true;
+    notifyListeners();
+
+    final res = await repo.getMyJobListing(
+        listingStatus, activeStatus, _pageLimit, _jobListingOffset);
     if (res != null) {
-      myJobListingList = res;
+      if (reset) {
+        myJobListingList = res;
+      } else {
+        myJobListingList.addAll(res);
+      }
       myJobListingList
           .sort((a, b) => (b.updatedAt ?? '').compareTo(a.updatedAt ?? ''));
-      //Loaders.circularHideLoader(context);
+      _jobListingOffset += res.length;
+      hasMoreJobs = res.length == _pageLimit;
+    } else {
+      hasMoreJobs = false;
     }
+
+    isPaginating = false;
     notifyListeners();
   }
 
@@ -247,11 +271,12 @@ class JobListingsViewModel extends ChangeNotifier {
 
   Future<void> fetchJobStatusCounts() async {
     final res = await repo.jobListingStatusCount();
+    print("***Job Status Count: $res");
     allJobTalentCount = res.all?.aggregate?.count ?? 0;
     pendingApprovalCount = res.pending?.aggregate?.count ?? 0;
     draftTalentCount = res.draft?.aggregate?.count ?? 0;
     inActiveCount = res.inactive?.aggregate?.count ?? 0;
-    activeCount = res.approved?.aggregate?.count ?? 0;
+    activeCount = res.active?.aggregate?.count ?? 0;
     expiredStatusCount = res.expired?.aggregate?.count ?? 0;
     rejectStatusCount = res.rejected?.aggregate?.count ?? 0;
     notifyListeners();
@@ -381,9 +406,11 @@ class JobListingsViewModel extends ChangeNotifier {
       String applicantId, bool deletedStatus) async {
     try {
       isLoading = true;
-
       final res = await repo.deleteApplicantMessage(Id, deletedStatus);
-      await fetchApplicantMessages(applicantId);
+      if (res != null) {
+        await fetchApplicantMessages(applicantId);
+        scaffoldMessenger("Message deleted successfully");
+      }
     } catch (e) {
       errorMessage = e.toString();
     } finally {

@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/enquiries/model/enquiries_list_res.dart';
 import 'package:di360_flutter/feature/enquiries/model/get_enquiries_messages_res.dart';
 import 'package:di360_flutter/feature/enquiries/repository/enquiries_repo_impl.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,14 @@ class EnquiriesViewModel extends ChangeNotifier {
       BuildContext context) async {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getMyEnquiryJobData(userId);
+    final variables = {
+      "limit": 5,
+      "offset": 0,
+      "where": {
+        "enquiry_userid": {"_eq": userId}
+      }
+    };
+    final res = await repo.getMyEnquiryJobData(variables);
     enquiriesListData = res;
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -63,8 +71,20 @@ class EnquiriesViewModel extends ChangeNotifier {
 
   Future<void> fetchEnquiriesMessages(String jobId) async {
     final variables = {
-      "job_enquiry_id": {"_eq": jobId}
+      "where": {
+        "_and": [
+          {
+            "_or": [
+              {
+                "job_enquiry_id": {"_eq": jobId}
+              }
+            ]
+          }
+        ]
+      },
+      "limit": 20
     };
+    print("****************************variables $variables");
     try {
       isLoading = true;
 
@@ -99,17 +119,17 @@ class EnquiriesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-/*
   Future<void> updateApplicantMessage(
       BuildContext context, String applicantId) async {
+    final variables = {"id": editMessageId, "message": messageController.text};
     try {
       isLoading = true;
+      print("***********variables $variables");
 
-      final res = await repo.updateApplicantMessage(
-          editMessageId, messageController.text);
+      final res = await repo.updateApplicantMessage(variables);
       if (res != null) {
         setEditMessage(false);
-        await fetchApplicantMessages(applicantId);
+        await fetchEnquiriesMessages(applicantId);
         scaffoldMessenger("Message updated successfully");
       }
     } catch (e) {
@@ -120,9 +140,9 @@ class EnquiriesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> sendApplicantMessage(BuildContext context, String applicantId,
-      String message, String? typeName) async {
-    if (message.isEmpty) {
+  Future<void> sendApplicantMessage(BuildContext context, String jobId,
+      String jobEnquiryId, String receiverId) async {
+    if (messageController.text.isEmpty) {
       scaffoldMessenger("Message cannot be empty");
       return;
     }
@@ -130,26 +150,24 @@ class EnquiriesViewModel extends ChangeNotifier {
     try {
       Loaders.circularShowLoader(context);
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final variables = {
+        "object": {
+          "message": messageController.text,
+          "job_id": jobId,
+          "job_enquiry_id": jobEnquiryId,
+          "sender_id": userId,
+          "sender_type": "PROFESSIONAL",
+          "receiver_id": receiverId,
+          "receiver_type": "SUPPLIER"
+        }
+      };
 
-      final res = await repo.sendApplicantMessage({
-        "job_applicant_id": applicantId,
-        "message": message,
-        "message_from": userId,
-      }, typeName ?? "");
+      final res = await repo.sendApplicantMessage(variables);
 
       if (res != null) {
         scaffoldMessenger("Message sent successfully");
         messageController.clear();
-        /*messages.add(
-          JobApplicantMessage(
-            id: res, // backend ID
-            jobApplicantId: applicantId,
-            message: message,
-            messageFrom: "me", // mark current user
-            createdAt: DateTime.now().toIso8601String(),
-          ),
-        );*/
-        fetchApplicantMessages(applicantId);
+        await fetchEnquiriesMessages(jobEnquiryId);
       } else {
         scaffoldMessenger("Failed to send message");
       }
@@ -163,18 +181,18 @@ class EnquiriesViewModel extends ChangeNotifier {
 
   Future<void> deleteapplicantMessage(BuildContext context, String Id,
       String applicantId, bool deletedStatus) async {
-    print("******************deleteapplicantMessage called");
+    final variables = {"id": Id, "deleted_status": deletedStatus};
     try {
       isLoading = true;
 
-      final res = await repo.deleteApplicantMessage(Id, deletedStatus);
+      final res = await repo.deleteApplicantMessage(variables);
       print("res $res");
-      await fetchApplicantMessages(applicantId);
+      await fetchEnquiriesMessages(applicantId);
     } catch (e) {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
       notifyListeners();
     }
-  }*/
+  }
 }

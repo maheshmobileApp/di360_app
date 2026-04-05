@@ -15,7 +15,6 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -411,7 +410,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             child: _buildRow(
                 Icons.nightlight_outlined, AppColors.primaryColor, "Inactive"),
           ),
-        if (status == "INACTIVE")
+         if (activeStatus == "INACTIVE" && status == "APPROVE")
           PopupMenuItem(
             value: "Active",
             child: _buildRow(

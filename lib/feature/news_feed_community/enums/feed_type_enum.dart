@@ -2,7 +2,14 @@ enum FeedType {
   learnhub('LEARNHUB'),
   catalogue('CATALOGUE'),
   jobs('JOBS'),
-  newsfeed('NEWSFEED');
+  newsfeed('NEWSFEED'),
+  profile('PROFILE'),
+  directory('DIRECTORY'),
+  talents('TALENTS'),
+  banners('BANNERS'),
+  campaign('CAMPAIGN'),
+  course('COURSE'),
+  joinCommunity('JOIN-COMMUNITY');
 
   const FeedType(this.value);
 
@@ -12,7 +19,7 @@ enum FeedType {
     if (value == null) return null;
 
     for (FeedType type in FeedType.values) {
-      if (type.value == value) {
+      if (type.value == value.toUpperCase()) {
         return type;
       }
     }

@@ -8,6 +8,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/applied_job.dart/model/applied_job_respo.dart';
 import 'package:di360_flutter/feature/enquiries/view_model/enquiries_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
@@ -32,6 +33,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
     final String time = _getShortTime(job?.updatedAt ?? '') ?? '';
     final applicant = appliedJob;
     final vm = Provider.of<EnquiriesViewModel>(context);
+    final jobSeekVM = Provider.of<JobSeekViewModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
@@ -64,7 +66,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                       children: [
                         _statusChip(appliedJob.status ?? ''),
                         addHorizontal(4),
-                        _appliedJobMenu(context, vm, appliedJob.jobId ?? ''),
+                        _appliedJobMenu(context, vm, appliedJob.jobId ?? '', jobSeekVM),
                       ],
                     ),
                   ],
@@ -105,6 +107,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                         "jobId": applicant.jobId ?? "",
                         "applicantId": applicant.id ?? "",
                         "userId": userId,
+                        "profilePic": job?.logo ?? '',
                         "type": "applicant"
                       },
                     );
@@ -115,6 +118,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
                   onTap: () async {
                     await vm.getJobEnquiryDetails(
                         context, applicant.jobId ?? '');
+                    jobSeekVM.setHideFloatingButton(true);
                     navigationService.navigateToWithParams(
                       RouteList.jobdetailsScreen,
                       params: vm.jobEnquiryDetails?.isNotEmpty == true
@@ -310,7 +314,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _appliedJobMenu(
-      BuildContext context, EnquiriesViewModel vm, String jobEnquiryId) {
+      BuildContext context, EnquiriesViewModel vm, String jobEnquiryId, JobSeekViewModel jobSeekVM) {
     return PopupMenuButton<String>(
       iconColor: Colors.grey,
       color: AppColors.whiteColor,
@@ -320,6 +324,7 @@ class AppliedJobCard extends StatelessWidget with BaseContextHelpers {
         if (value == "Preview") {
           if (appliedJob.job != null) {
             await vm.getJobEnquiryDetails(context, jobEnquiryId);
+               jobSeekVM.setHideFloatingButton(true);
             navigationService.navigateToWithParams(
               RouteList.jobdetailsScreen,
               params: vm.jobEnquiryDetails?.isNotEmpty == true

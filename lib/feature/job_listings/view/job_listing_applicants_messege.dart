@@ -69,22 +69,21 @@ class _JobListingApplicantsMessegeState
                     imageUrl: profileUrl,
                     width: 44,
                     height: 44,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 )
               : const Icon(Icons.person, color: AppColors.whiteColor),
         );
       }
     } else {
-      final professional = widget.applicant?.dentalProfessional;
-      final profileUrl = professional?.profileImage?.url;
+     
       return CircleAvatar(
         radius: 22,
         backgroundColor: AppColors.geryColor,
-        child: (profileUrl != null && profileUrl.isNotEmpty)
+        child: (widget.profilePic.isNotEmpty)
             ? ClipOval(
                 child: CachedNetworkImageWidget(
-                  imageUrl: profileUrl,
+                  imageUrl: widget.profilePic,
                   width: 44,
                   height: 44,
                   fit: BoxFit.cover,
@@ -142,6 +141,7 @@ class _JobListingApplicantsMessegeState
                                     if (isMe) const SizedBox(width: 6),
                                     if (isMe) avatarWidget,
                                     if (isMe)
+                                    if (msg.deletedStatus == false)
                                       _MessegeMenu(
                                           context,
                                           vm,
@@ -168,19 +168,23 @@ class _JobListingApplicantsMessegeState
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        msg.message ?? "",
+                                        msg.deletedStatus == true
+                                            ? "This message has been deleted"
+                                            : msg.message ?? "",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                    if (msg.updatedAt != msg.createdAt)
-                                      const Padding(
-                                        padding: EdgeInsets.only(top: 2),
-                                        child: Text(
-                                          "Edited",
-                                          style: TextStyle(
-                                              fontSize: 12, color: Colors.grey),
+                                    if (msg.deletedStatus == false)
+                                      if (msg.updatedAt != msg.createdAt)
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: Text(
+                                            "Edited",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          ),
                                         ),
-                                      ),
                                   ],
                                 ),
                               ],
@@ -219,7 +223,12 @@ class _JobListingApplicantsMessegeState
                               vm.messageController.clear();
                             } else {
                               vm.sendApplicantMessage(
-                                  context, widget.applicantId, text,  widget.typeName != null ? widget.typeName : "");
+                                  context,
+                                  widget.applicantId,
+                                  text,
+                                  widget.typeName != null
+                                      ? widget.typeName
+                                      : "");
                               vm.messageController.clear();
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
