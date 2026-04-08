@@ -1,6 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
@@ -46,6 +47,8 @@ class DeepLinkService {
           orElse: () => null,
         );
     if (urlType == null) return;
+    print(
+        '********************DeepLinkService: Navigating to $urlType with ID $id');
 
     switch (urlType) {
       case FeedType.jobs:
@@ -58,9 +61,19 @@ class DeepLinkService {
         break;
 
       case FeedType.learnhub:
-        Provider.of<NotificationViewModel>(context, listen: false)
-            .getNewsFeedData(context, id);
+        () async {
+          final courseListingVM =
+              Provider.of<CourseListingViewModel>(context, listen: false);
+          await courseListingVM.getCourseDetails(
+            context,
+            id,
+          );
+          navigationService.navigateTo(
+            RouteList.courseDetailScreen,
+          );
+        }();
         break;
+
       case FeedType.talents:
         () async {
           final talentEnqVM =
@@ -94,6 +107,13 @@ class DeepLinkService {
       case FeedType.joinCommunity:
       case FeedType.profile:
       case FeedType.directory:
+        () async {
+          final directoryVM =
+              Provider.of<DirectoryViewModel>(context, listen: false);
+          await directoryVM.GetDirectorDetails(id);
+          navigationService.navigateTo(RouteList.directoryDetailsScreen);
+        }();
+        break;
       case FeedType.banners:
       case FeedType.campaign:
         break;

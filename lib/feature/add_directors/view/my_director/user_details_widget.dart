@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
   final String? imageUrl;
   final String? userName;
+  final String? name;
   final String? followerCount;
   final String? followingCount;
   final String? bannerImg;
@@ -17,6 +18,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
       {super.key,
       this.imageUrl,
       this.userName,
+      this.name,
       this.followerCount,
       this.followingCount,
       this.bannerImg});
@@ -74,9 +76,16 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
             Divider(color: AppColors.dividerColor),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(userName ?? homeViewModel.userName ?? '',
+              child: Column(
+                children: [
+                   Text(name ?? '',
                   style: TextStyles.clashMedium(
-                      fontSize: 20, color: AppColors.black)),
+                      fontSize: 14, color: AppColors.black)),
+                  Text(userName ?? homeViewModel.userName ?? '',
+                      style: TextStyles.clashMedium(
+                          fontSize: 20, color: AppColors.black)),
+                ],
+              ),
             ),
             Divider(color: AppColors.dividerColor),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

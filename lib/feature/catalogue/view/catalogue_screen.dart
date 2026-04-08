@@ -7,6 +7,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_like_widget.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
@@ -34,7 +35,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
 
   void _onScroll() {
     if (!mounted) return;
-    
+
     if (_scrollController.offset > 150) {
       if (!_showScrollToTop) {
         setState(() => _showScrollToTop = true);
@@ -297,10 +298,12 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                       CatalogueLikeWidget(cat: c, catalogues: catalogues),
                       addVertical(4),
                       ShareWidget(
-                        category: "catalogue",
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                          size: 20, feedId: c.id??"",)
+                        category: FeedType.catalogue.name,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                        size: 20,
+                        feedId: c.id ?? "",
+                      )
                     ],
                   )
                 ],

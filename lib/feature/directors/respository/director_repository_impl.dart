@@ -85,6 +85,7 @@ class DirectorRepositoryImpl extends DirectorRepository {
     final res =
         await http.query(directories_Details_Query, variables: {"id": id});
     final result = DirectoryDetailsData.fromJson(res);
+    print("***********Directory Details: ${result.directoriesByPk?.name}");
     return result.directoriesByPk;
   }
 
