@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/view/build_courses_type_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/build_job_type_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
@@ -90,13 +91,21 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       : null,
                   index: index,
                   newsfeeds: newsfeeds),
+            if (newsFeedTypeEnum == FeedType.learnhub.value)
+              BuildCoursesTypeWidget(
+                  courses: newsfeeds?.courses?.isNotEmpty ?? false
+                      ? newsfeeds?.courses?.first
+                      : null,
+                  index: index,
+                  newsfeeds: newsfeeds),
             addVertical(22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (newsFeedTypeEnum != FeedType.jobs.value)
+                  if (newsFeedTypeEnum != FeedType.jobs.value &&
+                      newsFeedTypeEnum != FeedType.learnhub.value)
                     ExpandableHtmlText(
                       htmlData: (newsfeeds?.description == null ||
                               newsfeeds?.description == '')
