@@ -45,7 +45,7 @@ class ShareUtils {
         path = category.toLowerCase();
     }
 
-    return '${HttpService.dioUrl}/deeplink/$path/$feedId';
+    return '${HttpService.frontendUrl}/deeplink/$path/$feedId';
   }
 }
 

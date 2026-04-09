@@ -85,18 +85,19 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                         imageUrl: director.logo?.url ??
                                             director.profileImage?.url ??
                                             '',
-                                        height: 150,
+                                        height: 110,
                                         width: double.infinity,
                                         fit: BoxFit.contain,
                                         errorWidget: Container(
-                                          height: 150,
+                                          height: 110,
                                           width: double.infinity,
                                           color: AppColors.greyLight,
                                           child: Center(
-                                            child: Image.asset(ImageConst.man,
-                                                height: 80,
-                                                width: 80,
-                                                fit: BoxFit.contain),
+                                            child: Image.asset(
+                                                ImageConst.directorImg,
+                                                height: 110,
+                                                width: double.infinity,
+                                                fit: BoxFit.fitWidth),
                                           ),
                                         ),
                                       ),

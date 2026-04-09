@@ -335,6 +335,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
 
   Widget _archievementcard(AddDirectoryViewModel vm) {
     return CustomGrid(
+      childAspectRatio: 0.65,
       children: List.generate(
           vm.getBasicInfoData.first.directoryAchievements?.length ?? 0,
           (index) {
@@ -351,16 +352,21 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                   borderRadius: BorderRadius.circular(16),
                   child: CachedNetworkImageWidget(
                       imageUrl: achieve?.attachments?.url ?? '',
-                      height: 170,
-                      fit: BoxFit.fill)),
-              Divider(),
-              Text(
-                achieve?.title ?? '',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                  fontSize: 12,
+                      height: 150,
+                      fit: BoxFit.cover)),
+              Divider(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Text(
+                  achieve?.title ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],

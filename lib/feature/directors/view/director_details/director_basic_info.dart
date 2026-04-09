@@ -194,7 +194,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                         height: 110,
                         child: CachedNetworkImageWidget(
                             imageUrl: teamData?.image?.url ?? '',
-                            fit: BoxFit.fill)),
+                            fit: BoxFit.contain)),
                     const SizedBox(height: 5),
                     Text(teamData?.name ?? '',
                         maxLines: 1,
@@ -460,6 +460,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     return Column(
       children: [
         CustomGrid(
+          childAspectRatio: 0.75,
           children: List.generate(achieveList?.length ?? 0, (index) {
             final achieve = achieveList?[index];
             return Container(
@@ -474,16 +475,21 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                       borderRadius: BorderRadius.circular(16),
                       child: CachedNetworkImageWidget(
                           imageUrl: achieve?.attachments?.url ?? '',
-                          height: 170,
-                          fit: BoxFit.fill)),
-                  Divider(),
-                  Text(
-                    achieve?.title ?? '',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orange,
-                      fontSize: 12,
+                          height: 150,
+                          fit: BoxFit.contain)),
+                  Divider(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: Text(
+                      achieve?.title ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],

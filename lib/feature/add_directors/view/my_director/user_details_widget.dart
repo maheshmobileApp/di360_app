@@ -52,16 +52,17 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                 backgroundColor: AppColors.whiteColor,
                 radius: 63,
                 child: CircleAvatar(
-                  backgroundColor: AppColors.greyLight,
+                  backgroundColor: AppColors.primaryColor,
                   radius: 60,
                   child: ClipOval(
                     child: SizedBox(
+                      
                       height: 120,
                       width: 120,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
                           fit: BoxFit.contain,
-                          errorWidget: Image.asset(ImageConst.prfImg)),
+                          errorWidget: Image.asset(ImageConst.directorProfile)),
                     ),
                   ),
                 ),
@@ -78,6 +79,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Column(
                 children: [
+                  if (name != null)
                    Text(name ?? '',
                   style: TextStyles.clashMedium(
                       fontSize: 14, color: AppColors.black)),

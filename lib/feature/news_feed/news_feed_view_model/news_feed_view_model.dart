@@ -67,21 +67,14 @@ class NewsFeedViewModel extends ChangeNotifier {
     updateTheNewsFeedLikeCount(context, feedId, false);
     removeTheLikeObject(context, feedId);
     try {
-      var res =
-          await _http.mutation(removeNewsFeedLikeMutation, {"id": likeId});
-      if (res.isNotEmpty) {
-        // updateTheNewsFeedLikeCount(context, feedId, false);
-        // removeTheLikeObject(context, feedId);
-      }
+      await _http.mutation(removeNewsFeedLikeMutation, {"id": likeId});
     } catch (e) {}
-
     notifyListeners();
   }
 
   addNewsFeedLike(BuildContext context, String newsFeedId) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     updateTheNewsFeedLikeCount(context, newsFeedId, true);
-    updateTheLikeObject(context, newsFeedId, '34');
     try {
       var res = await _http.mutation(addNewsFeedLikeMutation, {
         "fields": {
@@ -97,9 +90,13 @@ class NewsFeedViewModel extends ChangeNotifier {
       if (res['insert_newsfeeds_likes_one'] != null) {
         updateTheLikeObject(
             context, newsFeedId, res['insert_newsfeeds_likes_one']['id']);
+      } else {
+        // API failed — rollback optimistic count
+        updateTheNewsFeedLikeCount(context, newsFeedId, false);
       }
-    } catch (e) {}
-
+    } catch (e) {
+      updateTheNewsFeedLikeCount(context, newsFeedId, false);
+    }
     notifyListeners();
   }
 

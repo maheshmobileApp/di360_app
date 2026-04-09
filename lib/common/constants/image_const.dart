@@ -39,6 +39,7 @@ class ImageConst {
   static const String menu = "assets/pngs/menu.png";
   static const String textLogo = "assets/pngs/text_logo.png";
   static const String prfImg = "assets/pngs/prf.png";
+  static const String directorProfile = "assets/pngs/directorProfile.png";
   static const String feedImg = "assets/pngs/feedImg.png";
   static const String computer = "assets/pngs/Computer.png";
   static const String chatbox = "assets/pngs/chatbox.png";
@@ -62,6 +63,7 @@ class ImageConst {
   static const String _svgBasePath = 'assets/svgs/';
   static const String noImage = 'assets/pngs/noImage.jpg';
   static const String man = 'assets/pngs/man.png';
+  static const String directorImg = 'assets/pngs/directorImg.png';
   static const String woman = 'assets/pngs/woman.png';
   static const String noSupport = 'assets/svgs/supportHome.svg';
   static const String createSupport = 'assets/svgs/createSupport.svg';

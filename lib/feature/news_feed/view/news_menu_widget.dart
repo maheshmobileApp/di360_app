@@ -110,8 +110,12 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
             child: SafeArea(
               top: false,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 10,
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                  ),
                 child: Column(
                   children: [
                     SizedBox(height: 12),
