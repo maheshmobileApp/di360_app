@@ -62,6 +62,7 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                         directionalVM.directorDetails?.profileImage?.url ??
                         '',
                     userName: directionalVM.directorDetails?.professionType,
+                    name: directionalVM.directorDetails?.name,
                     followerCount:
                         '${directionalVM.getFollowersData?.whoIsFollowingAggregate?.aggregate?.count ?? 0}',
                     followingCount:

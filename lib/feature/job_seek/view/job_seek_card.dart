@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/utils/job_time_chip.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
@@ -68,6 +69,7 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
                 Row(
                   children: [
                     ShareWidget(
+                      category: FeedType.jobs.name,
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       size: 20,
                       feedId: jobsData?.id ?? '',

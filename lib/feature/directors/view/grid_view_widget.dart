@@ -8,6 +8,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_all_banner_res.dart';
 import 'package:di360_flutter/feature/directors/model_class/get_directories_res.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -78,18 +79,25 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                      borderRadius: const BorderRadius.vertical(
+                                          top: Radius.circular(10)),
                                       child: CachedNetworkImageWidget(
-                                        imageUrl: director.logo?.url ?? director.profileImage?.url ?? '',
-                                        height: 150,
+                                        imageUrl: director.logo?.url ??
+                                            director.profileImage?.url ??
+                                            '',
+                                        height: 110,
                                         width: double.infinity,
                                         fit: BoxFit.contain,
                                         errorWidget: Container(
-                                          height: 150,
+                                          height: 110,
                                           width: double.infinity,
                                           color: AppColors.greyLight,
                                           child: Center(
-                                            child: Image.asset(ImageConst.man, height: 80, width: 80, fit: BoxFit.contain),
+                                            child: Image.asset(
+                                                ImageConst.directorImg,
+                                                height: 110,
+                                                width: double.infinity,
+                                                fit: BoxFit.fitWidth),
                                           ),
                                         ),
                                       ),
@@ -112,6 +120,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                                                 style: TextStyles.medium2(
                                                     color: AppColors.black))),
                                         ShareWidget(
+                                            category: FeedType.directory.name,
                                             feedId: director.id ?? '',
                                             padding: EdgeInsets.all(2))
                                       ],

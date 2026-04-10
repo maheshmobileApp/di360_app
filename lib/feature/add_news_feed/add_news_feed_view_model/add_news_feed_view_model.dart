@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
@@ -38,15 +40,22 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> pickFiles() async {
+  /*Future<void> pickFiles() async {
     final picker = ImagePicker();
     final List<XFile> images = await picker.pickMultiImage();
-
     if (images.isNotEmpty) {
       selectedFiles.addAll(images);
       notifyListeners();
     }
-  }
+  }*/
+
+  
+
+void addFiles(List<XFile> files) {
+  selectedFiles.addAll(files);
+  notifyListeners();
+}
+
 
   void removeFile(int index) {
     selectedFiles.removeAt(index);
@@ -87,10 +96,13 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
+      uploadedFiles.clear();
+      print("Selected files: ${selectedFiles.length}");
       for (var element in selectedFiles) {
+        print("Uploading file: ${element.path}");
         var value = await _http.uploadImage(element.path);
         if (value != null) {
-          uploadedFiles.add(value);
+          uploadedFiles.add(value['data'] ?? value);
         }
       }
 
@@ -133,10 +145,11 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
+      uploadedFiles.clear();
       for (var element in selectedFiles) {
         var value = await _http.uploadImage(element.path);
         if (value != null) {
-          uploadedFiles.add(value);
+          uploadedFiles.add(value['data'] ?? value);
         }
       }
 

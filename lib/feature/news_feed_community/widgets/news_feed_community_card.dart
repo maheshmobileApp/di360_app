@@ -209,6 +209,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
 
                         /// 🔗 Share Button
                         ShareWidget(
+                          category: feedType,
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           size: 20,

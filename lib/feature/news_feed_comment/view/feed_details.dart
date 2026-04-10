@@ -195,10 +195,18 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       children: [
         GestureDetector(
           onTap: () {
-            isLiked
-                ? viewModel.removeNewsFeedLike(context, newsfeeds?.id ?? '',
-                    newsfeeds?.myLike?.first.id ?? '')
-                : viewModel.addNewsFeedLike(context, newsfeeds?.id ?? '');
+            if (isLiked) {
+              final likeId = newsfeeds?.myLike
+                      ?.firstWhere((e) => e.id != null && e.id!.isNotEmpty,
+                          orElse: () => MyLike())
+                      .id ??
+                  '';
+              if (likeId.isEmpty) return;
+              viewModel.removeNewsFeedLike(
+                  context, newsfeeds?.id ?? '', likeId);
+            } else {
+              viewModel.addNewsFeedLike(context, newsfeeds?.id ?? '');
+            }
           },
           child: Container(
             decoration: BoxDecoration(
@@ -244,12 +252,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
   }
 
   bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    return newsfeed?.newsfeedsLikes?.any((e) =>
-            e.adminUser?.id == userId ||
-            e.dentalPractice?.id == userId ||
-            e.dentalProfessional?.id == userId ||
-            e.dentalSupplier?.id == userId) ??
-        false;
+    if (userId.isEmpty) return false;
+    return newsfeed?.myLike?.any((e) => e.id != null && e.id?.isNotEmpty == true) ?? false;
   }
 
   Widget _buildCatalogueRow(

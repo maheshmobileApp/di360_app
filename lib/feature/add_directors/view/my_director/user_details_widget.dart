@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
   final String? imageUrl;
   final String? userName;
+  final String? name;
   final String? followerCount;
   final String? followingCount;
   final String? bannerImg;
@@ -17,6 +18,7 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
       {super.key,
       this.imageUrl,
       this.userName,
+      this.name,
       this.followerCount,
       this.followingCount,
       this.bannerImg});
@@ -50,16 +52,17 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
                 backgroundColor: AppColors.whiteColor,
                 radius: 63,
                 child: CircleAvatar(
-                  backgroundColor: AppColors.greyLight,
+                  backgroundColor: AppColors.primaryColor,
                   radius: 60,
                   child: ClipOval(
                     child: SizedBox(
+                      
                       height: 120,
                       width: 120,
                       child: CachedNetworkImageWidget(
                           imageUrl: imageUrl ?? homeViewModel.profilePic ?? '',
                           fit: BoxFit.contain,
-                          errorWidget: Image.asset(ImageConst.prfImg)),
+                          errorWidget: Image.asset(ImageConst.directorProfile)),
                     ),
                   ),
                 ),
@@ -74,9 +77,17 @@ class UserDetailsWidget extends StatelessWidget with BaseContextHelpers {
             Divider(color: AppColors.dividerColor),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(userName ?? homeViewModel.userName ?? '',
+              child: Column(
+                children: [
+                  if (name != null)
+                   Text(name ?? '',
                   style: TextStyles.clashMedium(
-                      fontSize: 20, color: AppColors.black)),
+                      fontSize: 14, color: AppColors.black)),
+                  Text(userName ?? homeViewModel.userName ?? '',
+                      style: TextStyles.clashMedium(
+                          fontSize: 20, color: AppColors.black)),
+                ],
+              ),
             ),
             Divider(color: AppColors.dividerColor),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

@@ -5,6 +5,7 @@ import 'package:hasura_connect/hasura_connect.dart';
 class HttpService {
   static String _url = AppConfig.hasuraBaseUrl;
   static String dioUrl = AppConfig.serverBaseUrl;
+  static String frontendUrl = AppConfig.frontendPath;
   //https://qa-api.dentalinterface360.com/api/v1/file-upload/upload-s3
   HasuraConnect _hasuraConnect = HasuraConnect(_url, headers: {});
   static BaseOptions _options = new BaseOptions(

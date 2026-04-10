@@ -35,7 +35,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     if (courseListingVM.courseDetails.isEmpty) {
       return const Scaffold(
-        backgroundColor: AppColors.lightGeryColor,
+        backgroundColor: AppColors.whiteColor,
         body: Center(child: Text("No course details available")),
       );
     }

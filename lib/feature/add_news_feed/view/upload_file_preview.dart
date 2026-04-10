@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,116 @@ class FileUploadWidget extends StatefulWidget {
 }
 
 class _FileUploadWidgetState extends State<FileUploadWidget> {
+  final ImagePicker _imagePicker = ImagePicker();
+
+  void _showSourcePicker(AddNewsFeedViewModel viewModel) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      
+      builder: (_) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Choose Option",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildOption(
+                    icon: Icons.camera_alt,
+                    label: "Camera",
+                    color: Colors.blue,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final picked = await _imagePicker.pickImage(
+                          source: ImageSource.camera, imageQuality: 85);
+                      if (picked != null) viewModel.addFiles([picked]);
+                    },
+                  ),
+                  _buildOption(
+                    icon: Icons.photo_library,
+                    label: "Gallery",
+                    color: Colors.orange,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final List<XFile> picked =
+                          await _imagePicker.pickMultiImage(imageQuality: 85);
+                      if (picked.isNotEmpty) viewModel.addFiles(picked);
+                    },
+                  ),
+                  _buildOption(
+                    icon: Icons.file_copy_rounded,
+                    label: "Files",
+                    color: Colors.green,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final result = await FilePicker.platform
+                          .pickFiles(allowMultiple: true, type: FileType.any);
+                      if (result != null) {
+                        final xFiles = result.files
+                            .where((f) => f.path != null)
+                            .map((f) => XFile(f.path!))
+                            .toList();
+                        viewModel.addFiles(xFiles);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOption(
+          {required IconData icon,
+          required String label,
+          required Color color,
+          required VoidCallback onTap}) =>
+      GestureDetector(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: color.withOpacity(0.1), shape: BoxShape.circle),
+              child: Icon(icon, size: 30, color: color),
+            ),
+            const SizedBox(height: 8),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87)),
+          ],
+        ),
+      );
+
   Widget _fileCard(Widget child, int index, AddNewsFeedViewModel viewModel,
       {bool isExisting = false}) {
     return Stack(
@@ -117,7 +228,7 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
         Text("Upload File", style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 10),
         GestureDetector(
-          onTap: viewModel.pickFiles,
+          onTap: () => _showSourcePicker(viewModel),
           child: Container(
             width: 80,
             height: 80,

@@ -53,14 +53,7 @@ class _TalentsViewState extends State<TalentsView> {
                   items: talentViewModel.talentList,
                   itemBuilder: (BuildContext context, int index) {
                     final talentData = talentViewModel.talentList[index];
-                    return InkWell(
-                        onTap: () async {
-                          await talentViewModel.getTalentListMutationById(
-                              context, talentData.dentalProfessionalId ?? "");
-                          navigationService.navigateToWithParams(
-                              RouteList.talentsHireMeScreen);
-                        },
-                        child: TalentsCard(talentList: talentData));
+                    return TalentsCard(talentList: talentData);
                   },
                   bannerIndices: BannerUtils.calculateBannerIndices(
                       talentViewModel.talentList.length),
