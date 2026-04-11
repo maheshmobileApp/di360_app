@@ -12,12 +12,12 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileSection? _profileSection;
   List<ProfileCategory> _visibleSections = [];
-  bool communityStatus = false;
+  //bool communityStatus = false;
 
-  void updateCommunityStatus(bool status) {
+  /*void updateCommunityStatus(bool status) {
     communityStatus = status;
     notifyListeners();
-  }
+  }*/
 
   String communityName = "";
 
@@ -30,7 +30,7 @@ class ProfileViewModel extends ChangeNotifier {
   ProfileSection? get profileSection => _profileSection;
   List<ProfileCategory> get visibleSections => _visibleSections;
   String? get error => _error;
-  Future<void> fetchProfileSections(bool communityStatus) async {
+  Future<void> fetchProfileSections() async {
     _error = null;
     try {
       _profileSection = await _repository.getProfileSections();

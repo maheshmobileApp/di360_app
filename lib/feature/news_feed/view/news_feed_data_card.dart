@@ -363,19 +363,14 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       BuildContext context,
       String feedId,
       String? category) {
-    final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
+    final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
       children: [
         GestureDetector(
           onTap: () {
             if (isLiked) {
-              final likeId = newsfeeds?.myLike
-                      ?.firstWhere((e) => e.id != null && e.id!.isNotEmpty,
-                          orElse: () => MyLike())
-                      .id ??
-                  '';
-              if (likeId.isEmpty) return;
+              final likeId = newsfeeds?.myLike?.first.id ?? '';
               viewModel.removeNewsFeedLike(
                   context, newsfeeds?.id ?? '', likeId);
             } else {
@@ -425,12 +420,5 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         )
       ],
     );
-  }
-
-  bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    if (userId.isEmpty) return false;
-    return newsfeed?.myLike
-            ?.any((e) => e.id != null && e.id?.isNotEmpty == true) ??
-        false;
   }
 }

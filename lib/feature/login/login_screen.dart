@@ -4,7 +4,6 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/account/account_view_model/account_view_model.dart';
 import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password_view_model.dart';
 import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -22,7 +21,6 @@ class LoginScreen extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<LoginViewModel>(context);
-    final profileVM = Provider.of<ProfileViewModel>(context);
     final forgotPasswordViewModel =
         Provider.of<ForgotPasswordViewModel>(context);
     return Scaffold(
@@ -95,11 +93,6 @@ class LoginScreen extends StatelessWidget
                   onTap: () async {
                     if (viewModel.formKey.currentState!.validate()) {
                       await viewModel.submit(context);
-                      final supplier = viewModel
-                          .supplerCommunityOwner?.dentalSuppliers?.first;
-                      (supplier?.communityStatus == "YES")
-                          ? profileVM.updateCommunityStatus(true)
-                          : profileVM.updateCommunityStatus(false);
                     }
                   },
                   text: "Login",
