@@ -145,8 +145,6 @@ class LoginViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Login failed. Please try again.');
     }
-
-    notifyListeners();
   }
 
   homeNavigation(BuildContext context) async {
