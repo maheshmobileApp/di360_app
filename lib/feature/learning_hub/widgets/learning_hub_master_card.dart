@@ -20,8 +20,9 @@ class ListingHubMasterCard extends StatelessWidget {
   final String profilePic;
   final String presenterName;
   final VoidCallback registerTap;
-  final dynamic remainingOfSeats;
+  final dynamic afterWardsPrice;
   final bool isRegistered;
+  final String? type;
 
   const ListingHubMasterCard(
       {super.key,
@@ -37,8 +38,9 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.profilePic,
       required this.presenterName,
       required this.registerTap,
-      required this.remainingOfSeats,
-      required this.isRegistered});
+      required this.afterWardsPrice,
+      required this.isRegistered,
+      this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +49,7 @@ class ListingHubMasterCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Card(
         color: AppColors.whiteColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 3,
         margin: const EdgeInsets.all(8),
         clipBehavior: Clip.antiAlias,
@@ -65,11 +65,8 @@ class ListingHubMasterCard extends StatelessWidget {
                     height: 140,
                     width: double.infinity,
                     fit: BoxFit.contain,
-                    errorWidget: const Icon(
-                      Icons.broken_image,
-                      size: 50,
-                      color: AppColors.lightGeryColor,
-                    ),
+                    errorWidget: const Icon(Icons.broken_image,
+                        size: 50, color: AppColors.lightGeryColor),
                   ),
                 ),
                 Positioned(
@@ -79,18 +76,16 @@ class ListingHubMasterCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(134, 255, 255, 255),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 139, 139, 139)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        color: const Color.fromARGB(134, 255, 255, 255),
+                        border: Border.all(
+                            color: const Color.fromARGB(255, 139, 139, 139)),
+                        borderRadius: BorderRadius.circular(20)),
                     child: Text(
-                      remainingOfSeats <= 0 ? "SOLD OUT" : "FILLING FAST !",
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold),
-                    ),
+                        afterWardsPrice == 0.0 ? "FREE MASTERCLASS" : "PAID",
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -102,13 +97,9 @@ class ListingHubMasterCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "PRESENTED BY",
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text("PRESENTED BY",
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,7 +128,7 @@ class ListingHubMasterCard extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 4)
                         ],
                       ),
                       Row(
@@ -145,41 +136,37 @@ class ListingHubMasterCard extends StatelessWidget {
                           _circleIcon(),
                           SizedBox(width: 10),
                           ShareWidget(
-                            category:  FeedType.learnhub.name,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 8),
-                            size: 20,
-                            feedId: feedId ?? "",
-                          ),
+                              category: FeedType.learnhub.name,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              size: 20,
+                              feedId: feedId ?? ""),
                         ],
                       ),
                     ],
                   ),
                   const Divider(),
-                  Text(
-                    companyName,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text(companyName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w500)),
                   const Divider(),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(type ?? '',
+                          style: TextStyles.medium2(color: AppColors.black)),
                       Row(
                         children: [
                           Icon(Icons.access_time,
                               color: AppColors.primaryColor, size: 20),
                           const SizedBox(width: 6),
-                          Text(
-                            "CPD HOURS: ${cpdHours}",
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyles.medium2(
-                                color: AppColors.primaryColor),
-                          ),
+                          Text("CPD HOURS: ${cpdHours}",
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyles.medium2(
+                                  color: AppColors.primaryColor)),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -205,19 +192,19 @@ class ListingHubMasterCard extends StatelessWidget {
                       (date.isEmpty)
                           ? SizedBox.shrink()
                           : Row(
-                        children: [
-                          Icon(Icons.calendar_month_outlined,
-                              color: AppColors.primaryColor, size: 20),
-                          const SizedBox(width: 6),
-                          Text(
-                            (date.isEmpty) ? "------" : date,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyles.medium2(
-                                color: AppColors.primaryColor),
-                          ),
-                        ],
-                      ),
+                              children: [
+                                Icon(Icons.calendar_month_outlined,
+                                    color: AppColors.primaryColor, size: 20),
+                                const SizedBox(width: 6),
+                                Text(
+                                  (date.isEmpty) ? "------" : date,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyles.medium2(
+                                      color: AppColors.primaryColor),
+                                ),
+                              ],
+                            ),
                     ],
                   ),
 

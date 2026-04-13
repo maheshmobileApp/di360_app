@@ -1,5 +1,6 @@
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
@@ -15,7 +16,7 @@ abstract class LearningHubRepository {
   Future<dynamic> updateCourseStatus(String courseId, String status);
   Future<List<CoursesListingDetails>?> getCoursesListing(
       String? listingStatus,String? activeStatus,String? userId, String? searchText,int limit, int offset);
-  Future<List<CoursesListingDetails>?> getCourseDetails(String? courseId);
+  Future<CoursesByPk?> getCourseDetails(String? courseId);
   Future<CourseStatusCountData> courseListingStatusCount(String? userId);
   Future<GetCourseTypes> getCourseType();
   Future<GetCourseCategories> getCourseCategory();

@@ -56,7 +56,7 @@ class CourseInfoCardWidget extends StatelessWidget {
               Container(
                 height: 50,
                 width: 5,
-                color: AppColors.primaryColor,
+                color: AppColors.primaryColor
               ),
               const SizedBox(width: 10),
               Column(

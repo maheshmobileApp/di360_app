@@ -96,12 +96,14 @@ class _JobListingScreenState extends State<LearningHubMasterView>
 
                           return ListingHubMasterCard(
                             feedId: course.id ?? "",
-                            remainingOfSeats: seats,
+                            afterWardsPrice: course.afterwardsPrice,
                             presenterName: course.presenters?.isNotEmpty == true
                                 ? course.presenters?.first.presentedByName ?? ""
                                 : "",
                             profilePic: course.presenters?.isNotEmpty == true
-                                ? course.presenters?.first.presentedByImage?.url ?? ""
+                                ? course.presenters?.first.presentedByImage
+                                        ?.url ??
+                                    ""
                                 : "",
                             imageUrl: (course.courseBannerImage!.isNotEmpty)
                                 ? course.courseBannerImage?.first.url ?? ''
@@ -120,25 +122,22 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     "")
                                 : "",
                             onTap: () async {
-                              //if (seats > 0) {
                               await courseListingVM.getCourseDetails(
-                                context,
-                                course.id ?? "",
-                              );
+                                  context, course.id ?? "");
 
                               await courseListingVM.getCourseRegisteredUsers(
                                   context, course.id ?? "");
 
                               await courseListingVM.registerCourseHandler(
                                   context, course.createdById ?? "");
-                              navigationService.navigateTo(
-                                RouteList.courseDetailScreen,
-                              );
+                              navigationService
+                                  .navigateTo(RouteList.courseDetailScreen);
                               /*} else {
                                 scaffoldMessenger('Seats are sold out!');
                               }*/
                             },
-                            registerTap: isRegistered
+                            registerTap: () {},
+                            /* isRegistered
                                 ? () {
                                     scaffoldMessenger("Already Registered!");
                                   }
@@ -152,10 +151,10 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                           course.createdById ?? "",
                                           course.id ?? "");
                                     } else {
-            
                                       scaffoldMessenger('Seats are sold out!');
                                     }
-                                  },
+                                  },*/
+                            type: course.type,
                           );
                         },
                       )),

@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
@@ -154,13 +157,16 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getCourseDetails(
-      String? courseId) async {
-    final Map<String, dynamic> variables = {"id": "${courseId}"};
+  Future<CoursesByPk?> getCourseDetails(String? courseId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final Map<String, dynamic> variables = {
+      "id": "${courseId}",
+      "userId": userId
+    };
     final courseTypeData =
         await http.query(showCourseById, variables: variables);
-    final result = CoursesListingData.fromJson(courseTypeData);
-    return result.courses;
+    final result = courseDetailsResponse.fromJson(courseTypeData);
+    return result.data?.coursesByPk;
   }
 
   @override
@@ -202,18 +208,68 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future<List<CoursesListingDetails>?> getAllListingData(
       String? searchText) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final communityIdList =
+        await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final payload = {
       "limit": 10,
       "offset": 0,
       "where": {
-        "course_name": {"_ilike": "%${searchText}%"}
+        "_and": [
+          {
+            "_or": [
+              {
+                "_and": [
+                  {
+                    "created_by_id": {"_eq": userId}
+                  },
+                  {
+                    "_or": [
+                      {
+                        "community_user_type": {
+                          "_in": ["COMMUNITY_USER", "BOTH"]
+                        }
+                      },
+                      {
+                        "community_user_type": {"_is_null": true}
+                      },
+                      if (communityIdList != [] && communityIdList.isNotEmpty)
+                        {
+                          "community_id": {"_in": communityIdList}
+                        }
+                    ]
+                  }
+                ]
+              },
+              {
+                "_and": [
+                  {
+                    "created_by_id": {"_neq": userId}
+                  },
+                  {
+                    "_or": [
+                      {
+                        "community_user_type": {"_eq": "BOTH"}
+                      },
+                      {
+                        "community_user_type": {"_is_null": true}
+                      },
+                      if (communityIdList != [] && communityIdList.isNotEmpty)
+                        {
+                          "community_id": {"_in": communityIdList}
+                        }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     };
 
-    final listingData = await http.query(
-      getAllListingDataQuery,
-      variables: payload,
-    );
+    final listingData =
+        await http.query(getAllListingDataQuery, variables: payload);
 
     final result = CoursesListingData.fromJson(listingData);
     return result.courses ?? [];

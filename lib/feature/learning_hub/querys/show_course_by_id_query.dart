@@ -1,78 +1,82 @@
-const String showCourseById = r'''query ShowCourseById($id: uuid!) {
-  courses(where: { id: { _eq: $id } }) {
+const String showCourseById = r'''
+query getSelectedCourse($id: uuid!, $userId: uuid!) {
+  courses_by_pk(id: $id) {
     id
-    course_category_id
-    short_id
     course_name
-    short_info
-    image
-    video
-    complete_details
-    attachments
     is_featured
-    active_status
-    type
+    number_of_seats
     address
-    scheduled_at
+    attachments
+    course_event_info
+    presenters
+    seo_metadata
+    sponsor_by_image
+    afterwards_price
+    cpd_points
+    early_bird_price
+    community_id
+    community_user_type
     max_subscribers
     price_in_aud
     price_in_usd
-    seo_metadata
-    webinar_link
-    presented_by_image
-    presented_by_name
-    description
-    course_event_info
-    early_bird_end_date
-    topics_included
-    learning_objectives
-    event_type
-    created_by_id
     company_name
-    status
-    sponsor_by_image
-    terms
-    refund_policy
-    contact_name
+    complete_details
     contact_email
+    contact_name
     contact_phone
     contact_website
-    cpd_points
-    number_of_seats
-    early_bird_price
-    afterwards_price
-    course_gallery
-    course_banner_video
-    course_banner_image
     register_link
-    meeting_link
+    description
+    early_bird_end_date
+    endDate
+    event_type
+    image
+    learning_objectives
+    module_section
+    question_section
+    pass_percentage
+    refund_policy
+    short_id
+    short_info
+    startDate
+    status
+    terms
+    topics_included
+    video
+    webinar_link
+    created_at
+    scheduled_at
+    updated_at
+    course_category_id
+    created_by_id
+    course_banner_video
+    course_gallery
+    active_status
+    startTime
+    endTime
+    type
+    course_banner_image
     facebook_link
     instagram_link
     linkedin_link
     youtube_link
-    feed_type
-    active_status_feed
-    user_role
-    rsvp_date
-    startDate
-    endDate
-    startTime
-    endTime
-    community_user_type
-    course_registered_users {
+    course_registered_users(where: {from_id: {_eq: $userId}}) {
+      id
       course_id
       from_id
       status
+      quiz_status
+      module_section
       __typename
     }
-    created_at
-    updated_at
-
-    # Aggregate for registered users
-    course_registered_users_aggregate {
+    course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {
       aggregate {
         count
+        __typename
       }
+      __typename
     }
+    __typename
   }
-}''';
+}
+''';

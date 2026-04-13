@@ -19,6 +19,7 @@ const String getAllListingDataQuery =
     startDate
     status
     created_at
+    afterwards_price
     course_category_id
     active_status
     type

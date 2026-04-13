@@ -33,15 +33,15 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
 
-    if (courseListingVM.courseDetails.isEmpty) {
+    if (courseListingVM.courseDetails == null) {
       return const Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: Center(child: Text("No course details available")),
       );
     }
 
-    final courseDetails = courseListingVM.courseDetails.isNotEmpty
-        ? courseListingVM.courseDetails.first
+    final courseDetails = courseListingVM.courseDetails != null
+        ? courseListingVM.courseDetails
         : null;
 
     final bannerUrls = (courseDetails?.courseBannerImage ?? [])
@@ -68,7 +68,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         : "";
 
     final isRegistered =
-        courseListingVM.isRegisteredCheck(courseDetails?.courseRegisteredUsers);
+        courseListingVM.isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
     final seats = courseDetails?.numberOfSeats ?? 0;
 
     return Scaffold(
@@ -91,19 +91,17 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             scaffoldMessenger("Already Registered");
                           }
                         : () {
-                          if (seats > 0) {
-                            courseListingVM
-                                .setCourseId(courseDetails?.id ?? "");
-                            RegistrationUserForm.show(
-                                context,
-                                courseDetails?.courseName ?? "",
-                                courseDetails?.createdById ?? "",
-                                courseDetails?.id ?? "");
-
-                          } else {
-                            scaffoldMessenger('Seats are sold out!');
-                          }
-                            
+                            if (seats > 0) {
+                              courseListingVM
+                                  .setCourseId(courseDetails?.id ?? "");
+                              RegistrationUserForm.show(
+                                  context,
+                                  courseDetails?.courseName ?? "",
+                                  courseDetails?.createdById ?? "",
+                                  courseDetails?.id ?? "");
+                            } else {
+                              scaffoldMessenger('Seats are sold out!');
+                            }
                           },
                   ),
                 ),
@@ -189,12 +187,22 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         startDate: courseDetails?.startDate ?? "",
                         endDate: courseDetails?.endDate ?? "",
                         courseName: courseDetails?.courseName ?? "",
-                        profilePic: courseDetails?.presentedByImage?.url ?? "",
-                        presentByName: courseDetails?.presentedByName ?? "",
+                        profilePic:
+                            courseDetails?.presenters?.isNotEmpty ?? false
+                                ? courseDetails?.presenters?.first
+                                        .presentedByImage?.url ??
+                                    ""
+                                : "",
+                        presentByName:
+                            courseDetails?.presenters?.isNotEmpty ?? false
+                                ? courseDetails
+                                        ?.presenters?.first.presentedByName ??
+                                    ""
+                                : "",
                         cpdHours:
                             courseDetails?.cpdPoints?.toInt().toString() ?? "0",
                         platform: courseDetails?.type ?? "",
-                        webinar: courseDetails?.feedType ?? "",
+                        webinar:  "",
                         totalPrice:
                             courseDetails?.afterwardsPrice?.toString() ?? "0",
                         discountPrice:
@@ -232,11 +240,11 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              EventDayDataWidget(
-                                index: index.toString(),
-                                descriptions: [eventInfo],
-                                images: images,
-                              ),
+                              // EventDayDataWidget(
+                              //   index: index.toString(),
+                              //   descriptions: [eventInfo],
+                              //   images: images
+                              // ),
                             ],
                           );
                         }),

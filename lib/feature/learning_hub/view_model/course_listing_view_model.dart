@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart'
+   ;
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
     hide CourseRegisteredUsers;
@@ -16,7 +18,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   List<CoursesListingDetails> coursesListingList = [];
   List<CoursesListingDetails> marketPlaceCoursesList = [];
-  List<CoursesListingDetails> courseDetails = [];
+  CoursesByPk? courseDetails;
   RegisteredUsersData? registeredUsers;
   String selectedStatus = "All";
   String selectedRegUsersStatus = "All";
@@ -247,6 +249,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final res = await repo.getCourseDetails(courseId);
     if (res != null) {
       courseDetails = res;
+      print('*********$courseDetails');
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -259,16 +262,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final res = await repo.getCourseRegisteredUsers(
         courseId, listingRegUsersStatus ?? "");
-    if (res != null) {
-      registeredUsers = res;
-    }
+    registeredUsers = res;
     await getCourseRegisteredUsersTabCount(context, courseId);
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> updateRegUserStatus(
-      BuildContext context, String regUserId, String status, String courseId) async {
+  Future<void> updateRegUserStatus(BuildContext context, String regUserId,
+      String status, String courseId) async {
     if (courseId.isEmpty) return;
     Loaders.circularShowLoader(context);
     final variables = {
@@ -295,7 +296,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       }
     };
     final res = await repo.getRegisterUserTabCountData(variables);
-    if (res != null && res != "") {
+    if (res != "") {
       registerUserTabCount = res;
       allRegUsersCount = registerUserTabCount?.all?.aggregate?.count ?? 0;
       pendingRegUsersCount =
@@ -407,6 +408,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   bool isRegisteredCheck(List<CourseRegisteredUsers>? courseRegisteredUsers) {
+    return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
+        false;
+  }
+
+  bool isCourseDetailRegisteredCheck(List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
   }

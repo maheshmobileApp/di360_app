@@ -246,7 +246,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       case "Edit":
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
-                        if (courseListingVM.courseDetails.isEmpty) {
+                        if (courseListingVM.courseDetails == null) {
                           scaffoldMessenger('Course details not found');
                           break;
                         }
@@ -258,11 +258,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         newCourseVM.setEditMode(true);
                         courseListingVM.setCourseStatus(course.status ?? "");
                         Loaders.circularShowLoader(context);
-                        await loadCourseData(
-                            newCourseVM, courseListingVM.courseDetails.first);
+                        // await loadCourseData(
+                        //     newCourseVM, courseListingVM.courseDetails);
                         Loaders.circularHideLoader(context);
                         navigationService.navigateTo(
-                          RouteList.newCourseScreen,
+                          RouteList.newCourseScreen
                         );
 
                         break;
@@ -287,7 +287,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       case "Re-Listing":
                         await courseListingVM.getCourseDetails(
                             context, course.id ?? "");
-                        if (courseListingVM.courseDetails.isEmpty) {
+                        if (courseListingVM.courseDetails == null) {
                           scaffoldMessenger('Course details not found');
                           break;
                         }
@@ -300,8 +300,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         courseListingVM.setCourseStatus(course.status ?? "");
 
                         Loaders.circularShowLoader(context);
-                        await loadCourseData(
-                            newCourseVM, courseListingVM.courseDetails.first);
+                        // await loadCourseData(
+                        //     newCourseVM, courseListingVM.courseDetails);
                         newCourseVM.eraseDateFields();
 
                         Loaders.circularHideLoader(context);
