@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_directors/view_model/add_director_view
 import 'package:di360_flutter/feature/add_directors/widgets/pdf_view_widget.dart';
 import 'package:di360_flutter/feature/directors/view/director_details/custom_grid.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
+import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
               directData.directoryGalleryPosts?.first.image?.length != 0)
             _sectionTitle('GALLERY', _galleryCard(addDirectVM)),
           if (directData.directoryDocuments?.length != 0)
-            _sectionTitle('OUR DOCUMENT', _documentCard(addDirectVM)),
+            _sectionTitle('OUR DOCUMENT', _documentCard(context,addDirectVM)),
           if (directData.directoryAchievements?.length != 0)
             _sectionTitle('OUR ACHIEVEMENTS', _archievementcard(addDirectVM)),
           if (directData.directoryCertifications?.length != 0)
@@ -261,7 +262,7 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                     []));
   }
 
-  Widget _documentCard(AddDirectoryViewModel vm) {
+  Widget _documentCard(BuildContext context,AddDirectoryViewModel vm) {
     return CustomGrid(
       childAspectRatio: 0.75,
       children: List.generate(
@@ -305,13 +306,8 @@ class DirectorDetailsView extends StatelessWidget with BaseContextHelpers {
                     child: GestureDetector(
                       onTap: () async {
                         final url = doc?.attachment?.url ?? '';
-                        if (url.isNotEmpty &&
-                            await canLaunchUrl(Uri.parse(url))) {
-                          await launchUrl(
-                            Uri.parse(url),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        }
+                        final fileName = doc?.attachment?.name ?? '';
+                        downloadFile(context, url, fileName: fileName);
                       },
                       child: CircleAvatar(
                         radius: 14,
