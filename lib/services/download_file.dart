@@ -88,7 +88,6 @@ Future<void> downloadAllFiles(
       final filePath = '${dir.path}/$name';
       try {
         await dio.download(media.url!, filePath);
-        await OpenFile.open(filePath);
       } catch (e) {
         print('Failed to download ${media.name}: $e');
       }
