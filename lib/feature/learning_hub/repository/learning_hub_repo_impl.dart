@@ -165,8 +165,8 @@ class LearningHubRepoImpl extends LearningHubRepository {
     };
     final courseTypeData =
         await http.query(showCourseById, variables: variables);
-    final result = courseDetailsResponse.fromJson(courseTypeData);
-    return result.data?.coursesByPk;
+    final result = CourseDetailData.fromJson(courseTypeData);
+    return result.coursesByPk;
   }
 
   @override
@@ -206,14 +206,14 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getAllListingData(
-      String? searchText) async {
+  Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
+      int limit,int offset) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityIdList =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final payload = {
-      "limit": 10,
-      "offset": 0,
+      "limit": limit,
+      "offset": offset,
       "where": {
         "_and": [
           {

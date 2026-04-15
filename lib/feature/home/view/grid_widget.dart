@@ -66,7 +66,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       context.read<CourseListingViewModel>().searchController.text = "";
       context.read<NewCourseViewModel>().fetchCourseCategory();
       context.read<NewCourseViewModel>().fetchCourseType();
-      await context.read<CourseListingViewModel>().getAllListingData(context);
+      await context.read<CourseListingViewModel>().getAllLearningHubData(context);
       Loaders.circularHideLoader(context);
       await navigationService.navigateTo(RouteList.learningHubMasterView);
     }

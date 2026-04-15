@@ -170,7 +170,7 @@ class CoursesByPk {
     id = json['id'];
     courseName = json['course_name'];
     isFeatured = json['is_featured'];
-    numberOfSeats = json['number_of_seats'];
+    numberOfSeats = (json['number_of_seats'] as num?)?.toInt();
     if (json['address'] != null) {
       address = <Address>[];
       json['address'].forEach((v) {
@@ -197,12 +197,12 @@ class CoursesByPk {
         sponsorByImage!.add(new SponsorByImage.fromJson(v));
       });
     }
-    afterwardsPrice = json['afterwards_price'];
-    cpdPoints = json['cpd_points'];
+    afterwardsPrice = (json['afterwards_price'] as num?)?.toInt();
+    cpdPoints = (json['cpd_points'] as num?)?.toInt();
     earlyBirdPrice = json['early_bird_price'];
     communityId = json['community_id'];
     communityUserType = json['community_user_type'];
-    maxSubscribers = json['max_subscribers'];
+    maxSubscribers = (json['max_subscribers'] as num?)?.toInt();
     priceInAud = json['price_in_aud'];
     priceInUsd = json['price_in_usd'];
     companyName = json['company_name'];
@@ -418,7 +418,7 @@ class PresentedByImage {
   PresentedByImage.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
-    size = json['size'];
+    size = (json['size'] as num?)?.toInt();
     type = json['type'];
   }
 
@@ -648,7 +648,7 @@ class CourseGallery {
   CourseGallery.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
-    size = json['size'];
+    size = (json['size'] as num?)?.toInt();
     type = json['type'];
   }
 
@@ -667,7 +667,7 @@ class CourseBannerVideo {
   CourseBannerVideo.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
-    size = json['size'];
+    size = (json['size'] as num?)?.toInt();
     type = json['type'];
   }
 
@@ -718,7 +718,7 @@ class Images {
   Images.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
-    size = json['size'];
+    size = (json['size'] as num?)?.toInt();
     type = json['type'];
   }
 
@@ -759,7 +759,7 @@ class SponsorByImage {
   SponsorByImage.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
-    size = json['size'];
+    size = (json['size'] as num?)?.toInt();
     type = json['type'];
   }
 

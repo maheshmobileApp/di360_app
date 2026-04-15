@@ -3,13 +3,11 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,15 +22,28 @@ class LearningHubMasterView extends StatefulWidget {
 
 class _JobListingScreenState extends State<LearningHubMasterView>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final viewModel =
-          Provider.of<LearningHubMasterViewModel>(context, listen: false);
-
-      viewModel.clearFilterOptions();
+      Provider.of<LearningHubMasterViewModel>(context, listen: false)
+          .clearFilterOptions();
     });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        Provider.of<CourseListingViewModel>(context, listen: false)
+            .getAllLearningHubData(context, loadMore: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,10 +70,10 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                 hintText: "Search Course...",
                 onClear: () {
                   courseListingVM.searchController.clear();
-                  courseListingVM.getAllListingData(context);
+                  courseListingVM.getAllLearningHubData(context);
                 },
                 onSearch: () {
-                  courseListingVM.getAllListingData(context);
+                  courseListingVM.getAllLearningHubData(context);
                 },
               ),
             Expanded(
@@ -79,18 +90,26 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                         ),
                       )
                     : ListView.builder(
+                        controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
-                        itemCount:
-                            courseListingVM.marketPlaceCoursesList.length,
+                        itemCount: courseListingVM.marketPlaceCoursesList.length +
+                            (courseListingVM.isLoadingMoreMarketPlace ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index ==
+                              courseListingVM.marketPlaceCoursesList.length) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
                           final jobData =
                               courseListingVM.marketPlaceCoursesList[index];
                           final course = jobData;
 
-                          final seats = (course.numberOfSeats ?? 0) -
-                              (course.courseRegisteredUsersAggregate?.aggregate
-                                      ?.count ??
-                                  0);
+                          // final seats = (course.numberOfSeats ?? 0) -
+                          //     (course.courseRegisteredUsersAggregate?.aggregate
+                          //             ?.count ??
+                          //         0);
                           final isRegistered = courseListingVM
                               .isRegisteredCheck(course.courseRegisteredUsers);
 

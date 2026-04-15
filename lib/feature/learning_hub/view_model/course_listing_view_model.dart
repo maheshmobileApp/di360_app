@@ -38,6 +38,11 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   bool isLoadingMoreCourses = false;
   bool hasMoreCourses = true;
 
+  final int _marketPlaceLimit = 10;
+  int _marketPlaceOffset = 0;
+  bool isLoadingMoreMarketPlace = false;
+  bool hasMoreMarketPlace = true;
+
   /********************************** */
   final userFirstNameController = TextEditingController();
   final userLastNameController = TextEditingController();
@@ -221,13 +226,31 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getAllListingData(BuildContext context) async {
-    currentUserId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getAllListingData(searchController.text);
-
-    if (res != null) {
-      marketPlaceCoursesList = res;
+  Future<void> getAllLearningHubData(BuildContext context,
+      {bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMoreMarketPlace || !hasMoreMarketPlace) return;
+      isLoadingMoreMarketPlace = true;
+    } else {
+      currentUserId =
+          await LocalStorage.getStringVal(LocalStorageConst.userId);
+      _marketPlaceOffset = 0;
+      hasMoreMarketPlace = true;
     }
+    notifyListeners();
+
+    final res = await repo.getMarketPlaceLearningHubData(
+        _marketPlaceLimit, _marketPlaceOffset);
+
+    if (loadMore) {
+      marketPlaceCoursesList.addAll(res ?? []);
+      isLoadingMoreMarketPlace = false;
+    } else {
+      marketPlaceCoursesList = res ?? [];
+    }
+
+    hasMoreMarketPlace = (res?.length ?? 0) >= _marketPlaceLimit;
+    _marketPlaceOffset += res?.length ?? 0;
     notifyListeners();
   }
 
@@ -247,11 +270,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getCourseDetails(BuildContext context, String courseId) async {
     Loaders.circularShowLoader(context);
     final res = await repo.getCourseDetails(courseId);
-    if (res != null) {
-      courseDetails = res;
-      print('*********$courseDetails');
-      Loaders.circularHideLoader(context);
-    }
+    if (res != null) courseDetails = res;
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 // Registered Users

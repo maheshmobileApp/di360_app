@@ -146,7 +146,7 @@ class RegistrationUserForm {
                                 },
                               );
                               await courseVM.getCoursesListingData(context);
-                              await courseVM.getAllListingData(context);
+                              await courseVM.getAllLearningHubData(context);
                               await courseVM.getCourseDetails(
                                   context, courseId);
                             }
