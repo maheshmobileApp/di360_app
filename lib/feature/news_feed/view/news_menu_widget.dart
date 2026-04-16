@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -51,6 +52,10 @@ class NewsMenuWidget extends StatelessWidget {
                     newsfeeds?.dentalProfessional?.id ??
                     '');
           });
+        } else if (value == 'Save Media') {
+          final mediaList = newsfeeds?.postImage ?? [];
+
+          downloadAllFiles(context, mediaList);
         }
       },
       itemBuilder: (context) => [
@@ -71,8 +76,12 @@ class NewsMenuWidget extends StatelessWidget {
               child: buildRow(Icons.report, AppColors.primaryColor, "Report")),
           PopupMenuItem(
               value: "block",
-              child: buildRow(Icons.block, AppColors.redColor, "Block"))
-        ]
+              child: buildRow(Icons.block, AppColors.redColor, "Block")),
+        ],
+        if (newsfeeds?.postImage != null && newsfeeds?.postImage?.isNotEmpty == true)
+        PopupMenuItem(
+            value: "Save Media",
+            child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))
       ],
     );
   }
@@ -111,11 +120,11 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
               top: false,
               child: Padding(
                 padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 10,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-                  ),
+                  left: 16,
+                  right: 16,
+                  top: 10,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                ),
                 child: Column(
                   children: [
                     SizedBox(height: 12),
@@ -131,7 +140,11 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
                                   color: AppColors.primaryColor))
                         ]),
                     SizedBox(height: 20),
-                    InputTextField(title: 'Report', hintText: 'Enter report',maxLines: 5,),
+                    InputTextField(
+                      title: 'Report',
+                      hintText: 'Enter report',
+                      maxLines: 5,
+                    ),
                     SizedBox(height: 40),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

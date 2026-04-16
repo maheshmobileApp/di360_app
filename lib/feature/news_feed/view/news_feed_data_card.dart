@@ -271,7 +271,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url);
+          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.contain);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);

@@ -123,7 +123,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                                         LocalStorageConst.userId)))
                           Row(
                             children: [
-                              _menuWidget(context, type),
+                              _menuWidget(context, type, imageUrls),
                             ],
                           ),
                       ],
@@ -144,8 +144,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     if (newsfeeds?.videoUrl != null &&
                         newsfeeds?.videoUrl?.isNotEmpty == true &&
                         _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
-                      LazyYoutubePlayer(
-                          youtubeUrl: newsfeeds?.videoUrl??""),
+                      LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ""),
                     const SizedBox(height: 8),
 
                     if (newsfeeds?.webUrl != null &&
@@ -398,7 +397,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
- /* Widget _mediaCard({
+  /* Widget _mediaCard({
     required Widget child,
     VoidCallback? onTap,
     bool isFullWidth = false,
@@ -758,7 +757,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _menuWidget(BuildContext context, String type) {
+  Widget _menuWidget(
+      BuildContext context, String type, List<PostImage>? imageUrls) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -792,7 +792,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             _popupItem("Publish", Icons.send, AppColors.blueColor),
           if (status == "PUBLISHED" || status == "PENDING")
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
-        ]
+        ],
+        if (imageUrls?.isNotEmpty == true)
+        _popupItem("Save Media", Icons.save, AppColors.greenColor),
       ],
     );
   }
