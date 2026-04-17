@@ -115,7 +115,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildCategoryTypes(JobCreateViewModel jobCreateVM) {
+ /* Widget _buildCategoryTypes(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
       value: jobCreateVM.selectedRole,
@@ -181,5 +181,5 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
     );
-  }
+  }*/
 }

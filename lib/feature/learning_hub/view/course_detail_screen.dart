@@ -7,7 +7,6 @@ import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.d
 import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_description_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widget.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
@@ -249,13 +248,13 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                             .asMap()
                             .entries
                             .map((entry) {
-                          final index = entry.key + 1;
-                          final eventInfo = entry.value;
+                          // final index = entry.key + 1;
+                          // final eventInfo = entry.value;
 
-                          final images = (eventInfo.images ?? [])
-                              .map((e) => e.url ?? "")
-                              .where((url) => url.isNotEmpty)
-                              .toList();
+                          // final images = (eventInfo.images ?? [])
+                          //     .map((e) => e.url ?? "")
+                          //     .where((url) => url.isNotEmpty)
+                          //     .toList();
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

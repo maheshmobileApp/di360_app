@@ -77,7 +77,7 @@ class EventDayDataWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+ /* Widget _buildInfoRow(String label, String value) {
     return RichText(
       text: TextSpan(
         children: [
@@ -100,5 +100,5 @@ class EventDayDataWidget extends StatelessWidget {
         ],
       ),
     );
-  }
+  }*/
 }
