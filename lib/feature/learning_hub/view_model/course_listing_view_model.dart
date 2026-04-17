@@ -2,8 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart'
-   ;
+import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
     hide CourseRegisteredUsers;
@@ -232,8 +231,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       if (isLoadingMoreMarketPlace || !hasMoreMarketPlace) return;
       isLoadingMoreMarketPlace = true;
     } else {
-      currentUserId =
-          await LocalStorage.getStringVal(LocalStorageConst.userId);
+      currentUserId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       _marketPlaceOffset = 0;
       hasMoreMarketPlace = true;
     }
@@ -432,7 +430,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         false;
   }
 
-  bool isCourseDetailRegisteredCheck(List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
+  bool isCourseDetailRegisteredCheck(
+      List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
   }
@@ -443,5 +442,84 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     userEmailController.text = "";
     userPhoneNumberController.text = "";
     userDescriptionController.text = "";
+  }
+
+  int currentModuleIndex = 0;
+  int currentSectionIndex = 0;
+  List<ModuleSection> modules = [];
+
+  /// 🔹 Get current module
+  ModuleSection get currentModule =>
+      courseDetails?.moduleSection?[currentModuleIndex] ?? ModuleSection();
+
+  /// 🔹 Get current section
+  SectionList get currentSection =>
+      currentModule.sectionList?[currentSectionIndex] ?? SectionList();
+
+  /// 🔹 Set data (from API / JSON)
+  void setModules(List<ModuleSection> data) {
+    modules = data;
+    currentModuleIndex = 0;
+    currentSectionIndex = 0;
+    notifyListeners();
+  }
+
+  /// 🔹 Manually switch section
+  void setCurrent(int moduleIndex, int sectionIndex) {
+    currentModuleIndex = moduleIndex;
+    currentSectionIndex = sectionIndex;
+    notifyListeners();
+  }
+
+  /// 🔹 Complete & go to next
+  void markCompleteAndNext() {
+    if (modules.isEmpty) return;
+
+    // Mark current section complete
+    currentSection.status = "completed";
+
+    // Next section in same module
+    if (currentSectionIndex < currentModule.sectionList!.length - 1) {
+      currentSectionIndex++;
+    }
+    // Move to next module
+    else if (currentModuleIndex < modules.length - 1) {
+      currentModuleIndex++;
+      currentSectionIndex = 0;
+    }
+    // Last module + last section
+    else {
+      debugPrint("Course Completed 🎉");
+    }
+
+    notifyListeners();
+  }
+
+  /// 🔹 Check if section is active
+  bool isActive(int moduleIndex, int sectionIndex) {
+    return moduleIndex == currentModuleIndex &&
+        sectionIndex == currentSectionIndex;
+  }
+
+  /// 🔹 Check if section is completed
+  bool isCompleted(int moduleIndex, int sectionIndex) {
+    return modules[moduleIndex].sectionList?[sectionIndex].status ==
+        "completed";
+  }
+
+  /// 🔹 Get progress %
+  double get progress {
+    int total = 0;
+    int completed = 0;
+
+    for (var m in modules) {
+      for (var s in m.sectionList ?? []) {
+        total++;
+        if (s.status == "completed") completed++;
+      }
+    }
+
+    if (total == 0) return 0;
+    return completed / total;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/course_modules_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.dart';
@@ -10,6 +11,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widg
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
@@ -89,8 +91,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       onPressed: isRegistered
                           ? courseDetails?.type == 'Online Academy'
                               ? () {
-                                
-                              }
+                                  navigationService.push(CourseModulesScreen());
+                                }
                               : () {
                                   scaffoldMessenger("Already Registered");
                                 }
