@@ -75,8 +75,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   addNewsFeedLike(BuildContext context, String newsFeedId) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     updateTheNewsFeedLikeCount(context, newsFeedId, true);
-    try {
-      var res = await _http.mutation(addNewsFeedLikeMutation, {
+    final variables = {
         "fields": {
           "news_feeds_id": newsFeedId,
           "created_by_id": userID ?? null,
@@ -86,7 +85,9 @@ class NewsFeedViewModel extends ChangeNotifier {
           "dental_professional_id": professionId ?? null,
           "dental_admin_id": adminId ?? null,
         }
-      });
+      };
+    try {
+      var res = await _http.mutation(addNewsFeedLikeMutation, variables);
       if (res['insert_newsfeeds_likes_one'] != null) {
         updateTheLikeObject(
             context, newsFeedId, res['insert_newsfeeds_likes_one']['id']);
@@ -112,7 +113,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> updateTheLikeObject(
-      BuildContext context, String feedId,String likeId) async {
+      BuildContext context, String feedId, String likeId) async {
     final newsFeedList =
         context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
     final feed = newsFeedList?.firstWhere((v) => v.id == feedId);
@@ -123,7 +124,8 @@ class NewsFeedViewModel extends ChangeNotifier {
   Future<void> removeTheLikeObject(BuildContext context, String feedId) async {
     final newsFeedList =
         context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
-    final feed = newsFeedList?.firstWhere((v) => v.id == feedId, orElse: () => Newsfeeds());
+    final feed = newsFeedList?.firstWhere((v) => v.id == feedId,
+        orElse: () => Newsfeeds());
     feed?.myLike?.clear();
     notifyListeners();
   }

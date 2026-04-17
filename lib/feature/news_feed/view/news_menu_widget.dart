@@ -165,7 +165,7 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
                               width: 150,
                               height: 45,
                               radius: 12,
-                              text: 'Submited',
+                              text: 'Submit',
                               onTap: sumbitedAction)
                         ])
                   ],
