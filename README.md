@@ -415,21 +415,14 @@ flutter build apk --release --dart-define-from-file=.env/dev.json
 dart fix --apply
 
 
-flutter clean && flutter pub get &&flutter build ipa --release --dart-define-from-file=.env/dev.json && firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk\
+flutter clean && flutter pub get &&flutter build apk --release --dart-define-from-file=.env/dev.json && firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk\
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
 Deep ling implemented for newsfeed
 
-2399
-2400
-2401
-2402
-2403
-2333
-2334
-2335
-2338
+Implemented save media,
+fixed the deeplink issue in iOS
 
 "
   
