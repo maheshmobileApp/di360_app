@@ -67,8 +67,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
         ? courseDetails?.courseBannerVideo?.first.name ?? ""
         : "";
 
-    final isRegistered =
-        courseListingVM.isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
+    final isRegistered = courseListingVM
+        .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
     final seats = courseDetails?.numberOfSeats ?? 0;
 
     return Scaffold(
@@ -81,29 +81,44 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: RegisterNowWidget(
-                    earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
-                    registerStatus: isRegistered,
-                    currentPrice:
-                        courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                    oldPrice: courseDetails?.afterwardsPrice?.toString() ?? "0",
-                    onPressed: isRegistered
-                        ? () {
-                            scaffoldMessenger("Already Registered");
-                          }
-                        : () {
-                            if (seats > 0) {
-                              courseListingVM
-                                  .setCourseId(courseDetails?.id ?? "");
-                              RegistrationUserForm.show(
-                                  context,
-                                  courseDetails?.courseName ?? "",
-                                  courseDetails?.createdById ?? "",
-                                  courseDetails?.id ?? "");
-                            } else {
-                              scaffoldMessenger('Seats are sold out!');
-                            }
-                          },
-                  ),
+                      earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
+                      registerStatus: isRegistered,
+                      currentPrice:
+                          courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                      oldPrice:
+                          courseDetails?.afterwardsPrice?.toString() ?? "0",
+                      onPressed: isRegistered
+                          ? courseDetails?.type == 'Online Academy'
+                              ? () {
+                                
+                              }
+                              : () {
+                                  scaffoldMessenger("Already Registered");
+                                }
+                          : courseDetails?.type == 'Online Academy'
+                              ? () {
+                                  courseListingVM
+                                      .setCourseId(courseDetails?.id ?? "");
+                                  RegistrationUserForm.show(
+                                      context,
+                                      courseDetails?.courseName ?? "",
+                                      courseDetails?.createdById ?? "",
+                                      courseDetails?.id ?? "");
+                                }
+                              : () {
+                                  if (seats > 0) {
+                                    courseListingVM
+                                        .setCourseId(courseDetails?.id ?? "");
+                                    RegistrationUserForm.show(
+                                        context,
+                                        courseDetails?.courseName ?? "",
+                                        courseDetails?.createdById ?? "",
+                                        courseDetails?.id ?? "");
+                                  } else {
+                                    scaffoldMessenger('Seats are sold out!');
+                                  }
+                                },
+                      courseType: courseDetails?.type ?? ""),
                 ),
               ],
             )
@@ -132,11 +147,10 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       ? const SizedBox.shrink()
                       : CarouselSlider(
                           options: CarouselOptions(
-                            height: 250,
-                            autoPlay: true,
-                            viewportFraction: 1.0,
-                            enableInfiniteScroll: true,
-                          ),
+                              height: 250,
+                              autoPlay: true,
+                              viewportFraction: 1.0,
+                              enableInfiniteScroll: true),
                           items: bannerUrls
                               .map((url) => BannerImageWidget(imageUrl: url))
                               .toList(),
@@ -179,50 +193,55 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CourseInfoCardWidget(
-                        address: courseDetails?.address?.isNotEmpty == true
-                            ? courseDetails?.address?.first.city ?? ""
-                            : "",
-                        startTime: courseDetails?.startTime ?? "",
-                        endTime: courseDetails?.endTime ?? "",
-                        startDate: courseDetails?.startDate ?? "",
-                        endDate: courseDetails?.endDate ?? "",
-                        courseName: courseDetails?.courseName ?? "",
-                        profilePic:
-                            courseDetails?.presenters?.isNotEmpty ?? false
-                                ? courseDetails?.presenters?.first
-                                        .presentedByImage?.url ??
-                                    ""
-                                : "",
-                        presentByName:
-                            courseDetails?.presenters?.isNotEmpty ?? false
-                                ? courseDetails
-                                        ?.presenters?.first.presentedByName ??
-                                    ""
-                                : "",
-                        cpdHours:
-                            courseDetails?.cpdPoints?.toInt().toString() ?? "0",
-                        platform: courseDetails?.type ?? "",
-                        webinar:  "",
-                        totalPrice:
-                            courseDetails?.afterwardsPrice?.toString() ?? "0",
-                        discountPrice:
-                            courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                        bannerUrl: bannerUrl,
-                        bannerName: bannerName,
-                      ),
+                          address: courseDetails?.address?.isNotEmpty == true
+                              ? courseDetails?.address?.first.city ?? ""
+                              : "",
+                          startTime: courseDetails?.startTime ?? "",
+                          endTime: courseDetails?.endTime ?? "",
+                          startDate: courseDetails?.startDate ?? "",
+                          endDate: courseDetails?.endDate ?? "",
+                          courseName: courseDetails?.courseName ?? "",
+                          profilePic:
+                              courseDetails?.presenters?.isNotEmpty ?? false
+                                  ? courseDetails?.presenters?.first
+                                          .presentedByImage?.url ??
+                                      ""
+                                  : "",
+                          presentByName:
+                              courseDetails?.presenters?.isNotEmpty ?? false
+                                  ? courseDetails
+                                          ?.presenters?.first.presentedByName ??
+                                      ""
+                                  : "",
+                          cpdHours:
+                              courseDetails?.cpdPoints?.toInt().toString() ??
+                                  "0",
+                          platform: courseDetails?.type ?? "",
+                          webinar: "",
+                          totalPrice:
+                              courseDetails?.afterwardsPrice?.toString() ?? "0",
+                          discountPrice:
+                              courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                          bannerUrl: bannerUrl,
+                          bannerName: bannerName,
+                          creatAt: courseDetails?.updatedAt),
                       const SizedBox(height: 12),
                       if (courseDetails?.description != "")
                         CourseDescriptionWidget(
                           title: 'Course Description',
                           description: courseDetails?.description ?? "",
                         ),
-                      const SizedBox(height: 12),
-                      Text(
-                        (courseDetails?.eventType == "Single Day")
-                            ? "Single Day Event"
-                            : "Multiple Day Event",
-                        style: TextStyles.bold2(color: AppColors.primaryColor),
-                      ),
+                      if (courseDetails?.type != 'Online Academy' &&
+                          courseDetails?.eventType != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          (courseDetails?.eventType != "multiple")
+                              ? "Single Day Event"
+                              : "Multiple Day Event",
+                          style:
+                              TextStyles.bold2(color: AppColors.primaryColor),
+                        )
+                      ],
                       const SizedBox(height: 6),
                       if ((courseDetails?.courseEventInfo != null &&
                           courseDetails!.courseEventInfo!.isNotEmpty)) ...[

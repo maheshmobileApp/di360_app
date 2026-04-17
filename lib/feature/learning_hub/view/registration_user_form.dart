@@ -55,10 +55,10 @@ class RegistrationUserForm {
                             child: const Icon(
                               Icons.close,
                               color: AppColors.black,
-                              size: 24,
-                            ),
-                          ),
-                        ],
+                              size: 24
+                            )
+                          )
+                        ]
                       ),
 
                       Text(

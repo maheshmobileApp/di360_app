@@ -2,8 +2,8 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/media_widget.dart';
-import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 
 class CourseInfoCardWidget extends StatelessWidget {
@@ -22,6 +22,7 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String endTime;
   final String bannerUrl;
   final String bannerName;
+  final String? creatAt;
 
   const CourseInfoCardWidget(
       {super.key,
@@ -39,7 +40,8 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.bannerUrl,
       required this.bannerName,
       required this.startTime,
-      required this.endTime});
+      required this.endTime,
+      this.creatAt});
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +55,7 @@ class CourseInfoCardWidget extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              Container(
-                height: 50,
-                width: 5,
-                color: AppColors.primaryColor
-              ),
+              Container(height: 50, width: 5, color: AppColors.primaryColor),
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,15 +123,12 @@ class CourseInfoCardWidget extends StatelessWidget {
                             Icon(Icons.calendar_month_outlined,
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
-                            Text(startDate.isEmpty
-                                ? ""
-                                : DateFormatUtils.convertToddmmm(startDate)
-                                    .toUpperCase()),
-                            Text(" - "),
-                            Text(endDate.isEmpty
-                                ? ""
-                                : DateFormatUtils.convertToddmmm(endDate)
-                                    .toUpperCase()),
+                            Text(jiffyDataWidget(creatAt, format: 'd MMM')),
+                            // Text(" - "),
+                            // Text(endDate.isEmpty
+                            //     ? ""
+                            //     : DateFormatUtils.convertToddmmm(endDate)
+                            //         .toUpperCase()),
                           ],
                         ),
                         Row(
@@ -141,13 +136,14 @@ class CourseInfoCardWidget extends StatelessWidget {
                             Icon(Icons.access_time_rounded,
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
-                            Text(startTime.isNotEmpty
-                                ? DateFormatUtils.formatToAmPm(startTime)
-                                : '--'),
-                            Text(" - "),
-                            Text(endTime.isNotEmpty
-                                ? DateFormatUtils.formatToAmPm(endTime)
-                                : '--')
+                            Text(jiffyDataWidget(creatAt, format: 'h a')),
+                            // Text(startTime.isNotEmpty
+                            //     ? DateFormatUtils.formatToAmPm(startTime)
+                            //     : '--'),
+                            // Text(" - "),
+                            // Text(endTime.isNotEmpty
+                            //     ? DateFormatUtils.formatToAmPm(endTime)
+                            //     : '--')
                           ],
                         ),
                       ],
@@ -198,7 +194,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                         _InfoTextWidget(
                           label: "Where",
                           first: false,
-                          value: address,
+                          value: 'Online',
                         ),
 
                         /*_PriceTextWidget(
@@ -262,7 +258,7 @@ class _InfoTextWidget extends StatelessWidget {
   }
 }
 
-class _PriceTextWidget extends StatelessWidget {
+/*class _PriceTextWidget extends StatelessWidget {
   final String label;
 
   final String originalPrice;
@@ -310,4 +306,4 @@ class _PriceTextWidget extends StatelessWidget {
       ],
     );
   }
-}
+} */

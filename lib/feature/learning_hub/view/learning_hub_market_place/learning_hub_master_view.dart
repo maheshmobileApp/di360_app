@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
@@ -92,7 +93,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                     : ListView.builder(
                         controller: _scrollController,
                         physics: const BouncingScrollPhysics(),
-                        itemCount: courseListingVM.marketPlaceCoursesList.length +
+                        itemCount: courseListingVM
+                                .marketPlaceCoursesList.length +
                             (courseListingVM.isLoadingMoreMarketPlace ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index ==
@@ -155,24 +157,33 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 scaffoldMessenger('Seats are sold out!');
                               }*/
                             },
-                            registerTap: () {},
-                            /* isRegistered
-                                ? () {
-                                    scaffoldMessenger("Already Registered!");
+                            registerTap: isRegistered
+                                ? () async {
+                                    await courseListingVM.getCourseDetails(
+                                        context, course.id ?? "");
+
+                                    await courseListingVM
+                                        .getCourseRegisteredUsers(
+                                            context, course.id ?? "");
+
+                                    await courseListingVM.registerCourseHandler(
+                                        context, course.createdById ?? "");
+                                    navigationService.navigateTo(
+                                        RouteList.courseDetailScreen);
                                   }
                                 : () {
-                                    if (seats > 0) {
-                                      courseListingVM
-                                          .setCourseId(course.id ?? "");
-                                      RegistrationUserForm.show(
-                                          context,
-                                          course.courseName ?? "",
-                                          course.createdById ?? "",
-                                          course.id ?? "");
-                                    } else {
-                                      scaffoldMessenger('Seats are sold out!');
-                                    }
-                                  },*/
+                                    // if (seats > 0) {
+                                    courseListingVM
+                                        .setCourseId(course.id ?? "");
+                                    RegistrationUserForm.show(
+                                        context,
+                                        course.courseName ?? "",
+                                        course.createdById ?? "",
+                                        course.id ?? "");
+                                    // } else {
+                                    //   scaffoldMessenger('Seats are sold out!');
+                                    // }
+                                  },
                             type: course.type,
                           );
                         },
