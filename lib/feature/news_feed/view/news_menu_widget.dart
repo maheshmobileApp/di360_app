@@ -20,6 +20,13 @@ class NewsMenuWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
+    final currentUserId = needFeedViewModel.userID;
+
+    final isSameUser = newsfeeds?.userId == currentUserId ||
+        newsfeeds?.dentalPracticeId == currentUserId ||
+        newsfeeds?.dentalProfessionalId == currentUserId ||
+        newsfeeds?.dentalSupplierId == currentUserId;
+
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
@@ -67,21 +74,19 @@ class NewsMenuWidget extends StatelessWidget {
               value: "delete",
               child: buildRow(Icons.delete, AppColors.redColor, "Delete"))
         ],
-        if (newsfeeds?.userId != needFeedViewModel.userID ||
-            newsfeeds?.dentalPracticeId != needFeedViewModel.userID ||
-            newsfeeds?.dentalProfessionalId != needFeedViewModel.userID ||
-            newsfeeds?.dentalSupplierId != needFeedViewModel.userID) ...[
+        if (!isSameUser) ...[
           PopupMenuItem(
               value: "report",
-              child: buildRow(Icons.report, AppColors.primaryColor, "Report")),
+              child: buildRow(Icons.report, AppColors.primaryColor, "Report Post")),
           PopupMenuItem(
               value: "block",
-              child: buildRow(Icons.block, AppColors.redColor, "Block")),
+              child: buildRow(Icons.block, AppColors.redColor, "Block Profile")),
         ],
-        if (newsfeeds?.postImage != null && newsfeeds?.postImage?.isNotEmpty == true)
-        PopupMenuItem(
-            value: "Save Media",
-            child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))
+        if (newsfeeds?.postImage != null &&
+            newsfeeds?.postImage?.isNotEmpty == true)
+          PopupMenuItem(
+              value: "Save Media",
+              child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))
       ],
     );
   }
