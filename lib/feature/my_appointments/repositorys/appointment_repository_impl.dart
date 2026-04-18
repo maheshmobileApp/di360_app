@@ -9,11 +9,11 @@ class AppointmentRepositoryImpl extends AppoinmentRepository {
   final HttpService http = HttpService();
 
   @override
-  Future<List<DirectoryAppointmentsList>> getAppointments() async {
+  Future<AppoinmentData> getAppointments() async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res =
         await http.query(getAppointmentsQuery, variables: {"id": userId});
     final result = AppoinmentData.fromJson(res);
-    return result.directories?.first.directoryAppointments ?? [];
+    return result;
   }
 }

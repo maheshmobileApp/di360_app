@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class AppointmentViewModel extends ChangeNotifier {
   AppointmentRepositoryImpl appointmentRepository = AppointmentRepositoryImpl();
 
-  List<DirectoryAppointmentsList> appointmentList = [];
+  AppoinmentData? appointmentList;
 
   Future<void> getAppointmentData(BuildContext context) async {
     Loaders.circularShowLoader(context);

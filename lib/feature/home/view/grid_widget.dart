@@ -49,7 +49,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
 
   gridOnTap(String title, BuildContext context,
       DashBoardViewModel dashBoardVM) async {
-    final type = LocalStorage.getStringVal(LocalStorageConst.type);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (title == 'News Feed') {
       dashBoardVM.setIndex(1, navigatorKey.currentContext!);
     } else if (title == 'Job Seek') {
