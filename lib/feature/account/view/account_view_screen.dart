@@ -56,11 +56,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
   Widget build(BuildContext context) {
     final addDirectorVM = Provider.of<AddDirectoryViewModel>(context);
     final homeViewModel = Provider.of<HomeViewModel>(context);
-    final profileVM = Provider.of<ProfileViewModel>(context);
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
     return ChangeNotifierProvider(
       create: (_) => ProfileViewModel(ProfileRepositoryImpl())
-        ..fetchProfileSections(profileVM.communityStatus),
+        ..fetchProfileSections(),
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(searchWidget: false),

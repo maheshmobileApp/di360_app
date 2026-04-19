@@ -43,77 +43,99 @@ class LoginViewModel extends ChangeNotifier {
   List<Modules>? modulePermissions = [];
   List<CommunityMembers> communityMembers = [];
 
-  submit(BuildContext context) async {
+  Future<void> submit(BuildContext context) async {
     _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
     _variables['details']['password'] = passController.text;
+
     if (Map.from(_variables['details']).containsValue("")) {
       scaffoldMessenger("Please fill all the details");
-      return "";
+      return;
     }
+
     Loaders.circularShowLoader(context);
+
     try {
-      var res = await repo.login(_variables);
+      final res = await repo.login(_variables);
 
       if (res.isNotEmpty && res.containsKey('_error')) {
         Loaders.circularHideLoader(context);
+
         final err =
             res['_error']?.toString() ?? "Login failed. Please try again.";
 
-        scaffoldMessenger(err == "HasuraRequestError: Invalid credentials"
-            ? "Invalid credentials"
-            : err);
+        scaffoldMessenger(
+          err == "HasuraRequestError: Invalid credentials"
+              ? "Invalid credentials"
+              : err,
+        );
         return;
       }
 
       if (res.isNotEmpty && res.containsKey('login_api')) {
-        Provider.of<DashBoardViewModel>(context, listen: false)
-            .setIndex(0, context);
-        if (res['login_api']['status'] == 'ACTIVE' ||
-            res['login_api']['status'] == 'UNBLOCKED') {
-          final result = LogInData.fromJson(res);
-          if (result.loginApi?.type == UserRole.supplier.value)
-            await getSuppliers(result.loginApi?.id ?? '');
+        final result = LogInData.fromJson(res);
+        final loginData = result.loginApi;
 
-          (result.loginApi?.type == UserRole.supplier.value)
-              ? await getSupplierCommunityOwner(result.loginApi?.id ?? '')
-              : () {};
-          await LocalStorage.setStringVal(
-              LocalStorageConst.name, result.loginApi?.name ?? '');
-          await LocalStorage.setStringVal(LocalStorageConst.businessName,
-              result.loginApi?.businessName ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.userId, result.loginApi?.id ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.emailId, result.loginApi?.email ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.token, result.loginApi?.accessToken ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.type, result.loginApi?.type ?? '');
-          await LocalStorage.setStringVal(LocalStorageConst.professionType,
-              result.loginApi?.professionType ?? '');
-          await LocalStorage.setStringVal(
-              LocalStorageConst.subType, result.loginApi?.subType ?? '');
-          await LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
-              result.loginApi?.subscriptionId ?? '');
-          await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
-              result.loginApi?.profileCompleted ?? false);
-          await LocalStorage.setStringVal(
-              LocalStorageConst.profilePic,
-              result.loginApi?.logo?.url ??
-                  result.loginApi?.profileImage?.url ??
-                  '');
-          await LocalStorage.setBoolValue(LocalStorageConst.isAuth, true);
-          await getMyCommunityData(result.loginApi?.id ?? '');
-          _modulePermissions(
-              result.loginApi?.subscriptionPermissions?.modules ?? []);
-          _http.setToken(result.loginApi?.accessToken ?? '');
-          await updateDevieToken();
-          result.loginApi?.profileCompleted == true
-              ? homeNavigation(context)
-              : viewProfileHandle(context);
+        if (loginData?.status == 'ACTIVE' || loginData?.status == 'UNBLOCKED') {
+          final userId = loginData?.id ?? '';
+          final isSupplier = loginData?.type == UserRole.supplier.value;
+
+          _http.setToken(loginData?.accessToken ?? '');
+          //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
+
+          // Set dashboard index 
+          Provider.of<DashBoardViewModel>(context, listen: false)
+              .setIndex(0, context);
+
+          Loaders.circularHideLoader(context);
+
+          // Navigate instantly
+          if (loginData?.profileCompleted == true) {
+            homeNavigation(context);
+          } else {
+            viewProfileHandle(context);
+          }
+
+          // Background tasks (parallel)
+          Future(() async {
+            try {
+              await Future.wait([
+                // APIs
+                if (isSupplier) getSuppliers(userId),
+                if (isSupplier) getSupplierCommunityOwner(userId),
+                getMyCommunityData(userId),
+                updateDevieToken(),
+
+                // Local Storage
+                LocalStorage.setStringVal(
+                    LocalStorageConst.name, loginData?.name ?? ''),
+                LocalStorage.setStringVal(LocalStorageConst.businessName,
+                    loginData?.businessName ?? ''),
+                LocalStorage.setStringVal(LocalStorageConst.userId, userId),
+                LocalStorage.setStringVal(
+                    LocalStorageConst.emailId, loginData?.email ?? ''),
+                LocalStorage.setStringVal(
+                    LocalStorageConst.token, loginData?.accessToken ?? ''),
+                LocalStorage.setStringVal(
+                    LocalStorageConst.type, loginData?.type ?? ''),
+                LocalStorage.setStringVal(LocalStorageConst.professionType,
+                    loginData?.professionType ?? ''),
+                LocalStorage.setStringVal(
+                    LocalStorageConst.subType, loginData?.subType ?? ''),
+                LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
+                    loginData?.subscriptionId ?? ''),
+                LocalStorage.setBoolValue(LocalStorageConst.profileCompleted,
+                    loginData?.profileCompleted ?? false),
+                LocalStorage.setStringVal(LocalStorageConst.profilePic,
+                    loginData?.logo?.url ?? loginData?.profileImage?.url ?? ''),
+                LocalStorage.setBoolValue(LocalStorageConst.isAuth, true),
+              ]);
+            } catch (e) {
+              debugPrint("Post login error: $e");
+            }
+          });
         } else {
           Loaders.circularHideLoader(context);
-          scaffoldMessenger('Account is ${res['login_api']['status']}');
+          scaffoldMessenger('Account is ${loginData?.status}');
         }
       } else {
         Loaders.circularHideLoader(context);
@@ -123,7 +145,6 @@ class LoginViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Login failed. Please try again.');
     }
-    notifyListeners();
   }
 
   homeNavigation(BuildContext context) async {
@@ -165,7 +186,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> updateDevieToken() async {
     try {
       if (Firebase.apps.isEmpty) return;
-      await Future.delayed(Duration(seconds: 2));
+      //await Future.delayed(Duration(seconds: 2));
 
       final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       final deviceToken = await FirebaseMessaging.instance.getToken();

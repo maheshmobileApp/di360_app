@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/services/download_notification_service.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -38,8 +38,11 @@ Future<void> downloadFile(BuildContext context, String url,
 
     showTopMessage(context, "Downloading file...");
 
-    final String name =
-        fileName?.isNotEmpty == true ? fileName! : url.split('/').last;
+    final urlFileName = url.split('/').last;
+    final ext =
+        urlFileName.contains('.') ? '.${urlFileName.split('.').last}' : '';
+    final baseName = fileName?.isNotEmpty == true ? fileName! : urlFileName;
+    final String name = baseName.contains('.') ? baseName : '$baseName$ext';
     final dir = await _getDownloadDir();
     final filePath = '${dir.path}/$name';
 
@@ -54,11 +57,11 @@ Future<void> downloadFile(BuildContext context, String url,
       },
     );
 
-    showTopMessage(context, "Download completed!");
-    showTopMessage(context, "Downloaded to: $filePath");
-    await OpenFile.open(filePath);
+    await DownloadNotificationService.showDownloadNotification(
+      fileName: name,
+      filePath: filePath,
+    );
   } catch (e) {
-    print("Download error: $e");
     // ignore: use_build_context_synchronously
     showTopMessage(context, "Download failed");
   }
@@ -82,18 +85,22 @@ Future<void> downloadAllFiles(
     mediaList
         .where((media) => media.url?.isNotEmpty == true)
         .map((media) async {
-      final name = media.name?.isNotEmpty == true
-          ? media.name!
-          : media.url!.split('/').last;
+      final urlFileName = media.url!.split('/').last;
+      final ext =
+          urlFileName.contains('.') ? '.${urlFileName.split('.').last}' : '';
+      final baseName =
+          media.name?.isNotEmpty == true ? media.name! : urlFileName;
+      final name = baseName.contains('.') ? baseName : '$baseName$ext';
       final filePath = '${dir.path}/$name';
       try {
         await dio.download(media.url!, filePath);
+        await DownloadNotificationService.showDownloadNotification(
+          fileName: "${name} file",
+          filePath: filePath,
+        );
       } catch (e) {
         print('Failed to download ${media.name}: $e');
       }
     }),
   );
-
-  // ignore: use_build_context_synchronously
-  showTopMessage(context, "All downloads completed!");
 }

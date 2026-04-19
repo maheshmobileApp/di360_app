@@ -120,7 +120,8 @@ void addFiles(List<XFile> files) {
           "dental_supplier_id": type == UserRole.supplier.value ? userId : null,
           "dental_professional_id":
               type == UserRole.professional.value ? userId : null,
-          "dental_admin_id": type == UserRole.admin.value ? userId : null
+          "dental_admin_id": type == UserRole.admin.value ? userId : null,
+          "feed_type": "NEWSFEED",
         }
       });
 
@@ -171,7 +172,8 @@ void addFiles(List<XFile> files) {
           "dental_practice_id": type == 'PRACTICE' ? userId : null,
           "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
           "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
-          "dental_admin_id": type == 'ADMIN' ? userId : null
+          "dental_admin_id": type == 'ADMIN' ? userId : null,
+          "feed_type": "NEWSFEED",
         }
       });
 

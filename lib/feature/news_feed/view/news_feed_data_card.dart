@@ -49,6 +49,15 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           },
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _tagWidget(
+                newsfeeds?.feedType ?? '',
+                newsfeeds?.dentalSupplier?.businessName ??
+                    newsfeeds?.dentalPractice?.businessName ??
+                    newsfeeds?.dentalProfessional?.name ??
+                    '',
+                newsfeeds?.courses?.isNotEmpty == true
+                    ? newsfeeds?.courses?.first.type ?? ''
+                    : ""),
             addVertical(10),
             _buildHeader(
                 newsfeeds?.dentalSupplier != null
@@ -72,7 +81,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                         ? newsfeeds?.dentalPractice?.businessName ?? ''
                         : newsfeeds?.dentalProfessional != null
                             ? newsfeeds?.dentalProfessional?.name ?? ''
-                            : '',
+                            : 'Dental interface',
                 newsfeeds?.createdAt ?? '',
                 context,
                 newsfeeds,
@@ -137,6 +146,43 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             Divider(thickness: 8, color: Color(0xffEDEFF1)),
           ]),
         ));
+  }
+
+  Widget _tagWidget(String? feedType, String userName, String courseType) {
+    String tagText = '';
+
+    switch (feedType) {
+      case 'JOBS':
+        tagText = "#New Job Opportunity Posted by $userName";
+      case 'LEARNHUB':
+        tagText = "#New Course $courseType";
+      case 'CATALOGUE':
+        tagText = "#New CATALOGUE Posted";
+      default:
+        tagText = '#NEWSFEED Post';
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: Text(tagText,
+            style: TextStyles.semiBold(
+              color: AppColors.black,
+            )),
+      ),
+    );
   }
 
   Widget _buildHeader(
@@ -232,9 +278,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildImageRow(CatalogueViewModel catalogueVM, BuildContext context) {
-    final mediaList = newsfeeds?.postImage ?? [];
+    final mediaList = newsfeeds?.postImage?.isNotEmpty == true ? newsfeeds?.postImage??[] : newsfeeds?.imageUrl??[] ;
 
-    if (mediaList.isEmpty) return SizedBox();
+    if (mediaList.isEmpty == true) return SizedBox();
 
     Widget buildMediaContent(media) {
       final type = media.type ?? media.mimeType ?? '';
@@ -249,7 +295,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         if (isBase64Image(url)) {
           try {
             final decodedBytes = base64Decode(url.split(',').last);
-            return Image.memory(decodedBytes, fit: BoxFit.cover);
+            return Image.memory(decodedBytes, fit: BoxFit.contain);
           } catch (e) {
             return Icon(Icons.broken_image);
           }
@@ -363,19 +409,14 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       BuildContext context,
       String feedId,
       String? category) {
-    final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
+    final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
       children: [
         GestureDetector(
           onTap: () {
             if (isLiked) {
-              final likeId = newsfeeds?.myLike
-                      ?.firstWhere((e) => e.id != null && e.id!.isNotEmpty,
-                          orElse: () => MyLike())
-                      .id ??
-                  '';
-              if (likeId.isEmpty) return;
+              final likeId = newsfeeds?.myLike?.first.id ?? '';
               viewModel.removeNewsFeedLike(
                   context, newsfeeds?.id ?? '', likeId);
             } else {
@@ -425,12 +466,5 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         )
       ],
     );
-  }
-
-  bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    if (userId.isEmpty) return false;
-    return newsfeed?.myLike
-            ?.any((e) => e.id != null && e.id?.isNotEmpty == true) ??
-        false;
   }
 }

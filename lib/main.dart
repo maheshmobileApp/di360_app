@@ -45,6 +45,7 @@ import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_
 import 'package:di360_flutter/firebase_options.dart';
 import 'package:di360_flutter/feature/splash/splash_screen.dart';
 import 'package:di360_flutter/services/deep_link_service.dart';
+import 'package:di360_flutter/services/download_notification_service.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -75,6 +76,7 @@ void main() async {
 
     
     await NotificationService.initialize();
+    await DownloadNotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
     await NotificationService.captureInitialMessage();
   } catch (e) {
