@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/services/download_notification_service.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -20,12 +21,15 @@ Future<Directory> _getDownloadDir() async {
 }
 
 Future<bool> _requestPermission() async {
-  if (Platform.isIOS) return true; // iOS needs no storage permission
-  PermissionStatus status = await Permission.manageExternalStorage.request();
-  if (!status.isGranted) {
-    status = await Permission.storage.request();
+  if (Platform.isIOS) return true;
+  if (Platform.isAndroid) {
+    final info = await DeviceInfoPlugin().androidInfo;
+    print('Android SDK version: ${info.version.sdkInt}');
+    if (info.version.sdkInt >= 33) return true;
+    final status = await Permission.storage.request();
+    return status.isGranted;
   }
-  return status.isGranted;
+  return true;
 }
 
 Future<void> downloadFile(BuildContext context, String url,

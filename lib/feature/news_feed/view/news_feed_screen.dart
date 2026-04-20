@@ -66,21 +66,21 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                               .toList() ??
                           [],
                     ).then((value) {
-                      homeViewModel.resetPagination();
+                      newsFeedVM.resetPagination();
                       newsFeedVM.updateApplyCatageories(true);
                       newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
                       if ((value as dynamic)?.categoryName == 'Catalogue') {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: 'CATALOGUE', categoryType: null);
                       } else if ((value as dynamic)?.categoryName == 'Jobs') {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: 'JOBS', categoryType: null);
                       } else if ((value as dynamic)?.categoryName ==
                           'Learning Hub') {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: 'LEARNHUB', categoryType: null);
                       } else {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: null, categoryType: value?.id);
                       }
                     });
@@ -92,8 +92,8 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                   padding: const EdgeInsets.only(left: 10),
                   child: GestureDetector(
                       onTap: () {
-                        homeViewModel.resetPagination();
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.resetPagination();
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: null, categoryType: null);
                         newsFeedVM.updateApplyCatageories(false);
                         newsFeedVM.updateSelectedCategory(null);
@@ -106,7 +106,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         body: Column(
           children: [
             Expanded(
-                child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ??
+                child: newsFeedVM.allNewsFeedsData?.newsfeeds?.isEmpty ??
                         false
                     ? Center(
                         child: Text('No Data',
@@ -114,13 +114,13 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                               color: AppColors.black,
                             )))
                     : GenericListViewWithBanners<Newsfeeds>(
-                        controller: homeViewModel.scrollController,
-                        items: homeViewModel.allNewsFeedsData?.newsfeeds ?? [],
+                        controller: newsFeedVM.scrollController,
+                        items: newsFeedVM.allNewsFeedsData?.newsfeeds ?? [],
                         bannerIndices: BannerUtils.calculateBannerIndices(
-                            homeViewModel.allNewsFeedsData?.newsfeeds?.length ??
+                            newsFeedVM.allNewsFeedsData?.newsfeeds?.length ??
                                 0),
                         itemBuilder: (context, dataIndex) {
-                          final newsData = homeViewModel
+                          final newsData = newsFeedVM
                               .allNewsFeedsData?.newsfeeds?[dataIndex];
                           return NewsFeedDataCard(
                               newsfeeds: newsData, index: dataIndex);

@@ -314,7 +314,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final commentReply = comments.commentReply?[index];
-            return ReplyCommentWidget(comments: commentReply, feedId: feedId);
+            return ReplyCommentWidget(comments: commentReply, feedId: feedId, parentCommentId: comments.id ?? '');
           },
         ),
       ),
