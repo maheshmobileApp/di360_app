@@ -16,6 +16,7 @@ const String getAllNewsFeedQuery =
     attachments
     feed_type
     payload
+    payload_id
     user_role
     video_url
     web_url

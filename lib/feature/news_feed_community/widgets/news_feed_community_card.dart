@@ -84,6 +84,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final feedTypeEnum = feedType;
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
+    final String shareId = _fetchId(newsfeeds);
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -170,7 +171,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         course?.isNotEmpty == true)
                       _learnHubWidget(course?.first ?? Courses(), createdAt),
                     if (feedTypeEnum == FeedType.catalogue.value)
-                      _buildCatalogueRow(catelougeViewModel, context),
+                      _buildCatalogueRow(catelougeViewModel, context, shareId),
                     if (feedTypeEnum == FeedType.jobs.value &&
                         job?.isNotEmpty == true)
                       _jobsWidget(job?.first ?? Jobs(), createdAt),
@@ -212,7 +213,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           size: 20,
-                          feedId: id,
+                          feedId: shareId,
                         ),
 
                         const Spacer(),
@@ -242,6 +243,18 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
         );
       },
     );
+  }
+
+  String _fetchId(Newsfeeds? newsfeeds) {
+    if (newsfeeds?.feedType == FeedType.jobs.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.learnhub.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.catalogue.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else{
+      return newsfeeds?.id ?? '';
+    }
   }
 
   Widget _buildImageRow(List<PostImage>? allMediaList) {
@@ -494,7 +507,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCatalogueRow(
-      CatalogueViewModel catalogueVM, BuildContext context) {
+      CatalogueViewModel catalogueVM, BuildContext context, String catalogueId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -526,7 +539,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             width: 100,
             onTap: () async {
               await catalogueVM.getCatalogDetails(
-                  context, newsfeeds?.payload?.catalogueId ?? '');
+                  context, catalogueId ?? '');
               final id =
                   catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
               await catalogueVM.getReletedCatalog(context, id);
