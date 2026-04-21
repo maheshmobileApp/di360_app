@@ -40,6 +40,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     final commentViewModel = Provider.of<CommentViewModel>(context);
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
+    final String shareId = _fetchId(newsfeeds);
     return Container(
         color: AppColors.whiteColor,
         child: GestureDetector(
@@ -129,7 +130,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       newsfeeds!.webUrl!.isNotEmpty)
                     addVertical(8),
                   if (newsFeedTypeEnum == FeedType.catalogue.value)
-                    _buildCatalogueRow(catalogueViewModel, context),
+                    _buildCatalogueRow(catalogueViewModel, context, shareId),
                   Divider(color: AppColors.dividerColor),
                   addVertical(4),
                   _buildStatsRow(
@@ -137,7 +138,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                       '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
                       needFeedViewModel,
                       context,
-                      newsfeeds?.id ?? '',
+                      shareId,
                       newsfeeds?.feedType ?? FeedType.newsfeed.name),
                   addVertical(10)
                 ],
@@ -146,6 +147,18 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             Divider(thickness: 8, color: Color(0xffEDEFF1)),
           ]),
         ));
+  }
+
+  String _fetchId(Newsfeeds? newsfeeds) {
+    if (newsfeeds?.feedType == FeedType.jobs.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.learnhub.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.catalogue.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else{
+      return newsfeeds?.id ?? '';
+    }
   }
 
   Widget _tagWidget(String? feedType, String userName, String courseType) {
@@ -235,7 +248,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _buildCatalogueRow(
-      CatalogueViewModel catalogueVM, BuildContext context) {
+      CatalogueViewModel catalogueVM, BuildContext context, String? categoryId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -261,18 +274,20 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             )
           ],
         ),
-        AppButton(
-            text: 'View',
-            height: 40,
-            width: 100,
-            onTap: () async {
-              await catalogueVM.getCatalogDetails(
-                  context, newsfeeds?.payload?.catalogueId ?? '');
-              final id =
-                  catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
-              await catalogueVM.getReletedCatalog(context, id);
-              await navigationService.navigateTo(RouteList.catalogueDetails);
-            })
+        Expanded(
+          child: AppButton(
+              text: 'View',
+              height: 40,
+              width: 100,
+              onTap: () async {
+                await catalogueVM.getCatalogDetails(
+                    context, categoryId ?? '');
+                final id =
+                    catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+                await catalogueVM.getReletedCatalog(context, id);
+                await navigationService.navigateTo(RouteList.catalogueDetails);
+              }),
+        )
       ],
     );
   }

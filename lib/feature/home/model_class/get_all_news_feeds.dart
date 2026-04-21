@@ -83,6 +83,7 @@ class Newsfeeds {
   List<NewsFeedsComments>? newsFeedsComments;
   NewsfeedsCommentAggregate? newsFeedsCommentsAggregate;
   String? sTypename;
+  String? payloadId;
 
   Newsfeeds(
       {this.id,
@@ -117,7 +118,8 @@ class Newsfeeds {
       this.newsfeedsLikesAggregate,
       this.newsFeedsComments,
       this.newsFeedsCommentsAggregate,
-      this.sTypename});
+      this.sTypename,
+      this.payloadId});
 
   Newsfeeds.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -204,6 +206,7 @@ class Newsfeeds {
             json['news_feeds_comments_aggregate'])
         : null;
     sTypename = json['__typename'];
+    payloadId = json['payload_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -270,6 +273,7 @@ class Newsfeeds {
           this.newsFeedsCommentsAggregate!.toJson();
     }
     data['__typename'] = this.sTypename;
+    data['payload_id'] = this.payloadId;
     return data;
   }
 }

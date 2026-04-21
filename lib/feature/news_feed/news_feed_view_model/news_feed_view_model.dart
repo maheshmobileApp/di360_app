@@ -76,16 +76,16 @@ class NewsFeedViewModel extends ChangeNotifier {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     updateTheNewsFeedLikeCount(context, newsFeedId, true);
     final variables = {
-        "fields": {
-          "news_feeds_id": newsFeedId,
-          "created_by_id": userID ?? null,
-          "role_type": type,
-          "dental_supplier_id": supplierId ?? null,
-          "dental_practice_id": practiceId ?? null,
-          "dental_professional_id": professionId ?? null,
-          "dental_admin_id": adminId ?? null,
-        }
-      };
+      "fields": {
+        "news_feeds_id": newsFeedId,
+        "created_by_id": userID ?? null,
+        "role_type": type,
+        "dental_supplier_id": supplierId ?? null,
+        "dental_practice_id": practiceId ?? null,
+        "dental_professional_id": professionId ?? null,
+        "dental_admin_id": adminId ?? null,
+      }
+    };
     try {
       var res = await _http.mutation(addNewsFeedLikeMutation, variables);
       if (res['insert_newsfeeds_likes_one'] != null) {
@@ -222,6 +222,8 @@ class NewsFeedViewModel extends ChangeNotifier {
           result.jobs?.isNotEmpty ?? false ? result.jobs?.first : Jobs();
       navigationService.navigateToWithParams(RouteList.jobdetailsScreen,
           params: job);
+    } else {
+      scaffoldMessenger("Job details not found");
     }
     notifyListeners();
   }
