@@ -112,7 +112,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<HomeViewModel>().getAllNewsfeeds(context);
+          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
@@ -136,7 +136,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<HomeViewModel>().getAllNewsfeeds(context);
+          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek
@@ -153,7 +153,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 0: // Home
           break;
         case 1: // News Feed
-          context.read<HomeViewModel>().getAllNewsfeeds(context);
+          context.read<NewsFeedViewModel>().getAllNewsfeeds(context);
           context.read<NewsFeedViewModel>().updateApplyCatageories(false);
           break;
         case 2: // Job Seek

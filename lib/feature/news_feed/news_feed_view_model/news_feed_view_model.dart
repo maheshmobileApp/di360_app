@@ -12,15 +12,17 @@ import 'package:di360_flutter/feature/news_feed/querys/get_all_news_feed_categor
 import 'package:di360_flutter/feature/news_feed/querys/get_job_details_by_id.dart';
 import 'package:di360_flutter/feature/news_feed/querys/news_feed_like_querys.dart';
 import 'package:di360_flutter/feature/news_feed/querys/report_query.dart';
+import 'package:di360_flutter/feature/news_feed/repository/news_feed_repo_impl.dart';
+import 'package:di360_flutter/feature/news_feed/repository/news_feed_repository.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class NewsFeedViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
+  final NewsFeedRepository repo = NewsFeedRepoImpl();
   NewsFeedViewModel() {
     getUserId();
     getFilterCategories();
@@ -64,8 +66,94 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-   void setSearchBar(bool value) {
-    searchBarOpen = value;
+  void setSearchBar(bool val) {
+    searchBarOpen = val;
+    notifyListeners();
+  }
+
+  int offset = 0;
+  int limit = 10;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+  AllNewsFeedData? allNewsFeedsData;
+
+  ScrollController scrollController = ScrollController();
+
+  HomeViewModel() {
+    scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 100 &&
+        !isLoadingMore &&
+        hasMoreData) {
+      loadMoreNewsfeeds();
+    }
+  }
+
+  void loadMoreNewsfeeds() async {
+    if (isLoadingMore || !hasMoreData) return;
+    isLoadingMore = true;
+
+    offset += limit;
+    print('Loading more... offset: $offset');
+    try {
+      var res = await repo.getAllNewsFeed(offset, limit);
+      if (res != null) {
+        final result = AllNewsFeedData.fromJson(res);
+        print('Received ${result.newsfeeds?.length ?? 0} items');
+        if (result.newsfeeds?.isEmpty ?? true) {
+          hasMoreData = false;
+        } else {
+          allNewsFeedsData?.newsfeeds?.addAll(result.newsfeeds ?? []);
+        }
+      } else {
+        hasMoreData = false;
+      }
+    } catch (e) {
+      print('Error loading more: $e');
+      hasMoreData = false;
+      offset -= limit;
+    }
+    isLoadingMore = false;
+    notifyListeners();
+  }
+
+  void resetPagination() {
+    offset = 0;
+    hasMoreData = true;
+    allNewsFeedsData?.newsfeeds?.clear();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> getAllNewsfeeds(BuildContext context,
+      {String? feedType, String? categoryType}) async {
+    Loaders.circularShowLoader(context);
+    resetPagination();
+    try {
+      var res = await repo.getAllNewsFeed(
+        offset,
+        limit,
+        feedType: feedType,
+        categoryType: categoryType,
+      );
+      if (res != null) {
+        final result = AllNewsFeedData.fromJson(res);
+        allNewsFeedsData = result;
+        Loaders.circularHideLoader(context);
+      } else {
+        Loaders.circularHideLoader(context);
+      }
+    } catch (e) {
+      allNewsFeedsData = null;
+      Loaders.circularHideLoader(context);
+    }
     notifyListeners();
   }
 
@@ -109,7 +197,7 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future updateTheNewsFeedLikeCount(
       BuildContext context, String feedId, bool isIncrement) async {
-    final newsFeedList = context.read<HomeViewModel>().allNewsFeedsData;
+    final newsFeedList = allNewsFeedsData;
     final post = newsFeedList?.newsfeeds
         ?.firstWhere((v) => v.id == feedId, orElse: () => Newsfeeds());
     post?.newsfeedsLikesAggregate?.aggregate?.count = isIncrement
@@ -120,16 +208,14 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> updateTheLikeObject(
       BuildContext context, String feedId, String likeId) async {
-    final newsFeedList =
-        context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
+    final newsFeedList = allNewsFeedsData?.newsfeeds;
     final feed = newsFeedList?.firstWhere((v) => v.id == feedId);
     feed?.myLike?.insert(0, MyLike(id: likeId));
     notifyListeners();
   }
 
   Future<void> removeTheLikeObject(BuildContext context, String feedId) async {
-    final newsFeedList =
-        context.read<HomeViewModel>().allNewsFeedsData?.newsfeeds;
+    final newsFeedList = allNewsFeedsData?.newsfeeds;
     final feed = newsFeedList?.firstWhere((v) => v.id == feedId,
         orElse: () => Newsfeeds());
     feed?.myLike?.clear();
@@ -190,18 +276,54 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> removeTheNewsFeedObject(
       BuildContext context, String feedId) async {
-    final homeVM = context.read<HomeViewModel>();
-    homeVM.allNewsFeedsData?.newsfeeds?.removeWhere((v) => v.id == feedId);
-    homeVM.notifyListeners();
+    allNewsFeedsData?.newsfeeds?.removeWhere((v) => v.id == feedId);
     notifyListeners();
   }
 
-  Future<void> blockUser(BuildContext context, String userId) async {
+  Future<void> blockProfile(BuildContext context, String entityId,
+      String entityType, String feedId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
-    await _http.post('/api/v1/auth/check-news-feed-block', {
-      "userId": userId,
-    });
-    scaffoldMessenger("Reported successfully");
+    final variables = {
+      "fields": {
+        "entity_id": entityId,
+        "entity_type": "PROFILE",
+        "action": "BLOCK",
+        "created_by_id": userId,
+        "created_by_type": type,
+        "status": "ACTIVE",
+        "feed_id": feedId
+      }
+    };
+    final res = await repo.blockUser(variables);
+    if (res != null) {
+      getAllNewsfeeds(context);
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  Future<void> HideUser(BuildContext context, String entityId,
+      String entityType, String feedId) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    Loaders.circularShowLoader(context);
+    final variables = {
+      "fields": {
+        "entity_id": entityId,
+        "entity_type": 'POST',
+        "action": "HIDE",
+        "created_by_id": userId,
+        "created_by_type": type,
+        "status": "ACTIVE",
+        "feed_id": feedId
+      }
+    };
+    final res = await repo.hidePost(variables);
+    if (res != null) {
+      getAllNewsfeeds(context);
+    }
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
@@ -233,4 +355,6 @@ class NewsFeedViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  
 }

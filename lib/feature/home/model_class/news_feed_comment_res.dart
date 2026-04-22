@@ -19,7 +19,7 @@ class NewsFeedsComments {
   String? parentCommentId;
   String? createdById;
   String? roleType;
-  dynamic attachments;
+  List<CommentsAttachments>? attachments;
   RepliesAggregate? repliesAggregate;
 
   NewsFeedsComments(
@@ -81,7 +81,21 @@ class NewsFeedsComments {
     parentCommentId = json['parent_comment_id'];
     createdById = json['created_by_id'];
     roleType = json['role_type'];
-    attachments = json['attachments'];
+    if (json['attachments'] != null) {
+      attachments = <CommentsAttachments>[];
+      final data = json['attachments'];
+      if (data is List) {
+        for (var v in data) {
+          attachments!.add(
+            CommentsAttachments.fromJson(Map<String, dynamic>.from(v)),
+          );
+        }
+      } else if (data is Map) {
+        attachments!.add(
+          CommentsAttachments.fromJson(Map<String, dynamic>.from(data)),
+        );
+      }
+    }
     repliesAggregate = json['replies_aggregate'] != null
         ? new RepliesAggregate.fromJson(json['replies_aggregate'])
         : null;
@@ -112,7 +126,9 @@ class NewsFeedsComments {
     data['parent_comment_id'] = this.parentCommentId;
     data['created_by_id'] = this.createdById;
     data['role_type'] = this.roleType;
-    data['attachments'] = this.attachments;
+    if (this.attachments != null) {
+      data['attachments'] = this.attachments!.map((v) => null).toList();
+    }
     if (this.repliesAggregate != null) {
       data['replies_aggregate'] = this.repliesAggregate!.toJson();
     }
@@ -375,7 +391,8 @@ class CommentDentalPartice {
 //  List<Directories>? directories;
   String? sTypename;
 
-  CommentDentalPartice({this.name, this.logo,this.businessName, this.sTypename});
+  CommentDentalPartice(
+      {this.name, this.logo, this.businessName, this.sTypename});
 
   CommentDentalPartice.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -865,13 +882,15 @@ class CommentsAttachments {
   String? url;
   String? name;
   String? type;
+  int? size;
 
-  CommentsAttachments({this.url, this.name, this.type});
+  CommentsAttachments({this.url, this.name, this.type, this.size});
 
   CommentsAttachments.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
     type = json['type'];
+    size = json['size'];
   }
 
   Map<String, dynamic> toJson() {
@@ -879,6 +898,7 @@ class CommentsAttachments {
     data['url'] = this.url;
     data['name'] = this.name;
     data['type'] = this.type;
+    data['size'] = this.size;
     return data;
   }
 }

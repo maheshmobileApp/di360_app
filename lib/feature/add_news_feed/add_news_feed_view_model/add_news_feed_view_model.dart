@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.d
 import 'package:di360_flutter/feature/add_news_feed/update_news_feed.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -196,14 +197,14 @@ void addFiles(List<XFile> files) {
 
   Future<void> updateTheNewsFeedObject(
       BuildContext context, dynamic object) async {
-    final homeVM = context.read<HomeViewModel>();
-    final feedIndex = homeVM.allNewsFeedsData?.newsfeeds
+    final newsfeedVM = context.read<NewsFeedViewModel>();
+    final feedIndex = newsfeedVM.allNewsFeedsData?.newsfeeds
         ?.indexWhere((v) => v.id == newsFeedId);
     if (feedIndex != null && feedIndex != -1) {
-      homeVM.allNewsFeedsData?.newsfeeds?[feedIndex] =
+      newsfeedVM.allNewsFeedsData?.newsfeeds?[feedIndex] =
           Newsfeeds.fromJson(object);
     }
-    homeVM.notifyListeners();
+    newsfeedVM.notifyListeners();
     notifyListeners();
   }
 

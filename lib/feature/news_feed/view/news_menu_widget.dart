@@ -48,16 +48,25 @@ class NewsMenuWidget extends StatelessWidget {
             navigationService.goBack();
             needFeedViewModel.reportNewsFeed(context, newsfeeds?.id ?? '');
           });
-        } else if (value == 'block') {
-          showUserBlockPopup(context, 'Are you sure Block this user',
+        } else if (value == 'hide') {
+          showUserBlockPopup(context, 'Are you sure Hide this user?',
               confirmAction: () {
             navigationService.goBack();
-            needFeedViewModel.blockUser(
+            needFeedViewModel.HideUser(context, newsfeeds?.id ?? '',
+                newsfeeds?.feedType ?? '', newsfeeds?.id ?? '');
+          });
+        } else if (value == 'block') {
+          showUserBlockPopup(context, 'Are you sure Block this profile?',
+              confirmAction: () {
+            navigationService.goBack();
+            needFeedViewModel.blockProfile(
                 context,
-                newsfeeds?.dentalSupplier?.id ??
+                newsfeeds?.dentalProfessional?.id ??
+                    newsfeeds?.dentalSupplier?.id ??
                     newsfeeds?.dentalPractice?.id ??
-                    newsfeeds?.dentalProfessional?.id ??
-                    '');
+                    '',
+                newsfeeds?.feedType ?? '',
+                newsfeeds?.id ?? '');
           });
         } else if (value == 'Save Media') {
           final mediaList = newsfeeds?.postImage ?? [];
@@ -77,10 +86,16 @@ class NewsMenuWidget extends StatelessWidget {
         if (!isSameUser) ...[
           PopupMenuItem(
               value: "report",
-              child: buildRow(Icons.report, AppColors.primaryColor, "Report Post")),
+              child: buildRow(
+                  Icons.report, AppColors.primaryColor, "Report Post")),
           PopupMenuItem(
               value: "block",
-              child: buildRow(Icons.block, AppColors.redColor, "Block Profile")),
+              child:
+                  buildRow(Icons.block, AppColors.redColor, "Block Profile")),
+          PopupMenuItem(
+              value: "hide",
+              child:
+                  buildRow(Icons.hide_source, AppColors.redColor, "Hide Post")),
         ],
         if (newsfeeds?.postImage != null &&
             newsfeeds?.postImage?.isNotEmpty == true)

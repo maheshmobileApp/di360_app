@@ -198,7 +198,6 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getNewsfeedComment(BuildContext context, String feedId) async {
-    print("*****************getNewsfeedComment$feedId");
     try {
       var res = await _http.query(getNewsfeedQuery, variables: {'id': feedId});
       if (res != null) {
