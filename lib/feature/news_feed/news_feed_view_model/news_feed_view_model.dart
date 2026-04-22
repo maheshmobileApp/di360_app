@@ -26,6 +26,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   NewsFeedViewModel() {
     getUserId();
     getFilterCategories();
+    searchController.addListener(notifyListeners);
   }
 
   List<NewsfeedCategories>? newsfeedCategories;
@@ -38,7 +39,16 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   ScrollController feedScrollController = ScrollController();
-  TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
+
+  List<Newsfeeds> get filteredNewsfeeds {
+    final query = searchController.text.trim().toLowerCase();
+    final all = allNewsFeedsData?.newsfeeds ?? [];
+    if (query.isEmpty) return all;
+    return all.where((f) {
+      return (f.title?.toLowerCase().contains(query) ?? false);
+    }).toList();
+  }
 
   String? adminId;
   String? supplierId;
@@ -48,7 +58,7 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   final Set<int> _expandedIndices = {};
   bool applyCatageories = false;
-   bool searchBarOpen = false;
+  bool searchBarOpen = false;
 
   bool isExpanded(int index) => _expandedIndices.contains(index);
 
@@ -129,6 +139,8 @@ class NewsFeedViewModel extends ChangeNotifier {
   @override
   void dispose() {
     scrollController.dispose();
+    searchController.removeListener(notifyListeners);
+    searchController.dispose();
     super.dispose();
   }
 
@@ -355,6 +367,4 @@ class NewsFeedViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  
 }

@@ -1,11 +1,14 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/view/grid_widget.dart';
 import 'package:di360_flutter/feature/home/view/user_data.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,10 +26,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final viewProfileVM = Provider.of<ViewProfileViewModel>(context);
+    final directorVM = Provider.of<DirectoryViewModel>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBarWidget(searchWidget: false),
+      appBar: AppBarWidget(
+        searchWidget: true,
+        searchAction: () {
+          directorVM.setSearchBar(true);
+          navigationService.navigateTo(RouteList.directory);
+        },
+      ),
       body: Column(
         children: [
           UserData(type: type, gender: viewProfileVM.gender),

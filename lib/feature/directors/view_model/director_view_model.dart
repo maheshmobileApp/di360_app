@@ -33,6 +33,7 @@ class DirectoryViewModel extends ChangeNotifier {
     getBannerList();
     getDirectorCatagoryList();
     _addListeners();
+    directorSearchController.addListener(notifyListeners);
   }
 
   void _addListeners() {
@@ -56,6 +57,8 @@ class DirectoryViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController descController = TextEditingController();
   final TextEditingController appointmentDateController =
+      TextEditingController();
+  final TextEditingController directorSearchController =
       TextEditingController();
 
 // Dropdown Selections
@@ -81,6 +84,14 @@ class DirectoryViewModel extends ChangeNotifier {
 
   List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
   String? selectedPhoneCode = "AU (+61)";
+
+  bool searchBarOpen = false;
+
+  void setSearchBar(bool val) {
+    searchBarOpen = val;
+    notifyListeners();
+  }
+
   void setPhoneCode(String value) {
     selectedPhoneCode = value;
     notifyListeners();
@@ -179,6 +190,31 @@ class DirectoryViewModel extends ChangeNotifier {
 
   List<Directories> directorsList = [];
   List<Banners> bannerList = [];
+
+  List<Directories> get filteredDirectorsList {
+    final query = directorSearchController.text.trim().toLowerCase();
+    if (query.isEmpty) return directorsList;
+    return directorsList.where((d) {
+      return (d.companyName?.toLowerCase().contains(query) ?? false) ||
+          (d.name?.toLowerCase().contains(query) ?? false);
+    }).toList();
+  }
+
+  List<dynamic> get filteredInterleavedList {
+    final filtered = filteredDirectorsList;
+    List<dynamic> items = [];
+    int bannerIndex = 0;
+    for (int i = 0; i < filtered.length; i += 2) {
+      List<Directories> pair = [filtered[i]];
+      if (i + 1 < filtered.length) pair.add(filtered[i + 1]);
+      items.add(pair);
+      if (((i + 2) % 6 == 0) && bannerIndex < bannerList.length) {
+        items.add(bannerList[bannerIndex++]);
+      }
+    }
+    return items;
+  }
+
   List<DirectoryBusinessTypes>? catagoryTypesList;
   List<dynamic> interleavedList = [];
   TextEditingController searchController = TextEditingController();
@@ -189,9 +225,7 @@ class DirectoryViewModel extends ChangeNotifier {
   GetFollowersData? getFollowersData;
   bool _removeIcon = false;
   bool get removeIcon => _removeIcon;
-
   String? _timeSlotSelected;
-
   String? get timeSlotSelected => _timeSlotSelected;
 
   void updateTimeSlotSelect(String value) {

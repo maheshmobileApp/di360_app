@@ -28,7 +28,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
     return Consumer<DirectoryViewModel>(builder: (context, value, child) {
       return SingleChildScrollView(
         controller: controller,
-        child: value.directorsList.isEmpty
+        child: value.filteredDirectorsList.isEmpty
             ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -43,7 +43,7 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                 ),
               )
             : Column(
-                children: value.interleavedList.map((item) {
+                children: value.filteredInterleavedList.map((item) {
                 if (item is List<Directories>) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),

@@ -29,7 +29,9 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
-          searchAction: () => newsFeedVM.setSearchBar(!newsFeedVM.searchBarOpen),
+          searchBarOpen: newsFeedVM.searchBarOpen,
+          searchAction: () =>
+              newsFeedVM.setSearchBar(!newsFeedVM.searchBarOpen),
           filterWidget: Row(
             children: [
               GestureDetector(
@@ -106,21 +108,19 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         ),
         body: Column(
           children: [
-             /*if (newsFeedVM.searchBarOpen)
-                    SearchWidget(
-                      controller: newsFeedVM.searchController,
-                      hintText: "Search News Feed...",
-                      onClear: () {
-                        newsFeedVM.searchController.clear();
-                        newsFeedVM.getAllNewsFeeds(context);
-                      },
-                      onSearch: () {
-                        newsFeedVM.getAllNewsFeeds(context);
-                      },
-                    ),*/
+            addVertical(10),
+            if (newsFeedVM.searchBarOpen)
+              SearchWidget(
+                searchButton: false,
+                controller: newsFeedVM.searchController,
+                hintText: "Search News Feed...",
+                onClear: () {
+                  newsFeedVM.searchController.clear();
+                },
+                onSearch: () {},
+              ),
             Expanded(
-                child: newsFeedVM.allNewsFeedsData?.newsfeeds?.isEmpty ??
-                        false
+                child: newsFeedVM.filteredNewsfeeds.isEmpty
                     ? Center(
                         child: Text('No Data',
                             style: TextStyles.medium3(
@@ -128,13 +128,12 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                             )))
                     : GenericListViewWithBanners<Newsfeeds>(
                         controller: newsFeedVM.scrollController,
-                        items: newsFeedVM.allNewsFeedsData?.newsfeeds ?? [],
+                        items: newsFeedVM.filteredNewsfeeds,
                         bannerIndices: BannerUtils.calculateBannerIndices(
-                            newsFeedVM.allNewsFeedsData?.newsfeeds?.length ??
-                                0),
+                            newsFeedVM.filteredNewsfeeds.length),
                         itemBuilder: (context, dataIndex) {
                           final newsData = newsFeedVM
-                              .allNewsFeedsData?.newsfeeds?[dataIndex];
+                              .filteredNewsfeeds[dataIndex];
                           return NewsFeedDataCard(
                               newsfeeds: newsData, index: dataIndex);
                         },

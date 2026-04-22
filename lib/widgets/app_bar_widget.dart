@@ -17,13 +17,15 @@ class AppBarWidget extends StatelessWidget
   final bool searchWidget;
   final bool logo;
   final Function()? searchAction;
+  final bool searchBarOpen;
   const AppBarWidget(
       {super.key,
       this.filterWidget,
       this.title,
       this.searchAction,
       this.searchWidget = true,
-      this.logo = true});
+      this.logo = true,
+      this.searchBarOpen = false});
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +74,13 @@ class AppBarWidget extends StatelessWidget
                 ],
               )),
         ),
-        addHorizontal(15),
+        addHorizontal(20),
         (searchWidget)
             ? GestureDetector(
                 onTap: searchAction,
-                child:
-                    SvgPicture.asset(ImageConst.search, color: AppColors.black))
+                child: searchBarOpen
+                    ? Icon(Icons.search_off, color: AppColors.black)
+                    :  Icon(Icons.search, color: AppColors.black))
             : SizedBox.shrink(),
         addHorizontal(15),
         if (filterWidget != null) filterWidget!,
