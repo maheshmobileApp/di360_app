@@ -36,6 +36,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   ScrollController feedScrollController = ScrollController();
+  TextEditingController searchController = TextEditingController();
 
   String? adminId;
   String? supplierId;
@@ -44,6 +45,8 @@ class NewsFeedViewModel extends ChangeNotifier {
   String? userID;
 
   final Set<int> _expandedIndices = {};
+  bool applyCatageories = false;
+   bool searchBarOpen = false;
 
   bool isExpanded(int index) => _expandedIndices.contains(index);
 
@@ -56,10 +59,13 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool applyCatageories = false;
-
   void updateApplyCatageories(bool val) {
     applyCatageories = val;
+    notifyListeners();
+  }
+
+   void setSearchBar(bool value) {
+    searchBarOpen = value;
     notifyListeners();
   }
 

@@ -9,6 +9,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -28,7 +29,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
-          searchWidget: false,
+          searchAction: () => newsFeedVM.setSearchBar(!newsFeedVM.searchBarOpen),
           filterWidget: Row(
             children: [
               GestureDetector(
@@ -105,6 +106,18 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         ),
         body: Column(
           children: [
+             /*if (newsFeedVM.searchBarOpen)
+                    SearchWidget(
+                      controller: newsFeedVM.searchController,
+                      hintText: "Search News Feed...",
+                      onClear: () {
+                        newsFeedVM.searchController.clear();
+                        newsFeedVM.getAllNewsFeeds(context);
+                      },
+                      onSearch: () {
+                        newsFeedVM.getAllNewsFeeds(context);
+                      },
+                    ),*/
             Expanded(
                 child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ??
                         false
