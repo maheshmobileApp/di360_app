@@ -174,7 +174,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       _buildCatalogueRow(catelougeViewModel, context, shareId),
                     if (feedTypeEnum == FeedType.jobs.value &&
                         job?.isNotEmpty == true)
-                      _jobsWidget(job?.first ?? Jobs(), createdAt),
+                      _jobsWidget(job?.first ?? Jobs(), createdAt,
+                          newsfeeds?.title ?? ""),
 
                     const Divider(),
                     Row(
@@ -252,7 +253,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       return newsfeeds?.payloadId ?? '';
     } else if (newsfeeds?.feedType == FeedType.catalogue.value) {
       return newsfeeds?.payloadId ?? '';
-    } else{
+    } else {
       return newsfeeds?.id ?? '';
     }
   }
@@ -506,8 +507,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildCatalogueRow(
-      CatalogueViewModel catalogueVM, BuildContext context, String catalogueId) {
+  Widget _buildCatalogueRow(CatalogueViewModel catalogueVM,
+      BuildContext context, String catalogueId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -538,8 +539,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             height: 40,
             width: 100,
             onTap: () async {
-              await catalogueVM.getCatalogDetails(
-                  context, catalogueId ?? '');
+              await catalogueVM.getCatalogDetails(context, catalogueId ?? '');
               final id =
                   catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
               await catalogueVM.getReletedCatalog(context, id);
@@ -624,7 +624,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _jobsWidget(Jobs job, String createdAt) {
+  Widget _jobsWidget(Jobs job, String createdAt, String? title) {
     return Container(
       width: double.infinity,
       height: 120,
@@ -638,7 +638,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionWidget("Title", job.title ?? ""),
+                _sectionWidget("Title", title ?? ""),
                 _sectionWidget("Role", job.jRole ?? ""),
                 _chipWidget(job.typeofEmployment ?? [], "")
               ],
@@ -807,7 +807,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ],
         if (imageUrls?.isNotEmpty == true)
-        _popupItem("Save Media", Icons.save, AppColors.greenColor),
+          _popupItem("Save Media", Icons.save, AppColors.greenColor),
       ],
     );
   }
