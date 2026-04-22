@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
@@ -87,8 +88,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     return Consumer<NewsFeedCommunityViewModel>(
       builder: (context, viewModel, child) {
         final courseListingVM = Provider.of<CourseListingViewModel>(context);
-        final jobListingsViewModel = Provider.of<JobListingsViewModel>(context);
-
+        final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
         final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
@@ -295,15 +295,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             RouteList.courseDetailScreen);
                                         break;
                                       case FeedType.jobs:
-                                        await jobListingsViewModel
-                                            .getJobListingById(context,
-                                                newsItem.jobs?.first.id ?? "");
-                                        navigationService.navigateToWithParams(
-                                          RouteList.jobdetailsScreen,
-                                          params: jobListingsViewModel
-                                                  .jobListingData?.first ??
-                                              Jobs(),
-                                        );
+                                        await newsFeedVM.getJobDetailsByIds(
+                                            context, newsItem.payloadId ?? "");
                                         break;
                                       default:
                                         // Handle default case or other feed types if necessary
