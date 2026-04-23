@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/course_details.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/course_modules_screen.dart';
 import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
@@ -91,7 +92,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       onPressed: isRegistered
                           ? courseDetails?.type == 'Online Academy'
                               ? () {
-                                  navigationService.push(CourseModulesScreen());
+                                  navigationService.push(CourseDetailPage());
                                 }
                               : () {
                                   scaffoldMessenger("Already Registered");

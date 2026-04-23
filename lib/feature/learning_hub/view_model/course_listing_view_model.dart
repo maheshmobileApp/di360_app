@@ -464,6 +464,18 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void goToPrevious() {
+    if (currentSectionIndex > 0) {
+      currentSectionIndex--;
+    } else if (currentModuleIndex > 0) {
+      currentModuleIndex--;
+      final prevModule = courseDetails!.moduleSection![currentModuleIndex];
+      currentSectionIndex = (prevModule.sectionList?.length ?? 1) - 1;
+    }
+
+    notifyListeners();
+  }
+
   /// 🔹 Manually switch section
   void setCurrent(int moduleIndex, int sectionIndex) {
     currentModuleIndex = moduleIndex;
