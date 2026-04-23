@@ -9,6 +9,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -28,7 +29,9 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
-          searchWidget: false,
+          searchBarOpen: newsFeedVM.searchBarOpen,
+          searchAction: () =>
+              newsFeedVM.setSearchBar(!newsFeedVM.searchBarOpen),
           filterWidget: Row(
             children: [
               GestureDetector(
@@ -66,21 +69,21 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                               .toList() ??
                           [],
                     ).then((value) {
-                      homeViewModel.resetPagination();
+                      newsFeedVM.resetPagination();
                       newsFeedVM.updateApplyCatageories(true);
                       newsFeedVM.updateSelectedCategory((value as dynamic)?.id);
                       if ((value as dynamic)?.categoryName == 'Catalogue') {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: 'CATALOGUE', categoryType: null);
                       } else if ((value as dynamic)?.categoryName == 'Jobs') {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: 'JOBS', categoryType: null);
                       } else if ((value as dynamic)?.categoryName ==
                           'Learning Hub') {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: 'LEARNHUB', categoryType: null);
                       } else {
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: null, categoryType: value?.id);
                       }
                     });
@@ -92,8 +95,8 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                   padding: const EdgeInsets.only(left: 10),
                   child: GestureDetector(
                       onTap: () {
-                        homeViewModel.resetPagination();
-                        homeViewModel.getAllNewsfeeds(context,
+                        newsFeedVM.resetPagination();
+                        newsFeedVM.getAllNewsfeeds(context,
                             feedType: null, categoryType: null);
                         newsFeedVM.updateApplyCatageories(false);
                         newsFeedVM.updateSelectedCategory(null);
@@ -105,23 +108,32 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
         ),
         body: Column(
           children: [
+            addVertical(10),
+            if (newsFeedVM.searchBarOpen)
+              SearchWidget(
+                searchButton: false,
+                controller: newsFeedVM.searchController,
+                hintText: "Search News Feed...",
+                onClear: () {
+                  newsFeedVM.searchController.clear();
+                },
+                onSearch: () {},
+              ),
             Expanded(
-                child: homeViewModel.allNewsFeedsData?.newsfeeds?.isEmpty ??
-                        false
+                child: newsFeedVM.filteredNewsfeeds.isEmpty
                     ? Center(
                         child: Text('No Data',
                             style: TextStyles.medium3(
                               color: AppColors.black,
                             )))
                     : GenericListViewWithBanners<Newsfeeds>(
-                        controller: homeViewModel.scrollController,
-                        items: homeViewModel.allNewsFeedsData?.newsfeeds ?? [],
+                        controller: newsFeedVM.scrollController,
+                        items: newsFeedVM.filteredNewsfeeds,
                         bannerIndices: BannerUtils.calculateBannerIndices(
-                            homeViewModel.allNewsFeedsData?.newsfeeds?.length ??
-                                0),
+                            newsFeedVM.filteredNewsfeeds.length),
                         itemBuilder: (context, dataIndex) {
-                          final newsData = homeViewModel
-                              .allNewsFeedsData?.newsfeeds?[dataIndex];
+                          final newsData = newsFeedVM
+                              .filteredNewsfeeds[dataIndex];
                           return NewsFeedDataCard(
                               newsfeeds: newsData, index: dataIndex);
                         },

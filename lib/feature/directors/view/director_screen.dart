@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view/grid_view_widget.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,9 @@ class _DirectorScreenState extends State<DirectorScreen>
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
       appBar: AppBarWidget(
-          searchWidget: false,
+          searchBarOpen: directorVM.searchBarOpen,
+          searchAction: () =>
+              directorVM.setSearchBar(!directorVM.searchBarOpen),
           filterWidget: Row(children: [
             GestureDetector(
                 onTap: () =>
@@ -77,11 +80,22 @@ class _DirectorScreenState extends State<DirectorScreen>
           ])),
       body: Column(
         children: [
-          ListBanner(),
-          addVertical(16),
+          //ListBanner(),
+           addVertical(10),
+          if (directorVM.searchBarOpen)
+            SearchWidget(
+              searchButton: false,
+              controller: directorVM.directorSearchController,
+              hintText: "Search Directory...",
+              onClear: () {
+                directorVM.directorSearchController.clear();
+              },
+              onSearch: () {},
+            ),
+          addVertical(10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
@@ -91,7 +105,7 @@ class _DirectorScreenState extends State<DirectorScreen>
                     children: [
                       Padding(
                           padding: const EdgeInsets.only(
-                              left: 20, right: 20, top: 20,bottom: 10),
+                              left: 20, right: 20, top: 20, bottom: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

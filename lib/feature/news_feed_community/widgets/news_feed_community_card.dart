@@ -16,11 +16,11 @@ import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +51,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final int comments;
   final bool isLiked;
   final Newsfeeds? newsfeeds;
+  final int index;
 
   NewsFeedCommunityCard({
     super.key,
@@ -78,12 +79,14 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     required this.feedType,
     this.isLiked = false,
     this.newsfeeds,
+    required this.index
   }) {}
 
   @override
   Widget build(BuildContext context) {
     final feedTypeEnum = feedType;
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
+    final String shareId = _fetchId(newsfeeds);
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -129,18 +132,17 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       ],
                     ),
 
-                    const SizedBox(height: 8),
-
-                    const SizedBox(height: 8),
-                    HtmlWidget(
-                      description,
-                      textStyle: TextStyles.regular2(color: AppColors.black),
-                    ),
+                    
                     const SizedBox(height: 8),
 
                     (imageUrls?.isNotEmpty ?? false)
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
+                    const SizedBox(height: 8),
+                    ExpandableHtmlText(
+                      htmlData: description,
+                      index: index,
+                    ),
                     if (newsfeeds?.videoUrl != null &&
                         newsfeeds?.videoUrl?.isNotEmpty == true &&
                         _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
@@ -170,10 +172,11 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         course?.isNotEmpty == true)
                       _learnHubWidget(course?.first ?? Courses(), createdAt),
                     if (feedTypeEnum == FeedType.catalogue.value)
-                      _buildCatalogueRow(catelougeViewModel, context),
+                      _buildCatalogueRow(catelougeViewModel, context, shareId),
                     if (feedTypeEnum == FeedType.jobs.value &&
                         job?.isNotEmpty == true)
-                      _jobsWidget(job?.first ?? Jobs(), createdAt),
+                      _jobsWidget(job?.first ?? Jobs(), createdAt,
+                          newsfeeds?.title ?? ""),
 
                     const Divider(),
                     Row(
@@ -212,7 +215,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           size: 20,
-                          feedId: id,
+                          feedId: shareId,
                         ),
 
                         const Spacer(),
@@ -242,6 +245,18 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
         );
       },
     );
+  }
+
+  String _fetchId(Newsfeeds? newsfeeds) {
+    if (newsfeeds?.feedType == FeedType.jobs.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.learnhub.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.catalogue.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else {
+      return newsfeeds?.id ?? '';
+    }
   }
 
   Widget _buildImageRow(List<PostImage>? allMediaList) {
@@ -493,8 +508,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildCatalogueRow(
-      CatalogueViewModel catalogueVM, BuildContext context) {
+  Widget _buildCatalogueRow(CatalogueViewModel catalogueVM,
+      BuildContext context, String catalogueId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -525,8 +540,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             height: 40,
             width: 100,
             onTap: () async {
-              await catalogueVM.getCatalogDetails(
-                  context, newsfeeds?.payload?.catalogueId ?? '');
+              await catalogueVM.getCatalogDetails(context, catalogueId ?? '');
               final id =
                   catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
               await catalogueVM.getReletedCatalog(context, id);
@@ -611,7 +625,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _jobsWidget(Jobs job, String createdAt) {
+  Widget _jobsWidget(Jobs job, String createdAt, String? title) {
     return Container(
       width: double.infinity,
       height: 120,
@@ -625,7 +639,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionWidget("Title", job.title ?? ""),
+                _sectionWidget("Title", title ?? ""),
                 _sectionWidget("Role", job.jRole ?? ""),
                 _chipWidget(job.typeofEmployment ?? [], "")
               ],
@@ -794,7 +808,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ],
         if (imageUrls?.isNotEmpty == true)
-        _popupItem("Save Media", Icons.save, AppColors.greenColor),
+          _popupItem("Save Media", Icons.save, AppColors.greenColor),
       ],
     );
   }

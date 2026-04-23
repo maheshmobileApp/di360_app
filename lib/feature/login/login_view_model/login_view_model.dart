@@ -88,6 +88,9 @@ class LoginViewModel extends ChangeNotifier {
 
           Loaders.circularHideLoader(context);
 
+           await LocalStorage.setStringVal(
+              LocalStorageConst.type, loginData?.type ?? '');
+
           // Navigate instantly
           if (loginData?.profileCompleted == true) {
             homeNavigation(context);
@@ -152,7 +155,7 @@ class LoginViewModel extends ChangeNotifier {
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     await LocalStorage.setBoolValue(LocalStorageConst.directoryComplete, true);
-    Future.microtask(() => DeepLinkService.consumePendingLink(context));
+    Future.microtask(() => DeepLinkService.consumePendingLink());
   }
 
   viewProfileHandle(BuildContext context) async {

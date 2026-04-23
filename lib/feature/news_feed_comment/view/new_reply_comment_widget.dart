@@ -70,20 +70,15 @@ class NewReplyCommentWidget extends StatelessWidget with BaseContextHelpers {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          comments?.dentalSupplier?.name ??
+                          comments?.dentalSupplier?.businessName ??
                               comments?.dentalPractice?.name ??
                               comments?.dentalProfessional?.name ??
-                              comments?.adminUser?.name ??
-                              '',
+                              "Dental Interface",
                           style: TextStyles.semiBold(
                               color: AppColors.black, fontSize: 16),
                         ),
                         addHorizontal(15),
-                        if (comments?.dentalAdminId == viewModel.userID ||
-                            comments?.dentalPracticeId == viewModel.userID ||
-                            comments?.dentalProfessionalId ==
-                                viewModel.userID ||
-                            comments?.dentalSupplierId == viewModel.userID)
+                        if (comments?.createdById == viewModel.userID)
                           GestureDetector(
                             onTapDown: (TapDownDetails details) {
                               final offset = details.globalPosition;
@@ -151,7 +146,7 @@ class NewReplyCommentWidget extends StatelessWidget with BaseContextHelpers {
                                       isedit: true);
                                 } else if (value == 'delete') {
                                   viewModel.deleteTheReplyComment(
-                                      context, comments?.id ?? '', feedId);
+                                      context, comments?.id ?? '', feedId, comments?.parentCommentId ?? '');
                                 }
                               });
                             },

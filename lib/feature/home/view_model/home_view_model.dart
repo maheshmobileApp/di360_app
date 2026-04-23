@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
 import 'package:di360_flutter/feature/home/repository/home_repository_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -10,7 +9,6 @@ class HomeViewModel extends ChangeNotifier {
   HomeRepositoryImpl homeRepositoryImpl = HomeRepositoryImpl();
 
   GetFollowersData? getFollowersData;
-  AllNewsFeedData? allNewsFeedsData;
   String? userName;
   String? profilePic;
   String? userID;
@@ -20,7 +18,7 @@ class HomeViewModel extends ChangeNotifier {
   int limit = 10;
   bool isLoadingMore = false;
   bool hasMoreData = true;
-  ScrollController scrollController = ScrollController();
+  /*ScrollController scrollController = ScrollController();
 
   HomeViewModel() {
     scrollController.addListener(_scrollListener);
@@ -73,7 +71,7 @@ class HomeViewModel extends ChangeNotifier {
   void dispose() {
     scrollController.dispose();
     super.dispose();
-  }
+  }*/
 
   getFollowersCount(BuildContext context) async {
     Loaders.circularShowLoader(context);
@@ -91,7 +89,7 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getAllNewsfeeds(BuildContext context,
+  /*Future<void> getAllNewsfeeds(BuildContext context,
       {String? feedType, String? categoryType}) async {
     Loaders.circularShowLoader(context);
     resetPagination();
@@ -110,7 +108,7 @@ class HomeViewModel extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
-  }
+  }*/
 
   getUserDetails() async {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);

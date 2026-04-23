@@ -70,11 +70,11 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
     if (userLogin == true) {
       if (profileCompleted == true) {
         navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
-        Future.microtask(() => DeepLinkService.consumePendingLink(context));
+        DeepLinkService.consumePendingLink();
         return;
       }
       await viewProfileHandle(context);
-      Future.microtask(() => DeepLinkService.consumePendingLink(context));
+      DeepLinkService.consumePendingLink();
       return;
     }
 

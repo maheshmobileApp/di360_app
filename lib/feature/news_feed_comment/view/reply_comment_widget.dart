@@ -11,8 +11,9 @@ import 'package:provider/provider.dart';
 
 class ReplyCommentWidget extends StatelessWidget with BaseContextHelpers {
   final CommentReply? comments;
+  final String parentCommentId;
   final String feedId;
-  const ReplyCommentWidget({super.key, this.comments, required this.feedId});
+  const ReplyCommentWidget({super.key, this.comments, required this.feedId, required this.parentCommentId});
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +152,7 @@ class ReplyCommentWidget extends StatelessWidget with BaseContextHelpers {
                                       isedit: true);
                                 } else if (value == 'delete') {
                                   viewModel.deleteTheReplyComment(
-                                      context, comments?.id ?? '', feedId);
+                                      context, comments?.id ?? '', feedId, parentCommentId);
                                 }
                               });
                             },

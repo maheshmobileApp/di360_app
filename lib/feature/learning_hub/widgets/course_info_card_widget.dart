@@ -59,19 +59,21 @@ class CourseInfoCardWidget extends StatelessWidget {
                 color: AppColors.primaryColor,
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${courseName}",
-                      maxLines: 2,
-                      style: TextStyle(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${courseName}",
+                        maxLines: 2,
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis)),
-                  const SizedBox(height: 4),
-                  const Text("A Comprehensive Guide",
-                      style: TextStyle(color: Colors.grey)),
-                ],
+                        )),
+                    const SizedBox(height: 4),
+                    const Text("A Comprehensive Guide",
+                        style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
               ),
             ],
           ),
