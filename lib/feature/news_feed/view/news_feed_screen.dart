@@ -26,6 +26,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
     final homeViewModel = Provider.of<HomeViewModel>(context);
     final categoryVM = Provider.of<AddNewsFeedViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
+    final AddNewsFeedVM = Provider.of<AddNewsFeedViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
@@ -132,8 +133,8 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                         bannerIndices: BannerUtils.calculateBannerIndices(
                             newsFeedVM.filteredNewsfeeds.length),
                         itemBuilder: (context, dataIndex) {
-                          final newsData = newsFeedVM
-                              .filteredNewsfeeds[dataIndex];
+                          final newsData =
+                              newsFeedVM.filteredNewsfeeds[dataIndex];
                           return NewsFeedDataCard(
                               newsfeeds: newsData, index: dataIndex);
                         },
@@ -151,6 +152,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
             backgroundColor: AppColors.primaryColor,
             onPressed: () async {
               await categoryVM.fetchNewsfeedCategories();
+              AddNewsFeedVM.clearFeedNews();
               navigationService.navigateTo(RouteList.addNewsFeed);
             },
             child: SvgPicture.asset(ImageConst.addFeed)));

@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/news_feed_community_comment/view/community
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
@@ -120,16 +121,25 @@ class _CommentScreenState extends State<CommunityCommentScreen>
             ),
             _buildCommentInputField(context, viewModel, widget.newsfeeds),
             // File attachments preview
-            if (viewModel.selectedFiles.isNotEmpty)
+            // File attachments preview
+            if (viewModel.existingAttachments.isNotEmpty || viewModel.selectedFiles.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: List.generate(
-                    viewModel.selectedFiles.length,
-                    (index) => _buildFilePreview(viewModel.selectedFiles[index], index, viewModel),
-                  ),
+                  children: [
+                    ...List.generate(
+                      viewModel.existingAttachments.length,
+                      (index) => _buildExistingFilePreview(
+                          viewModel.existingAttachments[index], index, viewModel),
+                    ),
+                    ...List.generate(
+                      viewModel.selectedFiles.length,
+                      (index) => _buildFilePreview(
+                          viewModel.selectedFiles[index], index, viewModel),
+                    ),
+                  ],
                 ),
               ),
           ],
@@ -240,6 +250,46 @@ class _CommentScreenState extends State<CommunityCommentScreen>
                 ))
         ],
       ),
+    );
+  }
+
+  Widget _buildExistingFilePreview(CommentsAttachments attachment, int index,
+      NewsFeedCommunityCommentViewModel viewModel) {
+    final ext = attachment.name?.split('.').last.toLowerCase();
+    return Stack(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          margin: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: ['jpg', 'png', 'jpeg'].contains(ext)
+                ? CachedNetworkImageWidget(
+                    imageUrl: attachment.url ?? '',
+                    fit: BoxFit.cover,
+                    errorWidget: Icon(Icons.broken_image, color: Colors.grey),
+                  )
+                : _getFileIcon(ext),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => viewModel.removeExistingAttachment(index),
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.red, shape: BoxShape.circle),
+              child: const Icon(Icons.close, color: Colors.white, size: 14),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

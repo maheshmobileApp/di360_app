@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/feed_details.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/new_comment_sheet.dart';
@@ -122,18 +123,24 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
               ),
             ),
             _buildCommentInputField(context, viewModel, widget.newsfeeds),
-            if (viewModel.selectedFiles.isNotEmpty)
+            if (viewModel.existingAttachments.isNotEmpty || viewModel.selectedFiles.isNotEmpty)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: List.generate(
-                    viewModel.selectedFiles.length,
-                    (index) => _buildFilePreview(
-                        viewModel.selectedFiles[index], index, viewModel),
-                  ),
+                  children: [
+                    ...List.generate(
+                      viewModel.existingAttachments.length,
+                      (index) => _buildExistingFilePreview(
+                          viewModel.existingAttachments[index], index, viewModel),
+                    ),
+                    ...List.generate(
+                      viewModel.selectedFiles.length,
+                      (index) => _buildFilePreview(
+                          viewModel.selectedFiles[index], index, viewModel),
+                    ),
+                  ],
                 ),
               ),
           ],
@@ -202,7 +209,6 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                               viewModel.replyCommentTheFeed(
                                 context,
                                 newsfeeds?.id ?? '',
-                                viewModel.commentId ?? '',
                               );
                             } else if (viewModel.replyCommentUpdate) {
                               viewModel.updateTheReplyCommentTheFeed(
@@ -247,6 +253,46 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                 ))
         ],
       ),
+    );
+  }
+
+  Widget _buildExistingFilePreview(CommentsAttachments attachment, int index,
+      CommentViewModel viewModel) {
+    final ext = attachment.name?.split('.').last.toLowerCase();
+    return Stack(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          margin: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: ['jpg', 'png', 'jpeg'].contains(ext)
+                ? CachedNetworkImageWidget(
+                    imageUrl: attachment.url ?? '',
+                    fit: BoxFit.cover,
+                    errorWidget: Icon(Icons.broken_image, color: Colors.grey),
+                  )
+                : _getFileIcon(ext),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => viewModel.removeExistingAttachment(index),
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.red, shape: BoxShape.circle),
+              child: const Icon(Icons.close, color: Colors.white, size: 14),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

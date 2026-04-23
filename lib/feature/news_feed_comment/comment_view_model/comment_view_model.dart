@@ -92,6 +92,19 @@ class CommentViewModel extends ChangeNotifier {
     }
   }
 
+  void setEditAttachments(List<CommentsAttachments>? attachments) {
+    existingAttachments = List.from(attachments ?? []);
+    selectedFiles.clear();
+    notifyListeners();
+  }
+
+  void removeExistingAttachment(int index) {
+    if (index < existingAttachments.length) {
+      existingAttachments.removeAt(index);
+      notifyListeners();
+    }
+  }
+
   Future<List<Map<String, dynamic>>> _uploadFiles() async {
     List<Map<String, dynamic>> uploadedFiles = [];
 
@@ -182,8 +195,9 @@ class CommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         existingAttachments.clear();
-        getComments(context, feedId);
-        getNewsfeedComment(context, feedId);
+        await getComments(context, feedId);
+        selectedFiles.clear();
+        //await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -234,14 +248,16 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getComments(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
     final variables = {"feedId": feedId, "limit": 10, "offset": 0};
     try {
       var res = await repo.getComments(variables);
-      // ignore: unnecessary_null_comparison
       if (res != null) {
         newsFeedComments = res;
+        Loaders.circularHideLoader(context);
       }
     } catch (e) {
+      Loaders.circularHideLoader(context);
       scaffoldMessenger(e.toString());
     }
     notifyListeners();
@@ -300,17 +316,17 @@ class CommentViewModel extends ChangeNotifier {
   replyCommentTheFeed(
     BuildContext context,
     String feedId,
-    String parentId,
   ) async {
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final directParentId = commentId ?? '';
     await getUserId();
     Loaders.circularShowLoader(context);
     final variables = {
       "object": {
         "comment_text": commentController.text,
         "news_feeds_id": feedId,
-        "parent_comment_id": parentId,
+        "parent_comment_id": directParentId,
         "created_by_id": userId,
         "role_type": userType,
         "attachments": null,
@@ -328,9 +344,9 @@ class CommentViewModel extends ChangeNotifier {
 
       if (res.isNotEmpty) {
         commentController.clear();
-        await getComments(context, feedId);
-        await getReplies(context, parentId);
         await getNewsfeedComment(context, feedId);
+        await getComments(context, feedId);
+        await getReplies(context, directParentId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -368,7 +384,8 @@ class CommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTheReplyComment(BuildContext context, String id, String feedId, String parentId) async {
+  deleteTheReplyComment(
+      BuildContext context, String id, String feedId, String parentId) async {
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
