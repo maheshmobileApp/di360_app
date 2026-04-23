@@ -241,6 +241,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               }
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
+                                  index : index,
                                   newsfeeds: newsItem,
                                   course: newsItem.courses ?? [],
                                   feedType: newsItem.feedType ?? "",

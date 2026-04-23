@@ -27,7 +27,6 @@ import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
@@ -101,13 +100,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   needFeedViewModel,
                   addNeedFeedViewModel),
               addVertical(10),
-              HtmlWidget(
-                newsfeeds?.description ?? "",
-                textStyle: TextStyles.regular2(color: AppColors.black),
-              ),
-              addVertical(10),
               _buildImageRow(catalogueViewModel, context),
-              addVertical(5),
+              addVertical(10),
+              ExpandableHtmlText(
+                htmlData: newsfeeds?.description ?? "",
+                index: index,
+              ),
               if (newsfeeds?.videoUrl != null &&
                   newsfeeds?.videoUrl?.isNotEmpty == true &&
                   _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
@@ -117,8 +115,13 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   newsfeeds?.webUrl?.isNotEmpty == true)
                 webSiteText(newsfeeds?.webUrl ?? ""),
               if (newsFeedTypeEnum == FeedType.jobs.value)
-                _jobsWidget(newsfeeds?.jobs?.first ?? Jobs(),
-                    newsfeeds?.createdAt ?? '', context, newsFeedVM, shareId, newsfeeds?.title),
+                _jobsWidget(
+                    newsfeeds?.jobs?.first ?? Jobs(),
+                    newsfeeds?.createdAt ?? '',
+                    context,
+                    newsFeedVM,
+                    shareId,
+                    newsfeeds?.title),
               addVertical(10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,8 +134,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     addVertical(8),
                   if (newsFeedTypeEnum == FeedType.learnhub.value &&
                       newsfeeds?.courses?.isNotEmpty == true)
-                    _learnHubWidget(newsfeeds?.courses?.first ?? Courses(),
-                        newsfeeds?.createdAt ?? '', context, courseListingVM, shareId),
+                    _learnHubWidget(
+                        newsfeeds?.courses?.first ?? Courses(),
+                        newsfeeds?.createdAt ?? '',
+                        context,
+                        courseListingVM,
+                        shareId),
                   if (newsFeedTypeEnum == FeedType.catalogue.value)
                     _buildCatalogueRow(catalogueViewModel, context, shareId),
                   Divider(color: AppColors.dividerColor),
@@ -165,13 +172,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     }
   }
 
-  Widget _learnHubWidget(
-    Courses course,
-    String createdAt,
-    BuildContext context,
-    CourseListingViewModel courseListingVM,
-    String courseId
-  ) {
+  Widget _learnHubWidget(Courses course, String createdAt, BuildContext context,
+      CourseListingViewModel courseListingVM, String courseId) {
     return Container(
       width: double.infinity,
       height: 150,

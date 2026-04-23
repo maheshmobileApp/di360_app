@@ -16,11 +16,11 @@ import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +51,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final int comments;
   final bool isLiked;
   final Newsfeeds? newsfeeds;
+  final int index;
 
   NewsFeedCommunityCard({
     super.key,
@@ -78,6 +79,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     required this.feedType,
     this.isLiked = false,
     this.newsfeeds,
+    required this.index
   }) {}
 
   @override
@@ -130,18 +132,17 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       ],
                     ),
 
-                    const SizedBox(height: 8),
-
-                    const SizedBox(height: 8),
-                    HtmlWidget(
-                      description,
-                      textStyle: TextStyles.regular2(color: AppColors.black),
-                    ),
+                    
                     const SizedBox(height: 8),
 
                     (imageUrls?.isNotEmpty ?? false)
                         ? _buildImageRow(imageUrls)
                         : SizedBox.shrink(),
+                    const SizedBox(height: 8),
+                    ExpandableHtmlText(
+                      htmlData: description,
+                      index: index,
+                    ),
                     if (newsfeeds?.videoUrl != null &&
                         newsfeeds?.videoUrl?.isNotEmpty == true &&
                         _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
