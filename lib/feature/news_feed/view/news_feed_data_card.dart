@@ -258,7 +258,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       NewsFeedViewModel newsFeedVM, String jobId, String? title) {
     return Container(
       width: double.infinity,
-      height: 130,
+      height: 150,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -3,7 +3,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/get_news_feed_categories.dart';
@@ -27,6 +26,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     getUserId();
     getFilterCategories();
     searchController.addListener(notifyListeners);
+    scrollController.addListener(_scrollListener);
   }
 
   List<NewsfeedCategories>? newsfeedCategories;
@@ -38,17 +38,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  ScrollController feedScrollController = ScrollController();
   final TextEditingController searchController = TextEditingController();
-
-  List<Newsfeeds> get filteredNewsfeeds {
-    final query = searchController.text.trim().toLowerCase();
-    final all = allNewsFeedsData?.newsfeeds ?? [];
-    if (query.isEmpty) return all;
-    return all.where((f) {
-      return (f.title?.toLowerCase().contains(query) ?? false);
-    }).toList();
-  }
 
   String? adminId;
   String? supplierId;
@@ -88,31 +78,32 @@ class NewsFeedViewModel extends ChangeNotifier {
   AllNewsFeedData? allNewsFeedsData;
 
   ScrollController scrollController = ScrollController();
-
-  HomeViewModel() {
-    scrollController.addListener(_scrollListener);
-  }
+  String? _activeFeedType;
+  String? _activeCategoryType;
 
   void _scrollListener() {
     if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 100 &&
         !isLoadingMore &&
         hasMoreData) {
-      loadMoreNewsfeeds();
+      _loadMoreNewsfeeds();
     }
   }
 
-  void loadMoreNewsfeeds() async {
+  void _loadMoreNewsfeeds() async {
     if (isLoadingMore || !hasMoreData) return;
     isLoadingMore = true;
-
     offset += limit;
-    print('Loading more... offset: $offset');
     try {
-      var res = await repo.getAllNewsFeed(offset, limit);
+      var res = await repo.getAllNewsFeed(
+        offset,
+        limit,
+        searchController.text,
+        feedType: _activeFeedType,
+        categoryType: _activeCategoryType,
+      );
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
-        print('Received ${result.newsfeeds?.length ?? 0} items');
         if (result.newsfeeds?.isEmpty ?? true) {
           hasMoreData = false;
         } else {
@@ -122,7 +113,6 @@ class NewsFeedViewModel extends ChangeNotifier {
         hasMoreData = false;
       }
     } catch (e) {
-      print('Error loading more: $e');
       hasMoreData = false;
       offset -= limit;
     }
@@ -138,6 +128,7 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    scrollController.removeListener(_scrollListener);
     scrollController.dispose();
     searchController.removeListener(notifyListeners);
     searchController.dispose();
@@ -146,12 +137,15 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void> getAllNewsfeeds(BuildContext context,
       {String? feedType, String? categoryType}) async {
+    _activeFeedType = feedType;
+    _activeCategoryType = categoryType;
     Loaders.circularShowLoader(context);
     resetPagination();
     try {
       var res = await repo.getAllNewsFeed(
         offset,
         limit,
+        searchController.text,
         feedType: feedType,
         categoryType: categoryType,
       );
