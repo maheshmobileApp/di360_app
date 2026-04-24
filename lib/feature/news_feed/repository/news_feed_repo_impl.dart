@@ -13,14 +13,14 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
     return res;
   }
 
-   @override
+  @override
   Future<dynamic> blockUser(variables) {
     final res = http.mutation(BlockUserQuery, variables);
     return res;
   }
 
   @override
-  Future<dynamic> getAllNewsFeed(int offset, int limit,
+  Future<dynamic> getAllNewsFeed(int offset, int limit, String searchText,
       {String? feedType, String? categoryType}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityId =
@@ -30,8 +30,10 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
 
     final variables = {
       "where": {
-        "status": {"_eq": "PUBLISHED"},
         "_and": [
+          {
+            "status": {"_eq": "PUBLISHED"}
+          },
           {
             "_or": [
               {
@@ -56,6 +58,48 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
           if (categoryType != null)
             {
               "category_type": {"_eq": categoryType}
+            },
+          {
+                "_or": [
+                    {
+                        "description": {
+                            "_ilike": "%$searchText%"
+                        }
+                    },
+                    {
+                        "title": {
+                            "_ilike": "%$searchText%"
+                        }
+                    },
+                    {
+                        "admin_user": {
+                            "name": {
+                                "_ilike": "%$searchText%"
+                            }
+                        }
+                    },
+                    {
+                        "dental_practice": {
+                            "business_name": {
+                                "_ilike": "%$searchText%"
+                            }
+                        }
+                    },
+                    {
+                        "dental_supplier": {
+                            "business_name": {
+                                "_ilike": "%$searchText%"
+                            }
+                        }
+                    },
+                    {
+                        "dental_professional": {
+                            "name": {
+                                "_ilike": "%$searchText%"
+                            }
+                        }
+                    }
+                ]
             },
           {
             "_not": {

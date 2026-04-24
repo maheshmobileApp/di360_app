@@ -100,6 +100,7 @@ const String getAllNewsfeedsQuery =
     admin_user {
       id
       name
+      profile_image
       __typename
     }
     __typename

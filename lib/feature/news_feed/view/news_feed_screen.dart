@@ -8,7 +8,6 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
@@ -18,20 +17,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
+class NewsFeedScreen extends StatefulWidget {
   const NewsFeedScreen({super.key});
 
   @override
+  State<NewsFeedScreen> createState() => _NewsFeedScreenState();
+}
+
+class _NewsFeedScreenState extends State<NewsFeedScreen>
+    with BaseContextHelpers {
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final homeViewModel = Provider.of<HomeViewModel>(context);
     final categoryVM = Provider.of<AddNewsFeedViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
+    final addNewsFeedVM = Provider.of<AddNewsFeedViewModel>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
           searchBarOpen: newsFeedVM.searchBarOpen,
-          searchAction: () =>
-              newsFeedVM.setSearchBar(!newsFeedVM.searchBarOpen),
+          searchAction: () {
+            final isOpening = !newsFeedVM.searchBarOpen;
+            newsFeedVM.setSearchBar(isOpening);
+            if (isOpening) {
+              Future.microtask(() => _searchFocusNode.requestFocus());
+            }
+          },
           filterWidget: Row(
             children: [
               GestureDetector(
@@ -111,16 +134,22 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
             addVertical(10),
             if (newsFeedVM.searchBarOpen)
               SearchWidget(
-                searchButton: false,
+                focusNode: _searchFocusNode,
+                searchButton:
+                    newsFeedVM.searchController.text.length >= 3 ? true : false,
                 controller: newsFeedVM.searchController,
                 hintText: "Search News Feed...",
-                onClear: () {
+                onClear: () async {
                   newsFeedVM.searchController.clear();
+                  await newsFeedVM.getAllNewsfeeds(context);
                 },
-                onSearch: () {},
+                onSearch: () async {
+                  _searchFocusNode.unfocus();
+                  await newsFeedVM.getAllNewsfeeds(context);
+                },
               ),
             Expanded(
-                child: newsFeedVM.filteredNewsfeeds.isEmpty
+                child: newsFeedVM.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
                     ? Center(
                         child: Text('No Data',
                             style: TextStyles.medium3(
@@ -128,12 +157,20 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
                             )))
                     : GenericListViewWithBanners<Newsfeeds>(
                         controller: newsFeedVM.scrollController,
-                        items: newsFeedVM.filteredNewsfeeds,
+                        items: newsFeedVM.allNewsFeedsData?.newsfeeds ?? [],
                         bannerIndices: BannerUtils.calculateBannerIndices(
-                            newsFeedVM.filteredNewsfeeds.length),
+                            newsFeedVM.allNewsFeedsData?.newsfeeds?.length ??
+                                0),
+                        loadingWidget: newsFeedVM.isLoadingMore
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            : null,
                         itemBuilder: (context, dataIndex) {
                           final newsData = newsFeedVM
-                              .filteredNewsfeeds[dataIndex];
+                              .allNewsFeedsData?.newsfeeds?[dataIndex];
                           return NewsFeedDataCard(
                               newsfeeds: newsData, index: dataIndex);
                         },
@@ -151,6 +188,7 @@ class NewsFeedScreen extends StatelessWidget with BaseContextHelpers {
             backgroundColor: AppColors.primaryColor,
             onPressed: () async {
               await categoryVM.fetchNewsfeedCategories();
+              addNewsFeedVM.clearFeedNews();
               navigationService.navigateTo(RouteList.addNewsFeed);
             },
             child: SvgPicture.asset(ImageConst.addFeed)));

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
@@ -6,7 +5,6 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/update_news_feed.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
-import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -244,8 +242,8 @@ void addFiles(List<XFile> files) {
   }
 
   editSelectCategoryAssigned(String id) {
-    final category = newsfeedCategories?.where((val) => val.id == id).first;
-    setSelectedCategory(category);
+    final category = newsfeedCategories?.firstWhere((val) => val.id == id, orElse: () => newsfeedCategories!.first);
+    setSelectedCategory(id.isEmpty ? null : category);
     notifyListeners();
   }
 }

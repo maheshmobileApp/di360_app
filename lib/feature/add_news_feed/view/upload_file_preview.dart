@@ -262,117 +262,65 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
       PostImage image, int index, AddNewsFeedViewModel viewModel) {
     final type = image.type ?? image.mimeType ?? '';
     final url = image.url ?? '';
+    final name = image.name ?? '';
+    final urlExt = url.split('?').first.split('.').last.toLowerCase();
+    final nameExt = name.split('.').last.toLowerCase();
 
-    // Helper: check if base64
     bool isBase64Image(String data) => data.startsWith('data:image/');
 
-    if (type.startsWith('image/') ||
-        type.startsWith('application/octet-stream')) {
+    final isPdf = type == 'application/pdf' ||
+        type == 'application/msword' ||
+        urlExt == 'pdf' ||
+        nameExt == 'pdf';
+
+    final isVideo = type.startsWith('video/') ||
+        ['mp4', 'mov', 'avi'].contains(urlExt) ||
+        ['mp4', 'mov', 'avi'].contains(nameExt);
+
+    final isImage = type.startsWith('image/') ||
+        ['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(urlExt) ||
+        ['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(nameExt);
+
+    if (isPdf) {
+      return _fileCard(
+          Stack(alignment: Alignment.center, children: [
+            Icon(Icons.picture_as_pdf, size: 40, color: Colors.red),
+            Positioned(
+              top: 4, right: 4,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                color: Colors.red,
+                child: Text('PDF', style: TextStyle(color: Colors.white, fontSize: 10)),
+              ),
+            )
+          ]),
+          index, viewModel, isExisting: true);
+    } else if (isVideo) {
+      return _fileCard(
+          Stack(alignment: Alignment.center, children: [
+            Container(color: Colors.black12, child: Icon(Icons.videocam, size: 40, color: Colors.purple)),
+            Positioned(
+              top: 4, right: 4,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                color: Colors.purple,
+                child: Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
+              ),
+            )
+          ]),
+          index, viewModel, isExisting: true);
+    } else if (isImage) {
       if (isBase64Image(url)) {
         try {
           final decodedBytes = base64Decode(url.split(',').last);
-          return _fileCard(
-              Image.memory(decodedBytes, fit: BoxFit.cover), index, viewModel,
-              isExisting: true);
-        } catch (e) {
-          return Icon(Icons.broken_image);
+          return _fileCard(Image.memory(decodedBytes, fit: BoxFit.cover), index, viewModel, isExisting: true);
+        } catch (_) {
+          return _fileCard(Icon(Icons.broken_image), index, viewModel, isExisting: true);
         }
-      } else if (image.name!.endsWith('.mp4')) {
-        return _fileCard(
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                    color: Colors.black12,
-                    child:
-                        Icon(Icons.videocam, size: 40, color: Colors.purple)),
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                    color: Colors.purple,
-                    child: Text('Video',
-                        style: TextStyle(color: Colors.white, fontSize: 10)),
-                  ),
-                )
-              ],
-            ),
-            index,
-            viewModel);
-      } else {
-        return _fileCard(
-            Image.network(url, fit: BoxFit.cover), index, viewModel,
-            isExisting: true);
       }
-    } else if (type == 'video/mp4') {
-      return _fileCard(
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                  color: Colors.black12,
-                  child: Icon(Icons.videocam, size: 40, color: Colors.purple)),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  color: Colors.purple,
-                  child: Text('Video',
-                      style: TextStyle(color: Colors.white, fontSize: 10)),
-                ),
-              )
-            ],
-          ),
-          index,
-          viewModel);
-    } else if (type == 'application/pdf') {
-      return _fileCard(
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Icon(Icons.picture_as_pdf, size: 40, color: Colors.red),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  color: Colors.red,
-                  child: Text('PDF',
-                      style: TextStyle(color: Colors.white, fontSize: 10)),
-                ),
-              )
-            ],
-          ),
-          index,
-          viewModel);
-    } else if (type == 'application/msword') {
-      return _fileCard(
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Icon(Icons.picture_as_pdf, size: 40, color: Colors.red),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  color: Colors.red,
-                  child: Text('PDF',
-                      style: TextStyle(color: Colors.white, fontSize: 10)),
-                ),
-              )
-            ],
-          ),
-          index,
-          viewModel);
+      return _fileCard(Image.network(url, fit: BoxFit.cover), index, viewModel, isExisting: true);
     } else {
-      return _fileCard(Image.network(url, fit: BoxFit.cover), index, viewModel,
-          isExisting: true);
+      return _fileCard(Icon(Icons.insert_drive_file, size: 40), index, viewModel, isExisting: true);
     }
   }
-  // return _fileCard(
-  //     Image.network(image.url ?? '', fit: BoxFit.cover), index, viewModel,
-  //     isExisting: true);
 }

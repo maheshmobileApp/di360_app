@@ -35,6 +35,7 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   bool removeReplyFeild = false;
   String? hintText;
   List<PlatformFile> selectedFiles = [];
+  List<CommentsAttachments> existingAttachments = [];
 
   @override
   void dispose() {
@@ -55,6 +56,9 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     commenterName = commenteName;
     replyCommentUpdate = isedit ?? false;
     commentUpdate = commentupdate ?? false;
+    if (!value && isedit == false && commentupdate == false) {
+      existingAttachments.clear();
+    }
     notifyListeners();
   }
 
@@ -76,6 +80,19 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
   void removeFile(int index) {
     if (index < selectedFiles.length) {
       selectedFiles.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void setEditAttachments(List<CommentsAttachments>? attachments) {
+    existingAttachments = List.from(attachments ?? []);
+    selectedFiles.clear();
+    notifyListeners();
+  }
+
+  void removeExistingAttachment(int index) {
+    if (index < existingAttachments.length) {
+      existingAttachments.removeAt(index);
       notifyListeners();
     }
   }
@@ -152,19 +169,23 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
-      // Upload files first
       final uploadedFiles = await _getUploadedFiles();
+      final existingAsMap = existingAttachments
+          .map((a) => {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
+          .toList();
+      final allAttachments = [...existingAsMap, ...uploadedFiles];
       var res = await _http.mutation(updateCommentQuery, {
         "id": commentId,
         "data": {
           "comments": commentController.text,
-          "comments_attachments": uploadedFiles
+          "comments_attachments": allAttachments
         }
       });
 
       if (res.isNotEmpty) {
         commentController.clear();
         selectedFiles.clear();
+        existingAttachments.clear();
         await getNewsfeedComment(context, feedId);
         Loaders.circularHideLoader(context);
       } else {

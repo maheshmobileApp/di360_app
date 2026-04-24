@@ -101,14 +101,14 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
               itemBuilder: (context, index) {
                 final comments = _sortedComments?[index];
                 return _buildCommentTile(comments, viewModel,
-                    widget.newsfeeds?.id ?? '', comments?.id ?? "");
+                    widget.newsfeeds?.id ?? '');
               },
             ),
     );
   }
 
   Widget _buildCommentTile(NewsFeedsComments? comments,
-      CommentViewModel viewModel, String feedId, String parentId) {
+      CommentViewModel viewModel, String feedId) {
     if (comments?.id == null) {
       return const SizedBox.shrink();
     }
@@ -146,14 +146,11 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                   ),
                 ),
               ),
-              if ((comments.commentReply?.isNotEmpty ?? false))
+              if ((comments.repliesAggregate?.aggregate?.count ?? 0) > 0 &&
+                  (viewModel.expandedReplies[comments.id] ?? false))
                 Container(
                   width: 2,
-                  height: (comments.commentReply?.isNotEmpty ?? false)
-                      ? (_replyHeights[comments.id]
-                              ?.clamp(0, double.infinity) ??
-                          80)
-                      : 0,
+                  height: _replyHeights[comments.id]?.clamp(0, double.infinity) ?? 80,
                   color: Colors.grey.shade400,
                 ),
             ],
@@ -214,7 +211,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                     if ((comments.repliesAggregate?.aggregate?.count ?? 0) > 0)
                       GestureDetector(
                         onTap: () =>
-                            _handleViewReplyTap(comments, viewModel, parentId),
+                            _handleViewReplyTap(comments, viewModel),
                         child: Text(
                           viewModel.expandedReplies[comments.id] ?? false
                               ? 'Hide replies'
@@ -470,11 +467,11 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
   }
 
   void _handleViewReplyTap(NewsFeedsComments comments,
-      CommentViewModel viewModel, String parentId) async {
+      CommentViewModel viewModel) async {
     final isExpanded = viewModel.expandedReplies[comments.id] ?? false;
 
     if (!isExpanded) {
-      await viewModel.getReplies(context, parentId);
+      await viewModel.getReplies(context, comments.id??"");
     }
 
     viewModel.toggleReplyExpansion(comments.id ?? '');

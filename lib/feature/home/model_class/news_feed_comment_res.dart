@@ -307,7 +307,7 @@ class CommentDentalSupplier {
 
   CommentDentalSupplier.fromJson(Map<String, dynamic> json) {
     name = json['name'];
-    businessName = json['business_name'];
+    businessName = json['business_name'] ?? json['name'];
     logo = json['logo'] != null
         ? new CommentSupplierLogo.fromJson(json['logo'])
         : null;
@@ -395,8 +395,8 @@ class CommentDentalPartice {
       {this.name, this.logo, this.businessName, this.sTypename});
 
   CommentDentalPartice.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    businessName = json['business_name'];
+    name = json['name'] ?? json['business_name'];
+    businessName = json['business_name'] ?? json['name'];
     logo = json['logo'] != null
         ? new CommentParticeLogo.fromJson(json['logo'])
         : null;

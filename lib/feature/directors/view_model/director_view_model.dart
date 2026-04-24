@@ -33,7 +33,7 @@ class DirectoryViewModel extends ChangeNotifier {
     getBannerList();
     getDirectorCatagoryList();
     _addListeners();
-    directorSearchController.addListener(notifyListeners);
+    searchController.addListener(notifyListeners);
   }
 
   void _addListeners() {
@@ -57,8 +57,6 @@ class DirectoryViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController descController = TextEditingController();
   final TextEditingController appointmentDateController =
-      TextEditingController();
-  final TextEditingController directorSearchController =
       TextEditingController();
 
 // Dropdown Selections
@@ -190,31 +188,6 @@ class DirectoryViewModel extends ChangeNotifier {
 
   List<Directories> directorsList = [];
   List<Banners> bannerList = [];
-
-  List<Directories> get filteredDirectorsList {
-    final query = directorSearchController.text.trim().toLowerCase();
-    if (query.isEmpty) return directorsList;
-    return directorsList.where((d) {
-      return (d.companyName?.toLowerCase().contains(query) ?? false) ||
-          (d.name?.toLowerCase().contains(query) ?? false);
-    }).toList();
-  }
-
-  List<dynamic> get filteredInterleavedList {
-    final filtered = filteredDirectorsList;
-    List<dynamic> items = [];
-    int bannerIndex = 0;
-    for (int i = 0; i < filtered.length; i += 2) {
-      List<Directories> pair = [filtered[i]];
-      if (i + 1 < filtered.length) pair.add(filtered[i + 1]);
-      items.add(pair);
-      if (((i + 2) % 6 == 0) && bannerIndex < bannerList.length) {
-        items.add(bannerList[bannerIndex++]);
-      }
-    }
-    return items;
-  }
-
   List<DirectoryBusinessTypes>? catagoryTypesList;
   List<dynamic> interleavedList = [];
   TextEditingController searchController = TextEditingController();
@@ -227,6 +200,10 @@ class DirectoryViewModel extends ChangeNotifier {
   bool get removeIcon => _removeIcon;
   String? _timeSlotSelected;
   String? get timeSlotSelected => _timeSlotSelected;
+  int _directoryLimit = 12;
+  int _directoryOffset = 0;
+  bool hasMore = true;
+  bool isLoadingMore = false;
 
   void updateTimeSlotSelect(String value) {
     _timeSlotSelected = value;
@@ -257,17 +234,40 @@ class DirectoryViewModel extends ChangeNotifier {
 
   Future<void> getDirectorsList(BuildContext context) async {
     directorsList = [];
+    _directoryOffset = 0;
+    hasMore = true;
     Loaders.circularShowLoader(context);
-    final res = await repository.getDirectors(
-        _selectedCategoryId ?? '', searchController.text);
+    final res = await repository.getDirectors(_selectedCategoryId ?? '',
+        searchController.text, _directoryLimit, _directoryOffset);
     if (res.isNotEmpty) {
       directorsList = res;
+      _directoryOffset = res.length;
+      hasMore = res.length == _directoryLimit;
       await getBannerList();
       Loaders.circularHideLoader(context);
     } else {
+      hasMore = false;
       Loaders.circularHideLoader(context);
     }
     await updateInterleavedList();
+    notifyListeners();
+  }
+
+  Future<void> loadMoreDirectors() async {
+    if (isLoadingMore || !hasMore) return;
+    isLoadingMore = true;
+    notifyListeners();
+    final res = await repository.getDirectors(_selectedCategoryId ?? '',
+        searchController.text, _directoryLimit, _directoryOffset);
+    if (res.isNotEmpty) {
+      directorsList.addAll(res);
+      _directoryOffset += res.length;
+      hasMore = res.length == _directoryLimit;
+      await updateInterleavedList();
+    } else {
+      hasMore = false;
+    }
+    isLoadingMore = false;
     notifyListeners();
   }
 
@@ -504,6 +504,8 @@ class DirectoryViewModel extends ChangeNotifier {
     _selectedCategoryId = null;
     searchController.clear();
     updateTheRemoveIcon(false);
+    hasMore = true;
+    isLoadingMore = false;
     getDirectorsList(navigatorKey.currentContext!);
     notifyListeners();
   }

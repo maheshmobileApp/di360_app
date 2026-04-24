@@ -8,6 +8,7 @@ class SearchWidget extends StatelessWidget {
   final VoidCallback? onClear;
   final VoidCallback? onSearch;
   final bool searchButton;
+  final FocusNode? focusNode;
 
   const SearchWidget({
     Key? key,
@@ -17,6 +18,7 @@ class SearchWidget extends StatelessWidget {
     this.onClear,
     this.onSearch,
     this.searchButton = true,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -38,6 +40,7 @@ class SearchWidget extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: controller,
+                focusNode: focusNode,
                 onChanged: onChanged,
                 textInputAction: TextInputAction.search,
                 onSubmitted: (_) {

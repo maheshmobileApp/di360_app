@@ -15,6 +15,7 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NewsFeedCommunityViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
@@ -56,6 +57,11 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     searchBarOpen = value;
     notifyListeners();
   }
+
+  void addFiles(List<XFile> files) {
+  selectedFiles.addAll(files);
+  notifyListeners();
+}
 
   List<NewsfeedCategories>? newsfeedCategories;
 
@@ -451,7 +457,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   /******************News Feed Upload ************************ */
 
   List existingImages = [];
-  List<PlatformFile> selectedFiles = [];
+  List<XFile> selectedFiles = [];
   void removeExistingFile(int index) {
     existingImages.removeAt(index);
     notifyListeners();
@@ -462,7 +468,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> pickFiles() async {
+  /*Future<void> pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
@@ -473,7 +479,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       selectedFiles.addAll(result.files);
       notifyListeners();
     }
-  }
+  }*/
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
 
