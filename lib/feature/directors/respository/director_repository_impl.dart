@@ -35,21 +35,37 @@ class DirectorRepositoryImpl extends DirectorRepository {
 
   @override
   Future<List<Directories>> getDirectors(
-      String catagoryId, String searchText) async {
-    final res = (catagoryId.isEmpty && searchText.isEmpty)
-        ? await http.query(getDirectorsQuery)
-        : await http.query(GetDirectorBasedOnCatagoryQuery, variables: {
-            "andList": [
-              if (searchText.isNotEmpty)
-                {
-                  "name": {"_ilike": "%$searchText%"}
-                },
-              if (catagoryId.isNotEmpty)
-                {
-                  "directory_category_id": {"_eq": catagoryId}
+      String catagoryId, String searchText, int limit, int offset) async {
+    final where = <String, dynamic>{
+      if (catagoryId.isNotEmpty)
+        "directory_category_id": {"_eq": catagoryId},
+      if (searchText.isNotEmpty)
+        "_or": [
+          {
+                "business_name": {
+                    "_ilike": "%$searchText%"
                 }
-            ]
-          });
+            },
+            {
+                "name": {
+                    "_ilike": "%$searchText%"
+                }
+            },
+            {
+                "address": {
+                    "_ilike": "%$searchText%"
+                }
+            },
+            {
+                "pincode": {
+                    "_ilike": "%$searchText%"
+                }
+            }
+
+        ],
+    };
+    final variables = {"limit": limit, "offset": offset, "where": where};
+    final res = await http.query(getDirectorsQuery, variables: variables);
     final result = DirectoriesData.fromJson(res);
     return result.directories ?? [];
   }

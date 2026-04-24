@@ -1,4 +1,3 @@
-import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -23,13 +22,16 @@ class DirectorScreen extends StatefulWidget {
 class _DirectorScreenState extends State<DirectorScreen>
     with BaseContextHelpers {
   final ScrollController _scrollController = ScrollController();
-
+  final FocusNode _searchFocusNode = FocusNode();
   bool _showScrollToTop = false;
 
   fetchDirectorData() {
     final directorVM = context.read<DirectoryViewModel>();
     directorVM.getDirectorsList(context);
     directorVM.clearFilter();
+    directorVM.searchBarOpen
+        ? Future.microtask(() => _searchFocusNode.requestFocus())
+        : () {};
   }
 
   @override
@@ -59,6 +61,7 @@ class _DirectorScreenState extends State<DirectorScreen>
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -69,8 +72,13 @@ class _DirectorScreenState extends State<DirectorScreen>
       backgroundColor: AppColors.buttomBarColor,
       appBar: AppBarWidget(
           searchBarOpen: directorVM.searchBarOpen,
-          searchAction: () =>
-              directorVM.setSearchBar(!directorVM.searchBarOpen),
+          searchAction: () {
+            final isOpening = !directorVM.searchBarOpen;
+            directorVM.setSearchBar(isOpening);
+            if (isOpening) {
+              Future.microtask(() => _searchFocusNode.requestFocus());
+            }
+          },
           filterWidget: Row(children: [
             GestureDetector(
                 onTap: () =>
@@ -80,17 +88,23 @@ class _DirectorScreenState extends State<DirectorScreen>
           ])),
       body: Column(
         children: [
-          //ListBanner(),
-           addVertical(10),
+          //ListBanner(), 
+          addVertical(10),
           if (directorVM.searchBarOpen)
             SearchWidget(
-              searchButton: false,
-              controller: directorVM.directorSearchController,
+              focusNode: _searchFocusNode,
+              searchButton:
+                  directorVM.searchController.text.length >= 3 ? true : false,
+              controller: directorVM.searchController,
               hintText: "Search Directory...",
-              onClear: () {
-                directorVM.directorSearchController.clear();
+              onClear: () async {
+                directorVM.searchController.clear();
+                await directorVM.getDirectorsList(context);
               },
-              onSearch: () {},
+              onSearch: () async {
+                _searchFocusNode.unfocus();
+                await directorVM.getDirectorsList(context);
+              },
             ),
           addVertical(10),
           Expanded(
@@ -122,7 +136,8 @@ class _DirectorScreenState extends State<DirectorScreen>
                           )),
                       Divider(),
                       Expanded(
-                        child: GridViewWidget(controller: _scrollController),
+                        child:
+                            GridViewWidget(scrollController: _scrollController),
                       ),
                     ],
                   )),
