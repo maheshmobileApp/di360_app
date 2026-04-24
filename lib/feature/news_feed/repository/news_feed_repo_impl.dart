@@ -28,14 +28,6 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
     final myCommunityIds =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
 
-    // removed based on new payload
-    /*
-     if (categoryType != null)
-            {
-              "category_type": {"_eq": categoryType}
-            },
-     */
-
     final variables = {
       "where": {
         "_and": [
@@ -62,6 +54,10 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
           if (feedType != null)
             {
               "feed_type": {"_eq": feedType}
+            },
+          if (categoryType != null)
+            {
+              "category_type": {"_eq": categoryType}
             },
           {
                 "_or": [
