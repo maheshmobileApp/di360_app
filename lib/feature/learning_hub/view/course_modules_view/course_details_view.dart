@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/Quiz_section_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/module_section_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:flutter/material.dart';
@@ -9,22 +10,23 @@ class CourseDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final courseViewModel = Provider.of<CourseListingViewModel>(context);
-    final course = courseViewModel.courseDetails;
     return Scaffold(
       backgroundColor: AppColors.borderColor,
-      appBar: AppBar(title: Text("Course Details")),
+      appBar: AppBar(title: const Text("Course Details")),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Card(
             color: AppColors.whiteColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _headerTitle(course?.courseName ?? ''),
-                ModuleSectionWidget(courseViewModel: courseViewModel),
+                Consumer<CourseListingViewModel>(
+                  builder: (_, vm, __) => _headerTitle(vm.courseDetails?.courseName ?? ''),
+                ),
+                const ModuleSectionWidget(),
+                const QuizSectionWidget(),
               ],
             ),
           ),
@@ -43,6 +45,7 @@ class CourseDetailsView extends StatelessWidget {
               Container(width: 4, height: 40, color: AppColors.primaryColor),
               const SizedBox(width: 12),
               Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,

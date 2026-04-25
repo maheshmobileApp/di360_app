@@ -8,174 +8,160 @@ import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:provider/provider.dart';
 
 class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
-  final CourseListingViewModel courseViewModel;
-  const ModuleSectionWidget({super.key, required this.courseViewModel});
+  const ModuleSectionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: courseViewModel.courseDetails?.moduleSection?.length,
-      itemBuilder: (context, index) {
-        final section = courseViewModel.courseDetails?.moduleSection?[index];
-        return _buildModuleItem(index, section);
+    return Consumer<CourseListingViewModel>(
+      builder: (context, vm, _) {
+        final modules = vm.courseDetails?.moduleSection ?? [];
+        if (modules.isEmpty) return const SizedBox.shrink();
+        final section = modules[vm.currentModuleIndex];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Module ${vm.currentModuleIndex + 1}"),
+              Text(section.moduleName ?? '',
+                  style: TextStyles.bold4(color: AppColors.black)),
+              addVertical(10),
+              _navButtons(
+                label1: 'Previous',
+                icon1: Icons.arrow_back_ios,
+                onTap1: vm.currentModuleIndex > 0 ? vm.previousModule : null,
+                label2: 'Next',
+                icon2: Icons.arrow_forward_ios,
+                onTap2: vm.currentModuleIndex < modules.length - 1 ? vm.nextModule : null,
+              ),
+              addVertical(10),
+              _buildSectionItem(vm, section.sectionList ?? []),
+            ],
+          ),
+        );
       },
     );
   }
 
-  Widget _buildModuleItem(int index, ModuleSection? section) {
+  Widget _buildSectionItem(CourseListingViewModel vm, List<SectionList> sectionList) {
+    if (sectionList.isEmpty) return const SizedBox.shrink();
+    final topic = sectionList[vm.currentSectionIndex];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Module ${index + 1}"),
-        Text(section?.moduleName ?? '',
-            style: TextStyles.bold4(color: AppColors.black)),
+        Text(topic.courseTopic ?? '',
+            style: TextStyles.bold3(color: AppColors.primaryColor)),
+        addVertical(5),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: LazyYoutubePlayer(youtubeUrl: topic.youtubeLink ?? ''),
+          ),
+        ),
+        addVertical(8),
+        _navButtons(
+          label1: 'Previous',
+          icon1: Icons.arrow_back_ios,
+          onTap1: vm.currentSectionIndex > 0 ? vm.previousSection : null,
+          label2: 'Next',
+          icon2: Icons.arrow_forward_ios,
+          onTap2: vm.currentSectionIndex < sectionList.length - 1 ? vm.nextSection : null,
+        ),
         addVertical(10),
-        _moduleButtons(() => print('Previous'), () => print('Next')),
-        addVertical(10),
-        _buildsectionList(section?.sectionList),
+        if (topic.description != null && topic.description != '') ...[
+          Text('Description: ', style: TextStyles.regular1(color: AppColors.black)),
+          addVertical(5),
+          HtmlWidget(topic.description ?? '',
+              textStyle: TextStyles.regular4(color: AppColors.black)),
+        ],
+        if (topic.image != null) ...[
+          addVertical(10),
+          Text('Images:', style: TextStyles.regular1(color: AppColors.black)),
+          addVertical(10),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: (topic.image as List?)?.length ?? 0,
+              itemBuilder: (_, i) {
+                final img = (topic.image as List)[i] as Map<String, dynamic>;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(img['url'] ?? '', width: 150, fit: BoxFit.cover),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+        if (topic.attachment != null) ...[
+          addVertical(10),
+          Text('Attachments:', style: TextStyles.regular1(color: AppColors.black)),
+          addVertical(5),
+          Image.asset(ImageConst.pdf),
+        ],
+        addVertical(30),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: AppButton(
+            text: topic.status == 'Pending' ? 'Complete and Continue' : 'Completed',
+            radius: 8,
+            height: 42,
+            width: 230,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _moduleButtons(Function()? onPrevious, Function()? onNext) {
+  Widget _navButtons({
+    required String label1,
+    required IconData icon1,
+    required VoidCallback? onTap1,
+    required String label2,
+    required IconData icon2,
+    required VoidCallback? onTap2,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
-          onTap: onPrevious,
-          child: Row(
-            children: [
+          onTap: onTap1,
+          child: Opacity(
+            opacity: onTap1 != null ? 1.0 : 0.3,
+            child: Row(children: [
               CircleAvatar(
                 radius: 10,
                 backgroundColor: AppColors.bottomBarSelectIconColor,
-                child: const Icon(Icons.arrow_back_ios,
-                    color: AppColors.black, size: 10),
+                child: Icon(icon1, color: AppColors.black, size: 10),
               ),
               addHorizontal(4),
-              Text('Previous', style: TextStyle(color: AppColors.black))
-            ],
+              Text(label1, style: TextStyle(color: AppColors.black)),
+            ]),
           ),
         ),
         GestureDetector(
-          onTap: onNext,
-          child: Row(
-            children: [
-              Text('Next', style: TextStyle(color: AppColors.black)),
+          onTap: onTap2,
+          child: Opacity(
+            opacity: onTap2 != null ? 1.0 : 0.3,
+            child: Row(children: [
+              Text(label2, style: TextStyle(color: AppColors.black)),
               addHorizontal(4),
               CircleAvatar(
                 radius: 10,
                 backgroundColor: AppColors.bottomBarSelectIconColor,
-                child: const Icon(Icons.arrow_forward_ios,
-                    color: AppColors.black, size: 10),
+                child: Icon(icon2, color: AppColors.black, size: 10),
               ),
-            ],
+            ]),
           ),
-        )
+        ),
       ],
-    );
-  }
-
-  Widget _buildsectionList(List<SectionList>? sectionList) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: sectionList?.length ?? 0,
-      itemBuilder: (context, index) {
-        final topic = sectionList?[index];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(topic?.courseTopic ?? '',
-                style: TextStyles.bold3(color: AppColors.primaryColor)),
-            addVertical(5),
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child:
-                        LazyYoutubePlayer(youtubeUrl: topic?.youtubeLink ?? ''),
-                  ),
-                ),
-                Positioned(
-                    left: 8,
-                    top: 80,
-                    child: CircleAvatar(
-                        radius: 14,
-                        backgroundColor: AppColors.whiteColor,
-                        child: Icon(Icons.arrow_back_ios,
-                            size: 11, color: AppColors.black))),
-                Positioned(
-                    right: 8,
-                    top: 80,
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: AppColors.whiteColor,
-                      child: Icon(Icons.arrow_forward_ios,
-                          size: 11, color: AppColors.black),
-                    ))
-              ],
-            ),
-            addVertical(10),
-            if (topic?.description != null) ...[
-              Text('Description: ',
-                  style: TextStyles.regular1(color: AppColors.black)),
-              addVertical(5),
-              HtmlWidget(topic?.description ?? '',
-                  textStyle: TextStyles.regular4(color: AppColors.black))
-            ],
-            if (topic?.image != null) ...[
-              addVertical(10),
-              Text('Images:',
-                  style: TextStyles.regular1(color: AppColors.black)),
-              addVertical(10),
-              SizedBox(
-                height: 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: topic?.image?.length ?? 0,
-                  itemBuilder: (_, i) {
-                    final img = topic?.image?[i] as Map<String, dynamic>;
-                    final url = img['url'] ?? '';
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child:
-                            Image.network(url, width: 150, fit: BoxFit.cover),
-                      ),
-                    );
-                  },
-                ),
-              )
-            ],
-            if (topic?.attachment != null) ...[
-              addVertical(10),
-              Text('Attachements:',
-                  style: TextStyles.regular1(color: AppColors.black)),
-              addVertical(5),
-              Image.asset(ImageConst.pdf),
-              // Text(topic?.pdfLink ?? '',
-              //     style: TextStyles.regular4(color: AppColors.primaryColor))
-            ],
-            addVertical(30),
-            Align(
-                alignment: Alignment.bottomRight,
-                child: AppButton(
-                    text: topic?.status == 'Pending'
-                        ? 'Complete and Continue'
-                        : 'Completed',
-                        radius: 8,
-                        height: 42,width: 230,))
-          ],
-        );
-      },
     );
   }
 }

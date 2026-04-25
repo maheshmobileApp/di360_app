@@ -71,7 +71,7 @@ class CoursesByPk {
   dynamic image;
   dynamic learningObjectives;
   List<ModuleSection>? moduleSection;
-  List<Null>? questionSection;
+  List<QuestionSection>? questionSection;
   dynamic passPercentage;
   String? refundPolicy;
   dynamic shortId;
@@ -224,12 +224,12 @@ class CoursesByPk {
         moduleSection!.add(new ModuleSection.fromJson(v));
       });
     }
-    // if (json['question_section'] != null) {
-    //   questionSection = <Null>[];
-    //   json['question_section'].forEach((v) {
-    //     questionSection!.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['question_section'] != null) {
+      questionSection = <QuestionSection>[];
+      json['question_section'].forEach((v) {
+        questionSection!.add(new QuestionSection.fromJson(v));
+      });
+    }
     passPercentage = json['pass_percentage'];
     refundPolicy = json['refund_policy'];
     shortId = json['short_id'];
@@ -332,10 +332,10 @@ class CoursesByPk {
       data['module_section'] =
           this.moduleSection!.map((v) => v.toJson()).toList();
     }
-    // if (this.questionSection != null) {
-    //   data['question_section'] =
-    //       this.questionSection!.map((v) => v.toJson()).toList();
-    // }
+    if (this.questionSection != null) {
+      data['question_section'] =
+          this.questionSection!.map((v) => v.toJson()).toList();
+    }
     data['pass_percentage'] = this.passPercentage;
     data['refund_policy'] = this.refundPolicy;
     data['short_id'] = this.shortId;
@@ -789,6 +789,54 @@ class CourseDetailRegisteredUsers {
     data['from_id'] = this.fromId;
     data['status'] = this.status;
     data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class QuestionSection {
+  List<Options>? options;
+  String? question;
+  String? type;
+
+  QuestionSection({this.options, this.question, this.type});
+
+  QuestionSection.fromJson(Map<String, dynamic> json) {
+    if (json['options'] != null) {
+      options = <Options>[];
+      json['options'].forEach((v) {
+        options!.add(new Options.fromJson(v));
+      });
+    }
+    question = json['question'];
+    type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.options != null) {
+      data['options'] = this.options!.map((v) => v.toJson()).toList();
+    }
+    data['question'] = this.question;
+    data['type'] = this.type;
+    return data;
+  }
+}
+
+class Options {
+  bool? isCorrect;
+  String? text;
+
+  Options({this.isCorrect, this.text});
+
+  Options.fromJson(Map<String, dynamic> json) {
+    isCorrect = json['isCorrect'];
+    text = json['text'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['isCorrect'] = this.isCorrect;
+    data['text'] = this.text;
     return data;
   }
 }

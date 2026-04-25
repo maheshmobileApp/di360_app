@@ -32,6 +32,82 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
   String? currentUserId;
 
+  int currentModuleIndex = 0;
+  int currentSectionIndex = 0;
+
+  void nextModule() {
+    final total = courseDetails?.moduleSection?.length ?? 0;
+    if (currentModuleIndex < total - 1) {
+      currentModuleIndex++;
+      currentSectionIndex = 0;
+      notifyListeners();
+    }
+  }
+
+  void previousModule() {
+    if (currentModuleIndex > 0) {
+      currentModuleIndex--;
+      currentSectionIndex = 0;
+      notifyListeners();
+    }
+  }
+
+  void nextSection() {
+    final sections = courseDetails?.moduleSection?[currentModuleIndex].sectionList;
+    if (currentSectionIndex < (sections?.length ?? 1) - 1) {
+      currentSectionIndex++;
+      notifyListeners();
+    }
+  }
+
+  void previousSection() {
+    if (currentSectionIndex > 0) {
+      currentSectionIndex--;
+      notifyListeners();
+    }
+  }
+
+  // Quiz
+  int currentQuizIndex = 0;
+  int? selectedSingleAnswer;
+  Set<int> selectedMultipleAnswers = {};
+
+  void nextQuiz() {
+    final total = courseDetails?.questionSection?.length ?? 0;
+    if (currentQuizIndex < total - 1) {
+      currentQuizIndex++;
+      _clearQuizSelection();
+      notifyListeners();
+    }
+  }
+
+  void previousQuiz() {
+    if (currentQuizIndex > 0) {
+      currentQuizIndex--;
+      _clearQuizSelection();
+      notifyListeners();
+    }
+  }
+
+  void selectSingleAnswer(int index) {
+    selectedSingleAnswer = index;
+    notifyListeners();
+  }
+
+  void toggleMultipleAnswer(int index) {
+    if (selectedMultipleAnswers.contains(index)) {
+      selectedMultipleAnswers.remove(index);
+    } else {
+      selectedMultipleAnswers.add(index);
+    }
+    notifyListeners();
+  }
+
+  void _clearQuizSelection() {
+    selectedSingleAnswer = null;
+    selectedMultipleAnswers = {};
+  }
+
   int _courseListingLimit = 10;
   int _courseListingOffset = 0;
   bool isLoadingMoreCourses = false;
@@ -268,7 +344,13 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   Future<void> getCourseDetails(BuildContext context, String courseId) async {
     Loaders.circularShowLoader(context);
     final res = await repo.getCourseDetails(courseId);
-    if (res != null) courseDetails = res;
+    if (res != null) {
+      courseDetails = res;
+      currentModuleIndex = 0;
+      currentSectionIndex = 0;
+      currentQuizIndex = 0;
+      _clearQuizSelection();
+    }
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
