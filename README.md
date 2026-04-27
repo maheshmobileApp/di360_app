@@ -419,11 +419,10 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
-Deep ling implemented for newsfeed
-
-Implemented save media,
-fixed the deeplink issue in iOS
-
+Deep link issue fixed
+1.⁠ ⁠Directory Pagination 
+2.⁠ ⁠Directory Search flow from home screen. 
+3.⁠ ⁠Newsfeed Search Functionality 
 "
   
 
@@ -440,3 +439,6 @@ fixed the deeplink issue in iOS
     }
   }
 ]
+drspeddi@gmail.com
+
+123456
