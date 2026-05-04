@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 
 class ExpandableHtmlText extends StatelessWidget {
   final String htmlData;
-  final int maxLines;
+  final dynamic height;
   final int index;
 
   const ExpandableHtmlText({
     super.key,
     required this.htmlData,
     required this.index,
-    this.maxLines = 6,
+    this.height = 140.0,
   });
 
   @override
@@ -26,7 +26,7 @@ class ExpandableHtmlText extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: provider.isExpanded(index) ? double.infinity : 140,
+                  maxHeight: provider.isExpanded(index) ? double.infinity : height,
                 ),
                 child: ClipRect(
                   child: SingleChildScrollView(

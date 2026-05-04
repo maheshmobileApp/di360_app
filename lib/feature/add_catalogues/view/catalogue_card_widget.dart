@@ -185,10 +185,10 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               value: "Edit",
               child:
                   _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
-        PopupMenuItem(
+        /*PopupMenuItem(
             value: "Delete",
             child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),
+                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),*/
       ],
     );
   }

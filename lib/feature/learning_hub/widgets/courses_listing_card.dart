@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -12,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class CouresListingCard extends StatelessWidget {
   final String id;
+  final int index;
   final String logoUrl;
   final String companyName;
   final String courseTitle;
@@ -31,6 +33,7 @@ class CouresListingCard extends StatelessWidget {
   const CouresListingCard({
     super.key,
     required this.id,
+    required this.index,
     required this.logoUrl,
     required this.companyName,
     required this.courseTitle,
@@ -49,7 +52,7 @@ class CouresListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(createdAt) ?? '';
+    final String time = DateFormatUtils.formatTwoDateTime(createdAt);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -75,7 +78,6 @@ class CouresListingCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        _jobTimeChip(time),
                         _menuWidget(context),
                       ],
                     ),
@@ -83,11 +85,10 @@ class CouresListingCard extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 8),
-
-                _chipWidget(types, meetingLink),
+                _chipWidget(types, meetingLink, time),
                 const SizedBox(height: 8),
 
-                _descriptionWidget(description),
+                _descriptionWidget(description, index),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,47 +195,66 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _descriptionWidget(String description) {
+  Widget _descriptionWidget(String description, int index) {
     return SizedBox(
       width: double.infinity,
-      child: HtmlWidget(
-        description,
+      child: ExpandableHtmlText(
+        htmlData: description,
+        index: index,
+        height: 50.0,
       ),
     );
   }
 
-  Widget _chipWidget(List<String> types, String meetingLink) {
+  Widget _chipWidget(List<String> types, String meetingLink, String time) {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
       children: types.map((type) {
         final label = type.isEmpty ? 'N/A' : type;
         return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.secondaryBlueColor,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                child: Text(
-                  label,
-                  style: TextStyles.regular1(
-                    color: AppColors.typeTextColor,
-                    fontSize: 12,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlueColor,
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    child: Text(
+                      label,
+                      style: TextStyles.regular1(
+                        color: AppColors.typeTextColor,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: 8,
+                ),
+                (meetingLink != "" && types.first == "Webinar")
+                    ? _meetingLinkWidget(meetingLink)
+                    : SizedBox.shrink(),
+              ],
             ),
-            SizedBox(
-              width: 10,
-            ),
-            (meetingLink != "" && types.first == "Webinar")
-                ? _meetingLinkWidget(meetingLink)
-                : SizedBox.shrink(),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _jobTimeChip(time),
+              ],
+            )
           ],
         );
       }).toList(),
@@ -287,7 +307,7 @@ class CouresListingCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
-        time,
+        "Posted on : $time",
         style: TextStyles.semiBold(
             fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
       ),

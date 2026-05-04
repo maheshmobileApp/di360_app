@@ -77,7 +77,6 @@ class BuildJobTypeWidget extends StatelessWidget {
                       ? newsfeeds?.title ?? ''
                       : newsfeeds?.description ?? '',
                       index: index,
-                  maxLines: 6,
                 )
                 // HtmlWidget(
                 //   (newsfeeds?.description == null ||
