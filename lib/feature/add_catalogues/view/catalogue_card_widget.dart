@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/ad
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -113,7 +114,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(titleVal ?? '', format: 'MMM d, y')
+                  ? DateFormatUtils.formatDateOnly(titleVal)
                   : titleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),
@@ -124,7 +125,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ? jiffyDataWidget(subTitleVal ?? '', format: 'MMM d, y')
+                  ?  DateFormatUtils.formatDateOnly(subTitleVal)
                   : subTitleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),

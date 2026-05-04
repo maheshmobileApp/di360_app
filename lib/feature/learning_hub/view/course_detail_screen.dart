@@ -182,7 +182,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     children: [
                       CourseInfoCardWidget(
                         address: courseDetails?.address?.isNotEmpty == true
-                            ? courseDetails?.address?.first.city ?? ""
+                            ? courseDetails?.address?.first.city??""
                             : "",
                         startTime: courseDetails?.startTime ?? "",
                         endTime: courseDetails?.endTime ?? "",
@@ -290,7 +290,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                   .isNotEmpty)
                                 LocationViewWidget(
                                     location:
-                                        courseDetails?.address?.first.country ??
+                                        courseDetails?.address?.first.formattedAddress ??
                                             ""),
                               SocilaMediaIconsWidget(
                                 instagram: courseDetails?.instagramLink,

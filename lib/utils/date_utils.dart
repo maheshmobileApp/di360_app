@@ -149,4 +149,14 @@ static String formatYyyyMmDdToDdMmYyyy(String dateString) {
     return dateString;
   }
 }
+
+static String formatDateOnly(String? date) {
+  if (date == null || date.trim().isEmpty) return '';
+  try {
+    final dateOnly = date.split('T').first;
+    return DateFormat('MMM d, y').format(DateTime.parse(dateOnly));
+  } catch (_) {
+    return '';
+  }
+}
 }
