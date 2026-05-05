@@ -768,26 +768,37 @@ class SponsorByImage {
 }
 
 class CourseDetailRegisteredUsers {
+  String? id;
   String? courseId;
   String? fromId;
   String? status;
+  List<RegisterModuleSection>? moduleSection;
   String? sTypename;
 
   CourseDetailRegisteredUsers(
-      {this.courseId, this.fromId, this.status, this.sTypename});
+      {this.id, this.courseId, this.fromId, this.status, this.moduleSection, this.sTypename});
 
   CourseDetailRegisteredUsers.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     courseId = json['course_id'];
     fromId = json['from_id'];
     status = json['status'];
+    if (json['module_section'] != null) {
+      moduleSection = <RegisterModuleSection>[];
+      json['module_section'].forEach((v) {
+        moduleSection!.add(new RegisterModuleSection.fromJson(v));
+      });
+    }
     sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['course_id'] = this.courseId;
     data['from_id'] = this.fromId;
     data['status'] = this.status;
+    data['module_section'] = this.moduleSection;
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -837,6 +848,83 @@ class Options {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['isCorrect'] = this.isCorrect;
     data['text'] = this.text;
+    return data;
+  }
+}
+
+class RegisterModuleSection {
+  bool? expanded;
+  String? id;
+  String? moduleName;
+  List<RegisterSectionList>? sectionList;
+
+  RegisterModuleSection({this.expanded, this.id, this.moduleName, this.sectionList});
+
+  RegisterModuleSection.fromJson(Map<String, dynamic> json) {
+    expanded = json['expanded'];
+    id = json['id'];
+    moduleName = json['module_name'];
+    if (json['section_list'] != null) {
+      sectionList = <RegisterSectionList>[];
+      json['section_list'].forEach((v) {
+        sectionList!.add(new RegisterSectionList.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['expanded'] = this.expanded;
+    data['id'] = this.id;
+    data['module_name'] = this.moduleName;
+    if (this.sectionList != null) {
+      data['section_list'] = this.sectionList!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class RegisterSectionList {
+  dynamic attachment;
+  String? courseTopic;
+  String? description;
+  bool? expanded;
+  String? id;
+  dynamic image;
+  String? status;
+  dynamic youtubeLink;
+
+  RegisterSectionList(
+      {this.attachment,
+      this.courseTopic,
+      this.description,
+      this.expanded,
+      this.id,
+      this.image,
+      this.status,
+      this.youtubeLink});
+
+  RegisterSectionList.fromJson(Map<String, dynamic> json) {
+    attachment = json['attachment'];
+    courseTopic = json['course_topic'];
+    description = json['description'];
+    expanded = json['expanded'];
+    id = json['id'];
+    image = json['image'];
+    status = json['status'];
+    youtubeLink = json['youtube_link'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['attachment'] = this.attachment;
+    data['course_topic'] = this.courseTopic;
+    data['description'] = this.description;
+    data['expanded'] = this.expanded;
+    data['id'] = this.id;
+    data['image'] = this.image;
+    data['status'] = this.status;
+    data['youtube_link'] = this.youtubeLink;
     return data;
   }
 }

@@ -36,7 +36,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int currentSectionIndex = 0;
 
   void nextModule() {
-    final total = courseDetails?.moduleSection?.length ?? 0;
+    final total =
+        courseDetails?.courseRegisteredUsers?.first.moduleSection?.length ?? 0;
     if (currentModuleIndex < total - 1) {
       currentModuleIndex++;
       currentSectionIndex = 0;
@@ -53,7 +54,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void nextSection() {
-    final sections = courseDetails?.moduleSection?[currentModuleIndex].sectionList;
+    final sections =
+        courseDetails?.moduleSection?[currentModuleIndex].sectionList;
     if (currentSectionIndex < (sections?.length ?? 1) - 1) {
       currentSectionIndex++;
       notifyListeners();
@@ -442,17 +444,23 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
 
-    final res = await repo.userRegisterToCourse({
-      "object": {
-        "course_id": courseId,
-        "from_id": userId,
-        "first_name": userFirstNameController.text,
-        "last_name": userLastNameController.text,
-        "phone_number": userPhoneNumberController.text,
-        "email": userEmailController.text,
-        "description": userDescriptionController.text
-      }
-    });
+    final res = await repo.userRegisterToCourse(
+        {
+          "fields": {
+            "course_id": courseId,
+            "from_id": userId,
+            "type": "SUPPLIER",
+            "first_name": userFirstNameController.text,
+            "last_name": userLastNameController.text,
+            "phone_number": userPhoneNumberController.text,
+            "email": userEmailController.text,
+            "description": userDescriptionController.text,
+            "status": "PENDING",
+            "quiz_status": "PENDING",
+            "module_section": courseDetails?.moduleSection?.map((e) => e.toJson()).toList(),
+            "question_section": courseDetails?.questionSection?.map((e) => e.toJson()).toList()
+          }
+        });
     if (res != null) {
       scaffoldMessenger(
         "Successfully Submitted!\nThank you for your interest.\nOur organiser will be in touch with you soon.",
@@ -516,6 +524,45 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
+  }
+
+  Future<void> completeAndContinue(BuildContext context) async {
+    final regUser = courseDetails?.courseRegisteredUsers?.firstOrNull;
+    if (regUser?.id == null || regUser?.moduleSection == null) return;
+
+    final section = regUser!
+        .moduleSection![currentModuleIndex].sectionList?[currentSectionIndex];
+    if (section == null || section.status == 'Completed') return;
+
+    // Update locally first
+    section.status = 'Completed';
+    notifyListeners();
+
+    // Build payload from the typed model (status is already updated)
+    final moduleSectionPayload = regUser.moduleSection!
+        .map((module) => {
+              "expanded": module.expanded,
+              "id": module.id,
+              "module_name": module.moduleName,
+              "section_list": (module.sectionList ?? [])
+                  .map((s) => {
+                        "attachment": s.attachment,
+                        "course_topic": s.courseTopic,
+                        "description": s.description,
+                        "expanded": s.expanded,
+                        "id": s.id,
+                        "image": s.image,
+                        "status": s.status,
+                        "youtube_link": s.youtubeLink,
+                      })
+                  .toList(),
+            })
+        .toList();
+
+    await repo.updateRegUserStatus({
+      "id": regUser.id,
+      "fields": {"module_section": moduleSectionPayload},
+    });
   }
 
   clearAll() {

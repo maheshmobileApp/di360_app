@@ -29,4 +29,5 @@ abstract class LearningHubRepository {
       String type, String courseCategoryId, String startDate, String address);
   Future<RegisterUserTabCountData> getRegisterUserTabCountData(dynamic variables);
   Future<dynamic> updateRegUserStatus(dynamic variables);
+  Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables);
 }

@@ -17,7 +17,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     return Consumer<CourseListingViewModel>(
       builder: (context, vm, _) {
-        final modules = vm.courseDetails?.moduleSection ?? [];
+        final modules = vm.courseDetails?.courseRegisteredUsers?.first.moduleSection ?? [];
         if (modules.isEmpty) return const SizedBox.shrink();
         final section = modules[vm.currentModuleIndex];
         return Padding(
@@ -38,7 +38,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
                 onTap2: vm.currentModuleIndex < modules.length - 1 ? vm.nextModule : null,
               ),
               addVertical(10),
-              _buildSectionItem(vm, section.sectionList ?? []),
+              _buildSectionItem(context, vm, section.sectionList ?? []),
             ],
           ),
         );
@@ -46,7 +46,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSectionItem(CourseListingViewModel vm, List<SectionList> sectionList) {
+  Widget _buildSectionItem(BuildContext context, CourseListingViewModel vm, List<RegisterSectionList> sectionList) {
     if (sectionList.isEmpty) return const SizedBox.shrink();
     final topic = sectionList[vm.currentSectionIndex];
     return Column(
@@ -114,6 +114,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
             radius: 8,
             height: 42,
             width: 230,
+            onTap: () => vm.completeAndContinue(context),
           ),
         ),
       ],

@@ -25,6 +25,7 @@ import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_quer
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/update_section_status_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
@@ -371,7 +372,12 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future updateRegUserStatus(variables) async {
     final res = await http.mutation(updateRegUserStatusQuery, variables);
+    return res;
+  }
 
+  @override
+  Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables) async {
+    final res = await http.mutation(updatedTheCourseCompletedStatusQuery, variables);
     return res;
   }
 
