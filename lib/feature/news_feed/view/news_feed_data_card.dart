@@ -19,10 +19,9 @@ import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
-import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
-import 'package:di360_flutter/widgets/jiffy_widget.dart';
+import 'package:di360_flutter/widgets/outline_button_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
@@ -53,109 +52,130 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-          color: AppColors.whiteColor,
-          child: GestureDetector(
-            onTap: () async {
-              await commentViewModel.getComments(context, newsfeeds?.id ?? "");
-              navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-            },
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _tagWidget(
-                  newsfeeds?.feedType ?? '',
-                  newsfeeds?.dentalSupplier?.businessName ??
-                      newsfeeds?.dentalPractice?.businessName ??
-                      newsfeeds?.dentalProfessional?.name ??
-                      '',
-                  newsfeeds?.courses?.isNotEmpty == true
-                      ? newsfeeds?.courses?.first.type ?? ''
-                      : ""),
-              addVertical(10),
-              _buildHeader(
-                  newsfeeds?.dentalSupplier != null
-                      ? newsfeeds?.dentalSupplier?.logo?.url ??
-                          (newsfeeds?.dentalSupplier?.directories?.isNotEmpty ==
-                                  true
-                              ? newsfeeds?.dentalSupplier?.directories?.first
-                                      .logo?.url ??
-                                  ''
-                              : '')
-                      : newsfeeds?.dentalPractice != null
-                          ? newsfeeds?.dentalPractice?.logo?.url ?? ''
-                          : newsfeeds?.dentalProfessional != null
-                              ? newsfeeds
-                                      ?.dentalProfessional?.profileImage?.url ??
-                                  ''
-                              : '',
-                  newsfeeds?.dentalSupplier != null
-                      ? newsfeeds?.dentalSupplier?.businessName ?? ''
-                      : newsfeeds?.dentalPractice != null
-                          ? newsfeeds?.dentalPractice?.businessName ?? ''
-                          : newsfeeds?.dentalProfessional != null
-                              ? newsfeeds?.dentalProfessional?.name ?? ''
-                              : 'Dental interface',
-                  newsfeeds?.createdAt ?? '',
-                  context,
-                  newsfeeds,
-                  needFeedViewModel,
-                  addNeedFeedViewModel),
-              addVertical(10),
-              _buildImageRow(catalogueViewModel, context),
-              addVertical(10),
-              ExpandableHtmlText(
-                htmlData: newsfeeds?.description ?? "",
-                index: index,
-              ),
-              if (newsfeeds?.videoUrl != null &&
-                  newsfeeds?.videoUrl?.isNotEmpty == true &&
-                  _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
-                LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ""),
-              const SizedBox(height: 8),
-              if (newsfeeds?.webUrl != null &&
-                  newsfeeds?.webUrl?.isNotEmpty == true)
-                webSiteText(newsfeeds?.webUrl ?? ""),
-              if (newsFeedTypeEnum == FeedType.jobs.value)
-                _jobsWidget(
-                    newsfeeds?.jobs?.first ?? Jobs(),
-                    newsfeeds?.createdAt ?? '',
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: AppColors.whiteColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    await commentViewModel.getComments(
+                        context, newsfeeds?.id ?? "");
+                    navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+                  },
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _tagWidget(
+                            newsfeeds?.feedType ?? '',
+                            newsfeeds?.dentalSupplier?.businessName ??
+                                newsfeeds?.dentalPractice?.businessName ??
+                                newsfeeds?.dentalProfessional?.name ??
+                                '',
+                            newsfeeds?.courses?.isNotEmpty == true
+                                ? newsfeeds?.courses?.first.type ?? ''
+                                : ""),
+                        addVertical(8),
+                        _buildHeader(
+                            newsfeeds?.dentalSupplier != null
+                                ? newsfeeds?.dentalSupplier?.logo?.url ??
+                                    (newsfeeds?.dentalSupplier?.directories
+                                                ?.isNotEmpty ==
+                                            true
+                                        ? newsfeeds?.dentalSupplier?.directories
+                                                ?.first.logo?.url ??
+                                            ''
+                                        : '')
+                                : newsfeeds?.dentalPractice != null
+                                    ? newsfeeds?.dentalPractice?.logo?.url ?? ''
+                                    : newsfeeds?.dentalProfessional != null
+                                        ? newsfeeds?.dentalProfessional
+                                                ?.profileImage?.url ??
+                                            ''
+                                        : '',
+                            newsfeeds?.dentalSupplier != null
+                                ? newsfeeds?.dentalSupplier?.businessName ?? ''
+                                : newsfeeds?.dentalPractice != null
+                                    ? newsfeeds?.dentalPractice?.businessName ??
+                                        ''
+                                    : newsfeeds?.dentalProfessional != null
+                                        ? newsfeeds?.dentalProfessional?.name ??
+                                            ''
+                                        : 'Dental Interface 360',
+                            newsfeeds?.createdAt ?? '',
+                            context,
+                            newsfeeds,
+                            needFeedViewModel,
+                            addNeedFeedViewModel),
+                        addVertical(10),
+                        _buildImageRow(catalogueViewModel, context),
+                        if (newsfeeds?.videoUrl != null &&
+                            newsfeeds?.videoUrl?.isNotEmpty == true &&
+                            _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
+                          LazyYoutubePlayer(
+                              youtubeUrl: newsfeeds?.videoUrl ?? ""),
+                        const SizedBox(height: 8),
+                        if (newsfeeds?.webUrl != null &&
+                            newsfeeds?.webUrl?.isNotEmpty == true)
+                          webSiteText(newsfeeds?.webUrl ?? ""),
+                        if (newsFeedTypeEnum == FeedType.jobs.value)
+                          _jobsWidget(
+                              newsfeeds?.jobs?.first ?? Jobs(),
+                              newsfeeds?.createdAt ?? '',
+                              context,
+                              newsFeedVM,
+                              shareId,
+                              newsfeeds?.title),
+                        addVertical(10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (newsfeeds?.webUrl != null &&
+                                newsfeeds!.webUrl!.isNotEmpty)
+                              webSiteText(newsfeeds?.webUrl ?? ''),
+                            if (newsfeeds?.webUrl != null &&
+                                newsfeeds!.webUrl!.isNotEmpty)
+                              addVertical(8),
+                            if (newsFeedTypeEnum == FeedType.learnhub.value &&
+                                newsfeeds?.courses?.isNotEmpty == true)
+                              _learnHubWidget(
+                                  newsfeeds?.courses?.first ?? Courses(),
+                                  newsfeeds?.createdAt ?? '',
+                                  context,
+                                  courseListingVM,
+                                  shareId),
+                            if (newsFeedTypeEnum == FeedType.catalogue.value)
+                              _buildCatalogueRow(
+                                  catalogueViewModel, context, shareId),
+                            addVertical(10),
+                            if (newsfeeds?.description?.isNotEmpty == true) ...[
+                              Text(
+                                "Course Description :",
+                                style: TextStyles.semiBold(
+                                    fontSize: 14, color: AppColors.black),
+                              ),
+                              ExpandableHtmlText(
+                                htmlData: newsfeeds?.description ?? "",
+                                index: index,
+                              )
+                            ]
+                          ],
+                        ),
+                      ]),
+                ),
+                addVertical(8),
+                _buildStatsRow(
+                    '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
+                    '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
+                    needFeedViewModel,
                     context,
-                    newsFeedVM,
                     shareId,
-                    newsfeeds?.title),
-              addVertical(10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (newsfeeds?.webUrl != null &&
-                      newsfeeds!.webUrl!.isNotEmpty)
-                    webSiteText(newsfeeds?.webUrl ?? ''),
-                  if (newsfeeds?.webUrl != null &&
-                      newsfeeds!.webUrl!.isNotEmpty)
-                    addVertical(8),
-                  if (newsFeedTypeEnum == FeedType.learnhub.value &&
-                      newsfeeds?.courses?.isNotEmpty == true)
-                    _learnHubWidget(
-                        newsfeeds?.courses?.first ?? Courses(),
-                        newsfeeds?.createdAt ?? '',
-                        context,
-                        courseListingVM,
-                        shareId),
-                  if (newsFeedTypeEnum == FeedType.catalogue.value)
-                    _buildCatalogueRow(catalogueViewModel, context, shareId),
-                  Divider(color: AppColors.dividerColor),
-                  addVertical(4),
-                  _buildStatsRow(
-                      '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
-                      '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
-                      needFeedViewModel,
-                      context,
-                      shareId,
-                      newsfeeds?.feedType ?? FeedType.newsfeed.name),
-                  addVertical(10)
-                ],
-              ),
-              Divider(thickness: 8, color: Color(0xffEDEFF1)),
-            ]),
+                    newsfeeds?.feedType ?? FeedType.newsfeed.name,commentViewModel),
+              ],
+            ),
           )),
     );
   }
@@ -182,7 +202,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            flex: 2,
+            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -195,7 +215,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 _sectionWidget("CPD Hours", course.cpdPoints.toString()),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlueColor,
                     borderRadius: BorderRadius.circular(30),
@@ -211,18 +231,17 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          SizedBox(width: 16),
           Expanded(
-            flex: 1,
+            flex: 7,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                _timeChip(
-                    "Posted on : ${DateFormatUtils.formatDate(createdAt)}"),
+                _timeChip("${DateFormatUtils.formatTwoDateTime(createdAt)}"),
                 if (course.address?.isNotEmpty == true)
-                  _timeChip(course.address?.first.city ?? ""),
-                GestureDetector(
+                  _locationChip(course.address?.first.city ?? ""),
+                OutlineButtonWidget(
+                  text: "View Details",
                   onTap: () async {
                     await courseListingVM.getCourseDetails(
                       context,
@@ -230,22 +249,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     );
                     navigationService.navigateTo(RouteList.courseDetailScreen);
                   },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "View Details",
-                        style:
-                            TextStyles.medium1(color: AppColors.primaryColor),
-                      ),
-                      SvgPicture.asset(
-                        ImageConst.nextArrow,
-                        width: 20,
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
+                )
               ],
             ),
           ),
@@ -264,7 +268,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            flex: 2,
+            flex: 4,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,35 +279,20 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
               ],
             ),
           ),
-          SizedBox(width: 16),
           Expanded(
-            flex: 1,
+            flex: 8,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _timeChip(
-                    "Posted on : ${DateFormatUtils.formatDate(createdAt)}"),
-                GestureDetector(
-                  onTap: () async {
+                    "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
+                OutlineButtonWidget(
+                  text: "View Details",
+                    onTap: () async {
                     await newsFeedVM.getJobDetailsByIds(context, jobId);
                   },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "View Details",
-                        style:
-                            TextStyles.medium1(color: AppColors.primaryColor),
-                      ),
-                      SvgPicture.asset(
-                        ImageConst.nextArrow,
-                        width: 20,
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
+                )
               ],
             ),
           ),
@@ -312,24 +301,55 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _timeChip(String time) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color.fromRGBO(255, 241, 229, 0),
-            Color.fromRGBO(255, 241, 229, 1),
-          ],
+  Widget _locationChip(String location) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Icon(
+          Icons.location_on_outlined,
+          color: AppColors.primaryColor,
+          size: 16,
         ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        time,
-        style: TextStyles.semiBold(
-            fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
+        Text(location),
+      ],
+    );
+  }
+
+  Widget _timeChip(String time) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "Posted on : ",
+                style: TextStyles.medium1(
+                  color: AppColors.black,
+                ),
+              ),
+              TextSpan(
+                text: time,
+                style: TextStyles.medium1(
+                  color: AppColors.geryColor,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -424,44 +444,48 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       Newsfeeds? newsfeeds,
       NewsFeedViewModel viewModel,
       AddNewsFeedViewModel addNewsVM) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            backgroundColor: AppColors.greyLight,
-            radius: 26.5,
-            child: (imageUrl != null && imageUrl.isNotEmpty)
-                ? SizedBox(
-                    height: 52,
-                    width: 52,
-                    child: ClipOval(
-                        child: CachedNetworkImageWidget(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.contain,
-                            errorWidget: SvgPicture.asset(ImageConst.logo))),
-                  )
-                : SvgPicture.asset(ImageConst.logo),
-          ),
-          addHorizontal(16),
-          Expanded(
-            child: Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
+                  ? AppColors.greyLight
+                  : AppColors.primaryColor,
+              radius: 26.5,
+              child: (imageUrl != null && imageUrl.isNotEmpty)
+                  ? SizedBox(
+                      height: 52,
+                      width: 52,
+                      child: ClipOval(
+                          child: CachedNetworkImageWidget(
+                              imageUrl: imageUrl,
+                              fit: BoxFit.contain,
+                              errorWidget: SvgPicture.asset(ImageConst.logo))),
+                    )
+                  : Text(
+                      name?[0] ?? "",
+                      style: TextStyles.bold5(color: AppColors.whiteColor),
+                    ),
+            ),
+            addHorizontal(10),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(name ?? 'Dental Interface',
                     style: TextStyles.clashMedium(
                         fontSize: 16, color: AppColors.black)),
-                Text(jiffyDataWidget(date ?? '', format: 'dd-MM-yyyy hh:mm a'),
+                Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
                     style:
                         TextStyles.regular1(color: AppColors.lightGeryColor)),
               ],
             ),
-          ),
-          addHorizontal(15),
-          NewsMenuWidget(newsfeeds: newsfeeds)
-        ],
-      ),
+          ],
+        ),
+        NewsMenuWidget(newsfeeds: newsfeeds)
+      ],
     );
   }
 
@@ -492,18 +516,15 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             )
           ],
         ),
-        Expanded(
-          child: AppButton(
-              text: 'View',
-              height: 40,
-              width: 100,
-              onTap: () async {
-                await catalogueVM.getCatalogDetails(context, categoryId ?? '');
-                final id =
-                    catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
-                await catalogueVM.getReletedCatalog(context, id);
-                await navigationService.navigateTo(RouteList.catalogueDetails);
-              }),
+        OutlineButtonWidget(
+          text: "View Details",
+          onTap: () async {
+            await catalogueVM.getCatalogDetails(context, categoryId ?? '');
+            final id =
+                catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+            await catalogueVM.getReletedCatalog(context, id);
+            await navigationService.navigateTo(RouteList.catalogueDetails);
+          },
         )
       ],
     );
@@ -627,7 +648,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             width: isFullWidth ? double.infinity : 300,
-            height: 300,
+            height: 160,
             color: Colors.grey[200],
             child: child,
           ),
@@ -646,7 +667,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       NewsFeedViewModel viewModel,
       BuildContext context,
       String feedId,
-      String? category) {
+      String? category,
+      CommentViewModel commentViewModel) {
     final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
@@ -673,7 +695,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   Icon(isLiked ? Icons.favorite : Icons.favorite_border,
                       color: AppColors.primaryColor),
                   addHorizontal(8),
-                  Text('$likeCount Likes',
+                  Text('$likeCount',
                       style: TextStyles.regular2(color: AppColors.black)),
                 ],
               ),
@@ -686,19 +708,25 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           category: category,
         ),
         Spacer(),
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.backgroundColor),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: Row(
-              children: [
-                Image.asset(ImageConst.comment),
-                addHorizontal(8),
-                Text('$commentCount comments',
-                    style: TextStyles.regular3(color: AppColors.black))
-              ],
+        GestureDetector(
+          onTap: () async {
+            await commentViewModel.getComments(context, newsfeeds?.id ?? "");
+            navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: AppColors.backgroundColor),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Row(
+                children: [
+                  Image.asset(ImageConst.comment),
+                  addHorizontal(8),
+                  Text('$commentCount comments',
+                      style: TextStyles.regular3(color: AppColors.black))
+                ],
+              ),
             ),
           ),
         )

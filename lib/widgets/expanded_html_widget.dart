@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
-class ExpandableHtmlText extends StatelessWidget {
+class ExpandableHtmlText extends StatefulWidget {
   final String htmlData;
   final dynamic height;
   final int index;
@@ -12,8 +12,34 @@ class ExpandableHtmlText extends StatelessWidget {
     super.key,
     required this.htmlData,
     required this.index,
-    this.height = 140.0,
+    this.height = 100.0,
   });
+
+  @override
+  State<ExpandableHtmlText> createState() => _ExpandableHtmlTextState();
+}
+
+class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
+  final _contentKey = GlobalKey();
+  bool _isLengthy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkHeight());
+  }
+
+  void _checkHeight() {
+    final ctx = _contentKey.currentContext;
+    if (ctx == null) return;
+    final renderBox = ctx.findRenderObject() as RenderBox?;
+    if (renderBox != null && renderBox.hasSize) {
+      final contentHeight = renderBox.size.height;
+      if ((contentHeight > widget.height) != _isLengthy) {
+        setState(() => _isLengthy = contentHeight > widget.height);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +52,14 @@ class ExpandableHtmlText extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: provider.isExpanded(index) ? double.infinity : height,
+                  maxHeight: provider.isExpanded(widget.index) ? double.infinity : widget.height,
                 ),
                 child: ClipRect(
                   child: SingleChildScrollView(
                     physics: const NeverScrollableScrollPhysics(),
                     child: HtmlWidget(
-                      htmlData,
+                      key: _contentKey,
+                      widget.htmlData,
                       renderMode: RenderMode.column,
                       enableCaching: false,
                       customStylesBuilder: (element) {
@@ -41,22 +68,28 @@ class ExpandableHtmlText extends StatelessWidget {
                         }
                         return null;
                       },
+                      onLoadingBuilder: (_, __, ___) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) => _checkHeight());
+                        return const SizedBox.shrink();
+                      },
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => provider.toggle(index),
-              child: Text(
-                provider.isExpanded(index) ? "See less" : "See more",
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w600,
+            if (_isLengthy) ...[
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () => provider.toggle(widget.index),
+                child: Text(
+                  provider.isExpanded(widget.index) ? "See less" : "See more",
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         );
       },

@@ -248,6 +248,7 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getComments(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
     final variables = {"feedId": feedId, "limit": 10, "offset": 0};
     try {
       var res = await repo.getComments(variables);
@@ -257,6 +258,7 @@ class CommentViewModel extends ChangeNotifier {
     } catch (e) {
       scaffoldMessenger(e.toString());
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
