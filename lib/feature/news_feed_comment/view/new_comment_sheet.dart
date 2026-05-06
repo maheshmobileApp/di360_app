@@ -192,11 +192,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                             ),
                           ),
                           addHorizontal(15),
-                          if (comments.dentalAdminId == viewModel.userID ||
-                              comments.dentalPracticeId == viewModel.userID ||
-                              comments.dentalProfessionalId ==
-                                  viewModel.userID ||
-                              comments.dentalSupplierId == viewModel.userID)
+                          if (comments.createdById == viewModel.userID)
                             _buildCommentMenu(comments, viewModel, feedId),
                         ],
                       ),

@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 
 class ExpandableHtmlText extends StatefulWidget {
   final String htmlData;
-  final dynamic height;
+  final int maxLines;
   final int index;
 
   const ExpandableHtmlText({
     super.key,
     required this.htmlData,
-    required this.index,
-    this.height = 100.0,
+    this.index = 0,
+    this.maxLines = 2,
   });
 
   @override
@@ -22,6 +22,12 @@ class ExpandableHtmlText extends StatefulWidget {
 class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
   final _contentKey = GlobalKey();
   bool _isLengthy = false;
+
+  double _collapsedHeight(BuildContext context) {
+    final style = Theme.of(context).textTheme.bodyMedium;
+    final lineHeight = (style?.fontSize ?? 14) * (style?.height ?? 1.4);
+    return widget.maxLines * lineHeight;
+  }
 
   @override
   void initState() {
@@ -34,10 +40,9 @@ class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
     if (ctx == null) return;
     final renderBox = ctx.findRenderObject() as RenderBox?;
     if (renderBox != null && renderBox.hasSize) {
-      final contentHeight = renderBox.size.height;
-      if ((contentHeight > widget.height) != _isLengthy) {
-        setState(() => _isLengthy = contentHeight > widget.height);
-      }
+      final threshold = _collapsedHeight(context);
+      final isLengthy = renderBox.size.height > threshold;
+      if (isLengthy != _isLengthy) setState(() => _isLengthy = isLengthy);
     }
   }
 
@@ -52,7 +57,9 @@ class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
               duration: const Duration(milliseconds: 300),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: provider.isExpanded(widget.index) ? double.infinity : widget.height,
+                  maxHeight: provider.isExpanded(widget.index)
+                      ? double.infinity
+                      : _collapsedHeight(context),
                 ),
                 child: ClipRect(
                   child: SingleChildScrollView(
@@ -69,7 +76,8 @@ class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
                         return null;
                       },
                       onLoadingBuilder: (_, __, ___) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) => _checkHeight());
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((_) => _checkHeight());
                         return const SizedBox.shrink();
                       },
                     ),

@@ -14,7 +14,8 @@ class BuildJobTypeWidget extends StatelessWidget {
   final Jobs? job;
   final Newsfeeds? newsfeeds;
   final int index;
-  const BuildJobTypeWidget({super.key, this.job, this.newsfeeds,required this.index});
+  const BuildJobTypeWidget(
+      {super.key, this.job, this.newsfeeds, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,6 @@ class BuildJobTypeWidget extends StatelessWidget {
                           newsfeeds?.description == '')
                       ? newsfeeds?.title ?? ''
                       : newsfeeds?.description ?? '',
-                      index: index,
                 )
                 // HtmlWidget(
                 //   (newsfeeds?.description == null ||
@@ -97,7 +97,8 @@ class BuildJobTypeWidget extends StatelessWidget {
                             ?.map((e) => Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
-                                    color: AppColors.blueColor.withOpacity(0.1)),
+                                    color:
+                                        AppColors.blueColor.withOpacity(0.1)),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 4),

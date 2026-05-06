@@ -201,7 +201,7 @@ class CouresListingCard extends StatelessWidget {
       child: ExpandableHtmlText(
         htmlData: description,
         index: index,
-        height: 50.0,
+        
       ),
     );
   }

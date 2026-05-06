@@ -378,6 +378,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   Future<void> loadCourseData(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
+    print("**********************************${course.communityUserType}");
     newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
     newCourseVM.setCommunityType(
         course.communityUserType == "BOTH" ? "Both" : "Community User");
@@ -448,21 +449,24 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.birdPriceController.text = (course.earlyBirdPrice != null)
         ? course.earlyBirdPrice!.toStringAsFixed(0)
         : "";
-    newCourseVM.courseDescController.text = 
-    htmlParser.parse(course.description ?? '').body?.text ?? '';
+    newCourseVM.courseDescController.text =
+        htmlParser.parse(course.description ?? '').body?.text ?? '';
 
-    newCourseVM.topicsIncludedDescController.text = htmlParser.parse(course.topicsIncluded ?? '').body?.text ?? '';
-    newCourseVM.learningObjectivesDescController.text = htmlParser.parse(course.learningObjectives ?? '').body?.text ?? '';
+    newCourseVM.topicsIncludedDescController.text =
+        htmlParser.parse(course.topicsIncluded ?? '').body?.text ?? '';
+    newCourseVM.learningObjectivesDescController.text =
+        htmlParser.parse(course.learningObjectives ?? '').body?.text ?? '';
     newCourseVM.nameController.text = course.contactName ?? "";
     newCourseVM.phoneController.text = course.contactPhone ?? "";
     newCourseVM.emailController.text = course.contactEmail ?? "";
     newCourseVM.websiteUrlController.text = course.contactWebsite ?? "";
     newCourseVM.registerLinkController.text = course.registerLink ?? "";
     newCourseVM.meetingLinkController.text = course.meetingLink ?? "";
-    newCourseVM.termsAndConditionsController.text = htmlParser.parse(course.terms ?? '').body?.text ?? '';
-    newCourseVM.cancellationController.text = htmlParser.parse(course.refundPolicy ?? '').body?.text ?? '';
+    newCourseVM.termsAndConditionsController.text =
+        htmlParser.parse(course.terms ?? '').body?.text ?? '';
+    newCourseVM.cancellationController.text =
+        htmlParser.parse(course.refundPolicy ?? '').body?.text ?? '';
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    newCourseVM.selectedCommunityType = course.earlyBirdEndDate ?? "";
     newCourseVM.addressController.text = course.address?.isNotEmpty == true
         ? course.address?.first.formattedAddress ?? ""
         : "";
