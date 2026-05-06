@@ -465,7 +465,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                               errorWidget: SvgPicture.asset(ImageConst.logo))),
                     )
                   : Text(
-                      name?[0] ?? "",
+                      name?[0].toUpperCase() ?? "",
                       style: TextStyles.bold5(color: AppColors.whiteColor),
                     ),
             ),
@@ -563,7 +563,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(ImageConst.pdf),
+                Image.asset(ImageConst.pdf, height: 10),
                 addVertical(11),
                 Text(name,
                     style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -583,7 +583,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(ImageConst.pdf),
+              Image.asset(ImageConst.pdf, height: 50),
               addVertical(11),
               Text(name,
                   style: TextStyles.regular1(color: AppColors.lightGeryColor),

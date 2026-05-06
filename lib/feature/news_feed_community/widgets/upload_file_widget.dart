@@ -278,8 +278,8 @@ class _UploadFileWidgetState extends State<UploadFileWidget> {
         ['mp4', 'mov', 'avi'].contains(nameExt);
 
     final isImage = type.startsWith('image/') ||
-        ['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(urlExt) ||
-        ['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(nameExt);
+        ['jpg', 'jpeg', 'png'].contains(urlExt) ||
+        ['jpg', 'jpeg', 'png'].contains(nameExt);
 
     if (isPdf) {
       return _fileCard(
