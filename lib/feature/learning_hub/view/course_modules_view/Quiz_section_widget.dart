@@ -55,22 +55,21 @@ class QuizSectionWidget extends StatelessWidget with BaseContextHelpers {
                   final option = q.options![i];
                   if (q.type == 'single') {
                     return RadioListTile<int>(
-                      value: i,
-                      groupValue: vm.selectedSingleAnswer,
-                      onChanged: (val) => vm.selectSingleAnswer(val!),
-                      title: Text(option.text ?? '',
-                          style: const TextStyle(color: AppColors.whiteColor)),
-                      activeColor: AppColors.primaryColor,
-                    );
+                        value: i,
+                        groupValue: vm.selectedSingleAnswer,
+                        onChanged: (val) => vm.selectSingleAnswer(val!),
+                        title: Text(option.text ?? '',
+                            style:
+                                const TextStyle(color: AppColors.whiteColor)),
+                        activeColor: AppColors.primaryColor);
                   } else {
                     return CheckboxListTile(
-                      value: vm.selectedMultipleAnswers.contains(i),
-                      onChanged: (_) => vm.toggleMultipleAnswer(i),
-                      title: Text(option.text ?? '',
-                          style: const TextStyle(color: Colors.white)),
-                      activeColor: AppColors.primaryColor,
-                      checkColor: AppColors.black,
-                    );
+                        value: vm.selectedMultipleAnswers.contains(i),
+                        onChanged: (_) => vm.toggleMultipleAnswer(i),
+                        title: Text(option.text ?? '',
+                            style: const TextStyle(color: Colors.white)),
+                        activeColor: AppColors.primaryColor,
+                        checkColor: AppColors.black);
                   }
                 }),
 

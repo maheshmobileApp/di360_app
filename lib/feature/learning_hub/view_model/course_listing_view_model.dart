@@ -92,11 +92,19 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void selectSingleAnswer(int index) {
+    if (areAllSectionsCompleted() == false) {
+      scaffoldMessenger("Please complete all modules before taking the quiz.");
+      return;
+    }
     selectedSingleAnswer = index;
     notifyListeners();
   }
 
   void toggleMultipleAnswer(int index) {
+    if (areAllSectionsCompleted() == false) {
+      scaffoldMessenger("Please complete all modules before taking the quiz.");
+      return;
+    }
     if (selectedMultipleAnswers.contains(index)) {
       selectedMultipleAnswers.remove(index);
     } else {
@@ -444,23 +452,24 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
 
-    final res = await repo.userRegisterToCourse(
-        {
-          "fields": {
-            "course_id": courseId,
-            "from_id": userId,
-            "type": "SUPPLIER",
-            "first_name": userFirstNameController.text,
-            "last_name": userLastNameController.text,
-            "phone_number": userPhoneNumberController.text,
-            "email": userEmailController.text,
-            "description": userDescriptionController.text,
-            "status": "PENDING",
-            "quiz_status": "PENDING",
-            "module_section": courseDetails?.moduleSection?.map((e) => e.toJson()).toList(),
-            "question_section": courseDetails?.questionSection?.map((e) => e.toJson()).toList()
-          }
-        });
+    final res = await repo.userRegisterToCourse({
+      "fields": {
+        "course_id": courseId,
+        "from_id": userId,
+        "type": "SUPPLIER",
+        "first_name": userFirstNameController.text,
+        "last_name": userLastNameController.text,
+        "phone_number": userPhoneNumberController.text,
+        "email": userEmailController.text,
+        "description": userDescriptionController.text,
+        "status": "PENDING",
+        "quiz_status": "PENDING",
+        "module_section":
+            courseDetails?.moduleSection?.map((e) => e.toJson()).toList(),
+        "question_section":
+            courseDetails?.questionSection?.map((e) => e.toJson()).toList()
+      }
+    });
     if (res != null) {
       scaffoldMessenger(
         "Successfully Submitted!\nThank you for your interest.\nOur organiser will be in touch with you soon.",
@@ -527,6 +536,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> completeAndContinue(BuildContext context) async {
+    Loaders.circularShowLoader(context);
     final regUser = courseDetails?.courseRegisteredUsers?.firstOrNull;
     if (regUser?.id == null || regUser?.moduleSection == null) return;
 
@@ -540,11 +550,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     // Build payload from the typed model (status is already updated)
     final moduleSectionPayload = regUser.moduleSection!
-        .map((module) => {
-              "expanded": module.expanded,
-              "id": module.id,
-              "module_name": module.moduleName,
-              "section_list": (module.sectionList ?? [])
+        .asMap()
+        .entries
+        .map((entry) => {
+              "expanded":
+                  entry.key == currentModuleIndex ? true : entry.value.expanded,
+              "id": entry.value.id,
+              "module_name": entry.value.moduleName,
+              "section_list": (entry.value.sectionList ?? [])
                   .map((s) => {
                         "attachment": s.attachment,
                         "course_topic": s.courseTopic,
@@ -559,10 +572,36 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
             })
         .toList();
 
-    await repo.updateRegUserStatus({
+    final res = await repo.updatedTheCourseCompletedStatus({
       "id": regUser.id,
       "fields": {"module_section": moduleSectionPayload},
     });
+
+    if (res['insert_course_registered_users_one'] != null) {
+      final sections =
+          regUser.moduleSection![currentModuleIndex].sectionList ?? [];
+      final totalModules = regUser.moduleSection!.length;
+
+      if (currentSectionIndex < sections.length - 1) {
+        currentSectionIndex++;
+      } else if (currentModuleIndex < totalModules - 1) {
+        currentModuleIndex++;
+        currentSectionIndex = 0;
+      }
+      if (areAllSectionsCompleted()) {
+        scaffoldMessenger("Congratulations! You have completed the course.");
+      }
+    }
+    Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  bool areAllSectionsCompleted() {
+    final modules =
+        courseDetails?.courseRegisteredUsers?.firstOrNull?.moduleSection;
+    if (modules == null || modules.isEmpty) return false;
+    return modules.every((module) =>
+        (module.sectionList ?? []).every((s) => s.status == 'Completed'));
   }
 
   clearAll() {
