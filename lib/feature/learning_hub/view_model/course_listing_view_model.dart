@@ -36,8 +36,15 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int currentSectionIndex = 0;
 
   void nextModule() {
-    final total =
-        courseDetails?.courseRegisteredUsers?.first.moduleSection?.length ?? 0;
+    final modules =
+        courseDetails?.courseRegisteredUsers?.firstOrNull?.moduleSection;
+    final total = modules?.length ?? 0;
+    final currentSections = modules?[currentModuleIndex].sectionList ?? [];
+    final allCompleted = currentSections.every((s) => s.status == 'Completed');
+    if (!allCompleted) {
+      scaffoldMessenger("Please complete all sections in this module");
+      return;
+    }
     if (currentModuleIndex < total - 1) {
       currentModuleIndex++;
       currentSectionIndex = 0;
@@ -54,11 +61,16 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   void nextSection() {
-    final sections =
-        courseDetails?.moduleSection?[currentModuleIndex].sectionList;
-    if (currentSectionIndex < (sections?.length ?? 1) - 1) {
-      currentSectionIndex++;
-      notifyListeners();
+    final sections = courseDetails?.courseRegisteredUsers?.firstOrNull
+        ?.moduleSection?[currentModuleIndex].sectionList;
+    final current = sections?[currentSectionIndex];
+    if (current?.status == 'Completed') {
+      if (currentSectionIndex < (sections?.length ?? 1) - 1) {
+        currentSectionIndex++;
+        notifyListeners();
+      }
+    } else {
+      scaffoldMessenger("Please complete the this section");
     }
   }
 
@@ -536,18 +548,22 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> completeAndContinue(BuildContext context) async {
-    Loaders.circularShowLoader(context);
     final regUser = courseDetails?.courseRegisteredUsers?.firstOrNull;
     if (regUser?.id == null || regUser?.moduleSection == null) return;
 
     final section = regUser!
         .moduleSection![currentModuleIndex].sectionList?[currentSectionIndex];
-    if (section == null || section.status == 'Completed') return;
+    if (section == null || section.status == 'Completed') {
+      if (areAllSectionsCompleted()) {
+        scaffoldMessenger("Congratulations! You have completed the course.");
+      }
+      return;
+    }
 
     // Update locally first
     section.status = 'Completed';
     notifyListeners();
-
+    Loaders.circularShowLoader(context);
     // Build payload from the typed model (status is already updated)
     final moduleSectionPayload = regUser.moduleSection!
         .asMap()
@@ -582,14 +598,15 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
           regUser.moduleSection![currentModuleIndex].sectionList ?? [];
       final totalModules = regUser.moduleSection!.length;
 
+      if (areAllSectionsCompleted()) {
+        scaffoldMessenger("Congratulations! You have completed the course.");
+      }
       if (currentSectionIndex < sections.length - 1) {
         currentSectionIndex++;
       } else if (currentModuleIndex < totalModules - 1) {
         currentModuleIndex++;
         currentSectionIndex = 0;
-      }
-      if (areAllSectionsCompleted()) {
-        scaffoldMessenger("Congratulations! You have completed the course.");
+        regUser.moduleSection![currentModuleIndex].expanded = true;
       }
     }
     Loaders.circularHideLoader(context);

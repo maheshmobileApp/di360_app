@@ -805,13 +805,15 @@ class CourseDetailRegisteredUsers {
 }
 
 class QuestionSection {
+  String? id;
   List<Options>? options;
   String? question;
   String? type;
 
-  QuestionSection({this.options, this.question, this.type});
+  QuestionSection({this.id, this.options, this.question, this.type});
 
   QuestionSection.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     if (json['options'] != null) {
       options = <Options>[];
       json['options'].forEach((v) {
@@ -824,6 +826,7 @@ class QuestionSection {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     if (this.options != null) {
       data['options'] = this.options!.map((v) => v.toJson()).toList();
     }
@@ -834,18 +837,21 @@ class QuestionSection {
 }
 
 class Options {
+  String? id;
   bool? isCorrect;
   String? text;
 
-  Options({this.isCorrect, this.text});
+  Options({this.id, this.isCorrect, this.text});
 
   Options.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     isCorrect = json['isCorrect'];
     text = json['text'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['isCorrect'] = this.isCorrect;
     data['text'] = this.text;
     return data;
