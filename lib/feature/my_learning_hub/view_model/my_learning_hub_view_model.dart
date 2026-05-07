@@ -23,7 +23,8 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getCoursesWithMyRegistrations(BuildContext context, {bool loadMore = false}) async {
+  Future<void> getCoursesWithMyRegistrations(BuildContext context,
+      {bool loadMore = false}) async {
     if (loadMore) {
       if (isLoadingMore || !hasMoreData) return;
       isLoadingMore = true;
@@ -33,11 +34,11 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       hasMoreData = true;
       isLoading = true;
     }
-    
+
     notifyListeners();
-    
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getCoursesWithMyRegistrations(userId, searchController.text, _myLearningHubLimit, _myLearningHubOffset);
+
+    final res = await repo.getCoursesWithMyRegistrations(
+        searchController.text, _myLearningHubLimit, _myLearningHubOffset);
 
     if (res != null) {
       if (loadMore) {
@@ -52,7 +53,7 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       isLoading = false;
       isLoadingMore = false;
     }
-    
+
     notifyListeners();
   }
 

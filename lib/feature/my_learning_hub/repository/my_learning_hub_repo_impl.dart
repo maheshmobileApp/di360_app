@@ -1,4 +1,6 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/my_learning_hub/query/get_my_registered_courses_query.dart';
 import 'package:di360_flutter/feature/my_learning_hub/query/get_my_registered_courses_with_filters.dart';
@@ -8,17 +10,28 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
   final HttpService http = HttpService();
   @override
   Future<List<CoursesListingDetails>?> getCoursesWithMyRegistrations(
-      String? userId, String? searchText,int limit, int offset) async {
+       String? searchText, int limit, int offset) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final Map<String, dynamic> variables = {
       "where": {
         "_and": [
           {
             "course_registered_users": {
-              "from_id": {"_eq": "${userId}"}
+              "from_id": {"_eq": userId}
             }
           },
           {
-            "course_name": {"_ilike": "%${searchText}%"}
+            "_or": [
+              {
+                "company_name": {"_ilike": "%$searchText%"}
+              },
+              {
+                "course_name": {"_ilike": "%$searchText%"}
+              },
+              {
+                "presented_by_name": {"_ilike": "%$searchText%"}
+              }
+            ]
           }
         ]
       },
@@ -26,7 +39,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
       "offset": offset,
       "loginId": userId
     };
-    
+
     final getMyRegisteredCourses =
         await http.query(getMyRegisteredCourseQuery, variables: variables);
     final response = CoursesListingData.fromJson(getMyRegisteredCourses);
@@ -57,7 +70,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
         }
       });
     }
-    if (date != "null" ) {
+    if (date != "null") {
       andConditions.add({
         "_and": [
           {
