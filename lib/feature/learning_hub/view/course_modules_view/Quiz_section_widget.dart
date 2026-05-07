@@ -1,6 +1,8 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/test_result_dialog.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -117,6 +119,25 @@ class QuizSectionWidget extends StatelessWidget with BaseContextHelpers {
                                 : Colors.grey)),
                   ),
                 ),
+                addVertical(20),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: AppButton(
+                      text: "Submit Quiz",
+                      onTap: () {
+                        final result = vm.submitQuiz();
+                        if (result == null) return;
+                        final passPercentage = double.tryParse(
+                                vm.courseDetails?.passPercentage?.toString() ??
+                                    '0') ??
+                            0;
+                        showTestResultDialog(
+                            context, result.$1, result.$2, passPercentage);
+                      },
+                      width: 120,
+                      radius: 10,
+                      height: 40),
+                )
               ],
             ),
           ),

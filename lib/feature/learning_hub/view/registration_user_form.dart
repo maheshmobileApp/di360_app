@@ -6,6 +6,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,24 +43,19 @@ class RegistrationUserForm {
                     children: [
                       // Title
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Submit and Register for",
-                            style: TextStyles.medium4(color: AppColors.black),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Icon(
-                              Icons.close,
-                              color: AppColors.black,
-                              size: 24
-                            )
-                          )
-                        ]
-                      ),
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Submit and Register for",
+                              style: TextStyles.medium4(color: AppColors.black),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  navigationService.goBack();
+                                },
+                                child: const Icon(Icons.close,
+                                    color: AppColors.black, size: 24))
+                          ]),
 
                       Text(
                         courseName,
@@ -99,6 +95,10 @@ class RegistrationUserForm {
                           maxLength: 10,
                           keyboardType: TextInputType.number,
                           isRequired: true,
+                          inputFormatters: [
+                             FilteringTextInputFormatter.digitsOnly,
+                            // LengthLimitingTextInputFormatter(10),
+                          ],
                           validator: courseVM.validatePhoneNumber),
                       const SizedBox(height: 8),
 

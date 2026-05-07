@@ -166,10 +166,9 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2)),
                 ],
               ),
               child: IconButton(
@@ -226,7 +225,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           bannerUrl: bannerUrl,
                           bannerName: bannerName,
                           creatAt: courseDetails?.updatedAt),
-                      const SizedBox(height: 12),
+                      addVertical(12),
                       if (courseDetails?.description != "")
                         CourseDescriptionWidget(
                           title: 'Course Description',
@@ -234,7 +233,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         ),
                       if (courseDetails?.type != 'Online Academy' &&
                           courseDetails?.eventType != null) ...[
-                        const SizedBox(height: 12),
+                        addVertical(12),
                         Text(
                           (courseDetails?.eventType != "multiple")
                               ? "Single Day Event"
@@ -243,7 +242,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                               TextStyles.bold2(color: AppColors.primaryColor),
                         )
                       ],
-                      const SizedBox(height: 6),
+                      addVertical(6),
                       if ((courseDetails?.courseEventInfo != null &&
                           courseDetails!.courseEventInfo!.isNotEmpty)) ...[
                         ...courseDetails.courseEventInfo!
@@ -269,31 +268,30 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           );
                         }),
                       ],
-                      const SizedBox(height: 12),
+                      addVertical(12),
                       if (galleryUrls.isNotEmpty)
                         GalleryImgWidget(
                             title: "Gallery", imageUrls: galleryUrls),
-                      const SizedBox(height: 12),
+                      addVertical(12),
                       if (sponsorUrls.isNotEmpty)
                         GalleryImgWidget(
-                          title: "Sponsored by",
-                          height: 100,
-                          width: 100,
-                          imageUrls: sponsorUrls,
-                        ),
-                      const SizedBox(height: 12),
+                            title: "Sponsored by",
+                            height: 100,
+                            width: 100,
+                            imageUrls: sponsorUrls),
+                      addVertical(12),
                       if ((courseDetails?.terms ?? "").isNotEmpty)
                         CourseDescriptionWidget(
                           title: 'Terms & Conditions',
                           description: courseDetails?.terms ?? "",
                         ),
-                      const SizedBox(height: 12),
+                      addVertical(12),
                       if ((courseDetails?.refundPolicy ?? "").isNotEmpty)
                         CourseDescriptionWidget(
                           title: 'Cancellation & Refund Policy',
                           description: courseDetails?.refundPolicy ?? "",
                         ),
-                      const SizedBox(height: 12),
+                      addVertical(12),
                       Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),

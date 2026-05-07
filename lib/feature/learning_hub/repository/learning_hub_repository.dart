@@ -30,4 +30,5 @@ abstract class LearningHubRepository {
   Future<RegisterUserTabCountData> getRegisterUserTabCountData(dynamic variables);
   Future<dynamic> updateRegUserStatus(dynamic variables);
   Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables);
+  Future<dynamic> markQuizCompleted(dynamic variables);
 }

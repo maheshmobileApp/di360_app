@@ -21,6 +21,7 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_market_place_courses.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_register_user_tab_count.dart';
+import 'package:di360_flutter/feature/learning_hub/querys/quiz_sumbit_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
@@ -378,6 +379,12 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables) async {
     final res = await http.mutation(updatedTheCourseCompletedStatusQuery, variables);
+    return res;
+  }
+  
+  @override
+  Future<dynamic> markQuizCompleted(variables) async{
+    final res = await http.mutation(quizSubmitQuery, variables);
     return res;
   }
 

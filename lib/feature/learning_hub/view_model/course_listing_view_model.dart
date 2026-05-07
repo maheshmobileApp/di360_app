@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
@@ -8,6 +9,7 @@ import 'package:di360_flutter/feature/learning_hub/model_class/get_course_regist
     hide CourseRegisteredUsers;
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +87,9 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int currentQuizIndex = 0;
   int? selectedSingleAnswer;
   Set<int> selectedMultipleAnswers = {};
+  bool? quizAnswerCorrect;
+  // stores selected answer(s) per question index
+  final Map<int, dynamic> quizAnswers = {};
 
   void nextQuiz() {
     final total = courseDetails?.questionSection?.length ?? 0;
@@ -109,6 +114,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       return;
     }
     selectedSingleAnswer = index;
+    quizAnswers[currentQuizIndex] = index;
+    quizAnswerCorrect = null;
     notifyListeners();
   }
 
@@ -122,12 +129,96 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     } else {
       selectedMultipleAnswers.add(index);
     }
+    quizAnswers[currentQuizIndex] = Set<int>.from(selectedMultipleAnswers);
+    quizAnswerCorrect = null;
+    notifyListeners();
+  }
+
+  void verifyQuizAnswer() {
+    final question = courseDetails?.questionSection?[currentQuizIndex];
+    if (question == null) return;
+    final options = question.options ?? [];
+    bool isCorrect = false;
+
+    if (question.type == 'single') {
+      if (selectedSingleAnswer == null) {
+        scaffoldMessenger("Please select an answer");
+        return;
+      }
+      isCorrect = options[selectedSingleAnswer!].isCorrect == true;
+    } else {
+      if (selectedMultipleAnswers.isEmpty) {
+        scaffoldMessenger("Please select at least one answer");
+        return;
+      }
+      final correctIndices = options
+          .asMap()
+          .entries
+          .where((e) => e.value.isCorrect == true)
+          .map((e) => e.key)
+          .toSet();
+      isCorrect = selectedMultipleAnswers.length == correctIndices.length &&
+          selectedMultipleAnswers.every((i) => correctIndices.contains(i));
+    }
+
+    quizAnswerCorrect = isCorrect;
+    scaffoldMessenger(isCorrect ? "Correct Answer! ✅" : "Wrong Answer! ❌");
     notifyListeners();
   }
 
   void _clearQuizSelection() {
     selectedSingleAnswer = null;
     selectedMultipleAnswers = {};
+    quizAnswerCorrect = null;
+  }
+
+  // returns null if validation fails, else returns (scored%, passed)
+  (double, bool)? submitQuiz() {
+    final questions = courseDetails?.questionSection ?? [];
+    if (questions.isEmpty) return null;
+
+    for (int i = 0; i < questions.length; i++) {
+      final answer = quizAnswers[i];
+      if (answer == null || (answer is Set && answer.isEmpty)) {
+        scaffoldMessenger("Please answer all questions before submitting");
+        return null;
+      }
+    }
+
+    int correctCount = 0;
+    for (int i = 0; i < questions.length; i++) {
+      final q = questions[i];
+      final options = q.options ?? [];
+      final answer = quizAnswers[i];
+      bool isCorrect = false;
+      if (q.type == 'single') {
+        isCorrect = options[answer as int].isCorrect == true;
+      } else {
+        final selected = answer as Set<int>;
+        final correctIndices = options
+            .asMap()
+            .entries
+            .where((e) => e.value.isCorrect == true)
+            .map((e) => e.key)
+            .toSet();
+        isCorrect = selected.length == correctIndices.length &&
+            selected.every((idx) => correctIndices.contains(idx));
+      }
+      if (isCorrect) correctCount++;
+    }
+
+    final scored = (correctCount / questions.length) * 100;
+    final passPercentage =
+        double.tryParse(courseDetails?.passPercentage?.toString() ?? '0') ?? 0;
+    final passed = scored >= passPercentage;
+    return (scored, passed);
+  }
+
+  void resetQuiz() {
+    currentQuizIndex = 0;
+    quizAnswers.clear();
+    _clearQuizSelection();
+    notifyListeners();
   }
 
   int _courseListingLimit = 10;
@@ -371,6 +462,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       currentModuleIndex = 0;
       currentSectionIndex = 0;
       currentQuizIndex = 0;
+      quizAnswers.clear();
       _clearQuizSelection();
     }
     Loaders.circularHideLoader(context);
@@ -619,6 +711,18 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     if (modules == null || modules.isEmpty) return false;
     return modules.every((module) =>
         (module.sectionList ?? []).every((s) => s.status == 'Completed'));
+  }
+
+  Future<dynamic> quizSubmitted(BuildContext context) async {
+    final res = await repo.markQuizCompleted({
+      "id": courseDetails?.courseRegisteredUsers?.firstOrNull?.id ?? '',
+      "fields": {
+        "quiz_status": "COMPLETED",
+        "status": "COMPLETED",
+        "completed_date": DateTime.now().toIso8601String().split('T').first
+      }
+    });
+    return res;
   }
 
   clearAll() {
