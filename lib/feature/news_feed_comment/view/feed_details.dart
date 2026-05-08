@@ -91,7 +91,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
         if (isBase64Image(url)) {
           try {
             final decodedBytes = base64Decode(url.split(',').last);
-            return Image.memory(decodedBytes, fit: BoxFit.cover);
+            return Image.memory(decodedBytes, fit: BoxFit.contain);
           } catch (e) {
             return Icon(Icons.broken_image);
           }
@@ -107,7 +107,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             ],
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url);
+          return CachedNetworkImageWidget(imageUrl: url,fit: BoxFit.contain);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);

@@ -118,7 +118,7 @@ class AddNewsFeedScreen extends StatelessWidget
                       if (_formKey.currentState!.validate())  {
                         viewModel.isEditNewsFeed == true
                             ? await viewModel.updateTheNewsFeeds(context)
-                            : viewModel.addNewsFeeds(context);
+                            : await viewModel.addNewsFeeds(context);
 
                         await newsFeedVM.getAllNewsfeeds(context);
                       }
