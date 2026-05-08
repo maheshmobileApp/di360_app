@@ -1,6 +1,4 @@
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/my_learning_hub/repository/my_learning_hub_repo_impl.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +21,13 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getCoursesWithMyRegistrations(BuildContext context,
-      {bool loadMore = false}) async {
+  Future<void> getCoursesWithMyRegistrations(
+    BuildContext context, {
+    bool loadMore = false,
+    String? type,
+    String? category,
+    String? date,
+  }) async {
     if (loadMore) {
       if (isLoadingMore || !hasMoreData) return;
       isLoadingMore = true;
@@ -38,7 +41,7 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
 
     final res = await repo.getCoursesWithMyRegistrations(
-        searchController.text, _myLearningHubLimit, _myLearningHubOffset);
+        searchController.text, _myLearningHubLimit, _myLearningHubOffset, type ?? '', category ?? '', date ?? '');
 
     if (res != null) {
       if (loadMore) {
@@ -57,7 +60,7 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getCoursesWithFilters(BuildContext context, String? type,
+  /*Future<void> getCoursesWithFilters(BuildContext context, String? type,
       String? category, String? date) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     //Loaders.circularShowLoader(context);
@@ -68,5 +71,5 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       //Loaders.circularHideLoader(context);
     }
     notifyListeners();
-  }
+  }*/
 }

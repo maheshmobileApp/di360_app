@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/course_details_view.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
@@ -71,20 +72,20 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                     backgroundColor: Colors.transparent,
                     builder: (context) => FilterBottomSheet(
                       onApply: () {
-                        myLearningHubVM.getCoursesWithFilters(
+                        myLearningHubVM.getCoursesWithMyRegistrations(
                             context,
-                            filterVM.selectedOptions['Filter by Type'],
-                            filterVM.selectedOptions['Category'],
-                            filterVM.selectedDate.toString());
+                            type : filterVM.selectedOptions['Filter by Type'],
+                            category: filterVM.selectedOptions['Category'],
+                            date: filterVM.selectedDate.toString());
                         navigationService.goBack();
                       },
                       onClear: () {
                         filterVM.clearAll();
-                        myLearningHubVM.getCoursesWithFilters(
+                        myLearningHubVM.getCoursesWithMyRegistrations(
                             context,
-                            filterVM.selectedOptions['Filter by Type'],
-                            filterVM.selectedOptions['Category'],
-                            filterVM.selectedDate.toString());
+                            type: filterVM.selectedOptions['Filter by Type'],
+                            category: filterVM.selectedOptions['Category'],
+                            date: filterVM.selectedDate.toString());
                       },
                     ),
                   );
@@ -145,6 +146,11 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                                 myLearningHubVM.myRegisteredCourses[index];
                             return RegisterCourseCard(
                               courseData: courseData,
+                              onViewCourseTap: () async{
+                                await courseListingVM.getCourseDetails(
+                                    context, courseData.id ?? "");
+                                navigationService.push(CourseDetailsView());
+                              },
                               onCardTap: () async {
                                 await courseListingVM.getCourseDetails(
                                     context, courseData.id ?? "");

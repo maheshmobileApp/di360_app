@@ -10,7 +10,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
   final HttpService http = HttpService();
   @override
   Future<List<CoursesListingDetails>?> getCoursesWithMyRegistrations(
-       String? searchText, int limit, int offset) async {
+      String? searchText, int limit, int offset, String type, String category, String date) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final Map<String, dynamic> variables = {
       "where": {
@@ -20,6 +20,7 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
               "from_id": {"_eq": userId}
             }
           },
+          if (searchText?.isNotEmpty == true)
           {
             "_or": [
               {
@@ -30,6 +31,27 @@ class MyLearningHubRepoImpl extends MyLearningHubRepository {
               },
               {
                 "presented_by_name": {"_ilike": "%$searchText%"}
+              }
+            ]
+          },
+          if (type.isNotEmpty)
+          {
+            "type": {"_eq": type}
+          },
+           if (category.isNotEmpty)
+          {
+            "course_category": {
+              "name": {"_eq": category}
+            }
+          },
+          if (date.isNotEmpty && date != "null")
+          {
+            "_and": [
+              {
+                "startDate": {"_lte": date}
+              },
+              {
+                "endDate": {"_gte": date}
               }
             ]
           }
