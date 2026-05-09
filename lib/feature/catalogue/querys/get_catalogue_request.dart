@@ -16,6 +16,11 @@ query getFilteredCatalogueData(
         name
         __typename
       }
+      catalogue_category {
+        id
+        name
+        __typename
+      }
       catalogue_sub_category {
         id
         name

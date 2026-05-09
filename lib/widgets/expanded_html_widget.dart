@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
-class ExpandableHtmlText extends StatelessWidget {
+class ExpandableHtmlText extends StatefulWidget {
   final String htmlData;
   final int maxLines;
   final int index;
@@ -11,9 +11,40 @@ class ExpandableHtmlText extends StatelessWidget {
   const ExpandableHtmlText({
     super.key,
     required this.htmlData,
-    required this.index,
-    this.maxLines = 6,
+    this.index = 0,
+    this.maxLines = 2,
   });
+
+  @override
+  State<ExpandableHtmlText> createState() => _ExpandableHtmlTextState();
+}
+
+class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
+  final _contentKey = GlobalKey();
+  bool _isLengthy = false;
+
+  double _collapsedHeight(BuildContext context) {
+    final style = Theme.of(context).textTheme.bodyMedium;
+    final lineHeight = (style?.fontSize ?? 14) * (style?.height ?? 1.4);
+    return widget.maxLines * lineHeight;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkHeight());
+  }
+
+  void _checkHeight() {
+    final ctx = _contentKey.currentContext;
+    if (ctx == null) return;
+    final renderBox = ctx.findRenderObject() as RenderBox?;
+    if (renderBox != null && renderBox.hasSize) {
+      final threshold = _collapsedHeight(context);
+      final isLengthy = renderBox.size.height > threshold;
+      if (isLengthy != _isLengthy) setState(() => _isLengthy = isLengthy);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +57,16 @@ class ExpandableHtmlText extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: provider.isExpanded(index) ? double.infinity : 140,
+                  maxHeight: provider.isExpanded(widget.index)
+                      ? double.infinity
+                      : _collapsedHeight(context),
                 ),
                 child: ClipRect(
                   child: SingleChildScrollView(
                     physics: const NeverScrollableScrollPhysics(),
                     child: HtmlWidget(
-                      htmlData,
+                      key: _contentKey,
+                      widget.htmlData,
                       renderMode: RenderMode.column,
                       enableCaching: false,
                       customStylesBuilder: (element) {
@@ -41,22 +75,29 @@ class ExpandableHtmlText extends StatelessWidget {
                         }
                         return null;
                       },
+                      onLoadingBuilder: (_, __, ___) {
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((_) => _checkHeight());
+                        return const SizedBox.shrink();
+                      },
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => provider.toggle(index),
-              child: Text(
-                provider.isExpanded(index) ? "See less" : "See more",
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w600,
+            if (_isLengthy) ...[
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () => provider.toggle(widget.index),
+                child: Text(
+                  provider.isExpanded(widget.index) ? "See less" : "See more",
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         );
       },

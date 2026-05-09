@@ -60,6 +60,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
       appBar: AppBarWidget(
+        title: "test",
           searchAction: () =>
               navigationService.navigateTo(RouteList.catalogueFilterScreen),
           filterWidget: Row(children: [
@@ -281,12 +282,18 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(c.dentalSupplier?.name ?? '',
+                        Text(c.catalogueSubCategory?.name  ?? '',
                             style: TextStyles.regular2(
                                 color: AppColors.primaryColor)),
                         addVertical(5),
                         Text(
                           c.title ?? '',
+                          maxLines: 1,
+                          style: TextStyles.regular1(color: AppColors.black),
+                        ),
+                        addVertical(5),
+                        Text(
+                          c.catalogueCategory?.name ?? '',
                           maxLines: 1,
                           style: TextStyles.regular1(color: AppColors.black),
                         )

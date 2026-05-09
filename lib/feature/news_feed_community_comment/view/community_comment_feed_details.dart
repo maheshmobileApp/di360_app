@@ -94,7 +94,7 @@ class CommunityCommentFeedDetails extends StatelessWidget
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(ImageConst.pdf),
+              Image.asset(ImageConst.pdf, height: 50),
               addVertical(11),
               Text(name,
                   style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -110,7 +110,7 @@ class CommunityCommentFeedDetails extends StatelessWidget
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(ImageConst.pdf),
+            Image.asset(ImageConst.pdf, height: 50),
             addVertical(11),
             Text(name,
                 style: TextStyles.regular1(color: AppColors.lightGeryColor),

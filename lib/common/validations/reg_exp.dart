@@ -39,7 +39,7 @@ bool isValidAustralianPhoneNumber(String phone) {
 }
 
 bool isValidPhoneNumber(String phone) {
-  return RegExp(r'^[0-9]{9}$').hasMatch(phone);
+  return RegExp(r'^[0-9]{10}$').hasMatch(phone);
 }
 
 bool isValidContactPhoneNumber(String phone) {

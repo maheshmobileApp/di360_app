@@ -45,7 +45,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final addNewsFeedVM = Provider.of<AddNewsFeedViewModel>(context);
     return Scaffold(
-        backgroundColor: AppColors.whiteColor,
+        backgroundColor: AppColors.screenBgColor,
         appBar: AppBarWidget(
           searchBarOpen: newsFeedVM.searchBarOpen,
           searchAction: () {
@@ -176,7 +176,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
                         },
                         bannerBuilder: (context, bannerPosition) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 2),
                             child: ListBanner(),
                           );
                         }))

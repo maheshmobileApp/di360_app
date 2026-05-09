@@ -4,11 +4,12 @@ class AppColors {
   AppColors._();
   static const Color primaryColor = Color(0xFFFF7000);
   static const Color whiteColor = Color(0xffFFFFFF);
+  static const Color screenBgColor = Color.fromRGBO(211, 209, 209, 1);
   static const Color black = Color(0xff000000);
   static const Color hintColor = Color(0xffF9F9F9);
   static const Color bottomNavUnSelectedColor = Color(0xff748294);
   static const Color secondaryColor = Color(0xff021214);
-  static const Color geryColor = Color(0xffCCCCCC);
+  static const Color geryColor = Color.fromARGB(255, 156, 156, 156);
   static const Color lightGeryColor = Color(0xff8A8A8F);
   static const HINT_COLOR = Color(0xffC2C2C2);
   static const Color PRIMARY_BLACK_COLOR = Color(0xFF202020);
@@ -42,6 +43,5 @@ class AppColors {
   static const Color timewhite = Color.fromRGBO(255, 241, 229, 1);
   static const Color typeTextColor = Color(0xFF0471DE);
   static const Color greyLight = Color(0xffEDEFF1);
-    static const Color greyLightcolor= Color.fromRGBO(231, 231, 231, 1);
-
+  static const Color greyLightcolor = Color.fromRGBO(231, 231, 231, 1);
 }

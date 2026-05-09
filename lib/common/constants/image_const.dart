@@ -45,7 +45,7 @@ class ImageConst {
   static const String chatbox = "assets/pngs/chatbox.png";
   static const String reply = "assets/pngs/reply.png";
   static const String heart = "assets/pngs/heart.png";
-  static const String pdf = "assets/pngs/pdf.png";
+  static const String pdf = "assets/pngs/document.png";
   static const String role = "assets/pngs/role.png";
   static const String feed = "assets/pngs/Feed.png";
   static const String comment = "assets/pngs/comment.png";

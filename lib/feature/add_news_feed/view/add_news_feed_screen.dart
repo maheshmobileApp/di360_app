@@ -5,6 +5,7 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/upload_file_preview.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -21,6 +22,7 @@ class AddNewsFeedScreen extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<AddNewsFeedViewModel>(context);
+    final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(
@@ -104,7 +106,7 @@ class AddNewsFeedScreen extends StatelessWidget
                 addVertical(30),
                 AppButton(
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
-                    onTap: () {
+                    onTap: ()async {
                       if (viewModel.desController.text.trim().isEmpty) {
                         scaffoldMessenger('Please enter description');
                         return;
@@ -113,10 +115,12 @@ class AddNewsFeedScreen extends StatelessWidget
                         scaffoldMessenger('Please select category');
                         return;
                       }
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate())  {
                         viewModel.isEditNewsFeed == true
-                            ? viewModel.updateTheNewsFeeds(context)
+                            ? await viewModel.updateTheNewsFeeds(context)
                             : viewModel.addNewsFeeds(context);
+
+                        await newsFeedVM.getAllNewsfeeds(context);
                       }
                     }),
               ],

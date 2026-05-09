@@ -35,20 +35,22 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
+            title: "My Catalogues",
+            logo: false,
             filterWidget: Row(children: [
-          GestureDetector(
-              onTap: () {
-                myCatalogVM.initializeFilterOptions();
-                navigationService.navigateTo(RouteList.myCatalogueFilter);
-              },
-              child:
-                  SvgPicture.asset(ImageConst.filter, color: AppColors.black)),
-          if (myCatalogVM.catalogFilterApply == true)
-            GestureDetector(
-              onTap: () => myCatalogVM.clearSelections(),
-              child: Icon(Icons.close, color: AppColors.black),
-            )
-        ])),
+              GestureDetector(
+                  onTap: () {
+                    myCatalogVM.initializeFilterOptions();
+                    navigationService.navigateTo(RouteList.myCatalogueFilter);
+                  },
+                  child: SvgPicture.asset(ImageConst.filter,
+                      color: AppColors.black)),
+              if (myCatalogVM.catalogFilterApply == true)
+                GestureDetector(
+                  onTap: () => myCatalogVM.clearSelections(),
+                  child: Icon(Icons.close, color: AppColors.black),
+                )
+            ])),
         body: Column(
           children: [
             SizedBox(

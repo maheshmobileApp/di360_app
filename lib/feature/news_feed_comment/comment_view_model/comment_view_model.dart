@@ -195,9 +195,9 @@ class CommentViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         commentController.clear();
         existingAttachments.clear();
-        await getComments(context, feedId);
         selectedFiles.clear();
-        //await getNewsfeedComment(context, feedId);
+        await getComments(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -254,12 +254,11 @@ class CommentViewModel extends ChangeNotifier {
       var res = await repo.getComments(variables);
       if (res != null) {
         newsFeedComments = res;
-        Loaders.circularHideLoader(context);
       }
     } catch (e) {
-      Loaders.circularHideLoader(context);
       scaffoldMessenger(e.toString());
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 

@@ -46,7 +46,7 @@ class ContactInfoWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Contact Details",
+          "Get in Touch",
           style: TextStyles.bold2(color: AppColors.primaryColor),
         ),
         const SizedBox(height: 6),

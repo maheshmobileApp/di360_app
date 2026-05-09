@@ -76,6 +76,16 @@ static String formatDateTime(String dateTimeString) {
   }
 }
 
+static String formatTwoDateTime(String dateTimeString) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('yyyy-MM-dd hh:mm:ss a').format(localDateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
+
 static String formatDate(String dateTimeString) {
   try {
     final dateTime = DateTime.parse(dateTimeString);
@@ -147,6 +157,16 @@ static String formatYyyyMmDdToDdMmYyyy(String dateString) {
     return DateFormat('dd/MM/yyyy').format(localDateTime);
   } catch (e) {
     return dateString;
+  }
+}
+
+static String formatDateOnly(String? date) {
+  if (date == null || date.trim().isEmpty) return '';
+  try {
+    final dateOnly = date.split('T').first;
+    return DateFormat('MMM d, y').format(DateTime.parse(dateOnly));
+  } catch (_) {
+    return '';
   }
 }
 }
