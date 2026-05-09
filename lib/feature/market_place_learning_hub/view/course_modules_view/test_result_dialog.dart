@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -62,7 +62,7 @@ void showTestResultDialog(
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        context.read<CourseListingViewModel>().resetQuiz();
+                        context.read<MarketPlaceLearningHubViewModel>().resetQuiz();
                         navigationService.goBack();
                       },
                       child: const Text("CANCEL"),
@@ -81,7 +81,7 @@ void showTestResultDialog(
                         ? () async {
                             Loaders.circularShowLoader(context);
                             final res = await context
-                                .read<CourseListingViewModel>()
+                                .read<MarketPlaceLearningHubViewModel>()
                                 .quizSubmitted(context);
                             Loaders.circularHideLoader(context);
                             if (res['update_course_registered_users_by_pk'] !=
@@ -102,35 +102,4 @@ void showTestResultDialog(
       );
     },
   );
-
-  /**
-   * 
-   * 
-   * await context
-                                .read<MyLearningHubViewModel>()
-                                .getCoursesWithMyRegistrations(context);
-                            await context
-                                .read<FilterViewModel>()
-                                .fetchCourseCategory(context);
-                            await context
-                                .read<FilterViewModel>()
-                                .fetchCourseType(context);
-
-                            Loaders.circularHideLoader(context);
-                            context
-                                .read<MyLearningHubViewModel>()
-                                .searchBarOpen = false;
-                            context
-                                .read<MyLearningHubViewModel>()
-                                .searchController
-                                .text = "";
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCourseCategory();
-                            context
-                                .read<NewCourseViewModel>()
-                                .fetchCourseType();
-                            navigationService
-                                .navigateTo(RouteList.myLearningHubScreen);
-   */
 }

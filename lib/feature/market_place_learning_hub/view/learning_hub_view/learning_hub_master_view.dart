@@ -3,10 +3,10 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
-        Provider.of<CourseListingViewModel>(context, listen: false)
+        Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false)
             .getAllLearningHubData(context, loadMore: true);
       }
     });
@@ -48,7 +48,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
 
   @override
   Widget build(BuildContext context) {
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 249, 248, 248),
       appBar: AppBarWidget(
@@ -145,11 +145,11 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");
 
-                              await courseListingVM.getCourseRegisteredUsers(
-                                  context, course.id ?? "");
+                              // await courseListingVM.getCourseRegisteredUsers(
+                              //     context, course.id ?? "");
 
-                              await courseListingVM.registerCourseHandler(
-                                  context, course.createdById ?? "");
+                              // await courseListingVM.registerCourseHandler(
+                              //     context, course.createdById ?? "");
                               navigationService
                                   .navigateTo(RouteList.courseDetailScreen);
                               /*} else {
@@ -161,12 +161,12 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     await courseListingVM.getCourseDetails(
                                         context, course.id ?? "");
 
-                                    await courseListingVM
-                                        .getCourseRegisteredUsers(
-                                            context, course.id ?? "");
+                                    // await courseListingVM
+                                    //     .getCourseRegisteredUsers(
+                                    //         context, course.id ?? "");
 
-                                    await courseListingVM.registerCourseHandler(
-                                        context, course.createdById ?? "");
+                                    // await courseListingVM.registerCourseHandler(
+                                    //     context, course.createdById ?? "");
                                     navigationService.navigateTo(
                                         RouteList.courseDetailScreen);
                                   },

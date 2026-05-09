@@ -3,8 +3,8 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
@@ -50,7 +50,8 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
   @override
   Widget build(BuildContext context) {
     final myLearningHubVM = Provider.of<MyLearningHubViewModel>(context);
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final courseListingVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
     final filterVM = Provider.of<FilterViewModel>(context);
 
     return Scaffold(

@@ -4,7 +4,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';

@@ -39,7 +39,7 @@ class CoursesListingData {
     }
     return data;
   }
-}
+}    
 
 class CoursesListingDetails {
   String? id;

@@ -308,7 +308,7 @@ class Directories {
   String? name;
   String? email;
   String? phone;
-  Null? profileImage;
+  dynamic profileImage;
   String? address;
   String? professionType;
   String? sTypename;

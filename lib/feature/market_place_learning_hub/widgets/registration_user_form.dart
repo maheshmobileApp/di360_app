@@ -1,6 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 class RegistrationUserForm {
   static void show(BuildContext context, String courseName, String createdById,
       String courseId) {
-    final formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>(); 
 
     showModalBottomSheet(
       context: context,
@@ -23,7 +23,7 @@ class RegistrationUserForm {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        final courseVM = Provider.of<CourseListingViewModel>(context);
+        final courseVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
 
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
@@ -145,7 +145,7 @@ class RegistrationUserForm {
                                   navigationService.goBack();
                                 },
                               );
-                              await courseVM.getCoursesListingData(context);
+                            //  await courseVM.getCoursesListingData(context);
                               await courseVM.getAllLearningHubData(context);
                               await courseVM.getCourseDetails(
                                   context, courseId);

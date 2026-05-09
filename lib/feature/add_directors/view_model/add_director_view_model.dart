@@ -10,7 +10,7 @@ import 'package:di360_flutter/feature/add_directors/model/get_directories_res.da
 import 'package:di360_flutter/feature/add_directors/repository/add_director_repository_impl.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/edit_delete_director_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/professional_add_director/view_model/professional_add_director_vm.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/main.dart';

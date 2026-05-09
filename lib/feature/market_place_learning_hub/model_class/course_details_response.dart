@@ -36,7 +36,7 @@ class CourseDetailData {
     }
     return data;
   }
-}
+}     
 
 class CoursesByPk {
   String? id;

@@ -1,19 +1,15 @@
 import 'dart:convert';
-import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/delete_course_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/get_all_listing_data_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_category_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_registered_users_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_count.dart';
@@ -21,13 +17,10 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_market_place_courses.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_register_user_tab_count.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/quiz_sumbit_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/update_section_status_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -159,19 +152,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<CoursesByPk?> getCourseDetails(String? courseId) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final Map<String, dynamic> variables = {
-      "id": "${courseId}",
-      "userId": userId
-    };
-    final courseTypeData =
-        await http.query(showCourseById, variables: variables);
-    final result = CourseDetailData.fromJson(courseTypeData);
-    return result.coursesByPk;
-  }
-
-  @override
   Future deleteCourse(String? courseId) async {
     final deleteCourse =
         await http.mutation(deleteCourseQuery, {"id": courseId});
@@ -201,81 +181,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
     return result;
   }
 
-  @override
-  Future userRegisterToCourse(dynamic variables) async {
-    final res = await http.mutation(userRegisterToCourseQuery, variables);
-    return res;
-  }
-
-  @override
-  Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
-      int limit,int offset) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final communityIdList =
-        await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
-    final payload = {
-      "limit": limit,
-      "offset": offset,
-      "where": {
-        "_and": [
-          {
-            "_or": [
-              {
-                "_and": [
-                  {
-                    "created_by_id": {"_eq": userId}
-                  },
-                  {
-                    "_or": [
-                      {
-                        "community_user_type": {
-                          "_in": ["COMMUNITY_USER", "BOTH"]
-                        }
-                      },
-                      {
-                        "community_user_type": {"_is_null": true}
-                      },
-                      if (communityIdList != [] && communityIdList.isNotEmpty)
-                        {
-                          "community_id": {"_in": communityIdList}
-                        }
-                    ]
-                  }
-                ]
-              },
-              {
-                "_and": [
-                  {
-                    "created_by_id": {"_neq": userId}
-                  },
-                  {
-                    "_or": [
-                      {
-                        "community_user_type": {"_eq": "BOTH"}
-                      },
-                      {
-                        "community_user_type": {"_is_null": true}
-                      },
-                      if (communityIdList != [] && communityIdList.isNotEmpty)
-                        {
-                          "community_id": {"_in": communityIdList}
-                        }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    };
-
-    final listingData =
-        await http.query(getAllListingDataQuery, variables: payload);
-
-    final result = CoursesListingData.fromJson(listingData);
-    return result.courses ?? [];
-  }
 
   @override
   Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
@@ -373,18 +278,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future updateRegUserStatus(variables) async {
     final res = await http.mutation(updateRegUserStatusQuery, variables);
-    return res;
-  }
-
-  @override
-  Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables) async {
-    final res = await http.mutation(updatedTheCourseCompletedStatusQuery, variables);
-    return res;
-  }
-  
-  @override
-  Future<dynamic> markQuizCompleted(variables) async{
-    final res = await http.mutation(quizSubmitQuery, variables);
     return res;
   }
 

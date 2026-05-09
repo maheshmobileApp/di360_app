@@ -2,8 +2,8 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/course_details_response.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CourseListingViewModel>(
+    return Consumer<MarketPlaceLearningHubViewModel>(
       builder: (context, vm, _) {
         final modules = vm.courseDetails?.courseRegisteredUsers?.first.moduleSection ?? [];
         if (modules.isEmpty) return const SizedBox.shrink();
@@ -46,7 +46,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSectionItem(BuildContext context, CourseListingViewModel vm, List<RegisterSectionList> sectionList) {
+  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<RegisterSectionList> sectionList) {
     if (sectionList.isEmpty) return const SizedBox.shrink();
     final topic = sectionList[vm.currentSectionIndex];
     return Column(

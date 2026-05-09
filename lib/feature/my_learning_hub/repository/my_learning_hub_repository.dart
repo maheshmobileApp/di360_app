@@ -1,4 +1,4 @@
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 
 abstract class MyLearningHubRepository {
   Future<List<CoursesListingDetails>?> getCoursesWithMyRegistrations(

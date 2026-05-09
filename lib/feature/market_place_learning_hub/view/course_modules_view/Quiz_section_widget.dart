@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/test_result_dialog.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/test_result_dialog.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +11,7 @@ class QuizSectionWidget extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CourseListingViewModel>(
+    return Consumer<MarketPlaceLearningHubViewModel>(
       builder: (context, vm, _) {
         final questions = vm.courseDetails?.questionSection ?? [];
         if (questions.isEmpty) return const SizedBox.shrink();
