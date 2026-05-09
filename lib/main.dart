@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/account/account_view_model/account_view_mo
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -155,6 +156,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CampaignViewModel()),
         ChangeNotifierProvider(create: (_) => TeamMembersViewModel()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
+        ChangeNotifierProvider(create: (_) => MarketPlaceLearningHubViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

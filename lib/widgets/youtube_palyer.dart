@@ -20,15 +20,38 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   @override
   void initState() {
     super.initState();
-    _videoId = YoutubePlayer.convertUrlToId(widget.youtubeUrl) ?? '';
+    _initController(widget.youtubeUrl);
+  }
+
+  @override
+  void didUpdateWidget(LazyYoutubePlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.youtubeUrl != widget.youtubeUrl) {
+      _controller?.removeListener(_playerListener);
+      _controller?.dispose();
+      _controller = null;
+      setState(() {
+        _isPlayerVisible = false;
+        _initController(widget.youtubeUrl);
+      });
+    }
+  }
+
+  void _initController(String url) {
+    _videoId = YoutubePlayer.convertUrlToId(url) ?? '';
     if (_videoId.isNotEmpty) {
       _controller = YoutubePlayerController(
         initialVideoId: _videoId,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-        ),
-      )..addListener(_fullScreenListener);
+        flags: const YoutubePlayerFlags(autoPlay: true),
+      )..addListener(_playerListener);
     }
+  }
+
+  void _playerListener() {
+    if (_controller?.value.playerState == PlayerState.ended) {
+      _controller?.pause();
+    }
+    _fullScreenListener();
   }
 
   void _fullScreenListener() {
@@ -47,7 +70,7 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   @override
   void dispose() {
     if (_videoId.isNotEmpty && _controller != null) {
-      _controller!.removeListener(_fullScreenListener);
+      _controller!.removeListener(_playerListener);
       _controller!.dispose();
     }
     SystemChrome.setPreferredOrientations([

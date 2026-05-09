@@ -20,7 +20,6 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_register_user_tab_
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
-import 'package:di360_flutter/feature/market_place_learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
