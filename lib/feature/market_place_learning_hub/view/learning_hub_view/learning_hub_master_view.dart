@@ -48,7 +48,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
 
   @override
   Widget build(BuildContext context) {
-    final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
+    final courseListingVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 249, 248, 248),
       appBar: AppBarWidget(
@@ -144,6 +145,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             onTap: () async {
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");
+                              await courseListingVM.getProfile();
 
                               // await courseListingVM.getCourseRegisteredUsers(
                               //     context, course.id ?? "");
@@ -156,33 +158,34 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                 scaffoldMessenger('Seats are sold out!');
                               }*/
                             },
-                            registerTap:// isRegistered ?
-                                 () async {
-                                    await courseListingVM.getCourseDetails(
-                                        context, course.id ?? "");
+                            registerTap: // isRegistered ?
+                                () async {
+                              await courseListingVM.getCourseDetails(
+                                  context, course.id ?? "");
+                              await courseListingVM.getProfile();
 
-                                    // await courseListingVM
-                                    //     .getCourseRegisteredUsers(
-                                    //         context, course.id ?? "");
+                              // await courseListingVM
+                              //     .getCourseRegisteredUsers(
+                              //         context, course.id ?? "");
 
-                                    // await courseListingVM.registerCourseHandler(
-                                    //     context, course.createdById ?? "");
-                                    navigationService.navigateTo(
-                                        RouteList.courseDetailScreen);
-                                  },
-                                // : () {
-                                //     // if (seats > 0) {
-                                //     courseListingVM
-                                //         .setCourseId(course.id ?? "");
-                                //     RegistrationUserForm.show(
-                                //         context,
-                                //         course.courseName ?? "",
-                                //         course.createdById ?? "",
-                                //         course.id ?? "");
-                                //     // } else {
-                                //     //   scaffoldMessenger('Seats are sold out!');
-                                //     // }
-                                //   },
+                              // await courseListingVM.registerCourseHandler(
+                              //     context, course.createdById ?? "");
+                              navigationService
+                                  .navigateTo(RouteList.courseDetailScreen);
+                            },
+                            // : () {
+                            //     // if (seats > 0) {
+                            //     courseListingVM
+                            //         .setCourseId(course.id ?? "");
+                            //     RegistrationUserForm.show(
+                            //         context,
+                            //         course.courseName ?? "",
+                            //         course.createdById ?? "",
+                            //         course.id ?? "");
+                            //     // } else {
+                            //     //   scaffoldMessenger('Seats are sold out!');
+                            //     // }
+                            //   },
                             type: course.type,
                           );
                         },

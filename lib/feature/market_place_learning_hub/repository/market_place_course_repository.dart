@@ -8,4 +8,5 @@ abstract class MarketPlaceCourseRepository {
   Future<dynamic> markQuizCompleted(dynamic variables);
   Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables);
   Future<dynamic> userRegisterToCourse(dynamic variables);
+  Future<dynamic> getProfileData();
 }

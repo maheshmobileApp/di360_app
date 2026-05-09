@@ -4,11 +4,13 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/get_all_listing_data_query.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/querys/get_profile_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/quiz_sumbit_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/update_section_status_query.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/repository/market_place_course_repository.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
   final HttpService http = HttpService();
@@ -108,10 +110,24 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
         await http.mutation(updatedTheCourseCompletedStatusQuery, variables);
     return res;
   }
-  
+
   @override
   Future userRegisterToCourse(dynamic variables) async {
     final res = await http.mutation(userRegisterToCourseQuery, variables);
+    return res;
+  }
+
+  @override
+  Future<dynamic> getProfileData() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await http.query(
+        type == UserRole.supplier.value
+            ? getSupplierProfile
+            : type == UserRole.professional.value
+                ? getProfessionalProfile
+                : getPracticeProfile,
+        variables: {"id": userId});
     return res;
   }
 }

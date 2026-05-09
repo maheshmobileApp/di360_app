@@ -66,7 +66,6 @@ query getSelectedCourse($id: uuid!, $userId: uuid!) {
       from_id
       status
       quiz_status
-      module_section
       __typename
     }
     course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {

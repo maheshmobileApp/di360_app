@@ -4,9 +4,13 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart' hide CourseRegisteredUsers;
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_practices_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_professional_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_supplier_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/repository/market_place_course_reposiotry_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixins {
@@ -423,6 +427,38 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
     });
     return res;
   }
+
+  Future<dynamic> getProfile() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final res = await repo.getProfileData();
+    if (res != null) {
+      _assignProfileData(type, res);
+    }
+    return res;
+  }
+
+  void _assignProfileData(String? type, dynamic res) {
+    String? firstName, lastName, email, phone;
+    if (type == UserRole.supplier.value) {
+      final profile = DentalSuppliersByPk.fromJson(res['dental_suppliers_by_pk'] ?? {});
+      firstName = profile.firstName; lastName = profile.lastName;
+      email = profile.email; phone = profile.phone;
+    } else if (type == UserRole.professional.value) {
+      final profile = DentalProfessionalsByPk.fromJson(res['dental_professionals_by_pk'] ?? {});
+      firstName = profile.firstName; lastName = profile.lastName;
+      email = profile.email; phone = profile.phone;
+    } else {
+      final profile = DentalPracticesByPk.fromJson(res['dental_practices_by_pk'] ?? {});
+      firstName = profile.firstName; lastName = profile.lastName;
+      email = profile.email; phone = profile.phone;
+    }
+    userFirstNameController.text = firstName ?? '';
+    userLastNameController.text = lastName ?? '';
+    userEmailController.text = email ?? '';
+    userPhoneNumberController.text = phone ?? '';
+    notifyListeners();
+  }
+
 
   clearAll() {
     userFirstNameController.text = "";
