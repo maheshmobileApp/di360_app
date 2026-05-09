@@ -1,5 +1,7 @@
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 
+import '../../home/model_class/dental_supplier_res.dart';
+
 class CoursesResponse {
   CoursesListingData? data;
 
@@ -103,6 +105,7 @@ class CoursesListingDetails {
   String? endTime;
   String? meetingLink;
   List<CourseRegisteredUsers>? courseRegisteredUsers;
+  DentalSupplier? dentalSupplier;
   CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
 
   String? communityUserType;
@@ -170,6 +173,7 @@ class CoursesListingDetails {
       this.endTime,
       this.meetingLink,
       this.courseRegisteredUsers,
+       this.dentalSupplier,
       this.courseRegisteredUsersAggregate,
       this.communityUserType,
       this.presenters});
@@ -276,6 +280,9 @@ class CoursesListingDetails {
     endTime = json['endTime'];
     meetingLink = json['meeting_link'];
     communityUserType = json['community_user_type'];
+     dentalSupplier = json['dental_supplier'] != null
+        ? new DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
     if (json['presenters'] != null) {
       presenters = <Presenters>[];
       json['presenters'].forEach((v) {
@@ -318,6 +325,9 @@ class CoursesListingDetails {
     data['max_subscribers'] = this.maxSubscribers;
     data['price_in_aud'] = this.priceInAud;
     data['price_in_usd'] = this.priceInUsd;
+    if (this.dentalSupplier != null) {
+      data['dental_supplier'] = this.dentalSupplier!.toJson();
+    }
     if (this.seoMetadata != null) {
       data['seo_metadata'] = this.seoMetadata!.toJson();
     }
@@ -394,19 +404,41 @@ class CoursesListingDetails {
   }
 }
 
+
 class CourseRegisteredUsers {
   String? courseId;
   String? fromId;
   String? status;
+  String? id;
+  bool? isCourseCompleted;
+  String? webinarStatus;
+  String? firstName;
+  String? lastName;
+  String? completedDate;
   String? sTypename;
 
   CourseRegisteredUsers(
-      {this.courseId, this.fromId, this.status, this.sTypename});
+      {this.courseId,
+      this.fromId,
+      this.status,
+      this.id,
+      this.isCourseCompleted,
+      this.webinarStatus,
+      this.firstName,
+      this.lastName,
+      this.completedDate,
+      this.sTypename});
 
   CourseRegisteredUsers.fromJson(Map<String, dynamic> json) {
     courseId = json['course_id'];
     fromId = json['from_id'];
     status = json['status'];
+    id = json['id'];
+    isCourseCompleted = json['is_course_completed'];
+    webinarStatus = json['webinar_status'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    completedDate = json['completed_date'];
     sTypename = json['__typename'];
   }
 
@@ -415,6 +447,12 @@ class CourseRegisteredUsers {
     data['course_id'] = this.courseId;
     data['from_id'] = this.fromId;
     data['status'] = this.status;
+     data['id'] = this.id;
+    data['is_course_completed'] = this.isCourseCompleted;
+    data['webinar_status'] = this.webinarStatus;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['completed_date'] = this.completedDate;
     data['__typename'] = this.sTypename;
     return data;
   }

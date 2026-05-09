@@ -76,6 +76,16 @@ static String formatDateTime(String dateTimeString) {
   }
 }
 
+static String formatTwoDateTime(String dateTimeString) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final localDateTime = dateTime.toLocal();
+    return DateFormat('yyyy-MM-dd hh:mm:ss a').format(localDateTime);
+  } catch (e) {
+    return dateTimeString; // Return original if parsing fails
+  }
+}
+
 static String formatDate(String dateTimeString) {
   try {
     final dateTime = DateTime.parse(dateTimeString);

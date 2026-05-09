@@ -2,7 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
-import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,18 +12,20 @@ import 'package:url_launcher/url_launcher.dart';
 class RegisterCourseCard extends StatelessWidget {
   final VoidCallback? onCardTap;
   final VoidCallback? onViewCourseTap;
+  final VoidCallback? onDownloadTap;
   final CoursesListingDetails courseData;
 
   const RegisterCourseCard({
     super.key,
     this.onCardTap,
     this.onViewCourseTap,
+    this.onDownloadTap,
     required this.courseData,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String time = _getShortTime(courseData.createdAt ?? "") ?? '';
+    final String time = DateFormatUtils.formatTwoDateTime(courseData.createdAt ?? "");
     final courseStatus = courseData.courseRegisteredUsers?.isNotEmpty == true
         ? courseData.courseRegisteredUsers?.first.status ?? ""
         : "";
@@ -61,10 +63,7 @@ class RegisterCourseCard extends StatelessWidget {
               children: [
                 if (courseStatus == "COMPLETED")
                   GestureDetector(
-                    onTap: () {
-                      //download certificate functionality to be added
-                      scaffoldMessenger("Download Certificate functionality coming soon!");
-                    },
+                    onTap: onDownloadTap,
                     child: Row(
                       children: [
                         _courseStatusWidget("Download Certificate", AppColors.borderColor),
@@ -128,7 +127,7 @@ class RegisterCourseCard extends StatelessWidget {
                     width: 50,
                     height: 50,
                     imageUrl: profilePic,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     errorWidget: Image.asset(ImageConst.prfImg)),
               ),
             ),
@@ -304,7 +303,7 @@ class RegisterCourseCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
-        time,
+        "Posted on : $time",
         textAlign: TextAlign.right,
         style: TextStyles.semiBold(
             fontSize: 10, color: Color.fromRGBO(255, 112, 0, 1)),

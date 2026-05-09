@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub
 import 'package:di360_flutter/feature/my_learning_hub/widgets/filter_section_widget.dart';
 import 'package:di360_flutter/feature/my_learning_hub/widgets/register_course_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -59,12 +60,20 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
         appBar: AppBarWidget(
             logo: false,
             title: 'My Learning Hub',
-            searchAction: () =>
-                myLearningHubVM.setSearchBar(!myLearningHubVM.searchBarOpen),
+            searchBarOpen: myLearningHubVM.searchBarOpen,
+            searchAction: () {
+              final isOpening = !myLearningHubVM.searchBarOpen;
+              myLearningHubVM.setSearchBar(isOpening);
+              /* if (isOpening) {
+                Future.microtask(() => _searchFocusNode.requestFocus());
+              }*/
+            },
             filterWidget: GestureDetector(
-                onTap: () {
-                  filterVM.fetchCourseCategory(context);
-                  filterVM.fetchCourseType(context);
+                onTap: () async {
+                  Loaders.circularShowLoader(context);
+                  await filterVM.fetchCourseCategory(context);
+                  await filterVM.fetchCourseType(context);
+                  Loaders.circularHideLoader(context);
 
                   showModalBottomSheet(
                     context: context,
@@ -72,17 +81,15 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                     backgroundColor: Colors.transparent,
                     builder: (context) => FilterBottomSheet(
                       onApply: () {
-                        myLearningHubVM.getCoursesWithMyRegistrations(
-                            context,
-                            type : filterVM.selectedOptions['Filter by Type'],
+                        myLearningHubVM.getCoursesWithMyRegistrations(context,
+                            type: filterVM.selectedOptions['Filter by Type'],
                             category: filterVM.selectedOptions['Category'],
                             date: filterVM.selectedDate.toString());
                         navigationService.goBack();
                       },
                       onClear: () {
                         filterVM.clearAll();
-                        myLearningHubVM.getCoursesWithMyRegistrations(
-                            context,
+                        myLearningHubVM.getCoursesWithMyRegistrations(context,
                             type: filterVM.selectedOptions['Filter by Type'],
                             category: filterVM.selectedOptions['Category'],
                             date: filterVM.selectedDate.toString());
@@ -146,7 +153,10 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                                 myLearningHubVM.myRegisteredCourses[index];
                             return RegisterCourseCard(
                               courseData: courseData,
-                              onViewCourseTap: () async{
+                              onDownloadTap: () {
+                                myLearningHubVM.certificateDownload(context, courseData);
+                              },
+                              onViewCourseTap: () async {
                                 await courseListingVM.getCourseDetails(
                                     context, courseData.id ?? "");
                                 navigationService.push(CourseDetailsView());
