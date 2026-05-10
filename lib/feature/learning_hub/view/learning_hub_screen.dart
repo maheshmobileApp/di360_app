@@ -3,13 +3,14 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/courses_listing_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -56,6 +57,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
   Widget build(BuildContext context) {
     final courseListingVM = Provider.of<CourseListingViewModel>(context);
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
+    final marketPlaceLearningHubVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
 
     var floatingActionButton = FloatingActionButton(
       backgroundColor: AppColors.primaryColor,
@@ -94,7 +97,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
               ),
             courseStatusWidget(courseListingVM),
             Divider(),
-            coursesListWidget(courseListingVM, newCourseVM),
+            coursesListWidget(
+                courseListingVM, newCourseVM, marketPlaceLearningHubVM),
           ],
         ),
         floatingActionButton: floatingActionButton);
@@ -158,7 +162,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
   }
 
   Expanded coursesListWidget(
-      CourseListingViewModel courseListingVM, NewCourseViewModel newCourseVM) {
+      CourseListingViewModel courseListingVM,
+      NewCourseViewModel newCourseVM,
+      MarketPlaceLearningHubViewModel marketPlaceLearningHubVM) {
     return Expanded(
       child: courseListingVM.coursesListingList.isEmpty
           ? Center(
@@ -208,7 +214,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                     await courseListingVM.registerCourseHandler(
                         context, course.createdById ?? "");*/
 
-                    await courseListingVM.getCourseDetails(
+                    await marketPlaceLearningHubVM.getCourseDetails(
                       context,
                       course.id ?? "",
                     );
@@ -235,7 +241,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   onMenuAction: (action, id) async {
                     switch (action) {
                       case "Preview":
-                        await courseListingVM.getCourseDetails(
+                        await marketPlaceLearningHubVM.getCourseDetails(
                             context, course.id ?? "");
 
                         navigationService.navigateTo(
@@ -244,9 +250,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
                         break;
                       case "Edit":
-                        await courseListingVM.getCourseDetails(
+                        await marketPlaceLearningHubVM.getCourseDetails(
                             context, course.id ?? "");
-                        if (courseListingVM.courseDetails == null) {
+                        if (marketPlaceLearningHubVM.courseDetails == null) {
                           scaffoldMessenger('Course details not found');
                           break;
                         }
@@ -261,9 +267,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         // await loadCourseData(
                         //     newCourseVM, courseListingVM.courseDetails);
                         Loaders.circularHideLoader(context);
-                        navigationService.navigateTo(
-                          RouteList.newCourseScreen
-                        );
+                        navigationService.navigateTo(RouteList.newCourseScreen);
 
                         break;
                       case "Delete":
@@ -285,9 +289,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                             context, course.id ?? "", "ACTIVE");
                         break;
                       case "Re-Listing":
-                        await courseListingVM.getCourseDetails(
+                        await marketPlaceLearningHubVM.getCourseDetails(
                             context, course.id ?? "");
-                        if (courseListingVM.courseDetails == null) {
+                        if (marketPlaceLearningHubVM.courseDetails == null) {
                           scaffoldMessenger('Course details not found');
                           break;
                         }
@@ -489,8 +493,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
         newCourseVM.addressController.text = course.address as String;
       } else if (course.address is Map<String, dynamic>) {
         final addr = course.address as Map<String, dynamic>;
-        newCourseVM.addressController.text =
-            "${addr['country']}";
+        newCourseVM.addressController.text = "${addr['country']}";
       } else {
         newCourseVM.addressController.text = "";
       }

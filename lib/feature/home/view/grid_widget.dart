@@ -6,8 +6,8 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -62,11 +62,11 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       await navigationService.navigateTo(RouteList.directory);
     } else if (title == 'Learning Hub') {
       Loaders.circularShowLoader(context);
-      context.read<CourseListingViewModel>().searchBarOpen = false;
-      context.read<CourseListingViewModel>().searchController.text = "";
+      context.read<MarketPlaceLearningHubViewModel>().searchBarOpen = false;
+      context.read<MarketPlaceLearningHubViewModel>().searchController.text = "";
       context.read<NewCourseViewModel>().fetchCourseCategory();
       context.read<NewCourseViewModel>().fetchCourseType();
-      await context.read<CourseListingViewModel>().getAllLearningHubData(context);
+      await context.read<MarketPlaceLearningHubViewModel>().getAllLearningHubData(context);
       Loaders.circularHideLoader(context);
       await navigationService.navigateTo(RouteList.learningHubMasterView);
     }
