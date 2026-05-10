@@ -5,6 +5,7 @@ query getSelectedCourse($id: uuid!, $userId: uuid!) {
     course_name
     is_featured
     number_of_seats
+    is_lifetime
     address
     attachments
     course_event_info
@@ -12,6 +13,7 @@ query getSelectedCourse($id: uuid!, $userId: uuid!) {
     seo_metadata
     sponsor_by_image
     afterwards_price
+    course_access_duration
     cpd_points
     early_bird_price
     community_id
@@ -60,12 +62,68 @@ query getSelectedCourse($id: uuid!, $userId: uuid!) {
     instagram_link
     linkedin_link
     youtube_link
-    course_registered_users(where: {from_id: {_eq: $userId}}) {
+    module_details(order_by: {module_position: asc}) {
+      id
+      module_name
+      expanded
+      module_id
+      course_id
+      module_position
+      section_details(order_by: {section_position: asc}) {
+        id
+        course_topic
+        module_id
+        description
+        attachment
+        expanded
+        image
+        status
+        youtube_link
+        section_position
+        __typename
+      }
+      __typename
+    }
+    quiz_details(order_by: {quiz_position: asc}) {
+      id
+      question
+      type
+      quiz_id
+      course_id
+      quiz_position
+      option_details(order_by: {option_position: asc}) {
+        id
+        quiz_id
+        isCorrect
+        option_position
+        text
+        __typename
+      }
+      __typename
+    }
+    course_registered_users(
+      where: {from_id: {_eq: $userId}, status: {_neq: "CANCELLED"}}
+    ) {
       id
       course_id
       from_id
       status
       quiz_status
+      quiz_answers
+      registered_module_details(
+        order_by: {module_position: asc}
+        where: {user_id: {_eq: $userId}, course_id: {_eq: $id}}
+      ) {
+        id
+        module_name
+        expanded
+        module_id
+        user_id
+        section_status
+        section_id
+        module_position
+        __typename
+      }
       __typename
     }
     course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {

@@ -17,7 +17,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     return Consumer<MarketPlaceLearningHubViewModel>(
       builder: (context, vm, _) {
-        final modules = vm.courseDetails?.courseRegisteredUsers?.first.moduleSection ?? [];
+        final modules = vm.courseDetails?.moduleSection ?? [];
         if (modules.isEmpty) return const SizedBox.shrink();
         final section = modules[vm.currentModuleIndex];
         return Padding(
@@ -46,7 +46,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<RegisterSectionList> sectionList) {
+  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<SectionList> sectionList) {
     if (sectionList.isEmpty) return const SizedBox.shrink();
     final topic = sectionList[vm.currentSectionIndex];
     return Column(
@@ -72,10 +72,10 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
           onTap2: vm.currentSectionIndex < sectionList.length - 1 ? vm.nextSection : null,
         ),
         addVertical(10),
-        if (topic.description != null && topic.description != '') ...[
+        if (topic.moduleDescription != null && topic.moduleDescription != '') ...[
           Text('Description: ', style: TextStyles.regular1(color: AppColors.black)),
           addVertical(5),
-          HtmlWidget(topic.description ?? '',
+          HtmlWidget(topic.moduleDescription ?? '',
               textStyle: TextStyles.regular4(color: AppColors.black)),
         ],
         if (topic.image != null) ...[

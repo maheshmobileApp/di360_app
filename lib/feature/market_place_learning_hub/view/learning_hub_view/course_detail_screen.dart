@@ -32,7 +32,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
+    final courseListingVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
 
     if (courseListingVM.courseDetails == null) {
       return const Scaffold(
@@ -104,7 +105,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                       context,
                                       courseDetails?.courseName ?? "",
                                       courseDetails?.createdById ?? "",
-                                      courseDetails?.id ?? "");
+                                      courseDetails?.id ?? "",
+                                      courseDetails?.registerLink ?? "");
                                 }
                               : () {
                                   if (seats > 0) {
@@ -114,7 +116,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         context,
                                         courseDetails?.courseName ?? "",
                                         courseDetails?.createdById ?? "",
-                                        courseDetails?.id ?? "");
+                                        courseDetails?.id ?? "",
+                                        courseDetails?.registerLink ?? "");
                                   } else {
                                     scaffoldMessenger('Seats are sold out!');
                                   }

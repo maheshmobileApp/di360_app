@@ -55,7 +55,7 @@ class QuizSectionWidget extends StatelessWidget with BaseContextHelpers {
                 // Options
                 ...List.generate(q.options?.length ?? 0, (i) {
                   final option = q.options![i];
-                  if (q.type == 'single') {
+                  if (q.questionType == 'single') {
                     return RadioListTile<int>(
                         value: i,
                         groupValue: vm.selectedSingleAnswer,

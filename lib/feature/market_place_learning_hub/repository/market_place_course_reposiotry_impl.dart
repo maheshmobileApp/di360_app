@@ -80,7 +80,7 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
 
     final listingData =
         await http.query(getAllListingDataQuery, variables: payload);
-
+    if (listingData is Map && listingData.containsKey('_error')) return [];
     final result = CoursesListingData.fromJson(listingData);
     return result.courses ?? [];
   }
@@ -94,6 +94,7 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
     };
     final courseTypeData =
         await http.query(showCourseById, variables: variables);
+    if (courseTypeData is Map && courseTypeData.containsKey('_error')) return null;
     final result = CourseDetailData.fromJson(courseTypeData);
     return result.coursesByPk;
   }
@@ -128,6 +129,7 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
                 ? getProfessionalProfile
                 : getPracticeProfile,
         variables: {"id": userId});
+    if (res is Map && res.containsKey('_error')) return null;
     return res;
   }
 }

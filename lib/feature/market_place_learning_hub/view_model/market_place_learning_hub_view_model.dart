@@ -1,7 +1,8 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart' hide CourseRegisteredUsers;
+import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
+    hide CourseRegisteredUsers;
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_practices_response.dart';
@@ -13,7 +14,8 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
-class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixins {
+class MarketPlaceLearningHubViewModel extends ChangeNotifier
+    with ValidationMixins {
   final MarketPlaceCourseRepositoryImpl repo =
       MarketPlaceCourseRepositoryImpl();
 
@@ -52,6 +54,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
     courseId = value;
     notifyListeners();
   }
+
   String? validateEmailField(String? _) =>
       validateEmail(userEmailController.text);
   String? validatePhoneNum(String? _) =>
@@ -69,7 +72,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
 
   void nextModule() {
     final modules =
-        courseDetails?.courseRegisteredUsers?.firstOrNull?.moduleSection;
+        courseDetails?.moduleSection;
     final total = modules?.length ?? 0;
     final currentSections = modules?[currentModuleIndex].sectionList ?? [];
     final allCompleted = currentSections.every((s) => s.status == 'Completed');
@@ -93,8 +96,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
   }
 
   void nextSection() {
-    final sections = courseDetails?.courseRegisteredUsers?.firstOrNull
-        ?.moduleSection?[currentModuleIndex].sectionList;
+    final sections = courseDetails?.moduleSection?[currentModuleIndex].sectionList;
     final current = sections?[currentSectionIndex];
     if (current?.status == 'Completed') {
       if (currentSectionIndex < (sections?.length ?? 1) - 1) {
@@ -162,7 +164,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
     final options = question.options ?? [];
     bool isCorrect = false;
 
-    if (question.type == 'single') {
+    if (question.questionType == 'single') {
       if (selectedSingleAnswer == null) {
         scaffoldMessenger("Please select an answer");
         return;
@@ -206,7 +208,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
       final options = q.options ?? [];
       final answer = quizAnswers[i];
       bool isCorrect = false;
-      if (q.type == 'single') {
+      if (q.questionType == 'single') {
         isCorrect = options[answer as int].isCorrect == true;
       } else {
         final selected = answer as Set<int>;
@@ -280,24 +282,25 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
 
   Future<void> userRegisterToCourse(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
 
     final res = await repo.userRegisterToCourse({
       "fields": {
         "course_id": courseId,
         "from_id": userId,
-        "type": "SUPPLIER",
+        "type": type,
         "first_name": userFirstNameController.text,
         "last_name": userLastNameController.text,
         "phone_number": userPhoneNumberController.text,
         "email": userEmailController.text,
         "description": userDescriptionController.text,
-        "status": "PENDING",
+        "status": (courseDetails?.afterwardsPrice == 0 ||
+                courseDetails?.afterwardsPrice == null)
+            ? "APPROVED"
+            : "PENDING",
         "quiz_status": "PENDING",
-        "module_section":
-            courseDetails?.moduleSection?.map((e) => e.toJson()).toList(),
-        "question_section":
-            courseDetails?.questionSection?.map((e) => e.toJson()).toList()
+        "course_valid_till": 1
       }
     });
     if (res != null) {
@@ -309,10 +312,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
     notifyListeners();
   }
 
-   Future<void> registerCourseHandler(
-    BuildContext context,
-    String createdById
-  ) async {
+  Future<void> registerCourseHandler(
+      BuildContext context, String createdById) async {
     final isAlreadyRegistered = registeredUsers?.courseRegisteredUsers?.any(
       (user) => user.fromId == createdById,
     );
@@ -331,7 +332,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
     quizAnswerCorrect = null;
   }
 
-   bool isRegisteredCheck(List<CourseRegisteredUsers>? courseRegisteredUsers) {
+  bool isRegisteredCheck(List<CourseRegisteredUsers>? courseRegisteredUsers) {
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
   }
@@ -343,7 +344,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
   }
 
   Future<void> completeAndContinue(BuildContext context) async {
-    final regUser = courseDetails?.courseRegisteredUsers?.firstOrNull;
+    final regUser = courseDetails;
     if (regUser?.id == null || regUser?.moduleSection == null) return;
 
     final section = regUser!
@@ -366,13 +367,13 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
         .map((entry) => {
               "expanded":
                   entry.key == currentModuleIndex ? true : entry.value.expanded,
-              "id": entry.value.id,
+              "id": entry.value.moduleId,
               "module_name": entry.value.moduleName,
               "section_list": (entry.value.sectionList ?? [])
                   .map((s) => {
                         "attachment": s.attachment,
                         "course_topic": s.courseTopic,
-                        "description": s.description,
+                        "description": s.moduleDescription,
                         "expanded": s.expanded,
                         "id": s.id,
                         "image": s.image,
@@ -410,7 +411,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
 
   bool areAllSectionsCompleted() {
     final modules =
-        courseDetails?.courseRegisteredUsers?.firstOrNull?.moduleSection;
+        courseDetails?.moduleSection;
     if (modules == null || modules.isEmpty) return false;
     return modules.every((module) =>
         (module.sectionList ?? []).every((s) => s.status == 'Completed'));
@@ -440,17 +441,26 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
   void _assignProfileData(String? type, dynamic res) {
     String? firstName, lastName, email, phone;
     if (type == UserRole.supplier.value) {
-      final profile = DentalSuppliersByPk.fromJson(res['dental_suppliers_by_pk'] ?? {});
-      firstName = profile.firstName; lastName = profile.lastName;
-      email = profile.email; phone = profile.phone;
+      final profile =
+          DentalSuppliersByPk.fromJson(res['dental_suppliers_by_pk'] ?? {});
+      firstName = profile.firstName;
+      lastName = profile.lastName;
+      email = profile.email;
+      phone = profile.phone;
     } else if (type == UserRole.professional.value) {
-      final profile = DentalProfessionalsByPk.fromJson(res['dental_professionals_by_pk'] ?? {});
-      firstName = profile.firstName; lastName = profile.lastName;
-      email = profile.email; phone = profile.phone;
+      final profile = DentalProfessionalsByPk.fromJson(
+          res['dental_professionals_by_pk'] ?? {});
+      firstName = profile.firstName;
+      lastName = profile.lastName;
+      email = profile.email;
+      phone = profile.phone;
     } else {
-      final profile = DentalPracticesByPk.fromJson(res['dental_practices_by_pk'] ?? {});
-      firstName = profile.firstName; lastName = profile.lastName;
-      email = profile.email; phone = profile.phone;
+      final profile =
+          DentalPracticesByPk.fromJson(res['dental_practices_by_pk'] ?? {});
+      firstName = profile.firstName;
+      lastName = profile.lastName;
+      email = profile.email;
+      phone = profile.phone;
     }
     userFirstNameController.text = firstName ?? '';
     userLastNameController.text = lastName ?? '';
@@ -458,7 +468,6 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier with ValidationMixi
     userPhoneNumberController.text = phone ?? '';
     notifyListeners();
   }
-
 
   clearAll() {
     userFirstNameController.text = "";

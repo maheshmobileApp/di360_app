@@ -12,7 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class RegistrationUserForm {
   static void show(BuildContext context, String courseName, String createdById,
-      String courseId) {
+      String courseId, String registrationLink) {
     final formKey = GlobalKey<FormState>();
     final courseVM =
         Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false);
@@ -47,8 +47,8 @@ class RegistrationUserForm {
                               children: [
                                 Text(
                                   "Submit and Register for",
-                                  style:
-                                      TextStyles.medium4(color: AppColors.black),
+                                  style: TextStyles.medium4(
+                                      color: AppColors.black),
                                 ),
                                 GestureDetector(
                                     onTap: () {
@@ -59,8 +59,8 @@ class RegistrationUserForm {
                               ]),
                           Text(
                             courseName,
-                            style:
-                                TextStyles.medium3(color: AppColors.primaryColor),
+                            style: TextStyles.medium3(
+                                color: AppColors.primaryColor),
                           ),
                           const SizedBox(height: 16),
                           InputTextField(
@@ -127,11 +127,10 @@ class RegistrationUserForm {
                                     context,
                                     "You are being redirected to the registration link",
                                     onBack: () async {
-                                      final url = Uri.parse(
-                                        "https://docs.google.com/forms/d/1j__p12VOITVXFpxTYQVr8XCMhzp-b5QqaJo5Pc_mdW8/viewform?edit_requested=true",
-                                      );
+                                      final url = Uri.parse(registrationLink);
                                       if (!await launchUrl(url,
-                                          mode: LaunchMode.externalApplication)) {
+                                          mode:
+                                              LaunchMode.externalApplication)) {
                                         throw "Could not launch $url";
                                       }
                                       navigationService.goBack();
