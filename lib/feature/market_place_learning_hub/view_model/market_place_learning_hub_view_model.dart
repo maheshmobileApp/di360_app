@@ -70,50 +70,58 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  void nextModule() {
-    final modules =
-        courseDetails?.moduleSection;
-    final total = modules?.length ?? 0;
-    final currentSections = modules?[currentModuleIndex].sectionList ?? [];
-    final allCompleted = currentSections.every((s) => s.status == 'Completed');
-    if (!allCompleted) {
-      scaffoldMessenger("Please complete all sections in this module");
-      return;
+  /// Flat list of all sections across all modules in order
+  List<SectionList> get allSections =>
+      courseDetails?.moduleSection?.expand((m) => m.sectionList ?? <SectionList>[]).toList() ?? [];
+
+  /// Resolves [currentModuleIndex] from the flat [currentSectionIndex]
+  void _syncModuleIndex() {
+    final modules = courseDetails?.moduleSection ?? [];
+    int count = 0;
+    for (int i = 0; i < modules.length; i++) {
+      count += modules[i].sectionList?.length ?? 0;
+      if (currentSectionIndex < count) {
+        currentModuleIndex = i;
+        return;
+      }
     }
-    if (currentModuleIndex < total - 1) {
-      currentModuleIndex++;
-      currentSectionIndex = 0;
+  }
+
+  void nextModule() {
+    if (currentSectionIndex < allSections.length - 1) {
+      currentSectionIndex++;
+      _syncModuleIndex();
       notifyListeners();
     }
   }
 
   void previousModule() {
-    if (currentModuleIndex > 0) {
-      currentModuleIndex--;
-      currentSectionIndex = 0;
-      notifyListeners();
-    }
-  }
-
-  void nextSection() {
-    final sections = courseDetails?.moduleSection?[currentModuleIndex].sectionList;
-    final current = sections?[currentSectionIndex];
-    if (current?.status == 'Completed') {
-      if (currentSectionIndex < (sections?.length ?? 1) - 1) {
-        currentSectionIndex++;
-        notifyListeners();
-      }
-    } else {
-      scaffoldMessenger("Please complete the this section");
-    }
-  }
-
-  void previousSection() {
     if (currentSectionIndex > 0) {
       currentSectionIndex--;
+      _syncModuleIndex();
       notifyListeners();
     }
   }
+
+  // void nextSection() {
+  //   final sections = courseDetails?.moduleSection?[currentModuleIndex].sectionList;
+  //   final current = sections?[currentSectionIndex];
+  //   if (current?.status == 'Completed') {
+  //     if (currentSectionIndex < (sections?.length ?? 1) - 1) {
+  //       currentSectionIndex++;
+  //       notifyListeners();
+  //     }
+  //   } else {
+  //     scaffoldMessenger("Please complete the this section");
+  //   }
+  // }
+
+  // void previousSection() {
+  //   if (currentSectionIndex > 0) {
+  //     currentSectionIndex--;
+  //     notifyListeners();
+  //   }
+  // }
 
   void nextQuiz() {
     final total = courseDetails?.questionSection?.length ?? 0;

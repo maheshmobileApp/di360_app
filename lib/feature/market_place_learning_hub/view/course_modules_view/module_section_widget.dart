@@ -20,6 +20,10 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
         final modules = vm.courseDetails?.moduleSection ?? [];
         if (modules.isEmpty) return const SizedBox.shrink();
         final section = modules[vm.currentModuleIndex];
+        final prevSectionsCount = modules
+            .sublist(0, vm.currentModuleIndex)
+            .fold<int>(0, (sum, m) => sum + (m.sectionList?.length ?? 0));
+        final localSectionIndex = vm.currentSectionIndex - prevSectionsCount;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
@@ -32,13 +36,13 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
               _navButtons(
                 label1: 'Previous',
                 icon1: Icons.arrow_back_ios,
-                onTap1: vm.currentModuleIndex > 0 ? vm.previousModule : null,
+                onTap1: vm.currentSectionIndex > 0 ? vm.previousModule : null,
                 label2: 'Next',
                 icon2: Icons.arrow_forward_ios,
-                onTap2: vm.currentModuleIndex < modules.length - 1 ? vm.nextModule : null,
+                onTap2: vm.currentSectionIndex < vm.allSections.length - 1 ? vm.nextModule : null,
               ),
               addVertical(10),
-              _buildSectionItem(context, vm, section.sectionList ?? []),
+              _buildSectionItem(context, vm, section.sectionList ?? [], localSectionIndex),
             ],
           ),
         );
@@ -46,9 +50,9 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<SectionList> sectionList) {
+  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<SectionList> sectionList, int localSectionIndex) {
     if (sectionList.isEmpty) return const SizedBox.shrink();
-    final topic = sectionList[vm.currentSectionIndex];
+    final topic = sectionList[localSectionIndex.clamp(0, sectionList.length - 1)];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,15 +66,15 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
             child: LazyYoutubePlayer(youtubeUrl: topic.youtubeLink ?? ''),
           ),
         ),
-        addVertical(8),
-        _navButtons(
-          label1: 'Previous',
-          icon1: Icons.arrow_back_ios,
-          onTap1: vm.currentSectionIndex > 0 ? vm.previousSection : null,
-          label2: 'Next',
-          icon2: Icons.arrow_forward_ios,
-          onTap2: vm.currentSectionIndex < sectionList.length - 1 ? vm.nextSection : null,
-        ),
+        // addVertical(8),
+        // _navButtons(
+        //   label1: 'Previous',
+        //   icon1: Icons.arrow_back_ios,
+        //   onTap1: vm.currentSectionIndex > 0 ? vm.previousSection : null,
+        //   label2: 'Next',
+        //   icon2: Icons.arrow_forward_ios,
+        //   onTap2: vm.currentSectionIndex < sectionList.length - 1 ? vm.nextSection : null,
+        // ),
         addVertical(10),
         if (topic.moduleDescription != null && topic.moduleDescription != '') ...[
           Text('Description: ', style: TextStyles.regular1(color: AppColors.black)),
