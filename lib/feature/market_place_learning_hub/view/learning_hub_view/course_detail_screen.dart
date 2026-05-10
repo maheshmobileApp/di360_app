@@ -1,9 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/course_details_view.dart';
-import 'package:di360_flutter/feature/learning_hub/view/registration_user_form.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_description_widget.dart';
@@ -11,12 +8,16 @@ import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widg
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/course_details_view.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/widgets/registration_user_form.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
   const CourseDetailScreen({super.key});
@@ -32,7 +33,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final courseListingVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
 
     if (courseListingVM.courseDetails == null) {
       return const Scaffold(
@@ -88,10 +90,47 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           courseDetails?.earlyBirdPrice?.toString() ?? "0",
                       oldPrice:
                           courseDetails?.afterwardsPrice?.toString() ?? "0",
+                      courseRegisterStatus: courseDetails
+                          ?.courseRegisteredUsers?.firstOrNull?.status,
                       onPressed: isRegistered
                           ? courseDetails?.type == 'Online Academy'
-                              ? () {
-                                  navigationService.push(CourseDetailsView());
+                              ? () async {
+                                  courseDetails?.courseRegisteredUsers
+                                              ?.firstOrNull?.status ==
+                                          'APPROVED'
+                                      ? navigationService
+                                          .push(CourseDetailsView())
+                                      : showAlertMessage(
+                                          context,
+                                          'Thank you for your registration. We are currently awaiting payment confirmation from the administrator. You will be notified once your enrollment is confirmed.',
+                                          yes: 'View Registration Link',
+                                          onBack: () async {
+                                            final raw = courseDetails
+                                                    ?.registerLink
+                                                    ?.trim() ??
+                                                '';
+                                            if (raw.isEmpty) {
+                                              navigationService.goBack();
+                                              return;
+                                            }
+                                            final urlStr = raw.startsWith(
+                                                        'http://') ||
+                                                    raw.startsWith('https://')
+                                                ? raw
+                                                : 'https://$raw';
+                                            final url = Uri.tryParse(urlStr);
+                                            if (url != null &&
+                                                await canLaunchUrl(url)) {
+                                              await launchUrl(url,
+                                                  mode: LaunchMode
+                                                      .externalApplication);
+                                            } else {
+                                              scaffoldMessenger(
+                                                  'Could not open registration link');
+                                            }
+                                            navigationService.goBack();
+                                          },
+                                        );
                                 }
                               : () {
                                   scaffoldMessenger("Already Registered");
@@ -104,7 +143,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                       context,
                                       courseDetails?.courseName ?? "",
                                       courseDetails?.createdById ?? "",
-                                      courseDetails?.id ?? "");
+                                      courseDetails?.id ?? "",
+                                      courseDetails?.registerLink ?? "");
                                 }
                               : () {
                                   if (seats > 0) {
@@ -114,7 +154,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         context,
                                         courseDetails?.courseName ?? "",
                                         courseDetails?.createdById ?? "",
-                                        courseDetails?.id ?? "");
+                                        courseDetails?.id ?? "",
+                                        courseDetails?.registerLink ?? "");
                                   } else {
                                     scaffoldMessenger('Seats are sold out!');
                                   }

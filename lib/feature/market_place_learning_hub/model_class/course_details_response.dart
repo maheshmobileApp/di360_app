@@ -36,13 +36,14 @@ class CourseDetailData {
     }
     return data;
   }
-}
+}     
 
 class CoursesByPk {
   String? id;
   String? courseName;
   bool? isFeatured;
   int? numberOfSeats;
+  bool? isLifetime;
   List<Address>? address;
   Attachments? attachments;
   List<CourseEventInfo>? courseEventInfo;
@@ -50,6 +51,7 @@ class CoursesByPk {
   SeoMetadata? seoMetadata;
   List<SponsorByImage>? sponsorByImage;
   int? afterwardsPrice;
+  int? courseAccessDuration;
   int? cpdPoints;
   dynamic earlyBirdPrice;
   String? communityId;
@@ -98,6 +100,8 @@ class CoursesByPk {
   String? instagramLink;
   String? linkedinLink;
   String? youtubeLink;
+  List<ModuleDetails>? moduleDetails;
+  List<QuizDetails>? quizDetails;
   List<CourseDetailRegisteredUsers>? courseRegisteredUsers;
   CourseRegisteredUsersAggregate? courseRegisteredUsersAggregate;
   String? sTypename;
@@ -107,6 +111,8 @@ class CoursesByPk {
       this.courseName,
       this.isFeatured,
       this.numberOfSeats,
+      this.isLifetime,
+      this.courseAccessDuration,
       this.address,
       this.attachments,
       this.courseEventInfo,
@@ -162,6 +168,8 @@ class CoursesByPk {
       this.instagramLink,
       this.linkedinLink,
       this.youtubeLink,
+      this.moduleDetails,
+      this.quizDetails,
       this.courseRegisteredUsers,
       this.courseRegisteredUsersAggregate,
       this.sTypename});
@@ -171,6 +179,8 @@ class CoursesByPk {
     courseName = json['course_name'];
     isFeatured = json['is_featured'];
     numberOfSeats = (json['number_of_seats'] as num?)?.toInt();
+    isLifetime = json['is_lifetime'];
+    courseAccessDuration = (json['course_access_duration'] as num?)?.toInt();
     if (json['address'] != null) {
       address = <Address>[];
       json['address'].forEach((v) {
@@ -271,6 +281,18 @@ class CoursesByPk {
     instagramLink = json['instagram_link'];
     linkedinLink = json['linkedin_link'];
     youtubeLink = json['youtube_link'];
+    if (json['module_details'] != null) {
+      moduleDetails = <ModuleDetails>[];
+      json['module_details'].forEach((v) {
+        moduleDetails!.add(new ModuleDetails.fromJson(v));
+      });
+    }
+    if (json['quiz_details'] != null) {
+      quizDetails = <QuizDetails>[];
+      json['quiz_details'].forEach((v) {
+        quizDetails!.add(new QuizDetails.fromJson(v));
+      });
+    }
     if (json['course_registered_users'] != null) {
       courseRegisteredUsers = <CourseDetailRegisteredUsers>[];
       json['course_registered_users'].forEach((v) {
@@ -371,6 +393,13 @@ class CoursesByPk {
     data['instagram_link'] = this.instagramLink;
     data['linkedin_link'] = this.linkedinLink;
     data['youtube_link'] = this.youtubeLink;
+    if (this.moduleDetails != null) {
+      data['module_details'] =
+          this.moduleDetails!.map((v) => v.toJson()).toList();
+    }
+    if (this.quizDetails != null) {
+      data['quiz_details'] = this.quizDetails!.map((v) => v.toJson()).toList();
+    }
     if (this.courseRegisteredUsers != null) {
       data['course_registered_users'] =
           this.courseRegisteredUsers!.map((v) => v.toJson()).toList();
@@ -434,16 +463,23 @@ class PresentedByImage {
 
 class ModuleSection {
   bool? expanded;
-  String? id;
+  String? moduleId;
   String? moduleName;
+  String? modulePosition;
   List<SectionList>? sectionList;
 
-  ModuleSection({this.expanded, this.id, this.moduleName, this.sectionList});
+  ModuleSection(
+      {this.expanded,
+      this.moduleId,
+      this.moduleName,
+      this.modulePosition,
+      this.sectionList});
 
   ModuleSection.fromJson(Map<String, dynamic> json) {
     expanded = json['expanded'];
-    id = json['id'];
+    moduleId = json['module_id'];
     moduleName = json['module_name'];
+    modulePosition = json['module_position'];
     if (json['section_list'] != null) {
       sectionList = <SectionList>[];
       json['section_list'].forEach((v) {
@@ -455,8 +491,9 @@ class ModuleSection {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['expanded'] = this.expanded;
-    data['id'] = this.id;
+    data['module_id'] = this.moduleId;
     data['module_name'] = this.moduleName;
+    data['module_position'] = this.modulePosition;
     if (this.sectionList != null) {
       data['section_list'] = this.sectionList!.map((v) => v.toJson()).toList();
     }
@@ -467,30 +504,33 @@ class ModuleSection {
 class SectionList {
   dynamic attachment;
   String? courseTopic;
-  String? description;
   bool? expanded;
   String? id;
   dynamic image;
+  String? moduleDescription;
+  String? sectionPosition;
   String? status;
-  dynamic youtubeLink;
+  String? youtubeLink;
 
   SectionList(
       {this.attachment,
       this.courseTopic,
-      this.description,
       this.expanded,
       this.id,
       this.image,
+      this.moduleDescription,
+      this.sectionPosition,
       this.status,
       this.youtubeLink});
 
   SectionList.fromJson(Map<String, dynamic> json) {
     attachment = json['attachment'];
     courseTopic = json['course_topic'];
-    description = json['description'];
     expanded = json['expanded'];
     id = json['id'];
     image = json['image'];
+    moduleDescription = json['module_description'];
+    sectionPosition = json['section_position'];
     status = json['status'];
     youtubeLink = json['youtube_link'];
   }
@@ -499,10 +539,11 @@ class SectionList {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['attachment'] = this.attachment;
     data['course_topic'] = this.courseTopic;
-    data['description'] = this.description;
     data['expanded'] = this.expanded;
     data['id'] = this.id;
     data['image'] = this.image;
+    data['module_description'] = this.moduleDescription;
+    data['section_position'] = this.sectionPosition;
     data['status'] = this.status;
     data['youtube_link'] = this.youtubeLink;
     return data;
@@ -772,21 +813,28 @@ class CourseDetailRegisteredUsers {
   String? courseId;
   String? fromId;
   String? status;
-  List<RegisterModuleSection>? moduleSection;
+  List<Null>? quizAnswers;
+  List<RegisteredModuleDetails>? registeredModuleDetails;
   String? sTypename;
 
   CourseDetailRegisteredUsers(
-      {this.id, this.courseId, this.fromId, this.status, this.moduleSection, this.sTypename});
+      {this.id, this.courseId, this.fromId, this.status, this.quizAnswers, this.registeredModuleDetails, this.sTypename});
 
   CourseDetailRegisteredUsers.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     courseId = json['course_id'];
     fromId = json['from_id'];
     status = json['status'];
-    if (json['module_section'] != null) {
-      moduleSection = <RegisterModuleSection>[];
-      json['module_section'].forEach((v) {
-        moduleSection!.add(new RegisterModuleSection.fromJson(v));
+    // if (json['quiz_answers'] != null) {
+    //   quizAnswers = <Null>[];
+    //   json['quiz_answers'].forEach((v) {
+    //     quizAnswers!.add(new Null.fromJson(v));
+    //   });
+    // }
+    if (json['registered_module_details'] != null) {
+      registeredModuleDetails = <RegisteredModuleDetails>[];
+      json['registered_module_details'].forEach((v) {
+        registeredModuleDetails!.add(new RegisteredModuleDetails.fromJson(v));
       });
     }
     sTypename = json['__typename'];
@@ -798,7 +846,13 @@ class CourseDetailRegisteredUsers {
     data['course_id'] = this.courseId;
     data['from_id'] = this.fromId;
     data['status'] = this.status;
-    data['module_section'] = this.moduleSection;
+    // if (this.quizAnswers != null) {
+    //   data['quiz_answers'] = this.quizAnswers!.map((v) => v.toJson()).toList();
+    // }
+    if (this.registeredModuleDetails != null) {
+      data['registered_module_details'] =
+          this.registeredModuleDetails!.map((v) => v.toJson()).toList();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -808,9 +862,17 @@ class QuestionSection {
   String? id;
   List<Options>? options;
   String? question;
-  String? type;
+  String? questionType;
+  String? quizId;
+  String? quizPosition;
 
-  QuestionSection({this.id, this.options, this.question, this.type});
+  QuestionSection(
+      {this.id,
+      this.options,
+      this.question,
+      this.questionType,
+      this.quizId,
+      this.quizPosition});
 
   QuestionSection.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -821,7 +883,9 @@ class QuestionSection {
       });
     }
     question = json['question'];
-    type = json['type'];
+    questionType = json['question_type'];
+    quizId = json['quiz_id'];
+    quizPosition = json['quiz_position'];
   }
 
   Map<String, dynamic> toJson() {
@@ -831,7 +895,9 @@ class QuestionSection {
       data['options'] = this.options!.map((v) => v.toJson()).toList();
     }
     data['question'] = this.question;
-    data['type'] = this.type;
+    data['question_type'] = this.questionType;
+    data['quiz_id'] = this.quizId;
+    data['quiz_position'] = this.quizPosition;
     return data;
   }
 }
@@ -839,13 +905,15 @@ class QuestionSection {
 class Options {
   String? id;
   bool? isCorrect;
+  String? optionPosition;
   String? text;
 
-  Options({this.id, this.isCorrect, this.text});
+  Options({this.id, this.isCorrect, this.optionPosition, this.text});
 
   Options.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     isCorrect = json['isCorrect'];
+    optionPosition = json['option_position'];
     text = json['text'];
   }
 
@@ -853,12 +921,13 @@ class Options {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['isCorrect'] = this.isCorrect;
+    data['option_position'] = this.optionPosition;
     data['text'] = this.text;
     return data;
   }
 }
 
-class RegisterModuleSection {
+/*class RegisterModuleSection {
   bool? expanded;
   String? id;
   String? moduleName;
@@ -931,6 +1000,255 @@ class RegisterSectionList {
     data['image'] = this.image;
     data['status'] = this.status;
     data['youtube_link'] = this.youtubeLink;
+    return data;
+  }
+}*/
+
+class ModuleDetails {
+  String? id;
+  String? moduleName;
+  bool? expanded;
+  String? moduleId;
+  String? courseId;
+  String? modulePosition;
+  List<SectionDetails>? sectionDetails;
+  String? sTypename;
+
+  ModuleDetails(
+      {this.id,
+      this.moduleName,
+      this.expanded,
+      this.moduleId,
+      this.courseId,
+      this.modulePosition,
+      this.sectionDetails,
+      this.sTypename});
+
+  ModuleDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    moduleName = json['module_name'];
+    expanded = json['expanded'];
+    moduleId = json['module_id'];
+    courseId = json['course_id'];
+    modulePosition = json['module_position'];
+    if (json['section_details'] != null) {
+      sectionDetails = <SectionDetails>[];
+      json['section_details'].forEach((v) {
+        sectionDetails!.add(new SectionDetails.fromJson(v));
+      });
+    }
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['module_name'] = this.moduleName;
+    data['expanded'] = this.expanded;
+    data['module_id'] = this.moduleId;
+    data['course_id'] = this.courseId;
+    data['module_position'] = this.modulePosition;
+    if (this.sectionDetails != null) {
+      data['section_details'] =
+          this.sectionDetails!.map((v) => v.toJson()).toList();
+    }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class SectionDetails {
+  String? id;
+  String? courseTopic;
+  String? moduleId;
+  String? description;
+  dynamic attachment;
+  bool? expanded;
+  dynamic image;
+  String? status;
+  String? youtubeLink;
+  String? sectionPosition;
+  String? sTypename;
+
+  SectionDetails(
+      {this.id,
+      this.courseTopic,
+      this.moduleId,
+      this.description,
+      this.attachment,
+      this.expanded,
+      this.image,
+      this.status,
+      this.youtubeLink,
+      this.sectionPosition,
+      this.sTypename});
+
+  SectionDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    courseTopic = json['course_topic'];
+    moduleId = json['module_id'];
+    description = json['description'];
+    attachment = json['attachment'];
+    expanded = json['expanded'];
+    image = json['image'];
+    status = json['status'];
+    youtubeLink = json['youtube_link'];
+    sectionPosition = json['section_position'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['course_topic'] = this.courseTopic;
+    data['module_id'] = this.moduleId;
+    data['description'] = this.description;
+    data['attachment'] = this.attachment;
+    data['expanded'] = this.expanded;
+    data['image'] = this.image;
+    data['status'] = this.status;
+    data['youtube_link'] = this.youtubeLink;
+    data['section_position'] = this.sectionPosition;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class QuizDetails {
+  String? id;
+  String? question;
+  String? type;
+  String? quizId;
+  String? courseId;
+  String? quizPosition;
+  List<OptionDetails>? optionDetails;
+  String? sTypename;
+
+  QuizDetails(
+      {this.id,
+      this.question,
+      this.type,
+      this.quizId,
+      this.courseId,
+      this.quizPosition,
+      this.optionDetails,
+      this.sTypename});
+
+  QuizDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    question = json['question'];
+    type = json['type'];
+    quizId = json['quiz_id'];
+    courseId = json['course_id'];
+    quizPosition = json['quiz_position'];
+    if (json['option_details'] != null) {
+      optionDetails = <OptionDetails>[];
+      json['option_details'].forEach((v) {
+        optionDetails!.add(new OptionDetails.fromJson(v));
+      });
+    }
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['question'] = this.question;
+    data['type'] = this.type;
+    data['quiz_id'] = this.quizId;
+    data['course_id'] = this.courseId;
+    data['quiz_position'] = this.quizPosition;
+    if (this.optionDetails != null) {
+      data['option_details'] =
+          this.optionDetails!.map((v) => v.toJson()).toList();
+    }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class OptionDetails {
+  String? id;
+  String? quizId;
+  bool? isCorrect;
+  String? optionPosition;
+  String? text;
+  String? sTypename;
+
+  OptionDetails(
+      {this.id,
+      this.quizId,
+      this.isCorrect,
+      this.optionPosition,
+      this.text,
+      this.sTypename});
+
+  OptionDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    quizId = json['quiz_id'];
+    isCorrect = json['isCorrect'];
+    optionPosition = json['option_position'];
+    text = json['text'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['quiz_id'] = this.quizId;
+    data['isCorrect'] = this.isCorrect;
+    data['option_position'] = this.optionPosition;
+    data['text'] = this.text;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class RegisteredModuleDetails {
+  String? id;
+  String? moduleName;
+  bool? expanded;
+  String? moduleId;
+  String? userId;
+  String? sectionStatus;
+  String? sectionId;
+  String? modulePosition;
+  String? sTypename;
+
+  RegisteredModuleDetails(
+      {this.id,
+      this.moduleName,
+      this.expanded,
+      this.moduleId,
+      this.userId,
+      this.sectionStatus,
+      this.sectionId,
+      this.modulePosition,
+      this.sTypename});
+
+  RegisteredModuleDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    moduleName = json['module_name'];
+    expanded = json['expanded'];
+    moduleId = json['module_id'];
+    userId = json['user_id'];
+    sectionStatus = json['section_status'];
+    sectionId = json['section_id'];
+    modulePosition = json['module_position'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['module_name'] = this.moduleName;
+    data['expanded'] = this.expanded;
+    data['module_id'] = this.moduleId;
+    data['user_id'] = this.userId;
+    data['section_status'] = this.sectionStatus;
+    data['section_id'] = this.sectionId;
+    data['module_position'] = this.modulePosition;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

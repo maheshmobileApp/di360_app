@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/my_learning_hub/repository/my_learning_hub_repo_impl.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';

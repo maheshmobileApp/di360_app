@@ -1,4 +1,4 @@
-const String getAllListingDataQuery =
+const String getAllListingDataQuery   =
     r'''query getAllLearningHubList($limit: Int!, $offset: Int!, $where: courses_bool_exp!) {
   courses(
     limit: $limit

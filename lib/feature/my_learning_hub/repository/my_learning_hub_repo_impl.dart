@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/my_learning_hub/query/get_my_registered_courses_query.dart';
 import 'package:di360_flutter/feature/my_learning_hub/repository/my_learning_hub_repository.dart';
 

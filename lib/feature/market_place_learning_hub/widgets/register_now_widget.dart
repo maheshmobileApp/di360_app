@@ -10,20 +10,18 @@ class RegisterNowWidget extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool registerStatus;
   final String? earlyBirdEndDate;
-  final String? courseType;
-  final String? courseRegisterStatus;
+  final String? courseType; 
 
-  const RegisterNowWidget(
-      {Key? key,
-      required this.currentPrice,
-      this.oldPrice,
-      this.buttonText,
-      this.onPressed,
-      required this.registerStatus,
-      this.earlyBirdEndDate,
-      this.courseType,
-      this.courseRegisterStatus})
-      : super(key: key);
+  const RegisterNowWidget({
+    Key? key,
+    required this.currentPrice,
+    this.oldPrice,
+    this.buttonText,
+    this.onPressed,
+    required this.registerStatus,
+    this.earlyBirdEndDate,
+    this.courseType,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +86,10 @@ class RegisterNowWidget extends StatelessWidget {
             backgroundColor: AppColors.primaryColor,
             text: registerStatus
                 ? courseType == 'Online Academy'
-                    ? courseRegisterStatus == 'APPROVED'
-                        ? "View Course"
-                        : "Registration Pending"
+                    ? "View Course"
                     : "Registered"
                 : "Register Now",
-            width: 170,
+            width: 150,
             height: 42,
             textColor: AppColors.whiteColor,
           )

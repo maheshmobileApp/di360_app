@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/Quiz_section_widget.dart';
-import 'package:di360_flutter/feature/learning_hub/view/course_modules_view/module_section_widget.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/Quiz_section_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/module_section_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +27,7 @@ class CourseDetailsView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Consumer<CourseListingViewModel>(
+                Consumer<MarketPlaceLearningHubViewModel>(
                   builder: (_, vm, __) => _headerTitle(vm.courseDetails?.courseName ?? ''),
                 ),
                 const ModuleSectionWidget(),

@@ -1,7 +1,6 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/job_profile/model/job_profile_role_response.dart';
 import 'package:di360_flutter/feature/job_profile/quary/job_profile_role_quary.dart';
-import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/talents/model/enquire_request.dart';
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/feature/talents/model/update_hiring_status_res.dart';
