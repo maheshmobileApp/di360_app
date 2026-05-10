@@ -17,6 +17,7 @@ import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
   const CourseDetailScreen({super.key});
@@ -89,10 +90,47 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           courseDetails?.earlyBirdPrice?.toString() ?? "0",
                       oldPrice:
                           courseDetails?.afterwardsPrice?.toString() ?? "0",
+                      courseRegisterStatus: courseDetails
+                          ?.courseRegisteredUsers?.firstOrNull?.status,
                       onPressed: isRegistered
                           ? courseDetails?.type == 'Online Academy'
-                              ? () {
-                                  navigationService.push(CourseDetailsView());
+                              ? () async {
+                                  courseDetails?.courseRegisteredUsers
+                                              ?.firstOrNull?.status ==
+                                          'APPROVED'
+                                      ? navigationService
+                                          .push(CourseDetailsView())
+                                      : showAlertMessage(
+                                          context,
+                                          'Thank you for your registration. We are currently awaiting payment confirmation from the administrator. You will be notified once your enrollment is confirmed.',
+                                          yes: 'View Registration Link',
+                                          onBack: () async {
+                                            final raw = courseDetails
+                                                    ?.registerLink
+                                                    ?.trim() ??
+                                                '';
+                                            if (raw.isEmpty) {
+                                              navigationService.goBack();
+                                              return;
+                                            }
+                                            final urlStr = raw.startsWith(
+                                                        'http://') ||
+                                                    raw.startsWith('https://')
+                                                ? raw
+                                                : 'https://$raw';
+                                            final url = Uri.tryParse(urlStr);
+                                            if (url != null &&
+                                                await canLaunchUrl(url)) {
+                                              await launchUrl(url,
+                                                  mode: LaunchMode
+                                                      .externalApplication);
+                                            } else {
+                                              scaffoldMessenger(
+                                                  'Could not open registration link');
+                                            }
+                                            navigationService.goBack();
+                                          },
+                                        );
                                 }
                               : () {
                                   scaffoldMessenger("Already Registered");

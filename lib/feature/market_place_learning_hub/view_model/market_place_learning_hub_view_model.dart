@@ -72,7 +72,10 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   /// Flat list of all sections across all modules in order
   List<SectionList> get allSections =>
-      courseDetails?.moduleSection?.expand((m) => m.sectionList ?? <SectionList>[]).toList() ?? [];
+      courseDetails?.moduleSection
+          ?.expand((m) => m.sectionList ?? <SectionList>[])
+          .toList() ??
+      [];
 
   /// Resolves [currentModuleIndex] from the flat [currentSectionIndex]
   void _syncModuleIndex() {
@@ -102,26 +105,6 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       notifyListeners();
     }
   }
-
-  // void nextSection() {
-  //   final sections = courseDetails?.moduleSection?[currentModuleIndex].sectionList;
-  //   final current = sections?[currentSectionIndex];
-  //   if (current?.status == 'Completed') {
-  //     if (currentSectionIndex < (sections?.length ?? 1) - 1) {
-  //       currentSectionIndex++;
-  //       notifyListeners();
-  //     }
-  //   } else {
-  //     scaffoldMessenger("Please complete the this section");
-  //   }
-  // }
-
-  // void previousSection() {
-  //   if (currentSectionIndex > 0) {
-  //     currentSectionIndex--;
-  //     notifyListeners();
-  //   }
-  // }
 
   void nextQuiz() {
     final total = courseDetails?.questionSection?.length ?? 0;
@@ -353,85 +336,104 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   Future<void> completeAndContinue(BuildContext context) async {
     final regUser = courseDetails;
-    if (regUser?.id == null || regUser?.moduleSection == null) return;
+    if (regUser?.moduleSection == null) return;
 
-    final section = regUser!
-        .moduleSection![currentModuleIndex].sectionList?[currentSectionIndex];
-    if (section == null || section.status == 'Completed') {
-      if (areAllSectionsCompleted()) {
+    final modules = regUser!.moduleSection!;
+    final currentModule = modules[currentModuleIndex];
+    final sectionList = currentModule.sectionList ?? [];
+    if (sectionList.isEmpty) return;
+    final prevCount = modules
+        .sublist(0, currentModuleIndex)
+        .fold<int>(0, (sum, m) => sum + (m.sectionList?.length ?? 0));
+    final localIndex =
+        (currentSectionIndex - prevCount).clamp(0, sectionList.length - 1);
+    final section = sectionList[localIndex];
+
+    void _advance() {
+      if (currentSectionIndex < allSections.length - 1) {
+        currentSectionIndex++;
+        _syncModuleIndex();
+        notifyListeners();
+      } else {
         scaffoldMessenger("Congratulations! You have completed the course.");
       }
+    }
+
+    // If already completed, just move to next
+    if (isSectionCompleted(section.id)) {
+      _advance();
       return;
     }
 
-    // Update locally first
-    section.status = 'Completed';
-    notifyListeners();
     Loaders.circularShowLoader(context);
-    // Build payload from the typed model (status is already updated)
-    final moduleSectionPayload = regUser.moduleSection!
-        .asMap()
-        .entries
-        .map((entry) => {
-              "expanded":
-                  entry.key == currentModuleIndex ? true : entry.value.expanded,
-              "id": entry.value.moduleId,
-              "module_name": entry.value.moduleName,
-              "section_list": (entry.value.sectionList ?? [])
-                  .map((s) => {
-                        "attachment": s.attachment,
-                        "course_topic": s.courseTopic,
-                        "description": s.moduleDescription,
-                        "expanded": s.expanded,
-                        "id": s.id,
-                        "image": s.image,
-                        "status": s.status,
-                        "youtube_link": s.youtubeLink,
-                      })
-                  .toList(),
-            })
-        .toList();
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     final res = await repo.updatedTheCourseCompletedStatus({
-      "id": regUser.id,
-      "fields": {"module_section": moduleSectionPayload},
+      "fields": {
+        "module_name": currentModule.moduleName,
+        "expanded": true,
+        "module_id": currentModule.moduleId,
+        "course_id": regUser.id,
+        "module_position": currentModule.modulePosition,
+        "section_id": section.id,
+        "section_status": "Completed",
+        "user_id": userId,
+      }
     });
 
     if (res['insert_course_registered_users_one'] != null) {
-      final sections =
-          regUser.moduleSection![currentModuleIndex].sectionList ?? [];
-      final totalModules = regUser.moduleSection!.length;
-
-      if (areAllSectionsCompleted()) {
-        scaffoldMessenger("Congratulations! You have completed the course.");
+      section.status = 'Completed';
+      final registeredUser = courseDetails?.courseRegisteredUsers?.firstOrNull;
+      if (registeredUser != null) {
+        registeredUser.registeredModuleDetails ??= [];
+        final alreadyExists = registeredUser.registeredModuleDetails!
+            .any((d) => d.sectionId == section.id);
+        if (!alreadyExists) {
+          registeredUser.registeredModuleDetails!.add(
+            RegisteredModuleDetails(
+                sectionId: section.id,
+                moduleId: currentModule.moduleId,
+                moduleName: currentModule.moduleName,
+                sectionStatus: 'Completed',
+                userId: userId),
+          );
+        }
       }
-      if (currentSectionIndex < sections.length - 1) {
-        currentSectionIndex++;
-      } else if (currentModuleIndex < totalModules - 1) {
-        currentModuleIndex++;
-        currentSectionIndex = 0;
-        regUser.moduleSection![currentModuleIndex].expanded = true;
-      }
+      _advance();
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
+  bool isSectionCompleted(String? sectionId) {
+    if (sectionId == null) return false;
+    return courseDetails?.courseRegisteredUsers?.any(
+          (user) =>
+              user.registeredModuleDetails?.any(
+                (detail) => detail.sectionId == sectionId,
+              ) ??
+              false,
+        ) ??
+        false;
+  }
+
   bool areAllSectionsCompleted() {
-    final modules =
-        courseDetails?.moduleSection;
-    if (modules == null || modules.isEmpty) return false;
-    return modules.every((module) =>
-        (module.sectionList ?? []).every((s) => s.status == 'Completed'));
+    final sections = allSections;
+    if (sections.isEmpty) return false;
+    return sections.every((s) => isSectionCompleted(s.id));
   }
 
   Future<dynamic> quizSubmitted(BuildContext context) async {
+    final quizResult = submitQuiz();
+    final score = quizResult?.$1 ?? 0;
     final res = await repo.markQuizCompleted({
       "id": courseDetails?.courseRegisteredUsers?.firstOrNull?.id ?? '',
       "fields": {
         "quiz_status": "COMPLETED",
         "status": "COMPLETED",
-        "completed_date": DateTime.now().toIso8601String().split('T').first
+        "quiz_score": score.toStringAsFixed(2),
+        "completed_date": DateTime.now().toIso8601String().split('T').first,
+        "is_course_completed": true
       }
     });
     return res;

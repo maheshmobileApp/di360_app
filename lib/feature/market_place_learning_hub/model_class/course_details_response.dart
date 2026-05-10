@@ -814,7 +814,7 @@ class CourseDetailRegisteredUsers {
   String? fromId;
   String? status;
   List<Null>? quizAnswers;
-  List<Null>? registeredModuleDetails;
+  List<RegisteredModuleDetails>? registeredModuleDetails;
   String? sTypename;
 
   CourseDetailRegisteredUsers(
@@ -831,12 +831,12 @@ class CourseDetailRegisteredUsers {
     //     quizAnswers!.add(new Null.fromJson(v));
     //   });
     // }
-    // if (json['registered_module_details'] != null) {
-    //   registeredModuleDetails = <Null>[];
-    //   json['registered_module_details'].forEach((v) {
-    //     registeredModuleDetails!.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['registered_module_details'] != null) {
+      registeredModuleDetails = <RegisteredModuleDetails>[];
+      json['registered_module_details'].forEach((v) {
+        registeredModuleDetails!.add(new RegisteredModuleDetails.fromJson(v));
+      });
+    }
     sTypename = json['__typename'];
   }
 
@@ -849,10 +849,10 @@ class CourseDetailRegisteredUsers {
     // if (this.quizAnswers != null) {
     //   data['quiz_answers'] = this.quizAnswers!.map((v) => v.toJson()).toList();
     // }
-    // if (this.registeredModuleDetails != null) {
-    //   data['registered_module_details'] =
-    //       this.registeredModuleDetails!.map((v) => v.toJson()).toList();
-    // }
+    if (this.registeredModuleDetails != null) {
+      data['registered_module_details'] =
+          this.registeredModuleDetails!.map((v) => v.toJson()).toList();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -1199,6 +1199,55 @@ class OptionDetails {
     data['isCorrect'] = this.isCorrect;
     data['option_position'] = this.optionPosition;
     data['text'] = this.text;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class RegisteredModuleDetails {
+  String? id;
+  String? moduleName;
+  bool? expanded;
+  String? moduleId;
+  String? userId;
+  String? sectionStatus;
+  String? sectionId;
+  String? modulePosition;
+  String? sTypename;
+
+  RegisteredModuleDetails(
+      {this.id,
+      this.moduleName,
+      this.expanded,
+      this.moduleId,
+      this.userId,
+      this.sectionStatus,
+      this.sectionId,
+      this.modulePosition,
+      this.sTypename});
+
+  RegisteredModuleDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    moduleName = json['module_name'];
+    expanded = json['expanded'];
+    moduleId = json['module_id'];
+    userId = json['user_id'];
+    sectionStatus = json['section_status'];
+    sectionId = json['section_id'];
+    modulePosition = json['module_position'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['module_name'] = this.moduleName;
+    data['expanded'] = this.expanded;
+    data['module_id'] = this.moduleId;
+    data['user_id'] = this.userId;
+    data['section_status'] = this.sectionStatus;
+    data['section_id'] = this.sectionId;
+    data['module_position'] = this.modulePosition;
     data['__typename'] = this.sTypename;
     return data;
   }

@@ -127,11 +127,19 @@ class RegistrationUserForm {
                                     context,
                                     "You are being redirected to the registration link",
                                     onBack: () async {
-                                      final url = Uri.parse(registrationLink);
-                                      if (!await launchUrl(url,
-                                          mode:
-                                              LaunchMode.externalApplication)) {
-                                        throw "Could not launch $url";
+                                      final raw = registrationLink.trim();
+                                      if (raw.isEmpty) {
+                                        navigationService.goBack();
+                                        return;
+                                      }
+                                      final urlStr = raw.startsWith('http://') || raw.startsWith('https://')
+                                          ? raw
+                                          : 'https://$raw';
+                                      final url = Uri.tryParse(urlStr);
+                                      if (url != null && await canLaunchUrl(url)) {
+                                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                                      } else {
+                                        scaffoldMessenger('Could not open registration link');
                                       }
                                       navigationService.goBack();
                                     },
