@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/Quiz_section_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/module_section_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,11 @@ class CourseDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.borderColor,
-      appBar: AppBar(title: const Text("Course Details")),
+      appBar: AppBarWidget(
+        searchWidget: false,
+        logo: false,
+        title: "Course Details",
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),

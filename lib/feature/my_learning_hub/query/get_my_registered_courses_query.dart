@@ -35,6 +35,7 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
       limit: 1
     ) {
       id
+      is_course_completed
       webinar_status
       status
       first_name

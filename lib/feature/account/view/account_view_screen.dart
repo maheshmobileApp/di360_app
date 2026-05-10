@@ -267,12 +267,6 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             await context
                                 .read<MyLearningHubViewModel>()
                                 .getCoursesWithMyRegistrations(context);
-                            await context
-                                .read<FilterViewModel>()
-                                .fetchCourseCategory(context);
-                            await context
-                                .read<FilterViewModel>()
-                                .fetchCourseType(context);
 
                             Loaders.circularHideLoader(context);
                             context
