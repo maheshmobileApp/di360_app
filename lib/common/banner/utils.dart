@@ -7,7 +7,7 @@ List<int> getBannerIndices(int itemCount, int interval) {
 }
 
 class BannerUtils {
-  static const int bannerInterval = 5; // Insert banner after every 5 items
+  static const int bannerInterval = 6;
 
   static List<int> calculateBannerIndices(int itemCount) {
     return getBannerIndices(itemCount, bannerInterval);

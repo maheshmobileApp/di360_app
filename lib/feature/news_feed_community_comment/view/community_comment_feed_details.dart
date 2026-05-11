@@ -16,6 +16,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class CommunityCommentFeedDetails extends StatelessWidget
@@ -44,12 +45,7 @@ class CommunityCommentFeedDetails extends StatelessWidget
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                (newsfeeds?.description == null || newsfeeds?.description == '')
-                    ? newsfeeds?.title ?? ''
-                    : newsfeeds?.description ?? '',
-                style: TextStyles.regular2(color: AppColors.black),
-              ),
+              HtmlWidget(newsfeeds?.description ?? ""),
               addVertical(10),
               if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
                 webSiteText(newsfeeds?.webUrl ?? ''),
@@ -98,7 +94,7 @@ class CommunityCommentFeedDetails extends StatelessWidget
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(ImageConst.pdf),
+              Image.asset(ImageConst.pdf, height: 50),
               addVertical(11),
               Text(name,
                   style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -114,7 +110,7 @@ class CommunityCommentFeedDetails extends StatelessWidget
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(ImageConst.pdf),
+            Image.asset(ImageConst.pdf, height: 50),
             addVertical(11),
             Text(name,
                 style: TextStyles.regular1(color: AppColors.lightGeryColor),

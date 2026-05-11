@@ -1,10 +1,10 @@
 // This is a generated file; do not edit or check into version control.
 FLUTTER_ROOT=/Users/sohit/development/flutter
-FLUTTER_APPLICATION_PATH=/Users/sohit/Documents/di360/di360_flutter_backup
+FLUTTER_APPLICATION_PATH=/Users/sohit/new_detnatal/di360_app
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
-FLUTTER_BUILD_NAME=2.2.2
-FLUTTER_BUILD_NUMBER=35
+FLUTTER_BUILD_NAME=2.3.0
+FLUTTER_BUILD_NUMBER=44
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false

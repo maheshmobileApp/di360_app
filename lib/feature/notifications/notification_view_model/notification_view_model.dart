@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/news_feed/model_class/notification_count_r
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/notifications/notification_resposity/notification_resposity_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -86,8 +87,12 @@ class NotificationViewModel extends ChangeNotifier {
       if (response != null) {
         final res = AllNewsFeedData.fromJson(response);
         newsfeeds = res.newsfeeds ?? [];
-        navigationService.push(CommentScreen(
-            newsfeeds: newsfeeds.isNotEmpty ? newsfeeds.first : Newsfeeds()));
+        if (newsfeeds.isNotEmpty) {
+          navigationService.push(CommentScreen(
+              newsfeeds: newsfeeds.isNotEmpty ? newsfeeds.first : Newsfeeds()));
+        } else {
+          scaffoldMessenger("NewsFeed data not found");
+        }
       }
     } catch (e) {
       print("Error loading notification count: $e");

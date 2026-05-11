@@ -13,7 +13,7 @@ import 'package:di360_flutter/feature/directors/model_class/get_partnership_stat
 import 'package:di360_flutter/feature/directors/model_class/get_team_members_res.dart';
 
 abstract class DirectorRepository {
-  Future<List<Directories>> getDirectors(String catagoryId, String searchText);
+  Future<List<Directories>> getDirectors(String catagoryId, String searchText, int limit, int offset);
   Future<List<Banners>> getBannersList();
   Future<List<DirectoryBusinessTypes>> directoriesCatagory();
   Future<DirectoriesByPk?> directoriesDetailsQuery(String id);

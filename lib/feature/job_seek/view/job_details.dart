@@ -202,24 +202,26 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 ),
               ],
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.orange.shade50, Colors.white],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.orange.shade50, Colors.white],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                widget.job.createdAt?.isNotEmpty == true
-                    ? Jiffy.parse(widget.job.createdAt!).fromNow()
-                    : 'Recently posted',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                child: Text(
+                  widget.job.createdAt?.isNotEmpty == true
+                      ? Jiffy.parse(widget.job.createdAt!).fromNow()
+                      : 'Recently posted',
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),

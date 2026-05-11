@@ -96,8 +96,8 @@ class CatalogueViewModel extends ChangeNotifier {
   Future<void> fetchCatalogue(BuildContext context) async {
     cataloguesLoading = true;
     Loaders.circularShowLoader(context);
-    var res = await repo.getCatalogue(
-        searchController.text,type, catagroies, suppliers, selectedUserId ?? '');
+    var res = await repo.getCatalogue(searchController.text, type, catagroies,
+        suppliers, selectedUserId ?? '');
     if (res != []) {
       catalogueCategories = res;
       initializeExpanded(catalogueCategories);
@@ -353,7 +353,7 @@ class CatalogueViewModel extends ChangeNotifier {
             selectedUserId = id;
           } else if (section == "Types") {
             type = id;
-          } 
+          }
         }
       }
     });

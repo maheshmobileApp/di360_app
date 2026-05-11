@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.d
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/main.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,12 +26,14 @@ class DeepLinkService {
     });
   }
 
-  // Called by SplashScreen after it finishes auth navigation
-  static void consumePendingLink(BuildContext context) {
-    if (_pendingUri != null) {
-      _handleUri(_pendingUri!, context);
-      _pendingUri = null;
-    }
+  static void consumePendingLink() {
+    if (_pendingUri == null) return;
+    final uri = _pendingUri ?? Uri();
+    _pendingUri = null;
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final context = navigatorKey.currentContext;
+      if (context != null) _handleUri(uri, context);
+    });
   }
 
   static void _handleUri(Uri uri, BuildContext context) {
@@ -68,9 +71,11 @@ class DeepLinkService {
             context,
             id,
           );
-          navigationService.navigateTo(
-            RouteList.courseDetailScreen,
-          );
+          if (courseListingVM.courseDetails.isNotEmpty) {
+            navigationService.navigateTo(RouteList.courseDetailScreen);
+          } else {
+            scaffoldMessenger('This course details not found');
+          }
         }();
         break;
 
@@ -82,6 +87,8 @@ class DeepLinkService {
           if (talentEnqVM.talentEnqPreviewData.isNotEmpty) {
             navigationService.navigateToWithParams(RouteList.talentPreview,
                 params: talentEnqVM.talentEnqPreviewData.first);
+          } else {
+            scaffoldMessenger('This talent post has been deleted.');
           }
         }();
         break;
@@ -93,15 +100,24 @@ class DeepLinkService {
           final catId =
               catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
           await catalogueVM.getReletedCatalog(context, catId);
-          navigationService.navigateTo(RouteList.catalogueDetails);
+          if (catalogueVM.cataloguesByIdData != null) {
+            navigationService.navigateTo(RouteList.catalogueDetails);
+          } else {
+            scaffoldMessenger('This catalogue is not available.');
+          }
         }();
+
         break;
       case FeedType.course:
         () async {
           final courseVM =
               Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false);
           await courseVM.getCourseDetails(context, id);
-          navigationService.navigateTo(RouteList.courseDetailScreen);
+          if (courseVM.courseDetails.isNotEmpty) {
+            navigationService.navigateTo(RouteList.courseDetailScreen);
+          } else {
+            scaffoldMessenger('This course is not available.');
+          }
         }();
         break;
       case FeedType.joinCommunity:
@@ -111,7 +127,11 @@ class DeepLinkService {
           final directoryVM =
               Provider.of<DirectoryViewModel>(context, listen: false);
           await directoryVM.GetDirectorDetails(id);
-          navigationService.navigateTo(RouteList.directoryDetailsScreen);
+          if (directoryVM.directorDetails != null) {
+            navigationService.navigateTo(RouteList.directoryDetailsScreen);
+          } else {
+            scaffoldMessenger('This directory is not available.');
+          }
         }();
         break;
       case FeedType.banners:

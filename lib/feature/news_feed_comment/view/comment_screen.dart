@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/feed_details.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/new_comment_sheet.dart';
@@ -16,7 +17,7 @@ import 'package:provider/provider.dart';
 
 class CommentScreen extends StatefulWidget {
   final Newsfeeds? newsfeeds;
-  const CommentScreen({super.key,  required this.newsfeeds});
+  const CommentScreen({super.key, required this.newsfeeds});
 
   @override
   State<CommentScreen> createState() => _CommentScreenState();
@@ -61,23 +62,23 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                               widget.newsfeeds?.dentalProfessional?.profileImage
                                   ?.url ??
                               (widget.newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
-                                  ? widget.newsfeeds?.dentalSupplier?.directories?.first.logo?.url
+                                  ? widget.newsfeeds?.dentalSupplier
+                                      ?.directories?.first.logo?.url
                                   : null) ??
                               '') ==
                           '')
                       ? SvgPicture.asset(ImageConst.logo)
                       : ClipOval(
                           child: CachedNetworkImageWidget(
-                              imageUrl:
-                                  widget.newsfeeds?.dentalSupplier?.logo?.url ??
-                                      widget.newsfeeds?.dentalPractice?.logo
-                                          ?.url ??
-                                      widget.newsfeeds?.dentalProfessional
-                                          ?.profileImage?.url ??
-                                      (widget.newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
-                                          ? widget.newsfeeds?.dentalSupplier?.directories?.first.logo?.url
-                                          : null) ??
-                                      '',
+                              imageUrl: widget.newsfeeds?.dentalSupplier?.logo?.url ??
+                                  widget.newsfeeds?.dentalPractice?.logo?.url ??
+                                  widget.newsfeeds?.dentalProfessional
+                                      ?.profileImage?.url ??
+                                  (widget.newsfeeds?.dentalSupplier?.directories?.isNotEmpty == true
+                                      ? widget.newsfeeds?.dentalSupplier
+                                          ?.directories?.first.logo?.url
+                                      : null) ??
+                                  '',
                               errorWidget: SvgPicture.asset(ImageConst.logo)))),
             ),
             addHorizontal(16),
@@ -114,12 +115,34 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FeedDetails(newsfeeds: widget.newsfeeds),
-                    NewCommentSheet(newsfeeds: widget.newsfeeds,),
+                    NewCommentSheet(
+                      newsfeeds: widget.newsfeeds,
+                    ),
                   ],
                 ),
               ),
             ),
             _buildCommentInputField(context, viewModel, widget.newsfeeds),
+            if (viewModel.existingAttachments.isNotEmpty || viewModel.selectedFiles.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ...List.generate(
+                      viewModel.existingAttachments.length,
+                      (index) => _buildExistingFilePreview(
+                          viewModel.existingAttachments[index], index, viewModel),
+                    ),
+                    ...List.generate(
+                      viewModel.selectedFiles.length,
+                      (index) => _buildFilePreview(
+                          viewModel.selectedFiles[index], index, viewModel),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -165,6 +188,14 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                       ),
                     ),
                     GestureDetector(
+                      child: Icon(Icons.attachment,
+                          color: AppColors.lightGeryColor),
+                      onTap: () {
+                        viewModel.pickFiles();
+                      },
+                    ),
+                    addHorizontal(10),
+                    GestureDetector(
                         child: Image.asset(ImageConst.sendIcon,
                             color: AppColors.black),
                         onTap: () {
@@ -176,7 +207,9 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                             viewModel.replyFocusNode.canRequestFocus = false;
                             if (viewModel.isReply) {
                               viewModel.replyCommentTheFeed(
-                                  context, newsfeeds?.id ?? '', viewModel.commentId ?? '',);
+                                context,
+                                newsfeeds?.id ?? '',
+                              );
                             } else if (viewModel.replyCommentUpdate) {
                               viewModel.updateTheReplyCommentTheFeed(
                                   context, newsfeeds?.id ?? '');
@@ -221,5 +254,90 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
         ],
       ),
     );
+  }
+
+  Widget _buildExistingFilePreview(CommentsAttachments attachment, int index,
+      CommentViewModel viewModel) {
+    final ext = attachment.name?.split('.').last.toLowerCase();
+    return Stack(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          margin: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: ['jpg', 'png', 'jpeg'].contains(ext)
+                ? CachedNetworkImageWidget(
+                    imageUrl: attachment.url ?? '',
+                    fit: BoxFit.cover,
+                    errorWidget: Icon(Icons.broken_image, color: Colors.grey),
+                  )
+                : _getFileIcon(ext),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => viewModel.removeExistingAttachment(index),
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.red, shape: BoxShape.circle),
+              child: const Icon(Icons.close, color: Colors.white, size: 14),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilePreview(
+      dynamic file, int index, CommentViewModel viewModel) {
+    final extension = file.extension?.toLowerCase();
+    return Stack(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          margin: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: _getFileIcon(extension),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => viewModel.removeFile(index),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.close, color: Colors.white, size: 14),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _getFileIcon(String? extension) {
+    if (['jpg', 'png', 'jpeg'].contains(extension)) {
+      return Icon(Icons.image, size: 30, color: Colors.blue);
+    } else if (extension == 'pdf') {
+      return Icon(Icons.picture_as_pdf, size: 30, color: Colors.red);
+    } else if (['mp4', 'mov', 'avi'].contains(extension)) {
+      return Icon(Icons.videocam, size: 30, color: Colors.purple);
+    } else {
+      return Icon(Icons.insert_drive_file, size: 30, color: Colors.grey);
+    }
   }
 }

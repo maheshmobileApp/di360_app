@@ -99,7 +99,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(ImageConst.pdf),
+              Image.asset(ImageConst.pdf, height: 50),
               addVertical(11),
               Text(name,
                   style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -115,7 +115,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(ImageConst.pdf),
+            Image.asset(ImageConst.pdf, height: 50),
             addVertical(11),
             Text(name,
                 style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -164,12 +164,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-
-  Widget _mediaCard({
-    required Widget child,
-    VoidCallback? onTap,
-    bool isFullWidth = false,
-  }) {
+Widget _mediaCard(
+      {required Widget child, VoidCallback? onTap, bool isFullWidth = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
@@ -178,7 +174,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             width: isFullWidth ? double.infinity : 300,
-            height: 300,
+            height: 160,
             color: Colors.grey[200],
             child: child,
           ),
@@ -189,19 +185,14 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
 
   Widget _buildStatsRow(String likeCount, String commentCount,
       NewsFeedViewModel viewModel, BuildContext context) {
-    final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
+    final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
       children: [
         GestureDetector(
           onTap: () {
             if (isLiked) {
-              final likeId = newsfeeds?.myLike
-                      ?.firstWhere((e) => e.id != null && e.id!.isNotEmpty,
-                          orElse: () => MyLike())
-                      .id ??
-                  '';
-              if (likeId.isEmpty) return;
+              final likeId = newsfeeds?.myLike?.first.id ?? '';
               viewModel.removeNewsFeedLike(
                   context, newsfeeds?.id ?? '', likeId);
             } else {
@@ -249,11 +240,6 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
         ),
       ],
     );
-  }
-
-  bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    if (userId.isEmpty) return false;
-    return newsfeed?.myLike?.any((e) => e.id != null && e.id?.isNotEmpty == true) ?? false;
   }
 
   Widget _buildCatalogueRow(

@@ -46,9 +46,10 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               ] else if (jobCreateVM.selectedEvent == "Multiple Day") ...[
                 _buildMultipleDayUI(jobCreateVM, context),
               ],
+              if (jobCreateVM.selectedEvent == "Single Day") ...[
               SizedBox(height: 8),
               InputTextField(
-                hintText: "Enter Description",
+                hintText: "Enter text here",
                 maxLength: 1000,
                 maxLines: 5,
                 title: "Topics Included",
@@ -56,12 +57,13 @@ class CourseInfo extends StatelessWidget with BaseContextHelpers {
               ),
               SizedBox(height: 8),
               InputTextField(
-                hintText: "Enter Description",
+                hintText: "Enter text here",
                 maxLength: 1000,
                 maxLines: 5,
                 title: "Learning Objectives",
                 controller: jobCreateVM.learningObjectivesDescController,
               ),
+              ]
             ],
           ),
         ),

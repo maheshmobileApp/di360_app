@@ -4,9 +4,12 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
+import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comment_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/view/new_reply_comment_widget.dart';
+import 'package:di360_flutter/feature/news_feed_community_comment/view/image_viewr_screen_community.dart';
 import 'package:di360_flutter/main.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +68,8 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
       if (oldComments[i].id != newComments[i].id ||
           oldComments[i].commentText != newComments[i].commentText ||
           oldComments[i].createdAt != newComments[i].createdAt ||
-          oldComments[i].repliesAggregate?.aggregate?.count != newComments[i].repliesAggregate?.aggregate?.count) {
+          oldComments[i].repliesAggregate?.aggregate?.count !=
+              newComments[i].repliesAggregate?.aggregate?.count) {
         return true;
       }
     }
@@ -96,15 +100,15 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
               itemCount: _sortedComments?.length ?? 0,
               itemBuilder: (context, index) {
                 final comments = _sortedComments?[index];
-                return _buildCommentTile(comments, viewModel,
-                    widget.newsfeeds?.id ?? '', comments?.id ?? "");
+                return _buildCommentTile(
+                    comments, viewModel, widget.newsfeeds?.id ?? '');
               },
             ),
     );
   }
 
-  Widget _buildCommentTile(NewsFeedsComments? comments,
-      CommentViewModel viewModel, String feedId, String parentId) {
+  Widget _buildCommentTile(
+      NewsFeedsComments? comments, CommentViewModel viewModel, String feedId) {
     if (comments?.id == null) {
       return const SizedBox.shrink();
     }
@@ -142,14 +146,13 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                   ),
                 ),
               ),
-              if ((comments.commentReply?.isNotEmpty ?? false))
+              if ((comments.repliesAggregate?.aggregate?.count ?? 0) > 0 &&
+                  (viewModel.expandedReplies[comments.id] ?? false))
                 Container(
                   width: 2,
-                  height: (comments.commentReply?.isNotEmpty ?? false)
-                      ? (_replyHeights[comments.id]
-                              ?.clamp(0, double.infinity) ??
-                          80)
-                      : 0,
+                  height:
+                      _replyHeights[comments.id]?.clamp(0, double.infinity) ??
+                          80,
                   color: Colors.grey.shade400,
                 ),
             ],
@@ -170,11 +173,12 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(comments.dentalSupplier?.businessName ??
-                              comments.dentalPractice?.name ??
-                              comments.dentalProfessional?.name ??
-                              comments.adminUser?.name ??
-                              '',
+                          Text(
+                              comments.dentalSupplier?.businessName ??
+                                  comments.dentalPractice?.name ??
+                                  comments.dentalProfessional?.name ??
+                                  comments.adminUser?.name ??
+                                  '',
                               style: TextStyles.semiBold(
                                   color: AppColors.black, fontSize: 14)),
                           addHorizontal(20),
@@ -188,11 +192,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                             ),
                           ),
                           addHorizontal(15),
-                          if (comments.dentalAdminId == viewModel.userID ||
-                              comments.dentalPracticeId == viewModel.userID ||
-                              comments.dentalProfessionalId ==
-                                  viewModel.userID ||
-                              comments.dentalSupplierId == viewModel.userID)
+                          if (comments.createdById == viewModel.userID)
                             _buildCommentMenu(comments, viewModel, feedId),
                         ],
                       ),
@@ -202,6 +202,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                         style: TextStyles.regular2(
                             color: AppColors.bottomNavUnSelectedColor),
                       ),
+                      _buildImageRow(comments.attachments),
                     ],
                   ),
                 ),
@@ -211,8 +212,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                   children: [
                     if ((comments.repliesAggregate?.aggregate?.count ?? 0) > 0)
                       GestureDetector(
-                        onTap: () =>
-                            _handleViewReplyTap(comments, viewModel, parentId),
+                        onTap: () => _handleViewReplyTap(comments, viewModel),
                         child: Text(
                           viewModel.expandedReplies[comments.id] ?? false
                               ? 'Hide replies'
@@ -228,11 +228,167 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                   ],
                 ),
                 if (viewModel.expandedReplies[comments.id] ?? false)
-                  _buildRepliesSection(comments.id ?? '', feedId, replyKey, viewModel),
+                  _buildRepliesSection(
+                      comments.id ?? '', feedId, replyKey, viewModel),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildImageRow(List<CommentsAttachments>? allMediaList) {
+    final mediaList = allMediaList ?? [];
+    if (mediaList.isEmpty) return SizedBox();
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: mediaList.length == 1
+          ? _buildSingleMedia(mediaList.first, mediaList)
+          : _buildMultipleMedia(mediaList),
+    );
+  }
+
+  Widget _buildSingleMedia(
+      CommentsAttachments media, List<CommentsAttachments> allMedia) {
+    return GestureDetector(
+      onTap: () => navigationService.push(ImageViewrScreenCommunity(
+          postImage: allMedia as List<CommentsAttachments>?)),
+      child: Container(
+        width: double.infinity,
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[100],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: _buildMediaWidget(media, isFullSize: true),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMediaWidget(CommentsAttachments media,
+      {bool isFullSize = false}) {
+    final type = media.type ?? media.type ?? '';
+    final url = media.url ?? '';
+    final name = media.name ?? '';
+
+    // Video handling
+    if (type.contains('video') || name.endsWith('.mp4')) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          InlineVideoPlayer(videoUrl: url),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Icon(Icons.play_arrow, color: Colors.white, size: 16),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // PDF handling
+    if (type.contains('pdf') || name.endsWith('.pdf')) {
+      return Container(
+        color: Colors.red[50],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.picture_as_pdf,
+                size: isFullSize ? 40 : 40, color: Colors.red),
+            SizedBox(height: 8),
+            if (isFullSize)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  name.isNotEmpty ? name : 'PDF Document',
+                  style:
+                      TextStyles.medium3(fontSize: 12, color: Colors.red[700]!),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Word document handling
+    if (type.contains('msword') ||
+        name.endsWith('.doc') ||
+        name.endsWith('.docx')) {
+      return Container(
+        color: Colors.blue[50],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.description,
+                size: isFullSize ? 60 : 40, color: Colors.blue),
+            SizedBox(height: 8),
+            if (isFullSize)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  name.isNotEmpty ? name : 'Word Document',
+                  style: TextStyles.medium3(color: Colors.blue[700]!),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Image handling (default)
+    return CachedNetworkImageWidget(
+      imageUrl: url,
+      fit: BoxFit.contain,
+      errorWidget: Container(
+        color: Colors.grey[200],
+        child: Icon(Icons.broken_image, color: Colors.grey[400]),
+      ),
+    );
+  }
+
+  Widget _buildMultipleMedia(List<CommentsAttachments> mediaList) {
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: mediaList.length,
+        separatorBuilder: (_, __) => SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final media = mediaList[index];
+          return GestureDetector(
+            onTap: () => navigationService.push(ImageViewrScreenCommunity(
+                postImage: mediaList as List<CommentsAttachments>?)),
+            child: Container(
+              width: 250,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey[100],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: _buildMediaWidget(media),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -294,8 +450,10 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
       NewsFeedsComments comments, CommentViewModel viewModel) {
     FocusScope.of(navigatorKey.currentContext!)
         .requestFocus(viewModel.replyFocusNode);
-    final comment = comments.comments ?? '';
+    final comment = comments.commentText ?? '';
     viewModel.commentController.text = comment;
+    viewModel.selectedFiles = [];
+    viewModel.existingAttachments = List.from(comments.attachments ?? []);
     viewModel.updateIsReply(false, comments.id ?? '', '', commentupdate: true);
   }
 
@@ -309,19 +467,19 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
         .requestFocus(viewModel.replyFocusNode);
   }
 
-  void _handleViewReplyTap(NewsFeedsComments comments,
-      CommentViewModel viewModel, String parentId) async {
+  void _handleViewReplyTap(
+      NewsFeedsComments comments, CommentViewModel viewModel) async {
     final isExpanded = viewModel.expandedReplies[comments.id] ?? false;
 
     if (!isExpanded) {
-      await viewModel.getReplies(context, parentId);
+      await viewModel.getReplies(context, comments.id ?? "");
     }
-    
+
     viewModel.toggleReplyExpansion(comments.id ?? '');
   }
 
-  Widget _buildRepliesSection(
-      String commentId, String feedId, GlobalKey replyKey, CommentViewModel viewModel) {
+  Widget _buildRepliesSection(String commentId, String feedId,
+      GlobalKey replyKey, CommentViewModel viewModel) {
     final replies = viewModel.repliesDataCache[commentId] ?? [];
 
     return MeasureSize(

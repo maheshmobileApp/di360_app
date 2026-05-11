@@ -452,6 +452,7 @@ class _CommentBottomSheetState extends State<CommunityCommentSheet>
         .requestFocus(viewModel.replyFocusNode);
     final comment = comments.comments ?? '';
     viewModel.commentController.text = comment;
+    viewModel.setEditAttachments(comments.commentsAttachments);
     viewModel.updateIsReply(false, comments.id ?? '', '', commentupdate: true);
   }
 

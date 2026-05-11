@@ -18,6 +18,7 @@ import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -195,6 +196,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 final course = jobData;
                 return CouresListingCard(
                   id: course.id ?? "",
+                  index: index,
                   meetingLink: course.meetingLink ?? "",
                   logoUrl: course.presentedByImage?.url ?? '',
                   companyName: course.courseName ?? '',
@@ -203,7 +205,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   activeStatus: course.activeStatus ?? "",
                   description: course.description ?? '',
                   types: [course.type ?? ''],
-                  createdAt: course.updatedAt ?? '',
+                  createdAt: course.createdAt ?? '',
                   registeredCount:
                       course.courseRegisteredUsersAggregate?.aggregate?.count ??
                           0,
@@ -380,6 +382,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   Future<void> loadCourseData(
       NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
+    print("**********************************${course.communityUserType}");
     newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
     newCourseVM.setCommunityType(
         course.communityUserType == "BOTH" ? "Both" : "Community User");
@@ -450,20 +453,27 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.birdPriceController.text = (course.earlyBirdPrice != null)
         ? course.earlyBirdPrice!.toStringAsFixed(0)
         : "";
-    newCourseVM.courseDescController.text = course.description ?? "";
-    newCourseVM.topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    newCourseVM.courseDescController.text =
+        htmlParser.parse(course.description ?? '').body?.text ?? '';
+
+    newCourseVM.topicsIncludedDescController.text =
+        htmlParser.parse(course.topicsIncluded ?? '').body?.text ?? '';
     newCourseVM.learningObjectivesDescController.text =
-        course.learningObjectives ?? "";
+        htmlParser.parse(course.learningObjectives ?? '').body?.text ?? '';
     newCourseVM.nameController.text = course.contactName ?? "";
     newCourseVM.phoneController.text = course.contactPhone ?? "";
     newCourseVM.emailController.text = course.contactEmail ?? "";
     newCourseVM.websiteUrlController.text = course.contactWebsite ?? "";
     newCourseVM.registerLinkController.text = course.registerLink ?? "";
     newCourseVM.meetingLinkController.text = course.meetingLink ?? "";
-    newCourseVM.termsAndConditionsController.text = course.terms ?? "";
-    newCourseVM.cancellationController.text = course.refundPolicy ?? "";
+    newCourseVM.termsAndConditionsController.text =
+        htmlParser.parse(course.terms ?? '').body?.text ?? '';
+    newCourseVM.cancellationController.text =
+        htmlParser.parse(course.refundPolicy ?? '').body?.text ?? '';
     newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    newCourseVM.selectedCommunityType = course.earlyBirdEndDate ?? "";
+    newCourseVM.addressController.text = course.address?.isNotEmpty == true
+        ? course.address?.first.formattedAddress ?? ""
+        : "";
 
     // Dates (safe parse)
 
@@ -533,7 +543,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.sessions = course.courseEventInfo?.map((event) {
           return SessionModel(
             sessionName: event.name,
-            sessionInfo: event.info,
+            sessionInfo: htmlParser.parse(event.info).body?.text ?? '',
             eventDate: event.date,
             images: [],
             serverImagesList: event.images, // keep reference to server images

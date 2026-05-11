@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -19,8 +20,15 @@ class NewsMenuWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
+    final currentUserId = needFeedViewModel.userID;
+
+    final isSameUser = newsfeeds?.userId == currentUserId ||
+        newsfeeds?.dentalPracticeId == currentUserId ||
+        newsfeeds?.dentalProfessionalId == currentUserId ||
+        newsfeeds?.dentalSupplierId == currentUserId;
+
     return PopupMenuButton<String>(
-      iconColor: AppColors.bottomNavUnSelectedColor,
+      iconColor: AppColors.black,
       color: AppColors.whiteColor,
       padding: const EdgeInsets.all(0),
       onSelected: (value) async {
@@ -40,17 +48,30 @@ class NewsMenuWidget extends StatelessWidget {
             navigationService.goBack();
             needFeedViewModel.reportNewsFeed(context, newsfeeds?.id ?? '');
           });
-        } else if (value == 'block') {
-          showUserBlockPopup(context, 'Are you sure Block this user',
+        } else if (value == 'hide') {
+          showUserBlockPopup(context, 'Are you sure Hide this user?',
               confirmAction: () {
             navigationService.goBack();
-            needFeedViewModel.blockUser(
-                context,
-                newsfeeds?.dentalSupplier?.id ??
-                    newsfeeds?.dentalPractice?.id ??
-                    newsfeeds?.dentalProfessional?.id ??
-                    '');
+            needFeedViewModel.HideUser(context, newsfeeds?.id ?? '',
+                newsfeeds?.feedType ?? '', newsfeeds?.id ?? '');
           });
+        } else if (value == 'block') {
+          showUserBlockPopup(context, 'Are you sure Block this profile?',
+              confirmAction: () {
+            navigationService.goBack();
+            needFeedViewModel.blockProfile(
+                context,
+                newsfeeds?.dentalProfessional?.id ??
+                    newsfeeds?.dentalSupplier?.id ??
+                    newsfeeds?.dentalPractice?.id ??
+                    '',
+                newsfeeds?.feedType ?? '',
+                newsfeeds?.id ?? '');
+          });
+        } else if (value == 'Save Media') {
+          final mediaList = newsfeeds?.postImage ?? [];
+
+          downloadAllFiles(context, mediaList);
         }
       },
       itemBuilder: (context) => [
@@ -62,17 +83,25 @@ class NewsMenuWidget extends StatelessWidget {
               value: "delete",
               child: buildRow(Icons.delete, AppColors.redColor, "Delete"))
         ],
-        if (newsfeeds?.userId != needFeedViewModel.userID ||
-            newsfeeds?.dentalPracticeId != needFeedViewModel.userID ||
-            newsfeeds?.dentalProfessionalId != needFeedViewModel.userID ||
-            newsfeeds?.dentalSupplierId != needFeedViewModel.userID) ...[
+        if (!isSameUser) ...[
           PopupMenuItem(
               value: "report",
-              child: buildRow(Icons.report, AppColors.primaryColor, "Report")),
+              child: buildRow(
+                  Icons.report, AppColors.primaryColor, "Report Post")),
           PopupMenuItem(
               value: "block",
-              child: buildRow(Icons.block, AppColors.redColor, "Block"))
-        ]
+              child:
+                  buildRow(Icons.block, AppColors.redColor, "Block Profile")),
+          PopupMenuItem(
+              value: "hide",
+              child:
+                  buildRow(Icons.hide_source, AppColors.redColor, "Hide Post")),
+        ],
+        if (newsfeeds?.postImage != null &&
+            newsfeeds?.postImage?.isNotEmpty == true)
+          PopupMenuItem(
+              value: "Save Media",
+              child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))
       ],
     );
   }
@@ -111,11 +140,11 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
               top: false,
               child: Padding(
                 padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 10,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-                  ),
+                  left: 16,
+                  right: 16,
+                  top: 10,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                ),
                 child: Column(
                   children: [
                     SizedBox(height: 12),
@@ -131,7 +160,11 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
                                   color: AppColors.primaryColor))
                         ]),
                     SizedBox(height: 20),
-                    InputTextField(title: 'Report', hintText: 'Enter report',maxLines: 5,),
+                    InputTextField(
+                      title: 'Report',
+                      hintText: 'Enter report',
+                      maxLines: 5,
+                    ),
                     SizedBox(height: 40),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,7 +180,7 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
                               width: 150,
                               height: 45,
                               radius: 12,
-                              text: 'Submited',
+                              text: 'Submit',
                               onTap: sumbitedAction)
                         ])
                   ],

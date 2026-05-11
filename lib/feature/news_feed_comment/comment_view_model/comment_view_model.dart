@@ -3,11 +3,16 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dart';
 import 'package:di360_flutter/feature/home/view_model/home_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_comment/model_class/news_feed_comments_res.dart';
+import 'package:di360_flutter/feature/news_feed_comment/query/add_comment_query.dart';
+import 'package:di360_flutter/feature/news_feed_comment/query/update_comment_query.dart';
 import 'package:di360_flutter/feature/news_feed_comment/repository/news_feed_comment_repo_impl.dart';
 import 'package:di360_flutter/feature/news_feed_comment/repository/news_feed_comment_repository.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +29,8 @@ class CommentViewModel extends ChangeNotifier {
   String? practiceId;
   String? professionId;
   String? userID;
+  List<PlatformFile> selectedFiles = [];
+  List<CommentsAttachments> existingAttachments = [];
 
   TextEditingController commentController = TextEditingController();
   final FocusNode replyFocusNode = FocusNode();
@@ -63,40 +70,99 @@ class CommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> pickFiles() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.any,
+      );
+      if (result != null) {
+        selectedFiles.addAll(result.files);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error picking files: $e');
+    }
+  }
+
+  void removeFile(int index) {
+    if (index < selectedFiles.length) {
+      selectedFiles.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void setEditAttachments(List<CommentsAttachments>? attachments) {
+    existingAttachments = List.from(attachments ?? []);
+    selectedFiles.clear();
+    notifyListeners();
+  }
+
+  void removeExistingAttachment(int index) {
+    if (index < existingAttachments.length) {
+      existingAttachments.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _uploadFiles() async {
+    List<Map<String, dynamic>> uploadedFiles = [];
+
+    for (var file in selectedFiles) {
+      try {
+        final response = await _http.uploadImage(file.path);
+        if (response != null && response['url'] != null) {
+          uploadedFiles.add({
+            "url": response['url'],
+            "name": file.name,
+            "type": file.extension ?? "file",
+            "size": file.size,
+          });
+        }
+      } catch (e) {
+        print('Error uploading file ${file.name}: $e');
+      }
+    }
+
+    return uploadedFiles;
+  }
+
+  Future<List<Map<String, dynamic>>> _getUploadedFiles() async {
+    if (selectedFiles.isNotEmpty) {
+      return await _uploadFiles();
+    }
+    return [];
+  }
+
   addCommentTheFeed(BuildContext context, String feedId) async {
     await getUserId();
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     try {
-      var res = await _http.mutation(commentQuery, {
+      final uploadedFiles = await _getUploadedFiles();
+      final variables = {
         "object": {
           "comment_text": commentController.text,
           "news_feeds_id": feedId,
           "parent_comment_id": null,
           "created_by_id": userId,
           "role_type": userType,
-          "attachments": null
+          "attachments": uploadedFiles,
+          "dental_supplier_id":
+              UserRole.supplier.value == userType ? userId : null,
+          "dental_practice_id":
+              UserRole.practice.value == userType ? userId : null,
+          "dental_professional_id":
+              UserRole.professional.value == userType ? userId : null,
+          "dental_admin_id": null
         }
-      }
-
-          /*{
-        "addCommentsData": {
-          "dental_practice_id": practiceId ?? null,
-          "dental_professional_id": professionId ?? null,
-          "commenter_name": name,
-          "comment_Pro_Img": img,
-          "comments": commentController.text,
-          "comments_attachments": [],
-          "dental_admin_id": adminId ?? null,
-          "dental_supplier_id": supplierId ?? null,
-          "news_feeds_id": feedId
-        }
-      }*/
-          );
+      };
+      var res = await _http.mutation(commentQuery, variables);
 
       if (res.isNotEmpty) {
         commentController.clear();
+        selectedFiles.clear();
         getComments(context, feedId);
         getNewsfeedComment(context, feedId);
       }
@@ -112,14 +178,26 @@ class CommentViewModel extends ChangeNotifier {
     await getUserId();
     Loaders.circularShowLoader(context);
     try {
-      var res = await _http.mutation(updateCommentQuery, {
+      final uploadedFiles = await _getUploadedFiles();
+      final existing = existingAttachments
+          .map((a) =>
+              {"url": a.url, "name": a.name, "type": a.type, "size": a.size})
+          .toList();
+      final variables = {
         "id": commentId,
-        "data": {"comments": commentController.text, "comments_attachments": []}
-      });
+        "_set": {
+          "comment_text": commentController.text,
+          "attachments": [...existing, ...uploadedFiles]
+        }
+      };
+      var res = await _http.mutation(updateCommentQuery, variables);
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        existingAttachments.clear();
+        selectedFiles.clear();
+        await getComments(context, feedId);
+        Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -133,12 +211,14 @@ class CommentViewModel extends ChangeNotifier {
 
   deleteTheComment(BuildContext context, String id, String feedId) async {
     Loaders.circularShowLoader(context);
+
     try {
       var res = await _http.mutation(deleteCommentQuery, {"id": id});
 
       if (res.isNotEmpty) {
         commentController.clear();
-        getNewsfeedComment(context, feedId);
+        await getComments(context, feedId);
+        await getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -168,16 +248,17 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<void> getComments(BuildContext context, String feedId) async {
+    Loaders.circularShowLoader(context);
     final variables = {"feedId": feedId, "limit": 10, "offset": 0};
     try {
       var res = await repo.getComments(variables);
-      // ignore: unnecessary_null_comparison
       if (res != null) {
         newsFeedComments = res;
       }
     } catch (e) {
       scaffoldMessenger(e.toString());
     }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
@@ -219,57 +300,52 @@ class CommentViewModel extends ChangeNotifier {
 
   Future<void> updateTheCommentObject(BuildContext context, String feedId,
       List<dynamic>? newsFeeds, dynamic count) async {
-    final homeVM = context.read<HomeViewModel>();
-    final feed =
-        homeVM.allNewsFeedsData?.newsfeeds?.firstWhere((v) => v.id == feedId);
+    final newsFeedVM = context.read<NewsFeedViewModel>();
+    final feed = newsFeedVM.allNewsFeedsData?.newsfeeds
+        ?.firstWhere((v) => v.id == feedId);
     feed?.newsFeedsComments?.clear();
     feed?.newsFeedsComments =
         newsFeeds?.map((e) => NewsFeedsComments.fromJson(e)).toList();
     feed?.newsFeedsCommentsAggregate?.aggregate?.count = count;
     updateIsReply(false, '', '', isedit: false, commentupdate: false);
-    homeVM.notifyListeners();
+    newsFeedVM.notifyListeners();
     notifyListeners();
   }
 
   replyCommentTheFeed(
-      BuildContext context, String feedId, String parentId,) async {
+    BuildContext context,
+    String feedId,
+  ) async {
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final directParentId = commentId ?? '';
     await getUserId();
     Loaders.circularShowLoader(context);
-    try {
-      var res = await _http.mutation(commentQuery, {
-        "object": {
-          "comment_text": commentController.text,
-          "news_feeds_id": feedId,
-          "parent_comment_id": parentId,
-          "created_by_id": userId,
-          "role_type": userType,
-          "attachments": null
-        }
+    final variables = {
+      "object": {
+        "comment_text": commentController.text,
+        "news_feeds_id": feedId,
+        "parent_comment_id": directParentId,
+        "created_by_id": userId,
+        "role_type": userType,
+        "attachments": null,
+        "dental_supplier_id":
+            UserRole.supplier.value == userType ? userId : null,
+        "dental_practice_id":
+            UserRole.practice.value == userType ? userId : null,
+        "dental_professional_id":
+            UserRole.professional.value == userType ? userId : null,
+        "dental_admin_id": null
       }
-
-          /*{
-        "addReplyData": {
-          "dental_practice_id": practiceId ?? null,
-          "dental_professional_id": professionId ?? null,
-          "dental_supplier_id": supplierId ?? null,
-          "news_feeds_id": feedId,
-          "reply_text": "@$commenterName ${commentController.text}",
-          "dental_admin_id": adminId ?? null,
-          "comment_id": commentId,
-          "reply_id": commentId,
-          "liked_count": 0,
-          "reply_attachments": []
-        }
-      }*/
-          );
+    };
+    try {
+      var res = await _http.mutation(commentQuery, variables);
 
       if (res.isNotEmpty) {
         commentController.clear();
-        await getComments(context, feedId);
-        await getReplies(context, parentId);
         await getNewsfeedComment(context, feedId);
+        await getComments(context, feedId);
+        await getReplies(context, directParentId);
       } else {
         Loaders.circularHideLoader(context);
       }
@@ -307,14 +383,16 @@ class CommentViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTheReplyComment(BuildContext context, String id, String feedId) async {
-    await getUserId();
+  deleteTheReplyComment(
+      BuildContext context, String id, String feedId, String parentId) async {
     Loaders.circularShowLoader(context);
     try {
       var res = await _http.mutation(deleteReplyCommentQuery, {"id": id});
 
       if (res.isNotEmpty) {
         commentController.clear();
+        getComments(context, feedId);
+        getReplies(context, parentId);
         getNewsfeedComment(context, feedId);
       } else {
         Loaders.circularHideLoader(context);
@@ -328,22 +406,9 @@ class CommentViewModel extends ChangeNotifier {
   }
 }
 
-const String deleteCommentQuery = '''
-mutation DeleteNewsfeedComments(\$id: uuid!) {
-  delete_news_feeds_comments_by_pk(id: \$id) {
-    id
-    __typename
-  }
-  delete_news_feeds_comments_replys(where: {comment_id: {_eq: \$id}}) {
-    affected_rows
-    __typename
-  }
-}
-''';
-
-const String updateCommentQuery = '''
-mutation UpdateNewsfeedComments(\$id: uuid!, \$data: news_feeds_comments_set_input!) {
-  update_news_feeds_comments_by_pk(pk_columns: {id: \$id}, _set: \$data) {
+const String deleteCommentQuery = r'''
+mutation deleteRecord($id: uuid!) {
+  delete_news_feeds_comments_by_pk(id: $id) {
     id
     __typename
   }
@@ -359,63 +424,14 @@ mutation updateNewsfeedReply(\$id: uuid!, \$data: news_feeds_comments_replys_set
 }
 ''';
 
-const String deleteReplyCommentQuery = '''
-mutation deleteNewsfeedReply(\$id: uuid!) {
-  delete_news_feeds_comments_replys_by_pk(id: \$id) {
+const String deleteReplyCommentQuery = r'''
+mutation deleteRecord($id: uuid!) {
+  delete_news_feeds_comments_by_pk(id: $id) {
     id
-    __typename
-  }
-  delete_news_feeds_comments_replys(where: {reply_id: {_eq: \$id}}) {
-    affected_rows
     __typename
   }
 }
 ''';
-
-final String commentQuery = '''
-    mutation InsertComment(\$object: news_feeds_comments_insert_input!) {
-  insert_news_feeds_comments_one(object: \$object) {
-    id
-    parent_comment_id
-    comment_text
-    created_at
-    role_type
-    attachments
-    replies_aggregate {
-      aggregate {
-        count
-        __typename
-      }
-      __typename
-    }
-    dental_professional {
-      id
-      name
-      profile_image
-      __typename
-    }
-    dental_practice {
-      id
-      business_name
-      logo
-      __typename
-    }
-    dental_supplier {
-      id
-      business_name
-      logo
-      __typename
-    }
-    admin_user {
-      id
-      name
-      profile_image
-      __typename
-    }
-    __typename
-  }
-}
-  ''';
 
 const String replyCommentQuery = '''
   mutation addNewsFeedCommentsReplys(\$addReplyData: news_feeds_comments_replys_insert_input!) {

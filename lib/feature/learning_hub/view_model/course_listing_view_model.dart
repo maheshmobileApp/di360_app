@@ -193,12 +193,12 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     if (loadMore) {
       coursesListingList.addAll(res ?? []);
       coursesListingList
-          .sort((a, b) => (b.updatedAt ?? '').compareTo(a.updatedAt ?? ''));
+          .sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
       isLoadingMoreCourses = false;
     } else {
       coursesListingList = res ?? [];
       coursesListingList
-          .sort((a, b) => (b.updatedAt ?? '').compareTo(a.updatedAt ?? ''));
+          .sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
     }
 
     hasMoreCourses = (res?.length ?? 0) >= _courseListingLimit;

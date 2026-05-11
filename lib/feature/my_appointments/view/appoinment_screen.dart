@@ -29,16 +29,18 @@ class _AppoinmentScreenState extends State<AppoinmentScreen> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(title: 'My Appointments'),
-      body: appointmentVM.appointmentList.isEmpty
-          ? Center(
-              child: Text('No Appointments Found',
-                  style: TextStyles.bold3(color: AppColors.black)))
-          : ListView.builder(
-              itemCount: appointmentVM.appointmentList.length,
-              itemBuilder: (context, index) {
-                final appointment = appointmentVM.appointmentList[index];
-                return AppointmentCard(item: appointment);
-              }),
+      body: appointmentVM.appointmentList == null
+          ? const SizedBox.shrink()
+          : appointmentVM.appointmentList?.directories?.isEmpty == true
+              ? Center(
+                  child: Text('No Appointments Found',
+                      style: TextStyles.regular2(color: AppColors.black)))
+              : ListView.builder(
+                  itemCount: appointmentVM.appointmentList?.directories?.length,
+                  itemBuilder: (context, index) {
+                    final appointment = appointmentVM.appointmentList?.directories?[index].directoryAppointments?[index];
+                    return AppointmentCard(item: appointment);
+                  }),
     );
   }
 }

@@ -8,14 +8,15 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_model.dart';
-import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_screen.dart';
+import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -87,7 +88,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       builder: (context, viewModel, child) {
         final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
         final jobListingsViewModel = Provider.of<JobListingsViewModel>(context);
-
+        final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
         final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
@@ -240,6 +241,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               }
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
+                                  index : index,
                                   newsfeeds: newsItem,
                                   course: newsItem.courses ?? [],
                                   feedType: newsItem.feedType ?? "",
@@ -294,15 +296,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             RouteList.courseDetailScreen);
                                         break;
                                       case FeedType.jobs:
-                                        await jobListingsViewModel
-                                            .getJobListingById(context,
-                                                newsItem.jobs?.first.id ?? "");
-                                        navigationService.navigateToWithParams(
-                                          RouteList.jobdetailsScreen,
-                                          params: jobListingsViewModel
-                                                  .jobListingData?.first ??
-                                              Jobs(),
-                                        );
+                                        await newsFeedVM.getJobDetailsByIds(
+                                            context, newsItem.payloadId ?? "");
                                         break;
                                       default:
                                         // Handle default case or other feed types if necessary
@@ -383,6 +378,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                   context, newsItem.id ?? "");
                                           navigationService.goBack();
                                         });
+
+                                        break;
+                                      case "Save Media":
+                                        final mediaList =
+                                            newsItem.postImage ?? [];
+                                        downloadAllFiles(context, mediaList);
 
                                         break;
                                     }

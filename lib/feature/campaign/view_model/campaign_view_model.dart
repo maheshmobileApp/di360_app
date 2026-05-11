@@ -375,22 +375,20 @@ class CampaignViewModel extends ChangeNotifier {
       final res = await repo.getCampaignDetails(variables);
 
       campaignDetails = res;
+      print("**************************$campaignDetails");
       final data = campaignDetails?.smsCampaignByPk;
       campaignNameController.text = data?.campaignName ?? "";
       scheduleDateController.text = data?.scheduleDate ?? "";
       scheduleTimeController.text = "";
       messageController.text = data?.messageText ?? "";
-      selectedTimeZone = timeOptions.firstWhere(
-            (tz) => tz['value'] == data?.scheduleTimezone,
-            orElse: () => {},
-          )['label'] ??
-          "";
+      selectedTimeZone = data?.scheduleTimezone ??"";
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
       selectStateCondition = data?.isRefinedByState == "yes" ? "Yes" : "No";
       _selectedSendChips = (data?.sendToNumbers?.cast<String>()) ?? [];
       recipientsCount = data?.recipientsCount.toString() ?? "0";
+       print("**************************$_selectedGroupChips");
 
       notifyListeners();
     } catch (e) {}
@@ -484,7 +482,7 @@ class CampaignViewModel extends ChangeNotifier {
           "is_repeating": "no",
           "is_refined_by_state": selectStateCondition == "Yes" ? "yes" : "no",
           "refine_state": selectedStateChips,
-          "groups": selectedGroupIdChips,
+          "groups": _selectedGroupChips,
           "message_text": messageController.text,
           "send_to_numbers": selectedSendChips,
           "send_to_emails": null,

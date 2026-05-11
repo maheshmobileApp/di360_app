@@ -281,6 +281,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
         .requestFocus(viewModel.replyFocusNode);
     final comment = comments.comments ?? '';
     viewModel.commentController.text = comment;
+     viewModel.setEditAttachments(comments.commentsAttachments);
     viewModel.updateIsReply(false, comments.id ?? '', '', commentupdate: true);
   }
 
@@ -314,7 +315,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet>
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final commentReply = comments.commentReply?[index];
-            return ReplyCommentWidget(comments: commentReply, feedId: feedId);
+            return ReplyCommentWidget(comments: commentReply, feedId: feedId, parentCommentId: comments.id ?? '');
           },
         ),
       ),

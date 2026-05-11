@@ -7,8 +7,9 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
+import 'package:di360_flutter/feature/job_seek/model/job.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
-import 'package:di360_flutter/feature/news_feed/view/build_job_type_widget.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_menu_widget.dart';
@@ -17,10 +18,10 @@ import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comme
 import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
-import 'package:di360_flutter/widgets/jiffy_widget.dart';
+import 'package:di360_flutter/widgets/outline_button_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,14 @@ import 'package:provider/provider.dart';
 
 class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
+  final VoidCallback? onDetailView;
   final int index;
-  const NewsFeedDataCard(
-      {super.key, required this.newsfeeds, required this.index});
+  const NewsFeedDataCard({
+    super.key,
+    required this.newsfeeds,
+    required this.index,
+    this.onDetailView,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,104 +45,395 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     final commentViewModel = Provider.of<CommentViewModel>(context);
+    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
-    return Container(
-        color: AppColors.whiteColor,
-        child: GestureDetector(
-          onTap: () async {
-            await commentViewModel.getComments(context, newsfeeds?.id ?? "");
-            navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-          },
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            addVertical(10),
-            _buildHeader(
-                newsfeeds?.dentalSupplier != null
-                    ? newsfeeds?.dentalSupplier?.logo?.url ??
-                        (newsfeeds?.dentalSupplier?.directories?.isNotEmpty ==
-                                true
-                            ? newsfeeds?.dentalSupplier?.directories?.first.logo
-                                    ?.url ??
-                                ''
-                            : '')
-                    : newsfeeds?.dentalPractice != null
-                        ? newsfeeds?.dentalPractice?.logo?.url ?? ''
-                        : newsfeeds?.dentalProfessional != null
-                            ? newsfeeds
-                                    ?.dentalProfessional?.profileImage?.url ??
-                                ''
-                            : '',
-                newsfeeds?.dentalSupplier != null
-                    ? newsfeeds?.dentalSupplier?.businessName ?? ''
-                    : newsfeeds?.dentalPractice != null
-                        ? newsfeeds?.dentalPractice?.businessName ?? ''
-                        : newsfeeds?.dentalProfessional != null
-                            ? newsfeeds?.dentalProfessional?.name ?? ''
-                            : '',
-                newsfeeds?.createdAt ?? '',
-                context,
-                newsfeeds,
-                needFeedViewModel,
-                addNeedFeedViewModel),
-            addVertical(10),
-            _buildImageRow(catalogueViewModel, context),
-            addVertical(5),
-            if (newsfeeds?.videoUrl != null && newsfeeds!.videoUrl!.isNotEmpty)
-              LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ''),
-            if (newsFeedTypeEnum == FeedType.jobs.value)
-              BuildJobTypeWidget(
-                  job: newsfeeds?.jobs?.isNotEmpty ?? false
-                      ? newsfeeds?.jobs?.first
-                      : null,
-                  index: index,
-                  newsfeeds: newsfeeds),
-            addVertical(22),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (newsFeedTypeEnum != FeedType.jobs.value)
-                    ExpandableHtmlText(
-                      htmlData: (newsfeeds?.description == null ||
-                              newsfeeds?.description == '')
-                          ? newsfeeds?.title ?? ''
-                          : newsfeeds?.description ?? '',
-                      index: index,
-                      maxLines: 6,
-                    ),
-                  // HtmlWidget(
-                  //   (newsfeeds?.description == null ||
-                  //           newsfeeds?.description == '')
-                  //       ? newsfeeds?.title ?? ''
-                  //       : newsfeeds?.description ?? '',
-                  //   textStyle: TextStyles.regular2(color: AppColors.black),
-                  // ),
-                  addVertical(10),
-                  if (newsfeeds?.webUrl != null &&
-                      newsfeeds!.webUrl!.isNotEmpty)
-                    webSiteText(newsfeeds?.webUrl ?? ''),
-                  if (newsfeeds?.webUrl != null &&
-                      newsfeeds!.webUrl!.isNotEmpty)
-                    addVertical(8),
-                  if (newsFeedTypeEnum == FeedType.catalogue.value)
-                    _buildCatalogueRow(catalogueViewModel, context),
-                  Divider(color: AppColors.dividerColor),
-                  addVertical(4),
-                  _buildStatsRow(
-                      '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
-                      '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
-                      needFeedViewModel,
-                      context,
-                      newsfeeds?.id ?? '',
-                      newsfeeds?.feedType ?? FeedType.newsfeed.name),
-                  addVertical(10)
-                ],
-              ),
+    final String shareId = _fetchId(newsfeeds);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: AppColors.whiteColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    await commentViewModel.getComments(
+                        context, newsfeeds?.id ?? "");
+                    navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+                  },
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _tagWidget(
+                            newsfeeds?.feedType ?? '',
+                            newsfeeds?.dentalSupplier?.businessName ??
+                                newsfeeds?.dentalPractice?.businessName ??
+                                newsfeeds?.dentalProfessional?.name ??
+                                '',
+                            newsfeeds?.courses?.isNotEmpty == true
+                                ? newsfeeds?.courses?.first.type ?? ''
+                                : ""),
+                        addVertical(8),
+                        _buildHeader(
+                            newsfeeds?.dentalSupplier != null
+                                ? newsfeeds?.dentalSupplier?.logo?.url ??
+                                    (newsfeeds?.dentalSupplier?.directories
+                                                ?.isNotEmpty ==
+                                            true
+                                        ? newsfeeds?.dentalSupplier?.directories
+                                                ?.first.logo?.url ??
+                                            ''
+                                        : '')
+                                : newsfeeds?.dentalPractice != null
+                                    ? newsfeeds?.dentalPractice?.logo?.url ?? ''
+                                    : newsfeeds?.dentalProfessional != null
+                                        ? newsfeeds?.dentalProfessional
+                                                ?.profileImage?.url ??
+                                            ''
+                                        : '',
+                            newsfeeds?.dentalSupplier != null
+                                ? newsfeeds?.dentalSupplier?.businessName ?? ''
+                                : newsfeeds?.dentalPractice != null
+                                    ? newsfeeds?.dentalPractice?.businessName ??
+                                        ''
+                                    : newsfeeds?.dentalProfessional != null
+                                        ? newsfeeds?.dentalProfessional?.name ??
+                                            ''
+                                        : 'Dental Interface 360',
+                            newsfeeds?.createdAt ?? '',
+                            context,
+                            newsfeeds,
+                            needFeedViewModel,
+                            addNeedFeedViewModel),
+                        addVertical(10),
+                        _buildImageRow(catalogueViewModel, context),
+                        if (newsfeeds?.videoUrl != null &&
+                            newsfeeds?.videoUrl?.isNotEmpty == true &&
+                            _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
+                          LazyYoutubePlayer(
+                              youtubeUrl: newsfeeds?.videoUrl ?? ""),
+                        const SizedBox(height: 8),
+                        if (newsfeeds?.webUrl != null &&
+                            newsfeeds?.webUrl?.isNotEmpty == true)
+                          webSiteText(newsfeeds?.webUrl ?? ""),
+                        if (newsFeedTypeEnum == FeedType.jobs.value)
+                          _jobsWidget(
+                              newsfeeds?.jobs?.first ?? Jobs(),
+                              newsfeeds?.createdAt ?? '',
+                              context,
+                              newsFeedVM,
+                              shareId,
+                              newsfeeds?.title),
+                        addVertical(10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (newsfeeds?.webUrl != null &&
+                                newsfeeds!.webUrl!.isNotEmpty)
+                              webSiteText(newsfeeds?.webUrl ?? ''),
+                            if (newsfeeds?.webUrl != null &&
+                                newsfeeds!.webUrl!.isNotEmpty)
+                              addVertical(8),
+                            if (newsFeedTypeEnum == FeedType.learnhub.value &&
+                                newsfeeds?.courses?.isNotEmpty == true)
+                              _learnHubWidget(
+                                  newsfeeds?.courses?.first ?? Courses(),
+                                  newsfeeds?.createdAt ?? '',
+                                  context,
+                                  courseListingVM,
+                                  shareId),
+                            if (newsFeedTypeEnum == FeedType.catalogue.value)
+                              _buildCatalogueRow(
+                                  catalogueViewModel, context, shareId),
+                            addVertical(10),
+                            if (newsfeeds?.description?.isNotEmpty == true) ...[
+                              Text(
+                                "Course Description :",
+                                style: TextStyles.semiBold(
+                                    fontSize: 14, color: AppColors.black),
+                              ),
+                              ExpandableHtmlText(
+                                htmlData: newsfeeds?.description ?? "",
+                                index: index,
+                              )
+                            ]
+                          ],
+                        ),
+                      ]),
+                ),
+                addVertical(8),
+                _buildStatsRow(
+                    '${newsfeeds?.newsfeedsLikesAggregate?.aggregate?.count ?? 0}',
+                    '${newsfeeds?.newsFeedsCommentsAggregate?.aggregate?.count ?? 0}',
+                    needFeedViewModel,
+                    context,
+                    shareId,
+                    newsfeeds?.feedType ?? FeedType.newsfeed.name,commentViewModel),
+              ],
             ),
-            Divider(thickness: 8, color: Color(0xffEDEFF1)),
-          ]),
-        ));
+          )),
+    );
+  }
+
+  String _fetchId(Newsfeeds? newsfeeds) {
+    if (newsfeeds?.feedType == FeedType.jobs.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.learnhub.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else if (newsfeeds?.feedType == FeedType.catalogue.value) {
+      return newsfeeds?.payloadId ?? '';
+    } else {
+      return newsfeeds?.id ?? '';
+    }
+  }
+
+  Widget _learnHubWidget(Courses course, String createdAt, BuildContext context,
+      CourseListingViewModel courseListingVM, String courseId) {
+    return Container(
+      width: double.infinity,
+      height: 150,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _sectionWidget(
+                    "Presented By",
+                    (course.presenters?.isNotEmpty == true)
+                        ? (course.presenters?.first.presentedByName ?? "")
+                        : ""),
+                _sectionWidget("CPD Hours", course.cpdPoints.toString()),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlueColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    course.type ?? "",
+                    style: TextStyles.regular1(
+                      color: AppColors.typeTextColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _timeChip("${DateFormatUtils.formatTwoDateTime(createdAt)}"),
+                if (course.address?.isNotEmpty == true)
+                  _locationChip(course.address?.first.city ?? ""),
+                OutlineButtonWidget(
+                  text: "View Details",
+                  onTap: () async {
+                    await courseListingVM.getCourseDetails(
+                      context,
+                      courseId,
+                    );
+                    navigationService.navigateTo(RouteList.courseDetailScreen);
+                  },
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _jobsWidget(Jobs job, String createdAt, BuildContext context,
+      NewsFeedViewModel newsFeedVM, String jobId, String? title) {
+    return Container(
+      width: double.infinity,
+      height: 150,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _sectionWidget("Title", title ?? ''),
+                _sectionWidget("Role", job.jRole ?? ""),
+                _chipWidget(job.typeofEmployment ?? [], "")
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 8,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _timeChip(
+                    "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
+                OutlineButtonWidget(
+                  text: "View Details",
+                    onTap: () async {
+                    await newsFeedVM.getJobDetailsByIds(context, jobId);
+                  },
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _locationChip(String location) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Icon(
+          Icons.location_on_outlined,
+          color: AppColors.primaryColor,
+          size: 16,
+        ),
+        Text(location),
+      ],
+    );
+  }
+
+  Widget _timeChip(String time) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "Posted on : ",
+                style: TextStyles.medium1(
+                  color: AppColors.black,
+                ),
+              ),
+              TextSpan(
+                text: time,
+                style: TextStyles.medium1(
+                  color: AppColors.geryColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _chipWidget(List<String> types, String meetingLink) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColors.secondaryBlueColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            child: Text(
+              types.isNotEmpty ? types.first : "N/A",
+              style: TextStyles.regular1(
+                color: AppColors.typeTextColor,
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _sectionWidget(String title, String value) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyles.regular2(color: AppColors.geryColor),
+        ),
+        SizedBox(
+          height: 2,
+        ),
+        Text(
+          value,
+          style: TextStyles.medium2(color: AppColors.black),
+        ),
+      ],
+    );
+  }
+
+  Widget _tagWidget(String? feedType, String userName, String courseType) {
+    String tagText = '';
+
+    switch (feedType) {
+      case 'JOBS':
+        tagText = "#New Job Opportunity Posted by $userName";
+      case 'LEARNHUB':
+        tagText = "#New Course $courseType";
+      case 'CATALOGUE':
+        tagText = "#New CATALOGUE Posted";
+      default:
+        tagText = '#NEWSFEED Post';
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: Text(tagText,
+            style: TextStyles.semiBold(
+              color: AppColors.black,
+            )),
+      ),
+    );
   }
 
   Widget _buildHeader(
@@ -147,49 +444,53 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       Newsfeeds? newsfeeds,
       NewsFeedViewModel viewModel,
       AddNewsFeedViewModel addNewsVM) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            backgroundColor: AppColors.greyLight,
-            radius: 26.5,
-            child: (imageUrl != null && imageUrl.isNotEmpty)
-                ? SizedBox(
-                    height: 52,
-                    width: 52,
-                    child: ClipOval(
-                        child: CachedNetworkImageWidget(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.contain,
-                            errorWidget: SvgPicture.asset(ImageConst.logo))),
-                  )
-                : SvgPicture.asset(ImageConst.logo),
-          ),
-          addHorizontal(16),
-          Expanded(
-            child: Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
+                  ? AppColors.greyLight
+                  : AppColors.primaryColor,
+              radius: 26.5,
+              child: (imageUrl != null && imageUrl.isNotEmpty)
+                  ? SizedBox(
+                      height: 52,
+                      width: 52,
+                      child: ClipOval(
+                          child: CachedNetworkImageWidget(
+                              imageUrl: imageUrl,
+                              fit: BoxFit.contain,
+                              errorWidget: SvgPicture.asset(ImageConst.logo))),
+                    )
+                  : Text(
+                      name?[0].toUpperCase() ?? "",
+                      style: TextStyles.bold5(color: AppColors.whiteColor),
+                    ),
+            ),
+            addHorizontal(10),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(name ?? 'Dental Interface',
                     style: TextStyles.clashMedium(
                         fontSize: 16, color: AppColors.black)),
-                Text(jiffyDataWidget(date ?? '', format: 'dd-MM-yyyy hh:mm a'),
+                Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
                     style:
                         TextStyles.regular1(color: AppColors.lightGeryColor)),
               ],
             ),
-          ),
-          addHorizontal(15),
-          NewsMenuWidget(newsfeeds: newsfeeds)
-        ],
-      ),
+          ],
+        ),
+        NewsMenuWidget(newsfeeds: newsfeeds)
+      ],
     );
   }
 
-  Widget _buildCatalogueRow(
-      CatalogueViewModel catalogueVM, BuildContext context) {
+  Widget _buildCatalogueRow(CatalogueViewModel catalogueVM,
+      BuildContext context, String? categoryId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -215,26 +516,26 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             )
           ],
         ),
-        AppButton(
-            text: 'View',
-            height: 40,
-            width: 100,
-            onTap: () async {
-              await catalogueVM.getCatalogDetails(
-                  context, newsfeeds?.payload?.catalogueId ?? '');
-              final id =
-                  catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
-              await catalogueVM.getReletedCatalog(context, id);
-              await navigationService.navigateTo(RouteList.catalogueDetails);
-            })
+        OutlineButtonWidget(
+          text: "View Details",
+          onTap: () async {
+            await catalogueVM.getCatalogDetails(context, categoryId ?? '');
+            final id =
+                catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+            await catalogueVM.getReletedCatalog(context, id);
+            await navigationService.navigateTo(RouteList.catalogueDetails);
+          },
+        )
       ],
     );
   }
 
   Widget _buildImageRow(CatalogueViewModel catalogueVM, BuildContext context) {
-    final mediaList = newsfeeds?.postImage ?? [];
+    final mediaList = newsfeeds?.postImage?.isNotEmpty == true
+        ? newsfeeds?.postImage ?? []
+        : newsfeeds?.imageUrl ?? [];
 
-    if (mediaList.isEmpty) return SizedBox();
+    if (mediaList.isEmpty == true) return SizedBox();
 
     Widget buildMediaContent(media) {
       final type = media.type ?? media.mimeType ?? '';
@@ -249,7 +550,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         if (isBase64Image(url)) {
           try {
             final decodedBytes = base64Decode(url.split(',').last);
-            return Image.memory(decodedBytes, fit: BoxFit.cover);
+            return Image.memory(decodedBytes, fit: BoxFit.contain);
           } catch (e) {
             return Icon(Icons.broken_image);
           }
@@ -262,7 +563,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(ImageConst.pdf),
+                Image.asset(ImageConst.pdf, height: 10),
                 addVertical(11),
                 Text(name,
                     style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -271,7 +572,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             ),
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url);
+          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.contain);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);
@@ -282,7 +583,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(ImageConst.pdf),
+              Image.asset(ImageConst.pdf, height: 50),
               addVertical(11),
               Text(name,
                   style: TextStyles.regular1(color: AppColors.lightGeryColor),
@@ -347,7 +648,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             width: isFullWidth ? double.infinity : 300,
-            height: 300,
+            height: 160,
             color: Colors.grey[200],
             child: child,
           ),
@@ -356,26 +657,26 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
+  bool _isValidYoutubeUrl(String url) {
+    return url.contains('youtube.com') || url.contains('youtu.be');
+  }
+
   Widget _buildStatsRow(
       String likeCount,
       String commentCount,
       NewsFeedViewModel viewModel,
       BuildContext context,
       String feedId,
-      String? category) {
-    final isLiked = isLikedByCurrentUser(newsfeeds, viewModel.userID ?? '');
+      String? category,
+      CommentViewModel commentViewModel) {
+    final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
       children: [
         GestureDetector(
           onTap: () {
             if (isLiked) {
-              final likeId = newsfeeds?.myLike
-                      ?.firstWhere((e) => e.id != null && e.id!.isNotEmpty,
-                          orElse: () => MyLike())
-                      .id ??
-                  '';
-              if (likeId.isEmpty) return;
+              final likeId = newsfeeds?.myLike?.first.id ?? '';
               viewModel.removeNewsFeedLike(
                   context, newsfeeds?.id ?? '', likeId);
             } else {
@@ -394,7 +695,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   Icon(isLiked ? Icons.favorite : Icons.favorite_border,
                       color: AppColors.primaryColor),
                   addHorizontal(8),
-                  Text('$likeCount Likes',
+                  Text('$likeCount',
                       style: TextStyles.regular2(color: AppColors.black)),
                 ],
               ),
@@ -407,30 +708,29 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           category: category,
         ),
         Spacer(),
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.backgroundColor),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: Row(
-              children: [
-                Image.asset(ImageConst.comment),
-                addHorizontal(8),
-                Text('$commentCount comments',
-                    style: TextStyles.regular3(color: AppColors.black))
-              ],
+        GestureDetector(
+          onTap: () async {
+            await commentViewModel.getComments(context, newsfeeds?.id ?? "");
+            navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: AppColors.backgroundColor),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Row(
+                children: [
+                  Image.asset(ImageConst.comment),
+                  addHorizontal(8),
+                  Text('$commentCount comments',
+                      style: TextStyles.regular3(color: AppColors.black))
+                ],
+              ),
             ),
           ),
         )
       ],
     );
-  }
-
-  bool isLikedByCurrentUser(Newsfeeds? newsfeed, String userId) {
-    if (userId.isEmpty) return false;
-    return newsfeed?.myLike
-            ?.any((e) => e.id != null && e.id?.isNotEmpty == true) ??
-        false;
   }
 }

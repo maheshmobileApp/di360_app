@@ -400,6 +400,7 @@ flutter pub get && flutter run --dart-define-from-file=.env/dev.json
 
 flutter run --dart-define-from-file=.env/prod.json
 flutter run --dart-define-from-file=.env/dev.json
+keytool -list -v -keystore ~/.android/debug.keystore
 
 
   # For iOS Build 
@@ -419,23 +420,10 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
- 1.⁠ ⁠DS5-T2343 
- 2.⁠ ⁠DS5-T2345
- 3.⁠ ⁠DS5-T2347 
- 4.⁠ ⁠DS5-T2348 
- 5.⁠ ⁠DS5-T2349 
- 6.⁠ ⁠DS5-T2351 
- 7.⁠ ⁠DS5-T2353 
- 8.⁠ ⁠DS5-T2355 
- 9.⁠ ⁠DS5-T2356 
-10.⁠ ⁠DS5-T2357 
-11.⁠ ⁠DS5-T2359 
-12.⁠ ⁠DS5-T2360 
-13.⁠ ⁠DS5-T2361 
-14.⁠ ⁠DS5-T2362
-15.⁠ ⁠DS5-T2365
-16.⁠ ⁠DS5-T2366 
-17.⁠ ⁠DS5-T2367 
+Deep link issue fixed
+1.⁠ ⁠Directory Pagination 
+2.⁠ ⁠Directory Search flow from home screen. 
+3.⁠ ⁠Newsfeed Search Functionality 
 "
   
 
@@ -452,3 +440,6 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
     }
   }
 ]
+drspeddi@gmail.com
+
+123456

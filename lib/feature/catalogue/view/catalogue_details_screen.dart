@@ -6,13 +6,13 @@ import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_v
 import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/feature/catalogue/view/related_catalogue_like_widget.dart';
+import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
   const CatalogueDetailsScreen({super.key});
@@ -101,12 +101,10 @@ class CatalogueDetailsScreen extends StatelessWidget with BaseContextHelpers {
                                 final url = catalogueVM
                                         .cataloguesByIdData?.attachment?.url ??
                                     '';
-                                if (await canLaunchUrl(Uri.parse(url))) {
-                                  await launchUrl(
-                                    Uri.parse(url),
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                }
+                                final fileName = catalogueVM
+                                        .cataloguesByIdData?.attachment?.name ??
+                                    '';
+                                downloadFile(context, url, fileName: fileName);
                               },
                               child: Row(
                                 children: [

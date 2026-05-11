@@ -19,7 +19,7 @@ class CourseDescriptionWidget extends StatelessWidget {
           style: TextStyles.bold2(color: AppColors.primaryColor),
         ),
         SizedBox(height: 8),
-        ExpandableHtmlText(htmlData: description,  index: 0)
+        ExpandableHtmlText(htmlData: description, index: 0)
       ],
     );
   }

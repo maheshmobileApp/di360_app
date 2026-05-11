@@ -54,6 +54,7 @@ class Newsfeeds {
   String? createdAt;
   String? updatedAt;
   List<PostImage>? postImage;
+  List<PostImage>? imageUrl;
   String? communityId;
   String? description;
   String? categoryType;
@@ -82,12 +83,14 @@ class Newsfeeds {
   List<NewsFeedsComments>? newsFeedsComments;
   NewsfeedsCommentAggregate? newsFeedsCommentsAggregate;
   String? sTypename;
+  String? payloadId;
 
   Newsfeeds(
       {this.id,
       this.createdAt,
       this.updatedAt,
       this.postImage,
+      this.imageUrl,
       this.communityId,
       this.description,
       this.categoryType,
@@ -115,7 +118,8 @@ class Newsfeeds {
       this.newsfeedsLikesAggregate,
       this.newsFeedsComments,
       this.newsFeedsCommentsAggregate,
-      this.sTypename});
+      this.sTypename,
+      this.payloadId});
 
   Newsfeeds.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -128,6 +132,16 @@ class Newsfeeds {
             .toList();
       } else if (json['post_image'] is Map) {
         postImage = [PostImage.fromJson(json['post_image'])];
+      }
+    }
+
+    if (json['image_url'] != null) {
+      if (json['image_url'] is List) {
+        imageUrl = (json['image_url'] as List)
+            .map((item) => PostImage.fromJson(item))
+            .toList();
+      } else if (json['image_url'] is Map) {
+        imageUrl = [PostImage.fromJson(json['image_url'])];
       }
     }
     communityId = json['community_id'];
@@ -192,6 +206,7 @@ class Newsfeeds {
             json['news_feeds_comments_aggregate'])
         : null;
     sTypename = json['__typename'];
+    payloadId = json['payload_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -201,6 +216,10 @@ class Newsfeeds {
     data['updated_at'] = this.updatedAt;
     if (this.postImage != null) {
       data['post_image'] = this.postImage!.map((v) => v.toJson()).toList();
+    }
+
+    if (this.imageUrl != null) {
+      data['image_url'] = this.imageUrl!.map((v) => v.toJson()).toList();
     }
     data['community_id'] = this.communityId;
     data['description'] = this.description;
@@ -254,6 +273,7 @@ class Newsfeeds {
           this.newsFeedsCommentsAggregate!.toJson();
     }
     data['__typename'] = this.sTypename;
+    data['payload_id'] = this.payloadId;
     return data;
   }
 }
@@ -434,14 +454,16 @@ class Payload {
 class AdminUser {
   String? id;
   String? phone;
+  String? name;
   String? email;
   String? sTypename;
 
-  AdminUser({this.id, this.phone, this.email, this.sTypename});
+  AdminUser({this.id, this.phone, this.name, this.email, this.sTypename});
 
   AdminUser.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     phone = json['phone'];
+    name = json['name'];
     email = json['email'];
     sTypename = json['__typename'];
   }
@@ -450,6 +472,7 @@ class AdminUser {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['phone'] = this.phone;
+    data['name'] = this.name;
     data['email'] = this.email;
     data['__typename'] = this.sTypename;
     return data;

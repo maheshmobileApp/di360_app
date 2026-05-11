@@ -19,15 +19,39 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GridViewWidget extends StatelessWidget with BaseContextHelpers {
-  final ScrollController? controller;
-  const GridViewWidget({super.key, this.controller});
+class GridViewWidget extends StatefulWidget {
+  final ScrollController scrollController;
+  const GridViewWidget({super.key, required this.scrollController});
+
+  @override
+  State<GridViewWidget> createState() => _GridViewWidgetState();
+}
+
+class _GridViewWidgetState extends State<GridViewWidget> with BaseContextHelpers {
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (widget.scrollController.position.pixels >=
+        widget.scrollController.position.maxScrollExtent - 200) {
+      context.read<DirectoryViewModel>().loadMoreDirectors();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<DirectoryViewModel>(builder: (context, value, child) {
       return SingleChildScrollView(
-        controller: controller,
+        controller: widget.scrollController,
         child: value.directorsList.isEmpty
             ? Center(
                 child: Column(
@@ -43,124 +67,137 @@ class GridViewWidget extends StatelessWidget with BaseContextHelpers {
                 ),
               )
             : Column(
-                children: value.interleavedList.map((item) {
-                if (item is List<Directories>) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: List.generate(2, (i) {
-                        if (i < item.length) {
-                          final director = item[i];
-                          return Expanded(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 8),
-                              decoration: BoxDecoration(
-                                  color: AppColors.whiteColor,
-                                  border: Border.all(
-                                      color: AppColors.buttomBarColor),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final type = await LocalStorage.getStringVal(
-                                      LocalStorageConst.type);
-                                  Loaders.circularShowLoader(context);
-                                  await (type == UserRole.supplier.value)
-                                      ? value
-                                          .getBusinessSupplierDetails(context)
-                                      : value.getBusinessProfessionalDetails(
-                                          context);
-                                  await value.GetDirectorDetails(
-                                      director.id ?? '');
-                                  await value.getDirectory(director.id ?? "");
-                                  Loaders.circularHideLoader(context);
-                                  navigationService.navigateTo(
-                                      RouteList.directoryDetailsScreen);
-                                },
-                                child: Column(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(
-                                          top: Radius.circular(10)),
-                                      child: CachedNetworkImageWidget(
-                                        imageUrl: director.logo?.url ??
-                                            director.profileImage?.url ??
-                                            '',
-                                        height: 110,
-                                        width: double.infinity,
-                                        fit: BoxFit.contain,
-                                        errorWidget: Container(
-                                          height: 110,
-                                          width: double.infinity,
-                                          color: AppColors.greyLight,
-                                          child: Center(
-                                            child: Image.asset(
-                                                ImageConst.directorImg,
-                                                height: 110,
-                                                width: double.infinity,
-                                                fit: BoxFit.fitWidth),
+                children: [
+                  ...value.interleavedList.map((item) {
+                    if (item is List<Directories>) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: List.generate(2, (i) {
+                            if (i < item.length) {
+                              final director = item[i];
+                              return Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: AppColors.whiteColor,
+                                      border: Border.all(
+                                          color: AppColors.buttomBarColor),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      final type =
+                                          await LocalStorage.getStringVal(
+                                              LocalStorageConst.type);
+                                      Loaders.circularShowLoader(context);
+                                      await (type == UserRole.supplier.value)
+                                          ? value.getBusinessSupplierDetails(
+                                              context)
+                                          : value.getBusinessProfessionalDetails(
+                                              context);
+                                      await value.GetDirectorDetails(
+                                          director.id ?? '');
+                                      await value
+                                          .getDirectory(director.id ?? "");
+                                      Loaders.circularHideLoader(context);
+                                      navigationService.navigateTo(
+                                          RouteList.directoryDetailsScreen);
+                                    },
+                                    child: Column(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                  top: Radius.circular(10)),
+                                          child: CachedNetworkImageWidget(
+                                            imageUrl: director.logo?.url ??
+                                                director.profileImage?.url ??
+                                                '',
+                                            height: 110,
+                                            width: double.infinity,
+                                            fit: BoxFit.contain,
+                                            errorWidget: Container(
+                                              height: 110,
+                                              width: double.infinity,
+                                              color: AppColors.greyLight,
+                                              child: Center(
+                                                child: Image.asset(
+                                                    ImageConst.directorImg,
+                                                    height: 110,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.fitWidth),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    Container(
-                                        height: 1,
-                                        color: AppColors.dividerColor),
-                                    addVertical(6),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Flexible(
-                                            child: Text(
-                                                director.companyName ??
-                                                    director.name ??
-                                                    '',
-                                                textAlign: TextAlign.center,
-                                                maxLines: 2,
-                                                style: TextStyles.medium2(
-                                                    color: AppColors.black))),
-                                        ShareWidget(
-                                            category: FeedType.directory.name,
-                                            feedId: director.id ?? '',
-                                            padding: EdgeInsets.all(2))
+                                        Container(
+                                            height: 1,
+                                            color: AppColors.dividerColor),
+                                        addVertical(6),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Flexible(
+                                                child: Text(
+                                                    director.companyName ??
+                                                        director.name ??
+                                                        '',
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 2,
+                                                    style: TextStyles.medium2(
+                                                        color: AppColors.black))),
+                                            ShareWidget(
+                                                category:
+                                                    FeedType.directory.name,
+                                                feedId: director.id ?? '',
+                                                padding: EdgeInsets.all(2))
+                                          ],
+                                        ),
+                                        addVertical(6)
                                       ],
                                     ),
-                                    addVertical(6)
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Expanded(child: SizedBox());
-                        }
-                      }),
+                              );
+                            } else {
+                              return Expanded(child: SizedBox());
+                            }
+                          }),
+                        ),
+                      );
+                    } else if (item is Banners) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: GestureDetector(
+                          onTap: () async {
+                            if (await canLaunchUrl(Uri.parse(item.url ?? ''))) {
+                              await launchUrl(Uri.parse(item.url ?? ''),
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImageWidget(
+                                imageUrl: item.image?.first.url ?? '',
+                                fit: BoxFit.contain,
+                                width: double.infinity,
+                                height: 170),
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox.shrink();
+                  }).toList(),
+                  if (value.isLoadingMore)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              color: AppColors.primaryColor)),
                     ),
-                  );
-                } else if (item is Banners) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: GestureDetector(
-                      onTap: () async {
-                        if (await canLaunchUrl(Uri.parse(item.url ?? ''))) {
-                          await launchUrl(Uri.parse(item.url ?? ''),
-                              mode: LaunchMode.externalApplication);
-                        }
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: CachedNetworkImageWidget(
-                            imageUrl: item.image?.first.url ?? '',
-                            fit: BoxFit.contain,
-                            width: double.infinity,
-                            height: 170),
-                      ),
-                    ),
-                  );
-                }
-
-                return SizedBox.shrink();
-              }).toList()),
+                ],
+              ),
       );
     });
   }
