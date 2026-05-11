@@ -97,10 +97,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                               ? () async {
                                   courseDetails?.courseRegisteredUsers
                                               ?.firstOrNull?.status ==
-                                          'APPROVED'
-                                      ? navigationService
-                                          .push(CourseDetailsView())
-                                      : showAlertMessage(
+                                          "PENDING"
+                                      ? showAlertMessage(
                                           context,
                                           'Thank you for your registration. We are currently awaiting payment confirmation from the administrator. You will be notified once your enrollment is confirmed.',
                                           yes: 'View Registration Link',
@@ -130,7 +128,9 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                             }
                                             navigationService.goBack();
                                           },
-                                        );
+                                        )
+                                      : navigationService
+                                          .push(CourseDetailsView());
                                 }
                               : () {
                                   scaffoldMessenger("Already Registered");

@@ -86,16 +86,17 @@ class RegistrationUserForm {
                           ),
                           const SizedBox(height: 8),
                           InputTextField(
-                              controller: courseVM.userPhoneNumberController,
-                              hintText: "Enter Phone Number",
-                              title: "Phone Number",
-                              maxLength: 10,
-                              keyboardType: TextInputType.number,
-                              isRequired: true,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              validator: courseVM.validatePhoneNumber),
+                            controller: courseVM.userPhoneNumberController,
+                            hintText: "Enter Phone Number",
+                            title: "Phone Number",
+                            maxLength: 12,
+                            keyboardType: TextInputType.number,
+                            isRequired: true,
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.digitsOnly,
+                            // ],
+                            // validator: courseVM.validatePhoneNumber
+                          ),
                           const SizedBox(height: 8),
                           InputTextField(
                               controller: courseVM.userEmailController,
@@ -132,14 +133,20 @@ class RegistrationUserForm {
                                         navigationService.goBack();
                                         return;
                                       }
-                                      final urlStr = raw.startsWith('http://') || raw.startsWith('https://')
-                                          ? raw
-                                          : 'https://$raw';
+                                      final urlStr =
+                                          raw.startsWith('http://') ||
+                                                  raw.startsWith('https://')
+                                              ? raw
+                                              : 'https://$raw';
                                       final url = Uri.tryParse(urlStr);
-                                      if (url != null && await canLaunchUrl(url)) {
-                                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                                      if (url != null &&
+                                          await canLaunchUrl(url)) {
+                                        await launchUrl(url,
+                                            mode:
+                                                LaunchMode.externalApplication);
                                       } else {
-                                        scaffoldMessenger('Could not open registration link');
+                                        scaffoldMessenger(
+                                            'Could not open registration link');
                                       }
                                       navigationService.goBack();
                                     },

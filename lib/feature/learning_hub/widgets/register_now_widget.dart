@@ -88,9 +88,9 @@ class RegisterNowWidget extends StatelessWidget {
             backgroundColor: AppColors.primaryColor,
             text: registerStatus
                 ? courseType == 'Online Academy'
-                    ? courseRegisterStatus == 'APPROVED'
-                        ? "View Course"
-                        : "Registration Pending"
+                    ? courseRegisterStatus == "PENDING"
+                        ? "Registration Pending"
+                        : "View Course"
                     : "Registered"
                 : "Register Now",
             width: 170,
