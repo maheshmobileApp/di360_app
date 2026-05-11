@@ -110,12 +110,19 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     if (Platform.isAndroid) {
       final info = await DeviceInfoPlugin().androidInfo;
       if (info.version.sdkInt >= 29) {
-        final dir = Directory('/storage/emulated/0/Download/DentalInterface360/Certificates');
-        if (!await dir.exists()) await dir.create(recursive: true);
-        return dir;
+        try {
+          final dir = Directory('/storage/emulated/0/Download/DentalInterface360/Certificates');
+          if (!await dir.exists()) await dir.create(recursive: true);
+          return dir;
+        } catch (_) {
+          final base = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+          final dir = Directory('${base.path}/DentalInterface360/Certificates');
+          if (!await dir.exists()) await dir.create(recursive: true);
+          return dir;
+        }
       } else {
-        final base = await getExternalStorageDirectory();
-        final dir = Directory('${base!.path}/DentalInterface360/Certificates');
+        final base = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+        final dir = Directory('${base.path}/DentalInterface360/Certificates');
         if (!await dir.exists()) await dir.create(recursive: true);
         return dir;
       }
