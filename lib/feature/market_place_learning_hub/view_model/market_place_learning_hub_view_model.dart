@@ -381,23 +381,22 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       }
     });
 
-    if (res['insert_course_registered_users_one'] != null) {
+    if (res['insert_registered_course_module_one'] != null) {
       section.status = 'Completed';
       final registeredUser = courseDetails?.courseRegisteredUsers?.firstOrNull;
-      if (registeredUser != null) {
-        registeredUser.registeredModuleDetails ??= [];
-        final alreadyExists = registeredUser.registeredModuleDetails!
-            .any((d) => d.sectionId == section.id);
-        if (!alreadyExists) {
-          registeredUser.registeredModuleDetails!.add(
-            RegisteredModuleDetails(
-                sectionId: section.id,
-                moduleId: currentModule.moduleId,
-                moduleName: currentModule.moduleName,
-                sectionStatus: 'Completed',
-                userId: userId),
-          );
-        }
+      registeredUser?.registeredModuleDetails ??= [];
+      final alreadyExists = registeredUser?.registeredModuleDetails
+              ?.any((d) => d.sectionId == section.id) ??
+          false;
+      if (!alreadyExists) {
+        registeredUser?.registeredModuleDetails?.add(
+          RegisteredModuleDetails(
+              sectionId: section.id,
+              moduleId: currentModule.moduleId,
+              moduleName: currentModule.moduleName,
+              sectionStatus: 'Completed',
+              userId: userId),
+        );
       }
       _advance();
     }
