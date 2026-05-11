@@ -241,10 +241,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
         type: type, subCatagory: subCatagory);
     getCatalogCounts();
     if (res != null) {
+      res.sort((a, b) {
+        final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
+        final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
+        return dateB.compareTo(dateA);
+      });
+
       myCatalogueList = res;
-      Loaders.circularHideLoader(context);
-    } else {
-      Loaders.circularHideLoader(context);
+        Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }

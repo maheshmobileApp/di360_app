@@ -100,15 +100,15 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
               itemCount: _sortedComments?.length ?? 0,
               itemBuilder: (context, index) {
                 final comments = _sortedComments?[index];
-                return _buildCommentTile(comments, viewModel,
-                    widget.newsfeeds?.id ?? '');
+                return _buildCommentTile(
+                    comments, viewModel, widget.newsfeeds?.id ?? '');
               },
             ),
     );
   }
 
-  Widget _buildCommentTile(NewsFeedsComments? comments,
-      CommentViewModel viewModel, String feedId) {
+  Widget _buildCommentTile(
+      NewsFeedsComments? comments, CommentViewModel viewModel, String feedId) {
     if (comments?.id == null) {
       return const SizedBox.shrink();
     }
@@ -150,7 +150,9 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                   (viewModel.expandedReplies[comments.id] ?? false))
                 Container(
                   width: 2,
-                  height: _replyHeights[comments.id]?.clamp(0, double.infinity) ?? 80,
+                  height:
+                      _replyHeights[comments.id]?.clamp(0, double.infinity) ??
+                          80,
                   color: Colors.grey.shade400,
                 ),
             ],
@@ -210,8 +212,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                   children: [
                     if ((comments.repliesAggregate?.aggregate?.count ?? 0) > 0)
                       GestureDetector(
-                        onTap: () =>
-                            _handleViewReplyTap(comments, viewModel),
+                        onTap: () => _handleViewReplyTap(comments, viewModel),
                         child: Text(
                           viewModel.expandedReplies[comments.id] ?? false
                               ? 'Hide replies'
@@ -466,12 +467,12 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
         .requestFocus(viewModel.replyFocusNode);
   }
 
-  void _handleViewReplyTap(NewsFeedsComments comments,
-      CommentViewModel viewModel) async {
+  void _handleViewReplyTap(
+      NewsFeedsComments comments, CommentViewModel viewModel) async {
     final isExpanded = viewModel.expandedReplies[comments.id] ?? false;
 
     if (!isExpanded) {
-      await viewModel.getReplies(context, comments.id??"");
+      await viewModel.getReplies(context, comments.id ?? "");
     }
 
     viewModel.toggleReplyExpansion(comments.id ?? '');

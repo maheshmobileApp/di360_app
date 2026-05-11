@@ -34,6 +34,23 @@ class HttpService {
     return response;
   }
 
+  String _getContentType(String filePath) {
+    final ext = filePath.toLowerCase().split('.').last;
+    final mimeTypes = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'mp4': 'video/mp4',
+      'mov': 'video/quicktime',
+      'pdf': 'application/pdf',
+      'doc': 'application/msword',
+      'docx':
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'txt': 'text/plain',
+    };
+    return mimeTypes[ext] ?? 'application/octet-stream';
+  }
+
   Future<dynamic> uploadImage(String? filePath) async {
     if (filePath == null || filePath.isEmpty) {
       print("Upload failed: File path is null or empty");
@@ -41,7 +58,10 @@ class HttpService {
     }
 
     try {
-      MultipartFile _uploadImage = await MultipartFile.fromFile(filePath);
+      MultipartFile _uploadImage = await MultipartFile.fromFile(
+        filePath,
+        contentType: DioMediaType.parse(_getContentType(filePath)),
+      );
       var _data = {"file": _uploadImage, "directory": 'project'};
       return await post(
           '/api/v1/file-upload/upload-s3', FormData.fromMap(_data));

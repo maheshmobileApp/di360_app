@@ -236,10 +236,8 @@ class NewsFeedViewModel extends ChangeNotifier {
         newsfeedCategories = res.newsfeedCategories;
         newsfeedCategories?.insert(
             0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
-        newsfeedCategories?.insert(
-            1, NewsfeedCategories(id: '2', categoryName: 'Jobs'));
-        newsfeedCategories?.insert(
-            2, NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
+        newsfeedCategories?.add(NewsfeedCategories(id: '2', categoryName: 'Jobs'));
+        newsfeedCategories?.add(NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
       }
     } catch (e) {}
     notifyListeners();

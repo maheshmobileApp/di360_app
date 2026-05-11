@@ -49,7 +49,7 @@ class CatalogueCategories {
 
   CatalogueCategories({this.id, this.name, this.catalogues, this.sTypename});
 
-  CatalogueCategories. fromJson(Map<String, dynamic> json) {
+  CatalogueCategories.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     if (json['catalogues'] != null) {
@@ -80,6 +80,7 @@ class Catalogues {
   ThumbnailImage? thumbnailImage;
   String? schedulerDay;
   DentalSupplier? dentalSupplier;
+  CatalogueSubCategory? catalogueCategory;
   CatalogueSubCategory? catalogueSubCategory;
   List<CatalogueFavorites>? catalogueFavorites;
   String? sTypename;
@@ -91,6 +92,7 @@ class Catalogues {
       this.thumbnailImage,
       this.schedulerDay,
       this.dentalSupplier,
+      this.catalogueCategory,
       this.catalogueSubCategory,
       this.catalogueFavorites,
       this.sTypename});
@@ -114,6 +116,9 @@ class Catalogues {
     schedulerDay = json['schedulerDay'];
     dentalSupplier = json['dental_supplier'] != null
         ? new DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
+    catalogueCategory = json['catalogue_category'] != null
+        ? new CatalogueSubCategory.fromJson(json['catalogue_category'])
         : null;
     catalogueSubCategory = json['catalogue_sub_category'] != null
         ? new CatalogueSubCategory.fromJson(json['catalogue_sub_category'])
@@ -143,6 +148,8 @@ class Catalogues {
       data['catalogue_favorites'] =
           this.catalogueFavorites!.map((v) => v.toJson()).toList();
     }
+    data['catalogue_category'] = this.catalogueCategory!.toJson();
+    data['catalogue_sub_category'] = this.catalogueSubCategory!.toJson();
     data['__typename'] = this.sTypename;
     return data;
   }

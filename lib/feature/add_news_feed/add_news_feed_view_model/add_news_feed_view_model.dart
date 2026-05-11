@@ -1,9 +1,9 @@
-
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
-import 'package:di360_flutter/feature/add_news_feed/update_news_feed.dart';
+import 'package:di360_flutter/feature/add_news_feed/querys/update_news_feed.dart';
+import 'package:di360_flutter/feature/add_news_feed/repository/add_news_feed_repo_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 
 class AddNewsFeedViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
+  final AddNewsFeedRepoImpl repo = AddNewsFeedRepoImpl();
 
   // AddNewsFeedViewModel() {
   //   fetchNewsfeedCategories();
@@ -48,13 +49,10 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     }
   }*/
 
-  
-
-void addFiles(List<XFile> files) {
-  selectedFiles.addAll(files);
-  notifyListeners();
-}
-
+  void addFiles(List<XFile> files) {
+    selectedFiles.addAll(files);
+    notifyListeners();
+  }
 
   void removeFile(int index) {
     selectedFiles.removeAt(index);
@@ -101,12 +99,18 @@ void addFiles(List<XFile> files) {
         print("Uploading file: ${element.path}");
         var value = await _http.uploadImage(element.path);
         if (value != null) {
-          uploadedFiles.add(value['data'] ?? value);
+          final data = value['data'] ?? value;
+          uploadedFiles.add({
+            "id": data['file_id'],
+            "name": data['name'],
+            "type": data['mime_type'],
+            "url": data['url'],
+          });
         }
       }
 
-      final res = await _http.mutation(addNewsFeed, {
-        "object": {
+      final variables = {
+        "fields": {
           "description": desController.text,
           "category_type": selectedCategory?.id,
           "video_url": videoController.text,
@@ -121,8 +125,12 @@ void addFiles(List<XFile> files) {
               type == UserRole.professional.value ? userId : null,
           "dental_admin_id": type == UserRole.admin.value ? userId : null,
           "feed_type": "NEWSFEED",
+          "community_id": null,
+          "community_type": "BOTH"
         }
-      });
+      };
+
+      final res = await repo.addNewsFeed(variables);
 
       if (res.isNotEmpty) {
         uploadedFiles.clear();
@@ -149,7 +157,13 @@ void addFiles(List<XFile> files) {
       for (var element in selectedFiles) {
         var value = await _http.uploadImage(element.path);
         if (value != null) {
-          uploadedFiles.add(value['data'] ?? value);
+          final data = value['data'] ?? value;
+          uploadedFiles.add({
+            "id": data['file_id'],
+            "name": data['name'],
+            "type": data['mime_type'],
+            "url": data['url'],
+          });
         }
       }
 
@@ -157,22 +171,14 @@ void addFiles(List<XFile> files) {
         uploadedFiles.addAll(existingImages);
       }
 
-      final res = await _http.mutation(updatedTheNewsFeedQuery, {
+      final res = await repo.updateNewsFeed({
         "id": newsFeedId,
-        "data": {
+        "fields": {
           "description": desController.text,
           "category_type": selectedCategory?.id,
           "video_url": videoController.text,
           "post_image": uploadedFiles,
           "web_url": websiteController.text,
-          "user_role": type,
-          "user_id": userId,
-          "status": "PUBLISHED",
-          "dental_practice_id": type == 'PRACTICE' ? userId : null,
-          "dental_supplier_id": type == 'SUPPLIER' ? userId : null,
-          "dental_professional_id": type == 'PROFESSIONAL' ? userId : null,
-          "dental_admin_id": type == 'ADMIN' ? userId : null,
-          "feed_type": "NEWSFEED",
         }
       });
 
@@ -242,17 +248,9 @@ void addFiles(List<XFile> files) {
   }
 
   editSelectCategoryAssigned(String id) {
-    final category = newsfeedCategories?.firstWhere((val) => val.id == id, orElse: () => newsfeedCategories!.first);
+    final category = newsfeedCategories?.firstWhere((val) => val.id == id,
+        orElse: () => newsfeedCategories!.first);
     setSelectedCategory(id.isEmpty ? null : category);
     notifyListeners();
   }
 }
-
-const addNewsFeed = '''
-    mutation insert_newsfeeds_one(\$object: newsfeeds_insert_input!) {
-      insert_newsfeeds_one(object: \$object) {
-        id
-        __typename
-      }
-    }
-  ''';

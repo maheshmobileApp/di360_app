@@ -28,7 +28,7 @@ class NewsMenuWidget extends StatelessWidget {
         newsfeeds?.dentalSupplierId == currentUserId;
 
     return PopupMenuButton<String>(
-      iconColor: AppColors.bottomNavUnSelectedColor,
+      iconColor: AppColors.black,
       color: AppColors.whiteColor,
       padding: const EdgeInsets.all(0),
       onSelected: (value) async {
