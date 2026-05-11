@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -62,14 +63,16 @@ void showTestResultDialog(
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        context.read<MarketPlaceLearningHubViewModel>().resetQuiz();
+                        context
+                            .read<MarketPlaceLearningHubViewModel>()
+                            .resetQuiz();
                         navigationService.goBack();
                       },
                       child: const Text("CANCEL"),
                     ),
                   ),
                   const SizedBox(width: 10),
-                    AppButton(
+                  AppButton(
                     text: 'Submit',
                     width: 100,
                     height: 40,
@@ -83,11 +86,16 @@ void showTestResultDialog(
                             final res = await context
                                 .read<MarketPlaceLearningHubViewModel>()
                                 .quizSubmitted(context);
-                            Loaders.circularHideLoader(context);
                             if (res['update_course_registered_users_by_pk'] !=
                                 null) {
+                              await context
+                                  .read<MyLearningHubViewModel>()
+                                  .getCoursesWithMyRegistrations(context);
+                              Loaders.circularHideLoader(context);
+
                               navigationService
                                   .pushNamedAndRemoveUntil(RouteList.dashBoard);
+
                               navigationService
                                   .navigateTo(RouteList.myLearningHubScreen);
                             }
