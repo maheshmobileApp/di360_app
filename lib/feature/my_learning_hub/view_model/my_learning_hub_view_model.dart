@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/my_learning_hub/repository/my_learning_hub_repo_impl.dart';
+import 'package:di360_flutter/services/download_notification_service.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
@@ -95,7 +94,11 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       final dir = await _getDownloadDir();
       final file = File('${dir.path}/${certificateName}');
       await file.writeAsBytes(res);
-      await OpenFile.open(file.path);
+      await DownloadNotificationService.showDownloadNotification(
+      fileName: certificateName,
+      filePath: file.path,
+    );
+       
       scaffoldMessenger("Certificate downloaded to ${file.path}");
     } else {
       print("Certificate download failed or invalid response");
@@ -104,7 +107,7 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<Directory> _getDownloadDir() async {
     if (Platform.isAndroid) {
-      final dir = Directory('/storage/emulated/0/Download/DentalInterface360');
+      final dir = Directory('/storage/emulated/0/Download/DentalInterface360/Certificates');
       if (!await dir.exists()) await dir.create(recursive: true);
       return dir;
     } else {
