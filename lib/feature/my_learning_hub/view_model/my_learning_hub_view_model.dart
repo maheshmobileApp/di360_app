@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/my_learning_hub/repository/my_learning_hub_repo_impl.dart';
@@ -107,13 +108,19 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<Directory> _getDownloadDir() async {
     if (Platform.isAndroid) {
-      final dir = Directory('/storage/emulated/0/Download/DentalInterface360/Certificates');
-      if (!await dir.exists()) await dir.create(recursive: true);
-      return dir;
+      final info = await DeviceInfoPlugin().androidInfo;
+      if (info.version.sdkInt >= 29) {
+        final dir = Directory('/storage/emulated/0/Download/DentalInterface360/Certificates');
+        if (!await dir.exists()) await dir.create(recursive: true);
+        return dir;
+      } else {
+        final base = await getExternalStorageDirectory();
+        final dir = Directory('${base!.path}/DentalInterface360/Certificates');
+        if (!await dir.exists()) await dir.create(recursive: true);
+        return dir;
+      }
     } else {
-      // iOS: saves to app Documents folder, accessible via Files app
-      final dir = await getApplicationDocumentsDirectory();
-      return dir;
+      return await getApplicationDocumentsDirectory();
     }
   }
 }
