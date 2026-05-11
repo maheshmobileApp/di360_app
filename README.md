@@ -400,6 +400,7 @@ flutter pub get && flutter run --dart-define-from-file=.env/dev.json
 
 flutter run --dart-define-from-file=.env/prod.json
 flutter run --dart-define-from-file=.env/dev.json
+keytool -list -v -keystore ~/.android/debug.keystore
 
 
   # For iOS Build 
