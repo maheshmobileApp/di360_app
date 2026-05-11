@@ -65,13 +65,14 @@ class DeepLinkService {
 
       case FeedType.learnhub:
         () async {
-          final courseListingVM =
-              Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false);
+          final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(
+              context,
+              listen: false);
           await courseListingVM.getCourseDetails(
             context,
             id,
           );
-          if (courseListingVM.courseDetails.isNotEmpty) {
+          if (courseListingVM.courseDetails != null) {
             navigationService.navigateTo(RouteList.courseDetailScreen);
           } else {
             scaffoldMessenger('This course details not found');
@@ -110,10 +111,10 @@ class DeepLinkService {
         break;
       case FeedType.course:
         () async {
-          final courseVM =
-              Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false);
+          final courseVM = Provider.of<MarketPlaceLearningHubViewModel>(context,
+              listen: false);
           await courseVM.getCourseDetails(context, id);
-          if (courseVM.courseDetails.isNotEmpty) {
+          if (courseVM.courseDetails != null) {
             navigationService.navigateTo(RouteList.courseDetailScreen);
           } else {
             scaffoldMessenger('This course is not available.');

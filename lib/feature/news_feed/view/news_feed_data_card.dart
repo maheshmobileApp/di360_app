@@ -8,7 +8,7 @@ import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
@@ -32,12 +32,11 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
   final VoidCallback? onDetailView;
   final int index;
-  const NewsFeedDataCard({
-    super.key,
-    required this.newsfeeds,
-    required this.index,
-    this.onDetailView,
-  });
+  const NewsFeedDataCard(
+      {super.key,
+      required this.newsfeeds,
+      required this.index,
+      this.onDetailView});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final catalogueViewModel = Provider.of<CatalogueViewModel>(context);
     final commentViewModel = Provider.of<CommentViewModel>(context);
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final courseListingVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
     final String shareId = _fetchId(newsfeeds);
@@ -173,7 +173,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     needFeedViewModel,
                     context,
                     shareId,
-                    newsfeeds?.feedType ?? FeedType.newsfeed.name,commentViewModel),
+                    newsfeeds?.feedType ?? FeedType.newsfeed.name,
+                    commentViewModel),
               ],
             ),
           )),
@@ -193,7 +194,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _learnHubWidget(Courses course, String createdAt, BuildContext context,
-      CourseListingViewModel courseListingVM, String courseId) {
+      MarketPlaceLearningHubViewModel courseListingVM, String courseId) {
     return Container(
       width: double.infinity,
       height: 150,
@@ -223,9 +224,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                   child: Text(
                     course.type ?? "",
                     style: TextStyles.regular1(
-                      color: AppColors.typeTextColor,
-                      fontSize: 12,
-                    ),
+                        color: AppColors.typeTextColor, fontSize: 12),
                   ),
                 ),
               ],
@@ -243,10 +242,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                 OutlineButtonWidget(
                   text: "View Details",
                   onTap: () async {
-                    await courseListingVM.getCourseDetails(
-                      context,
-                      courseId,
-                    );
+                    await courseListingVM.getCourseDetails(context, courseId);
                     navigationService.navigateTo(RouteList.courseDetailScreen);
                   },
                 )
@@ -289,7 +285,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
                 OutlineButtonWidget(
                   text: "View Details",
-                    onTap: () async {
+                  onTap: () async {
                     await newsFeedVM.getJobDetailsByIds(context, jobId);
                   },
                 )
