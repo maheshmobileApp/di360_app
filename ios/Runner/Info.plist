@@ -71,5 +71,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+<true/>
 </dict>
 </plist>
