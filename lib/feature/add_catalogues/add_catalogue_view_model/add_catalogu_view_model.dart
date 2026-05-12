@@ -90,7 +90,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeStatus(String status, BuildContext context) {
+  void changeStatus(String status, BuildContext context) async {
     selectedStatus = status;
     if (status == 'All') {
       catalogStatus = [
@@ -122,7 +122,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       activeStatus = ["INACTIVE"];
     }
 
-    getMyCataloguesData(context);
+    await getMyCataloguesData(context);
     notifyListeners();
   }
 
@@ -248,7 +248,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       });
 
       myCatalogueList = res;
-        Loaders.circularHideLoader(context);
+      Loaders.circularHideLoader(context);
     }
     notifyListeners();
   }
@@ -297,9 +297,10 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> inActiveCatalogue(BuildContext context, String? id) async {
+  Future<void> inActiveCatalogue(
+      BuildContext context, String? id, String? status) async {
     Loaders.circularShowLoader(context);
-    final res = await repo.inActiveCatalogue(id);
+    final res = await repo.inActiveCatalogue(id, status);
     if (res != null) {
       Loaders.circularHideLoader(context);
       getMyCataloguesData(context);
