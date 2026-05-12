@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.d
 import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_description_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
@@ -180,10 +181,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                 return FlexibleSpaceBar(
                   centerTitle: false,
                   title: isCollapsed
-                      ? Text(
-                          courseDetails?.courseName ?? '',
-                          style: TextStyles.bold2(color: AppColors.black),
-                        )
+                      ? Text(courseDetails?.courseName ?? '',
+                          style: TextStyles.bold2(color: AppColors.black))
                       : null,
                   background: (bannerUrls.isEmpty)
                       ? const SizedBox.shrink()
@@ -286,28 +285,12 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                       addVertical(6),
                       if ((courseDetails?.courseEventInfo != null &&
                           courseDetails!.courseEventInfo!.isNotEmpty)) ...[
-                        ...courseDetails.courseEventInfo!
-                            .asMap()
-                            .entries
-                            .map((entry) {
-                          // final index = entry.key + 1;
-                          // final eventInfo = entry.value;
-
-                          // final images = (eventInfo.images ?? [])
-                          //     .map((e) => e.url ?? "")
-                          //     .where((url) => url.isNotEmpty)
-                          //     .toList();
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // EventDayDataWidget(
-                              //   index: index.toString(),
-                              //   descriptions: [eventInfo],
-                              //   images: images
-                              // ),
-                            ],
-                          );
-                        }),
+                        ...courseDetails.courseEventInfo!.asMap().entries.map(
+                            (entry) => EventDayDataWidget(
+                                index: entry.key + 1,
+                                name: entry.value.name,
+                                desc: entry.value.info,
+                                images: entry.value.images))
                       ],
                       addVertical(12),
                       if (galleryUrls.isNotEmpty)

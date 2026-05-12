@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.d
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ListingHubMasterCard extends StatelessWidget {
   final String? feedId;
@@ -23,6 +24,8 @@ class ListingHubMasterCard extends StatelessWidget {
   final dynamic afterWardsPrice;
   final bool isRegistered;
   final String? type;
+  final dynamic noOfSeats;
+  final int? registerCount;
 
   const ListingHubMasterCard(
       {super.key,
@@ -40,7 +43,9 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.registerTap,
       required this.afterWardsPrice,
       required this.isRegistered,
-      this.type});
+      this.type,
+      this.noOfSeats,
+      this.registerCount});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +86,15 @@ class ListingHubMasterCard extends StatelessWidget {
                             color: const Color.fromARGB(255, 139, 139, 139)),
                         borderRadius: BorderRadius.circular(20)),
                     child: Text(
-                        afterWardsPrice == 0.0 ? "FREE MASTERCLASS" : "PAID",
+                        noOfSeats != null
+                            ? noOfSeats == registerCount
+                                ? "SOLD OUT"
+                                : noOfSeats > 15
+                                    ? " FILLING FAST !"
+                                    : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
+                            : afterWardsPrice == 0.0
+                                ? "FREE MASTERCLASS"
+                                : "PAID",
                         style: const TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0),
                             fontSize: 12,
@@ -197,48 +210,24 @@ class ListingHubMasterCard extends StatelessWidget {
                                     color: AppColors.primaryColor, size: 20),
                                 const SizedBox(width: 6),
                                 Text(
-                                  (date.isEmpty) ? "------" : date,
+                                  (date.isEmpty) ? "------" : DateFormat("dd MMM").format(DateTime.parse(date)),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyles.medium2(
-                                      color: AppColors.primaryColor),
-                                ),
+                                      color: AppColors.primaryColor)
+                                )
                               ],
                             ),
                     ],
                   ),
-
-                  /*Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: onTap,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Details",
-                              style: TextStyles.medium1(
-                                  color: AppColors.primaryColor),
-                            ),
-                            SvgPicture.asset(
-                              ImageConst.nextArrow,
-                              width: 26,
-                              height: 26,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),*/
                 ],
               ),
             ),
             //Spacer(),
             RegisterButton(
-              text: isRegistered ? "Already Registered" : 'Register Now',
-              onTap: registerTap,
-              isRegistered: isRegistered,
-            )
+                text: isRegistered ? "Already Registered" : 'Register Now',
+                onTap: registerTap,
+                isRegistered: isRegistered)
           ],
         ),
       ),

@@ -146,12 +146,6 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");
                               await courseListingVM.getProfile();
-
-                              // await courseListingVM.getCourseRegisteredUsers(
-                              //     context, course.id ?? "");
-
-                              // await courseListingVM.registerCourseHandler(
-                              //     context, course.createdById ?? "");
                               navigationService
                                   .navigateTo(RouteList.courseDetailScreen);
                               /*} else {
@@ -187,6 +181,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             //     // }
                             //   },
                             type: course.type,
+                            noOfSeats: course.numberOfSeats,
+                            registerCount: course.courseRegisteredUsersAggregate
+                                ?.aggregate?.count,
                           );
                         },
                       )),

@@ -39,7 +39,7 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.endDate,
       required this.bannerUrl,
       required this.bannerName,
-      required this.startTime, 
+      required this.startTime,
       required this.endTime,
       this.creatAt});
 
@@ -188,16 +188,13 @@ class CourseInfoCardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         _InfoTextWidget(
-                          label: "Platform",
+                          label: "HOW",
                           first: false,
                           value: "${platform}",
                         ),
                         const SizedBox(height: 6),
                         _InfoTextWidget(
-                          label: "Where",
-                          first: false,
-                          value: 'Online',
-                        ),
+                            label: "Where", first: false, value: 'Online'),
 
                         /*_PriceTextWidget(
                       label: "Price",
@@ -209,11 +206,10 @@ class CourseInfoCardWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                MediaWidget(
-                  url: bannerUrl,
-                  name: bannerName,
-                ),
+                if (bannerUrl.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  MediaWidget(url: bannerUrl, name: bannerName)
+                ],
                 const SizedBox(height: 10),
               ],
             ),
