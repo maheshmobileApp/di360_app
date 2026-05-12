@@ -139,7 +139,7 @@ class _CommentBottomSheetState extends State<NewCommentSheet>
                           comments.dentalSupplier?.logo?.url ??
                           comments.dentalPractice?.logo?.url ??
                           comments.dentalProfessional?.profileImage?.url ??
-                          comments.adminUser?.profileImage ??
+                          comments.adminUser?.profileImage?.url ??
                           '',
                       errorWidget: SvgPicture.asset(ImageConst.logo),
                     ),

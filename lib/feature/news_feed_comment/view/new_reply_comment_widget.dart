@@ -58,7 +58,7 @@ class NewReplyCommentWidget extends StatelessWidget with BaseContextHelpers {
                           imageUrl: comments?.dentalSupplier?.logo?.url ??
                               comments?.dentalPractice?.logo?.url ??
                               comments?.dentalProfessional?.profileImage?.url ??
-                              comments?.adminUser?.profileImage ??
+                              comments?.adminUser?.profileImage?.url ??
                               '',
                           errorWidget: SvgPicture.asset(ImageConst.logo),
                         ),
@@ -209,6 +209,7 @@ class NewReplyCommentWidget extends StatelessWidget with BaseContextHelpers {
             FocusScope.of(navigatorKey.currentContext!)
                 .requestFocus(viewModel.replyFocusNode);
             final comment = comments?.commentText ?? '';
+            viewModel.commentController.text = comment;
             final spaceIndex = comment.indexOf(' ');
             viewModel.commentController.text =
                 spaceIndex == -1 ? '' : comment.substring(spaceIndex + 1);

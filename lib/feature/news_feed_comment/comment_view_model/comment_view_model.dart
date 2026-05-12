@@ -256,6 +256,7 @@ class CommentViewModel extends ChangeNotifier {
         newsFeedComments = res;
       }
     } catch (e) {
+      print("Error fetching comments: $e");
       scaffoldMessenger(e.toString());
     }
     Loaders.circularHideLoader(context);
