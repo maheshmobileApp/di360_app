@@ -22,6 +22,7 @@ class CouresListingCard extends StatelessWidget {
   final String description;
   final List<String> types;
   final String createdAt;
+  final String updatedAt;
   final int registeredCount;
   final String meetingLink;
   final String chipTitle;
@@ -41,6 +42,7 @@ class CouresListingCard extends StatelessWidget {
     required this.description,
     required this.types,
     required this.createdAt,
+    required this.updatedAt,
     required this.registeredCount,
     this.onTapRegistered,
     this.onMenuAction,
@@ -52,7 +54,7 @@ class CouresListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String time = DateFormatUtils.formatTwoDateTime(createdAt);
+    final String time = (status == "ACTIVE") ?DateFormatUtils.formatTwoDateTime(createdAt) : DateFormatUtils.formatTwoDateTime(updatedAt);
 
     return Padding(
       padding: const EdgeInsets.all(8),

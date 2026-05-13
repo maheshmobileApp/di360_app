@@ -21,6 +21,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
   final NewsFeedCommunityRepoImpl repo = NewsFeedCommunityRepoImpl();
 
+  NewsFeedCommunityViewModel() {
+    getUserId();
+  }
+
   NewsFeedCommunityData? newsFeedCommunityData;
   int _currentPage = 0;
   bool _hasMoreNewsFeeds = true;
@@ -59,9 +63,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   void addFiles(List<XFile> files) {
-  selectedFiles.addAll(files);
-  notifyListeners();
-}
+    selectedFiles.addAll(files);
+    notifyListeners();
+  }
 
   List<NewsfeedCategories>? newsfeedCategories;
 
@@ -195,7 +199,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "where": {
         "status": {"_eq": listingStatus},
         "community_id": {
-          "_eq": (type == UserRole.professional.value) ? profCommunityId : communityId
+          "_eq": (type == UserRole.professional.value)
+              ? profCommunityId
+              : communityId
         },
         if (searchController.text.isNotEmpty && searchBarOpen)
           "_or": [
@@ -255,7 +261,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> filterNewsFeeds(BuildContext context,
+  /*Future<void> filterNewsFeeds(BuildContext context,
       {bool loadMore = false}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
 
@@ -310,7 +316,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     _isLoadingMore = false;
     notifyListeners();
-  }
+  }*/
 
   FeedCountData? feedCountData;
 
@@ -385,7 +391,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "user_id": userId,
       "status": (type == UserRole.professional.value) ? "PENDING" : "PUBLISHED",
       "feed_type": "NEWSFEED",
-      "community_id": (type == UserRole.professional.value) ? profCommunityId : communityId,
+      "community_id":
+          (type == UserRole.professional.value) ? profCommunityId : communityId,
     };
 
     if (type == UserRole.professional.value) {
@@ -558,7 +565,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "user_id": userId,
       "status": "PUBLISHED",
       "feed_type": "NEWSFEED",
-      "community_id": (type == UserRole.professional.value) ? profCommunityId : communityId,
+      "community_id":
+          (type == UserRole.professional.value) ? profCommunityId : communityId,
     };
 
     if (type == UserRole.professional.value) {
@@ -609,7 +617,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {
-      "value": type == UserRole.professional.value ? profCommunityId : communityId
+      "value":
+          type == UserRole.professional.value ? profCommunityId : communityId
     };
     final res = await repo.getBannerUrl(variables);
     bannerData = res;
@@ -639,6 +648,28 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Community leaved Successfully");
     }
 
+    notifyListeners();
+  }
+
+  String? adminId;
+  String? supplierId;
+  String? practiceId;
+  String? professionId;
+  String? userID;
+
+  getUserId() async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    userID = userId;
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    if (type == UserRole.professional.value) {
+      professionId = userId;
+    } else if (type == UserRole.admin.value) {
+      adminId = userId;
+    } else if (type == UserRole.supplier.value) {
+      supplierId = userId;
+    } else if (type == UserRole.practice.value) {
+      practiceId = userId;
+    }
     notifyListeners();
   }
 }

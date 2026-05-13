@@ -14,6 +14,7 @@ query getFilteredCatalogueData(
       schedulerDay
       dental_supplier {
         name
+        business_name
         __typename
       }
       catalogue_category {

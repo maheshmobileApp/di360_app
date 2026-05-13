@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
@@ -86,7 +87,14 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     final feedTypeEnum = feedType;
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
+    final newsFeedCommunityViewModel = Provider.of<NewsFeedCommunityViewModel>(context);
     final String shareId = _fetchId(newsfeeds);
+     final currentUserId = newsFeedCommunityViewModel.userID;
+
+    final isSameUser = newsfeeds?.userId == currentUserId ||
+        newsfeeds?.dentalPracticeId == currentUserId ||
+        newsfeeds?.dentalProfessionalId == currentUserId ||
+        newsfeeds?.dentalSupplierId == currentUserId;
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -135,7 +143,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                                         LocalStorageConst.userId)))
                           Row(
                             children: [
-                              _menuWidget(context, type, imageUrls),
+                              _menuWidget(context, type, imageUrls, isSameUser),
                             ],
                           ),
                       ],
@@ -818,7 +826,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget _menuWidget(
-      BuildContext context, String type, List<PostImage>? imageUrls) {
+      BuildContext context, String type, List<PostImage>? imageUrls, bool isSameUser) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -833,11 +841,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (type == UserRole.professional.value &&
-                (newsfeeds?.userId ==
-                    LocalStorage.getStringVal(LocalStorageConst.userId)) ||
-            (type == UserRole.supplier.value &&
-                feedUserRole == UserRole.supplier.value)) ...[
+        if (isSameUser) ...[
           _popupItem("Edit", Icons.edit, AppColors.blueColor),
           _popupItem("Delete", Icons.delete, AppColors.redColor)
         ],

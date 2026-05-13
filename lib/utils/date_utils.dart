@@ -169,4 +169,51 @@ static String formatDateOnly(String? date) {
     return '';
   }
 }
+
+static String formatDateTimeShort(String dateTimeString) {
+  try {
+    final dt = DateTime.parse(dateTimeString);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final period = dt.hour >= 12 ? 'PM' : 'AM';
+    return '${dt.day} ${months[dt.month - 1]} | $hour $period';
+  } catch (_) {
+    return dateTimeString;
+  }
+}
+
+static String formatDateRange(String start, String end) {
+  try {
+    final s = DateTime.parse(start);
+    final e = DateTime.parse(end);
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${s.day} (${days[s.weekday - 1]}) – ${e.day} (${days[e.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
+  } catch (_) {
+    return '$start – $end';
+  }
+}
+
+static DateTime? parseToLocalDate(String? dateStr) {
+  if (dateStr == null || dateStr.trim().isEmpty) return null;
+  try {
+    return DateTime.parse(dateStr).toLocal();
+  } catch (_) {
+    return null;
+  }
+}
+
+static String formatTime(String time) {
+  try {
+    final clean = time.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();
+    final parts = clean.split(':');
+    int hour = int.parse(parts[0]);
+    final minute = parts[1];
+    final period = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 == 0 ? 12 : hour % 12;
+    return '${hour.toString().padLeft(2, '0')}:$minute $period';
+  } catch (_) {
+    return time;
+  }
+}
 }

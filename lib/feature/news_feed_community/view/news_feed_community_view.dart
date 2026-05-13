@@ -67,11 +67,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         _scrollController.position.maxScrollExtent - 100) {
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      if (viewModel.applyFilter) {
+      viewModel.getAllNewsFeeds(context, loadMore: true);
+      /*if (viewModel.applyFilter) {
         viewModel.filterNewsFeeds(context, loadMore: true);
       } else {
         viewModel.getAllNewsFeeds(context, loadMore: true);
-      }
+      }*/
     }
   }
 
@@ -146,7 +147,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             if (value != null) {
                               viewModel.setSelectedCategoryId(
                                   (value as dynamic)?.id);
-                              viewModel.filterNewsFeeds(context);
+                              viewModel.getAllNewsFeeds(context);
                             }
 
                             /*if ((value as dynamic)?.categoryName == 'Catalog') {

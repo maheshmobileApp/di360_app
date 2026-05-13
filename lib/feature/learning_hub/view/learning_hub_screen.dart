@@ -200,6 +200,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   description: course.description ?? '',
                   types: [course.type ?? ''],
                   createdAt: course.createdAt ?? '',
+                  updatedAt: course.updatedAt ?? '',
                   registeredCount:
                       course.courseRegisteredUsersAggregate?.aggregate?.count ??
                           0,
@@ -243,7 +244,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         navigationService.navigateTo(
                           RouteList.courseDetailScreen,
                         );
-
                         break;
                       case "Edit":
                         await courseListingVM.getCourseDetails(
