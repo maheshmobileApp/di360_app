@@ -560,7 +560,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(ImageConst.pdf, height: 10),
+                Image.asset(ImageConst.pdf, height: 50),
                 addVertical(11),
                 Text(name,
                     style: TextStyles.regular1(color: AppColors.lightGeryColor),

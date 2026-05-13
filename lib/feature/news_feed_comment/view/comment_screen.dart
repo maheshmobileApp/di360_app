@@ -156,7 +156,7 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
         clipBehavior: Clip.none,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+           
             decoration: BoxDecoration(
               color: AppColors.whiteColor,
               border: Border.all(color: AppColors.dividerColor),
