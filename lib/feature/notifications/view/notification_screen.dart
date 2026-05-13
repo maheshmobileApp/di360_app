@@ -3,7 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/model_class/get_notification_res.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
@@ -57,7 +57,7 @@ class _NotificationScreenState extends State<NotificationScreen>
     final catalogueVM = Provider.of<CatalogueViewModel>(context);
     final newsFeedProvider = Provider.of<NewsFeedViewModel>(context);
     final talentEnqVM = Provider.of<TalentEnquiryViewModel>(context);
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
+    final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,

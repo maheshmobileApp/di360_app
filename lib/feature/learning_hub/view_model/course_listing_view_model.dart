@@ -1,62 +1,40 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
     hide CourseRegisteredUsers;
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repo_impl.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
 class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   final LearningHubRepoImpl repo = LearningHubRepoImpl();
-
+  
   List<CoursesListingDetails> coursesListingList = [];
   List<CoursesListingDetails> marketPlaceCoursesList = [];
-  List<CoursesListingDetails> courseDetails = [];
   RegisteredUsersData? registeredUsers;
   String selectedStatus = "All";
   String selectedRegUsersStatus = "All";
   final searchController = TextEditingController();
   bool searchBarOpen = false;
+  bool editOptionEnable = false;
   String? courseId;
+
   String? selectedCategory;
   List<CourseCategories> courseCategoryList = [];
   String? selectedCategoryId;
-  bool editOptionEnable = false;
-  bool courseRegistered = false;
+  
 
-  String? currentUserId;
+  String? currentUserId;  
 
   int _courseListingLimit = 10;
   int _courseListingOffset = 0;
   bool isLoadingMoreCourses = false;
   bool hasMoreCourses = true;
-
-  /********************************** */
-  final userFirstNameController = TextEditingController();
-  final userLastNameController = TextEditingController();
-  final userPhoneNumberController = TextEditingController();
-  final userEmailController = TextEditingController();
-  final userDescriptionController = TextEditingController();
-
-  String? validateEmailField(String? _) =>
-      validateEmail(userEmailController.text);
-  String? validatePhoneNum(String? _) =>
-      validatePhoneNumber(userPhoneNumberController.text);
-
-  void setSearchBar(bool value) {
-    searchBarOpen = value;
-    notifyListeners();
-  }
-
-  void setEditOption(bool value) {
-    editOptionEnable = value;
-    notifyListeners();
-  }
 
   String courseStatus = "";
 
@@ -65,8 +43,18 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  void setSearchBar(bool value) {
+    searchBarOpen = value;
+    notifyListeners();
+  }
+
   void setCourseId(String value) {
     courseId = value;
+    notifyListeners();
+  }
+
+  void setEditOption(bool value) {
+    editOptionEnable = value;
     notifyListeners();
   }
 
@@ -219,16 +207,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getAllListingData(BuildContext context) async {
-    currentUserId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getAllListingData(searchController.text);
-
-    if (res != null) {
-      marketPlaceCoursesList = res;
-    }
-    notifyListeners();
-  }
-
   Future<void> fetchCourseStatusCounts(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.courseListingStatusCount(userId);
@@ -242,15 +220,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getCourseDetails(BuildContext context, String courseId) async {
-    Loaders.circularShowLoader(context);
-    final res = await repo.getCourseDetails(courseId);
-    if (res != null) {
-      courseDetails = res;
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
-  }
 // Registered Users
 
   Future<void> getCourseRegisteredUsers(
@@ -259,16 +228,14 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     Loaders.circularShowLoader(context);
     final res = await repo.getCourseRegisteredUsers(
         courseId, listingRegUsersStatus ?? "");
-    if (res != null) {
-      registeredUsers = res;
-    }
+    registeredUsers = res;
     await getCourseRegisteredUsersTabCount(context, courseId);
     Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
-  Future<void> updateRegUserStatus(
-      BuildContext context, String regUserId, String status, String courseId) async {
+  Future<void> updateRegUserStatus(BuildContext context, String regUserId,
+      String status, String courseId) async {
     if (courseId.isEmpty) return;
     Loaders.circularShowLoader(context);
     final variables = {
@@ -295,7 +262,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
       }
     };
     final res = await repo.getRegisterUserTabCountData(variables);
-    if (res != null && res != "") {
+    if (res != "") {
       registerUserTabCount = res;
       allRegUsersCount = registerUserTabCount?.all?.aggregate?.count ?? 0;
       pendingRegUsersCount =
@@ -310,52 +277,12 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> registerCourseHandler(
-    BuildContext context,
-    String createdById,
-  ) async {
-    final isAlreadyRegistered = registeredUsers?.courseRegisteredUsers?.any(
-      (user) => user.fromId == createdById,
-    );
-
-    validateRegisterCourse(isAlreadyRegistered ?? false);
-  }
-
-  void validateRegisterCourse(bool value) {
-    courseRegistered = value;
-    notifyListeners();
-  }
-
   Future<void> deleteCourse(BuildContext context, String courseId) async {
     Loaders.circularShowLoader(context);
 
     final res = await repo.deleteCourse(courseId);
     if (res != null) {
       getCoursesListingData(context);
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
-  }
-
-  Future<void> userRegisterToCourse(BuildContext context) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    Loaders.circularShowLoader(context);
-
-    final res = await repo.userRegisterToCourse({
-      "object": {
-        "course_id": courseId,
-        "from_id": userId,
-        "first_name": userFirstNameController.text,
-        "last_name": userLastNameController.text,
-        "phone_number": userPhoneNumberController.text,
-        "email": userEmailController.text,
-        "description": userDescriptionController.text
-      }
-    });
-    if (res != null) {
-      scaffoldMessenger(
-        "Successfully Submitted!\nThank you for your interest.\nOur organiser will be in touch with you soon.",
-      );
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -372,8 +299,8 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
         type, courseCategoryId, startDate, address);
 
     if (res != null) {
-      coursesListingList = res;
-      marketPlaceCoursesList = res;
+      // coursesListingList = res;
+      // marketPlaceCoursesList = res;
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
@@ -406,16 +333,4 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  bool isRegisteredCheck(List<CourseRegisteredUsers>? courseRegisteredUsers) {
-    return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
-        false;
-  }
-
-  clearAll() {
-    userFirstNameController.text = "";
-    userLastNameController.text = "";
-    userEmailController.text = "";
-    userPhoneNumberController.text = "";
-    userDescriptionController.text = "";
-  }
 }

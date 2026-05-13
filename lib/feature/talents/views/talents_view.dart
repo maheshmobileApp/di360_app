@@ -1,10 +1,8 @@
 import 'package:di360_flutter/common/banner/generic_list_view_with_banners.dart';
 import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/banner/utils.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/talents/view_model/talents_view_model.dart';
 import 'package:di360_flutter/feature/talents/views/talents_card.dart';
-import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

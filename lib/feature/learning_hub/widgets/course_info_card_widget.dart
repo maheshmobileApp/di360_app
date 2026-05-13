@@ -22,6 +22,7 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String endTime;
   final String bannerUrl;
   final String bannerName;
+  final String? creatAt;
 
   const CourseInfoCardWidget(
       {super.key,
@@ -39,7 +40,8 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.bannerUrl,
       required this.bannerName,
       required this.startTime,
-      required this.endTime});
+      required this.endTime,
+      this.creatAt});
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +55,7 @@ class CourseInfoCardWidget extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              Container(
-                height: 50,
-                width: 5,
-                color: AppColors.primaryColor,
-              ),
+              Container(height: 50, width: 5, color: AppColors.primaryColor),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -81,6 +79,47 @@ class CourseInfoCardWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.calendar_month_outlined,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 4),
+                          if (startDate.isNotEmpty && endDate.isNotEmpty)
+                            Text(DateFormatUtils.formatDateRange(
+                                startDate, endDate)),
+                          if (platform == "Online Academy")
+                            Text(DateFormatUtils.formatDateTimeShort(
+                                creatAt ?? "")),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      if (startTime.isNotEmpty && endTime.isNotEmpty)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              color: AppColors.primaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
                 const Divider(),
                 const SizedBox(height: 4),
                 Row(
@@ -120,40 +159,6 @@ class CourseInfoCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_month_outlined,
-                                color: AppColors.primaryColor, size: 20),
-                            const SizedBox(width: 4),
-                            Text(startDate.isEmpty
-                                ? ""
-                                : DateFormatUtils.convertToddmmm(startDate)
-                                    .toUpperCase()),
-                            Text(" - "),
-                            Text(endDate.isEmpty
-                                ? ""
-                                : DateFormatUtils.convertToddmmm(endDate)
-                                    .toUpperCase()),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.access_time_rounded,
-                                color: AppColors.primaryColor, size: 20),
-                            const SizedBox(width: 4),
-                            Text(startTime.isNotEmpty
-                                ? DateFormatUtils.formatToAmPm(startTime)
-                                : '--'),
-                            Text(" - "),
-                            Text(endTime.isNotEmpty
-                                ? DateFormatUtils.formatToAmPm(endTime)
-                                : '--')
-                          ],
-                        ),
-                      ],
-                    )
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -192,32 +197,24 @@ class CourseInfoCardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         _InfoTextWidget(
-                          label: "Platform",
+                          label: "How",
                           first: false,
                           value: "${platform}",
                         ),
                         const SizedBox(height: 6),
                         _InfoTextWidget(
-                          label: "Where",
-                          first: false,
-                          value: address,
-                        ),
-
-                        /*_PriceTextWidget(
-                      label: "Price",
-                      first: false,
-                      originalPrice: "${totalPrice} ",
-                      discountedPrice: "${discountPrice}",
-                    ),*/
+                            label: "Where",
+                            first: false,
+                            value:
+                                address.isNotEmpty ? "${address}" : "Online"),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                MediaWidget(
-                  url: bannerUrl,
-                  name: bannerName,
-                ),
+                if (bannerUrl.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  MediaWidget(url: bannerUrl, name: bannerName)
+                ],
                 const SizedBox(height: 10),
               ],
             ),
@@ -264,7 +261,7 @@ class _InfoTextWidget extends StatelessWidget {
   }
 }
 
-class _PriceTextWidget extends StatelessWidget {
+/*class _PriceTextWidget extends StatelessWidget {
   final String label;
 
   final String originalPrice;
@@ -312,4 +309,4 @@ class _PriceTextWidget extends StatelessWidget {
       ],
     );
   }
-}
+} */

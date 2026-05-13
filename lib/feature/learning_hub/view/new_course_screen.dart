@@ -128,9 +128,6 @@ class _JobCreateViewState extends State<NewCourseScreen> {
         return Contacts();
       case CourseCreateSteps.SOCIALMEDIALINKS:
         return SocialMediaLinks();
-
-      default:
-        return Center(child: Text("Step \${stepIndex.value + 1}"));
     }
   }
 

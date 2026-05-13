@@ -3,14 +3,13 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
-import 'package:di360_flutter/feature/learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_type.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_register_user_tab_count_res.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/add_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_category.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/delete_course_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/get_all_listing_data_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_category_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_registered_users_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_count.dart';
@@ -18,11 +17,9 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_market_place_courses.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_register_user_tab_count.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/show_course_by_id_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/user_register_to_course.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -154,16 +151,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
   }
 
   @override
-  Future<List<CoursesListingDetails>?> getCourseDetails(
-      String? courseId) async {
-    final Map<String, dynamic> variables = {"id": "${courseId}"};
-    final courseTypeData =
-        await http.query(showCourseById, variables: variables);
-    final result = CoursesListingData.fromJson(courseTypeData);
-    return result.courses;
-  }
-
-  @override
   Future deleteCourse(String? courseId) async {
     final deleteCourse =
         await http.mutation(deleteCourseQuery, {"id": courseId});
@@ -193,31 +180,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
     return result;
   }
 
-  @override
-  Future userRegisterToCourse(dynamic variables) async {
-    final res = await http.mutation(userRegisterToCourseQuery, variables);
-    return res;
-  }
-
-  @override
-  Future<List<CoursesListingDetails>?> getAllListingData(
-      String? searchText) async {
-    final payload = {
-      "limit": 10,
-      "offset": 0,
-      "where": {
-        "course_name": {"_ilike": "%${searchText}%"}
-      }
-    };
-
-    final listingData = await http.query(
-      getAllListingDataQuery,
-      variables: payload,
-    );
-
-    final result = CoursesListingData.fromJson(listingData);
-    return result.courses ?? [];
-  }
 
   @override
   Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
@@ -315,7 +277,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
   @override
   Future updateRegUserStatus(variables) async {
     final res = await http.mutation(updateRegUserStatusQuery, variables);
-
     return res;
   }
 

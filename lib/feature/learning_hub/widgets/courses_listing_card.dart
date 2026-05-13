@@ -6,7 +6,6 @@ import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -375,11 +374,11 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  String? _getShortTime(String createdAt) {
-    try {
-      return Jiffy.parse(createdAt).fromNow();
-    } catch (_) {
-      return '';
-    }
-  }
+  // String? _getShortTime(String createdAt) {
+  //   try {
+  //     return Jiffy.parse(createdAt).fromNow();
+  //   } catch (_) {
+  //     return '';
+  //   }
+  // }
 }

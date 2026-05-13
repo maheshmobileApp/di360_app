@@ -23,9 +23,10 @@ class SigninButton extends StatelessWidget with BaseContextHelpers {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(text, style: TextStyles.medium3(color: AppColors.whiteColor)),
-            if (img != null)
-            addHorizontal(13),
-            SvgPicture.asset(img ?? "")
+            if (img != null) ...[
+              addHorizontal(13),
+              SvgPicture.asset(img!),
+            ]
           ],
         ),
       ),

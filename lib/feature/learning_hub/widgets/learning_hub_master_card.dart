@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.d
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ListingHubMasterCard extends StatelessWidget {
   final String? feedId;
@@ -20,8 +21,11 @@ class ListingHubMasterCard extends StatelessWidget {
   final String profilePic;
   final String presenterName;
   final VoidCallback registerTap;
-  final dynamic remainingOfSeats;
+  final dynamic afterWardsPrice;
   final bool isRegistered;
+  final String? type;
+  final dynamic noOfSeats;
+  final int? registerCount;
 
   const ListingHubMasterCard(
       {super.key,
@@ -37,8 +41,11 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.profilePic,
       required this.presenterName,
       required this.registerTap,
-      required this.remainingOfSeats,
-      required this.isRegistered});
+      required this.afterWardsPrice,
+      required this.isRegistered,
+      this.type,
+      this.noOfSeats,
+      this.registerCount});
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +54,7 @@ class ListingHubMasterCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Card(
         color: AppColors.whiteColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 3,
         margin: const EdgeInsets.all(8),
         clipBehavior: Clip.antiAlias,
@@ -65,11 +70,8 @@ class ListingHubMasterCard extends StatelessWidget {
                     height: 140,
                     width: double.infinity,
                     fit: BoxFit.contain,
-                    errorWidget: const Icon(
-                      Icons.broken_image,
-                      size: 50,
-                      color: AppColors.lightGeryColor,
-                    ),
+                    errorWidget: const Icon(Icons.broken_image,
+                        size: 50, color: AppColors.lightGeryColor),
                   ),
                 ),
                 Positioned(
@@ -79,18 +81,24 @@ class ListingHubMasterCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(134, 255, 255, 255),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 139, 139, 139)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        color: const Color.fromARGB(134, 255, 255, 255),
+                        border: Border.all(
+                            color: const Color.fromARGB(255, 139, 139, 139)),
+                        borderRadius: BorderRadius.circular(20)),
                     child: Text(
-                      remainingOfSeats <= 0 ? "SOLD OUT" : "FILLING FAST !",
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold),
-                    ),
+                        noOfSeats != null
+                            ? noOfSeats == registerCount
+                                ? "SOLD OUT"
+                                : noOfSeats > 15
+                                    ? " FILLING FAST !"
+                                    : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
+                            : afterWardsPrice == 0.0
+                                ? "FREE MASTERCLASS"
+                                : "PAID",
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -102,13 +110,9 @@ class ListingHubMasterCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "PRESENTED BY",
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text("PRESENTED BY",
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,7 +141,7 @@ class ListingHubMasterCard extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 4)
                         ],
                       ),
                       Row(
@@ -145,41 +149,37 @@ class ListingHubMasterCard extends StatelessWidget {
                           _circleIcon(),
                           SizedBox(width: 10),
                           ShareWidget(
-                            category:  FeedType.learnhub.name,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 8),
-                            size: 20,
-                            feedId: feedId ?? "",
-                          ),
+                              category: FeedType.learnhub.name,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              size: 20,
+                              feedId: feedId ?? ""),
                         ],
                       ),
                     ],
                   ),
                   const Divider(),
-                  Text(
-                    companyName,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text(companyName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w500)),
                   const Divider(),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(type ?? '',
+                          style: TextStyles.medium2(color: AppColors.black)),
                       Row(
                         children: [
                           Icon(Icons.access_time,
                               color: AppColors.primaryColor, size: 20),
                           const SizedBox(width: 6),
-                          Text(
-                            "CPD HOURS: ${cpdHours}",
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyles.medium2(
-                                color: AppColors.primaryColor),
-                          ),
+                          Text("CPD HOURS: ${cpdHours}",
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyles.medium2(
+                                  color: AppColors.primaryColor)),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -205,53 +205,29 @@ class ListingHubMasterCard extends StatelessWidget {
                       (date.isEmpty)
                           ? SizedBox.shrink()
                           : Row(
-                        children: [
-                          Icon(Icons.calendar_month_outlined,
-                              color: AppColors.primaryColor, size: 20),
-                          const SizedBox(width: 6),
-                          Text(
-                            (date.isEmpty) ? "------" : date,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyles.medium2(
-                                color: AppColors.primaryColor),
-                          ),
-                        ],
-                      ),
+                              children: [
+                                Icon(Icons.calendar_month_outlined,
+                                    color: AppColors.primaryColor, size: 20),
+                                const SizedBox(width: 6),
+                                Text(
+                                  (date.isEmpty) ? "------" : DateFormat("dd MMM").format(DateTime.parse(date)),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyles.medium2(
+                                      color: AppColors.primaryColor)
+                                )
+                              ],
+                            ),
                     ],
                   ),
-
-                  /*Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: onTap,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Details",
-                              style: TextStyles.medium1(
-                                  color: AppColors.primaryColor),
-                            ),
-                            SvgPicture.asset(
-                              ImageConst.nextArrow,
-                              width: 26,
-                              height: 26,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),*/
                 ],
               ),
             ),
             //Spacer(),
             RegisterButton(
-              text: isRegistered ? "Already Registered" : 'Register Now',
-              onTap: registerTap,
-              isRegistered: isRegistered,
-            )
+                text: isRegistered ? "Already Registered" : 'Register Now',
+                onTap: registerTap,
+                isRegistered: isRegistered)
           ],
         ),
       ),

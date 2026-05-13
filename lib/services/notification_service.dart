@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
@@ -148,7 +148,7 @@ class NotificationService {
       case NotificationType.COURSE:
         () async {
           final courseVM =
-              Provider.of<CourseListingViewModel>(context, listen: false);
+              Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false);
           await courseVM.getCourseDetails(context, id);
           navigationService.navigateTo(RouteList.courseDetailScreen);
         }();

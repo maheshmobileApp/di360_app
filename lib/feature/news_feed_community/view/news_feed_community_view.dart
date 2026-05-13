@@ -7,8 +7,8 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
@@ -86,7 +86,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   Widget build(BuildContext context) {
     return Consumer<NewsFeedCommunityViewModel>(
       builder: (context, viewModel, child) {
-        final courseListingVM = Provider.of<CourseListingViewModel>(context);
+        final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
         final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);

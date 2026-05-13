@@ -10,13 +10,26 @@ import 'package:permission_handler/permission_handler.dart';
 
 Future<Directory> _getDownloadDir() async {
   if (Platform.isAndroid) {
-    final dir = Directory('/storage/emulated/0/Download/DentalInterface360');
-    if (!await dir.exists()) await dir.create(recursive: true);
-    return dir;
+    final info = await DeviceInfoPlugin().androidInfo;
+    if (info.version.sdkInt >= 29) {
+      try {
+        final dir = Directory('/storage/emulated/0/Download/DentalInterface360');
+        if (!await dir.exists()) await dir.create(recursive: true);
+        return dir;
+      } catch (_) {
+        final base = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+        final dir = Directory('${base.path}/DentalInterface360');
+        if (!await dir.exists()) await dir.create(recursive: true);
+        return dir;
+      }
+    } else {
+      final base = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+      final dir = Directory('${base.path}/DentalInterface360');
+      if (!await dir.exists()) await dir.create(recursive: true);
+      return dir;
+    }
   } else {
-    // iOS: saves to app Documents folder, accessible via Files app
-    final dir = await getApplicationDocumentsDirectory();
-    return dir;
+    return await getApplicationDocumentsDirectory();
   }
 }
 
@@ -24,8 +37,7 @@ Future<bool> _requestPermission() async {
   if (Platform.isIOS) return true;
   if (Platform.isAndroid) {
     final info = await DeviceInfoPlugin().androidInfo;
-    print('Android SDK version: ${info.version.sdkInt}');
-    if (info.version.sdkInt >= 33) return true;
+    if (info.version.sdkInt >= 29) return true;
     final status = await Permission.storage.request();
     return status.isGranted;
   }

@@ -1,0 +1,363 @@
+import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/banner_image_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/contact_info_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/course_description_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/course_info_card_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/event_day_data_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/location_view_widget.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/register_now_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/course_details_view.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/widgets/registration_user_form.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
+  const CourseDetailScreen({super.key});
+
+  String _getAddressAsString(dynamic address) {
+    if (address == null) return "";
+    if (address is String) return address;
+    if (address is List) {
+      return address.map((e) => e.toString()).join(", ");
+    }
+    return address.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final courseListingVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
+
+    if (courseListingVM.courseDetails == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        body: Center(child: Text("No course details available")),
+      );
+    }
+
+    final courseDetails = courseListingVM.courseDetails != null
+        ? courseListingVM.courseDetails
+        : null;
+
+    final bannerUrls = (courseDetails?.courseBannerImage ?? [])
+        .map((e) => e.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    final galleryUrls = (courseDetails?.courseGallery ?? [])
+        .map((e) => e.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    final sponsorUrls = (courseDetails?.sponsorByImage ?? [])
+        .map((e) => e.url ?? "")
+        .where((url) => url.isNotEmpty)
+        .toList();
+    final bannerUrl = (courseDetails?.courseBannerVideo != null &&
+            courseDetails?.courseBannerVideo?.isNotEmpty == true)
+        ? courseDetails?.courseBannerVideo?.first.url ?? ""
+        : "";
+    final bannerName = (courseDetails?.courseBannerVideo != null &&
+            courseDetails?.courseBannerVideo?.isNotEmpty == true)
+        ? courseDetails?.courseBannerVideo?.first.name ?? ""
+        : "";
+
+    final isRegistered = courseListingVM
+        .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
+    final seats = courseDetails?.numberOfSeats ?? 0;
+
+    return Scaffold(
+      backgroundColor: AppColors.greyLightcolor,
+      bottomNavigationBar: (courseDetails?.status == "APPROVE")
+          ? Column(
+              mainAxisSize: MainAxisSize.min, // 🔑 prevent unbounded height
+              children: [
+                const Divider(height: 1),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RegisterNowWidget(
+                      earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
+                      registerStatus: isRegistered,
+                      currentPrice:
+                          courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                      oldPrice:
+                          courseDetails?.afterwardsPrice?.toString() ?? "0",
+                      courseRegisterStatus: courseDetails
+                          ?.courseRegisteredUsers?.firstOrNull?.status,
+                      onPressed: isRegistered
+                          ? courseDetails?.type == 'Online Academy'
+                              ? () async {
+                                  courseDetails?.courseRegisteredUsers
+                                              ?.firstOrNull?.status ==
+                                          "PENDING"
+                                      ? showAlertMessage(
+                                          context,
+                                          'Thank you for your registration. We are currently awaiting payment confirmation from the administrator. You will be notified once your enrollment is confirmed.',
+                                          yes: 'View Registration Link',
+                                          onBack: () async {
+                                            final raw = courseDetails
+                                                    ?.registerLink
+                                                    ?.trim() ??
+                                                '';
+                                            if (raw.isEmpty) {
+                                              navigationService.goBack();
+                                              return;
+                                            }
+                                            final urlStr = raw.startsWith(
+                                                        'http://') ||
+                                                    raw.startsWith('https://')
+                                                ? raw
+                                                : 'https://$raw';
+                                            final url = Uri.tryParse(urlStr);
+                                            if (url != null &&
+                                                await canLaunchUrl(url)) {
+                                              await launchUrl(url,
+                                                  mode: LaunchMode
+                                                      .externalApplication);
+                                            } else {
+                                              scaffoldMessenger(
+                                                  'Could not open registration link');
+                                            }
+                                            navigationService.goBack();
+                                          },
+                                        )
+                                      : navigationService
+                                          .push(CourseDetailsView());
+                                }
+                              : () {
+                                  scaffoldMessenger("Already Registered");
+                                }
+                          : courseDetails?.type == 'Online Academy'
+                              ? () {
+                                  courseListingVM
+                                      .setCourseId(courseDetails?.id ?? "");
+                                  RegistrationUserForm.show(
+                                      context,
+                                      courseDetails?.courseName ?? "",
+                                      courseDetails?.createdById ?? "",
+                                      courseDetails?.id ?? "",
+                                      courseDetails?.registerLink ?? "");
+                                }
+                              : () {
+                                  if (seats > 0) {
+                                    courseListingVM
+                                        .setCourseId(courseDetails?.id ?? "");
+                                    RegistrationUserForm.show(
+                                        context,
+                                        courseDetails?.courseName ?? "",
+                                        courseDetails?.createdById ?? "",
+                                        courseDetails?.id ?? "",
+                                        courseDetails?.registerLink ?? "");
+                                  } else {
+                                    scaffoldMessenger('Seats are sold out!');
+                                  }
+                                },
+                      courseType: courseDetails?.type ?? ""),
+                ),
+              ],
+            )
+          : const SizedBox.shrink(),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 200.0,
+            pinned: true,
+            iconTheme: const IconThemeData(color: AppColors.black),
+            elevation: 0,
+            flexibleSpace: LayoutBuilder(
+              builder: (context, constraints) {
+                final top = constraints.biggest.height;
+                final isCollapsed =
+                    top <= kToolbarHeight + MediaQuery.of(context).padding.top;
+                return FlexibleSpaceBar(
+                  centerTitle: false,
+                  title: isCollapsed
+                      ? Text(courseDetails?.courseName ?? '',
+                          style: TextStyles.bold2(color: AppColors.black))
+                      : null,
+                  background: (bannerUrls.isEmpty)
+                      ? const SizedBox.shrink()
+                      : CarouselSlider(
+                          options: CarouselOptions(
+                              height: 250,
+                              autoPlay: true,
+                              viewportFraction: 1.0,
+                              enableInfiniteScroll: true),
+                          items: bannerUrls
+                              .map((url) => BannerImageWidget(imageUrl: url))
+                              .toList()),
+                );
+              },
+            ),
+            leading: Container(
+                margin: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2)),
+                  ],
+                ),
+                child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => navigationService.goBack())),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Card(
+                // color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 2,
+                color: AppColors.whiteColor,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CourseInfoCardWidget(
+                          address: courseDetails?.address?.isNotEmpty == true
+                              ? courseDetails?.address?.first.city ?? ""
+                              : "",
+                          startTime: courseDetails?.startTime ?? "",
+                          endTime: courseDetails?.endTime ?? "",
+                          startDate: courseDetails?.startDate ?? "",
+                          endDate: courseDetails?.endDate ?? "",
+                          courseName: courseDetails?.courseName ?? "",
+                          profilePic:
+                              courseDetails?.presenters?.isNotEmpty ?? false
+                                  ? courseDetails?.presenters?.first
+                                          .presentedByImage?.url ??
+                                      ""
+                                  : "",
+                          presentByName:
+                              courseDetails?.presenters?.isNotEmpty ?? false
+                                  ? courseDetails
+                                          ?.presenters?.first.presentedByName ??
+                                      ""
+                                  : "",
+                          cpdHours:
+                              courseDetails?.cpdPoints?.toInt().toString() ??
+                                  "0",
+                          platform: courseDetails?.type ?? "",
+                          webinar: "",
+                          totalPrice:
+                              courseDetails?.afterwardsPrice?.toString() ?? "0",
+                          discountPrice:
+                              courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                          bannerUrl: bannerUrl,
+                          bannerName: bannerName,
+                          creatAt: courseDetails?.updatedAt),
+                      addVertical(12),
+                      if (courseDetails?.description != "")
+                        CourseDescriptionWidget(
+                          title: 'Course Description',
+                          description: courseDetails?.description ?? "",
+                        ),
+                      if (courseDetails?.type != 'Online Academy' &&
+                          courseDetails?.eventType != null) ...[
+                        addVertical(12),
+                        Text(
+                          (courseDetails?.eventType != "multiple")
+                              ? "Single Day Event"
+                              : "Multiple Day Event",
+                          style:
+                              TextStyles.bold2(color: AppColors.primaryColor),
+                        )
+                      ],
+                      addVertical(6),
+                      if ((courseDetails?.type != 'Online Academy' &&
+                          courseDetails?.courseEventInfo != null &&
+                          courseDetails!.courseEventInfo!.isNotEmpty)) ...[
+                        ...courseDetails.courseEventInfo!.asMap().entries.map(
+                            (entry) => EventDayDataWidget(
+                                index: entry.key + 1,
+                                name: entry.value.name,
+                                desc: entry.value.info,
+                                images: entry.value.images))
+                      ],
+                      addVertical(12),
+                      if (galleryUrls.isNotEmpty)
+                        GalleryImgWidget(
+                            title: "Gallery", imageUrls: galleryUrls),
+                      addVertical(12),
+                      if (sponsorUrls.isNotEmpty)
+                        GalleryImgWidget(
+                            title: "Sponsored by",
+                            height: 100,
+                            width: 100,
+                            imageUrls: sponsorUrls),
+                      addVertical(12),
+                      if ((courseDetails?.terms ?? "").isNotEmpty)
+                        CourseDescriptionWidget(
+                          title: 'Terms & Conditions',
+                          description: courseDetails?.terms ?? "",
+                        ),
+                      addVertical(12),
+                      if ((courseDetails?.refundPolicy ?? "").isNotEmpty)
+                        CourseDescriptionWidget(
+                          title: 'Cancellation & Refund Policy',
+                          description: courseDetails?.refundPolicy ?? "",
+                        ),
+                      addVertical(12),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        elevation: 2,
+                        color: AppColors.greyLight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: [
+                              ContactInfoWidget(
+                                user: courseDetails?.contactName ?? "",
+                                website: courseDetails?.contactWebsite ?? "",
+                                location: courseDetails?.address?.isNotEmpty ==
+                                        true
+                                    ? courseDetails?.address?.first.country ??
+                                        ""
+                                    : "",
+                                email: courseDetails?.contactEmail ?? "",
+                                phoneNumber: courseDetails?.contactPhone ?? "",
+                              ),
+                              if (_getAddressAsString(courseDetails?.address)
+                                  .isNotEmpty)
+                                LocationViewWidget(
+                                    location:
+                                        courseDetails?.address?.first.country ??
+                                            ""),
+                              SocilaMediaIconsWidget(
+                                instagram: courseDetails?.instagramLink,
+                                facebook: courseDetails?.facebookLink,
+                                linkedin: courseDetails?.linkedinLink,
+                                youtube: courseDetails?.youtubeLink,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

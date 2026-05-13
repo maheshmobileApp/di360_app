@@ -1,0 +1,139 @@
+const String showCourseById = r'''
+query getSelectedCourse($id: uuid!, $userId: uuid!) {
+  courses_by_pk(id: $id) {
+    id
+    course_name
+    is_featured
+    number_of_seats
+    is_lifetime
+    address
+    attachments
+    course_event_info
+    presenters
+    seo_metadata
+    sponsor_by_image
+    afterwards_price
+    course_access_duration
+    cpd_points
+    early_bird_price
+    community_id
+    community_user_type
+    max_subscribers
+    price_in_aud
+    price_in_usd
+    company_name
+    complete_details
+    contact_email
+    contact_name
+    contact_phone
+    contact_website
+    register_link
+    description
+    early_bird_end_date
+    endDate
+    event_type
+    image
+    learning_objectives
+    module_section
+    question_section
+    pass_percentage
+    refund_policy
+    short_id
+    short_info
+    startDate
+    status
+    terms
+    topics_included
+    video
+    webinar_link
+    created_at
+    scheduled_at
+    updated_at
+    course_category_id
+    created_by_id
+    course_banner_video
+    course_gallery
+    active_status
+    startTime
+    endTime
+    type
+    course_banner_image
+    facebook_link
+    instagram_link
+    linkedin_link
+    youtube_link
+    module_details(order_by: {module_position: asc}) {
+      id
+      module_name
+      expanded
+      module_id
+      course_id
+      module_position
+      section_details(order_by: {section_position: asc}) {
+        id
+        course_topic
+        module_id
+        description
+        attachment
+        expanded
+        image
+        status
+        youtube_link
+        section_position
+        __typename
+      }
+      __typename
+    }
+    quiz_details(order_by: {quiz_position: asc}) {
+      id
+      question
+      type
+      quiz_id
+      course_id
+      quiz_position
+      option_details(order_by: {option_position: asc}) {
+        id
+        quiz_id
+        isCorrect
+        option_position
+        text
+        __typename
+      }
+      __typename
+    }
+    course_registered_users(
+      where: {from_id: {_eq: $userId}, status: {_neq: "CANCELLED"}}
+    ) {
+      id
+      course_id
+      from_id
+      status
+      quiz_status
+      quiz_answers
+      registered_module_details(
+        order_by: {module_position: asc}
+        where: {user_id: {_eq: $userId}, course_id: {_eq: $id}}
+      ) {
+        id
+        module_name
+        expanded
+        module_id
+        user_id
+        section_status
+        section_id
+        module_position
+        __typename
+      }
+      __typename
+    }
+    course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {
+      aggregate {
+        count
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+''';

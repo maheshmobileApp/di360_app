@@ -557,7 +557,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             height: 40,
             width: 100,
             onTap: () async {
-              await catalogueVM.getCatalogDetails(context, catalogueId ?? '');
+              await catalogueVM.getCatalogDetails(context, catalogueId);
               final id =
                   catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
               await catalogueVM.getReletedCatalog(context, id);
