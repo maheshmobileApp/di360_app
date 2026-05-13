@@ -12,7 +12,7 @@ abstract class AddCatalogueRepository {
   Future<CataloguesByPk?> cataloguView(String? id);
   Future<void> removeCatalogue(String? id);
   Future<void> sendApprovalCatalogue(String? id);
-  Future<void> inActiveCatalogue(String? id);
+  Future<void> inActiveCatalogue(String? id, String? status);
   Future<List<CatalogueSubCategories>?> getCatagorys();
   Future<dynamic> editCatalogue(dynamic variables);
   Future<CatalogueCountData> catalogueCounts();

@@ -30,20 +30,21 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   @override
   Future<List<Catalogues>?> getMyCatalogues(
       List<String>? catalogStatus, List<String>? status,
-      {String? type, String? subCatagory}) async {
+      {String? type, String? subCatagory, String? searchText}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final catalogueData = await http.query(getMyCatalogueQuery, variables: {
-      "limit": 100,
+    final variables = {
+      "limit": 10,
       "offset": 0,
       "where": {
         "_and": [
-          {
-            "_and": [
-              {
-                "title": {"_ilike": "%%"}
-              }
-            ]
-          },
+          if (searchText?.isNotEmpty == true)
+            {
+              "_and": [
+                {
+                  "title": {"_ilike": "%%"}
+                }
+              ]
+            },
           {
             "dental_supplier_id": {"_eq": userId}
           },
@@ -59,35 +60,66 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                 "name": {"_ilike": "%$subCatagory%"}
               }
             },
-          {
-            "_or": [
-              {
-                "status": {
-                  "_in": catalogStatus?.isEmpty == true
-                      ? [
-                          "APPROVED",
-                          "PENDING_APPROVAL",
-                          "EXPIRED",
-                          "SCHEDULED",
-                          "REJECTED",
-                          "DRAFT"
-                        ]
-                      : catalogStatus
+          (catalogStatus ==
+                  [
+                    "APPROVED",
+                    "PENDING_APPROVAL",
+                    "EXPIRED",
+                    "SCHEDULED",
+                    "REJECTED",
+                    "DRAFT"
+                  ])
+              ? {
+                  "_or": [
+                    {
+                      "status": {
+                        "_in": catalogStatus?.isEmpty == true
+                            ? [
+                                "APPROVED",
+                                "PENDING_APPROVAL",
+                                "EXPIRED",
+                                "SCHEDULED",
+                                "REJECTED",
+                                "DRAFT"
+                              ]
+                            : catalogStatus
+                      }
+                    },
+                    if (status?.isNotEmpty == true)
+                      {
+                        "catalogue_status": {
+                          "_in": status?.isEmpty == true
+                              ? ["ACTIVE", "INACTIVE"]
+                              : status
+                        }
+                      }
+                  ]
                 }
-              },
-              if (status?.isNotEmpty == true)
-                {
-                  "catalogue_status": {
-                    "_in": status?.isEmpty == true
-                        ? ["ACTIVE", "INACTIVE"]
-                        : status
+              : {
+                  "status": {
+                    "_in": catalogStatus?.isEmpty == true
+                        ? [
+                            "APPROVED",
+                            "PENDING_APPROVAL",
+                            "EXPIRED",
+                            "SCHEDULED",
+                            "REJECTED",
+                            "DRAFT"
+                          ]
+                        : catalogStatus
                   }
-                }
-            ]
-          }
+                },
+          if (status?.isNotEmpty == true)
+            {
+              "catalogue_status": {
+                "_in": status?.isEmpty == true ? ["ACTIVE", "INACTIVE"] : status
+              }
+            }
         ]
       }
-    });
+    };
+    final catalogueData =
+        await http.query(getMyCatalogueQuery, variables: variables);
     final result = MyCataloguesData.fromJson(catalogueData);
     return result.catalogues ?? [];
   }
@@ -117,10 +149,10 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   }
 
   @override
-  Future<dynamic> inActiveCatalogue(String? id) async {
+  Future<dynamic> inActiveCatalogue(String? id, String? status) async {
     final catalogueData = await http.mutation(InactiveViewQuery, {
       "id": id,
-      "updateObj": {"catalogue_status": "INACTIVE"}
+      "updateObj": {"catalogue_status": status}
     });
     return catalogueData;
   }

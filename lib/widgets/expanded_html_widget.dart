@@ -89,12 +89,26 @@ class _ExpandableHtmlTextState extends State<ExpandableHtmlText> {
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () => provider.toggle(widget.index),
-                child: Text(
-                  provider.isExpanded(widget.index) ? "See less" : "See more",
-                  style: const TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      provider.isExpanded(widget.index) ? "See less" : "See more",
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Icon(
+                      provider.isExpanded(widget.index)
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: Colors.blue,
+                      size: 18,
+                    ),
+                  ],
                 ),
               ),
             ],

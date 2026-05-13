@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_re
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
-import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -67,7 +66,9 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
               child: Text(
-                item?.status ?? '',
+                item?.status == "APPROVED"
+                    ? "${item?.catalogueStatus} & ${item?.status}"
+                    : "${item?.status}",
                 style: TextStyles.medium3(
                     color: item?.status == 'APPROVED'
                         ? AppColors.greenColor
@@ -125,7 +126,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           addVertical(5),
           Text(
               isData
-                  ?  DateFormatUtils.formatDateOnly(subTitleVal)
+                  ? DateFormatUtils.formatDateOnly(subTitleVal)
                   : subTitleVal ?? '',
               style: TextStyles.medium2(color: AppColors.black))
         ]),
@@ -148,7 +149,13 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {
             navigationService.goBack();
-            vm.inActiveCatalogue(context, id);
+            vm.inActiveCatalogue(context, id, "INACTIVE");
+          });
+        } else if (value == "Active") {
+          showAlertMessage(context, 'Do you really want to change status?',
+              onBack: () {
+            navigationService.goBack();
+            vm.inActiveCatalogue(context, id, "ACTIVE");
           });
         } else if (value == "Delete") {
           showAlertMessage(
@@ -170,11 +177,16 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
             value: "View",
             child: _buildRow(
                 Icons.remove_red_eye, AppColors.black, "View Catalogue")),
-        if (vm.selectedStatus == 'Approved & Scheduled')
+        if (item?.catalogueStatus == 'ACTIVE' && item?.status == 'APPROVED')
           PopupMenuItem(
               value: "Inactive",
               child: _buildRow(
                   Icons.local_activity, AppColors.primaryColor, "Inactive")),
+        if (item?.catalogueStatus == 'INACTIVE' && item?.status == 'APPROVED')
+          PopupMenuItem(
+              value: "Active",
+              child: _buildRow(
+                  Icons.local_activity, AppColors.greenColor, "Active")),
         if (vm.selectedStatus == 'Draft')
           PopupMenuItem(
               value: "sendApproval",

@@ -135,9 +135,6 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                           children: [
                             if (newsfeeds?.webUrl != null &&
                                 newsfeeds!.webUrl!.isNotEmpty)
-                              webSiteText(newsfeeds?.webUrl ?? ''),
-                            if (newsfeeds?.webUrl != null &&
-                                newsfeeds!.webUrl!.isNotEmpty)
                               addVertical(8),
                             if (newsFeedTypeEnum == FeedType.learnhub.value &&
                                 newsfeeds?.courses?.isNotEmpty == true)
@@ -563,7 +560,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(ImageConst.pdf, height: 10),
+                Image.asset(ImageConst.pdf, height: 50),
                 addVertical(11),
                 Text(name,
                     style: TextStyles.regular1(color: AppColors.lightGeryColor),
