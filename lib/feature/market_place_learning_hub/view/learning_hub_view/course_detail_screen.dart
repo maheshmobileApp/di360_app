@@ -194,28 +194,25 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                               enableInfiniteScroll: true),
                           items: bannerUrls
                               .map((url) => BannerImageWidget(imageUrl: url))
-                              .toList(),
-                        ),
+                              .toList()),
                 );
               },
             ),
             leading: Container(
-              margin: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2)),
-                ],
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
+                margin: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2)),
+                  ],
+                ),
+                child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => navigationService.goBack())),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -283,7 +280,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                         )
                       ],
                       addVertical(6),
-                      if ((courseDetails?.courseEventInfo != null &&
+                      if ((courseDetails?.type != 'Online Academy' &&
+                          courseDetails?.courseEventInfo != null &&
                           courseDetails!.courseEventInfo!.isNotEmpty)) ...[
                         ...courseDetails.courseEventInfo!.asMap().entries.map(
                             (entry) => EventDayDataWidget(

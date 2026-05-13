@@ -93,30 +93,30 @@ class CourseInfoCardWidget extends StatelessWidget {
                             size: 20,
                           ),
                           const SizedBox(width: 4),
-                          if (startDate.isNotEmpty && endDate.isNotEmpty  )
+                          if (startDate.isNotEmpty && endDate.isNotEmpty)
                             Text(DateFormatUtils.formatDateRange(
                                 startDate, endDate)),
                           if (platform == "Online Academy")
-                          Text(DateFormatUtils.formatDateTimeShort(
-                              creatAt ?? "")),
+                            Text(DateFormatUtils.formatDateTimeShort(
+                                creatAt ?? "")),
                         ],
                       ),
                       const SizedBox(height: 4),
                       if (startTime.isNotEmpty && endTime.isNotEmpty)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.access_time_rounded,
-                            color: AppColors.primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
-                          ),
-                        ],
-                      ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              color: AppColors.primaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
@@ -203,17 +203,10 @@ class CourseInfoCardWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         _InfoTextWidget(
-                          label: "Where",
-                          first: false,
-                          value: "${address}",
-                        ),
-
-                        /*_PriceTextWidget(
-                      label: "Price",
-                      first: false,
-                      originalPrice: "${totalPrice} ",
-                      discountedPrice: "${discountPrice}",
-                    ),*/
+                            label: "Where",
+                            first: false,
+                            value:
+                                address.isNotEmpty ? "${address}" : "Online"),
                       ],
                     ),
                   ],

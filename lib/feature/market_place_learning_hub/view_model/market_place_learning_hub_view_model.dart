@@ -222,6 +222,11 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     return (scored, passed);
   }
 
+  void updateQuizAnswer(int index, dynamic value) {
+    quizAnswers[index] = value;
+    notifyListeners();
+  }
+
   void resetQuiz() {
     currentQuizIndex = 0;
     quizAnswers.clear();
