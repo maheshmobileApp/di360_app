@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/test_result_dialog.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +58,23 @@ class QuizScreen extends StatelessWidget {
                                   style: const TextStyle(
                                       color: AppColors.whiteColor),
                                 ),
+                                Spacer(),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                          quiz.type == 'single'
+                                              ? 'MCQ'
+                                              : quiz.type == 'multiple'
+                                                  ? 'MULTI SELECT'
+                                                  : 'T/F',
+                                          style: TextStyles.medium1(
+                                              color: AppColors.whiteColor))),
+                                )
                               ],
                             ),
                             const Divider(color: Colors.grey),
@@ -85,30 +104,50 @@ class QuizScreen extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: AppButton(
-                    text: "Submit Quiz",
-                    onTap: () {
-                      if (!vm.areAllSectionsCompleted()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                "Please complete all modules before taking the quiz."),
-                          ),
-                        );
-                        return;
-                      }
-                      final result = vm.submitQuiz();
-                      if (result == null) return;
-                      final passPercentage = double.tryParse(
-                              vm.courseDetails?.passPercentage?.toString() ??
-                                  '0') ??
-                          0;
-                      showTestResultDialog(
-                          context, result.$1, result.$2, passPercentage);
-                    },
-                    radius: 10,
-                    height: 48,
-                  ),
+                      text: "Submit Quiz",
+                      onTap: () {
+                        if (!vm.areAllSectionsCompleted()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Please complete all modules before taking the quiz."),
+                            ),
+                          );
+                          return;
+                        }
+                        final result = vm.submitQuiz();
+                        if (result == null) return;
+                        final passPercentage = double.tryParse(
+                                vm.courseDetails?.passPercentage?.toString() ??
+                                    '0') ??
+                            0;
+                        showTestResultDialog(
+                            context, result.$1, result.$2, passPercentage);
+                      },
+                      radius: 10,
+                      height: 48),
                 ),
+              if (isCompleted)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Row(children: [
+                    Expanded(
+                        child: AppButton(
+                            text: 'cancel',
+                            onTap: () => navigationService.goBack(),
+                            btnColor: Colors.grey,
+                            height: 40,
+                            radius: 8)),
+                    SizedBox(width: 20),
+                    Expanded(
+                        child: AppButton(
+                            text: 'Take Quiz Again',
+                            onTap: () => navigationService.goBack(),
+                            height: 40,
+                            radius: 8))
+                  ]),
+                )
             ],
           );
         },
@@ -198,10 +237,9 @@ class QuizScreen extends StatelessWidget {
             title: Text(
               option.text ?? '',
               style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500
-              ),
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500),
             ),
           ),
         );
@@ -237,25 +275,24 @@ class QuizScreen extends StatelessWidget {
         } else {
           final selected = vm.quizAnswers[index] as Set<int>? ?? {};
           return CheckboxListTile(
-            value: selected.contains(i),
-            onChanged: (_) {
-              if (!vm.areAllSectionsCompleted()) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                      "Please complete all modules before taking the quiz."),
-                ));
-                return;
-              }
-              final current =
-                  Set<int>.from(vm.quizAnswers[index] as Set<int>? ?? {});
-              current.contains(i) ? current.remove(i) : current.add(i);
-              vm.updateQuizAnswer(index, current);
-            },
-            title: Text(option.text ?? '',
-                style: const TextStyle(color: Colors.white)),
-            activeColor: AppColors.primaryColor,
-            checkColor: AppColors.black
-          );
+              value: selected.contains(i),
+              onChanged: (_) {
+                if (!vm.areAllSectionsCompleted()) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        "Please complete all modules before taking the quiz."),
+                  ));
+                  return;
+                }
+                final current =
+                    Set<int>.from(vm.quizAnswers[index] as Set<int>? ?? {});
+                current.contains(i) ? current.remove(i) : current.add(i);
+                vm.updateQuizAnswer(index, current);
+              },
+              title: Text(option.text ?? '',
+                  style: const TextStyle(color: Colors.white)),
+              activeColor: AppColors.primaryColor,
+              checkColor: AppColors.black);
         }
       }),
     );
