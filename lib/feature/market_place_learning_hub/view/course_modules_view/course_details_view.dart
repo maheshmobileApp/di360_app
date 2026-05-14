@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/module_section_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/quiz_screen.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,21 +15,20 @@ class CourseDetailsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.borderColor,
       appBar: AppBarWidget(
-        searchWidget: false,
-        logo: false,
-        title: "Course Details"
-      ),
+          searchWidget: false, logo: false, title: "Course Details"),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Card(
             color: AppColors.whiteColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Consumer<MarketPlaceLearningHubViewModel>(
-                  builder: (_, vm, __) => _headerTitle(vm.courseDetails?.courseName ?? ''),
+                  builder: (_, vm, __) =>
+                      _headerTitle(vm.courseDetails?.courseName ?? ''),
                 ),
                 const ModuleSectionWidget(),
                 Consumer<MarketPlaceLearningHubViewModel>(
@@ -49,11 +49,8 @@ class CourseDetailsView extends StatelessWidget {
                           ),
                           onPressed: () {
                             if (!vm.areAllSectionsCompleted()) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text(
-                                    "Please complete all modules before taking the quiz."),
-                              ));
+                              scaffoldMessenger(
+                                  "Please complete all modules before taking the quiz.");
                               return;
                             }
                             Navigator.push(

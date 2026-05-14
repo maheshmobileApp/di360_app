@@ -9,8 +9,8 @@ import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void showTestResultDialog(
-    BuildContext context, double scored, bool passed, double passPercentage) {
+void showTestResultDialog(BuildContext context, double scored, bool passed,
+    double passPercentage, List<Map<String, dynamic>> quizAnswersPayload) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -85,7 +85,7 @@ void showTestResultDialog(
                             Loaders.circularShowLoader(context);
                             final res = await context
                                 .read<MarketPlaceLearningHubViewModel>()
-                                .quizSubmitted(context);
+                                .quizSubmitted(context, quizAnswersPayload);
                             if (res['update_course_registered_users_by_pk'] !=
                                 null) {
                               await context

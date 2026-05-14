@@ -133,12 +133,15 @@ class QuizScreen extends StatelessWidget {
                           }
                         }
 
-                        // build & print payload
-                        final payload = List.generate(questions.length, (i) {
+                        // build payload
+                        final payload =
+                            List<Map<String, dynamic>>.generate(
+                                questions.length, (i) {
                           final quiz = questions[i];
                           final answer = vm.quizAnswers[i];
                           List<String> selectedOptionIds;
-                          if (quiz.type == 'single' || quiz.type == 'boolean') {
+                          if (quiz.type == 'single' ||
+                              quiz.type == 'boolean') {
                             final optionIndex = answer as int;
                             selectedOptionIds = [
                               quiz.optionDetails![optionIndex].id ?? ''
@@ -146,7 +149,8 @@ class QuizScreen extends StatelessWidget {
                           } else {
                             final indices = answer as Set<int>;
                             selectedOptionIds = indices
-                                .map((idx) => quiz.optionDetails![idx].id ?? '')
+                                .map((idx) =>
+                                    quiz.optionDetails![idx].id ?? '')
                                 .toList();
                           }
                           return {
@@ -163,7 +167,7 @@ class QuizScreen extends StatelessWidget {
                                     '0') ??
                             0;
                         showTestResultDialog(
-                            context, result.$1, result.$2, passPercentage);
+                            context, result.$1, result.$2, passPercentage, payload);
                       },
                       radius: 10,
                       height: 48),
