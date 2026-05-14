@@ -123,6 +123,8 @@ class DashBoardViewModel extends ChangeNotifier {
               .getJoinedCommunityMembersRes(context);
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           context.read<NewsFeedCommunityViewModel>().getBannerUrl(context);
+          context.read<NewsFeedCommunityViewModel>().initialStateData();
+
           break;
         case 4: // Catalogue
           context.read<CatalogueViewModel>().fetchCatalogue(context);

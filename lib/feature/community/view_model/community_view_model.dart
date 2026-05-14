@@ -390,6 +390,7 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
+  NewsFeedCategoriesData? filterCatgoriesData;
 
   Future<void> getNewsFeedCategories(BuildContext context,
       [String? newsFeedId]) async {
@@ -403,10 +404,15 @@ class CommunityViewModel extends ChangeNotifier {
     };
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
-    newsFeedCategoriesData?.newsfeedCategories?.insert(
-            0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
-        newsFeedCategoriesData?.newsfeedCategories?.add(NewsfeedCategories(id: '2', categoryName: 'Jobs'));
-        newsFeedCategoriesData?.newsfeedCategories?.add(NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
+    filterCatgoriesData = NewsFeedCategoriesData(
+      newsfeedCategories: List.from(res.newsfeedCategories ?? []),
+    );
+    filterCatgoriesData?.newsfeedCategories
+        ?.insert(0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
+    filterCatgoriesData?.newsfeedCategories
+        ?.insert(1,NewsfeedCategories(id: '2', categoryName: 'Jobs'));
+    filterCatgoriesData?.newsfeedCategories
+        ?.insert(2, NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
     Loaders.circularHideLoader(context);
 
     notifyListeners();
