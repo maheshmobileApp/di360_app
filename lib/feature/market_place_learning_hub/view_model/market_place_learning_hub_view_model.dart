@@ -441,10 +441,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     return sections.every((s) => isSectionCompleted(s.id));
   }
 
-  Future<dynamic> quizSubmitted(
-      BuildContext context,
-      List<Map<String, dynamic>> quizAnswersPayload
-  ) async {
+  Future<dynamic> quizSubmitted(BuildContext context,
+      List<Map<String, dynamic>> quizAnswersPayload) async {
     final quizResult = submitQuiz();
     final score = quizResult?.$1 ?? 0;
     final res = await repo.markQuizCompleted({
@@ -458,6 +456,9 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         "is_course_completed": true
       }
     });
+    if (res['update_course_registered_users_by_pk'] != null) {
+      retakeQuiz = false;
+    }
     return res;
   }
 
