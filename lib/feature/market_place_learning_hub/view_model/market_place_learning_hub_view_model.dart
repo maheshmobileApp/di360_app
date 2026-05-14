@@ -71,18 +71,18 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   }
 
   /// Flat list of all sections across all modules in order
-  List<SectionList> get allSections =>
-      courseDetails?.moduleSection
-          ?.expand((m) => m.sectionList ?? <SectionList>[])
+  List<SectionDetails> get allSections =>
+      courseDetails?.moduleDetails
+          ?.expand((m) => m.sectionDetails ?? <SectionDetails>[])
           .toList() ??
       [];
 
   /// Resolves [currentModuleIndex] from the flat [currentSectionIndex]
   void _syncModuleIndex() {
-    final modules = courseDetails?.moduleSection ?? [];
+    final modules = courseDetails?.moduleDetails ?? [];
     int count = 0;
     for (int i = 0; i < modules.length; i++) {
-      count += modules[i].sectionList?.length ?? 0;
+      count += modules[i].sectionDetails?.length ?? 0;
       if (currentSectionIndex < count) {
         currentModuleIndex = i;
         return;
@@ -341,18 +341,21 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   Future<void> completeAndContinue(BuildContext context) async {
     final regUser = courseDetails;
-    if (regUser?.moduleSection == null) return;
+    if (regUser?.moduleDetails == null) return;
 
-    final modules = regUser!.moduleSection!;
+    final modules = regUser!.moduleDetails!;
     final currentModule = modules[currentModuleIndex];
-    final sectionList = currentModule.sectionList ?? [];
+    final sectionList = currentModule.sectionDetails ?? [];
     if (sectionList.isEmpty) return;
     final prevCount = modules
         .sublist(0, currentModuleIndex)
-        .fold<int>(0, (sum, m) => sum + (m.sectionList?.length ?? 0));
+        .fold<int>(0, (sum, m) => sum + (m.sectionDetails?.length ?? 0));
     final localIndex =
         (currentSectionIndex - prevCount).clamp(0, sectionList.length - 1);
     final section = sectionList[localIndex];
+
+    final moduleId = currentModule.moduleId;
+    final modulePosition = currentModule.modulePosition;
 
     void _advance() {
       if (currentSectionIndex < allSections.length - 1) {
@@ -370,19 +373,28 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       return;
     }
 
-    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    if ((userId.isEmpty) ||
+        (moduleId == null || moduleId.isEmpty) ||
+        (section.id == null || section.id!.isEmpty) ||
+        (regUser.id == null || regUser.id!.isEmpty)) {
+      scaffoldMessenger("Missing required data. Please try again.");
+      return;
+    }
+
+    Loaders.circularShowLoader(context);
 
     final res = await repo.updatedTheCourseCompletedStatus({
       "fields": {
         "module_name": currentModule.moduleName,
         "expanded": true,
-        "module_id": currentModule.moduleId,
+        "module_id": moduleId,
         "course_id": regUser.id,
-        "module_position": currentModule.modulePosition,
+        "module_position": modulePosition,
         "section_id": section.id,
         "section_status": "Completed",
-        "user_id": userId,
+        "user_id": userId
       }
     });
 
@@ -397,7 +409,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         registeredUser?.registeredModuleDetails?.add(
           RegisteredModuleDetails(
               sectionId: section.id,
-              moduleId: currentModule.moduleId,
+              moduleId: moduleId,
               moduleName: currentModule.moduleName,
               sectionStatus: 'Completed',
               userId: userId),

@@ -17,12 +17,12 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
   Widget build(BuildContext context) {
     return Consumer<MarketPlaceLearningHubViewModel>(
       builder: (context, vm, _) {
-        final modules = vm.courseDetails?.moduleSection ?? [];
+        final modules = vm.courseDetails?.moduleDetails ?? [];
         if (modules.isEmpty) return const SizedBox.shrink();
         final section = modules[vm.currentModuleIndex];
         final prevSectionsCount = modules
             .sublist(0, vm.currentModuleIndex)
-            .fold<int>(0, (sum, m) => sum + (m.sectionList?.length ?? 0));
+            .fold<int>(0, (sum, m) => sum + (m.sectionDetails?.length ?? 0));
         final localSectionIndex = vm.currentSectionIndex - prevSectionsCount;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -42,7 +42,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
                 onTap2: vm.currentSectionIndex < vm.allSections.length - 1 ? () => vm.completeAndContinue(context) : null,
               ),
               addVertical(10),
-              _buildSectionItem(context, vm, section.sectionList ?? [], localSectionIndex),
+              _buildSectionItem(context, vm, section.sectionDetails ?? [], localSectionIndex),
             ],
           ),
         );
@@ -50,7 +50,7 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<SectionList> sectionList, int localSectionIndex) {
+  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<SectionDetails> sectionList, int localSectionIndex) {
     if (sectionList.isEmpty) return const SizedBox.shrink();
     final topic = sectionList[localSectionIndex.clamp(0, sectionList.length - 1)];
     return Column(
@@ -67,10 +67,10 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
           ),
         ),
         addVertical(10),
-        if (topic.moduleDescription != null && topic.moduleDescription != '') ...[
+        if (topic.description != null && topic.description != '') ...[
           Text('Description: ', style: TextStyles.regular1(color: AppColors.black)),
           addVertical(5),
-          HtmlWidget(topic.moduleDescription ?? '',
+          HtmlWidget(topic.description ?? '',
               textStyle: TextStyles.regular4(color: AppColors.black)),
         ],
         if (topic.image != null) ...[

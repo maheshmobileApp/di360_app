@@ -2,7 +2,6 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
-import 'package:di360_flutter/feature/add_news_feed/querys/update_news_feed.dart';
 import 'package:di360_flutter/feature/add_news_feed/repository/add_news_feed_repo_impl.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
@@ -149,8 +148,8 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   }
 
   updateTheNewsFeeds(BuildContext context) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    // final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    // final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
       uploadedFiles.clear();
