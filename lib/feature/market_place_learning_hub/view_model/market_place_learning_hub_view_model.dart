@@ -49,6 +49,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   int? selectedSingleAnswer;
   Set<int> selectedMultipleAnswers = {};
   bool? quizAnswerCorrect;
+  bool retakeQuiz = false;
 
   void setCourseId(String value) {
     courseId = value;
@@ -199,7 +200,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       final options = q.options ?? [];
       final answer = quizAnswers[i];
       bool isCorrect = false;
-      if (q.questionType == 'single') {
+      if (q.questionType == 'single' || q.questionType == 'boolean') {
         isCorrect = options[answer as int].isCorrect == true;
       } else {
         final selected = answer as Set<int>;
@@ -230,6 +231,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   void resetQuiz() {
     currentQuizIndex = 0;
     quizAnswers.clear();
+    retakeQuiz = true;
     _clearQuizSelection();
     notifyListeners();
   }
@@ -447,6 +449,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       "fields": {
         "quiz_status": "COMPLETED",
         "status": "COMPLETED",
+        "quiz_answers":[],
         "quiz_score": score.toStringAsFixed(2),
         "completed_date": DateTime.now().toIso8601String().split('T').first,
         "is_course_completed": true

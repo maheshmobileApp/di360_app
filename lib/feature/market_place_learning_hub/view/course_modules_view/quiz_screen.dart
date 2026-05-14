@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/market_place_learning_hub/model_class/cour
 import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/test_result_dialog.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,8 @@ class QuizScreen extends StatelessWidget {
 
           final registeredUser =
               vm.courseDetails?.courseRegisteredUsers?.firstOrNull;
-          final isCompleted = registeredUser?.quizStatus == 'COMPLETED';
+          final isCompleted =
+              registeredUser?.quizStatus == 'COMPLETED' && !vm.retakeQuiz;
 
           return Column(
             children: [
@@ -107,14 +109,53 @@ class QuizScreen extends StatelessWidget {
                       text: "Submit Quiz",
                       onTap: () {
                         if (!vm.areAllSectionsCompleted()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  "Please complete all modules before taking the quiz."),
-                            ),
-                          );
+                          scaffoldMessenger(
+                              "Please complete all modules before taking the quiz.");
                           return;
                         }
+                        // validate all answered + multiple min 2
+                        for (int i = 0; i < questions.length; i++) {
+                          final quiz = questions[i];
+                          final answer = vm.quizAnswers[i];
+                          if (answer == null ||
+                              (answer is Set && answer.isEmpty)) {
+                            scaffoldMessenger(
+                                "Please answer question ${i + 1}.");
+                            return;
+                          }
+                          if (quiz.type == 'multiple') {
+                            final sel = answer as Set<int>;
+                            if (sel.length < 2) {
+                              scaffoldMessenger(
+                                  "Question ${i + 1}: select at least 2 options.");
+                              return;
+                            }
+                          }
+                        }
+
+                        // build & print payload
+                        final payload = List.generate(questions.length, (i) {
+                          final quiz = questions[i];
+                          final answer = vm.quizAnswers[i];
+                          List<String> selectedOptionIds;
+                          if (quiz.type == 'single' || quiz.type == 'boolean') {
+                            final optionIndex = answer as int;
+                            selectedOptionIds = [
+                              quiz.optionDetails![optionIndex].id ?? ''
+                            ];
+                          } else {
+                            final indices = answer as Set<int>;
+                            selectedOptionIds = indices
+                                .map((idx) => quiz.optionDetails![idx].id ?? '')
+                                .toList();
+                          }
+                          return {
+                            'question_id': quiz.id ?? '',
+                            'selected_option_ids': selectedOptionIds,
+                          };
+                        });
+                        debugPrint(payload.toString());
+
                         final result = vm.submitQuiz();
                         if (result == null) return;
                         final passPercentage = double.tryParse(
@@ -143,7 +184,9 @@ class QuizScreen extends StatelessWidget {
                     Expanded(
                         child: AppButton(
                             text: 'Take Quiz Again',
-                            onTap: () => navigationService.goBack(),
+                            onTap: () {
+                              vm.resetQuiz();
+                            },
                             height: 40,
                             radius: 8))
                   ]),
@@ -253,7 +296,9 @@ class QuizScreen extends StatelessWidget {
     return Column(
       children: List.generate(quiz.optionDetails?.length ?? 0, (i) {
         final option = quiz.optionDetails![i];
-        if (quiz.type == 'single') {
+
+        // boolean & single → RadioListTile (single selection)
+        if (quiz.type == 'single' || quiz.type == 'boolean') {
           final selected = vm.quizAnswers[index];
           return RadioListTile<int>(
             value: i,
@@ -273,6 +318,7 @@ class QuizScreen extends StatelessWidget {
             activeColor: AppColors.primaryColor,
           );
         } else {
+          // multiple → CheckboxListTile (min 2, max 3)
           final selected = vm.quizAnswers[index] as Set<int>? ?? {};
           return CheckboxListTile(
               value: selected.contains(i),
@@ -286,7 +332,17 @@ class QuizScreen extends StatelessWidget {
                 }
                 final current =
                     Set<int>.from(vm.quizAnswers[index] as Set<int>? ?? {});
-                current.contains(i) ? current.remove(i) : current.add(i);
+                if (current.contains(i)) {
+                  current.remove(i);
+                } else {
+                  if (current.length >= 3) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("You can select a maximum of 3 options."),
+                    ));
+                    return;
+                  }
+                  current.add(i);
+                }
                 vm.updateQuizAnswer(index, current);
               },
               title: Text(option.text ?? '',
