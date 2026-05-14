@@ -17,7 +17,7 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
-      int limit, int offset) async {
+      int limit, int offset, String searchText) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityIdList =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
@@ -26,6 +26,20 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
       "offset": offset,
       "where": {
         "_and": [
+          if (searchText.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "company_name": {"_ilike": "%$searchText%"}
+                },
+                {
+                  "course_name": {"_ilike": "%$searchText%"}
+                },
+                {
+                  "presented_by_name": {"_ilike": "%$searchText%"}
+                }
+              ]
+            },
           {
             "_or": [
               {
@@ -94,7 +108,8 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
     };
     final courseTypeData =
         await http.query(showCourseById, variables: variables);
-    if (courseTypeData is Map && courseTypeData.containsKey('_error')) return null;
+    if (courseTypeData is Map && courseTypeData.containsKey('_error'))
+      return null;
     final result = CourseDetailData.fromJson(courseTypeData);
     return result.coursesByPk;
   }

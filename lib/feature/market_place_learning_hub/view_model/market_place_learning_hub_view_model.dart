@@ -247,7 +247,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     notifyListeners();
 
     final res = await repo.getMarketPlaceLearningHubData(
-        _marketPlaceLimit, _marketPlaceOffset);
+        _marketPlaceLimit, _marketPlaceOffset, searchController.text);
 
     if (loadMore) {
       marketPlaceCoursesList.addAll(res ?? []);

@@ -17,7 +17,7 @@ class QuizScreen extends StatelessWidget {
       appBar: AppBarWidget(searchWidget: false, logo: false, title: "Quiz"),
       body: Consumer<MarketPlaceLearningHubViewModel>(
         builder: (context, vm, _) {
-          final questions = vm.courseDetails?.questionSection ?? [];
+          final questions = vm.courseDetails?.quizDetails ?? [];
           if (questions.isEmpty) {
             return const Center(child: Text("No questions available."));
           }
@@ -33,7 +33,7 @@ class QuizScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   itemCount: questions.length,
                   itemBuilder: (context, index) {
-                    final q = questions[index];
+                    final quiz = questions[index];
                     return Card(
                       color: Colors.black,
                       shape: RoundedRectangleBorder(
@@ -61,7 +61,7 @@ class QuizScreen extends StatelessWidget {
                             const Divider(color: Colors.grey),
                             const SizedBox(height: 8),
                             Text(
-                              'Q${index + 1}.  ${q.question?.toUpperCase() ?? ''}',
+                              'Q${index + 1}.  ${quiz.question?.toUpperCase() ?? ''}',
                               style: const TextStyle(
                                   color: AppColors.primaryColor,
                                   fontWeight: FontWeight.bold),
@@ -69,9 +69,10 @@ class QuizScreen extends StatelessWidget {
                             const SizedBox(height: 8),
                             if (isCompleted)
                               _buildReviewOptions(
-                                  q, registeredUser, vm.courseDetails)
+                                  quiz, registeredUser, vm.courseDetails)
                             else
-                              _buildInteractiveOptions(context, vm, q, index),
+                              _buildInteractiveOptions(
+                                  context, vm, quiz, index),
                           ],
                         ),
                       ),
@@ -115,11 +116,11 @@ class QuizScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewOptions(QuestionSection q,
+  Widget _buildReviewOptions(QuizDetails quizDetails,
       CourseDetailRegisteredUsers? registeredUser, CoursesByPk? courseDetails) {
     /// USER ANSWERS
     final userAnswer = registeredUser?.quizAnswers?.firstWhere(
-      (a) => a.questionId == q.quizId,
+      (a) => a.questionId == quizDetails.id,
       orElse: () => QuizAnswers(),
     );
 
@@ -127,13 +128,13 @@ class QuizScreen extends StatelessWidget {
 
     /// QUIZ DETAIL
     final quizDetail = courseDetails?.quizDetails?.firstWhere(
-      (e) => e.quizId == q.quizId,
+      (e) => e.quizId == quizDetails.quizId,
       orElse: () => QuizDetails(),
     );
 
     return Column(
-      children: List.generate(q.options?.length ?? 0, (i) {
-        final option = q.options![i];
+      children: List.generate(quizDetails.optionDetails?.length ?? 0, (i) {
+        final option = quizDetails.optionDetails![i];
 
         /// FIND MATCHED OPTION FROM quiz_details
         final matchedQuizOption = quizDetail?.optionDetails?.firstWhere(
@@ -199,7 +200,7 @@ class QuizScreen extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w500
               ),
             ),
           ),
@@ -210,11 +211,11 @@ class QuizScreen extends StatelessWidget {
 
   /// Interactive mode for unanswered quiz
   Widget _buildInteractiveOptions(BuildContext context,
-      MarketPlaceLearningHubViewModel vm, QuestionSection q, int index) {
+      MarketPlaceLearningHubViewModel vm, QuizDetails quiz, int index) {
     return Column(
-      children: List.generate(q.options?.length ?? 0, (i) {
-        final option = q.options![i];
-        if (q.questionType == 'single') {
+      children: List.generate(quiz.optionDetails?.length ?? 0, (i) {
+        final option = quiz.optionDetails![i];
+        if (quiz.type == 'single') {
           final selected = vm.quizAnswers[index];
           return RadioListTile<int>(
             value: i,
@@ -253,7 +254,7 @@ class QuizScreen extends StatelessWidget {
             title: Text(option.text ?? '',
                 style: const TextStyle(color: Colors.white)),
             activeColor: AppColors.primaryColor,
-            checkColor: AppColors.black,
+            checkColor: AppColors.black
           );
         }
       }),
