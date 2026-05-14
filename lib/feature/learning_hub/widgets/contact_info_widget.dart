@@ -1,8 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactInfoWidget extends StatelessWidget {
   final String location;
@@ -20,23 +19,43 @@ class ContactInfoWidget extends StatelessWidget {
     required this.user,
   }) : super(key: key);
 
-  Widget _buildRow(String iconPath, String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SvgPicture.asset(
-          iconPath,
-          width: 30,
-          height: 30,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyles.medium2(color: AppColors.black),
+  Widget _buildRow(IconData? iconPath, String text, bool underlined,
+      {String? type}) {
+    return GestureDetector(
+      onTap: () {
+        if (type == 'phone') {
+          makePhoneCall(phoneNumber);
+        }
+        if (type == 'website') {
+          openWebsite(website);
+        }
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.white,
+            child: Icon(
+              iconPath,
+              size: 18,
+              color: AppColors.black,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyles.semiBold(
+                color: AppColors.black,
+                fontSize: 14,
+                decoration:
+                    underlined ? TextDecoration.underline : TextDecoration.none,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -51,25 +70,56 @@ class ContactInfoWidget extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         if (user.isNotEmpty) ...[
-          _buildRow(ImageConst.contactLocation, user),
+          _buildRow(Icons.person_outline, user, false),
         ],
         const SizedBox(height: 6),
         if (location.isNotEmpty) ...[
-          _buildRow(ImageConst.contactLocation, location),
+          _buildRow(Icons.location_on, location, false),
         ],
         const SizedBox(height: 6),
         if (email.isNotEmpty) ...[
-          _buildRow(ImageConst.contactMail, email),
+          _buildRow(Icons.mail_outline, email, false),
         ],
         const SizedBox(height: 6),
         if (phoneNumber.isNotEmpty) ...[
-          _buildRow(ImageConst.contactPhone, phoneNumber),
+          _buildRow(Icons.call_outlined, phoneNumber, true, type: 'phone'),
         ],
         const SizedBox(height: 6),
         if (website.isNotEmpty) ...[
-          _buildRow(ImageConst.contactLocation, website),
+          _buildRow(Icons.public, website, true, type: 'website'),
         ],
       ],
     );
+  }
+
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
+  }
+
+  Future<void> openWebsite(String? url) async {
+    if (url == null || url.trim().isEmpty) return;
+
+    final website = url.trim();
+
+    final formattedUrl =
+        website.startsWith('http://') || website.startsWith('https://')
+            ? website
+            : 'https://$website';
+
+    final Uri uri = Uri.parse(formattedUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    }
   }
 }

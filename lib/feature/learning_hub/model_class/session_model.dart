@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:flutter/material.dart';
-import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 
 class SessionModel {
   final TextEditingController sessionNameController;

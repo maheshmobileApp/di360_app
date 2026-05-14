@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/full_screen_gallery.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class GalleryImgWidget extends StatelessWidget {
     this.borderRadius = 12,
     this.spacing = 8,
     this.title = "",
-    this.width = 0, // default title
+    this.width = 0,
   }) : super(key: key);
 
   @override
@@ -29,7 +30,9 @@ class GalleryImgWidget extends StatelessWidget {
         if (title != null && title!.isNotEmpty) ...[
           Text(
             title!,
-            style: TextStyles.bold2(color: AppColors.primaryColor),
+            style: TextStyles.bold2(
+              color: AppColors.primaryColor,
+            ),
           ),
           const SizedBox(height: 8),
         ],
@@ -40,18 +43,36 @@ class GalleryImgWidget extends StatelessWidget {
             itemCount: imageUrls.length,
             separatorBuilder: (_, __) => SizedBox(width: spacing),
             itemBuilder: (context, index) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(borderRadius),
-                child: CachedNetworkImageWidget(
-                  imageUrl: imageUrls[index],
-                  height: height,
-                  width: (width == 0) ? height * 1.5 : width,
-                  fit: BoxFit.contain,
-                  errorWidget: Container(
+              return GestureDetector(
+                onTap: () {
+                  FullScreenGallery.open(
+                    context: context,
+                    images: imageUrls,
+                    initialIndex: index,
+                    imageBuilder: (imageUrl) {
+                      return CachedNetworkImageWidget(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.contain,
+                      );
+                    },
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  child: CachedNetworkImageWidget(
+                    imageUrl: imageUrls[index],
                     height: height,
                     width: (width == 0) ? height * 1.5 : width,
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.broken_image, color: Colors.red),
+                    fit: BoxFit.cover,
+                    errorWidget: Container(
+                      height: height,
+                      width: (width == 0) ? height * 1.5 : width,
+                      color: Colors.grey.shade300,
+                      child: const Icon(
+                        Icons.broken_image,
+                        color: Colors.red,
+                      ),
+                    ),
                   ),
                 ),
               );

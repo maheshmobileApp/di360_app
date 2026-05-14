@@ -213,7 +213,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
 
                       (courseListVM.editOptionEnable)
                           ? await newCourseVM.updateCourseListing(
-                              context, courseListVM.courseId, true)
+                              context, courseListVM.courseId, true, courseListVM.courseStatus, courseListVM.activeStatus)
                           : await newCourseVM.createdCourseListing(
                               context, true);
                       courseListVM.selectedStatus = "All";
@@ -242,7 +242,7 @@ class _JobCreateViewState extends State<NewCourseScreen> {
                   if (currentFormKey.currentState?.validate() ?? false) {
                     if (isLastStep) {
                       await newCourseVM.updateCourseListing(
-                          context, courseListVM.courseId, false);
+                          context, courseListVM.courseId, false, courseListVM.courseStatus, courseListVM.activeStatus);
                       courseListVM.editOptionEnable &&
                               courseListVM.courseStatus == "APPROVE"
                           ? scaffoldMessenger("Course is updated Successfully")

@@ -79,7 +79,7 @@ class CouresListingCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        _menuWidget(context),
+                        _menuWidget(context, types.isNotEmpty ? types.first : null),
                       ],
                     ),
                   ],
@@ -329,7 +329,7 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _menuWidget(BuildContext context) {
+  Widget _menuWidget(BuildContext context, String? courseType) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -345,7 +345,7 @@ class CouresListingCard extends StatelessWidget {
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (status != "EXPIRED")
+        if (status != "EXPIRED" && courseType != "Online Academy")
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
         if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),

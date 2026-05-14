@@ -17,7 +17,6 @@ import 'package:di360_flutter/feature/job_listings/view_model/job_listings_view_
 import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
-import 'package:di360_flutter/feature/my_learning_hub/view_model/filter_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
@@ -284,7 +283,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
-                            final bannerPermission =
+                            navigationService
+                                  .navigateTo(RouteList.bannersListView);
+                          
+                            /*final bannerPermission =
                                 await LocalStorage.getBoolValue(
                                     LocalStorageConst.bannerPermission);
 
@@ -294,7 +296,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             } else {
                               scaffoldMessenger(
                                   "You do not have permission to access this feature.");
-                            }
+                            }*/
                           } else if (item.title == "Marketing") {
                             navigationService
                                 .navigateTo(RouteList.campaignListingView);
