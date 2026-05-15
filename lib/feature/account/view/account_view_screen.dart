@@ -207,10 +207,8 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .navigateTo(RouteList.JobProfileScreen);
                           } else if (item.title == 'Applied Jobs') {
                             Navigator.pushNamed(
-                              context,
-                              RouteList.AppliedJobScreen,
-                              arguments: userId,
-                            );
+                                context, RouteList.AppliedJobScreen,
+                                arguments: userId);
                           } else if (item.title == 'Job Enquiries') {
                             Loaders.circularShowLoader(context);
                             await context
@@ -219,10 +217,8 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             Loaders.circularHideLoader(context);
 
                             Navigator.pushNamed(
-                              context,
-                              RouteList.EnquiriesScreen,
-                              arguments: userId,
-                            );
+                                context, RouteList.EnquiriesScreen,
+                                arguments: userId);
                           } else if (item.title == 'Talent Listing') {
                             /*Loaders.circularShowLoader(context);
                             await context

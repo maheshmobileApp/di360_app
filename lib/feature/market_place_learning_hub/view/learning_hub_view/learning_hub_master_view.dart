@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_c
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,10 +28,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<LearningHubMasterViewModel>(context, listen: false)
-          .clearFilterOptions();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
@@ -55,11 +53,31 @@ class _JobListingScreenState extends State<LearningHubMasterView>
       appBar: AppBarWidget(
           searchAction: () =>
               courseListingVM.setSearchBar(!courseListingVM.searchBarOpen),
-          filterWidget: GestureDetector(
-            onTap: () => {
-              navigationService.navigateTo(RouteList.learningHubFliterScreen)
-            },
-            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          filterWidget: Row(
+            children: [
+              GestureDetector(
+                onTap: () => {
+                  navigationService
+                      .navigateTo(RouteList.learningHubFliterScreen)
+                },
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              ),
+              if (courseListingVM.applyFilter)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        courseListingVM.updateApplyFilter(false);
+                        courseListingVM.searchController.clear();
+                        Provider.of<LearningHubMasterViewModel>(context,
+                                listen: false)
+                            .clearFilterOptions();
+                        courseListingVM.getAllLearningHubData(context);
+                      },
+                      child: Icon(Icons.close, color: AppColors.black)),
+                )
+            ],
           )),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -74,7 +92,11 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                   courseListingVM.getAllLearningHubData(context);
                 },
                 onSearch: () {
-                  courseListingVM.getAllLearningHubData(context);
+                  if (courseListingVM.searchController.text.trim().isNotEmpty) {
+                    courseListingVM.getAllLearningHubData(context);
+                  } else {
+                    scaffoldMessenger("Please enter search text.");
+                  }
                 },
               ),
             Expanded(
@@ -83,10 +105,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "No Data.",
-                              style: TextStyles.medium2(color: AppColors.black),
-                            ),
+                            Text("No Data.",
+                                style:
+                                    TextStyles.medium2(color: AppColors.black))
                           ],
                         ),
                       )

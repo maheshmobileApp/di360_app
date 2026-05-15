@@ -225,7 +225,7 @@ class ListingHubMasterCard extends StatelessWidget {
             ),
             //Spacer(),
             RegisterButton(
-                text: isRegistered ? "Already Registered" : 'Register Now',
+                text: isRegistered ? "View Course Details" : 'Register Now',
                 onTap: registerTap,
                 isRegistered: isRegistered)
           ],

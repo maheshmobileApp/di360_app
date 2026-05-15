@@ -148,8 +148,8 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   }
 
   updateTheNewsFeeds(BuildContext context) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    // final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    // final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
       uploadedFiles.clear();

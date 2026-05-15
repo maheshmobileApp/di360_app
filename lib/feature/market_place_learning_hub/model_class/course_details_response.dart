@@ -36,7 +36,7 @@ class CourseDetailData {
     }
     return data;
   }
-}     
+}
 
 class CoursesByPk {
   String? id;
@@ -813,24 +813,33 @@ class CourseDetailRegisteredUsers {
   String? courseId;
   String? fromId;
   String? status;
-  List<Null>? quizAnswers;
+  String? quizStatus;
+  List<QuizAnswers>? quizAnswers;
   List<RegisteredModuleDetails>? registeredModuleDetails;
   String? sTypename;
 
   CourseDetailRegisteredUsers(
-      {this.id, this.courseId, this.fromId, this.status, this.quizAnswers, this.registeredModuleDetails, this.sTypename});
+      {this.id,
+      this.courseId,
+      this.fromId,
+      this.status,
+      this.quizStatus,
+      this.quizAnswers,
+      this.registeredModuleDetails,
+      this.sTypename});
 
   CourseDetailRegisteredUsers.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     courseId = json['course_id'];
     fromId = json['from_id'];
     status = json['status'];
-    // if (json['quiz_answers'] != null) {
-    //   quizAnswers = <Null>[];
-    //   json['quiz_answers'].forEach((v) {
-    //     quizAnswers!.add(new Null.fromJson(v));
-    //   });
-    // }
+    quizStatus = json['quiz_status'];
+    if (json['quiz_answers'] != null) {
+      quizAnswers = <QuizAnswers>[];
+      json['quiz_answers'].forEach((v) {
+        quizAnswers!.add(new QuizAnswers.fromJson(v));
+      });
+    }
     if (json['registered_module_details'] != null) {
       registeredModuleDetails = <RegisteredModuleDetails>[];
       json['registered_module_details'].forEach((v) {
@@ -846,14 +855,34 @@ class CourseDetailRegisteredUsers {
     data['course_id'] = this.courseId;
     data['from_id'] = this.fromId;
     data['status'] = this.status;
-    // if (this.quizAnswers != null) {
-    //   data['quiz_answers'] = this.quizAnswers!.map((v) => v.toJson()).toList();
-    // }
+    data['quiz_status'] = this.quizStatus;
+    if (this.quizAnswers != null) {
+      data['quiz_answers'] = this.quizAnswers!.map((v) => v.toJson()).toList();
+    }
     if (this.registeredModuleDetails != null) {
       data['registered_module_details'] =
           this.registeredModuleDetails!.map((v) => v.toJson()).toList();
     }
     data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class QuizAnswers {
+  String? questionId;
+  List<String>? selectedOptionIds;
+
+  QuizAnswers({this.questionId, this.selectedOptionIds});
+
+  QuizAnswers.fromJson(Map<String, dynamic> json) {
+    questionId = json['question_id'];
+    selectedOptionIds = json['selected_option_ids'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['question_id'] = this.questionId;
+    data['selected_option_ids'] = this.selectedOptionIds;
     return data;
   }
 }

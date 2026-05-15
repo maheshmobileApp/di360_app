@@ -17,7 +17,8 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
 
   @override
   Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
-      int limit, int offset) async {
+      int limit, int offset, String searchText,
+      {List<String>? types, List<String>? courseCategory}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityIdList =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
@@ -26,6 +27,20 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
       "offset": offset,
       "where": {
         "_and": [
+          if (searchText.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "company_name": {"_ilike": "%$searchText%"}
+                },
+                {
+                  "course_name": {"_ilike": "%$searchText%"}
+                },
+                {
+                  "presented_by_name": {"_ilike": "%$searchText%"}
+                }
+              ]
+            },
           {
             "_or": [
               {
@@ -73,7 +88,15 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
                 ]
               }
             ]
-          }
+          },
+          if (types != null && types.isNotEmpty)
+            {
+              "type": {"_in": types}
+            },
+          if (courseCategory != null && courseCategory.isNotEmpty)
+            {
+              "course_category_id": {"_in": courseCategory}
+            }
         ]
       }
     };

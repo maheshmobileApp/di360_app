@@ -45,4 +45,12 @@ class AppColors {
   static const Color typeTextColor = Color(0xFF0471DE);
   static const Color greyLight = Color(0xffEDEFF1);
   static const Color greyLightcolor = Color.fromRGBO(231, 231, 231, 1);
+  static const Color quizCorrectBg = Color(0xFF1B5E20);
+  static const Color quizCorrectBorder = Color(0xFF66BB6A);
+  static const Color quizWrongBg = Color(0xFF7F1D1D);
+  static const Color quizWrongBorder = Color(0xFFEF5350);
+  static const Color quizMissedBg = Color(0xFF1E3A1E);
+  static const Color quizMissedBorder = Color(0xFF81C784);
+  static const Color quizNeutralBg = Color(0xFF1E1E1E);
+  static const Color quizNeutralBorder = Color(0xFF424242);
 }

@@ -288,24 +288,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  Future<void> getMarketPlaceCoursesWithFilters(
-      BuildContext context,
-      String type,
-      String courseCategoryId,
-      String startDate,
-      String address) async {
-    Loaders.circularShowLoader(context);
-    final res = await repo.getMarketPlaceCoursesWithFilters(
-        type, courseCategoryId, startDate, address);
-
-    if (res != null) {
-      // coursesListingList = res;
-      // marketPlaceCoursesList = res;
-      Loaders.circularHideLoader(context);
-    }
-    notifyListeners();
-  }
-
   void setSelectedCourseCategory(String? name) {
     selectedCategory = name;
 

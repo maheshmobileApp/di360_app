@@ -44,6 +44,7 @@ class SearchWidget extends StatelessWidget {
                 onChanged: onChanged,
                 textInputAction: TextInputAction.search,
                 onSubmitted: (_) {
+                  FocusScope.of(context).unfocus();
                   if (onSearch != null) onSearch!();
                 },
                 decoration: InputDecoration(
@@ -69,7 +70,10 @@ class SearchWidget extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
-              onPressed: onSearch,
+              onPressed: onSearch == null ? null : () {
+                FocusScope.of(context).unfocus();
+                onSearch!();
+              },
               label: const Text(
                 "Search",
                 style: TextStyle(color: Colors.white),

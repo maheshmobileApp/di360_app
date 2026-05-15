@@ -22,23 +22,19 @@ class RegisterButton extends StatelessWidget {
         height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: isRegistered? AppColors.geryColor:AppColors.black,
-          borderRadius: BorderRadius.circular(8),
-        ),
+            color: isRegistered ? AppColors.primaryColor : AppColors.black,
+            borderRadius: BorderRadius.circular(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               text.toUpperCase(),
               style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500),
             ),
-            const SizedBox(
-              width: 10,
-            ),
+            const SizedBox(width: 10),
             Container(
               width: 28,
               height: 28,

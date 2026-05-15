@@ -49,6 +49,13 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   int? selectedSingleAnswer;
   Set<int> selectedMultipleAnswers = {};
   bool? quizAnswerCorrect;
+  bool retakeQuiz = false;
+  bool applyFilter = false;
+
+  void updateApplyFilter(bool value) {
+    applyFilter = value;
+    notifyListeners();
+  }
 
   void setCourseId(String value) {
     courseId = value;
@@ -71,18 +78,18 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   }
 
   /// Flat list of all sections across all modules in order
-  List<SectionList> get allSections =>
-      courseDetails?.moduleSection
-          ?.expand((m) => m.sectionList ?? <SectionList>[])
+  List<SectionDetails> get allSections =>
+      courseDetails?.moduleDetails
+          ?.expand((m) => m.sectionDetails ?? <SectionDetails>[])
           .toList() ??
       [];
 
   /// Resolves [currentModuleIndex] from the flat [currentSectionIndex]
   void _syncModuleIndex() {
-    final modules = courseDetails?.moduleSection ?? [];
+    final modules = courseDetails?.moduleDetails ?? [];
     int count = 0;
     for (int i = 0; i < modules.length; i++) {
-      count += modules[i].sectionList?.length ?? 0;
+      count += modules[i].sectionDetails?.length ?? 0;
       if (currentSectionIndex < count) {
         currentModuleIndex = i;
         return;
@@ -199,7 +206,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       final options = q.options ?? [];
       final answer = quizAnswers[i];
       bool isCorrect = false;
-      if (q.questionType == 'single') {
+      if (q.questionType == 'single' || q.questionType == 'boolean') {
         isCorrect = options[answer as int].isCorrect == true;
       } else {
         final selected = answer as Set<int>;
@@ -230,12 +237,15 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   void resetQuiz() {
     currentQuizIndex = 0;
     quizAnswers.clear();
+    retakeQuiz = true;
     _clearQuizSelection();
     notifyListeners();
   }
 
   Future<void> getAllLearningHubData(BuildContext context,
-      {bool loadMore = false}) async {
+      {bool loadMore = false,
+      List<String>? types,
+      List<String>? courseCategory}) async {
     if (loadMore) {
       if (isLoadingMoreMarketPlace || !hasMoreMarketPlace) return;
       isLoadingMoreMarketPlace = true;
@@ -247,7 +257,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     notifyListeners();
 
     final res = await repo.getMarketPlaceLearningHubData(
-        _marketPlaceLimit, _marketPlaceOffset);
+        _marketPlaceLimit, _marketPlaceOffset, searchController.text,
+        types: types, courseCategory: courseCategory);
 
     if (loadMore) {
       marketPlaceCoursesList.addAll(res ?? []);
@@ -341,18 +352,21 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   Future<void> completeAndContinue(BuildContext context) async {
     final regUser = courseDetails;
-    if (regUser?.moduleSection == null) return;
+    if (regUser?.moduleDetails == null) return;
 
-    final modules = regUser!.moduleSection!;
+    final modules = regUser!.moduleDetails!;
     final currentModule = modules[currentModuleIndex];
-    final sectionList = currentModule.sectionList ?? [];
+    final sectionList = currentModule.sectionDetails ?? [];
     if (sectionList.isEmpty) return;
     final prevCount = modules
         .sublist(0, currentModuleIndex)
-        .fold<int>(0, (sum, m) => sum + (m.sectionList?.length ?? 0));
+        .fold<int>(0, (sum, m) => sum + (m.sectionDetails?.length ?? 0));
     final localIndex =
         (currentSectionIndex - prevCount).clamp(0, sectionList.length - 1);
     final section = sectionList[localIndex];
+
+    final moduleId = currentModule.moduleId;
+    final modulePosition = currentModule.modulePosition;
 
     void _advance() {
       if (currentSectionIndex < allSections.length - 1) {
@@ -370,19 +384,28 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       return;
     }
 
-    Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    if ((userId.isEmpty) ||
+        (moduleId == null || moduleId.isEmpty) ||
+        (section.id == null || section.id!.isEmpty) ||
+        (regUser.id == null || regUser.id!.isEmpty)) {
+      scaffoldMessenger("Missing required data. Please try again.");
+      return;
+    }
+
+    Loaders.circularShowLoader(context);
 
     final res = await repo.updatedTheCourseCompletedStatus({
       "fields": {
         "module_name": currentModule.moduleName,
         "expanded": true,
-        "module_id": currentModule.moduleId,
+        "module_id": moduleId,
         "course_id": regUser.id,
-        "module_position": currentModule.modulePosition,
+        "module_position": modulePosition,
         "section_id": section.id,
         "section_status": "Completed",
-        "user_id": userId,
+        "user_id": userId
       }
     });
 
@@ -397,7 +420,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         registeredUser?.registeredModuleDetails?.add(
           RegisteredModuleDetails(
               sectionId: section.id,
-              moduleId: currentModule.moduleId,
+              moduleId: moduleId,
               moduleName: currentModule.moduleName,
               sectionStatus: 'Completed',
               userId: userId),
@@ -427,7 +450,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     return sections.every((s) => isSectionCompleted(s.id));
   }
 
-  Future<dynamic> quizSubmitted(BuildContext context) async {
+  Future<dynamic> quizSubmitted(BuildContext context,
+      List<Map<String, dynamic>> quizAnswersPayload) async {
     final quizResult = submitQuiz();
     final score = quizResult?.$1 ?? 0;
     final res = await repo.markQuizCompleted({
@@ -435,11 +459,15 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       "fields": {
         "quiz_status": "COMPLETED",
         "status": "COMPLETED",
+        "quiz_answers": quizAnswersPayload,
         "quiz_score": score.toStringAsFixed(2),
         "completed_date": DateTime.now().toIso8601String().split('T').first,
         "is_course_completed": true
       }
     });
+    if (res['update_course_registered_users_by_pk'] != null) {
+      retakeQuiz = false;
+    }
     return res;
   }
 

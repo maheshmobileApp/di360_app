@@ -1,8 +1,8 @@
 import 'package:di360_flutter/feature/job_create/widgets/custom_date_picker.dart';
 import 'package:di360_flutter/feature/job_seek/widget/collasible_section.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
@@ -19,11 +19,11 @@ class LearningHubFilterScreen extends StatelessWidget with BaseContextHelpers {
 
   @override
   Widget build(BuildContext context) {
-    //final model = Provider.of<JobSeekViewModel>(context);
     final newCourseVM = Provider.of<NewCourseViewModel>(context);
+    final marketPlaceLearningHubVM =
+        Provider.of<MarketPlaceLearningHubViewModel>(context);
     final learningHubMasterVM =
         Provider.of<LearningHubMasterViewModel>(context);
-    final courseListingVM = Provider.of<CourseListingViewModel>(context);
 
     // ✅ Initialize filter options (only once)
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -130,14 +130,9 @@ class LearningHubFilterScreen extends StatelessWidget with BaseContextHelpers {
                       height: 40,
                       width: 150,
                       onTap: () async {
-                        learningHubMasterVM.clearSelections();
-                        await courseListingVM.getMarketPlaceCoursesWithFilters(
-                          context,
-                          "",
-                          "",
-                          "",
-                          "",
-                        );
+                        learningHubMasterVM.clearFilterOptions();
+                        marketPlaceLearningHubVM.getAllLearningHubData(context);
+                        navigationService.goBack();
                       },
                     ),
                     AppButton(
@@ -147,13 +142,11 @@ class LearningHubFilterScreen extends StatelessWidget with BaseContextHelpers {
                       onTap: () async {
                         await learningHubMasterVM.setSelectedCourseCategories(
                             learningHubMasterVM.selectedCategory);
-                        await courseListingVM.getMarketPlaceCoursesWithFilters(
-                          context,
-                          learningHubMasterVM.selectedType.join(','),
-                          learningHubMasterVM.selectedCategoryIds.join(','),
-                          learningHubMasterVM.filterDateController.text,
-                          learningHubMasterVM.locationController.text,
-                        );
+                        marketPlaceLearningHubVM.updateApplyFilter(true);
+                        marketPlaceLearningHubVM.getAllLearningHubData(context,
+                            types: learningHubMasterVM.selectedType,
+                            courseCategory:
+                                learningHubMasterVM.selectedCategoryIds);
                         navigationService.goBack();
                       },
                     ),
