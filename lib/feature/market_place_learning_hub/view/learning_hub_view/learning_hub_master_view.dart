@@ -90,8 +90,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           children: [
                             Text(
                               "No Data.",
-                              style: TextStyles.medium2(color: AppColors.black),
-                            ),
+                              style: TextStyles.medium2(color: AppColors.black)
+                            )
                           ],
                         ),
                       )
