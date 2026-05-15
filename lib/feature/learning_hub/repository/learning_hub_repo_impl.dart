@@ -15,14 +15,12 @@ import 'package:di360_flutter/feature/learning_hub/querys/get_course_registered_
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_status_count.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_course_type_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_courses_list_query.dart';
-import 'package:di360_flutter/feature/learning_hub/querys/get_market_place_courses.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/get_register_user_tab_count.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 class LearningHubRepoImpl extends LearningHubRepository {
   final HttpService http = HttpService();
@@ -178,84 +176,6 @@ class LearningHubRepoImpl extends LearningHubRepository {
         await http.query(getCourseRegisteredUsersQuery, variables: variables);
     final result = RegisteredUsersData.fromJson(getUsersData);
     return result;
-  }
-
-
-  @override
-  Future<List<CoursesListingDetails>?> getMarketPlaceCoursesWithFilters(
-      String type,
-      String courseCategoryId,
-      String startDate,
-      String address) async {
-    final List<Map<String, dynamic>> andConditions = [];
-
-    final List<String> typeList = type.isNotEmpty
-        ? type
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList()
-        : [];
-
-    final List<String> categoryList = courseCategoryId.isNotEmpty
-        ? courseCategoryId
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList()
-        : [];
-
-    String startDateFormatted = "";
-    if (startDate.isNotEmpty) {
-      try {
-        startDateFormatted = DateFormat("yyyy-MM-dd")
-            .format(DateFormat("dd/MM/yyyy").parse(startDate));
-      } catch (e) {
-        startDateFormatted = "";
-      }
-    }
-
-    if (type.isNotEmpty) {
-      andConditions.add({
-        "type": {"_in": typeList}
-      });
-    }
-
-    if (courseCategoryId.isNotEmpty) {
-      andConditions.add({
-        "course_category_id": {"_in": categoryList}
-      });
-    }
-
-    if (startDateFormatted.isNotEmpty) {
-      andConditions.add({
-        "startDate": {"_eq": startDateFormatted}
-      });
-    }
-
-    if (address.isNotEmpty) {
-      andConditions.add({
-        "address": {
-          "_cast": {
-            "String": {"_ilike": "%$address%"}
-          }
-        }
-      });
-    }
-
-    final Map<String, dynamic> variables = {
-      "limit": 10,
-      "offset": 0,
-      "where": {"_and": andConditions}
-    };
-
-    final getMarketPlaceCourses = await http.query(
-      getMarketPlaceCoursesQuery,
-      variables: variables,
-    );
-
-    final response = CoursesListingData.fromJson(getMarketPlaceCourses);
-    return response.courses ?? [];
   }
 
   @override

@@ -28,10 +28,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<LearningHubMasterViewModel>(context, listen: false)
-          .clearFilterOptions();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
@@ -56,11 +53,31 @@ class _JobListingScreenState extends State<LearningHubMasterView>
       appBar: AppBarWidget(
           searchAction: () =>
               courseListingVM.setSearchBar(!courseListingVM.searchBarOpen),
-          filterWidget: GestureDetector(
-            onTap: () => {
-              navigationService.navigateTo(RouteList.learningHubFliterScreen)
-            },
-            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          filterWidget: Row(
+            children: [
+              GestureDetector(
+                onTap: () => {
+                  navigationService
+                      .navigateTo(RouteList.learningHubFliterScreen)
+                },
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              ),
+              if (courseListingVM.applyFilter)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        courseListingVM.updateApplyFilter(false);
+                        courseListingVM.searchController.clear();
+                        Provider.of<LearningHubMasterViewModel>(context,
+                                listen: false)
+                            .clearFilterOptions();
+                        courseListingVM.getAllLearningHubData(context);
+                      },
+                      child: Icon(Icons.close, color: AppColors.black)),
+                )
+            ],
           )),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -88,10 +105,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "No Data.",
-                              style: TextStyles.medium2(color: AppColors.black)
-                            )
+                            Text("No Data.",
+                                style:
+                                    TextStyles.medium2(color: AppColors.black))
                           ],
                         ),
                       )

@@ -134,14 +134,12 @@ class QuizScreen extends StatelessWidget {
                         }
 
                         // build payload
-                        final payload =
-                            List<Map<String, dynamic>>.generate(
-                                questions.length, (i) {
+                        final payload = List<Map<String, dynamic>>.generate(
+                            questions.length, (i) {
                           final quiz = questions[i];
                           final answer = vm.quizAnswers[i];
                           List<String> selectedOptionIds;
-                          if (quiz.type == 'single' ||
-                              quiz.type == 'boolean') {
+                          if (quiz.type == 'single' || quiz.type == 'boolean') {
                             final optionIndex = answer as int;
                             selectedOptionIds = [
                               quiz.optionDetails![optionIndex].id ?? ''
@@ -149,8 +147,7 @@ class QuizScreen extends StatelessWidget {
                           } else {
                             final indices = answer as Set<int>;
                             selectedOptionIds = indices
-                                .map((idx) =>
-                                    quiz.optionDetails![idx].id ?? '')
+                                .map((idx) => quiz.optionDetails![idx].id ?? '')
                                 .toList();
                           }
                           return {
@@ -166,8 +163,8 @@ class QuizScreen extends StatelessWidget {
                                 vm.courseDetails?.passPercentage?.toString() ??
                                     '0') ??
                             0;
-                        showTestResultDialog(
-                            context, result.$1, result.$2, passPercentage, payload);
+                        showTestResultDialog(context, result.$1, result.$2,
+                            passPercentage, payload);
                       },
                       radius: 10,
                       height: 48),
@@ -246,20 +243,20 @@ class QuizScreen extends StatelessWidget {
         IconData iconData;
 
         if (isUserCorrect) {
-          bgColor = Colors.green.shade800;
-          borderColor = Colors.green;
+          bgColor = AppColors.quizCorrectBg;
+          borderColor = AppColors.quizCorrectBorder;
           iconData = Icons.check_circle;
         } else if (isUserWrong) {
-          bgColor = Colors.red.shade900;
-          borderColor = Colors.red;
+          bgColor = AppColors.quizWrongBg;
+          borderColor = AppColors.quizWrongBorder;
           iconData = Icons.cancel;
         } else if (isMissedCorrect) {
-          bgColor = Colors.green.shade900;
-          borderColor = Colors.green;
+          bgColor = AppColors.quizMissedBg;
+          borderColor = AppColors.quizMissedBorder;
           iconData = Icons.check_circle_outline;
         } else {
-          bgColor = Colors.grey.shade900;
-          borderColor = Colors.transparent;
+          bgColor = AppColors.quizNeutralBg;
+          borderColor = AppColors.quizNeutralBorder;
           iconData = Icons.radio_button_unchecked;
         }
 

@@ -50,6 +50,12 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   Set<int> selectedMultipleAnswers = {};
   bool? quizAnswerCorrect;
   bool retakeQuiz = false;
+  bool applyFilter = false;
+
+  void updateApplyFilter(bool value) {
+    applyFilter = value;
+    notifyListeners();
+  }
 
   void setCourseId(String value) {
     courseId = value;
@@ -237,7 +243,9 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   }
 
   Future<void> getAllLearningHubData(BuildContext context,
-      {bool loadMore = false}) async {
+      {bool loadMore = false,
+      List<String>? types,
+      List<String>? courseCategory}) async {
     if (loadMore) {
       if (isLoadingMoreMarketPlace || !hasMoreMarketPlace) return;
       isLoadingMoreMarketPlace = true;
@@ -249,7 +257,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     notifyListeners();
 
     final res = await repo.getMarketPlaceLearningHubData(
-        _marketPlaceLimit, _marketPlaceOffset, searchController.text);
+        _marketPlaceLimit, _marketPlaceOffset, searchController.text,
+        types: types, courseCategory: courseCategory);
 
     if (loadMore) {
       marketPlaceCoursesList.addAll(res ?? []);

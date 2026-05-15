@@ -104,15 +104,42 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   }
 
   Widget _placeholder() {
+    final thumbnailUrl = _type == _VideoType.youtube && _videoId.isNotEmpty
+        ? 'https://img.youtube.com/vi/$_videoId/hqdefault.jpg'
+        : null;
+
     return GestureDetector(
       onTap: () => setState(() => _isPlayerVisible = true),
-      child: Container(
-        width: double.infinity,
-        height: 200,
-        color: Colors.grey[300],
-        child: const Center(
-          child: Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          thumbnailUrl != null
+              ? Image.network(
+                  thumbnailUrl,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey[300],
+                  ),
+                )
+              : Container(
+                  width: double.infinity,
+                  height: 200,
+                  color: Colors.grey[300],
+                ),
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.play_arrow, size: 40, color: Colors.white),
+          ),
+        ],
       ),
     );
   }
