@@ -58,7 +58,7 @@ class RegistrationUserForm {
                                         color: AppColors.black, size: 24))
                               ]),
                           Text(
-                            courseName,
+                            capitalizeWords(courseName),
                             style: TextStyles.medium3(
                                 color: AppColors.primaryColor),
                           ),
@@ -175,5 +175,16 @@ class RegistrationUserForm {
         },
       );
     });
+  }
+
+  static String capitalizeWords(String text) {
+    return text
+        .split(' ')
+        .map(
+          (word) => word.isNotEmpty
+              ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+              : '',
+        )
+        .join(' ');
   }
 }
