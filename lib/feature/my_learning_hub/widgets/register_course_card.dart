@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
@@ -24,7 +25,8 @@ class RegisterCourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String time = DateFormatUtils.formatTwoDateTime(courseData.createdAt ?? "");
+    final String time =
+        DateFormatUtils.formatTwoDateTime(courseData.createdAt ?? "");
     final courseStatus = courseData.courseRegisteredUsers?.isNotEmpty == true
         ? courseData.courseRegisteredUsers?.first.status ?? ""
         : "";
@@ -65,7 +67,8 @@ class RegisterCourseCard extends StatelessWidget {
                     onTap: onDownloadTap,
                     child: Row(
                       children: [
-                        _courseStatusWidget("Download Certificate", AppColors.borderColor),
+                        _courseStatusWidget(
+                            "Download Certificate"),
                       ],
                     ),
                   ),
@@ -84,7 +87,7 @@ class RegisterCourseCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (courseStatus != "COMPLETED")
+                if (courseStatus == "APPROVED")
                   GestureDetector(
                     onTap: onViewCourseTap,
                     child: Row(
@@ -154,7 +157,8 @@ class RegisterCourseCard extends StatelessWidget {
                 children: [
                   _chipWidget(types),
                   const SizedBox(width: 4),
-                  _courseStatusWidget(courseStatus, AppColors.lightGreenColor),
+                  _courseStatusWidget(
+                      courseStatus),
                 ],
               ),
               const SizedBox(height: 4),
@@ -216,75 +220,73 @@ class RegisterCourseCard extends StatelessWidget {
     );
   }
 
-  Widget _courseStatusWidget(String status, Color color) {
+  Widget _courseStatusWidget(String status) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        height: 21,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
         decoration: BoxDecoration(
-          color: color,
+          color: const Color.fromRGBO(229, 244, 237, 1),
           borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: AppColors.whiteColor, width: 1),
         ),
         child: Text(
           status,
-          style: TextStyles.regular1(
-            color: AppColors.black,
-            fontSize: 12,
+          style: TextStyles.bold4(
+            color: StatusColors.getColor(status),
+            fontSize: 10,
           ),
-          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
   }
 
   Widget courseStatusWidget({
-  required String status,
-  required Color color,
-  IconData? icon,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 12,
-      vertical: 6,
-    ),
-    decoration: BoxDecoration(
-      color: color.withOpacity(0.12),
-      borderRadius: BorderRadius.circular(30),
-      border: Border.all(
-        color: color.withOpacity(0.4),
-        width: 1,
+    required String status,
+    required Color color,
+    IconData? icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
       ),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (icon != null) ...[
-          Icon(
-            icon,
-            size: 14,
-            color: color,
-          ),
-          const SizedBox(width: 5),
-        ],
-
-        Flexible(
-          child: Text(
-            status,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyles.medium1(
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: color.withOpacity(0.4),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(
+              icon,
+              size: 14,
               color: color,
-              fontSize: 12,
-            ).copyWith(
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.2,
+            ),
+            const SizedBox(width: 5),
+          ],
+          Flexible(
+            child: Text(
+              status,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyles.medium1(
+                color: color,
+                fontSize: 12,
+              ).copyWith(
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Widget _jobTimeChip(String time) {
     return Container(

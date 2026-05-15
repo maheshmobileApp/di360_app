@@ -206,18 +206,21 @@ class ThumbnailImage {
 
 class DentalSupplier {
   String? name;
+  String? businessName;
   String? sTypename;
 
-  DentalSupplier({this.name, this.sTypename});
+  DentalSupplier({this.name, this.businessName, this.sTypename});
 
   DentalSupplier.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    businessName = json['business_name'];
     sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['business_name'] = this.businessName;
     data['__typename'] = this.sTypename;
     return data;
   }

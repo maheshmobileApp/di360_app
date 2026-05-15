@@ -17,48 +17,50 @@ class FeedCountRes {
 }
 
 class FeedCountData {
-  Published? published;
-  Published? pending;
-  Published? unpublished;
+  PendingNews? pendingNews;
+  PendingNews? publishedNews;
+  PendingNews? unpublishedNews;
 
-  FeedCountData({this.published, this.pending, this.unpublished});
+  FeedCountData({this.pendingNews, this.publishedNews, this.unpublishedNews});
 
   FeedCountData.fromJson(Map<String, dynamic> json) {
-    published = json['published'] != null
-        ? new Published.fromJson(json['published'])
+    pendingNews = json['pendingNews'] != null
+        ? new PendingNews.fromJson(json['pendingNews'])
         : null;
-    pending = json['pending'] != null
-        ? new Published.fromJson(json['pending'])
+    publishedNews = json['publishedNews'] != null
+        ? new PendingNews.fromJson(json['publishedNews'])
         : null;
-    unpublished = json['unpublished'] != null
-        ? new Published.fromJson(json['unpublished'])
+    unpublishedNews = json['unpublishedNews'] != null
+        ? new PendingNews.fromJson(json['unpublishedNews'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.published != null) {
-      data['published'] = this.published!.toJson();
+    if (this.pendingNews != null) {
+      data['pendingNews'] = this.pendingNews!.toJson();
     }
-    if (this.pending != null) {
-      data['pending'] = this.pending!.toJson();
+    if (this.publishedNews != null) {
+      data['publishedNews'] = this.publishedNews!.toJson();
     }
-    if (this.unpublished != null) {
-      data['unpublished'] = this.unpublished!.toJson();
+    if (this.unpublishedNews != null) {
+      data['unpublishedNews'] = this.unpublishedNews!.toJson();
     }
     return data;
   }
 }
 
-class Published {
+class PendingNews {
   Aggregate? aggregate;
+  String? sTypename;
 
-  Published({this.aggregate});
+  PendingNews({this.aggregate, this.sTypename});
 
-  Published.fromJson(Map<String, dynamic> json) {
+  PendingNews.fromJson(Map<String, dynamic> json) {
     aggregate = json['aggregate'] != null
         ? new Aggregate.fromJson(json['aggregate'])
         : null;
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
@@ -66,22 +68,26 @@ class Published {
     if (this.aggregate != null) {
       data['aggregate'] = this.aggregate!.toJson();
     }
+    data['__typename'] = this.sTypename;
     return data;
   }
 }
 
 class Aggregate {
   int? count;
+  String? sTypename;
 
-  Aggregate({this.count});
+  Aggregate({this.count, this.sTypename});
 
   Aggregate.fromJson(Map<String, dynamic> json) {
     count = json['count'];
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['count'] = this.count;
+    data['__typename'] = this.sTypename;
     return data;
   }
 }

@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/catalogue/view/horizantal_pdf.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -337,8 +338,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
     pdfPathUrl = cataloguView?.attachment;
     assignTheSelectedCatagory(cataloguView?.catalogueSubCategory?.id);
     assignTheSelectedCatalogueType(cataloguView?.catalogueCategory?.id);
-    scheduleDate = DateTime.parse(cataloguView?.schedulerDay ?? '');
-    expiryDate = DateTime.parse(expirysDate);
+    scheduleDate = DateFormatUtils.parseToLocalDate(cataloguView?.schedulerDay);
+    expiryDate = DateFormatUtils.parseToLocalDate(cataloguView?.expiryDay);
     notifyListeners();
   }
 

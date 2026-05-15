@@ -194,6 +194,15 @@ static String formatDateRange(String start, String end) {
   }
 }
 
+static DateTime? parseToLocalDate(String? dateStr) {
+  if (dateStr == null || dateStr.trim().isEmpty) return null;
+  try {
+    return DateTime.parse(dateStr).toLocal();
+  } catch (_) {
+    return null;
+  }
+}
+
 static String formatTime(String time) {
   try {
     final clean = time.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();

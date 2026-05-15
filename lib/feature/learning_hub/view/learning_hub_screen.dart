@@ -3,7 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/header_media_info.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/session_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
@@ -206,6 +206,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   description: course.description ?? '',
                   types: [course.type ?? ''],
                   createdAt: course.createdAt ?? '',
+                  updatedAt: course.updatedAt ?? '',
                   registeredCount:
                       course.courseRegisteredUsersAggregate?.aggregate?.count ??
                           0,
@@ -249,7 +250,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         navigationService.navigateTo(
                           RouteList.courseDetailScreen,
                         );
-
                         break;
                       case "Edit":
                         await marketPlaceLearningHubVM.getCourseDetails(
@@ -266,8 +266,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         newCourseVM.setEditMode(true);
                         courseListingVM.setCourseStatus(course.status ?? "");
                         Loaders.circularShowLoader(context);
-                        // await loadCourseData(
-                        //     newCourseVM, courseListingVM.courseDetails);
+                         await loadCourseData(
+                             newCourseVM, marketPlaceLearningHubVM.courseDetails);
                         Loaders.circularHideLoader(context);
                         navigationService.navigateTo(RouteList.newCourseScreen);
 
@@ -381,30 +381,29 @@ class _JobListingScreenState extends State<LearningHubScreen>
   }
 
   Future<void> loadCourseData(
-      NewCourseViewModel newCourseVM, CoursesListingDetails course) async {
-    print("**********************************${course.communityUserType}");
-    newCourseVM.serverPresentedImg = course.presentedByImage?.url ?? "";
+      NewCourseViewModel newCourseVM, CoursesByPk? course) async {
+    newCourseVM.serverPresentedImg = course?.presenters?.first.presentedByImage?.url ?? "";
     newCourseVM.setCommunityType(
-        course.communityUserType == "BOTH" ? "Both" : "Community User");
+        course?.communityUserType == "BOTH" ? "Both" : "Community User");
 
     newCourseVM.serverCourseHeaderBanner =
-        course.courseBannerVideo != null && course.courseBannerVideo!.isNotEmpty
+        course?.courseBannerVideo != null && course!.courseBannerVideo!.isNotEmpty
             ? MediaInfo(
                 url: course.courseBannerVideo?.first.url ?? "",
                 type: course.courseBannerVideo?.first.type ?? "")
             : null;
 
-    newCourseVM.serverGallery = (course.courseGallery ?? [])
+    newCourseVM.serverGallery = (course?.courseGallery ?? [])
         .map((item) => item.url ?? "")
         .where((url) => url.isNotEmpty)
         .toList();
 
-    newCourseVM.serverCourseBannerImg = (course.courseBannerImage ?? [])
+    newCourseVM.serverCourseBannerImg = (course?.courseBannerImage ?? [])
         .map((item) => item.url ?? "")
         .where((url) => url.isNotEmpty)
         .toList();
 
-    newCourseVM.serverEventImg = (course.courseEventInfo ?? [])
+    newCourseVM.serverEventImg = (course?.courseEventInfo ?? [])
         .map((item) =>
             (item.images != null && item.images!.isNotEmpty
                 ? item.images!.first.url
@@ -413,12 +412,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
         .where((url) => url.isNotEmpty)
         .toList();
 
-    newCourseVM.serverSponsoredByImg = (course.sponsorByImage ?? [])
+    newCourseVM.serverSponsoredByImg = (course?.sponsorByImage ?? [])
         .map((item) => item.url ?? "")
         .where((url) => url.isNotEmpty)
         .toList();
 
-    newCourseVM.serverSessionImg = (course.courseEventInfo ?? [])
+    newCourseVM.serverSessionImg = (course?.courseEventInfo ?? [])
         .map((item) =>
             (item.images != null && item.images!.isNotEmpty
                 ? item.images!.first.url
@@ -428,81 +427,81 @@ class _JobListingScreenState extends State<LearningHubScreen>
         .toList();
 
     // Dropdown / selections
-    newCourseVM.selectedCategoryId = course.courseCategoryId;
-    (course.courseCategoryId != null)
+    newCourseVM.selectedCategoryId = course?.courseCategoryId;
+    (course?.courseCategoryId != null)
         ? await newCourseVM
-            .setSelectedCourseCategoryName(course.courseCategoryId)
+            .setSelectedCourseCategoryName(course!.courseCategoryId)
         : await newCourseVM.setSelectedCourseCategoryName("");
-    newCourseVM.selectedCourseType = course.type != null ? course.type : "";
+    newCourseVM.selectedCourseType = course?.type != null ? course!.type : "";
 
     // Text controllers
-    newCourseVM.courseNameController.text = course.courseName ?? "";
-    newCourseVM.facebookController.text = course.facebookLink ?? "";
-    newCourseVM.linkedinController.text = course.linkedinLink ?? "";
-    newCourseVM.youtubeController.text = course.youtubeLink ?? "";
-    newCourseVM.instagramController.text = course.instagramLink ?? "";
+    newCourseVM.courseNameController.text = course?.courseName ?? "";
+    newCourseVM.facebookController.text = course?.facebookLink ?? "";
+    newCourseVM.linkedinController.text = course?.linkedinLink ?? "";
+    newCourseVM.youtubeController.text = course?.youtubeLink ?? "";
+    newCourseVM.instagramController.text = course?.instagramLink ?? "";
 
-    newCourseVM.presenterNameController.text = course.presentedByName ?? "";
+    newCourseVM.presenterNameController.text = course?.presenters?.first.presentedByName ?? "";
     newCourseVM.cpdPointsController.text =
-        (course.cpdPoints != null) ? course.cpdPoints!.toStringAsFixed(0) : "";
+        (course?.cpdPoints != null) ? course!.cpdPoints!.toStringAsFixed(0) : "";
     newCourseVM.numberOfSeatsController.text =
-        course.numberOfSeats?.toString() ?? "";
-    newCourseVM.totalPriceController.text = (course.afterwardsPrice != null)
-        ? course.afterwardsPrice!.toStringAsFixed(0)
+        course?.numberOfSeats?.toString() ?? "";
+    newCourseVM.totalPriceController.text = (course?.afterwardsPrice != null)
+        ? course!.afterwardsPrice!.toStringAsFixed(0)
         : "";
-    newCourseVM.birdPriceController.text = (course.earlyBirdPrice != null)
-        ? course.earlyBirdPrice!.toStringAsFixed(0)
+    newCourseVM.birdPriceController.text = (course?.earlyBirdPrice != null)
+        ? course!.earlyBirdPrice!.toStringAsFixed(0)
         : "";
     newCourseVM.courseDescController.text =
-        htmlParser.parse(course.description ?? '').body?.text ?? '';
+        htmlParser.parse(course?.description ?? '').body?.text ?? '';
 
     newCourseVM.topicsIncludedDescController.text =
-        htmlParser.parse(course.topicsIncluded ?? '').body?.text ?? '';
+        htmlParser.parse(course?.topicsIncluded ?? '').body?.text ?? '';
     newCourseVM.learningObjectivesDescController.text =
-        htmlParser.parse(course.learningObjectives ?? '').body?.text ?? '';
-    newCourseVM.nameController.text = course.contactName ?? "";
-    newCourseVM.phoneController.text = course.contactPhone ?? "";
-    newCourseVM.emailController.text = course.contactEmail ?? "";
-    newCourseVM.websiteUrlController.text = course.contactWebsite ?? "";
-    newCourseVM.registerLinkController.text = course.registerLink ?? "";
-    newCourseVM.meetingLinkController.text = course.meetingLink ?? "";
+        htmlParser.parse(course?.learningObjectives ?? '').body?.text ?? '';
+    newCourseVM.nameController.text = course?.contactName ?? "";
+    newCourseVM.phoneController.text = course?.contactPhone ?? "";
+    newCourseVM.emailController.text = course?.contactEmail ?? "";
+    newCourseVM.websiteUrlController.text = course?.contactWebsite ?? "";
+    newCourseVM.registerLinkController.text = course?.registerLink ?? "";
+    //newCourseVM.meetingLinkController.text = course?.meetingLink ?? "";
     newCourseVM.termsAndConditionsController.text =
-        htmlParser.parse(course.terms ?? '').body?.text ?? '';
+        htmlParser.parse(course?.terms ?? '').body?.text ?? '';
     newCourseVM.cancellationController.text =
-        htmlParser.parse(course.refundPolicy ?? '').body?.text ?? '';
-    newCourseVM.earlyBirdDateController.text = course.earlyBirdEndDate ?? "";
-    newCourseVM.addressController.text = course.address?.isNotEmpty == true
-        ? course.address?.first.formattedAddress ?? ""
+        htmlParser.parse(course?.refundPolicy ?? '').body?.text ?? '';
+    newCourseVM.earlyBirdDateController.text = course?.earlyBirdEndDate ?? "";
+    newCourseVM.addressController.text = course?.address?.isNotEmpty == true
+        ? course?.address?.first.formattedAddress ?? ""
         : "";
 
     // Dates (safe parse)
 
-    if (course.rsvpDate != null && course.rsvpDate!.isNotEmpty) {
+    /*if (course?.rsvpDate != null && course!.rsvpDate!.isNotEmpty) {
       newCourseVM.rsvpDateController.text =
           DateFormat("d/M/yyyy").format(DateTime.parse(course.rsvpDate!));
     } else {
       newCourseVM.rsvpDateController.text = "";
-    }
-    if (course.startDate != null && course.startDate!.isNotEmpty) {
+    }*/
+    if (course?.startDate != null && course!.startDate!.isNotEmpty) {
       newCourseVM.startDateController.text =
           DateFormat("d/M/yyyy").format(DateTime.parse(course.startDate!));
     } else {
       newCourseVM.startDateController.text = "";
     }
 
-    if (course.endDate != null && course.endDate!.isNotEmpty) {
+    if (course?.endDate != null && course?.endDate?.isNotEmpty == true) {
       newCourseVM.endDateController.text =
-          DateFormat("d/M/yyyy").format(DateTime.parse(course.endDate!));
+          DateFormat("d/M/yyyy").format(DateTime.parse(course?.endDate ?? ""));
     } else {
       newCourseVM.endDateController.text = "";
     }
 
     // Address (stringify if it's an object/map)
-    if (course.address != null) {
-      if (course.address is String) {
-        newCourseVM.addressController.text = course.address as String;
-      } else if (course.address is Map<String, dynamic>) {
-        final addr = course.address as Map<String, dynamic>;
+    if (course?.address != null) {
+      if (course?.address is String) {
+        newCourseVM.addressController.text = course?.address as String;
+      } else if (course?.address is Map<String, dynamic>) {
+        final addr = course?.address as Map<String, dynamic>;
         newCourseVM.addressController.text = "${addr['country']}";
       } else {
         newCourseVM.addressController.text = "";
@@ -511,8 +510,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
       newCourseVM.addressController.text = "";
     }
 
-    String startTime = course.startTime ?? "";
-    String endTime = course.endTime ?? "";
+    String startTime = course?.startTime ?? "";
+    String endTime = course?.endTime ?? "";
     String start_time = startTime.split('+').first;
     String end_time = endTime.split('+').first;
 
@@ -525,7 +524,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
         : "";
 
     // Images / files (from API)
-    newCourseVM.presenter_image = course.presentedByImage?.url ?? "";
+    newCourseVM.presenter_image = course?.presenters?.first.presentedByImage?.url ?? "";
     newCourseVM.courseBannerImageHeaderList = [];
     newCourseVM.selectedGalleryList = [];
     newCourseVM.courseBannerImgList = [];
@@ -535,12 +534,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
   }
 
   void loadCourseForEdit(
-      NewCourseViewModel newCourseVM, CoursesListingDetails course) {
-    newCourseVM.selectedEvent = course.eventType == "multiple"
+      NewCourseViewModel newCourseVM, CoursesByPk? course) {
+    newCourseVM.selectedEvent = course?.eventType == "multiple"
         ? "Multiple Day"
         : "Single Day"; // "Single Day" or "Multiple Day"
 
-    newCourseVM.sessions = course.courseEventInfo?.map((event) {
+    newCourseVM.sessions = course?.courseEventInfo?.map((event) {
           return SessionModel(
             sessionName: event.name,
             sessionInfo: htmlParser.parse(event.info).body?.text ?? '',
@@ -553,8 +552,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     if (newCourseVM.sessions.isEmpty) newCourseVM.sessions.add(SessionModel());
 
-    newCourseVM.topicsIncludedDescController.text = course.topicsIncluded ?? "";
+    newCourseVM.topicsIncludedDescController.text = course?.topicsIncluded ?? "";
     newCourseVM.learningObjectivesDescController.text =
-        course.learningObjectives ?? "";
+        course?.learningObjectives ?? "";
   }
 }

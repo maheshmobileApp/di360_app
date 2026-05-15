@@ -21,6 +21,7 @@ class CouresListingCard extends StatelessWidget {
   final String description;
   final List<String> types;
   final String createdAt;
+  final String updatedAt;
   final int registeredCount;
   final String meetingLink;
   final String chipTitle;
@@ -40,6 +41,7 @@ class CouresListingCard extends StatelessWidget {
     required this.description,
     required this.types,
     required this.createdAt,
+    required this.updatedAt,
     required this.registeredCount,
     this.onTapRegistered,
     this.onMenuAction,
@@ -51,7 +53,7 @@ class CouresListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String time = DateFormatUtils.formatTwoDateTime(createdAt);
+    final String time = (status == "ACTIVE") ?DateFormatUtils.formatTwoDateTime(createdAt) : DateFormatUtils.formatTwoDateTime(updatedAt);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -77,7 +79,7 @@ class CouresListingCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        _menuWidget(context),
+                        _menuWidget(context, types.isNotEmpty ? types.first : null),
                       ],
                     ),
                   ],
@@ -327,7 +329,7 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _menuWidget(BuildContext context) {
+  Widget _menuWidget(BuildContext context, String? courseType) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -343,7 +345,7 @@ class CouresListingCard extends StatelessWidget {
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (status != "EXPIRED")
+        if (status != "EXPIRED" && courseType != "Online Academy")
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
         if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),

@@ -4,6 +4,7 @@ class StatusColors {
   static const Map<String, Color> _statusColorMap = {
     "APPROVE": Colors.green,
     "APPROVED": Colors.green,
+    "COMPLETED": Colors.green,
     "CANCELLED": Colors.red,
     "PENDING": Colors.orange,
     "REJECTED": Colors.red,

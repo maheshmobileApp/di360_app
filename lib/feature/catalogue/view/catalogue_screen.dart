@@ -60,7 +60,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
     return Scaffold(
       backgroundColor: AppColors.buttomBarColor,
       appBar: AppBarWidget(
-        title: "test",
+          title: "Catalogue",
           searchAction: () =>
               navigationService.navigateTo(RouteList.catalogueFilterScreen),
           filterWidget: Row(children: [
@@ -188,7 +188,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                             style: TextStyles.medium2(color: AppColors.black))
                       ]))
                 : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 23),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: GridView.count(
                       padding: EdgeInsets.all(0),
                       physics: NeverScrollableScrollPhysics(),
@@ -282,18 +282,18 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(c.catalogueSubCategory?.name  ?? '',
-                            style: TextStyles.regular2(
-                                color: AppColors.primaryColor)),
+                        Text(
+                            c.dentalSupplier?.businessName?.toUpperCase() ?? '',
+                            style: TextStyles.bold2()),
                         addVertical(5),
                         Text(
-                          c.title ?? '',
+                          c.catalogueSubCategory?.name ?? '',
                           maxLines: 1,
-                          style: TextStyles.regular1(color: AppColors.black),
+                          style: TextStyles.regular1(color: AppColors.primaryColor),
                         ),
                         addVertical(5),
                         Text(
-                          c.catalogueCategory?.name ?? '',
+                          c.title ?? '',
                           maxLines: 1,
                           style: TextStyles.regular1(color: AppColors.black),
                         )

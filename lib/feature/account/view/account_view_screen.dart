@@ -279,7 +279,10 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             navigationService
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
-                            final bannerPermission =
+                            navigationService
+                                  .navigateTo(RouteList.bannersListView);
+                          
+                            /*final bannerPermission =
                                 await LocalStorage.getBoolValue(
                                     LocalStorageConst.bannerPermission);
 
@@ -289,7 +292,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             } else {
                               scaffoldMessenger(
                                   "You do not have permission to access this feature.");
-                            }
+                            }*/
                           } else if (item.title == "Marketing") {
                             navigationService
                                 .navigateTo(RouteList.campaignListingView);

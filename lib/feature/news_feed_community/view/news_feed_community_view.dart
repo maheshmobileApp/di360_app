@@ -23,6 +23,7 @@ import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:provider/provider.dart';
 
 class NewsFeedCommunityView extends StatefulWidget {
@@ -67,11 +68,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         _scrollController.position.maxScrollExtent - 100) {
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      if (viewModel.applyFilter) {
+      viewModel.getAllNewsFeeds(context, loadMore: true);
+      /*if (viewModel.applyFilter) {
         viewModel.filterNewsFeeds(context, loadMore: true);
       } else {
         viewModel.getAllNewsFeeds(context, loadMore: true);
-      }
+      }*/
     }
   }
 
@@ -85,7 +87,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   Widget build(BuildContext context) {
     return Consumer<NewsFeedCommunityViewModel>(
       builder: (context, viewModel, child) {
-        final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(context);
+        final courseListingVM =
+            Provider.of<MarketPlaceLearningHubViewModel>(context);
         final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
@@ -119,7 +122,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               borderRadius: BorderRadius.circular(12),
                             ),
                             items: communityVM
-                                    .newsFeedCategoriesData?.newsfeedCategories
+                                    .filterCatgoriesData?.newsfeedCategories
                                     ?.map((v) => PopupMenuItem(
                                           value: v,
                                           child: Text(
@@ -143,18 +146,37 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     .toList() ??
                                 [],
                           ).then((value) {
-                            if (value != null) {
-                              viewModel.setSelectedCategoryId(
-                                  (value as dynamic)?.id);
-                              viewModel.filterNewsFeeds(context);
-                            }
+                            viewModel.updateApplyFilter(true);
 
-                            /*if ((value as dynamic)?.categoryName == 'Catalog') {
-                        newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
-                      } else {
-                        newsFeedVM.basedOnCategoriesGetFeeds(
-                            context, false, value?.id ?? '');
-                      }*/
+                            if (value != null) {
+                              final categoryName =
+                                  (value as dynamic)?.categoryName;
+
+                              final Map<String, String> feedTypeMap = {
+                                'Catalogue': 'CATALOGUE',
+                                'Jobs': 'JOBS',
+                                'Learning Hub': 'LEARNHUB',
+                              };
+
+                              viewModel.feedTypeUpdate(
+                                  feedTypeMap[categoryName] ?? '');
+                              viewModel.setSelectedCategoryId(
+                                  categoryName != "Catalogue" &&
+                                          categoryName != "Jobs" &&
+                                          categoryName != "Learning Hub"
+                                      ? (value as dynamic)?.id
+                                      : "");
+
+                              viewModel.getAllNewsFeeds(
+                                context,
+                                feedType: viewModel.feedType,
+                                categoryType: categoryName != "Catalogue" &&
+                                        categoryName != "Jobs" &&
+                                        categoryName != "Learning Hub"
+                                    ? viewModel.selectedCategoryId
+                                    : null,
+                              );
+                            }
                           });
                         },
                         child: SvgPicture.asset(ImageConst.filter,
@@ -165,6 +187,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         child: GestureDetector(
                             onTap: () {
                               viewModel.updateApplyFilter(false);
+                              viewModel.initialStateData();
                               viewModel.getAllNewsFeeds(context);
                               viewModel.setSelectedCategoryId("");
                             },
@@ -239,7 +262,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               }
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
-                                  index : index,
+                                  index: index,
                                   newsfeeds: newsItem,
                                   course: newsItem.courses ?? [],
                                   feedType: newsItem.feedType ?? "",
@@ -340,7 +363,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         viewModel.setEditNewsFeedId(
                                             newsItem.id ?? "");
                                         viewModel.descriptionController.text =
-                                            newsItem.description ?? "";
+                                            htmlParser.parse(newsItem.description).body?.text ?? '';
                                         viewModel.videoLinkController.text =
                                             newsItem.videoUrl ?? "";
                                         viewModel.websiteLinkController.text =

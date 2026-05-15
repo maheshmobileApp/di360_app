@@ -783,7 +783,8 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> updateCourseListing(
-      BuildContext context, String? courseId, bool isDraft) async {
+      BuildContext context, String? courseId, bool isDraft, String? courseStatus, String? activeStatus) async {
+        print("**********$courseStatus - $activeStatus");
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -867,7 +868,7 @@ class NewCourseViewModel extends ChangeNotifier with ValidationMixins {
         maxSubscribers: 1000,
         createdById: userId,
         companyName: name,
-        status: isDraft ? "DRAFT" : "PENDING",
+        status: isDraft ? "DRAFT" : (courseStatus == "APPROVE" && activeStatus == "ACTIVE") ? "APPROVE" : "PENDING",
         type: (selectedCourseType == null) ? "" : selectedCourseType,
         feedType: "LEARNHUB",
         startTime: startTime == "" ? null : startTime,
