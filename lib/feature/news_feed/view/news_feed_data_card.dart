@@ -135,9 +135,6 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                           children: [
                             if (newsfeeds?.webUrl != null &&
                                 newsfeeds!.webUrl!.isNotEmpty)
-                              webSiteText(newsfeeds?.webUrl ?? ''),
-                            if (newsfeeds?.webUrl != null &&
-                                newsfeeds!.webUrl!.isNotEmpty)
                               addVertical(8),
                             if (newsFeedTypeEnum == FeedType.learnhub.value &&
                                 newsfeeds?.courses?.isNotEmpty == true)

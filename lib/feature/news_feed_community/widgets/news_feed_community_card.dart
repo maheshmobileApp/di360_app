@@ -108,6 +108,15 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// Logo + Title + Menu
+                     _tagWidget(
+                            newsfeeds?.feedType ?? '',
+                            newsfeeds?.dentalSupplier?.businessName ??
+                                newsfeeds?.dentalPractice?.businessName ??
+                                newsfeeds?.dentalProfessional?.name ??
+                                '',
+                            newsfeeds?.courses?.isNotEmpty == true
+                                ? newsfeeds?.courses?.first.type ?? ''
+                                : ""),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -698,6 +707,43 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
         time,
         style: TextStyles.semiBold(
             fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
+      ),
+    );
+  }
+
+  Widget _tagWidget(String? feedType, String userName, String courseType) {
+    String tagText = '';
+
+    switch (feedType) {
+      case 'JOBS':
+        tagText = "#New Job Opportunity Posted by $userName";
+      case 'LEARNHUB':
+        tagText = "#New Course $courseType";
+      case 'CATALOGUE':
+        tagText = "#New CATALOGUE Posted";
+      default:
+        tagText = '#NEWSFEED Post';
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: Text(tagText,
+            style: TextStyles.semiBold(
+              color: AppColors.black,
+            )),
       ),
     );
   }

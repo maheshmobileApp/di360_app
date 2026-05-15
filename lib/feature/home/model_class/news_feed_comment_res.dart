@@ -54,7 +54,7 @@ class NewsFeedsComments {
     dentalAdminId = json['dental_admin_id'];
     commentProImg = json['comment_Pro_Img'];
     commenterName = json['commenter_name'];
-    if (json['comments_attachments'] != null) {
+    if (json['comments_attachments'] != null && json['comments_attachments'] != []) {
       commentsAttachments = <CommentsAttachments>[];
       final data = json['comments_attachments'];
       if (data is List) {
@@ -840,7 +840,8 @@ class AdminUser {
 
   AdminUser.fromJson(Map<String, dynamic> json) {
     name = json['name'];
-    profileImage = json['profile_image'];
+    final img = json['profile_image'];
+    profileImage = img is Map ? img['url'] as String? : img as String?;
     sTypename = json['__typename'];
   }
 
@@ -856,7 +857,7 @@ class AdminUser {
 class CommentAdminUser {
   String? id;
   String? name;
-  String? profileImage;
+  CommentProfessionalLogo? profileImage;
   String? sTypename;
 
   CommentAdminUser({this.id, this.name, this.profileImage, this.sTypename});
@@ -864,7 +865,9 @@ class CommentAdminUser {
   CommentAdminUser.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    profileImage = json['profile_image'];
+    profileImage = json['profile_image'] != null
+        ? new CommentProfessionalLogo.fromJson(json['profile_image'])
+        : null;
     sTypename = json['__typename'];
   }
 
@@ -872,7 +875,9 @@ class CommentAdminUser {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['profile_image'] = this.profileImage;
+    if (this.profileImage != null) {
+      data['profile_image'] = this.profileImage!.toJson();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }

@@ -75,13 +75,13 @@ class NewsMenuWidget extends StatelessWidget {
         }
       },
       itemBuilder: (context) => [
-        if (newsfeeds?.userId == needFeedViewModel.userID) ...[
+        if (isSameUser) ...[
           PopupMenuItem(
               value: "edit",
               child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),
-          PopupMenuItem(
+          /*PopupMenuItem(
               value: "delete",
-              child: buildRow(Icons.delete, AppColors.redColor, "Delete"))
+              child: buildRow(Icons.delete, AppColors.redColor, "Delete"))*/
         ],
         if (!isSameUser) ...[
           PopupMenuItem(
@@ -98,7 +98,7 @@ class NewsMenuWidget extends StatelessWidget {
                   buildRow(Icons.hide_source, AppColors.redColor, "Hide Post")),
         ],
         if (newsfeeds?.postImage != null &&
-            newsfeeds?.postImage?.isNotEmpty == true)
+            newsfeeds?.postImage?.isNotEmpty == true && !isSameUser)
           PopupMenuItem(
               value: "Save Media",
               child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))
