@@ -1,7 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -39,10 +39,13 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
                 onTap1: vm.currentSectionIndex > 0 ? vm.previousModule : null,
                 label2: 'Next',
                 icon2: Icons.arrow_forward_ios,
-                onTap2: vm.currentSectionIndex < vm.allSections.length - 1 ? () => vm.completeAndContinue(context) : null,
+                onTap2: vm.currentSectionIndex < vm.allSections.length - 1
+                    ? () => vm.completeAndContinue(context)
+                    : null,
               ),
               addVertical(10),
-              _buildSectionItem(context, vm, section.sectionDetails ?? [], localSectionIndex),
+              _buildSectionItem(
+                  context, vm, section.sectionDetails ?? [], localSectionIndex),
             ],
           ),
         );
@@ -50,9 +53,14 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildSectionItem(BuildContext context, MarketPlaceLearningHubViewModel vm, List<SectionDetails> sectionList, int localSectionIndex) {
+  Widget _buildSectionItem(
+      BuildContext context,
+      MarketPlaceLearningHubViewModel vm,
+      List<SectionDetails> sectionList,
+      int localSectionIndex) {
     if (sectionList.isEmpty) return const SizedBox.shrink();
-    final topic = sectionList[localSectionIndex.clamp(0, sectionList.length - 1)];
+    final topic =
+        sectionList[localSectionIndex.clamp(0, sectionList.length - 1)];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -68,51 +76,41 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
         ),
         addVertical(10),
         if (topic.description != null && topic.description != '') ...[
-          Text('Description: ', style: TextStyles.regular1(color: AppColors.black)),
+          Text('Description: ',
+              style: TextStyles.regular1(color: AppColors.black)),
           addVertical(5),
           HtmlWidget(topic.description ?? '',
               textStyle: TextStyles.regular4(color: AppColors.black)),
         ],
         if (topic.image != null) ...[
           addVertical(10),
-          Text('Images:', style: TextStyles.regular1(color: AppColors.black)),
-          addVertical(10),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: (topic.image as List?)?.length ?? 0,
-              itemBuilder: (_, i) {
-                final img = (topic.image as List)[i] as Map<String, dynamic>;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(img['url'] ?? '', width: 150, fit: BoxFit.cover),
-                  ),
-                );
-              },
-            ),
-          ),
+          GalleryImgWidget(
+              title: "Images", imageUrls: List<String>.from(topic.image ?? [])),
         ],
-        if (topic.attachment != null) ...[
+        /*if (topic.attachment != null) ...[
           addVertical(10),
-          Text('Attachments:', style: TextStyles.regular1(color: AppColors.black)),
+          Text('Attachments:',
+              style: TextStyles.regular1(color: AppColors.black)),
           addVertical(5),
-          Image.asset(ImageConst.pdf),
-        ],
+          Image.asset(ImageConst.pdf, height: 100, width: 100),
+        ],*/
         addVertical(30),
         Align(
           alignment: Alignment.bottomRight,
           child: AppButton(
-            text: vm.isSectionCompleted(topic.id) ? 'Completed' : 'Complete and Continue',
+            text: vm.isSectionCompleted(topic.id)
+                ? 'Completed'
+                : 'Complete and Continue',
             radius: 8,
             height: 42,
             width: 230,
             btnColor: vm.isSectionCompleted(topic.id) ? Colors.green : null,
-            onTap: vm.isSectionCompleted(topic.id) ? null : () => vm.completeAndContinue(context),
+            onTap: vm.isSectionCompleted(topic.id)
+                ? null
+                : () => vm.completeAndContinue(context),
           ),
         ),
+        addVertical(30),
       ],
     );
   }

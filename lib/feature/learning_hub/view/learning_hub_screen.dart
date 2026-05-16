@@ -64,14 +64,16 @@ class _JobListingScreenState extends State<LearningHubScreen>
     var floatingActionButton = FloatingActionButton(
       backgroundColor: AppColors.primaryColor,
       onPressed: () {
-        newCourseVM.setCurrentStep(0);
+        scaffoldMessenger(
+            "For a better experience and easier course creation, please continue using the Web App.");
+        /*newCourseVM.setCurrentStep(0);
         newCourseVM.resetForm();
         newCourseVM.serverImagesClear();
         courseListingVM.setEditOption(false);
         navigationService.navigateTo(RouteList.newCourseScreen);
         newCourseVM.fetchCourseType();
         newCourseVM.fetchCourseCategory();
-        newCourseVM.setEditMode(false);
+        newCourseVM.setEditMode(false);*/
       },
       child: SvgPicture.asset(ImageConst.addFeed),
     );
@@ -266,8 +268,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         newCourseVM.setEditMode(true);
                         courseListingVM.setCourseStatus(course.status ?? "");
                         Loaders.circularShowLoader(context);
-                         await loadCourseData(
-                             newCourseVM, marketPlaceLearningHubVM.courseDetails);
+                        await loadCourseData(newCourseVM,
+                            marketPlaceLearningHubVM.courseDetails);
                         Loaders.circularHideLoader(context);
                         navigationService.navigateTo(RouteList.newCourseScreen);
 
@@ -382,16 +384,17 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
   Future<void> loadCourseData(
       NewCourseViewModel newCourseVM, CoursesByPk? course) async {
-    newCourseVM.serverPresentedImg = course?.presenters?.first.presentedByImage?.url ?? "";
+    newCourseVM.serverPresentedImg =
+        course?.presenters?.first.presentedByImage?.url ?? "";
     newCourseVM.setCommunityType(
         course?.communityUserType == "BOTH" ? "Both" : "Community User");
 
-    newCourseVM.serverCourseHeaderBanner =
-        course?.courseBannerVideo != null && course!.courseBannerVideo!.isNotEmpty
-            ? MediaInfo(
-                url: course.courseBannerVideo?.first.url ?? "",
-                type: course.courseBannerVideo?.first.type ?? "")
-            : null;
+    newCourseVM.serverCourseHeaderBanner = course?.courseBannerVideo != null &&
+            course!.courseBannerVideo!.isNotEmpty
+        ? MediaInfo(
+            url: course.courseBannerVideo?.first.url ?? "",
+            type: course.courseBannerVideo?.first.type ?? "")
+        : null;
 
     newCourseVM.serverGallery = (course?.courseGallery ?? [])
         .map((item) => item.url ?? "")
@@ -441,9 +444,11 @@ class _JobListingScreenState extends State<LearningHubScreen>
     newCourseVM.youtubeController.text = course?.youtubeLink ?? "";
     newCourseVM.instagramController.text = course?.instagramLink ?? "";
 
-    newCourseVM.presenterNameController.text = course?.presenters?.first.presentedByName ?? "";
-    newCourseVM.cpdPointsController.text =
-        (course?.cpdPoints != null) ? course!.cpdPoints!.toStringAsFixed(0) : "";
+    newCourseVM.presenterNameController.text =
+        course?.presenters?.first.presentedByName ?? "";
+    newCourseVM.cpdPointsController.text = (course?.cpdPoints != null)
+        ? course!.cpdPoints!.toStringAsFixed(0)
+        : "";
     newCourseVM.numberOfSeatsController.text =
         course?.numberOfSeats?.toString() ?? "";
     newCourseVM.totalPriceController.text = (course?.afterwardsPrice != null)
@@ -524,7 +529,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
         : "";
 
     // Images / files (from API)
-    newCourseVM.presenter_image = course?.presenters?.first.presentedByImage?.url ?? "";
+    newCourseVM.presenter_image =
+        course?.presenters?.first.presentedByImage?.url ?? "";
     newCourseVM.courseBannerImageHeaderList = [];
     newCourseVM.selectedGalleryList = [];
     newCourseVM.courseBannerImgList = [];
@@ -533,8 +539,7 @@ class _JobListingScreenState extends State<LearningHubScreen>
     loadCourseForEdit(newCourseVM, course);
   }
 
-  void loadCourseForEdit(
-      NewCourseViewModel newCourseVM, CoursesByPk? course) {
+  void loadCourseForEdit(NewCourseViewModel newCourseVM, CoursesByPk? course) {
     newCourseVM.selectedEvent = course?.eventType == "multiple"
         ? "Multiple Day"
         : "Single Day"; // "Single Day" or "Multiple Day"
@@ -552,7 +557,8 @@ class _JobListingScreenState extends State<LearningHubScreen>
 
     if (newCourseVM.sessions.isEmpty) newCourseVM.sessions.add(SessionModel());
 
-    newCourseVM.topicsIncludedDescController.text = course?.topicsIncluded ?? "";
+    newCourseVM.topicsIncludedDescController.text =
+        course?.topicsIncluded ?? "";
     newCourseVM.learningObjectivesDescController.text =
         course?.learningObjectives ?? "";
   }

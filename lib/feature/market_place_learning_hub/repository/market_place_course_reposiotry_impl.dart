@@ -110,7 +110,10 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
 
   @override
   Future<CoursesByPk?> getCourseDetails(String? courseId) async {
-    final variables = {"id": courseId};
+    final variables = {
+      "id": courseId,
+      "userId": await LocalStorage.getStringVal(LocalStorageConst.userId)
+    };
     final courseTypeData =
         await http.query(showCourseById, variables: variables);
     if (courseTypeData is Map && courseTypeData.containsKey('_error'))

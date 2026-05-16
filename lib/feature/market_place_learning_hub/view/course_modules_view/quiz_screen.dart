@@ -155,7 +155,6 @@ class QuizScreen extends StatelessWidget {
                             'selected_option_ids': selectedOptionIds,
                           };
                         });
-                        debugPrint(payload.toString());
 
                         final result = vm.submitQuiz();
                         if (result == null) return;

@@ -19,6 +19,7 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
     presenters
     presented_by_name
     presented_by_image
+    course_access_duration
     company_name
     webinar_link
     afterwards_price
@@ -42,6 +43,8 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
       last_name
       from_id
       completed_date
+      course_registered_date
+      course_expires_at
       __typename
     }
     dental_supplier {

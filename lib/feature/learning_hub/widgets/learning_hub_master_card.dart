@@ -52,183 +52,195 @@ class ListingHubMasterCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: Card(
-        color: AppColors.whiteColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        elevation: 3,
-        margin: const EdgeInsets.all(8),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                GestureDetector(
-                  onTap: onTap,
-                  child: CachedNetworkImageWidget(
-                    imageUrl: imageUrl,
-                    height: 140,
-                    width: double.infinity,
-                    fit: BoxFit.contain,
-                    errorWidget: const Icon(Icons.broken_image,
-                        size: 50, color: AppColors.lightGeryColor),
-                  ),
-                ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(134, 255, 255, 255),
-                        border: Border.all(
-                            color: const Color.fromARGB(255, 139, 139, 139)),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text(
-                        noOfSeats != null
-                            ? noOfSeats == registerCount
-                                ? "SOLD OUT"
-                                : noOfSeats > 15
-                                    ? " FILLING FAST !"
-                                    : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
-                            : afterWardsPrice == 0.0
-                                ? "FREE MASTERCLASS"
-                                : "PAID",
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ],
-            ),
-
-            // Info section
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 6.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.whiteColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.all(8),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
                 children: [
-                  Text("PRESENTED BY",
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: AppColors.geryColor,
-                            radius: 15,
-                            child: ClipOval(
-                              child: CachedNetworkImageWidget(
-                                  imageUrl: profilePic,
-                                  width: 30,
-                                  height: 30,
-                                  fit: BoxFit.cover,
-                                  errorWidget: Image.asset(ImageConst.prfImg)),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            presenterName.toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4)
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          _circleIcon(),
-                          SizedBox(width: 10),
-                          ShareWidget(
-                              category: FeedType.learnhub.name,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 8),
-                              size: 20,
-                              feedId: feedId ?? ""),
-                        ],
-                      ),
-                    ],
+                  GestureDetector(
+                    onTap: onTap,
+                    child: CachedNetworkImageWidget(
+                      imageUrl: imageUrl,
+                      height: 140,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorWidget: const Icon(Icons.broken_image,
+                          size: 50, color: AppColors.lightGeryColor),
+                    ),
                   ),
-                  const Divider(),
-                  Text(companyName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w500)),
-                  const Divider(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(type ?? '',
-                          style: TextStyles.medium2(color: AppColors.black)),
-                      Row(
-                        children: [
-                          Icon(Icons.access_time,
-                              color: AppColors.primaryColor, size: 20),
-                          const SizedBox(width: 6),
-                          Text("CPD HOURS: ${cpdHours}",
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyles.medium2(
-                                  color: AppColors.primaryColor)),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      (location.isEmpty)
-                          ? SizedBox.shrink()
-                          : Row(
-                              children: [
-                                Icon(Icons.location_on_outlined,
-                                    color: AppColors.primaryColor, size: 20),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    (location.isEmpty) ? "" : "${location}",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyles.medium2(
-                                        color: AppColors.primaryColor),
-                                  ),
-                                ),
-                              ],
-                            ),
-                      const SizedBox(height: 4),
-                      (date.isEmpty)
-                          ? SizedBox.shrink()
-                          : Row(
-                              children: [
-                                Icon(Icons.calendar_month_outlined,
-                                    color: AppColors.primaryColor, size: 20),
-                                const SizedBox(width: 6),
-                                Text(
-                                  (date.isEmpty) ? "------" : DateFormat("dd MMM").format(DateTime.parse(date)),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyles.medium2(
-                                      color: AppColors.primaryColor)
-                                )
-                              ],
-                            ),
-                    ],
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          border: Border.all(
+                              color: AppColors.primaryColor, width: 1.5),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Text(
+                          noOfSeats != null
+                              ? noOfSeats == registerCount
+                                  ? "SOLD OUT"
+                                  : noOfSeats > 15
+                                      ? " FILLING FAST !"
+                                      : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
+                              : afterWardsPrice == 0.0
+                                  ? "FREE MASTERCLASS"
+                                  : "PAID",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ],
               ),
-            ),
-            //Spacer(),
-            RegisterButton(
-                text: isRegistered ? "View Course Details" : 'Register Now',
-                onTap: registerTap,
-                isRegistered: isRegistered)
-          ],
+        
+              // Info section
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("PRESENTED BY",
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: AppColors.geryColor,
+                              radius: 15,
+                              child: ClipOval(
+                                child: CachedNetworkImageWidget(
+                                    imageUrl: profilePic,
+                                    width: 30,
+                                    height: 30,
+                                    fit: BoxFit.cover,
+                                    errorWidget: Image.asset(ImageConst.prfImg)),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              presenterName.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4)
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _circleIcon(),
+                            SizedBox(width: 10),
+                            ShareWidget(
+                                category: FeedType.learnhub.name,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                size: 20,
+                                feedId: feedId ?? ""),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    Text(companyName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500)),
+                    const Divider(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(type ?? '',
+                            style: TextStyles.medium2(color: AppColors.black)),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time,
+                                color: AppColors.primaryColor, size: 20),
+                            const SizedBox(width: 6),
+                            Text("CPD HOURS: ${cpdHours}",
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyles.medium2(
+                                    color: AppColors.primaryColor)),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        (location.isEmpty)
+                            ? SizedBox.shrink()
+                            : Row(
+                                children: [
+                                  Icon(Icons.location_on_outlined,
+                                      color: AppColors.primaryColor, size: 20),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      (location.isEmpty) ? "" : "${location}",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyles.medium2(
+                                          color: AppColors.primaryColor),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        const SizedBox(height: 4),
+                        (date.isEmpty)
+                            ? SizedBox.shrink()
+                            : Row(
+                                children: [
+                                  Icon(Icons.calendar_month_outlined,
+                                      color: AppColors.primaryColor, size: 20),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    (date.isEmpty) ? "------" : DateFormat("dd MMM").format(DateTime.parse(date)),
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyles.medium2(
+                                        color: AppColors.primaryColor)
+                                  )
+                                ],
+                              ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              //Spacer(),
+              RegisterButton(
+                  text: isRegistered ? "View Course Details" : 'Register Now',
+                  onTap: registerTap,
+                  isRegistered: isRegistered)
+            ],
+          ),
         ),
       ),
     );

@@ -41,7 +41,7 @@ class CoursesListingData {
     }
     return data;
   }
-}    
+}
 
 class CoursesListingDetails {
   String? id;
@@ -67,6 +67,7 @@ class CoursesListingDetails {
   String? webinarLink;
   PresentedByImage? presentedByImage;
   String? presentedByName;
+  dynamic courseAccessDuration;
   String? description;
   List<CourseEventInfo>? courseEventInfo;
   String? earlyBirdEndDate;
@@ -135,6 +136,7 @@ class CoursesListingDetails {
       this.webinarLink,
       this.presentedByImage,
       this.presentedByName,
+      this.courseAccessDuration,
       this.description,
       this.courseEventInfo,
       this.earlyBirdEndDate,
@@ -173,7 +175,7 @@ class CoursesListingDetails {
       this.endTime,
       this.meetingLink,
       this.courseRegisteredUsers,
-       this.dentalSupplier,
+      this.dentalSupplier,
       this.courseRegisteredUsersAggregate,
       this.communityUserType,
       this.presenters});
@@ -217,6 +219,7 @@ class CoursesListingDetails {
         ? new PresentedByImage.fromJson(json['presented_by_image'])
         : null;
     presentedByName = json['presented_by_name'];
+    courseAccessDuration = json['course_access_duration'];
     description = json['description'];
     if (json['course_event_info'] != null) {
       courseEventInfo = <CourseEventInfo>[];
@@ -280,7 +283,7 @@ class CoursesListingDetails {
     endTime = json['endTime'];
     meetingLink = json['meeting_link'];
     communityUserType = json['community_user_type'];
-     dentalSupplier = json['dental_supplier'] != null
+    dentalSupplier = json['dental_supplier'] != null
         ? new DentalSupplier.fromJson(json['dental_supplier'])
         : null;
     if (json['presenters'] != null) {
@@ -310,6 +313,7 @@ class CoursesListingDetails {
     data['course_category_id'] = this.courseCategoryId;
     data['short_id'] = this.shortId;
     data['course_name'] = this.courseName;
+    data['course_access_duration'] = this.courseAccessDuration;
     data['short_info'] = this.shortInfo;
     data['image'] = this.image;
     data['video'] = this.video;
@@ -404,7 +408,6 @@ class CoursesListingDetails {
   }
 }
 
-
 class CourseRegisteredUsers {
   String? courseId;
   String? fromId;
@@ -415,6 +418,7 @@ class CourseRegisteredUsers {
   String? firstName;
   String? lastName;
   String? completedDate;
+  String? courseRegisteredDate;
   String? sTypename;
 
   CourseRegisteredUsers(
@@ -427,6 +431,7 @@ class CourseRegisteredUsers {
       this.firstName,
       this.lastName,
       this.completedDate,
+      this.courseRegisteredDate,
       this.sTypename});
 
   CourseRegisteredUsers.fromJson(Map<String, dynamic> json) {
@@ -439,6 +444,7 @@ class CourseRegisteredUsers {
     firstName = json['first_name'];
     lastName = json['last_name'];
     completedDate = json['completed_date'];
+    courseRegisteredDate = json['course_registered_date'];
     sTypename = json['__typename'];
   }
 
@@ -447,12 +453,13 @@ class CourseRegisteredUsers {
     data['course_id'] = this.courseId;
     data['from_id'] = this.fromId;
     data['status'] = this.status;
-     data['id'] = this.id;
+    data['id'] = this.id;
     data['is_course_completed'] = this.isCourseCompleted;
     data['webinar_status'] = this.webinarStatus;
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
     data['completed_date'] = this.completedDate;
+    data['course_registered_date'] = this.courseRegisteredDate;
     data['__typename'] = this.sTypename;
     return data;
   }

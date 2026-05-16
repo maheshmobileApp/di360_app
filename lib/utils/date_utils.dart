@@ -203,6 +203,16 @@ static DateTime? parseToLocalDate(String? dateStr) {
   }
 }
 
+static String addDaysToDate(String dateStr, int days) {
+  try {
+    final date = DateTime.parse(dateStr);
+    final expiry = date.add(Duration(days: days));
+    return DateFormat('d MMM yyyy').format(expiry); //17 May 2026 format needed
+  } catch (_) {
+    return '';
+  }
+}
+
 static String formatTime(String time) {
   try {
     final clean = time.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();

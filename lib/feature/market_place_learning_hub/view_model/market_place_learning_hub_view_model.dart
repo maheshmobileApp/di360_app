@@ -189,24 +189,16 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   }
 
   (double, bool)? submitQuiz() {
-    final questions = courseDetails?.questionSection ?? [];
+    final questions = courseDetails?.quizDetails ?? [];
     if (questions.isEmpty) return null;
-
-    for (int i = 0; i < questions.length; i++) {
-      final answer = quizAnswers[i];
-      if (answer == null || (answer is Set && answer.isEmpty)) {
-        scaffoldMessenger("Please answer all questions before submitting");
-        return null;
-      }
-    }
 
     int correctCount = 0;
     for (int i = 0; i < questions.length; i++) {
       final q = questions[i];
-      final options = q.options ?? [];
+      final options = q.optionDetails ?? [];
       final answer = quizAnswers[i];
       bool isCorrect = false;
-      if (q.questionType == 'single' || q.questionType == 'boolean') {
+      if (q.type == 'single' || q.type == 'boolean') {
         isCorrect = options[answer as int].isCorrect == true;
       } else {
         final selected = answer as Set<int>;
@@ -346,6 +338,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   bool isCourseDetailRegisteredCheck(
       List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
+        print("Current User ID: $currentUserId");
+        print("Registered Users: ${courseRegisteredUsers?.map((u) => u.fromId).toList()}");
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
   }
@@ -374,7 +368,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         _syncModuleIndex();
         notifyListeners();
       } else {
-        scaffoldMessenger("Congratulations! You have completed the course.");
+        //scaffoldMessenger("You have successfully completed the course");
       }
     }
 

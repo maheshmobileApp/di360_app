@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +93,7 @@ void showTestResultDialog(BuildContext context, double scored, bool passed,
                                   .read<MyLearningHubViewModel>()
                                   .getCoursesWithMyRegistrations(context);
                               Loaders.circularHideLoader(context);
+                              scaffoldMessenger("You have successfully completed the course");
 
                               navigationService
                                   .pushNamedAndRemoveUntil(RouteList.dashBoard);

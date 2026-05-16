@@ -345,8 +345,8 @@ class CouresListingCard extends StatelessWidget {
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (status != "EXPIRED" && courseType != "Online Academy")
-          _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),
+        /*if (status != "EXPIRED" && courseType != "Online Academy")
+          _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),*/
         if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
         if (activeStatus == "ACTIVE" && status == "APPROVE")
@@ -355,8 +355,8 @@ class CouresListingCard extends StatelessWidget {
         if (activeStatus == "INACTIVE" && status == "APPROVE")
           _popupItem(
               "Active", Icons.nightlight_outlined, AppColors.primaryColor),
-        if (status == "EXPIRED")
-          _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),
+        /*if (status == "EXPIRED")
+          _popupItem("Re-Listing", Icons.edit_outlined, AppColors.blueColor),*/
       ],
     );
   }

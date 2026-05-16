@@ -30,6 +30,11 @@ class RegisterCourseCard extends StatelessWidget {
     final courseStatus = courseData.courseRegisteredUsers?.isNotEmpty == true
         ? courseData.courseRegisteredUsers?.first.status ?? ""
         : "";
+    final registeredDate = courseData.courseRegisteredUsers?.first.courseRegisteredDate ?? "";
+    final accessDays = courseData.courseAccessDuration ?? 0;
+    final expiryDate = registeredDate.isNotEmpty
+        ? DateFormatUtils.addDaysToDate(registeredDate, accessDays)
+        : "";
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -55,7 +60,8 @@ class RegisterCourseCard extends StatelessWidget {
                 courseData.status ?? "",
                 courseData.type ?? "",
                 courseData.meetingLink ?? "",
-                courseStatus),
+                courseStatus,
+                expiryDate),
             Divider(color: AppColors.borderColor),
             Row(
               mainAxisAlignment: (courseStatus == "COMPLETED")
@@ -115,7 +121,7 @@ class RegisterCourseCard extends StatelessWidget {
   }
 
   Widget _logoWithTitle(String profilePic, String company, String title,
-      String status, String types, String link, String courseStatus) {
+      String status, String types, String link, String courseStatus, String expiryDate) {
     return Row(
       children: [
         Column(
@@ -151,6 +157,10 @@ class RegisterCourseCard extends StatelessWidget {
                   )),
               const SizedBox(height: 2),
               Text("CPD Points: ${courseData.cpdPoints ?? ""}",
+                  style: TextStyles.regular2(color: AppColors.black)),
+              const SizedBox(height: 2),
+              if (expiryDate.isNotEmpty)
+              Text("Expires on: $expiryDate",
                   style: TextStyles.regular2(color: AppColors.black)),
               const SizedBox(height: 2),
               Row(

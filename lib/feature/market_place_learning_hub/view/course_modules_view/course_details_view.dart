@@ -34,7 +34,7 @@ class CourseDetailsView extends StatelessWidget {
                 Consumer<MarketPlaceLearningHubViewModel>(
                   builder: (context, vm, _) {
                     final hasQuestions =
-                        (vm.courseDetails?.questionSection ?? []).isNotEmpty;
+                        (vm.courseDetails?.quizDetails ?? []).isNotEmpty;
                     if (!hasQuestions) return const SizedBox.shrink();
                     return Padding(
                       padding: const EdgeInsets.all(16),
@@ -86,16 +86,19 @@ class CourseDetailsView extends StatelessWidget {
             children: [
               Container(width: 4, height: 40, color: AppColors.primaryColor),
               const SizedBox(width: 12),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  const Text("A Comprehensive Guide",
-                      style: TextStyle(color: Colors.grey)),
-                ],
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        maxLines: 2,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text("A Comprehensive Guide",
+                        style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
               )
             ],
           ),

@@ -1,54 +1,67 @@
 const String showCourseById = r'''
-query getRecordById($id: uuid!) {
+query getSelectedCourse($id: uuid!, $userId: uuid!) {
   courses_by_pk(id: $id) {
     id
-    created_at
-    updated_at
     course_name
-    course_category_id
-    contact_name
-    type
-    startDate
-    endDate
-    startTime
-    endTime
-    presenters
-    description
-    address
-    cpd_points
+    is_featured
     number_of_seats
-    early_bird_end_date
-    early_bird_price
-    afterwards_price
-    topics_included
-    learning_objectives
-    event_type
+    is_lifetime
+    address
+    attachments
     course_event_info
+    presenters
+    seo_metadata
     sponsor_by_image
-    course_banner_video
-    course_banner_image
-    course_gallery
-    terms
-    refund_policy
+    afterwards_price
+    course_access_duration
+    cpd_points
+    early_bird_price
+    community_id
+    community_user_type
+    max_subscribers
+    price_in_aud
+    price_in_usd
     company_name
+    complete_details
     contact_email
+    contact_name
     contact_phone
     contact_website
-    status
-    active_status
     register_link
-    rsvp_date
-    webinar_link
-    youtube_link
-    facebook_link
-    instagram_link
-    linkedin_link
-    community_user_type
+    description
+    early_bird_end_date
+    endDate
+    event_type
+    image
+    learning_objectives
     module_section
     question_section
     pass_percentage
-    is_lifetime
-    course_access_duration
+    refund_policy
+    short_id
+    short_info
+    startDate
+    status
+    terms
+    topics_included
+    video
+    webinar_link
+    created_at
+    scheduled_at
+    updated_at
+    course_category_id
+    created_by_id
+    course_banner_video
+    course_gallery
+    active_status
+    startTime
+    endTime
+    type
+    course_banner_image
+    facebook_link
+    instagram_link
+    linkedin_link
+    youtube_link
     module_details(order_by: {module_position: asc}) {
       id
       module_name
@@ -75,15 +88,48 @@ query getRecordById($id: uuid!) {
       id
       question
       type
+      quiz_id
       course_id
       quiz_position
-      quiz_id
       option_details(order_by: {option_position: asc}) {
         id
-        isCorrect
         quiz_id
-        text
+        isCorrect
         option_position
+        text
+        __typename
+      }
+      __typename
+    }
+    course_registered_users(
+      where: {from_id: {_eq: $userId}, status: {_neq: "CANCELLED"}}
+    ) {
+      id
+      course_id
+      from_id
+      status
+      quiz_status
+      course_expires_at
+      quiz_answers
+      registered_module_details(
+        order_by: {module_position: asc}
+        where: {user_id: {_eq: $userId}, course_id: {_eq: $id}}
+      ) {
+        id
+        module_name
+        expanded
+        module_id
+        user_id
+        section_status
+        section_id
+        module_position
+        __typename
+      }
+      __typename
+    }
+    course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {
+      aggregate {
+        count
         __typename
       }
       __typename
