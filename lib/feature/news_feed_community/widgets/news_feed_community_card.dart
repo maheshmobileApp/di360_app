@@ -89,12 +89,10 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     final newsFeedCommunityViewModel =
         Provider.of<NewsFeedCommunityViewModel>(context);
     final String shareId = _fetchId(newsfeeds);
+    newsFeedCommunityViewModel.getUserId();
     final currentUserId = newsFeedCommunityViewModel.userID ?? '';
 
-    final isSameUser = newsfeeds?.userId == currentUserId ||
-        newsfeeds?.dentalPracticeId == currentUserId ||
-        newsfeeds?.dentalProfessionalId == currentUserId ||
-        newsfeeds?.dentalSupplierId == currentUserId;
+    final isSameUser = newsfeeds?.userId == currentUserId;
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -854,9 +852,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ],
         if (!isSameUser) ...[
-          /*_popupItem("Hide Post", Icons.hide_source, AppColors.redColor),
+          _popupItem("Hide Post", Icons.hide_source, AppColors.redColor),
           _popupItem("Report Post", Icons.report, AppColors.redColor),
-          _popupItem("Block Profile", Icons.block, AppColors.redColor),*/
+          _popupItem("Block Profile", Icons.block, AppColors.redColor),
           if (imageUrls?.isNotEmpty == true)
             _popupItem("Save Media", Icons.save, AppColors.greenColor),
         ],

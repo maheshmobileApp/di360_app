@@ -8,6 +8,7 @@ import 'package:di360_flutter/feature/market_place_learning_hub/model_class/cour
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/report_newsfeed_community.dart';
 import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -36,6 +37,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController videoLinkController = TextEditingController();
   TextEditingController websiteLinkController = TextEditingController();
+  TextEditingController reportText = TextEditingController();
 
   bool isEditNewsFeed = false;
   List<String> newsFeedCategory = [];
@@ -689,6 +691,31 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     } else if (type == UserRole.practice.value) {
       practiceId = userId;
     }
+    notifyListeners();
+  }
+
+  Future<void> newsFeedCommunityAction(
+      BuildContext context, String feedId, String action) async {
+    Loaders.circularShowLoader(context);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {
+      "fields": {
+        "entity_id": feedId,
+        "entity_type": (action == "BLOCK") ? "PROFILE" : "POST",
+        "action": action,
+        "created_by_id": userId,
+        "created_by_type": type,
+        "status": "ACTIVE",
+        "feed_id": feedId,
+        if (action == "REPORT") "reason": reportText.text,
+      }
+    };
+    final res = await _http.mutation(reportNewsfeedCommunityQuery, variables);
+    if (res['insert_newsfeed_user_action_one'] != null) {
+      await getAllNewsFeeds(context);
+    }
+    Loaders.circularHideLoader(context);
     notifyListeners();
   }
 
