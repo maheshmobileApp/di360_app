@@ -135,10 +135,10 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                             createdAt,
                           ),
                         ),
-                        if (type == UserRole.supplier.value ||
+                        /*if (type == UserRole.supplier.value ||
                             (type == UserRole.professional.value &&
                                 feedUserRole != UserRole.supplier.value &&
-                                isSameUser))
+                                isSameUser))*/
                           Row(
                             children: [
                               _menuWidget(context, type, imageUrls, isSameUser),
@@ -854,9 +854,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ],
         if (!isSameUser) ...[
-          /*_popupItem("Hide Post", Icons.hide_source, AppColors.redColor),
+          _popupItem("Hide Post", Icons.hide_source, AppColors.redColor),
           _popupItem("Report Post", Icons.report, AppColors.redColor),
-          _popupItem("Block Profile", Icons.block, AppColors.redColor),*/
+          _popupItem("Block Profile", Icons.block, AppColors.redColor),
           if (imageUrls?.isNotEmpty == true)
             _popupItem("Save Media", Icons.save, AppColors.greenColor),
         ],
