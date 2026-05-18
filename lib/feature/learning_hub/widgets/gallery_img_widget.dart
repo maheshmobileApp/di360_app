@@ -63,7 +63,7 @@ class GalleryImgWidget extends StatelessWidget {
                     imageUrl: imageUrls[index],
                     height: height,
                     width: (width == 0) ? height * 1.5 : width,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     errorWidget: Container(
                       height: height,
                       width: (width == 0) ? height * 1.5 : width,

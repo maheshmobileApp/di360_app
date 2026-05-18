@@ -196,7 +196,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       setSelectedBusineestype(businessType);
     }
     logoUrl = viewProfile?.logo?.url ?? "";
-    userName = viewProfile?.name ?? "";
+    userName = viewProfile?.businessName ?? "";
     await LocalStorage.setStringVal(
         LocalStorageConst.profilePic, logoUrl ?? '');
     await LocalStorage.setStringVal(LocalStorageConst.name, userName ?? '');
@@ -219,8 +219,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       _countryCode = '+61';
       phoneNoController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
     }
-    firstNameController.text =
-        viewProfile?.firstName ?? viewProfile?.name ?? "";
+    firstNameController.text = viewProfile?.name ?? "";
     middleNameController.text = viewProfile?.middleName ?? "";
     lastNameController.text = viewProfile?.lastName ?? "";
     alternateEmailController.text = viewProfile?.altEmail ?? "";

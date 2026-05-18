@@ -79,7 +79,7 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   ),
                 ),
                 addHorizontal(12),
-                Text(userName ?? homeViewModel.userName ?? '',
+                Text(userName ?? homeViewModel.profileName ?? '',
                     style: TextStyles.clashMedium(
                         fontSize: 20, color: AppColors.black)),
               ],

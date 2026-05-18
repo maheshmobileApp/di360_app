@@ -23,6 +23,9 @@ class CourseInfoCardWidget extends StatelessWidget {
   final String bannerUrl;
   final String bannerName;
   final String? creatAt;
+  final bool? registerStatus;
+  final String? courseStatus;
+  final String? expiryDate;
 
   const CourseInfoCardWidget(
       {super.key,
@@ -41,7 +44,10 @@ class CourseInfoCardWidget extends StatelessWidget {
       required this.bannerName,
       required this.startTime,
       required this.endTime,
-      this.creatAt});
+      this.creatAt,
+      this.registerStatus,
+      this.courseStatus,
+      this.expiryDate});
 
   @override
   Widget build(BuildContext context) {
@@ -79,47 +85,51 @@ class CourseInfoCardWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            color: AppColors.primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          if (startDate.isNotEmpty && endDate.isNotEmpty)
-                            Text(DateFormatUtils.formatDateRange(
-                                startDate, endDate)),
-                          if (platform == "Online Academy")
-                            Text(DateFormatUtils.formatDateTimeShort(
-                                creatAt ?? "")),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      if (startTime.isNotEmpty && endTime.isNotEmpty)
+                if (registerStatus == true && courseStatus != "PENDING")
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text("Already Registered",
+                            style: TextStyles.medium2(
+                                color: AppColors.greenColor)),
+                        const SizedBox(height: 4),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.access_time_rounded,
+                              Icons.calendar_month_outlined,
                               color: AppColors.primaryColor,
                               size: 20,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
-                            ),
+                            if (startDate.isNotEmpty && endDate.isNotEmpty)
+                              Text(DateFormatUtils.formatDateRange(
+                                  startDate, endDate)),
+                            if (platform == "Online Academy")
+                              Text("Expires on : $expiryDate"),
                           ],
                         ),
-                    ],
+                        const SizedBox(height: 4),
+                        if (startTime.isNotEmpty && endTime.isNotEmpty)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                color: AppColors.primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
-                ),
                 const Divider(),
                 const SizedBox(height: 4),
                 Row(

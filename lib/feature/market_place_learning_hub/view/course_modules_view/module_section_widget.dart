@@ -1,17 +1,20 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/attachment_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:provider/provider.dart';
 
 class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
-  const ModuleSectionWidget({super.key});
+  final ScrollController scrollController;
+  const ModuleSectionWidget({super.key, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -77,23 +80,34 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
         addVertical(10),
         if (topic.description != null && topic.description != '') ...[
           Text('Description: ',
-              style: TextStyles.regular1(color: AppColors.black)),
+              style: TextStyles.bold2(
+                color: AppColors.primaryColor,
+              )),
           addVertical(5),
-          HtmlWidget(topic.description ?? '',
-              textStyle: TextStyles.regular4(color: AppColors.black)),
+          ExpandableHtmlText(
+            htmlData: topic.description ?? '',
+          ),
         ],
         if (topic.image != null) ...[
           addVertical(10),
           GalleryImgWidget(
-              title: "Images", imageUrls: List<String>.from(topic.image ?? [])),
+            title: "Images",
+            imageUrls: _toList(topic.image)
+                .map((e) =>
+                    e is Map ? (e['url'] ?? '').toString() : e.toString())
+                .where((url) => url.isNotEmpty)
+                .toList(),
+          ),
         ],
-        /*if (topic.attachment != null) ...[
+        if (topic.attachment != null) ...[
           addVertical(10),
-          Text('Attachments:',
-              style: TextStyles.regular1(color: AppColors.black)),
-          addVertical(5),
-          Image.asset(ImageConst.pdf, height: 100, width: 100),
-        ],*/
+          AttachmentViewWidget(
+            attachments: _toList(topic.attachment)
+                .whereType<Map<String, dynamic>>()
+                .where((e) => e['url'] != null)
+                .toList(),
+          ),
+        ],
         addVertical(30),
         Align(
           alignment: Alignment.bottomRight,
@@ -107,12 +121,23 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
             btnColor: vm.isSectionCompleted(topic.id) ? Colors.green : null,
             onTap: vm.isSectionCompleted(topic.id)
                 ? null
-                : () => vm.completeAndContinue(context),
+                : () {
+                    vm.completeAndContinue(context);
+                    scrollController.animateTo(0,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOut);
+                  },
           ),
         ),
         addVertical(30),
       ],
     );
+  }
+
+  List _toList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) return value;
+    return [value];
   }
 
   Widget _navButtons({

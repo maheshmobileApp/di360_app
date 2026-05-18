@@ -203,6 +203,17 @@ static DateTime? parseToLocalDate(String? dateStr) {
   }
 }
 
+static int remainingDays(String dateStr, int accessDuration) {
+  try {
+    final expiry = DateTime.parse(dateStr).toLocal().add(Duration(days: accessDuration));
+    final now = DateTime.now();
+    if (expiry.isBefore(now)) return 0;
+    return (expiry.difference(now).inHours / 24).ceil();
+  } catch (_) {
+    return 0;
+  }
+}
+
 static String addDaysToDate(String dateStr, int days) {
   try {
     final date = DateTime.parse(dateStr);
