@@ -236,17 +236,19 @@ class NewsFeedViewModel extends ChangeNotifier {
         newsfeedCategories = res.newsfeedCategories;
         newsfeedCategories?.insert(
             0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
-        newsfeedCategories?.add(NewsfeedCategories(id: '2', categoryName: 'Jobs'));
-        newsfeedCategories?.add(NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
+        newsfeedCategories
+            ?.add(NewsfeedCategories(id: '2', categoryName: 'Jobs'));
+        newsfeedCategories
+            ?.add(NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
       }
     } catch (e) {}
     notifyListeners();
   }
 
   getUserId() async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userId = LocalStorage.getStringSync(LocalStorageConst.userId);
+    final type = LocalStorage.getStringSync(LocalStorageConst.type);
     userID = userId;
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     if (type == UserRole.professional.value) {
       professionId = userId;
     } else if (type == UserRole.admin.value) {

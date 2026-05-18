@@ -677,9 +677,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String? userID;
 
   getUserId() async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userId = await LocalStorage.getStringSync(LocalStorageConst.userId);
     userID = userId;
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final type = await LocalStorage.getStringSync(LocalStorageConst.type);
     if (type == UserRole.professional.value) {
       professionId = userId;
     } else if (type == UserRole.admin.value) {
