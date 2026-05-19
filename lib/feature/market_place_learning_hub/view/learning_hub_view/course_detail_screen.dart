@@ -14,6 +14,7 @@ import 'package:di360_flutter/feature/market_place_learning_hub/view_model/marke
 import 'package:di360_flutter/feature/market_place_learning_hub/widgets/registration_user_form.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +75,11 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
     final isRegistered = courseListingVM
         .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
     final seats = courseDetails?.numberOfSeats ?? 0;
+    final registeredDate = courseDetails?.createdAt ?? "";
+    final accessDays = courseDetails?.courseAccessDuration ?? 0;
+    final expiryDate = registeredDate.isNotEmpty
+        ? DateFormatUtils.addDaysToDate(registeredDate, accessDays)
+        : "";
 
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
@@ -230,38 +236,43 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CourseInfoCardWidget(
-                          address: courseDetails?.address?.isNotEmpty == true
-                              ? courseDetails?.address?.first.city ?? ""
-                              : "",
-                          startTime: courseDetails?.startTime ?? "",
-                          endTime: courseDetails?.endTime ?? "",
-                          startDate: courseDetails?.startDate ?? "",
-                          endDate: courseDetails?.endDate ?? "",
-                          courseName: courseDetails?.courseName ?? "",
-                          profilePic:
-                              courseDetails?.presenters?.isNotEmpty ?? false
-                                  ? courseDetails?.presenters?.first
-                                          .presentedByImage?.url ??
-                                      ""
-                                  : "",
-                          presentByName:
-                              courseDetails?.presenters?.isNotEmpty ?? false
-                                  ? courseDetails
-                                          ?.presenters?.first.presentedByName ??
-                                      ""
-                                  : "",
-                          cpdHours:
-                              courseDetails?.cpdPoints?.toInt().toString() ??
-                                  "0",
-                          platform: courseDetails?.type ?? "",
-                          webinar: "",
-                          totalPrice:
-                              courseDetails?.afterwardsPrice?.toString() ?? "0",
-                          discountPrice:
-                              courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                          bannerUrl: bannerUrl,
-                          bannerName: bannerName,
-                          creatAt: courseDetails?.updatedAt),
+                        expiryDate: expiryDate,
+                        address: courseDetails?.address?.isNotEmpty == true
+                            ? courseDetails?.address?.first.city ?? ""
+                            : "",
+                        startTime: courseDetails?.startTime ?? "",
+                        endTime: courseDetails?.endTime ?? "",
+                        startDate: courseDetails?.startDate ?? "",
+                        endDate: courseDetails?.endDate ?? "",
+                        courseName: courseDetails?.courseName ?? "",
+                        profilePic:
+                            courseDetails?.presenters?.isNotEmpty ?? false
+                                ? courseDetails?.presenters?.first
+                                        .presentedByImage?.url ??
+                                    ""
+                                : "",
+                        presentByName:
+                            courseDetails?.presenters?.isNotEmpty ?? false
+                                ? courseDetails
+                                        ?.presenters?.first.presentedByName ??
+                                    ""
+                                : "",
+                        cpdHours:
+                            courseDetails?.cpdPoints?.toInt().toString() ?? "0",
+                        platform: courseDetails?.type ?? "",
+                        webinar: "",
+                        totalPrice:
+                            courseDetails?.afterwardsPrice?.toString() ?? "0",
+                        discountPrice:
+                            courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                        bannerUrl: bannerUrl,
+                        bannerName: bannerName,
+                        creatAt: courseDetails?.updatedAt,
+                        registerStatus: isRegistered,
+                        courseStatus: courseDetails
+                                ?.courseRegisteredUsers?.firstOrNull?.status ??
+                            "",
+                      ),
                       addVertical(12),
                       if (courseDetails?.description != "")
                         CourseDescriptionWidget(

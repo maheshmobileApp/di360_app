@@ -7,8 +7,21 @@ import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CourseDetailsView extends StatelessWidget {
+class CourseDetailsView extends StatefulWidget {
   const CourseDetailsView({super.key});
+
+  @override
+  State<CourseDetailsView> createState() => _CourseDetailsViewState();
+}
+
+class _CourseDetailsViewState extends State<CourseDetailsView> {
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +30,7 @@ class CourseDetailsView extends StatelessWidget {
       appBar: AppBarWidget(
           searchWidget: false, logo: false, title: "Course Details"),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Card(
@@ -30,7 +44,7 @@ class CourseDetailsView extends StatelessWidget {
                   builder: (_, vm, __) =>
                       _headerTitle(vm.courseDetails?.courseName ?? ''),
                 ),
-                const ModuleSectionWidget(),
+                ModuleSectionWidget(scrollController: _scrollController),
                 Consumer<MarketPlaceLearningHubViewModel>(
                   builder: (context, vm, _) {
                     final hasQuestions =

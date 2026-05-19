@@ -27,10 +27,12 @@ const String getAllListingDataQuery   =
     number_of_seats
     startTime
     endTime
+    course_access_duration
     course_registered_users {
       course_id
       from_id
       status
+      course_registered_date
       __typename
     }
     course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {

@@ -9,6 +9,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -128,11 +129,15 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           final jobData =
                               courseListingVM.marketPlaceCoursesList[index];
                           final course = jobData;
+                          final registrationDate = course.courseRegisteredUsers?.isNotEmpty == true
+                              ? course.courseRegisteredUsers?.first.courseRegisteredDate
+                              : null;
 
-                          // final seats = (course.numberOfSeats ?? 0) -
-                          //     (course.courseRegisteredUsersAggregate?.aggregate
-                          //             ?.count ??
-                          //         0);
+                          final remainingDays = registrationDate != null
+                              ? DateFormatUtils.remainingDays(registrationDate,
+                                  course.courseAccessDuration ?? 0)
+                              : 0;
+
                           final isRegistered = courseListingVM
                               .isRegisteredCheck(course.courseRegisteredUsers);
 
@@ -163,6 +168,9 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     course.address?.first.city ??
                                     "")
                                 : "",
+                            expiryDateCount: remainingDays.toString(),
+                            courseStatus: course
+                                .courseRegisteredUsers?.firstOrNull?.status,
                             onTap: () async {
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");

@@ -26,6 +26,8 @@ class ListingHubMasterCard extends StatelessWidget {
   final String? type;
   final dynamic noOfSeats;
   final int? registerCount;
+  final String? expiryDateCount;
+  final String? courseStatus;
 
   const ListingHubMasterCard(
       {super.key,
@@ -45,7 +47,9 @@ class ListingHubMasterCard extends StatelessWidget {
       required this.isRegistered,
       this.type,
       this.noOfSeats,
-      this.registerCount});
+      this.registerCount,
+      this.expiryDateCount,
+      this.courseStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -89,8 +93,8 @@ class ListingHubMasterCard extends StatelessWidget {
                     right: 8,
                     top: 8,
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                           color: AppColors.whiteColor,
                           border: Border.all(
@@ -114,7 +118,7 @@ class ListingHubMasterCard extends StatelessWidget {
                   ),
                 ],
               ),
-        
+
               // Info section
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -141,7 +145,8 @@ class ListingHubMasterCard extends StatelessWidget {
                                     width: 30,
                                     height: 30,
                                     fit: BoxFit.cover,
-                                    errorWidget: Image.asset(ImageConst.prfImg)),
+                                    errorWidget:
+                                        Image.asset(ImageConst.prfImg)),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -189,8 +194,30 @@ class ListingHubMasterCard extends StatelessWidget {
                             Text("CPD HOURS: ${cpdHours}",
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
+                                style:
+                                    TextStyles.medium2(color: AppColors.black)),
+                          ],
+                        ),
+                        if (isRegistered && courseStatus != "PENDING")
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: AppColors.primaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                "You purchased this course", //- Access expires in ${expiryDateCount ?? '0'} days.
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyles.medium2(
-                                    color: AppColors.primaryColor)),
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -221,12 +248,14 @@ class ListingHubMasterCard extends StatelessWidget {
                                       color: AppColors.primaryColor, size: 20),
                                   const SizedBox(width: 6),
                                   Text(
-                                    (date.isEmpty) ? "------" : DateFormat("dd MMM").format(DateTime.parse(date)),
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyles.medium2(
-                                        color: AppColors.primaryColor)
-                                  )
+                                      (date.isEmpty)
+                                          ? "------"
+                                          : DateFormat("dd MMM")
+                                              .format(DateTime.parse(date)),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyles.medium2(
+                                          color: AppColors.primaryColor))
                                 ],
                               ),
                       ],

@@ -3,6 +3,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/home/model_class/get_followers_res.dart';
 import 'package:di360_flutter/feature/home/repository/home_repository_impl.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class HomeViewModel extends ChangeNotifier {
@@ -10,6 +11,7 @@ class HomeViewModel extends ChangeNotifier {
 
   GetFollowersData? getFollowersData;
   String? userName;
+  String? profileName;
   String? profilePic;
   String? userID;
   String? userType;
@@ -114,9 +116,11 @@ class HomeViewModel extends ChangeNotifier {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final businessName = await LocalStorage.getStringVal(LocalStorageConst.businessName);
     final user_id =
         await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     this.userName = name;
+    this.profileName = (type == UserRole.professional.value) ? name : businessName;
     this.profilePic = img;
     this.userID = user_id;
     this.userType = type;

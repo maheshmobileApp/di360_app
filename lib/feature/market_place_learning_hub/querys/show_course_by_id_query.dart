@@ -1,5 +1,4 @@
-const String showCourseById = r'''
-query getSelectedCourse($id: uuid!, $userId: uuid!) {
+const String showCourseById = r'''query getSelectedCourse($id: uuid!, $userId: uuid!) {
   courses_by_pk(id: $id) {
     id
     course_name
