@@ -83,20 +83,17 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
                 color: AppColors.primaryColor,
               )),
           addVertical(5),
-          ExpandableHtmlText(
-            htmlData: topic.description ?? '',
-          ),
+          ExpandableHtmlText(htmlData: topic.description ?? ''),
         ],
         if (topic.image != null) ...[
           addVertical(10),
           GalleryImgWidget(
-            title: "Images",
-            imageUrls: _toList(topic.image)
-                .map((e) =>
-                    e is Map ? (e['url'] ?? '').toString() : e.toString())
-                .where((url) => url.isNotEmpty)
-                .toList(),
-          ),
+              title: "Images",
+              imageUrls: _toList(topic.image)
+                  .map((e) =>
+                      e is Map ? (e['url'] ?? '').toString() : e.toString())
+                  .where((url) => url.isNotEmpty)
+                  .toList()),
         ],
         if (topic.attachment != null) ...[
           addVertical(10),
@@ -139,14 +136,13 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
     return [value];
   }
 
-  Widget _navButtons({
-    required String label1,
-    required IconData icon1,
-    required VoidCallback? onTap1,
-    required String label2,
-    required IconData icon2,
-    required VoidCallback? onTap2,
-  }) {
+  Widget _navButtons(
+      {required String label1,
+      required IconData icon1,
+      required VoidCallback? onTap1,
+      required String label2,
+      required IconData icon2,
+      required VoidCallback? onTap2}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

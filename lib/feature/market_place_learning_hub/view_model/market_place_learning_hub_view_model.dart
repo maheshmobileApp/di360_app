@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/get_course_registered_users.dart'
@@ -9,10 +10,13 @@ import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_professional_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/get_supplier_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/repository/market_place_course_reposiotry_impl.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MarketPlaceLearningHubViewModel extends ChangeNotifier
     with ValidationMixins {
@@ -338,8 +342,9 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   bool isCourseDetailRegisteredCheck(
       List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
-        print("Current User ID: $currentUserId");
-        print("Registered Users: ${courseRegisteredUsers?.map((u) => u.fromId).toList()}");
+    print("Current User ID: $currentUserId");
+    print(
+        "Registered Users: ${courseRegisteredUsers?.map((u) => u.fromId).toList()}");
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
   }
@@ -421,8 +426,21 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         );
       }
       _advance();
+      if (areAllSectionsCompleted() &&
+          (regUser.quizDetails == null || regUser.quizDetails!.isEmpty)) {
+        showCourseCompletedDialog(context, () async {
+          await quizSubmitted(context, [], isQuizEmpty: true);
+          await context
+              .read<MyLearningHubViewModel>()
+              .getCoursesWithMyRegistrations(context);
+          scaffoldMessenger("You have successfully completed the course");
+          navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+          navigationService.navigateTo(RouteList.myLearningHubScreen);
+        });
+      }
     }
     Loaders.circularHideLoader(context);
+
     notifyListeners();
   }
 
@@ -444,14 +462,15 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     return sections.every((s) => isSectionCompleted(s.id));
   }
 
-  Future<dynamic> quizSubmitted(BuildContext context,
-      List<Map<String, dynamic>> quizAnswersPayload) async {
+  Future<dynamic> quizSubmitted(
+      BuildContext context, List<Map<String, dynamic>> quizAnswersPayload,
+      {bool? isQuizEmpty}) async {
     final quizResult = submitQuiz();
     final score = quizResult?.$1 ?? 0;
     final res = await repo.markQuizCompleted({
       "id": courseDetails?.courseRegisteredUsers?.firstOrNull?.id ?? '',
       "fields": {
-        "quiz_status": "COMPLETED",
+        "quiz_status": isQuizEmpty == true ? "Not Attempted" : "COMPLETED",
         "status": "COMPLETED",
         "quiz_answers": quizAnswersPayload,
         "quiz_score": score.toStringAsFixed(2),
