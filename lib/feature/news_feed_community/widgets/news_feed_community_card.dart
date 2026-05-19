@@ -89,12 +89,10 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     final newsFeedCommunityViewModel =
         Provider.of<NewsFeedCommunityViewModel>(context);
     final String shareId = _fetchId(newsfeeds);
+    newsFeedCommunityViewModel.getUserId();
     final currentUserId = newsFeedCommunityViewModel.userID ?? '';
 
-    final isSameUser = newsfeeds?.userId == currentUserId ||
-        newsfeeds?.dentalPracticeId == currentUserId ||
-        newsfeeds?.dentalProfessionalId == currentUserId ||
-        newsfeeds?.dentalSupplierId == currentUserId;
+    final isSameUser = newsfeeds?.userId == currentUserId;
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
