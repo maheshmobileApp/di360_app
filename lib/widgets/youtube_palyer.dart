@@ -10,24 +10,44 @@ _VideoType _detectVideoType(String url) {
   if (url.contains('youtube.com') || url.contains('youtu.be')) {
     return _VideoType.youtube;
   }
-  if (url.contains('loom.com') || url.contains('vimeo.com')) {
+  // Google Search URL with embedded YouTube video ID
+  if (url.contains('google.com/search') && url.contains('vid:')) {
+    return _VideoType.youtube;
+  }
+  if (url.contains('drive.google.com') ||
+      url.contains('loom.com') ||
+      url.contains('vimeo.com')) {
     return _VideoType.webview;
   }
   return _VideoType.unknown;
 }
 
 String _toEmbedUrl(String url) {
-  // Loom: https://www.loom.com/share/ID → https://www.loom.com/embed/ID
   if (url.contains('loom.com/share/')) {
     return url.replaceFirst('/share/', '/embed/');
   }
-  // Vimeo: https://vimeo.com/ID?... → https://player.vimeo.com/video/ID
   if (url.contains('vimeo.com')) {
     final uri = Uri.parse(url);
     final id = uri.pathSegments.firstWhere((s) => s.isNotEmpty, orElse: () => '');
     return 'https://player.vimeo.com/video/$id';
   }
+  // Google Drive: .../file/d/FILE_ID/view → .../file/d/FILE_ID/preview
+  if (url.contains('drive.google.com')) {
+    final uri = Uri.parse(url);
+    final segments = uri.pathSegments;
+    final dIndex = segments.indexOf('d');
+    if (dIndex != -1 && dIndex + 1 < segments.length) {
+      final fileId = segments[dIndex + 1];
+      return 'https://drive.google.com/file/d/$fileId/preview';
+    }
+  }
   return url;
+}
+
+/// Extracts YouTube video ID from a Google Search URL containing vid:ID
+String? _extractYoutubeIdFromGoogleSearch(String url) {
+  final match = RegExp(r'vid:([A-Za-z0-9_-]{11})').firstMatch(url);
+  return match?.group(1);
 }
 
 class LazyYoutubePlayer extends StatefulWidget {
@@ -71,7 +91,10 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     _embedUrl = _toEmbedUrl(url);
     _videoId = '';
     if (_type == _VideoType.youtube) {
-      _videoId = YoutubePlayer.convertUrlToId(url) ?? '';
+      // Try standard YouTube URL first, then Google Search embedded vid
+      _videoId = YoutubePlayer.convertUrlToId(url) ??
+          _extractYoutubeIdFromGoogleSearch(url) ??
+          '';
       if (_videoId.isNotEmpty) {
         _controller = YoutubePlayerController(
           initialVideoId: _videoId,
