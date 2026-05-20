@@ -75,6 +75,7 @@ class EventDayDataWidget extends StatelessWidget with BaseContextHelpers {
             //     ],
             //   ),
             // ),
+            if (images != null && images!.isNotEmpty)
             GalleryImgWidget(
                 imageUrls: images?.map((img) => img.url ?? "").toList() ?? [])
           ],

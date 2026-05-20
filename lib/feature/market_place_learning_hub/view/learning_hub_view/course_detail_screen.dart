@@ -302,6 +302,17 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                 images: entry.value.images))
                       ],
                       addVertical(12),
+                      if ((courseDetails?.learningObjectives ?? "").isNotEmpty)
+                        CourseDescriptionWidget(
+                          title: 'Learning Objectives',
+                          description: courseDetails?.learningObjectives ?? "",
+                        ),
+                      addVertical(12),
+                      if ((courseDetails?.topicsIncluded ?? "").isNotEmpty)
+                        CourseDescriptionWidget(
+                          title: 'Topics Included',
+                          description: courseDetails?.topicsIncluded ?? "",
+                        ),
                       if (galleryUrls.isNotEmpty)
                         GalleryImgWidget(
                             title: "Gallery", imageUrls: galleryUrls),
