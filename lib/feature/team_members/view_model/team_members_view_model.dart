@@ -20,6 +20,14 @@ class TeamMembersViewModel extends ChangeNotifier {
 
   bool editMode = false;
   String editedId = "";
+  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  String? selectedPhoneCode = "AU (+61)";
+
+  void setPhoneCode(String value) {
+    selectedPhoneCode = value;
+    notifyListeners();
+  }
+
   void setEditMode(bool val) {
     editMode = val;
     notifyListeners();
@@ -176,7 +184,8 @@ class TeamMembersViewModel extends ChangeNotifier {
   editTeamMemberData(ClientsByPk? data) {
     userNameController.text = data?.name ?? "";
     emailController.text = data?.email ?? "";
-    phoneController.text = data?.phone ?? "";
+    phoneController.text = (data?.phone?.length ?? 0) > 8 ? data!.phone!.substring(8) : "";
+    setPhoneCode(data?.phone?.substring(0, 8) ?? "AU (+61)");
     passwordController.text = data?.password ?? "";
     confirmPasswordController.text = data?.password ?? "";
 
@@ -227,7 +236,7 @@ class TeamMembersViewModel extends ChangeNotifier {
     final variables = {
       "signUpObj": {
         "email": emailController.text,
-        "phone": phoneController.text,
+        "phone": '$selectedPhoneCode${phoneController.text}',
         "password": passwordController.text,
         "name": userNameController.text,
         "sub_type": "SUB_SUPPLIER",
@@ -320,7 +329,7 @@ class TeamMembersViewModel extends ChangeNotifier {
       "id": editedId,
       "fields": {
         "email": emailController.text,
-        "phone": phoneController.text,
+        "phone": '$selectedPhoneCode${phoneController.text}',
         "password": passwordController.text,
         "name": userNameController.text,
         "sub_type": "SUB_SUPPLIER",

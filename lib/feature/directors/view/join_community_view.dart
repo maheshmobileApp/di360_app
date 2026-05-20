@@ -66,11 +66,11 @@ class JoinCommunityView extends StatelessWidget
                     InputTextField(
                       isRequired: true,
                       title: "Phone",
-                      hintText: "Enter phone number",
+                      hintText: "4XXXXXXXX",
                       keyboardType: TextInputType.phone,
                       maxLength: 9,
                       controller: directorVM.phoneController,
-                      validator: validateContactPhoneNumber,
+                      validator: validateAustralianMobileNumber,
                       prefixIcon: PhonePrefixDropdown(
                         value: directorVM.selectedPhoneCode ?? "",
                         items: directorVM.phoneCodeList,

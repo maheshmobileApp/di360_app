@@ -689,7 +689,16 @@ class CommunityViewModel extends ChangeNotifier {
     selectedContactType = data?.contactType == "MEMBER" ? "Member" : "Partner";
     contactEmailController.text = data?.email ?? "";
     final phone = data?.phone ?? "";
-    contactPhoneController.text = phone.substring(3);
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      contactPhoneController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      contactPhoneController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      contactPhoneController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
   }
 
   clearContactDetails() {
