@@ -65,32 +65,27 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage.init();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
+
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
 
-    
     await NotificationService.initialize();
     await DownloadNotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
     await NotificationService.captureInitialMessage();
-  } catch (e) {
+  } catch (e) {}
 
-  }
-  
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
   runApp(const MyApp());
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   DeepLinkService.init();
   configLoading();
 }
@@ -109,7 +104,6 @@ void configLoading() {
     ..maskColor = Colors.blue.withOpacity(0.5)
     ..userInteractions = true
     ..dismissOnTap = false;
-    
 }
 
 class MyApp extends StatelessWidget {
@@ -160,7 +154,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CampaignViewModel()),
         ChangeNotifierProvider(create: (_) => TeamMembersViewModel()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
-        ChangeNotifierProvider(create: (_) => MarketPlaceLearningHubViewModel()),
+        ChangeNotifierProvider(
+            create: (_) => MarketPlaceLearningHubViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

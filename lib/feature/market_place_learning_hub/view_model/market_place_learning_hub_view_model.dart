@@ -270,6 +270,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   Future<void> getCourseDetails(BuildContext context, String courseId) async {
     Loaders.circularShowLoader(context);
+    currentUserId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getCourseDetails(courseId);
     if (res != null) {
       courseDetails = res;
@@ -342,9 +343,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   bool isCourseDetailRegisteredCheck(
       List<CourseDetailRegisteredUsers>? courseRegisteredUsers) {
-    print("Current User ID: $currentUserId");
-    print(
-        "Registered Users: ${courseRegisteredUsers?.map((u) => u.fromId).toList()}");
+    print("currentUserId: $currentUserId");
     return courseRegisteredUsers?.any((user) => user.fromId == currentUserId) ??
         false;
   }

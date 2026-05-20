@@ -155,7 +155,8 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                             return RegisterCourseCard(
                               courseData: courseData,
                               onDownloadTap: () {
-                                myLearningHubVM.certificateDownload(context, courseData);
+                                myLearningHubVM.certificateDownload(
+                                    context, courseData);
                               },
                               onViewCourseTap: () async {
                                 await courseListingVM.getCourseDetails(
@@ -166,9 +167,8 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                                 await courseListingVM.getCourseDetails(
                                     context, courseData.id ?? "");
 
-                                navigationService.navigateTo(
-                                  RouteList.courseDetailScreen,
-                                );
+                                navigationService
+                                    .navigateTo(RouteList.courseDetailScreen);
                               },
                             );
                           },

@@ -10,7 +10,6 @@ _VideoType _detectVideoType(String url) {
   if (url.contains('youtube.com') || url.contains('youtu.be')) {
     return _VideoType.youtube;
   }
-  // Google Search URL with embedded YouTube video ID
   if (url.contains('google.com/search') && url.contains('vid:')) {
     return _VideoType.youtube;
   }
@@ -31,7 +30,6 @@ String _toEmbedUrl(String url) {
     final id = uri.pathSegments.firstWhere((s) => s.isNotEmpty, orElse: () => '');
     return 'https://player.vimeo.com/video/$id';
   }
-  // Google Drive: .../file/d/FILE_ID/view → .../file/d/FILE_ID/preview
   if (url.contains('drive.google.com')) {
     final uri = Uri.parse(url);
     final segments = uri.pathSegments;
@@ -44,7 +42,6 @@ String _toEmbedUrl(String url) {
   return url;
 }
 
-/// Extracts YouTube video ID from a Google Search URL containing vid:ID
 String? _extractYoutubeIdFromGoogleSearch(String url) {
   final match = RegExp(r'vid:([A-Za-z0-9_-]{11})').firstMatch(url);
   return match?.group(1);
@@ -62,6 +59,7 @@ class LazyYoutubePlayer extends StatefulWidget {
 
 class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   bool _isPlayerVisible = false;
+  bool _isFullScreen = false;
   YoutubePlayerController? _controller;
   String _videoId = '';
   _VideoType _type = _VideoType.unknown;
@@ -81,6 +79,7 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
       _controller?.dispose();
       _controller = null;
       _isPlayerVisible = false;
+      _isFullScreen = false;
       _init(widget.youtubeUrl);
       setState(() {});
     }
@@ -91,7 +90,6 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     _embedUrl = _toEmbedUrl(url);
     _videoId = '';
     if (_type == _VideoType.youtube) {
-      // Try standard YouTube URL first, then Google Search embedded vid
       _videoId = YoutubePlayer.convertUrlToId(url) ??
           _extractYoutubeIdFromGoogleSearch(url) ??
           '';
@@ -108,21 +106,48 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     if (_controller?.value.playerState == PlayerState.ended) {
       _controller?.pause();
     }
-    if (_controller?.value.isFullScreen == true) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    if ((_controller?.value.isFullScreen ?? false) && !_isFullScreen) {
+      _isFullScreen = true;
+      _controller?.toggleFullScreenMode();
+      _enterFullScreen();
     }
+  }
+
+  void _enterFullScreen() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FullScreenYoutubePlayer(
+          controller: _controller!,
+          onClose: () {
+            Navigator.of(context).pop();
+            _exitFullScreen();
+          },
+        ),
+      ),
+    ).then((_) {
+      _isFullScreen = false;
+      _exitFullScreen();
+    });
+  }
+
+  void _exitFullScreen() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   @override
   void dispose() {
     _controller?.removeListener(_playerListener);
     _controller?.dispose();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    _exitFullScreen();
     super.dispose();
   }
 
@@ -199,7 +224,6 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
           : _placeholder();
     }
 
-    // Loom / Vimeo via InAppWebView
     return _isPlayerVisible
         ? SizedBox(
             height: 220,
@@ -213,5 +237,41 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
             ),
           )
         : _placeholder();
+  }
+}
+
+class FullScreenYoutubePlayer extends StatelessWidget {
+  final YoutubePlayerController controller;
+  final VoidCallback onClose;
+
+  const FullScreenYoutubePlayer({
+    Key? key,
+    required this.controller,
+    required this.onClose,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Center(
+            child: YoutubePlayer(
+              controller: controller,
+              showVideoProgressIndicator: true,
+            ),
+          ),
+          Positioned(
+            top: 16,
+            left: 16,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: onClose,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
