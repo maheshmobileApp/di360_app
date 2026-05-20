@@ -46,14 +46,14 @@ void showTestResultDialog(BuildContext context, double scored, bool passed,
                   style: TextStyles.regular1(color: Colors.grey)),
               const SizedBox(height: 20),
               Text(
-                passed
+                scored == 100
                     ? "Congratulations! You scored full marks."
-                    : "You need ${passPercentage.toStringAsFixed(0)}% to pass the test and receive the certificate.\n\nYou did not meet the passing criteria. Please try again.",
+                    : scored >= passPercentage
+                        ? "Congratulations! You scored ${scored.toStringAsFixed(0)}%."
+                        : "You need ${passPercentage.toStringAsFixed(0)}% to pass the test and receive the certificate.\n\nYou did not meet the passing criteria. Please try again.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: passed ? Colors.green : Colors.red,
-                  fontSize: 16,
-                ),
+                    color: scored >= passPercentage ? Colors.green : Colors.red, fontSize: 16),
               ),
               const SizedBox(height: 25),
               const Divider(),
@@ -93,7 +93,8 @@ void showTestResultDialog(BuildContext context, double scored, bool passed,
                                   .read<MyLearningHubViewModel>()
                                   .getCoursesWithMyRegistrations(context);
                               Loaders.circularHideLoader(context);
-                              scaffoldMessenger("You have successfully completed the course");
+                              scaffoldMessenger(
+                                  "You have successfully completed the course");
 
                               navigationService
                                   .pushNamedAndRemoveUntil(RouteList.dashBoard);

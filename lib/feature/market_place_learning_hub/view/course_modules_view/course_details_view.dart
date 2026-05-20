@@ -72,6 +72,7 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
                               MaterialPageRoute(
                                   builder: (_) => const QuizScreen()),
                             );
+                            vm.retakeQuiz = false;
                           },
                           child: const Text("Take Quiz",
                               style: TextStyle(
