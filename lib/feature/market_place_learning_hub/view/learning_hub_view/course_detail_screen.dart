@@ -85,7 +85,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
       backgroundColor: AppColors.greyLightcolor,
       bottomNavigationBar: (courseDetails?.status == "APPROVE")
           ? Column(
-              mainAxisSize: MainAxisSize.min, // 🔑 prevent unbounded height
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Divider(height: 1),
                 Padding(

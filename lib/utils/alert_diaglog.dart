@@ -358,3 +358,70 @@ Future<void> showReportSuccessPopup(BuildContext context) async {
     },
   );
 }
+
+void showCourseCompletedDialog(BuildContext context, Function()? onPressed) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(22)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text("Course Completed",
+                    style: TextStyles.bold3(color: AppColors.primaryColor)),
+                InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    borderRadius: BorderRadius.circular(50),
+                    child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey.shade300)),
+                        child: Icon(Icons.close,
+                            size: 28, color: AppColors.black)))
+              ]),
+              SizedBox(height: 20),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Congratulations on completing the course. "
+                    "Your certificate is now available for download.",
+                    style: TextStyles.medium2(color: AppColors.black),
+                  )),
+              SizedBox(height: 30),
+              Divider(color: Colors.grey.shade300),
+              SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: SizedBox(
+                  height: 40,
+                  child: ElevatedButton(
+                      onPressed: onPressed,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      child: Text("Claim Certificate",
+                          style: TextStyles.medium3())),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
