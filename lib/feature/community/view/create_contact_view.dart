@@ -43,11 +43,11 @@ class _CreateCategoryViewState extends State<CreateContactView>
                   ),
                   InputTextField(
                     title: "Phone",
-                    hintText: "Enter phone number",
+                    hintText: "4XXXXXXXX",
                     keyboardType: TextInputType.phone,
                     maxLength: 9,
                     controller: viewModel.contactPhoneController,
-                    validator: validateContactPhoneNumber,
+                    validator: validateAustralianMobileNumber,
                     prefixIcon: PhonePrefixDropdown(
                       value: viewModel.selectedPhoneCode??"",
                       items: viewModel.phoneCodeList,

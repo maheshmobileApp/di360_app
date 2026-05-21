@@ -87,10 +87,13 @@ class RegisteredUserCard extends StatelessWidget {
                     Icon(Icons.email,
                         size: 16, color: AppColors.bottomNavUnSelectedColor),
                     const SizedBox(width: 4),
-                    Text(
-                      userMail,
-                      style: TextStyles.regular2(
-                          color: AppColors.bottomNavUnSelectedColor),
+                    Expanded(
+                      child: Text(
+                        userMail,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyles.regular2(
+                            color: AppColors.bottomNavUnSelectedColor),
+                      ),
                     ),
                   ],
                 ),

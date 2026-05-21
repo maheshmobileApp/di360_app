@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:di360_flutter/configuration/app_config.dart';
 import 'package:dio/dio.dart';
 import 'package:hasura_connect/hasura_connect.dart';
@@ -84,6 +85,27 @@ class HttpService {
       return null;
     } catch (e, s) {
       print("Post request error: $e, $s");
+      return null;
+    }
+  }
+
+  Future<dynamic> downloadFile(String url, Map<String, dynamic> data) async {
+    try {
+      final result = await _dio.post(
+        url,
+        data: data,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.bytes,
+        ),
+      );
+      if (result.statusCode == 200 || result.statusCode == 201) {
+        return result.data as List<int>;
+      }
+      print("downloadFile failed with status: ${result.statusCode}");
+      return null;
+    } catch (e, s) {
+      print("downloadFile error: $e, $s");
       return null;
     }
   }

@@ -7,8 +7,8 @@ import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
@@ -21,8 +21,11 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
+import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:html/parser.dart' as htmlParser;
 import 'package:provider/provider.dart';
 
 class NewsFeedCommunityView extends StatefulWidget {
@@ -67,11 +70,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         _scrollController.position.maxScrollExtent - 100) {
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      if (viewModel.applyFilter) {
+      viewModel.getAllNewsFeeds(context, loadMore: true);
+      /*if (viewModel.applyFilter) {
         viewModel.filterNewsFeeds(context, loadMore: true);
       } else {
         viewModel.getAllNewsFeeds(context, loadMore: true);
-      }
+      }*/
     }
   }
 
@@ -85,8 +89,11 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
   Widget build(BuildContext context) {
     return Consumer<NewsFeedCommunityViewModel>(
       builder: (context, viewModel, child) {
-        final courseListingVM = Provider.of<CourseListingViewModel>(context);
+        final courseListingVM =
+            Provider.of<MarketPlaceLearningHubViewModel>(context);
         final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
+        final newsFeedCommunityVM =
+            Provider.of<NewsFeedCommunityViewModel>(context);
         final communityVM = Provider.of<CommunityViewModel>(context);
         final dashboardVM = Provider.of<DashBoardViewModel>(context);
         final joinRequests = viewModel.newsFeedCommunityData?.newsfeeds;
@@ -119,7 +126,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               borderRadius: BorderRadius.circular(12),
                             ),
                             items: communityVM
-                                    .newsFeedCategoriesData?.newsfeedCategories
+                                    .filterCatgoriesData?.newsfeedCategories
                                     ?.map((v) => PopupMenuItem(
                                           value: v,
                                           child: Text(
@@ -143,18 +150,37 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                     .toList() ??
                                 [],
                           ).then((value) {
-                            if (value != null) {
-                              viewModel.setSelectedCategoryId(
-                                  (value as dynamic)?.id);
-                              viewModel.filterNewsFeeds(context);
-                            }
+                            viewModel.updateApplyFilter(true);
 
-                            /*if ((value as dynamic)?.categoryName == 'Catalog') {
-                        newsFeedVM.basedOnCategoriesGetFeeds(context, true, '');
-                      } else {
-                        newsFeedVM.basedOnCategoriesGetFeeds(
-                            context, false, value?.id ?? '');
-                      }*/
+                            if (value != null) {
+                              final categoryName =
+                                  (value as dynamic)?.categoryName;
+
+                              final Map<String, String> feedTypeMap = {
+                                'Catalogue': 'CATALOGUE',
+                                'Jobs': 'JOBS',
+                                'Learning Hub': 'LEARNHUB',
+                              };
+
+                              viewModel.feedTypeUpdate(
+                                  feedTypeMap[categoryName] ?? '');
+                              viewModel.setSelectedCategoryId(
+                                  categoryName != "Catalogue" &&
+                                          categoryName != "Jobs" &&
+                                          categoryName != "Learning Hub"
+                                      ? (value as dynamic)?.id
+                                      : "");
+
+                              viewModel.getAllNewsFeeds(
+                                context,
+                                feedType: viewModel.feedType,
+                                categoryType: categoryName != "Catalogue" &&
+                                        categoryName != "Jobs" &&
+                                        categoryName != "Learning Hub"
+                                    ? viewModel.selectedCategoryId
+                                    : null,
+                              );
+                            }
                           });
                         },
                         child: SvgPicture.asset(ImageConst.filter,
@@ -165,6 +191,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         child: GestureDetector(
                             onTap: () {
                               viewModel.updateApplyFilter(false);
+                              viewModel.initialStateData();
                               viewModel.getAllNewsFeeds(context);
                               viewModel.setSelectedCategoryId("");
                             },
@@ -214,7 +241,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         viewModel.getAllNewsFeeds(context);
                       },
                     ),
-                  (type == 'PROFESSIONAL')
+                  (type == UserRole.professional.value)
                       ? SizedBox.shrink()
                       : communityStatusWidget(viewModel),
                   (joinRequests?.length != 0 && joinRequests != null)
@@ -239,7 +266,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               }
                               final newsItem = joinRequests[index];
                               return NewsFeedCommunityCard(
-                                  index : index,
+                                  index: index,
                                   newsfeeds: newsItem,
                                   course: newsItem.courses ?? [],
                                   feedType: newsItem.feedType ?? "",
@@ -340,7 +367,11 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         viewModel.setEditNewsFeedId(
                                             newsItem.id ?? "");
                                         viewModel.descriptionController.text =
-                                            newsItem.description ?? "";
+                                            htmlParser
+                                                    .parse(newsItem.description)
+                                                    .body
+                                                    ?.text ??
+                                                '';
                                         viewModel.videoLinkController.text =
                                             newsItem.videoUrl ?? "";
                                         viewModel.websiteLinkController.text =
@@ -383,6 +414,29 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             newsItem.postImage ?? [];
                                         downloadAllFiles(context, mediaList);
 
+                                        break;
+                                      case "Hide Post":
+                                        await viewModel.newsFeedCommunityAction(
+                                            context, newsItem.id ?? "", "HIDE");
+                                        showReportSuccessPopup(context);
+                                        break;
+                                      case "Report Post":
+                                        showReportBottomSheet(context, () {
+                                          navigationService.goBack();
+                                          viewModel.newsFeedCommunityAction(
+                                              context,
+                                              newsItem.id ?? "",
+                                              "REPORT");
+                                        }, newsFeedCommunityVM);
+                                        scaffoldMessenger(
+                                            "Post Reported Successfully");
+                                        break;
+                                      case "Block Profile":
+                                        await viewModel.newsFeedCommunityAction(
+                                            context,
+                                            newsItem.id ?? "",
+                                            "BLOCK");
+                                        showReportSuccessPopup(context);
                                         break;
                                     }
                                   });
@@ -474,6 +528,96 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           );
         },
       ),
+    );
+  }
+
+  void showReportBottomSheet(BuildContext context, Function()? sumbitedAction,
+      NewsFeedCommunityViewModel viewModel) {
+    final _formKey = GlobalKey<FormState>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      showDragHandle: false,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 10,
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 12),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Report',
+                                style: TextStyles.bold5(
+                                    color: AppColors.primaryColor)),
+                            InkWell(
+                                onTap: () => navigationService.goBack(),
+                                child: Icon(Icons.close,
+                                    color: AppColors.primaryColor))
+                          ]),
+                      SizedBox(height: 20),
+                      Text("Why are you reporting this post?",
+                          style: TextStyles.semiBold(
+                              color: AppColors.black, fontSize: 16)),
+                      SizedBox(height: 10),
+                      Text(
+                          "If someone is in immediate danger, get help before reporting. Your report is confidential and won’t be shared.",
+                          style: TextStyles.regular2()),
+                      SizedBox(height: 10),
+                      InputTextField(
+                        controller: viewModel.reportText,
+                        title: '',
+                        hintText: 'Describe the issue',
+                        maxLines: 5,
+                      ),
+                      SizedBox(height: 40),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AppButton(
+                              width: 150,
+                              height: 45,
+                              radius: 12,
+                              text: 'Cancel',
+                              onTap: () => navigationService.goBack(),
+                            ),
+                            AppButton(
+                                width: 150,
+                                height: 45,
+                                radius: 12,
+                                text: 'Submit',
+                                onTap: sumbitedAction)
+                          ])
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

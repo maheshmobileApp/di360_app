@@ -1,6 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+enum _VideoType { youtube, webview, unknown }
+
+_VideoType _detectVideoType(String url) {
+  if (url.isEmpty) return _VideoType.unknown;
+  if (url.contains('youtube.com') || url.contains('youtu.be')) {
+    return _VideoType.youtube;
+  }
+  if (url.contains('google.com/search') && url.contains('vid:')) {
+    return _VideoType.youtube;
+  }
+  if (url.contains('drive.google.com') ||
+      url.contains('loom.com') ||
+      url.contains('vimeo.com')) {
+    return _VideoType.webview;
+  }
+  return _VideoType.unknown;
+}
+
+String _toEmbedUrl(String url) {
+  if (url.contains('loom.com/share/')) {
+    return url.replaceFirst('/share/', '/embed/');
+  }
+  if (url.contains('vimeo.com')) {
+    final uri = Uri.parse(url);
+    final id = uri.pathSegments.firstWhere((s) => s.isNotEmpty, orElse: () => '');
+    return 'https://player.vimeo.com/video/$id';
+  }
+  if (url.contains('drive.google.com')) {
+    final uri = Uri.parse(url);
+    final segments = uri.pathSegments;
+    final dIndex = segments.indexOf('d');
+    if (dIndex != -1 && dIndex + 1 < segments.length) {
+      final fileId = segments[dIndex + 1];
+      return 'https://drive.google.com/file/d/$fileId/preview';
+    }
+  }
+  return url;
+}
+
+String? _extractYoutubeIdFromGoogleSearch(String url) {
+  final match = RegExp(r'vid:([A-Za-z0-9_-]{11})').firstMatch(url);
+  return match?.group(1);
+}
 
 class LazyYoutubePlayer extends StatefulWidget {
   final String youtubeUrl;
@@ -14,55 +59,142 @@ class LazyYoutubePlayer extends StatefulWidget {
 
 class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   bool _isPlayerVisible = false;
+  bool _isFullScreen = false;
   YoutubePlayerController? _controller;
-  late String _videoId;
+  String _videoId = '';
+  _VideoType _type = _VideoType.unknown;
+  String _embedUrl = '';
 
   @override
   void initState() {
     super.initState();
-    _videoId = YoutubePlayer.convertUrlToId(widget.youtubeUrl) ?? '';
-    if (_videoId.isNotEmpty) {
-      _controller = YoutubePlayerController(
-        initialVideoId: _videoId,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-        ),
-      )..addListener(_fullScreenListener);
+    _init(widget.youtubeUrl);
+  }
+
+  @override
+  void didUpdateWidget(LazyYoutubePlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.youtubeUrl != widget.youtubeUrl) {
+      _controller?.removeListener(_playerListener);
+      _controller?.dispose();
+      _controller = null;
+      _isPlayerVisible = false;
+      _isFullScreen = false;
+      _init(widget.youtubeUrl);
+      setState(() {});
     }
   }
 
-  void _fullScreenListener() {
-    if (_controller?.value.isFullScreen == true) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]);
+  void _init(String url) {
+    _type = _detectVideoType(url);
+    _embedUrl = _toEmbedUrl(url);
+    _videoId = '';
+    if (_type == _VideoType.youtube) {
+      _videoId = YoutubePlayer.convertUrlToId(url) ??
+          _extractYoutubeIdFromGoogleSearch(url) ??
+          '';
+      if (_videoId.isNotEmpty) {
+        _controller = YoutubePlayerController(
+          initialVideoId: _videoId,
+          flags: const YoutubePlayerFlags(autoPlay: true),
+        )..addListener(_playerListener);
+      }
     }
+  }
+
+  void _playerListener() {
+    if (_controller?.value.playerState == PlayerState.ended) {
+      _controller?.pause();
+    }
+    if ((_controller?.value.isFullScreen ?? false) && !_isFullScreen) {
+      _isFullScreen = true;
+      _controller?.toggleFullScreenMode();
+      _enterFullScreen();
+    }
+  }
+
+  void _enterFullScreen() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FullScreenYoutubePlayer(
+          controller: _controller!,
+          onClose: () {
+            Navigator.of(context).pop();
+            _exitFullScreen();
+          },
+        ),
+      ),
+    ).then((_) {
+      _isFullScreen = false;
+      _exitFullScreen();
+    });
+  }
+
+  void _exitFullScreen() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   @override
   void dispose() {
-    if (_videoId.isNotEmpty && _controller != null) {
-      _controller!.removeListener(_fullScreenListener);
-      _controller!.dispose();
-    }
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    _controller?.removeListener(_playerListener);
+    _controller?.dispose();
+    _exitFullScreen();
     super.dispose();
   }
 
-  void _loadPlayer() {
-    setState(() => _isPlayerVisible = true);
+  Widget _placeholder() {
+    final thumbnailUrl = _type == _VideoType.youtube && _videoId.isNotEmpty
+        ? 'https://img.youtube.com/vi/$_videoId/hqdefault.jpg'
+        : null;
+
+    return GestureDetector(
+      onTap: () => setState(() => _isPlayerVisible = true),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          thumbnailUrl != null
+              ? Image.network(
+                  thumbnailUrl,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey[300],
+                  ),
+                )
+              : Container(
+                  width: double.infinity,
+                  height: 200,
+                  color: Colors.grey[300],
+                ),
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.play_arrow, size: 40, color: Colors.white),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_videoId.isEmpty || widget.youtubeUrl.isEmpty) {
+    if (_type == _VideoType.unknown || widget.youtubeUrl.isEmpty) {
       return Container(
         width: double.infinity,
         height: 200,
@@ -73,21 +205,73 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
       );
     }
 
-    return _isPlayerVisible && _controller != null
-        ? YoutubePlayer(
-            controller: _controller!,
-            showVideoProgressIndicator: true,
-          )
-        : Container(
-            width: double.infinity,
-            height: 200,
-            color: Colors.grey[300],
-            child: GestureDetector(
-              onTap: _loadPlayer,
-              child: const Center(
-                child: Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
+    if (_type == _VideoType.youtube) {
+      if (_videoId.isEmpty) {
+        return Container(
+          width: double.infinity,
+          height: 200,
+          color: Colors.grey[300],
+          child: const Center(
+            child: Icon(Icons.error, size: 48, color: Colors.grey),
+          ),
+        );
+      }
+      return _isPlayerVisible && _controller != null
+          ? YoutubePlayer(
+              controller: _controller!,
+              showVideoProgressIndicator: true,
+            )
+          : _placeholder();
+    }
+
+    return _isPlayerVisible
+        ? SizedBox(
+            height: 220,
+            child: InAppWebView(
+              initialUrlRequest: URLRequest(url: WebUri(_embedUrl)),
+              initialSettings: InAppWebViewSettings(
+                mediaPlaybackRequiresUserGesture: false,
+                allowsInlineMediaPlayback: true,
+                javaScriptEnabled: true,
               ),
             ),
-          );
+          )
+        : _placeholder();
+  }
+}
+
+class FullScreenYoutubePlayer extends StatelessWidget {
+  final YoutubePlayerController controller;
+  final VoidCallback onClose;
+
+  const FullScreenYoutubePlayer({
+    Key? key,
+    required this.controller,
+    required this.onClose,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Center(
+            child: YoutubePlayer(
+              controller: controller,
+              showVideoProgressIndicator: true,
+            ),
+          ),
+          Positioned(
+            top: 16,
+            left: 16,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: onClose,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/news_feed/view/images_full_view.dart';
 import 'package:di360_flutter/feature/news_feed/view/inline_video_play.dart';
 import 'package:di360_flutter/feature/news_feed/view/pdf_word_viewr.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
+import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
@@ -53,40 +54,45 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
   final int index;
 
-  NewsFeedCommunityCard({
-    super.key,
-    required this.id,
-    required this.logoUrl,
-    required this.feedUserRole,
-    required this.comments,
-    required this.companyName,
-    required this.courseTitle,
-    required this.description,
-    required this.status,
-    required this.types,
-    required this.imageUrls,
-    required this.createdAt,
-    required this.registeredCount,
-    this.course,
-    this.job,
-    this.onTapRegistered,
-    this.onMenuAction,
-    this.onDetailView,
-    required this.chipTitle,
-    this.onLikeTap,
-    this.onCommentTap,
-    required this.likes,
-    required this.feedType,
-    this.isLiked = false,
-    this.newsfeeds,
-    required this.index
-  }) {}
+  NewsFeedCommunityCard(
+      {super.key,
+      required this.id,
+      required this.logoUrl,
+      required this.feedUserRole,
+      required this.comments,
+      required this.companyName,
+      required this.courseTitle,
+      required this.description,
+      required this.status,
+      required this.types,
+      required this.imageUrls,
+      required this.createdAt,
+      required this.registeredCount,
+      this.course,
+      this.job,
+      this.onTapRegistered,
+      this.onMenuAction,
+      this.onDetailView,
+      required this.chipTitle,
+      this.onLikeTap,
+      this.onCommentTap,
+      required this.likes,
+      required this.feedType,
+      this.isLiked = false,
+      this.newsfeeds,
+      required this.index}) {}
 
   @override
   Widget build(BuildContext context) {
     final feedTypeEnum = feedType;
     final catelougeViewModel = Provider.of<CatalogueViewModel>(context);
+    final newsFeedCommunityViewModel =
+        Provider.of<NewsFeedCommunityViewModel>(context);
     final String shareId = _fetchId(newsfeeds);
+    newsFeedCommunityViewModel.getUserId();
+    final currentUserId = newsFeedCommunityViewModel.userID ?? '';
+
+    final isSameUser = newsfeeds?.userId == currentUserId;
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -108,15 +114,15 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// Logo + Title + Menu
-                     _tagWidget(
-                            newsfeeds?.feedType ?? '',
-                            newsfeeds?.dentalSupplier?.businessName ??
-                                newsfeeds?.dentalPractice?.businessName ??
-                                newsfeeds?.dentalProfessional?.name ??
-                                '',
-                            newsfeeds?.courses?.isNotEmpty == true
-                                ? newsfeeds?.courses?.first.type ?? ''
-                                : ""),
+                    _tagWidget(
+                        newsfeeds?.feedType ?? '',
+                        newsfeeds?.dentalSupplier?.businessName ??
+                            newsfeeds?.dentalPractice?.businessName ??
+                            newsfeeds?.dentalProfessional?.name ??
+                            '',
+                        newsfeeds?.courses?.isNotEmpty == true
+                            ? newsfeeds?.courses?.first.type ?? ''
+                            : ""),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -127,21 +133,18 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                             createdAt,
                           ),
                         ),
-                        if (type == UserRole.supplier.value ||
+                        /*if (type == UserRole.supplier.value ||
                             (type == UserRole.professional.value &&
                                 feedUserRole != UserRole.supplier.value &&
-                                newsfeeds?.userId ==
-                                    LocalStorage.getStringVal(
-                                        LocalStorageConst.userId)))
+                                isSameUser))*/
                           Row(
                             children: [
-                              _menuWidget(context, type, imageUrls),
+                              _menuWidget(context, type, imageUrls, isSameUser),
                             ],
                           ),
                       ],
                     ),
 
-                    
                     const SizedBox(height: 8),
 
                     (imageUrls?.isNotEmpty ?? false)
@@ -549,7 +552,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             height: 40,
             width: 100,
             onTap: () async {
-              await catalogueVM.getCatalogDetails(context, catalogueId ?? '');
+              await catalogueVM.getCatalogDetails(context, catalogueId);
               final id =
                   catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
               await catalogueVM.getReletedCatalog(context, id);
@@ -817,8 +820,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _menuWidget(
-      BuildContext context, String type, List<PostImage>? imageUrls) {
+  Widget _menuWidget(BuildContext context, String type,
+      List<PostImage>? imageUrls, bool isSameUser) {
     return PopupMenuButton<String>(
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
@@ -833,13 +836,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (type == UserRole.professional.value &&
-                (newsfeeds?.userId ==
-                    LocalStorage.getStringVal(LocalStorageConst.userId)) ||
-            (type == UserRole.supplier.value &&
-                feedUserRole == UserRole.supplier.value)) ...[
+        if (isSameUser) ...[
           _popupItem("Edit", Icons.edit, AppColors.blueColor),
-          _popupItem("Delete", Icons.delete, AppColors.redColor)
         ],
         if (type == UserRole.supplier.value &&
             feedUserRole == UserRole.supplier.value) ...[
@@ -853,8 +851,13 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           if (status == "PUBLISHED" || status == "PENDING")
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ],
-        if (imageUrls?.isNotEmpty == true)
-          _popupItem("Save Media", Icons.save, AppColors.greenColor),
+        if (!isSameUser) ...[
+          _popupItem("Hide Post", Icons.hide_source, AppColors.redColor),
+          _popupItem("Report Post", Icons.report, AppColors.redColor),
+          _popupItem("Block Profile", Icons.block, AppColors.redColor),
+          if (imageUrls?.isNotEmpty == true)
+            _popupItem("Save Media", Icons.save, AppColors.greenColor),
+        ],
       ],
     );
   }

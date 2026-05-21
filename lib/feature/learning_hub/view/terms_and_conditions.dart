@@ -1,8 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
-import 'package:di360_flutter/feature/job_create/view_model.dart/job_create_view_model.dart';
-import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/widgets/image_picker_field.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -115,7 +113,7 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  Widget _buildCategoryTypes(JobCreateViewModel jobCreateVM) {
+ /* Widget _buildCategoryTypes(JobCreateViewModel jobCreateVM) {
     return CustomDropDown(
       isRequired: true,
       value: jobCreateVM.selectedRole,
@@ -181,5 +179,5 @@ class TermsAndConditions extends StatelessWidget with BaseContextHelpers {
         );
       }).toList(),
     );
-  }
+  }*/
 }

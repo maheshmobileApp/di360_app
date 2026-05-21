@@ -53,3 +53,7 @@ bool isValidBusinessPhoneNumber(String phone) {
 bool isValidateABNNumber(String abn) {
   return RegExp(r'^\d{9,11}$').hasMatch(abn);
 }
+
+bool validateAusMobileNumber(String phone) {
+  return RegExp(r'^4[0-9]{8}$').hasMatch(phone);
+}

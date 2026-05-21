@@ -169,4 +169,72 @@ static String formatDateOnly(String? date) {
     return '';
   }
 }
+
+static String formatDateTimeShort(String dateTimeString) {
+  try {
+    final dt = DateTime.parse(dateTimeString);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final period = dt.hour >= 12 ? 'PM' : 'AM';
+    return '${dt.day} ${months[dt.month - 1]} | $hour $period';
+  } catch (_) {
+    return dateTimeString;
+  }
+}
+
+static String formatDateRange(String start, String end) {
+  try {
+    final s = DateTime.parse(start);
+    final e = DateTime.parse(end);
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${s.day} (${days[s.weekday - 1]}) – ${e.day} (${days[e.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
+  } catch (_) {
+    return '$start – $end';
+  }
+}
+
+static DateTime? parseToLocalDate(String? dateStr) {
+  if (dateStr == null || dateStr.trim().isEmpty) return null;
+  try {
+    return DateTime.parse(dateStr).toLocal();
+  } catch (_) {
+    return null;
+  }
+}
+
+static int remainingDays(String dateStr, int accessDuration) {
+  try {
+    final expiry = DateTime.parse(dateStr).toLocal().add(Duration(days: accessDuration));
+    final now = DateTime.now();
+    if (expiry.isBefore(now)) return 0;
+    return (expiry.difference(now).inHours / 24).ceil();
+  } catch (_) {
+    return 0;
+  }
+}
+
+static String addDaysToDate(String dateStr, int days) {
+  try {
+    final date = DateTime.parse(dateStr);
+    final expiry = date.add(Duration(days: days));
+    return DateFormat('d MMM yyyy').format(expiry); //17 May 2026 format needed
+  } catch (_) {
+    return '';
+  }
+}
+
+static String formatTime(String time) {
+  try {
+    final clean = time.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();
+    final parts = clean.split(':');
+    int hour = int.parse(parts[0]);
+    final minute = parts[1];
+    final period = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 == 0 ? 12 : hour % 12;
+    return '${hour.toString().padLeft(2, '0')}:$minute $period';
+  } catch (_) {
+    return time;
+  }
+}
 }

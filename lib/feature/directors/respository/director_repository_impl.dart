@@ -20,7 +20,6 @@ import 'package:di360_flutter/feature/directors/querys/get_community_status_quer
 import 'package:di360_flutter/feature/directors/querys/get_dental_business_details_query.dart';
 import 'package:di360_flutter/feature/directors/querys/directories_catagory_res.dart';
 import 'package:di360_flutter/feature/directors/querys/get_all_banners.dart';
-import 'package:di360_flutter/feature/directors/querys/get_director_based_on_catagory.dart';
 import 'package:di360_flutter/feature/directors/querys/get_directors_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_directory_query.dart';
 import 'package:di360_flutter/feature/directors/querys/get_partnership_status_query.dart';

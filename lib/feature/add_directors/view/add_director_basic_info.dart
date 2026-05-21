@@ -88,12 +88,12 @@ class AddDirectorBasicInfo extends StatelessWidget
           InputTextField(
             title: "Phone Number",
             isRequired: true,
-            hintText: "Enter phone number",
+            hintText: "4XXXXXXXX",
             keyboardType: TextInputType.phone,
             maxLength: 9,
             readOnly: true,
             controller: addDirectorVM.MobileNumberController,
-            validator: validateContactPhoneNumber,
+            validator: validateAustralianMobileNumber,
             prefixIcon: PhonePrefixDropdown(
               value: addDirectorVM.selectedPhoneCode ?? "",
               items: ConstantData.phoneCodeList,

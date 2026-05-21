@@ -1,3 +1,4 @@
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -6,6 +7,7 @@ import 'package:di360_flutter/feature/account/account_view_model/account_view_mo
 import 'package:di360_flutter/feature/account/repository/account_repo_impl.dart';
 import 'package:di360_flutter/feature/campaign/view_model/campaign_view_model.dart';
 import 'package:di360_flutter/feature/forgot_password/view_model/forgot_password_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/no_internet/no_internet_view.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
@@ -61,33 +63,29 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorage.init();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
+
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
 
-    
     await NotificationService.initialize();
     await DownloadNotificationService.initialize();
     await NotificationService.initFirebaseMessaging();
     await NotificationService.captureInitialMessage();
-  } catch (e) {
+  } catch (e) {}
 
-  }
-  
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
   runApp(const MyApp());
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   DeepLinkService.init();
   configLoading();
 }
@@ -106,7 +104,6 @@ void configLoading() {
     ..maskColor = Colors.blue.withOpacity(0.5)
     ..userInteractions = true
     ..dismissOnTap = false;
-    
 }
 
 class MyApp extends StatelessWidget {
@@ -157,6 +154,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CampaignViewModel()),
         ChangeNotifierProvider(create: (_) => TeamMembersViewModel()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordViewModel()),
+        ChangeNotifierProvider(
+            create: (_) => MarketPlaceLearningHubViewModel()),
       ],
       child: MaterialApp(
         builder: (context, child) {

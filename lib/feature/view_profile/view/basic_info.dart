@@ -74,13 +74,13 @@ class BasicInfo extends StatelessWidget
             InputTextField(
               title: "Mobile Number",
               isRequired: true,
-              hintText: "Enter mobile number",
+              hintText: "4XXXXXXXX",
               keyboardType: TextInputType.phone,
               maxLength: 9,
               readOnly: false,
               canRequestFocus: true,
               controller: viewProfileVM.phoneNoController,
-              validator: validateContactPhoneNumber,
+              validator: validateAustralianMobileNumber,
               prefixIcon: PhonePrefixDropdown(
                 value: viewProfileVM.selectedPhoneCode ?? '',
                 items: ConstantData.phoneCodeList,

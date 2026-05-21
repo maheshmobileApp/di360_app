@@ -2,7 +2,7 @@ import 'package:app_links/app_links.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/feature/notifications/notification_view_model/notification_view_model.dart';
@@ -65,13 +65,14 @@ class DeepLinkService {
 
       case FeedType.learnhub:
         () async {
-          final courseListingVM =
-              Provider.of<CourseListingViewModel>(context, listen: false);
+          final courseListingVM = Provider.of<MarketPlaceLearningHubViewModel>(
+              context,
+              listen: false);
           await courseListingVM.getCourseDetails(
             context,
             id,
           );
-          if (courseListingVM.courseDetails.isNotEmpty) {
+          if (courseListingVM.courseDetails != null) {
             navigationService.navigateTo(RouteList.courseDetailScreen);
           } else {
             scaffoldMessenger('This course details not found');
@@ -110,10 +111,10 @@ class DeepLinkService {
         break;
       case FeedType.course:
         () async {
-          final courseVM =
-              Provider.of<CourseListingViewModel>(context, listen: false);
+          final courseVM = Provider.of<MarketPlaceLearningHubViewModel>(context,
+              listen: false);
           await courseVM.getCourseDetails(context, id);
-          if (courseVM.courseDetails.isNotEmpty) {
+          if (courseVM.courseDetails != null) {
             navigationService.navigateTo(RouteList.courseDetailScreen);
           } else {
             scaffoldMessenger('This course is not available.');

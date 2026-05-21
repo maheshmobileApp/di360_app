@@ -15,6 +15,15 @@ mixin ValidationMixins {
     return null;
   }
 
+  String? validateAustralianMobileNumber(String? value) {
+    if (value == null || value.isEmpty)
+      return "Please enter your Mobile Number";
+    if (value.startsWith('0'))
+      return 'Please enter the mobile number without the leading 0.';
+    if (!validateAusMobileNumber(value)) return 'Mobile number must start with 4';
+    return null;
+  }
+
   String? validateBusinessPhoneNumber(String? value) {
     if (value == null || value.isEmpty) return null;
     if (!isValidBusinessPhoneNumber(value))

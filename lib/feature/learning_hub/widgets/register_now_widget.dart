@@ -10,16 +10,20 @@ class RegisterNowWidget extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool registerStatus;
   final String? earlyBirdEndDate;
+  final String? courseType;
+  final String? courseRegisterStatus;
 
-  const RegisterNowWidget({
-    Key? key,
-    required this.currentPrice,
-    this.oldPrice,
-    this.buttonText,
-    this.onPressed,
-    required this.registerStatus,
-    this.earlyBirdEndDate,
-  }) : super(key: key);
+  const RegisterNowWidget(
+      {Key? key,
+      required this.currentPrice,
+      this.oldPrice,
+      this.buttonText,
+      this.onPressed,
+      required this.registerStatus,
+      this.earlyBirdEndDate,
+      this.courseType,
+      this.courseRegisterStatus})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +32,7 @@ class RegisterNowWidget extends StatelessWidget {
     if (earlyBirdEndDate != null && earlyBirdEndDate!.isNotEmpty) {
       try {
         earlyBirdEnd = DateFormat("dd/MM/yyyy").parse(earlyBirdEndDate!);
-      } catch (e) {
-      }
+      } catch (e) {}
     }
 
     final bool isEarlyBirdActive = earlyBirdEnd != null
@@ -68,7 +71,7 @@ class RegisterNowWidget extends StatelessWidget {
                 // EARLY BIRD EXPIRED → Show old & new prices
                 if (oldPrice != null)
                   Text(
-                  "AUD \$ ${oldPrice != null ? double.tryParse(oldPrice!)?.toStringAsFixed(0) ?? oldPrice : ''}",
+                    "AUD \$ ${oldPrice != null ? double.tryParse(oldPrice!)?.toStringAsFixed(0) ?? oldPrice : ''}",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -83,8 +86,14 @@ class RegisterNowWidget extends StatelessWidget {
           CustomRoundedButton(
             onPressed: onPressed ?? () {},
             backgroundColor: AppColors.primaryColor,
-            text: registerStatus ? "Registered" : "Register Now",
-            width: 150,
+            text: registerStatus
+                ? courseType == 'Online Academy'
+                    ? courseRegisterStatus == "PENDING"
+                        ? "Registration Pending"
+                        : "View Course"
+                    : "Registered"
+                : "Register Now",
+            width: 170,
             height: 42,
             textColor: AppColors.whiteColor,
           )

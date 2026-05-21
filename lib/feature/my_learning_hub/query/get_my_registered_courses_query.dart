@@ -4,7 +4,7 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
     where: $where
     limit: $limit
     offset: $offset
-    order_by: {startDate: desc}
+    order_by: {course_registered_users_aggregate: {max: {created_at: desc}}}
   ) {
     id
     type
@@ -19,6 +19,7 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
     presenters
     presented_by_name
     presented_by_image
+    course_access_duration
     company_name
     webinar_link
     afterwards_price
@@ -29,13 +30,21 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
       name
       __typename
     }
-    course_registered_users(where: {from_id: {_eq: $loginId}}) {
+    course_registered_users(
+      where: {from_id: {_eq: $loginId}}
+      order_by: {created_at: desc}
+      limit: 1
+    ) {
       id
+      is_course_completed
       webinar_status
       status
       first_name
       last_name
       from_id
+      completed_date
+      course_registered_date
+      course_expires_at
       __typename
     }
     dental_supplier {
@@ -44,4 +53,5 @@ query GetUserRegisteredCourses($where: courses_bool_exp!, $limit: Int!, $offset:
     }
     __typename
   }
-}''';
+}
+''';

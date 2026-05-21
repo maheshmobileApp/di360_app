@@ -390,6 +390,7 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
+  NewsFeedCategoriesData? filterCatgoriesData;
 
   Future<void> getNewsFeedCategories(BuildContext context,
       [String? newsFeedId]) async {
@@ -403,6 +404,15 @@ class CommunityViewModel extends ChangeNotifier {
     };
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
+    filterCatgoriesData = NewsFeedCategoriesData(
+      newsfeedCategories: List.from(res.newsfeedCategories ?? []),
+    );
+    filterCatgoriesData?.newsfeedCategories
+        ?.insert(0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
+    filterCatgoriesData?.newsfeedCategories
+        ?.insert(1,NewsfeedCategories(id: '2', categoryName: 'Jobs'));
+    filterCatgoriesData?.newsfeedCategories
+        ?.insert(2, NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
     Loaders.circularHideLoader(context);
 
     notifyListeners();
@@ -679,7 +689,16 @@ class CommunityViewModel extends ChangeNotifier {
     selectedContactType = data?.contactType == "MEMBER" ? "Member" : "Partner";
     contactEmailController.text = data?.email ?? "";
     final phone = data?.phone ?? "";
-    contactPhoneController.text = phone.substring(3);
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      contactPhoneController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      contactPhoneController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      contactPhoneController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
   }
 
   clearContactDetails() {
