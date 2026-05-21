@@ -478,7 +478,7 @@ class DirectoryViewModel extends ChangeNotifier {
         "company_name": communityName,
         "contact_name": contactNameController.text,
         "email": emailController.text,
-        "phone": phoneController.text,
+        "phone": '$selectedPhoneCode${phoneController.text}',
         "type": "PARTNERSHIP",
         "status": "PENDING",
         "is_registered": false

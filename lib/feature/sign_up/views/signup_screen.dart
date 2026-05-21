@@ -34,6 +34,7 @@ class _SignupScreenState extends State<SignupScreen>
       context.read<SignupViewModel>().subscriptionPlans();
     });
   }
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -128,11 +129,11 @@ class _SignupScreenState extends State<SignupScreen>
                     InputTextField(
                       title: "Mobile Number",
                       isRequired: true,
-                      hintText: "Enter mobile number",
+                      hintText: "4XXXXXXXX",
                       keyboardType: TextInputType.phone,
                       maxLength: 9,
                       controller: viewModel.numberController,
-                      validator: validateContactPhoneNumber,
+                      validator: validateAustralianMobileNumber,
                       prefixIcon: PhonePrefixDropdown(
                         value: viewModel.selectedPhoneCode ?? "",
                         items: viewModel.phoneCodeList,

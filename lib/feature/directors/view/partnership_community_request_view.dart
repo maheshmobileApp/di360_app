@@ -7,6 +7,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -55,12 +56,21 @@ class PartnershipCommunityRequestView extends StatelessWidget
                 ),
                 SizedBox(height: 8),
                 InputTextField(
-                  controller: directorVM.phoneController,
-                  hintText: "Enter Phone Number",
-                  title: "Phone",
-                  maxLength: 100,
-                  validator: validatePhoneNumber,
-                ),
+                      title: "Mobile Number",
+                      isRequired: true,
+                      hintText: "4XXXXXXXX",
+                      keyboardType: TextInputType.phone,
+                      maxLength: 9,
+                      controller: directorVM.phoneController,
+                      validator: validateAustralianMobileNumber,
+                      prefixIcon: PhonePrefixDropdown(
+                        value: directorVM.selectedPhoneCode ?? "",
+                        items: directorVM.phoneCodeList,
+                        onChanged: (value) {
+                          directorVM.setPhoneCode(value ?? "");
+                        },
+                      ),
+                    ),
                 SizedBox(
                   height: 30,
                 ),

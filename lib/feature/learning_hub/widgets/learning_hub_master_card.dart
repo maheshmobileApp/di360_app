@@ -198,28 +198,30 @@ class ListingHubMasterCard extends StatelessWidget {
                                     TextStyles.medium2(color: AppColors.black)),
                           ],
                         ),
-                        if (isRegistered && courseStatus != "PENDING")
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              color: AppColors.primaryColor,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                "You purchased this course", //- Access expires in ${expiryDateCount ?? '0'} days.
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyles.medium2(
-                                  color: AppColors.primaryColor,
+                        if (isRegistered &&
+                            courseStatus != "PENDING" &&
+                            type == "Online Academy")
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: AppColors.primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  "You purchased this course - ${_expiryLabel()}",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyles.medium2(
+                                    color: AppColors.primaryColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                         const SizedBox(height: 4),
                         (location.isEmpty)
                             ? SizedBox.shrink()
@@ -265,7 +267,11 @@ class ListingHubMasterCard extends StatelessWidget {
               ),
               //Spacer(),
               RegisterButton(
-                  text: isRegistered ? "View Course Details" : 'Register Now',
+                  text: isRegistered
+                      ? (type == "Online Academy")
+                          ? "View Course Details"
+                          : "Already Registered"
+                      : 'Register Now',
                   onTap: registerTap,
                   isRegistered: isRegistered)
             ],
@@ -273,6 +279,13 @@ class ListingHubMasterCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _expiryLabel() {
+    final count = int.tryParse(expiryDateCount ?? '0') ?? 0;
+    if (count == 0) return 'Access expires today';
+    if (count == 1) return 'Access expires tomorrow';
+    return 'Access expires in $count day';
   }
 
   Widget _circleIcon() {

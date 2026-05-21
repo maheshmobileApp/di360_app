@@ -8,6 +8,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
+import 'package:di360_flutter/widgets/phone_prefix_drodown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -73,13 +74,21 @@ class CreateTeamMemberView extends StatelessWidget
                       validator: validateEmail),
                   addVertical(10),
                   InputTextField(
-                    controller: viewModel.phoneController,
-                    hintText: "Enter Phone number",
-                    isRequired: true,
-                    title: "Phone",
-                    maxLength: 10,
-                    validator: validatePhoneNumber,
-                  ),
+                      title: "Phone",
+                      isRequired: true,
+                      hintText: "4XXXXXXXX",
+                      keyboardType: TextInputType.phone,
+                      maxLength: 9,
+                      controller: viewModel.phoneController,
+                      validator: validateAustralianMobileNumber,
+                      prefixIcon: PhonePrefixDropdown(
+                        value: viewModel.selectedPhoneCode ?? "",
+                        items: viewModel.phoneCodeList,
+                        onChanged: (value) {
+                          viewModel.setPhoneCode(value ?? "");
+                        },
+                      ),
+                    ),
                   addVertical(10),
                   InputTextField(
                     title: 'Password',
