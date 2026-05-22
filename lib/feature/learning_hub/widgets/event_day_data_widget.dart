@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -32,7 +33,7 @@ class EventDayDataWidget extends StatelessWidget with BaseContextHelpers {
               Text(name ?? '', style: TextStyles.bold2(color: AppColors.black)),
             ]),
             addVertical(10),
-            HtmlWidget(desc ?? ""),
+            ExpandableHtmlText(htmlData : desc ?? "", index: index ?? 0),
 
             // ...descriptions.map(
             //   (desc) => Column(

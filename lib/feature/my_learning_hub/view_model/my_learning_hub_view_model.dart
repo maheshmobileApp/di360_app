@@ -96,11 +96,12 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       final file = File('${dir.path}/${certificateName}');
       await file.writeAsBytes(res);
       await DownloadNotificationService.showDownloadNotification(
-      fileName: certificateName,
-      filePath: file.path,
-    );
-       
-      scaffoldMessenger("Certificate downloaded to ${file.path}");
+        fileName: certificateName,
+        filePath: file.path,
+      );
+
+      scaffoldMessenger(
+          "✅ Certificate Downloaded\n📁 Downloads > DentalInterface360 > Certificates");
     } else {
       print("Certificate download failed or invalid response");
     }
@@ -111,17 +112,20 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       final info = await DeviceInfoPlugin().androidInfo;
       if (info.version.sdkInt >= 29) {
         try {
-          final dir = Directory('/storage/emulated/0/Download/DentalInterface360/Certificates');
+          final dir = Directory(
+              '/storage/emulated/0/Download/DentalInterface360/Certificates');
           if (!await dir.exists()) await dir.create(recursive: true);
           return dir;
         } catch (_) {
-          final base = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+          final base = await getExternalStorageDirectory() ??
+              await getApplicationDocumentsDirectory();
           final dir = Directory('${base.path}/DentalInterface360/Certificates');
           if (!await dir.exists()) await dir.create(recursive: true);
           return dir;
         }
       } else {
-        final base = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+        final base = await getExternalStorageDirectory() ??
+            await getApplicationDocumentsDirectory();
         final dir = Directory('${base.path}/DentalInterface360/Certificates');
         if (!await dir.exists()) await dir.create(recursive: true);
         return dir;

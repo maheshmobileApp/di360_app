@@ -7,6 +7,7 @@ import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterCourseCard extends StatelessWidget {
@@ -30,11 +31,24 @@ class RegisterCourseCard extends StatelessWidget {
     final courseStatus = courseData.courseRegisteredUsers?.isNotEmpty == true
         ? courseData.courseRegisteredUsers?.first.status ?? ""
         : "";
-    final registeredDate = courseData.courseRegisteredUsers?.first.courseRegisteredDate ?? "";
-    final accessDays = courseData.courseAccessDuration ?? 0;
-    final expiryDate = registeredDate.isNotEmpty
-        ? DateFormatUtils.addDaysToDate(registeredDate, accessDays)
-        : "";
+    final expiryDate = DateFormatUtils.formatDateToDmy(
+        courseData.courseRegisteredUsers?.first.courseExpiryAt ?? "");
+    final today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final expiryStr =
+        courseData.courseRegisteredUsers?.first.courseExpiryAt ?? "";
+    DateTime? parsedExpiry;
+    try {
+      parsedExpiry = expiryStr.isNotEmpty
+          ? DateFormat('dd/MM/yyyy').parse(expiryStr)
+          : null;
+    } catch (_) {}
+
+    final isCourseExpiry = parsedExpiry != null && parsedExpiry.isBefore(today);
+
+    final showViewCourse =
+         (courseStatus == "APPROVED" || courseStatus == "COMPLETED") && courseData.type == "Online Academy" &&
+            !isCourseExpiry; // expiry is today or after today
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -73,45 +87,48 @@ class RegisterCourseCard extends StatelessWidget {
                     onTap: onDownloadTap,
                     child: Row(
                       children: [
-                        _courseStatusWidget(
-                            "Download Certificate"),
+                        _courseStatusWidget("Download Certificate"),
                       ],
                     ),
                   ),
-                GestureDetector(
-                  onTap: onCardTap,
-                  child: Row(
-                    children: [
-                      Text("View Details",
-                          style: TextStyles.medium2(
-                              color: AppColors.primaryColor)),
-                      SvgPicture.asset(
-                        ImageConst.nextArrow,
-                        width: 26,
-                        height: 26,
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: onCardTap,
+                      child: Row(
+                        children: [
+                          Text("View Details",
+                              style: TextStyles.medium2(
+                                  color: AppColors.primaryColor)),
+                          SvgPicture.asset(
+                            ImageConst.nextArrow,
+                            width: 26,
+                            height: 26,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                if (courseStatus == "APPROVED")
-                  GestureDetector(
-                    onTap: onViewCourseTap,
-                    child: Row(
-                      children: [
-                        Text("View Course",
-                            style: TextStyles.medium2(
-                                color: AppColors.primaryColor)),
-                        SizedBox(
-                          width: 6,
-                        ),
-                        Icon(
-                          Icons.visibility,
-                          size: 24,
-                          color: AppColors.primaryColor,
-                        ),
-                      ],
                     ),
-                  ),
+                    if (showViewCourse)
+                      GestureDetector(
+                        onTap: onViewCourseTap,
+                        child: Row(
+                          children: [
+                            Text("View Course",
+                                style: TextStyles.medium2(
+                                    color: AppColors.primaryColor)),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Icon(
+                              Icons.visibility,
+                              size: 24,
+                              color: AppColors.primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
           ],
@@ -120,8 +137,15 @@ class RegisterCourseCard extends StatelessWidget {
     );
   }
 
-  Widget _logoWithTitle(String profilePic, String company, String title,
-      String status, String types, String link, String courseStatus, String expiryDate) {
+  Widget _logoWithTitle(
+      String profilePic,
+      String company,
+      String title,
+      String status,
+      String types,
+      String link,
+      String courseStatus,
+      String expiryDate) {
     return Row(
       children: [
         Column(
@@ -160,15 +184,14 @@ class RegisterCourseCard extends StatelessWidget {
                   style: TextStyles.regular2(color: AppColors.black)),
               const SizedBox(height: 2),
               if (expiryDate.isNotEmpty)
-              Text("Expires on: $expiryDate",
-                  style: TextStyles.regular2(color: AppColors.black)),
+                Text("Expires on: $expiryDate",
+                    style: TextStyles.regular2(color: AppColors.black)),
               const SizedBox(height: 2),
               Row(
                 children: [
                   _chipWidget(types),
                   const SizedBox(width: 4),
-                  _courseStatusWidget(
-                      courseStatus),
+                  _courseStatusWidget(courseStatus),
                 ],
               ),
               const SizedBox(height: 4),

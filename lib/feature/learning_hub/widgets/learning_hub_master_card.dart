@@ -199,7 +199,6 @@ class ListingHubMasterCard extends StatelessWidget {
                           ],
                         ),
                         if (isRegistered &&
-                            courseStatus != "PENDING" &&
                             type == "Online Academy")
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +211,7 @@ class ListingHubMasterCard extends StatelessWidget {
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  "You purchased this course - ${_expiryLabel()}",
+                                  (courseStatus == "PENDING") ? "You purchased this course": "You purchased this course - ${_expiryLabel()}",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyles.medium2(
