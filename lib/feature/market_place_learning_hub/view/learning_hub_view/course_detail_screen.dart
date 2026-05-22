@@ -213,7 +213,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     BoxShadow(
                         color: Colors.black12,
                         blurRadius: 4,
-                        offset: Offset(0, 2)),
+                        offset: Offset(0, 2))
                   ],
                 ),
                 child: IconButton(

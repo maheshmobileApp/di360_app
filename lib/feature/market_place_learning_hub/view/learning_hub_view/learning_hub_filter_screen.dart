@@ -48,9 +48,8 @@ class LearningHubFilterScreen extends StatelessWidget with BaseContextHelpers {
                 child: SingleChildScrollView(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.whiteColor,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                        color: AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(15)),
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
@@ -89,11 +88,10 @@ class LearningHubFilterScreen extends StatelessWidget with BaseContextHelpers {
                             hintText: "Date",
                             onTap: () async {
                               final picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2100),
-                              );
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2020),
+                                  lastDate: DateTime(2100));
 
                               if (picked != null) {
                                 learningHubMasterVM.filterDateController.text =

@@ -104,7 +104,7 @@ class ListingHubMasterCard extends StatelessWidget {
                           noOfSeats != null
                               ? noOfSeats == registerCount
                                   ? "SOLD OUT"
-                                  : noOfSeats > 15
+                                  : noOfSeats > 10
                                       ? " FILLING FAST !"
                                       : "HURRY UP!! Only ${noOfSeats - registerCount} SEATS LEFT"
                               : afterWardsPrice == 0.0

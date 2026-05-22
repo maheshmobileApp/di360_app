@@ -70,9 +70,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                     Text("${courseName}",
                         maxLines: 2,
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        )),
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     const Text("A Comprehensive Guide",
                         style: TextStyle(color: Colors.grey)),
