@@ -10,24 +10,41 @@ _VideoType _detectVideoType(String url) {
   if (url.contains('youtube.com') || url.contains('youtu.be')) {
     return _VideoType.youtube;
   }
-  if (url.contains('loom.com') || url.contains('vimeo.com')) {
+  if (url.contains('google.com/search') && url.contains('vid:')) {
+    return _VideoType.youtube;
+  }
+  if (url.contains('drive.google.com') ||
+      url.contains('loom.com') ||
+      url.contains('vimeo.com')) {
     return _VideoType.webview;
   }
   return _VideoType.unknown;
 }
 
 String _toEmbedUrl(String url) {
-  // Loom: https://www.loom.com/share/ID → https://www.loom.com/embed/ID
   if (url.contains('loom.com/share/')) {
     return url.replaceFirst('/share/', '/embed/');
   }
-  // Vimeo: https://vimeo.com/ID?... → https://player.vimeo.com/video/ID
   if (url.contains('vimeo.com')) {
     final uri = Uri.parse(url);
     final id = uri.pathSegments.firstWhere((s) => s.isNotEmpty, orElse: () => '');
     return 'https://player.vimeo.com/video/$id';
   }
+  if (url.contains('drive.google.com')) {
+    final uri = Uri.parse(url);
+    final segments = uri.pathSegments;
+    final dIndex = segments.indexOf('d');
+    if (dIndex != -1 && dIndex + 1 < segments.length) {
+      final fileId = segments[dIndex + 1];
+      return 'https://drive.google.com/file/d/$fileId/preview';
+    }
+  }
   return url;
+}
+
+String? _extractYoutubeIdFromGoogleSearch(String url) {
+  final match = RegExp(r'vid:([A-Za-z0-9_-]{11})').firstMatch(url);
+  return match?.group(1);
 }
 
 class LazyYoutubePlayer extends StatefulWidget {
@@ -42,6 +59,7 @@ class LazyYoutubePlayer extends StatefulWidget {
 
 class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   bool _isPlayerVisible = false;
+  bool _isFullScreen = false;
   YoutubePlayerController? _controller;
   String _videoId = '';
   _VideoType _type = _VideoType.unknown;
@@ -61,6 +79,7 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
       _controller?.dispose();
       _controller = null;
       _isPlayerVisible = false;
+      _isFullScreen = false;
       _init(widget.youtubeUrl);
       setState(() {});
     }
@@ -71,7 +90,9 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     _embedUrl = _toEmbedUrl(url);
     _videoId = '';
     if (_type == _VideoType.youtube) {
-      _videoId = YoutubePlayer.convertUrlToId(url) ?? '';
+      _videoId = YoutubePlayer.convertUrlToId(url) ??
+          _extractYoutubeIdFromGoogleSearch(url) ??
+          '';
       if (_videoId.isNotEmpty) {
         _controller = YoutubePlayerController(
           initialVideoId: _videoId,
@@ -85,21 +106,48 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     if (_controller?.value.playerState == PlayerState.ended) {
       _controller?.pause();
     }
-    if (_controller?.value.isFullScreen == true) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    if ((_controller?.value.isFullScreen ?? false) && !_isFullScreen) {
+      _isFullScreen = true;
+      _controller?.toggleFullScreenMode();
+      _enterFullScreen();
     }
+  }
+
+  void _enterFullScreen() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FullScreenYoutubePlayer(
+          controller: _controller!,
+          onClose: () {
+            Navigator.of(context).pop();
+            _exitFullScreen();
+          },
+        ),
+      ),
+    ).then((_) {
+      _isFullScreen = false;
+      _exitFullScreen();
+    });
+  }
+
+  void _exitFullScreen() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   @override
   void dispose() {
     _controller?.removeListener(_playerListener);
     _controller?.dispose();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    _exitFullScreen();
     super.dispose();
   }
 
@@ -176,7 +224,6 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
           : _placeholder();
     }
 
-    // Loom / Vimeo via InAppWebView
     return _isPlayerVisible
         ? SizedBox(
             height: 220,
@@ -190,5 +237,41 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
             ),
           )
         : _placeholder();
+  }
+}
+
+class FullScreenYoutubePlayer extends StatelessWidget {
+  final YoutubePlayerController controller;
+  final VoidCallback onClose;
+
+  const FullScreenYoutubePlayer({
+    Key? key,
+    required this.controller,
+    required this.onClose,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Center(
+            child: YoutubePlayer(
+              controller: controller,
+              showVideoProgressIndicator: true,
+            ),
+          ),
+          Positioned(
+            top: 16,
+            left: 16,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: onClose,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -129,9 +129,11 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                           final jobData =
                               courseListingVM.marketPlaceCoursesList[index];
                           final course = jobData;
-                          final registrationDate = course.courseRegisteredUsers?.isNotEmpty == true
-                              ? course.courseRegisteredUsers?.first.courseRegisteredDate
-                              : null;
+                          final registrationDate =
+                              course.courseRegisteredUsers?.isNotEmpty == true
+                                  ? course.courseRegisteredUsers?.first
+                                      .courseRegisteredDate
+                                  : null;
 
                           final remainingDays = registrationDate != null
                               ? DateFormatUtils.remainingDays(registrationDate,
