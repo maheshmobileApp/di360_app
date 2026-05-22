@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/sign_up/model_class/get_business_type.dart';
@@ -61,7 +62,7 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  List<String> phoneCodeList = ConstantData.phoneCodeList;
   String? selectedPhoneCode = "AU (+61)";
   void setPhoneCode(String value) {
     selectedPhoneCode = value;

@@ -1,4 +1,5 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +20,12 @@ class AttachmentViewWidget extends StatelessWidget {
     if (type == null) return Icons.insert_drive_file;
     final t = type.toLowerCase();
     if (t.contains('pdf')) return Icons.picture_as_pdf;
-    if (t.contains('image') || t.contains('png') || t.contains('jpg')) return Icons.image;
+    if (t.contains('image') || t.contains('png') || t.contains('jpg'))
+      return Icons.image;
     if (t.contains('video')) return Icons.videocam;
     if (t.contains('word') || t.contains('doc')) return Icons.description;
-    if (t.contains('excel') || t.contains('sheet') || t.contains('xls')) return Icons.table_chart;
+    if (t.contains('excel') || t.contains('sheet') || t.contains('xls'))
+      return Icons.table_chart;
     return Icons.insert_drive_file;
   }
 
@@ -30,14 +33,17 @@ class AttachmentViewWidget extends StatelessWidget {
     if (type == null) return AppColors.geryColor;
     final t = type.toLowerCase();
     if (t.contains('pdf')) return Colors.red;
-    if (t.contains('image') || t.contains('png') || t.contains('jpg')) return AppColors.blueColor;
+    if (t.contains('image') || t.contains('png') || t.contains('jpg'))
+      return AppColors.blueColor;
     if (t.contains('video')) return Colors.purple;
     if (t.contains('word') || t.contains('doc')) return Colors.blue;
-    if (t.contains('excel') || t.contains('sheet') || t.contains('xls')) return Colors.green;
+    if (t.contains('excel') || t.contains('sheet') || t.contains('xls'))
+      return Colors.green;
     return AppColors.geryColor;
   }
 
-  Future<void> _openAttachment(BuildContext context, Map<String, dynamic> attachment) async {
+  Future<void> _openAttachment(
+      BuildContext context, Map<String, dynamic> attachment) async {
     final url = attachment['url']?.toString() ?? '';
     final name = attachment['name']?.toString() ?? 'file';
     if (url.isEmpty) return;
@@ -55,7 +61,8 @@ class AttachmentViewWidget extends StatelessWidget {
             children: [
               const Text('Downloading...'),
               const SizedBox(height: 12),
-              LinearProgressIndicator(value: progress, color: AppColors.primaryColor),
+              LinearProgressIndicator(
+                  value: progress, color: AppColors.primaryColor),
               const SizedBox(height: 8),
               Text('${(progress * 100).toStringAsFixed(0)}%'),
             ],
@@ -94,7 +101,7 @@ class AttachmentViewWidget extends StatelessWidget {
           const SizedBox(height: 8),
         ],
         SizedBox(
-          height: 72,
+          height: 100,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: attachments.length,
@@ -107,24 +114,24 @@ class AttachmentViewWidget extends StatelessWidget {
               return GestureDetector(
                 onTap: () => _openAttachment(context, item),
                 child: Container(
-                  width: 140,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  width: 100,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: color.withOpacity(0.3)),
                   ),
-                  child: Row(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(_iconForType(type), color: color, size: 28),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          name,
-                          style: TextStyles.regular1(color: AppColors.black),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      Image.asset(ImageConst.pdf, width: 36, height: 36),
+                      const SizedBox(height: 6),
+                      Text(
+                        name,
+                        style: TextStyles.regular1(color: AppColors.black),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),

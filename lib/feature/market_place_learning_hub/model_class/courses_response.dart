@@ -419,6 +419,7 @@ class CourseRegisteredUsers {
   String? lastName;
   String? completedDate;
   String? courseRegisteredDate;
+  String? courseExpiryAt;
   String? sTypename;
 
   CourseRegisteredUsers(
@@ -432,6 +433,7 @@ class CourseRegisteredUsers {
       this.lastName,
       this.completedDate,
       this.courseRegisteredDate,
+      this.courseExpiryAt,
       this.sTypename});
 
   CourseRegisteredUsers.fromJson(Map<String, dynamic> json) {
@@ -445,6 +447,7 @@ class CourseRegisteredUsers {
     lastName = json['last_name'];
     completedDate = json['completed_date'];
     courseRegisteredDate = json['course_registered_date'];
+    courseExpiryAt = json['course_expires_at'];
     sTypename = json['__typename'];
   }
 
@@ -460,6 +463,7 @@ class CourseRegisteredUsers {
     data['last_name'] = this.lastName;
     data['completed_date'] = this.completedDate;
     data['course_registered_date'] = this.courseRegisteredDate;
+    data['course_expires_at'] = this.courseExpiryAt;
     data['__typename'] = this.sTypename;
     return data;
   }

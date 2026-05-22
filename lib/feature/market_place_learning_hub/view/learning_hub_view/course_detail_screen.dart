@@ -286,12 +286,21 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           (courseDetails?.eventType != "multiple")
                               ? "Single Day Event"
                               : "Multiple Day Event",
-                          style:
-                              TextStyles.bold2(color: AppColors.primaryColor),
-                        )
+                          style: TextStyles.semiBold(
+                            color: AppColors.primaryColor,
+                            fontSize: 14,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primaryColor,
+                          ),
+                        ),
+                        addVertical(4),
+                        Text(courseDetails?.endDate ?? "",
+                            style: TextStyles.medium2(
+                                color: AppColors.primaryColor)),
                       ],
                       addVertical(6),
                       if ((courseDetails?.type != 'Online Academy' &&
+                          courseDetails?.eventType == "multiple" &&
                           courseDetails?.courseEventInfo != null &&
                           courseDetails!.courseEventInfo!.isNotEmpty)) ...[
                         ...courseDetails.courseEventInfo!.asMap().entries.map(
@@ -301,18 +310,19 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                 desc: entry.value.info,
                                 images: entry.value.images))
                       ],
-                      addVertical(12),
+                      addVertical(6),
                       if ((courseDetails?.learningObjectives ?? "").isNotEmpty)
                         CourseDescriptionWidget(
                           title: 'Learning Objectives',
                           description: courseDetails?.learningObjectives ?? "",
                         ),
-                      addVertical(12),
+                      addVertical(6),
                       if ((courseDetails?.topicsIncluded ?? "").isNotEmpty)
                         CourseDescriptionWidget(
                           title: 'Topics Included',
                           description: courseDetails?.topicsIncluded ?? "",
                         ),
+                      addVertical(6),
                       if (galleryUrls.isNotEmpty)
                         GalleryImgWidget(
                             title: "Gallery", imageUrls: galleryUrls),

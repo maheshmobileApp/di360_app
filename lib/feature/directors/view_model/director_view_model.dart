@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
@@ -80,7 +81,7 @@ class DirectoryViewModel extends ChangeNotifier {
 
   String? selectedMembership;
 
-  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  List<String> phoneCodeList = ConstantData.phoneCodeList;
   String? selectedPhoneCode = "AU (+61)";
 
   bool searchBarOpen = false;
@@ -396,7 +397,7 @@ class DirectoryViewModel extends ChangeNotifier {
     Loaders.circularShowLoader(context);
 
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final variables = {
       "fields": {
         "community_id": communityId,
@@ -406,7 +407,7 @@ class DirectoryViewModel extends ChangeNotifier {
         "first_name": firstNameController.text,
         "last_name": lastNameController.text,
         "email": emailController.text,
-        "phone": "$selectedPhoneCode${phoneController.text}",
+        "phone": "$phoneCode${phoneController.text}",
         "membership_number": membershipNumberController.text,
         "status": "PENDING",
         "type": "COMMUNITY",
@@ -468,6 +469,7 @@ class DirectoryViewModel extends ChangeNotifier {
       String communityName, String supplierId) async {
     Loaders.circularShowLoader(context);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     // need clarity on community id,
     final variables = {
       "fields": {
@@ -478,7 +480,7 @@ class DirectoryViewModel extends ChangeNotifier {
         "company_name": communityName,
         "contact_name": contactNameController.text,
         "email": emailController.text,
-        "phone": '$selectedPhoneCode${phoneController.text}',
+        "phone": '$phoneCode${phoneController.text}',
         "type": "PARTNERSHIP",
         "status": "PENDING",
         "is_registered": false

@@ -106,7 +106,7 @@ class AddNewsFeedScreen extends StatelessWidget
                 addVertical(30),
                 AppButton(
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',
-                    onTap: ()async {
+                    onTap: () async {
                       if (viewModel.desController.text.trim().isEmpty) {
                         scaffoldMessenger('Please enter description');
                         return;
@@ -115,7 +115,7 @@ class AddNewsFeedScreen extends StatelessWidget
                         scaffoldMessenger('Please select category');
                         return;
                       }
-                      if (_formKey.currentState!.validate())  {
+                      if (_formKey.currentState!.validate()) {
                         viewModel.isEditNewsFeed == true
                             ? await viewModel.updateTheNewsFeeds(context)
                             : await viewModel.addNewsFeeds(context);
