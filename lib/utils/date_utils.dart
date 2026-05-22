@@ -214,7 +214,7 @@ class DateFormatUtils {
         'Nov',
         'Dec'
       ];
-      if (s == e){
+      if (s == e) {
         return '${s.day} (${days[s.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
       }
       return '${s.day} (${days[s.weekday - 1]}) – ${e.day} (${days[e.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
@@ -276,6 +276,19 @@ class DateFormatUtils {
       return '${hour.toString().padLeft(2, '0')}:$minute $period';
     } catch (_) {
       return time;
+    }
+  }
+
+ static bool shouldShowBottomWidget(String? startDate, String? startTime) {
+    if (startDate == null || startTime == null) return true;
+
+    try {
+      final dateOnly = startDate.split('T').first.trim();
+      final timeOnly = startTime.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();
+      final courseDateTime = DateTime.parse('${dateOnly}T$timeOnly').toLocal();
+      return DateTime.now().isBefore(courseDateTime);
+    } catch (e) {
+      return true;
     }
   }
 }

@@ -105,26 +105,32 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
           ),
         ],
         addVertical(30),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: AppButton(
-            text: vm.isSectionCompleted(topic.id)
-                ? 'Completed'
-                : 'Complete and Continue',
-            radius: 8,
-            height: 42,
-            width: 230,
-            btnColor: vm.isSectionCompleted(topic.id) ? Colors.green : null,
-            onTap: vm.isSectionCompleted(topic.id)
-                ? null
-                : () {
-                    vm.completeAndContinue(context);
-                    scrollController.animateTo(0,
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeOut);
-                  },
-          ),
-        ),
+        Builder(builder: (context) {
+          final isLast = vm.currentSectionIndex == vm.allSections.length - 1;
+          final isCompleted = vm.isSectionCompleted(topic.id);
+          return Align(
+            alignment: Alignment.bottomRight,
+            child: AppButton(
+              text: isCompleted
+                  ? 'Completed'
+                  : isLast
+                      ? 'Complete'
+                      : 'Complete and Continue',
+              radius: 8,
+              height: 42,
+              width: 230,
+              btnColor: isCompleted ? Colors.green : null,
+              onTap: isCompleted
+                  ? null
+                  : () {
+                      vm.completeAndContinue(context);
+                      scrollController.animateTo(0,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeOut);
+                    },
+            ),
+          );
+        }),
         addVertical(30),
       ],
     );

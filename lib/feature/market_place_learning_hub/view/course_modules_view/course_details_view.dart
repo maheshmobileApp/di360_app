@@ -74,7 +74,12 @@ class _CourseDetailsViewState extends State<CourseDetailsView> {
                             );
                             vm.retakeQuiz = false;
                           },
-                          child: const Text("Take Quiz",
+                          child: Text(
+                              vm.courseDetails?.courseRegisteredUsers
+                                          ?.firstOrNull?.quizStatus !=
+                                      'PENDING'
+                                  ? "Proceed to Quiz"
+                                  : "Take Quiz",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

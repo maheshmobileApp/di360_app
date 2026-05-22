@@ -101,11 +101,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.calendar_month_outlined,
-                              color: AppColors.primaryColor,
-                              size: 20,
-                            ),
+                            Icon(Icons.calendar_month_outlined,
+                                color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
                             if (startDate.isNotEmpty && endDate.isNotEmpty)
                               Text(DateFormatUtils.formatDateRange(
@@ -117,11 +114,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.access_time_rounded,
-                              color: AppColors.primaryColor,
-                              size: 20,
-                            ),
+                            Icon(Icons.access_time_rounded,
+                                color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
                             Text(
                               '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',

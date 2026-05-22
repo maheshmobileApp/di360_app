@@ -106,10 +106,10 @@ class LearningHubFilterScreen extends StatelessWidget with BaseContextHelpers {
                         _buildDropdownSection(
                           title: "Filter by Location",
                           dropdown: InputTextField(
-                            title: "Location",
-                            controller: learningHubMasterVM.locationController,
-                            hintText: "Enter Location",
-                          ),
+                              title: "Location",
+                              controller:
+                                  learningHubMasterVM.locationController,
+                              hintText: "Enter Location"),
                         ),
                       ],
                     ),
