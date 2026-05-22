@@ -50,7 +50,7 @@ class LoginApi {
   bool? paymentCompleted;
   ProfileImage? profileImage;
   String? type;
-  dynamic address;//Not required in response
+  dynamic address; //Not required in response
   dynamic directoryCategoryId;
   String? professionType;
   bool? secondHand;
@@ -58,13 +58,14 @@ class LoginApi {
   String? abnNumber;
   String? gender;
   bool? sellProducts;
-  dynamic dashboardPermissions;//Not required in response
+  dynamic dashboardPermissions; //Not required in response
   String? planId;
   String? paymentStatus;
   String? subscriptionId;
   SubscriptionPermissions? subscriptionPermissions;
   String? subType;
   String? ownerId;
+  Professiontype? professiontype;
 
   LoginApi(
       {this.id,
@@ -94,6 +95,7 @@ class LoginApi {
       this.subscriptionId,
       this.subscriptionPermissions,
       this.subType,
+      this.professiontype,
       this.ownerId});
 
   LoginApi.fromJson(Map<String, dynamic> json) {
@@ -124,11 +126,14 @@ class LoginApi {
     planId = json['plan_id'];
     paymentStatus = json['payment_status'];
     subscriptionId = json['subscription_id'];
-   subscriptionPermissions = json['subscription_permissions'] != null
+    subscriptionPermissions = json['subscription_permissions'] != null
         ? new SubscriptionPermissions.fromJson(json['subscription_permissions'])
         : null;
     subType = json['sub_type'];
     ownerId = json['owner_id'];
+    professiontype = json['professiontype'] != null
+        ? new Professiontype.fromJson(json['professiontype'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -167,6 +172,28 @@ class LoginApi {
     }
     data['sub_type'] = this.subType;
     data['owner_id'] = this.ownerId;
+     if (this.professiontype != null) {
+      data['professiontype'] = this.professiontype!.toJson();
+    }
+    return data;
+  }
+}
+
+class Professiontype {
+  String? id;
+  String? name;
+
+  Professiontype({this.id, this.name});
+
+  Professiontype.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
     return data;
   }
 }
@@ -328,7 +355,7 @@ class Logo {
   }
 }
 
-//TODO: Replace with LOGO class 
+//TODO: Replace with LOGO class
 class ProfileImage {
   String? directory;
   String? extension;

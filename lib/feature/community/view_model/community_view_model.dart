@@ -399,10 +399,27 @@ class CommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final professionTypeId = await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final variables = {
-      "communityId":
-          (type == UserRole.professional.value) ? newsFeedId : communityId
-    };
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_is_null": true}
+          },
+          {
+            "_or": [
+              {
+                "access_rules": {
+                  "directory_category_id": {"_eq": professionTypeId}
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "limit": 5,
+      "offset": 0
+    };;
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
     filterCatgoriesData = NewsFeedCategoriesData(

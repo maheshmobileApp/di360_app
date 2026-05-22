@@ -121,7 +121,9 @@ class LoginViewModel extends ChangeNotifier {
                 LocalStorage.setStringVal(
                     LocalStorageConst.type, loginData?.type ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.professionType,
-                    loginData?.professionType ?? ''),
+                    loginData?.professiontype?.name ?? ''),
+                LocalStorage.setStringVal(LocalStorageConst.professionId,
+                    loginData?.professiontype?.id ?? ''),
                 LocalStorage.setStringVal(
                     LocalStorageConst.subType, loginData?.subType ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.subscriptionId,
