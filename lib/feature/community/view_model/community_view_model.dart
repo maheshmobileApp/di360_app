@@ -53,7 +53,16 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //***********************filters
-  List<String> filterContactTypes = ["All", "Partner", "Member", "Practice Owners", "Lab", "Dental Specialist", "Supplies", "Educators"];
+  List<String> filterContactTypes = [
+    "All",
+    "Partner",
+    "Member",
+    "Practice Owners",
+    "Lab",
+    "Dental Specialist",
+    "Supplies",
+    "Educators"
+  ];
   List<String> filterStates = [
     "All",
     "New South Wales",
@@ -404,30 +413,30 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getNewsFeedCategories(BuildContext context,
       [String? newsFeedId]) async {
     Loaders.circularShowLoader(context);
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final professionTypeId = await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    final professionTypeId =
+        await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final variables = {
       "where": {
         "_and": [
           {
             "community_id": {"_is_null": true}
           },
-          {
-            "_or": [
-              {
-                "access_rules": {
-                  "directory_category_id": {"_eq": professionTypeId}
+          if (professionTypeId.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "access_rules": {
+                    "directory_category_id": {"_eq": professionTypeId}
+                  }
                 }
-              }
-            ]
-          }
+              ]
+            }
         ]
       },
       "limit": 5,
       "offset": 0
-    };;
+    };
+    ;
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
     filterCatgoriesData = NewsFeedCategoriesData(
@@ -529,7 +538,8 @@ class CommunityViewModel extends ChangeNotifier {
       "created_by_id": {"_eq": id}
     };
 
-    if (selectedFilterContactType.isNotEmpty && selectedFilterContactType != "All") {
+    if (selectedFilterContactType.isNotEmpty &&
+        selectedFilterContactType != "All") {
       final match = contactTypes.firstWhere(
         (e) => e["label"] == selectedFilterContactType,
         orElse: () => {},

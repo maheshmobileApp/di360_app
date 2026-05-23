@@ -165,6 +165,7 @@ class SignupViewModel extends ChangeNotifier {
               : "VERIFICATION_PENDING",
           "subscription_plan_id": selectedSubscriptionPlanId,
           "professionType": selectedCategory?.name,
+          "professiontype": selectedCategorys,
           "payload": {"subscriptionId": selectedSubscriptionPlanId},
           "tracking_details": "Mobile"
         }

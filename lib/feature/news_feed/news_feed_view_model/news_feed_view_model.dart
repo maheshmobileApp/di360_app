@@ -237,6 +237,7 @@ class NewsFeedViewModel extends ChangeNotifier {
           {
             "community_id": {"_is_null": true}
           },
+          if (professionTypeId.isNotEmpty)
           {
             "_or": [
               {
