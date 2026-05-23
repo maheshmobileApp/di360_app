@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         
         {
             "name": "di360_flutter_backup",
@@ -26,7 +27,8 @@
             "name": "di360_flutter_backup (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            // "flutterMode": "release",
+            "args": ["--dart-define-from-file=.env/prod.json"]
         }
     ]
 }

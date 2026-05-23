@@ -62,6 +62,12 @@ class LoginViewModel extends ChangeNotifier {
 
         final err =
             res['_error']?.toString() ?? "Login failed. Please try again.";
+          if(err == "field 'professiontype' not found in type: 'LoginOutput'"){
+             scaffoldMessenger(
+            "Login Failed. your account is invactive now. Please contact support team."
+          );
+          return;
+          }
 
         scaffoldMessenger(
           err == "HasuraRequestError: Invalid credentials"
