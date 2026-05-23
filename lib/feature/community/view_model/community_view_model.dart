@@ -53,7 +53,7 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //***********************filters
-  List<String> filterContactTypes = ["All", "Partner", "Member"];
+  List<String> filterContactTypes = ["All", "Partner", "Member", "Practice Owners", "Lab", "Dental Specialist", "Supplies", "Educators"];
   List<String> filterStates = [
     "All",
     "New South Wales",
@@ -79,7 +79,15 @@ class CommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> contactTypes = ["Partner", "Member"];
+  final List<Map<String, String>> contactTypes = [
+    {"label": "Partner", "value": "PARTNER"},
+    {"label": "Member", "value": "MEMBER"},
+    {"label": "Practice Owners", "value": "PRACTICE_OWNERS"},
+    {"label": "Lab", "value": "LAB"},
+    {"label": "Dental Specialist", "value": "DENTAL_SPECIALIST"},
+    {"label": "Supplies", "value": "SUPPLIES"},
+    {"label": "Educators", "value": "EDUCATORS"},
+  ];
   String selectedContactType = "";
   void setSelectedContactType(String value) {
     selectedContactType = value;
@@ -521,10 +529,14 @@ class CommunityViewModel extends ChangeNotifier {
       "created_by_id": {"_eq": id}
     };
 
-    if (selectedFilterContactType == "Partner") {
-      whereClause["contact_type"] = {"_eq": "PARTNER"};
-    } else if (selectedFilterContactType == "Member") {
-      whereClause["contact_type"] = {"_eq": "MEMBER"};
+    if (selectedFilterContactType.isNotEmpty && selectedFilterContactType != "All") {
+      final match = contactTypes.firstWhere(
+        (e) => e["label"] == selectedFilterContactType,
+        orElse: () => {},
+      );
+      if (match["value"] != null) {
+        whereClause["contact_type"] = {"_eq": match["value"]};
+      }
     }
 
     final variables = {
@@ -569,8 +581,7 @@ class CommunityViewModel extends ChangeNotifier {
           "phone": "${phoneCode}${contactPhoneController.text}",
           "company_name": companyName,
           "state": selectedState,
-          "contact_type":
-              selectedContactType == "Member" ? "MEMBER" : "PARTNER",
+          "contact_type": selectedContactType,
           "created_by_id": id
         }
       };
@@ -635,8 +646,7 @@ class CommunityViewModel extends ChangeNotifier {
           "phone": "${phoneCode}${contactPhoneController.text}",
           "company_name": companyName,
           "state": selectedState,
-          "contact_type":
-              selectedContactType == "Member" ? "MEMBER" : "PARTNER",
+          "contact_type": selectedContactType,
           "created_by_id": id
         }
       };
@@ -704,7 +714,7 @@ class CommunityViewModel extends ChangeNotifier {
   setContactDetails(PartnersContactBook? data) {
     contactNameController.text = data?.contactName ?? "";
     selectedState = data?.state ?? "";
-    selectedContactType = data?.contactType == "MEMBER" ? "Member" : "Partner";
+    selectedContactType = data?.contactType ?? "";
     contactEmailController.text = data?.email ?? "";
     final phone = data?.phone ?? "";
     if (phone.startsWith('+61')) {

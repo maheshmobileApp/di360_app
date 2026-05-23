@@ -213,7 +213,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
       clearAddCatalogueData();
       selectedStatus = 'Pending Approval';
       catalogStatus = ['PENDING_APPROVAL'];
-      getMyCataloguesData(navigatorKey.currentContext!);
+      await getMyCataloguesData(navigatorKey.currentContext!);
     } else {
       Loaders.circularHideLoader(context);
     }
@@ -235,22 +235,37 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getMyCataloguesData(BuildContext context,
-      {String? type, String? subCatagory}) async {
-    Loaders.circularShowLoader(context);
-    final res = await repo.getMyCatalogues(catalogStatus, activeStatus,
-        type: type, subCatagory: subCatagory);
-    getCatalogCounts();
-    if (res != null) {
-      res.sort((a, b) {
-        final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
-        final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
-        return dateB.compareTo(dateA);
-      });
+  int catalogueLimit = 10;
+  int catalougueOffset = 0;
+  bool hasMoreCatalogues = true;
+  bool isLoadingMore = false;
+  String? _lastType;
+  String? _lastSubCatagory;
 
-      myCatalogueList = res;
-      Loaders.circularHideLoader(context);
+  Future<void> getMyCataloguesData(BuildContext context,
+      {String? type, String? subCatagory, bool isPagination = false}) async {
+    if (isPagination) {
+      if (!hasMoreCatalogues || isLoadingMore) return;
+      isLoadingMore = true;
+      catalougueOffset += catalogueLimit;
+    } else {
+      catalougueOffset = 0;
+      hasMoreCatalogues = true;
+      _lastType = type;
+      _lastSubCatagory = subCatagory;
+      Loaders.circularShowLoader(context);
     }
+    notifyListeners();
+    final res = await repo.getMyCatalogues(
+        catalogStatus, activeStatus, catalogueLimit, catalougueOffset,
+        type: _lastType, subCatagory: _lastSubCatagory);
+    if (!isPagination) getCatalogCounts();
+    if (res != null) {
+      myCatalogueList = isPagination ? [...?myCatalogueList, ...res] : res;
+      if (res.length < catalogueLimit) hasMoreCatalogues = false;
+    }
+    if (!isPagination) Loaders.circularHideLoader(context);
+    isLoadingMore = false;
     notifyListeners();
   }
 
@@ -408,11 +423,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
         selectedStatus = 'Pending Approval';
         catalogStatus = ['PENDING_APPROVAL'];
       }
-      getCatalogCounts();
+      await getCatalogCounts();
+      clearAddCatalogueData();
+      await getMyCataloguesData(navigatorKey.currentContext!);
       Loaders.circularHideLoader(context);
       navigationService.goBack();
-      clearAddCatalogueData();
-      getMyCataloguesData(navigatorKey.currentContext!);
     } else {
       Loaders.circularHideLoader(context);
     }

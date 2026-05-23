@@ -29,12 +29,12 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
 
   @override
   Future<List<Catalogues>?> getMyCatalogues(
-      List<String>? catalogStatus, List<String>? status,
+      List<String>? catalogStatus, List<String>? status,int limit, int offset,
       {String? type, String? subCatagory, String? searchText}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
-      "limit": 10,
-      "offset": 0,
+      "limit": limit,
+      "offset": offset,
       "where": {
         "_and": [
           if (searchText?.isNotEmpty == true)
@@ -118,6 +118,7 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
         ]
       }
     };
+    print("variables $variables");
     final catalogueData =
         await http.query(getMyCatalogueQuery, variables: variables);
     final result = MyCataloguesData.fromJson(catalogueData);

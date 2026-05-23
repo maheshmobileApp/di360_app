@@ -7,7 +7,7 @@ import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_re
 abstract class AddCatalogueRepository {
   Future<dynamic> addCatalogue(dynamic variables);
   Future<List<Catalogues>?> getMyCatalogues(
-      List<String>? catalogStatus, List<String>? status,
+      List<String>? catalogStatus, List<String>? status,int limit, int offset,
       {String? type, String? subCatagory});
   Future<CataloguesByPk?> cataloguView(String? id);
   Future<void> removeCatalogue(String? id);
