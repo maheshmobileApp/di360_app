@@ -62,7 +62,6 @@ class LoginScreen extends StatelessWidget
                 title: 'Password',
                 controller: viewModel.passController,
                 hintText: "Password",
-                validator: validatePassword,
                 obsecureText: !viewModel.isPasswordVisible,
                 suffixIcon: IconButton(
                   icon: Icon(

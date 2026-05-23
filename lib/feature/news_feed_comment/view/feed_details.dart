@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.d
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
+import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -45,11 +46,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HtmlWidget(
-                (newsfeeds?.description == null || newsfeeds?.description == '')
-                    ? newsfeeds?.title ?? ''
-                    : newsfeeds?.description ?? '',
-                textStyle: TextStyles.regular2(color: AppColors.black),
+              ExpandableHtmlText(
+                htmlData: newsfeeds?.description ?? '',
               ),
               addVertical(10),
               if (newsfeeds?.webUrl != null && newsfeeds!.webUrl!.isNotEmpty)
@@ -107,7 +105,7 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
             ],
           );
         } else {
-          return CachedNetworkImageWidget(imageUrl: url,fit: BoxFit.contain);
+          return CachedNetworkImageWidget(imageUrl: url, fit: BoxFit.contain);
         }
       } else if (type == 'video/mp4') {
         return InlineVideoPlayer(videoUrl: url);
@@ -164,7 +162,8 @@ class FeedDetails extends StatelessWidget with BaseContextHelpers {
       ),
     );
   }
-Widget _mediaCard(
+
+  Widget _mediaCard(
       {required Widget child, VoidCallback? onTap, bool isFullWidth = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),

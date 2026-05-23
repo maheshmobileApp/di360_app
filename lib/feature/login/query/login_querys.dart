@@ -1,6 +1,5 @@
-
-String get loginSchema => """mutation loginApi(\$details: LoginInput!) {
-  login_api(details: \$details) {
+String get loginSchema => r"""mutation loginApi($details: LoginInput!) {
+  login_api(details: $details) {
     id
     accessToken
     refreshToken
@@ -29,6 +28,7 @@ String get loginSchema => """mutation loginApi(\$details: LoginInput!) {
     subscription_permissions
     sub_type
     owner_id
+    professiontype
     __typename
   }
 }

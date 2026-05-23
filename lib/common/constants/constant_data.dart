@@ -99,5 +99,5 @@ class ConstantData {
     }
   ];
 
-  static List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  static List<String> phoneCodeList = ['AU (+61)'];// 'NZ (+64)';
 }

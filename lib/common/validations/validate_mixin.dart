@@ -92,14 +92,12 @@ mixin ValidationMixins {
   }
 
   String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Please enter password";
-    }
-
-    if (value.length < 6) {
-      return "Password must be at least 6 characters";
-    }
-
+    if (value == null || value.isEmpty) return "Please enter password";
+    if (value.length < 6) return "Password must be at least 6 characters";
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return "Must contain at least one capital letter";
+    if (!RegExp(r'[a-z]').hasMatch(value)) return "Must contain at least one lowercase letter";
+    if (!RegExp(r'[0-9]').hasMatch(value)) return "Must contain at least one number";
+    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-+=\[\]\\/;~`]').hasMatch(value)) return "Must contain at least one symbol";
     return null;
   }
 

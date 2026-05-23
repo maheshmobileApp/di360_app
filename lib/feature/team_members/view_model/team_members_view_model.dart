@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/team_members/model/get_sub_supplier_res.dart';
@@ -20,7 +21,7 @@ class TeamMembersViewModel extends ChangeNotifier {
 
   bool editMode = false;
   String editedId = "";
-  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  List<String> phoneCodeList = ConstantData.phoneCodeList;
   String? selectedPhoneCode = "AU (+61)";
 
   void setPhoneCode(String value) {
@@ -184,7 +185,8 @@ class TeamMembersViewModel extends ChangeNotifier {
   editTeamMemberData(ClientsByPk? data) {
     userNameController.text = data?.name ?? "";
     emailController.text = data?.email ?? "";
-    phoneController.text = (data?.phone?.length ?? 0) > 8 ? data!.phone!.substring(8) : "";
+    phoneController.text =
+        (data?.phone?.length ?? 0) > 8 ? data!.phone!.substring(8) : "";
     setPhoneCode(data?.phone?.substring(0, 8) ?? "AU (+61)");
     passwordController.text = data?.password ?? "";
     confirmPasswordController.text = data?.password ?? "";
@@ -233,10 +235,11 @@ class TeamMembersViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.professionType);
     final subscriptionPlanId =
         await LocalStorage.getStringVal(LocalStorageConst.subscriptionId);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final variables = {
       "signUpObj": {
         "email": emailController.text,
-        "phone": '$selectedPhoneCode${phoneController.text}',
+        "phone": '$phoneCode${phoneController.text}',
         "password": passwordController.text,
         "name": userNameController.text,
         "sub_type": "SUB_SUPPLIER",
@@ -295,10 +298,11 @@ class TeamMembersViewModel extends ChangeNotifier {
     try {
       final res = await repo.createTeamMember(variables);
       Loaders.circularHideLoader(context);
-      
+
       if (res != null && res['_error'] != null) {
         final errorMessage = res['_error'] as String;
-        if (errorMessage.contains('clients_email_key') || errorMessage.contains('Uniqueness violation')) {
+        if (errorMessage.contains('clients_email_key') ||
+            errorMessage.contains('Uniqueness violation')) {
           scaffoldMessenger('Email already exists, use another one');
         } else {
           scaffoldMessenger(errorMessage);
@@ -325,11 +329,13 @@ class TeamMembersViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.professionType);
     final subscriptionPlanId =
         await LocalStorage.getStringVal(LocalStorageConst.subscriptionId);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+
     final variables = {
       "id": editedId,
       "fields": {
         "email": emailController.text,
-        "phone": '$selectedPhoneCode${phoneController.text}',
+        "phone": '$phoneCode${phoneController.text}',
         "password": passwordController.text,
         "name": userNameController.text,
         "sub_type": "SUB_SUPPLIER",

@@ -59,182 +59,223 @@ class DateFormatUtils {
   }
 
   static String formatToAmPm(String timeString) {
-  // Add a dummy date to make it a valid ISO format
-  String withDate = "1970-01-01T$timeString";
+    // Add a dummy date to make it a valid ISO format
+    String withDate = "1970-01-01T$timeString";
 
-  DateTime dt = DateTime.parse(withDate);
-  return DateFormat('hh:mm a').format(dt);
-}
-
-static String formatDateTime(String dateTimeString) {
-  try {
-    final dateTime = DateTime.parse(dateTimeString);
-    final localDateTime = dateTime.toLocal();
-    return DateFormat('dd-MM-yyyy hh:mm a').format(localDateTime);
-  } catch (e) {
-    return dateTimeString; // Return original if parsing fails
+    DateTime dt = DateTime.parse(withDate);
+    return DateFormat('hh:mm a').format(dt);
   }
-}
 
-static String formatTwoDateTime(String dateTimeString) {
-  try {
-    final dateTime = DateTime.parse(dateTimeString);
-    final localDateTime = dateTime.toLocal();
-    return DateFormat('yyyy-MM-dd hh:mm:ss a').format(localDateTime);
-  } catch (e) {
-    return dateTimeString; // Return original if parsing fails
-  }
-}
-
-static String formatDate(String dateTimeString) {
-  try {
-    final dateTime = DateTime.parse(dateTimeString);
-    final localDateTime = dateTime.toLocal();
-    return DateFormat('dd-MM-yyyy').format(localDateTime);
-  } catch (e) {
-    return dateTimeString; // Return original if parsing fails
-  }
-}
-
-static String formatToTime(String dateTimeString) {
-  try {
-    final dateTime = DateTime.parse(dateTimeString);
-    final originalTime = dateTime.add(dateTime.timeZoneOffset);
-    return DateFormat('hh:mm a').format(originalTime);
-  } catch (e) {
-    return dateTimeString; // Return original if parsing fails
-  }
-}
-
-static String formatDateYear(String dateTimeString) {
-  try {
-    DateTime dateTime;
-    // Try parsing as ISO format first
+  static String formatDateTime(String dateTimeString) {
     try {
-      dateTime = DateTime.parse(dateTimeString);
+      final dateTime = DateTime.parse(dateTimeString);
+      final localDateTime = dateTime.toLocal();
+      return DateFormat('dd-MM-yyyy hh:mm a').format(localDateTime);
     } catch (e) {
-      // If ISO parsing fails, try DD/M/YYYY or DD/MM/YYYY format
-      final parts = dateTimeString.split('/');
+      return dateTimeString; // Return original if parsing fails
+    }
+  }
+
+  static String formatTwoDateTime(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      final localDateTime = dateTime.toLocal();
+      return DateFormat('yyyy-MM-dd hh:mm:ss a').format(localDateTime);
+    } catch (e) {
+      return dateTimeString; // Return original if parsing fails
+    }
+  }
+
+  static String formatDate(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      final localDateTime = dateTime.toLocal();
+      return DateFormat('dd-MM-yyyy').format(localDateTime);
+    } catch (e) {
+      return dateTimeString; // Return original if parsing fails
+    }
+  }
+
+  static String formatToTime(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      final originalTime = dateTime.add(dateTime.timeZoneOffset);
+      return DateFormat('hh:mm a').format(originalTime);
+    } catch (e) {
+      return dateTimeString; // Return original if parsing fails
+    }
+  }
+
+  static String formatDateYear(String dateTimeString) {
+    try {
+      DateTime dateTime;
+      // Try parsing as ISO format first
+      try {
+        dateTime = DateTime.parse(dateTimeString);
+      } catch (e) {
+        // If ISO parsing fails, try DD/M/YYYY or DD/MM/YYYY format
+        final parts = dateTimeString.split('/');
+        if (parts.length == 3) {
+          final day = int.parse(parts[0]);
+          final month = int.parse(parts[1]);
+          final year = int.parse(parts[2]);
+          dateTime = DateTime(year, month, day);
+        } else {
+          return dateTimeString;
+        }
+      }
+      return DateFormat('yyyy-MM-dd').format(dateTime);
+    } catch (e) {
+      return dateTimeString; // Return original if parsing fails
+    }
+  }
+
+  static String formatDateToIso8601(String dateString) {
+    try {
+      DateTime dateTime;
+      // Try parsing DD/MM/YYYY or DD/M/YYYY format
+      final parts = dateString.split('/');
       if (parts.length == 3) {
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
         dateTime = DateTime(year, month, day);
-      } else {
-        return dateTimeString;
+        return dateTime.toUtc().toIso8601String();
       }
-    }
-    return DateFormat('yyyy-MM-dd').format(dateTime);
-  } catch (e) {
-    return dateTimeString; // Return original if parsing fails
-  }
-}
-
-static String formatDateToIso8601(String dateString) {
-  try {
-    DateTime dateTime;
-    // Try parsing DD/MM/YYYY or DD/M/YYYY format
-    final parts = dateString.split('/');
-    if (parts.length == 3) {
-      final day = int.parse(parts[0]);
-      final month = int.parse(parts[1]);
-      final year = int.parse(parts[2]);
-      dateTime = DateTime(year, month, day);
+      // Try parsing as ISO format
+      dateTime = DateTime.parse(dateString);
       return dateTime.toUtc().toIso8601String();
+    } catch (e) {
+      return dateString;
     }
-    // Try parsing as ISO format
-    dateTime = DateTime.parse(dateString);
-    return dateTime.toUtc().toIso8601String();
-  } catch (e) {
-    return dateString;
   }
-}
 
-static String formatYyyyMmDdToDdMmYyyy(String dateString) {
-  try {
-    final dateTime = DateTime.parse(dateString);
-    final localDateTime = dateTime.toLocal();
-    return DateFormat('dd/MM/yyyy').format(localDateTime);
-  } catch (e) {
-    return dateString;
+  static String formatYyyyMmDdToDdMmYyyy(String dateString) {
+    try {
+      final dateTime = DateTime.parse(dateString);
+      final localDateTime = dateTime.toLocal();
+      return DateFormat('dd/MM/yyyy').format(localDateTime);
+    } catch (e) {
+      return dateString;
+    }
   }
-}
 
-static String formatDateOnly(String? date) {
-  if (date == null || date.trim().isEmpty) return '';
-  try {
-    final dateOnly = date.split('T').first;
-    return DateFormat('MMM d, y').format(DateTime.parse(dateOnly));
-  } catch (_) {
-    return '';
+  static String formatDateOnly(String? date) {
+    if (date == null || date.trim().isEmpty) return '';
+    try {
+      final dateOnly = date.split('T').first;
+      return DateFormat('MMM d, y').format(DateTime.parse(dateOnly));
+    } catch (_) {
+      return '';
+    }
   }
-}
 
-static String formatDateTimeShort(String dateTimeString) {
-  try {
-    final dt = DateTime.parse(dateTimeString);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final period = dt.hour >= 12 ? 'PM' : 'AM';
-    return '${dt.day} ${months[dt.month - 1]} | $hour $period';
-  } catch (_) {
-    return dateTimeString;
+  static String formatDateTimeShort(String dateTimeString) {
+    try {
+      final dt = DateTime.parse(dateTimeString);
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+      final period = dt.hour >= 12 ? 'PM' : 'AM';
+      return '${dt.day} ${months[dt.month - 1]} | $hour $period';
+    } catch (_) {
+      return dateTimeString;
+    }
   }
-}
 
-static String formatDateRange(String start, String end) {
-  try {
-    final s = DateTime.parse(start);
-    final e = DateTime.parse(end);
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${s.day} (${days[s.weekday - 1]}) – ${e.day} (${days[e.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
-  } catch (_) {
-    return '$start – $end';
+  static String formatDateRange(String start, String end) {
+    try {
+      final s = DateTime.parse(start);
+      final e = DateTime.parse(end);
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (s == e){
+        return '${s.day} (${days[s.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
+      }
+      return '${s.day} (${days[s.weekday - 1]}) – ${e.day} (${days[e.weekday - 1]}) ${months[s.month - 1]} ${s.year}';
+    } catch (_) {
+      return '$start – $end';
+    }
   }
-}
 
-static DateTime? parseToLocalDate(String? dateStr) {
-  if (dateStr == null || dateStr.trim().isEmpty) return null;
-  try {
-    return DateTime.parse(dateStr).toLocal();
-  } catch (_) {
-    return null;
+  static DateTime? parseToLocalDate(String? dateStr) {
+    if (dateStr == null || dateStr.trim().isEmpty) return null;
+    try {
+      return DateTime.parse(dateStr).toLocal();
+    } catch (_) {
+      return null;
+    }
   }
-}
 
-static int remainingDays(String dateStr, int accessDuration) {
-  try {
-    final expiry = DateTime.parse(dateStr).toLocal().add(Duration(days: accessDuration));
-    final now = DateTime.now();
-    if (expiry.isBefore(now)) return 0;
-    return (expiry.difference(now).inHours / 24).ceil();
-  } catch (_) {
-    return 0;
+  static int remainingDays(String dateStr, int accessDuration) {
+    try {
+      final expiry =
+          DateTime.parse(dateStr).toLocal().add(Duration(days: accessDuration));
+      final now = DateTime.now();
+      if (expiry.isBefore(now)) return 0;
+      return (expiry.difference(now).inHours / 24).ceil();
+    } catch (_) {
+      return 0;
+    }
   }
-}
 
-static String addDaysToDate(String dateStr, int days) {
-  try {
-    final date = DateTime.parse(dateStr);
-    final expiry = date.add(Duration(days: days));
-    return DateFormat('d MMM yyyy').format(expiry); //17 May 2026 format needed
-  } catch (_) {
-    return '';
+  static String addDaysToDate(String dateStr, int days) {
+    try {
+      final date = DateTime.parse(dateStr);
+      final expiry = date.add(Duration(days: days));
+      return DateFormat('d MMM yyyy')
+          .format(expiry); //17 May 2026 format needed
+    } catch (_) {
+      return '';
+    }
   }
-}
 
-static String formatTime(String time) {
-  try {
-    final clean = time.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();
-    final parts = clean.split(':');
-    int hour = int.parse(parts[0]);
-    final minute = parts[1];
-    final period = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12 == 0 ? 12 : hour % 12;
-    return '${hour.toString().padLeft(2, '0')}:$minute $period';
-  } catch (_) {
-    return time;
+  static String formatDateToDmy(String dateStr) {
+    print(dateStr);
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('d MMM yyyy').format(date);
+    } catch (_) {
+      return dateStr;
+    }
   }
-}
+
+  static String formatTime(String time) {
+    try {
+      final clean = time.replaceAll(RegExp(r'[+-]\d{2}(:\d{2})?$'), '').trim();
+      final parts = clean.split(':');
+      int hour = int.parse(parts[0]);
+      final minute = parts[1];
+      final period = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12 == 0 ? 12 : hour % 12;
+      return '${hour.toString().padLeft(2, '0')}:$minute $period';
+    } catch (_) {
+      return time;
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/contacts_res.dart';
@@ -44,7 +45,7 @@ class CommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> phoneCodeList = ['AU (+61)', 'NZ (+64)'];
+  List<String> phoneCodeList = ConstantData.phoneCodeList;
   String? selectedPhoneCode = "AU (+61)";
   void setPhoneCode(String value) {
     selectedPhoneCode = value;
@@ -398,10 +399,27 @@ class CommunityViewModel extends ChangeNotifier {
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final professionTypeId = await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final variables = {
-      "communityId":
-          (type == UserRole.professional.value) ? newsFeedId : communityId
-    };
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_is_null": true}
+          },
+          {
+            "_or": [
+              {
+                "access_rules": {
+                  "directory_category_id": {"_eq": professionTypeId}
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "limit": 5,
+      "offset": 0
+    };;
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
     filterCatgoriesData = NewsFeedCategoriesData(
@@ -410,7 +428,7 @@ class CommunityViewModel extends ChangeNotifier {
     filterCatgoriesData?.newsfeedCategories
         ?.insert(0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
     filterCatgoriesData?.newsfeedCategories
-        ?.insert(1,NewsfeedCategories(id: '2', categoryName: 'Jobs'));
+        ?.insert(1, NewsfeedCategories(id: '2', categoryName: 'Jobs'));
     filterCatgoriesData?.newsfeedCategories
         ?.insert(2, NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
     Loaders.circularHideLoader(context);

@@ -229,17 +229,40 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> getFilterCategories() async {
+    final professionTypeId =
+        await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_is_null": true}
+          },
+          {
+            "_or": [
+              {
+                "access_rules": {
+                  "directory_category_id": {"_eq": professionTypeId}
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "limit": 5,
+      "offset": 0
+    };
     try {
-      final response = await _http.query(getAllNewsfeedCategoriesQuery);
+      final response = await _http.query(getAllNewsfeedCategoriesQuery,
+          variables: variables);
       if (response['newsfeed_categories'] != null) {
         final res = CategoriesData.fromJson(response);
         newsfeedCategories = res.newsfeedCategories;
         newsfeedCategories?.insert(
             0, NewsfeedCategories(id: '1', categoryName: 'Catalogue'));
-        newsfeedCategories
-            ?.add(NewsfeedCategories(id: '2', categoryName: 'Jobs'));
-        newsfeedCategories
-            ?.add(NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
+        newsfeedCategories?.insert(
+            1, NewsfeedCategories(id: '2', categoryName: 'Jobs'));
+        newsfeedCategories?.insert(
+            2, NewsfeedCategories(id: '3', categoryName: 'Learning Hub'));
       }
     } catch (e) {}
     notifyListeners();
