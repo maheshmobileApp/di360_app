@@ -205,6 +205,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final professionId =
+        await LocalStorage.getStringVal(LocalStorageConst.professionId);
 
     final variables = {
       "limit": _newsFeedLimit,
@@ -233,6 +236,19 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
           if (categoryType != null && categoryType != "")
             {
               "category_type": {"_eq": categoryType}
+            },
+          if (userType != UserRole.admin.name && professionId.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "access_rules": {
+                    "directory_category_id": {"_eq": professionId}
+                  }
+                },
+                {
+                  "category_type": {"_is_null": true}
+                }
+              ]
             },
           {
             "_not": {

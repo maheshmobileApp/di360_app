@@ -420,10 +420,15 @@ flutter clean && flutter pub get &&flutter build apk --release --dart-define-fro
   --app 1:600297416712:android:fa069f2050ce2b738349bd \
   --groups "dental-interface-360-qa-testing" \
   --release-notes "
-Deep link issue fixed
-1.⁠ ⁠Directory Pagination 
-2.⁠ ⁠Directory Search flow from home screen. 
-3.⁠ ⁠Newsfeed Search Functionality 
+DS5-T2693
+DS5-T2765 
+DS5-T2766 
+DS5-T2735
+DS5-T2745
+DS5-T2759 
+DS5-T2762 
+DS5-T2763 
+DS5-T2743
 "
   
 
@@ -442,4 +447,7 @@ Deep link issue fixed
 ]
 drspeddi@gmail.com
 
+123456
+
+Sandeep50009@yahoo.com
 123456

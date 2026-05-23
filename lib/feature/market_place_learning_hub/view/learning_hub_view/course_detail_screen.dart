@@ -297,9 +297,10 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                           ),
                         ),
                         addVertical(4),
-                        Text(courseDetails?.endDate ?? "",
-                            style: TextStyles.medium2(
-                                color: AppColors.primaryColor)),
+                        if (courseDetails?.eventType != "multiple")
+                          Text(courseDetails?.endDate ?? "",
+                              style: TextStyles.medium2(
+                                  color: AppColors.primaryColor)),
                       ],
                       addVertical(6),
                       if ((courseDetails?.type != 'Online Academy' &&
