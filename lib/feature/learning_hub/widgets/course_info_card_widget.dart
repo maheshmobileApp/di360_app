@@ -70,9 +70,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                     Text("${courseName}",
                         maxLines: 2,
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        )),
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     const Text("A Comprehensive Guide",
                         style: TextStyle(color: Colors.grey)),
@@ -103,11 +101,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.calendar_month_outlined,
-                              color: AppColors.primaryColor,
-                              size: 20,
-                            ),
+                            Icon(Icons.calendar_month_outlined,
+                                color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
                             if (startDate.isNotEmpty && endDate.isNotEmpty)
                               Text(DateFormatUtils.formatDateRange(
@@ -119,11 +114,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.access_time_rounded,
-                              color: AppColors.primaryColor,
-                              size: 20,
-                            ),
+                            Icon(Icons.access_time_rounded,
+                                color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
                             Text(
                               '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
