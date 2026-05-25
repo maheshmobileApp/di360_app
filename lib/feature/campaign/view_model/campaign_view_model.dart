@@ -160,8 +160,13 @@ class CampaignViewModel extends ChangeNotifier {
       'enabled': false
     },
     {'id': 'COMMUNITY_MEMBERS', 'label': 'Community members', 'enabled': true},
-    {'id': 'CONTACT_PARTNER', 'label': 'Contact-Partner', 'enabled': true},
-    {'id': 'CONTACT_MEMBER', 'label': 'Contact-Member', 'enabled': true},
+    {'id': 'PARTNER', 'label': 'Contact-Partner', 'enabled': true},
+    {'id': 'MEMBER', 'label': 'Contact-Member', 'enabled': true},
+    {'id': 'LAB', 'label': 'Lab', 'enabled': true},
+    {'id': 'DENTAL_SPECIALIST', 'label': 'Dental-Specialist', 'enabled': true},
+    {'id': 'SUPPLIES', 'label': 'Supplies', 'enabled': true},
+    {'id': 'EDUCATORS', 'label': 'Educators', 'enabled': true},
+    {'id': 'PRACTICE_OWNERS', 'label': 'Practice-Owners', 'enabled': true},
   ];
 
   String? getGroupIdByLabel(String label) {
@@ -381,14 +386,14 @@ class CampaignViewModel extends ChangeNotifier {
       scheduleDateController.text = data?.scheduleDate ?? "";
       scheduleTimeController.text = "";
       messageController.text = data?.messageText ?? "";
-      selectedTimeZone = data?.scheduleTimezone ??"";
+      selectedTimeZone = data?.scheduleTimezone ?? "";
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
       _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
       selectStateCondition = data?.isRefinedByState == "yes" ? "Yes" : "No";
       _selectedSendChips = (data?.sendToNumbers?.cast<String>()) ?? [];
       recipientsCount = data?.recipientsCount.toString() ?? "0";
-       print("**************************$_selectedGroupChips");
+      print("**************************$_selectedGroupChips");
 
       notifyListeners();
     } catch (e) {}
@@ -399,24 +404,22 @@ class CampaignViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     try {
       List<String> sourceList = [];
-      List<String> contactTypeList = [];
+      List<String> contactTypeList = groupOptions
+          .where((option) =>
+              option['enabled'] == true &&
+              _selectedGroupChips.contains(option['label']))
+          .map<String>((option) => option['id'] as String)
+          .toList();
 
-      if (_selectedGroupChips.contains("Community members")) {
-        sourceList.add("community_members");
-      }
+      final bool hasCommunity =
+          _selectedGroupChips.contains("Community members");
+      final bool hasOtherGroups = _selectedGroupChips.any((chip) =>
+          chip != "Community members" &&
+          groupOptions.any(
+              (o) => o['label'] == chip && o['enabled'] == true));
 
-      if (_selectedGroupChips.contains("Contact-Partner") ||
-          _selectedGroupChips.contains("Contact-Member")) {
-        sourceList.add("partners_contact_book");
-      }
-
-      if (_selectedGroupChips.contains("Contact-Partner")) {
-        contactTypeList.addAll(["PARTNER"]);
-      }
-
-      if (_selectedGroupChips.contains("Contact-Member")) {
-        contactTypeList.addAll(["MEMBER"]);
-      }
+      if (hasCommunity) sourceList.add("community_members");
+      if (hasOtherGroups) sourceList.add("partners_contact_book");
 
       final Map<String, dynamic> whereClause = {
         "owner_id": {"_eq": userId},
@@ -576,24 +579,22 @@ class CampaignViewModel extends ChangeNotifier {
     _selectedStateChips = [];
     try {
       List<String> sourceList = [];
-      List<String> contactTypeList = [];
+      List<String> contactTypeList = groupOptions
+          .where((option) =>
+              option['enabled'] == true &&
+              _selectedGroupChips.contains(option['label']))
+          .map<String>((option) => option['id'] as String)
+          .toList();
 
-      if (_selectedGroupChips.contains("Community members")) {
-        sourceList.add("community_members");
-      }
+        final bool hasCommunity =
+          _selectedGroupChips.contains("Community members");
+      final bool hasOtherGroups = _selectedGroupChips.any((chip) =>
+          chip != "Community members" &&
+          groupOptions.any(
+              (o) => o['label'] == chip && o['enabled'] == true));
 
-      if (_selectedGroupChips.contains("Contact-Partner") ||
-          _selectedGroupChips.contains("Contact-Member")) {
-        sourceList.add("partners_contact_book");
-      }
-
-      if (_selectedGroupChips.contains("Contact-Partner")) {
-        contactTypeList.addAll(["PARTNER"]);
-      }
-
-      if (_selectedGroupChips.contains("Contact-Member")) {
-        contactTypeList.addAll(["MEMBER"]);
-      }
+      if (hasCommunity) sourceList.add("community_members");
+      if (hasOtherGroups) sourceList.add("partners_contact_book");
 
       final Map<String, dynamic> whereClause = {
         "owner_id": {"_eq": userId},

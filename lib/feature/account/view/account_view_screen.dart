@@ -335,14 +335,14 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 Provider.of<NewsFeedCommunityViewModel>(context,
                                     listen: false);
                             await viewModel.getNewsFeedCategories(context);
-                            newsFeedVM.newsFeedCategoriesData =
+                            /*newsFeedVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;
 
                             newsFeedVM.newsFeedCategory = viewModel
                                     .newsFeedCategoriesData?.newsfeedCategories
                                     ?.map((e) => e.categoryName ?? "")
                                     .toList() ??
-                                [];
+                                [];*/
                             navigationService
                                 .navigateTo(RouteList.newsFeedCommunityView);
                           }

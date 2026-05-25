@@ -81,7 +81,10 @@ class _ContactsViewState extends State<ContactsView> {
                           contactName: contact.contactName ?? "",
                           email: contact.email ?? "",
                           phone: contact.phone ?? "",
-                          contactType: contact.contactType ?? "",
+                          contactType: viewModel.contactTypes.firstWhere(
+                                (e) => e["value"] == contact.contactType,
+                                orElse: () => {"label": contact.contactType ?? ""},
+                              )["label"] ?? "",
                           state: contact.state ?? "",
                           company: contact.companyName ?? "",
                           onMenuAction: (action) async {

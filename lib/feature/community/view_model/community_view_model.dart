@@ -11,7 +11,6 @@ import 'package:di360_flutter/feature/community/repository/community_repo_impl.d
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class CommunityViewModel extends ChangeNotifier {
@@ -53,7 +52,16 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   //***********************filters
-  List<String> filterContactTypes = ["All", "Partner", "Member"];
+  List<String> filterContactTypes = [
+    "All",
+    "Partner",
+    "Member",
+    "Practice Owners",
+    "Lab",
+    "Dental Specialist",
+    "Supplies",
+    "Educators"
+  ];
   List<String> filterStates = [
     "All",
     "New South Wales",
@@ -79,7 +87,15 @@ class CommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> contactTypes = ["Partner", "Member"];
+  final List<Map<String, String>> contactTypes = [
+    {"label": "Partner", "value": "PARTNER"},
+    {"label": "Member", "value": "MEMBER"},
+    {"label": "Practice Owners", "value": "PRACTICE_OWNERS"},
+    {"label": "Lab", "value": "LAB"},
+    {"label": "Dental Specialist", "value": "DENTAL_SPECIALIST"},
+    {"label": "Supplies", "value": "SUPPLIES"},
+    {"label": "Educators", "value": "EDUCATORS"},
+  ];
   String selectedContactType = "";
   void setSelectedContactType(String value) {
     selectedContactType = value;
@@ -396,30 +412,30 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getNewsFeedCategories(BuildContext context,
       [String? newsFeedId]) async {
     Loaders.circularShowLoader(context);
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final professionTypeId = await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    final professionTypeId =
+        await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final variables = {
       "where": {
         "_and": [
           {
             "community_id": {"_is_null": true}
           },
-          {
-            "_or": [
-              {
-                "access_rules": {
-                  "directory_category_id": {"_eq": professionTypeId}
+          if (professionTypeId.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "access_rules": {
+                    "directory_category_id": {"_eq": professionTypeId}
+                  }
                 }
-              }
-            ]
-          }
+              ]
+            }
         ]
       },
       "limit": 5,
       "offset": 0
-    };;
+    };
+    ;
     final res = await repo.getNewsFeedCategories(variables);
     newsFeedCategoriesData = res;
     filterCatgoriesData = NewsFeedCategoriesData(
@@ -521,10 +537,15 @@ class CommunityViewModel extends ChangeNotifier {
       "created_by_id": {"_eq": id}
     };
 
-    if (selectedFilterContactType == "Partner") {
-      whereClause["contact_type"] = {"_eq": "PARTNER"};
-    } else if (selectedFilterContactType == "Member") {
-      whereClause["contact_type"] = {"_eq": "MEMBER"};
+    if (selectedFilterContactType.isNotEmpty &&
+        selectedFilterContactType != "All") {
+      final match = contactTypes.firstWhere(
+        (e) => e["label"] == selectedFilterContactType,
+        orElse: () => {},
+      );
+      if (match["value"] != null) {
+        whereClause["contact_type"] = {"_eq": match["value"]};
+      }
     }
 
     final variables = {
@@ -569,8 +590,7 @@ class CommunityViewModel extends ChangeNotifier {
           "phone": "${phoneCode}${contactPhoneController.text}",
           "company_name": companyName,
           "state": selectedState,
-          "contact_type":
-              selectedContactType == "Member" ? "MEMBER" : "PARTNER",
+          "contact_type": selectedContactType,
           "created_by_id": id
         }
       };
@@ -635,8 +655,7 @@ class CommunityViewModel extends ChangeNotifier {
           "phone": "${phoneCode}${contactPhoneController.text}",
           "company_name": companyName,
           "state": selectedState,
-          "contact_type":
-              selectedContactType == "Member" ? "MEMBER" : "PARTNER",
+          "contact_type": selectedContactType,
           "created_by_id": id
         }
       };
@@ -704,7 +723,7 @@ class CommunityViewModel extends ChangeNotifier {
   setContactDetails(PartnersContactBook? data) {
     contactNameController.text = data?.contactName ?? "";
     selectedState = data?.state ?? "";
-    selectedContactType = data?.contactType == "MEMBER" ? "Member" : "Partner";
+    selectedContactType = data?.contactType ?? "";
     contactEmailController.text = data?.email ?? "";
     final phone = data?.phone ?? "";
     if (phone.startsWith('+61')) {

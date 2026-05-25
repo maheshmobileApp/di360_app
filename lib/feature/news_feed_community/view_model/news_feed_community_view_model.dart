@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
-import 'package:di360_flutter/feature/community/model/get_new_feed_categories.dart';
+import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -40,9 +40,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   TextEditingController reportText = TextEditingController();
 
   bool isEditNewsFeed = false;
-  List<String> newsFeedCategory = [];
+  //List<String> newsFeedCategory = [];
 
-  String? selectedCategory;
+  NewsfeedCategories? selectedCategory;
   String? selectedCategoryId;
   bool searchBarOpen = false;
   TextEditingController searchController = TextEditingController();
@@ -75,7 +75,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<NewsfeedCategories>? newsfeedCategories;
+  //List<NewsfeedCategories>? newsfeedCategories;
 
   List<String>? serverNewsFeedGallery;
   List<File>? selectedNewsFeedGallery;
@@ -237,6 +237,37 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
             {
               "category_type": {"_eq": categoryType}
             },
+          if (searchController.text.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "description": {"_ilike": "%${searchController.text}%"}
+                },
+                {
+                  "title": {"_ilike": "%${searchController.text}%"}
+                },
+                {
+                  "admin_user": {
+                    "name": {"_ilike": "%${searchController.text}%"}
+                  }
+                },
+                {
+                  "dental_practice": {
+                    "business_name": {"_ilike": "%${searchController.text}%"}
+                  }
+                },
+                {
+                  "dental_supplier": {
+                    "business_name": {"_ilike": "%${searchController.text}%"}
+                  }
+                },
+                {
+                  "dental_professional": {
+                    "name": {"_ilike": "%${searchController.text}%"}
+                  }
+                }
+              ]
+            },
           if (userType != UserRole.admin.name && professionId.isNotEmpty)
             {
               "_or": [
@@ -321,6 +352,37 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
               "_in": ["BOTH", "COMMUNITY_USER"]
             }
           },
+          if (searchController.text.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "description": {"_ilike": "%${searchController.text}%"}
+                },
+                {
+                  "title": {"_ilike": "%${searchController.text}%"}
+                },
+                {
+                  "admin_user": {
+                    "name": {"_ilike": "%${searchController.text}%"}
+                  }
+                },
+                {
+                  "dental_practice": {
+                    "business_name": {"_ilike": "%${searchController.text}%"}
+                  }
+                },
+                {
+                  "dental_supplier": {
+                    "business_name": {"_ilike": "%${searchController.text}%"}
+                  }
+                },
+                {
+                  "dental_professional": {
+                    "name": {"_ilike": "%${searchController.text}%"}
+                  }
+                }
+              ]
+            },
           if (categoryType != null && categoryType != "")
             {
               "category_type": {"_eq": categoryType}
@@ -416,7 +478,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
-      "category_type": selectedCategoryId,
+      "category_type": selectedCategory?.id,
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
@@ -435,6 +497,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
 
     final variables = {"fields": fields};
+    print("addNFCommunity: $variables");
 
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
@@ -519,40 +582,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
   }*/
 
-  NewsFeedCategoriesData? newsFeedCategoriesData;
+  //NewsFeedCategoriesData? newsFeedCategoriesData;
 
-  void setSelectedNewsFeedCategory(String? name) {
-    print("****************Calling name to Id $name");
-    selectedCategory = name;
-
-    if (name != null && newsFeedCategoriesData?.newsfeedCategories != null) {
-      final match = newsFeedCategoriesData!.newsfeedCategories!.firstWhere(
-        (category) => category.categoryName == name,
-        orElse: () => NewsfeedCategories(),
-      );
-      selectedCategoryId = match.id;
-      print("********selected Id $selectedCategoryId");
-    } else {
-      selectedCategoryId = null;
-    }
-
-    notifyListeners();
-  }
-
-  Future<void> setSelectedCourseCategoryName(String? id) async {
-    selectedCategoryId = id;
-
-    if (id != null && newsFeedCategoriesData?.newsfeedCategories != null) {
-      final match = newsFeedCategoriesData!.newsfeedCategories!.firstWhere(
-        (category) => category.id == id,
-        orElse: () => NewsfeedCategories(),
-      );
-      selectedCategory = match.categoryName;
-      print("********selected Id $selectedCategory");
-    } else {
-      selectedCategory = null;
-    }
-
+  void setSelectedCategory(NewsfeedCategories? category) {
+    selectedCategory = category;
     notifyListeners();
   }
 
@@ -594,7 +627,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
-      "category_type": selectedCategoryId,
+      "category_type": selectedCategory?.id,
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
@@ -732,6 +765,45 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       await getAllNewsFeeds(context);
     }
     Loaders.circularHideLoader(context);
+    notifyListeners();
+  }
+
+  List<NewsfeedCategories>? addNewsFeedCommunityCategories;
+  Future<void> fetchAddNewsfeedCommunityCategories() async {
+    const String query = r'''
+    query getNewsfeedCategoriesByCommunity($communityId: uuid!) {
+  newsfeed_categories(
+    where: {community_id: {_eq: $communityId}}
+    order_by: {created_at: desc}
+  ) {
+    id
+    category_name
+    created_at
+    updated_at
+    created_by
+    created_by_user_id
+    community_id
+    __typename
+  }
+}''';
+    final variables = {"communityId": "c3e0eb48-6a07-4545-8ad2-777e32a13f97"};
+    try {
+      final response = await _http.query(query, variables: variables);
+      if (response != null) {
+        final res = CategoriesData.fromJson(response);
+        addNewsFeedCommunityCategories = res.newsfeedCategories;
+      }
+    } catch (e) {
+      print("Error fetching categories: $e");
+    }
+    notifyListeners();
+  }
+
+  editSelectCategoryAssigned(String id) {
+    final category = addNewsFeedCommunityCategories?.firstWhere(
+        (val) => val.id == id,
+        orElse: () => addNewsFeedCommunityCategories!.first);
+    setSelectedCategory(id.isEmpty ? null : category);
     notifyListeners();
   }
 

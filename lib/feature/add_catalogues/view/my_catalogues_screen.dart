@@ -20,6 +20,8 @@ class MyCataloguesScreen extends StatefulWidget {
 
 class _MyCataloguesScreenState extends State<MyCataloguesScreen>
     with BaseContextHelpers {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +29,18 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
       final catalogVM = context.read<AddCatalogueViewModel>();
       catalogVM.getMyCataloguesData(context);
     });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        context.read<AddCatalogueViewModel>().getMyCataloguesData(context, isPagination: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -125,8 +139,16 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
                       ),
                     )
                   : ListView.builder(
-                      itemCount: myCatalogVM.myCatalogueList?.length,
+                      controller: _scrollController,
+                      itemCount: (myCatalogVM.myCatalogueList?.length ?? 0) +
+                          (myCatalogVM.isLoadingMore ? 1 : 0),
                       itemBuilder: (context, index) {
+                        if (index == myCatalogVM.myCatalogueList?.length) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
                         return CatalogueCard(
                             item: myCatalogVM.myCatalogueList?[index]);
                       },

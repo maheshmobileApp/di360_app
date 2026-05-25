@@ -23,10 +23,14 @@ class NewsFeedViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
   final NewsFeedRepository repo = NewsFeedRepoImpl();
   NewsFeedViewModel() {
-    getUserId();
-    getFilterCategories();
+    _init();
     searchController.addListener(notifyListeners);
     scrollController.addListener(_scrollListener);
+  }
+
+  Future<void> _init() async {
+    await getUserId();
+    await getFilterCategories();
   }
 
   List<NewsfeedCategories>? newsfeedCategories;
@@ -237,6 +241,7 @@ class NewsFeedViewModel extends ChangeNotifier {
           {
             "community_id": {"_is_null": true}
           },
+          if (professionTypeId.isNotEmpty)
           {
             "_or": [
               {
@@ -268,7 +273,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getUserId() async {
+  Future<void> getUserId() async {
     final userId = LocalStorage.getStringSync(LocalStorageConst.userId);
     final type = LocalStorage.getStringSync(LocalStorageConst.type);
     userID = userId;

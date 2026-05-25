@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
+import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
@@ -105,17 +106,16 @@ class AddNewsFeedCommunityView extends StatelessWidget
       value: jobCreateVM.selectedCategory,
       title: "Category",
       onChanged: (v) {
-        if (jobCreateVM.newsFeedCategory.isEmpty) {
+        if (jobCreateVM.addNewsFeedCommunityCategories?.isEmpty == true) {
           scaffoldMessenger('Create category');
           return;
         }
-        jobCreateVM.setSelectedNewsFeedCategory(v as String);
+        jobCreateVM.setSelectedCategory(v);
       },
-      items: jobCreateVM.newsFeedCategory
-          .map<DropdownMenuItem<Object>>((String value) {
-        return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
+      items: (jobCreateVM.addNewsFeedCommunityCategories ?? []).map((v) {
+        return DropdownMenuItem<NewsfeedCategories>(
+          value: v,
+          child: Text(v.categoryName ?? ''),
         );
       }).toList(),
       hintText: "Select Category",

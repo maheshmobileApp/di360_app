@@ -105,22 +105,19 @@ class _CreateCategoryViewState extends State<CreateContactView>
   }
 
   Widget _buildContactTypes(CommunityViewModel viewModel) {
-    // Remove duplicates from contactTypes
-    final uniqueContactTypes = viewModel.contactTypes.toSet().toList();
-
     return CustomDropDown(
       isRequired: true,
-      value: uniqueContactTypes.contains(viewModel.selectedContactType)
+      value: viewModel.contactTypes.any((e) => e["value"] == viewModel.selectedContactType)
           ? viewModel.selectedContactType
           : null,
       title: "Category",
       onChanged: (v) {
         viewModel.setSelectedContactType(v as String);
       },
-      items: uniqueContactTypes.map<DropdownMenuItem<Object>>((String value) {
+      items: viewModel.contactTypes.map<DropdownMenuItem<Object>>((item) {
         return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
+          value: item["value"],
+          child: Text(item["label"]!),
         );
       }).toList(),
       hintText: "Select Contact Type",

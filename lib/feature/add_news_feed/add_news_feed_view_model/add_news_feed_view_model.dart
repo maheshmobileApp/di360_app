@@ -59,24 +59,43 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchNewsfeedCategories() async {
-    const String query = '''
-    query getAllNewsfeedCategories {
-  newsfeed_categories(
-    where: {community_id: {_is_null: true}}
-    order_by: {created_at: desc}
-  ) {
+    final professionTypeId =
+        await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    print("**************$professionTypeId");
+    const String query = r'''
+    query getAllNewsfeedCategories($where: newsfeed_categories_bool_exp!) {
+  newsfeed_categories(where: $where, order_by: {created_at: desc}) {
     id
     category_name
     created_at
     updated_at
     created_by
     created_by_user_id
+    __typename
   }
-}
-  ''';
+}''';
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_is_null": true}
+          },
+          if (professionTypeId.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "access_rules": {
+                    "directory_category_id": {"_eq": professionTypeId}
+                  }
+                }
+              ]
+            }
+        ]
+      },
+    };
 
     try {
-      final response = await _http.query(query);
+      final response = await _http.query(query, variables: variables);
       if (response != null) {
         final res = CategoriesData.fromJson(response);
         newsfeedCategories = res.newsfeedCategories;

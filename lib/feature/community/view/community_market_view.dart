@@ -46,8 +46,8 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                             await viewModel.getNewsFeedCategories(context,
                                 list[index].communityId ?? "");
                             newsCommunityVM.getBannerUrl(context);
-                            newsCommunityVM.newsFeedCategoriesData =
-                                viewModel.newsFeedCategoriesData;
+                            /*newsCommunityVM.newsFeedCategoriesData =
+                                viewModel.newsFeedCategoriesData;*/
                             navigationService
                                 .navigateTo(RouteList.newsFeedCommunityView);
                           },
