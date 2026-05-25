@@ -55,13 +55,13 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       if (type == 'SUPPLIER') {
         await communityVM.getNewsFeedCategories(context);
       }
-      newsFeedVM.newsFeedCategoriesData = communityVM.newsFeedCategoriesData;
+      //newsFeedVM.newsFeedCategoriesData = communityVM.newsFeedCategoriesData;
 
-      newsFeedVM.newsFeedCategory = communityVM
+      /*newsFeedVM.newsFeedCategory = communityVM
               .newsFeedCategoriesData?.newsfeedCategories
               ?.map((e) => e.categoryName ?? "")
               .toList() ??
-          [];
+          [];*/
     });
   }
 
@@ -376,17 +376,21 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             newsItem.videoUrl ?? "";
                                         viewModel.websiteLinkController.text =
                                             newsItem.webUrl ?? "";
+                                        await viewModel
+                                            .fetchAddNewsfeedCommunityCategories();
+                                        viewModel.editSelectCategoryAssigned(
+                                            newsItem?.categoryType ?? '');
 
-                                        viewModel.setSelectedCourseCategoryName(
-                                            newsItem.categoryType ?? "");
+                                        /*viewModel.setSelectedCourseCategoryName(
+                                            newsItem.categoryType ?? "");*/
 
-                                        viewModel.newsFeedCategory = communityVM
+                                        /*viewModel.newsFeedCategory = communityVM
                                                 .newsFeedCategoriesData
                                                 ?.newsfeedCategories
                                                 ?.map(
                                                     (e) => e.categoryName ?? "")
                                                 .toList() ??
-                                            [];
+                                            [];*/
                                         viewModel.serverNewsFeedGallery =
                                             (newsItem.postImage ?? [])
                                                 .map((item) => item.url ?? "")
@@ -455,14 +459,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                 ],
               ),
               floatingActionButton: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     viewModel.setEditNewsFeed(false);
                     viewModel.clearAddNewsFeedData();
-                    viewModel.newsFeedCategory = communityVM
-                            .newsFeedCategoriesData?.newsfeedCategories
-                            ?.map((e) => e.categoryName ?? "")
-                            .toList() ??
-                        [];
+                    await viewModel.fetchAddNewsfeedCommunityCategories();
                     navigationService
                         .navigateTo(RouteList.addNewsFeedCommunityView);
                   },

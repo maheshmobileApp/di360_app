@@ -11,7 +11,6 @@ import 'package:di360_flutter/feature/community/repository/community_repo_impl.d
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 
 class CommunityViewModel extends ChangeNotifier {
