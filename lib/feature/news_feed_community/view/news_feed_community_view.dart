@@ -53,7 +53,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
       final newsFeedVM =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       if (type == 'SUPPLIER') {
-        await communityVM.getNewsFeedCategories(context);
+        await communityVM.getNewsFeedCategories(context, type: "Community");
       }
       //newsFeedVM.newsFeedCategoriesData = communityVM.newsFeedCategoriesData;
 

@@ -63,6 +63,7 @@ class ContactFilterView extends StatelessWidget with BaseContextHelpers {
                         width: 150,
                         onTap: () async {
                           await viewModel.getContacts(context);
+                          viewModel.updateAppliedContactFilter(true);
                           navigationService.goBack();
                         },
                       ),

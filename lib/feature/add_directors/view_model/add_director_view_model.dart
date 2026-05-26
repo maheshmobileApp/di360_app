@@ -413,7 +413,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == data?.professionType,
+      (cat) => cat.name == data?.professiontype?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -448,7 +448,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == data?.professionType,
+      (cat) => cat.name == data?.professiontype?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -584,6 +584,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "mobile_number": businessPhoneCntr.text,
         "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
         "phone_visibility":
             VisibilityType.fromDisplayName(phoneVisibility)?.name ??
                 VisibilityType.PRIVATE.name,
@@ -624,6 +625,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image":
             banner == null ? getBasicInfoData.first.bannerImage : banner,
         "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
         "directory_category_id": selectedBusineestype?.id,
         "logo": logo == null ? getBasicInfoData.first.logo : logo,
         "alt_phone": alternateNumberController.text,
@@ -665,6 +667,7 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "address": addressController.text,
         "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
         "business_email":
             businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
         "business_name": CompanyNameController.text,

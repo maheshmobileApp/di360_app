@@ -107,7 +107,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
-  void setSelectedBusineestype(DirectoryCategories emp) {
+  void setSelectedBusineestype(DirectoryCategories? emp) {
     selectedBusineestype = emp;
     notifyListeners();
   }
@@ -189,7 +189,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == viewProfile?.professionType,
+      (cat) => cat.name == viewProfile?.professiontype.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -252,7 +252,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == viewProfile?.professionType,
+      (cat) => cat.name == viewProfile?.professiontype?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -369,6 +369,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "alt_email": alternateEmailController.text,
         "alt_phone": alternatePhoneNoController.text,
         "profession_type": selectedBusineestype?.name,
+        'professiontype': selectedBusineestype,
         "profile_completed": true
       };
     } else if (type == UserRole.professional.value) {
@@ -393,6 +394,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "date_of_birth": dateOfBirthController.text,
         "salutation": selectedSalutation,
         "profile_completed": true,
+        'professiontype': selectedBusineestype,
         //"about_us": aboutUsController.text,
       };
     } else {
@@ -420,7 +422,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "alt_email": alternateEmailController.text,
         "alt_phone": alternatePhoneNoController.text,
         "profession_type": selectedBusineestype?.name,
-        "profile_completed": true
+        "profile_completed": true,
+        'professiontype': selectedBusineestype,
       };
     }
 
@@ -451,6 +454,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
       if (type == UserRole.professional.value) updateTheDirectorViewProfile();
+      updateClient();
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -632,6 +636,29 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       scaffoldMessenger(result.toString());
     }
     notifyListeners();
+  }
+
+  Future<void> updateClient() async {
+    print("update cleint is calling");
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    final variables = {
+      "id": userId,
+      "changes": {
+        "type": type,
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "professionType": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "business_name": businessNameController.text,
+      }
+    };
+    final res = await repo.updateClient(variables);
+    if (res != null) {
+      print(res);
+    }
   }
 
   Future<void> clearProfileData() async {

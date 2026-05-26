@@ -16,6 +16,7 @@ query getUeserPracDirectory($id: uuid!) {
     business_email
     mobile_number
     profession_type
+    professiontype
     directory_category_id
     logo
     banner_image
@@ -121,6 +122,7 @@ query getUeserPracDirectory($id: uuid!) {
     mobile_number
     company_name
     profession_type
+    professiontype
     directory_category_id
     logo
     banner_image

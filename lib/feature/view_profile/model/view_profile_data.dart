@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class viewProfileDataRes {
   profileViewData? data;
 
@@ -62,6 +64,7 @@ class DentalSuppliersByPk {
   String? altEmail;
   String? altPhone;
   String? professionType;
+  DirectoryCategories? professiontype;
   String? tgaNumber;
   bool? secondHand;
   bool? sellProducts;
@@ -99,6 +102,7 @@ class DentalSuppliersByPk {
       this.altEmail,
       this.altPhone,
       this.professionType,
+      this.professiontype,
       this.tgaNumber,
       this.secondHand,
       this.sellProducts,
@@ -139,6 +143,9 @@ class DentalSuppliersByPk {
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
     professionType = json['profession_type'];
+    professiontype = json['professiontype'] != null
+        ? new DirectoryCategories.fromJson(json['professiontype'])
+        : null;
     tgaNumber = json['tga_number'];
     secondHand = json['second_hand'];
     sellProducts = json['sell_products'];
@@ -190,6 +197,7 @@ class DentalSuppliersByPk {
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
     data['profession_type'] = this.professionType;
+    data['professiontype'] = this.professiontype!.toJson();
     data['tga_number'] = this.tgaNumber;
     data['second_hand'] = this.secondHand;
     data['sell_products'] = this.sellProducts;

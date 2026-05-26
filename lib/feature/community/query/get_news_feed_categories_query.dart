@@ -19,3 +19,26 @@ const String getNewsFeedCategoriesQuery =
   }
 }
 ''';
+
+String getNewsFeedCommunityCategoriesQuery =
+    r'''query getNewsfeedCategoriesByCommunity($communityId: uuid!, $limit: Int, $offset: Int) {
+  newsfeed_categories(
+    where: {community_id: {_eq: $communityId}}
+    order_by: {created_at: desc}
+    limit: $limit
+    offset: $offset
+  ) {
+    id
+    category_name
+    community_id
+    __typename
+  }
+  newsfeed_categories_aggregate(where: {community_id: {_eq: $communityId}}) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+}''';
+

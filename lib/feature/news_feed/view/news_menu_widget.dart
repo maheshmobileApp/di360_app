@@ -12,20 +12,33 @@ import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NewsMenuWidget extends StatelessWidget {
+class NewsMenuWidget extends StatefulWidget {
   final Newsfeeds? newsfeeds;
   const NewsMenuWidget({super.key, this.newsfeeds});
 
   @override
+  State<NewsMenuWidget> createState() => _NewsMenuWidgetState();
+}
+
+class _NewsMenuWidgetState extends State<NewsMenuWidget> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NewsFeedViewModel>(context, listen: false).getUserId();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final needFeedViewModel = Provider.of<NewsFeedViewModel>(context);
+    final needFeedViewModel = Provider.of<NewsFeedViewModel>(context, listen:false);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final currentUserId = needFeedViewModel.userID;
 
-    final isSameUser = newsfeeds?.userId == currentUserId ||
-        newsfeeds?.dentalPracticeId == currentUserId ||
-        newsfeeds?.dentalProfessionalId == currentUserId ||
-        newsfeeds?.dentalSupplierId == currentUserId;
+    final isSameUser = widget.newsfeeds?.userId == currentUserId ||
+        widget.newsfeeds?.dentalPracticeId == currentUserId ||
+        widget.newsfeeds?.dentalProfessionalId == currentUserId ||
+        widget.newsfeeds?.dentalSupplierId == currentUserId;
 
     return PopupMenuButton<String>(
       iconColor: AppColors.black,
@@ -34,26 +47,26 @@ class NewsMenuWidget extends StatelessWidget {
       onSelected: (value) async {
         if (value == 'edit') {
           await addNeedFeedViewModel.fetchNewsfeedCategories();
-          await addNeedFeedViewModel.editFeedObject(newsfeeds);
+          await addNeedFeedViewModel.editFeedObject(widget.newsfeeds);
           navigationService.navigateTo(RouteList.addNewsFeed);
         } else if (value == 'delete') {
           showAlertMessage(
               context, 'Are you really want to delete this NewsFeed ?',
               onBack: () {
-            needFeedViewModel.deleteTheNewsFeed(context, newsfeeds?.id ?? '');
+            needFeedViewModel.deleteTheNewsFeed(context, widget.newsfeeds?.id ?? '');
             navigationService.goBack();
           });
         } else if (value == 'report') {
           showReportBottomSheet(context, () {
             navigationService.goBack();
-            needFeedViewModel.reportNewsFeed(context, newsfeeds?.id ?? '');
+            needFeedViewModel.reportNewsFeed(context, widget.newsfeeds?.id ?? '');
           });
         } else if (value == 'hide') {
           showUserBlockPopup(context, 'Are you sure Hide this user?',
               confirmAction: () {
             navigationService.goBack();
-            needFeedViewModel.HideUser(context, newsfeeds?.id ?? '',
-                newsfeeds?.feedType ?? '', newsfeeds?.id ?? '');
+            needFeedViewModel.HideUser(context, widget.newsfeeds?.id ?? '',
+                widget.newsfeeds?.feedType ?? '', widget.newsfeeds?.id ?? '');
           });
         } else if (value == 'block') {
           showUserBlockPopup(context, 'Are you sure Block this profile?',
@@ -61,15 +74,15 @@ class NewsMenuWidget extends StatelessWidget {
             navigationService.goBack();
             needFeedViewModel.blockProfile(
                 context,
-                newsfeeds?.dentalProfessional?.id ??
-                    newsfeeds?.dentalSupplier?.id ??
-                    newsfeeds?.dentalPractice?.id ??
+                widget.newsfeeds?.dentalProfessional?.id ??
+                    widget.newsfeeds?.dentalSupplier?.id ??
+                    widget.newsfeeds?.dentalPractice?.id ??
                     '',
-                newsfeeds?.feedType ?? '',
-                newsfeeds?.id ?? '');
+                widget.newsfeeds?.feedType ?? '',
+                widget.newsfeeds?.id ?? '');
           });
         } else if (value == 'Save Media') {
-          final mediaList = newsfeeds?.postImage ?? [];
+          final mediaList = widget.newsfeeds?.postImage ?? [];
 
           downloadAllFiles(context, mediaList);
         }
@@ -97,8 +110,9 @@ class NewsMenuWidget extends StatelessWidget {
               child:
                   buildRow(Icons.hide_source, AppColors.redColor, "Hide Post")),
         ],
-        if (newsfeeds?.postImage != null &&
-            newsfeeds?.postImage?.isNotEmpty == true && !isSameUser)
+        if (widget.newsfeeds?.postImage != null &&
+            widget.newsfeeds?.postImage?.isNotEmpty == true &&
+            !isSameUser)
           PopupMenuItem(
               value: "Save Media",
               child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))

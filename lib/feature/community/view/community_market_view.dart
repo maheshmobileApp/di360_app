@@ -43,8 +43,7 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                             newsCommunityVM.listingStatus = "PUBLISHED";
                             newsCommunityVM.setProfCommunityId(
                                 list[index].communityId ?? "",list[index].communityName ?? "");
-                            await viewModel.getNewsFeedCategories(context,
-                                list[index].communityId ?? "");
+                            await viewModel.getNewsFeedCategories(context);
                             newsCommunityVM.getBannerUrl(context);
                             /*newsCommunityVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;*/

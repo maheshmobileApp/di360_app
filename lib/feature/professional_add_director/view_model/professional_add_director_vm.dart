@@ -310,6 +310,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "address": addressController.text,
         "alt_phone": alternateNumberController.text,
         "profession_type": addDirectorVM.selectedBusineestype?.name,
+        "professiontype": addDirectorVM.selectedBusineestype,
         "description": descController.text,
         "directory_category_id": addDirectorVM.selectedBusineestype?.id,
         "banner_image": banner == null
@@ -387,7 +388,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.id == data.directoryCategoryId,
+      (cat) => cat.name == data.professiontype?.name,
       orElse: () => null,
     );
     if (businessType != null) {
@@ -434,7 +435,7 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         .expand((bt) => bt.directoryCategories ?? [])
         .toList();
     final businessType = allCategories.firstWhere(
-      (cat) => cat.name == data?.professionType,
+      (cat) => cat.name == data?.professiontype?.name,
       orElse: () => null,
     );
     if (businessType != null) {

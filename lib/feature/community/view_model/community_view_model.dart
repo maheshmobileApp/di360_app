@@ -75,9 +75,15 @@ class CommunityViewModel extends ChangeNotifier {
   ];
 
   String selectedFilterContactType = "";
+  bool appliedContactFilter = false;
 
   void setSelectedFilterContactType(String value) {
     selectedFilterContactType = value;
+    notifyListeners();
+  }
+
+  void updateAppliedContactFilter(bool value) {
+    appliedContactFilter = value;
     notifyListeners();
   }
 
@@ -410,10 +416,13 @@ class CommunityViewModel extends ChangeNotifier {
   NewsFeedCategoriesData? filterCatgoriesData;
 
   Future<void> getNewsFeedCategories(BuildContext context,
-      [String? newsFeedId]) async {
+      {String? type}) async {
     Loaders.circularShowLoader(context);
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+
     final variables = {
       "where": {
         "_and": [
@@ -432,11 +441,16 @@ class CommunityViewModel extends ChangeNotifier {
             }
         ]
       },
-      "limit": 5,
+      "limit": 10,
       "offset": 0
     };
-    ;
-    final res = await repo.getNewsFeedCategories(variables);
+    final communityVariables = {
+      "communityId": communityId,
+      "limit": 10,
+      "offset": 0
+    };
+    final res = await repo.getNewsFeedCategories(
+        type == "Community" ? communityVariables : variables, type ?? "");
     newsFeedCategoriesData = res;
     filterCatgoriesData = NewsFeedCategoriesData(
       newsfeedCategories: List.from(res.newsfeedCategories ?? []),

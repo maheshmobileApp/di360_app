@@ -24,8 +24,10 @@ class _ContactsViewState extends State<ContactsView> {
     super.initState();
     final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
     viewModel.contactsRes = null;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {      viewModel.selectedFilterContactType = "";
+      viewModel.selectedFilterState = "";
       viewModel.getContacts(context);
+      viewModel.updateAppliedContactFilter(false);
     });
     _scrollController.addListener(_onScroll);
   }
@@ -52,12 +54,29 @@ class _ContactsViewState extends State<ContactsView> {
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
           title: "Contacts",
-           logo: false,
+          logo: false,
           searchWidget: false,
-          filterWidget: GestureDetector(
-            onTap: () =>
-                navigationService.navigateTo(RouteList.contactFilterView),
-            child: SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+          filterWidget: Row(
+            children: [
+              GestureDetector(
+                onTap: () =>
+                    navigationService.navigateTo(RouteList.contactFilterView),
+                child:
+                    SvgPicture.asset(ImageConst.filter, color: AppColors.black),
+              ),
+              if (viewModel.appliedContactFilter)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: GestureDetector(
+                      onTap: () async {
+                        viewModel.selectedFilterContactType = "";
+                        viewModel.selectedFilterState = "";
+                        await viewModel.getContacts(context);
+                        viewModel.updateAppliedContactFilter(false);
+                      },
+                      child: Icon(Icons.close, color: AppColors.black)),
+                )
+            ],
           )),
       body: Column(
         children: [
@@ -66,13 +85,16 @@ class _ContactsViewState extends State<ContactsView> {
                   child: ListView.builder(
                     controller: _scrollController,
                     padding: EdgeInsets.all(10),
-                    itemCount: contacts.length + (viewModel.hasMoreContacts ? 1 : 0),
+                    itemCount:
+                        contacts.length + (viewModel.hasMoreContacts ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == contacts.length) {
                         return Center(
                           child: Padding(
                             padding: EdgeInsets.all(16),
-                            child: CircularProgressIndicator(color: AppColors.primaryColor,),
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
                           ),
                         );
                       }
@@ -83,8 +105,10 @@ class _ContactsViewState extends State<ContactsView> {
                           phone: contact.phone ?? "",
                           contactType: viewModel.contactTypes.firstWhere(
                                 (e) => e["value"] == contact.contactType,
-                                orElse: () => {"label": contact.contactType ?? ""},
-                              )["label"] ?? "",
+                                orElse: () =>
+                                    {"label": contact.contactType ?? ""},
+                              )["label"] ??
+                              "",
                           state: contact.state ?? "",
                           company: contact.companyName ?? "",
                           onMenuAction: (action) async {
