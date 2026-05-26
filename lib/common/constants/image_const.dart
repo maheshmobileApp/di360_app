@@ -39,6 +39,7 @@ class ImageConst {
   static const String menu = "assets/pngs/menu.png";
   static const String textLogo = "assets/pngs/text_logo.png";
   static const String prfImg = "assets/pngs/prf.png";
+  static const String pdfImg = "assets/pngs/pdf.png";
   static const String directorProfile = "assets/pngs/directorProfile.png";
   static const String feedImg = "assets/pngs/feedImg.png";
   static const String computer = "assets/pngs/Computer.png";

@@ -87,11 +87,11 @@ class RegisterNowWidget extends StatelessWidget {
             onPressed: onPressed ?? () {},
             backgroundColor: AppColors.primaryColor,
             text: registerStatus
-                ? courseType == 'Online Academy'
-                    ? courseRegisterStatus == "PENDING"
-                        ? "Registration Pending"
-                        : "View Course"
-                    : "Registered"
+                ? courseRegisterStatus == "PENDING"
+                    ? "Registration Pending"
+                    : courseType == 'Online Academy'
+                        ? "View Course"
+                        : "Registered"
                 : "Register Now",
             width: 170,
             height: 42,

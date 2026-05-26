@@ -9,13 +9,16 @@ import 'package:path_provider/path_provider.dart';
 class AttachmentViewWidget extends StatelessWidget {
   final List<Map<String, dynamic>> attachments;
   final String? title;
+  final String? icon;
 
-  const AttachmentViewWidget({
-    Key? key,
-    required this.attachments,
-    this.title = 'Attachments',
-  }) : super(key: key);
+  const AttachmentViewWidget(
+      {Key? key,
+      required this.attachments,
+      this.title = 'Attachments',
+      this.icon})
+      : super(key: key);
 
+  // ignore: unused_element
   IconData _iconForType(String? type) {
     if (type == null) return Icons.insert_drive_file;
     final t = type.toLowerCase();
@@ -115,7 +118,8 @@ class AttachmentViewWidget extends StatelessWidget {
                 onTap: () => _openAttachment(context, item),
                 child: Container(
                   width: 100,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(10),
@@ -124,15 +128,14 @@ class AttachmentViewWidget extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(ImageConst.pdf, width: 36, height: 36),
+                      Image.asset(icon ?? ImageConst.pdf,
+                          width: 36, height: 36),
                       const SizedBox(height: 6),
-                      Text(
-                        name,
-                        style: TextStyles.regular1(color: AppColors.black),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
+                      Text(name,
+                          style: TextStyles.regular1(color: AppColors.black),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center),
                     ],
                   ),
                 ),
