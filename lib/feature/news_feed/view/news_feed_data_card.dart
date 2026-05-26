@@ -114,7 +114,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
                             newsfeeds?.videoUrl?.isNotEmpty == true &&
-                            _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
+                            _isValidVideoUrl(newsfeeds?.videoUrl ?? ""))
                           LazyYoutubePlayer(
                               youtubeUrl: newsfeeds?.videoUrl ?? ""),
                         const SizedBox(height: 8),
@@ -650,8 +650,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  bool _isValidYoutubeUrl(String url) {
-    return url.contains('youtube.com') || url.contains('youtu.be');
+  bool _isValidVideoUrl(String url) {
+    return url.contains('youtube.com') ||
+        url.contains('youtu.be') ||
+        url.contains('drive.google.com') ||
+        url.contains('loom.com') ||
+        url.contains('vimeo.com');
   }
 
   Widget _buildStatsRow(

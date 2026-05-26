@@ -69,19 +69,12 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
         Text(topic.courseTopic ?? '',
             style: TextStyles.bold3(color: AppColors.primaryColor)),
         addVertical(5),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: LazyYoutubePlayer(youtubeUrl: topic.youtubeLink ?? ''),
-          ),
-        ),
+        if (topic.youtubeLink != null && topic.youtubeLink!.isNotEmpty)
+          LazyYoutubePlayer(youtubeUrl: topic.youtubeLink ?? ''),
         addVertical(10),
         if (topic.description != null && topic.description != '') ...[
           Text('Description: ',
-              style: TextStyles.bold2(
-                color: AppColors.primaryColor,
-              )),
+              style: TextStyles.bold2(color: AppColors.primaryColor)),
           addVertical(5),
           ExpandableHtmlText(htmlData: topic.description ?? ''),
         ],
