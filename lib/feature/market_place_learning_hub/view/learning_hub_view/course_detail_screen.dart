@@ -83,7 +83,10 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
-      bottomNavigationBar: (courseDetails?.status == "APPROVE")
+      bottomNavigationBar: (courseDetails?.status == "APPROVE" &&
+              (courseDetails?.type == 'Online Academy' ||
+                  DateFormatUtils.shouldShowBottomWidget(
+                      courseDetails?.startDate, courseDetails?.startTime)))
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -213,7 +216,7 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     BoxShadow(
                         color: Colors.black12,
                         blurRadius: 4,
-                        offset: Offset(0, 2)),
+                        offset: Offset(0, 2))
                   ],
                 ),
                 child: IconButton(

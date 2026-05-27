@@ -5,7 +5,6 @@ import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.da
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class EventDayDataWidget extends StatelessWidget with BaseContextHelpers {
   final String? name;
