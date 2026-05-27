@@ -345,7 +345,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         : await uploadBussinessLogo(context);
     Map<String, dynamic> requestData = {"id": userId};
     if (type == UserRole.practice.value) {
-      requestData["set"] = {
+      requestData["practiceObj"] = {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
@@ -373,7 +373,7 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "profile_completed": true
       };
     } else if (type == UserRole.professional.value) {
-      requestData["set"] = {
+      requestData["_set"] = {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
@@ -395,10 +395,9 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
         "salutation": selectedSalutation,
         "profile_completed": true,
         'professiontype': selectedBusineestype,
-        //"about_us": aboutUsController.text,
       };
     } else {
-      requestData["set"] = {
+      requestData["supplierObj"] = {
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$phoneCode${phoneNoController.text}',
@@ -454,7 +453,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
 
       await LocalStorage.setBoolValue(LocalStorageConst.profileCompleted, true);
       if (type == UserRole.professional.value) updateTheDirectorViewProfile();
-      updateClient();
+      await updateClient();
+      await updateRecord();
     }
     Loaders.circularHideLoader(context);
     notifyListeners();
@@ -643,19 +643,102 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
-    final variables = {
-      "id": userId,
-      "changes": {
+    Map<String, dynamic> requestData = {"id": userId};
+    if (type == UserRole.practice.value || type == UserRole.supplier.value) {
+      requestData["changes"] = {
+        "type": type,
+        "business_name": businessNameController.text,
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "state": stateController.text,
+        "professionType": selectedBusineestype?.name,
+        "postal_code": "",
+        "professiontype": selectedBusineestype,
+      };
+    } else if (type == UserRole.professional.value) {
+      requestData["changes"] = {
         "type": type,
         "name": nameController.text,
         "email": emailController.text,
         "phone": '$countryCode${phoneNoController.text}',
+        "state": stateController.text,
         "professionType": selectedBusineestype?.name,
+        "postal_code": "",
         "professiontype": selectedBusineestype,
+      };
+    }
+    final res = await repo.updateClient(requestData);
+    if (res != null) {
+      print(res);
+    }
+  }
+
+  Future<void> updateRecord() async {
+    print("update Record is calling");
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
+    final directoryId = type == UserRole.professional.value
+        ? professionalViewProfileData?.directories?.firstOrNull?.id
+        : type == UserRole.practice.value
+            ? practiceViewProfileData?.directories?.firstOrNull?.id
+            : supplierViewProfileData?.directories?.firstOrNull?.id;
+
+    if (directoryId == null || directoryId.isEmpty) {
+      print("updateRecord: no directory id found, skipping");
+      return;
+    }
+
+    Map<String, dynamic> requestData = {"id": directoryId};
+    if (type == UserRole.practice.value) {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "email": emailController.text,
         "business_name": businessNameController.text,
-      }
-    };
-    final res = await repo.updateClient(variables);
+        "business_email": businessEmailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "mobile_number": businessPhoneNoController.text,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "abn_acn": abnNumberController.text,
+        "address": addressController.text,
+        "type": type,
+        "dental_practice_id": userId,
+      };
+    } else if (type == UserRole.supplier.value) {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "email": emailController.text,
+        "business_name": businessNameController.text,
+        "business_email": businessEmailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "mobile_number": businessPhoneNoController.text,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "abn_acn": abnNumberController.text,
+        "address": addressController.text,
+        "type": type,
+        "dental_supplier_id": userId,
+      };
+    } else {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$countryCode${phoneNoController.text}',
+        "address": addressController.text,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "type": type,
+        "dental_professional_id": userId,
+        "profile_image": {
+          "url": "assets/images/social/male_avatar.png",
+          "type": "STATIC"
+        }
+      };
+    }
+
+    final res = await repo.updateRecord(requestData);
     if (res != null) {
       print(res);
     }

@@ -301,41 +301,45 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
     var banner = addDirectorVM.bannerFile == null
         ? null
         : await repository.http.uploadImage(addDirectorVM.bannerFile?.path);
-    final result = await repository.updateProfesBasicInfo({
+    Map<String, dynamic> requestData = {
       "id": addDirectorVM.getBasicInfoData.first.id,
-      "professinalUpdateObj": {
-        "name": nameController.text,
-        "phone": '$_countryCode${mobileNumberCntr.text}',
-        "email": emailController.text,
-        "address": addressController.text,
-        "alt_phone": alternateNumberController.text,
-        "profession_type": addDirectorVM.selectedBusineestype?.name,
-        "professiontype": addDirectorVM.selectedBusineestype,
-        "description": descController.text,
-        "directory_category_id": addDirectorVM.selectedBusineestype?.id,
-        "banner_image": banner == null
-            ? addDirectorVM.getBasicInfoData.first.bannerImage
-            : banner,
-        "profile_image": profile == null
-            ? addDirectorVM.getBasicInfoData.first.profileImage
-            : profile,
-        "university_school": getUniversitys,
-        "working_at": getWorkingAt,
-        "designation": designationCntr.text,
-        "education": getEducation,
-        "hobbies": getHobbies,
-        "special_interests": [],
-        "type": UserRole.professional.value,
-        "phone_visibility":
-            VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
-        "email_visibility":
-            VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
-      }
-    });
+    };
+
+    requestData["changes"] = {
+      "name": nameController.text,
+      "phone": '$_countryCode${mobileNumberCntr.text}',
+      "email": emailController.text,
+      "address": addressController.text,
+      "alt_phone": alternateNumberController.text,
+      "profession_type": addDirectorVM.selectedBusineestype?.name,
+      "professiontype": addDirectorVM.selectedBusineestype,
+      "description": descController.text,
+      "directory_category_id": addDirectorVM.selectedBusineestype?.id,
+      "banner_image": banner == null
+          ? addDirectorVM.getBasicInfoData.first.bannerImage
+          : banner,
+      "profile_image": profile == null
+          ? addDirectorVM.getBasicInfoData.first.profileImage
+          : profile,
+      "university_school": getUniversitys,
+      "working_at": getWorkingAt,
+      "designation": designationCntr.text,
+      "education": getEducation,
+      "hobbies": getHobbies,
+      "special_interests": [],
+      "type": UserRole.professional.value,
+      "phone_visibility":
+          VisibilityType.fromDisplayName(phoneVisibility)?.name ?? 'PRIVATE',
+      "email_visibility":
+          VisibilityType.fromDisplayName(emailVisibility)?.name ?? 'PRIVATE'
+    };
+    final result = await repository.updateProfesBasicInfo(requestData);
     if (result != null) {
       await LocalStorage.setBoolValue(
           LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
+      await updateRecord(context);
+      await updateClient(context);
       addDirectorVM.getDirectories();
       goToNextStep();
       scaffoldMessenger('Updated Basic Information successfully');
@@ -348,6 +352,51 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       Loaders.circularHideLoader(context);
     }
     notifyListeners();
+  }
+
+  Future<void> updateRecord(BuildContext context) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
+    print("**************update record calling");
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+
+    Map<String, dynamic> requestData = {"id": userId};
+    requestData["changes"] = {
+      "name": nameController.text,
+      "phone": '$_countryCode${mobileNumberCntr.text}',
+      "address": addressController.text,
+      "profession_type": addDirectorVM.selectedBusineestype?.name,
+      "professiontype": addDirectorVM.selectedBusineestype,
+      "profile_image": {
+        "url": "assets/images/social/male_avatar.png",
+        "type": "STATIC"
+      }
+    };
+
+    final res = await repository.updateRecord(requestData);
+    if (res != null) {
+      print(res);
+    }
+  }
+
+  Future<void> updateClient(BuildContext context) async {
+    final addDirectorVM = context.read<AddDirectoryViewModel>();
+
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    Map<String, dynamic> requestData = {"id": userId};
+
+    requestData["changes"] = {
+      "type": type,
+      "name": nameController.text,
+      "email": emailController.text,
+      "phone": '$_countryCode${mobileNumberCntr.text}',
+      "professionType": addDirectorVM.selectedBusineestype?.name,
+      "professiontype": addDirectorVM.selectedBusineestype,
+    };
+    final res = await repository.updateClient(requestData);
+    if (res != null) {
+      print(res);
+    }
   }
 
   Future<void> updateViewProfile(String profesType, dynamic prfImg) async {

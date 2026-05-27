@@ -610,6 +610,10 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<void> updateBasicInfo(BuildContext context) async {
     Loaders.circularShowLoader(context);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final communityId =
+        await await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     var logo = logoFile == null
         ? null
@@ -617,10 +621,13 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     var banner = bannerFile == null
         ? null
         : await addDirectorRepositoryImpl.http.uploadImage(bannerFile?.path);
-    final res = await addDirectorRepositoryImpl.updateBasicInfo({
+    Map<String, dynamic> requestData = {
       "id": getBasicInfoData.first.id,
-      "updateInfo": {
+    };
+    if (type == UserRole.supplier.value) {
+      requestData["changes"] = {
         "company_name": CompanyNameController.text,
+        "business_name": CompanyNameController.text,
         "description": descController.text,
         "banner_image":
             banner == null ? getBasicInfoData.first.bannerImage : banner,
@@ -632,6 +639,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "name": nameController.text,
         "abn_acn": ABNNumberController.text,
         "address": addressController.text,
+        "type": type,
+        "dental_supplier_id": userId,
         "latitude": getBasicInfoData.first.latitude,
         "longitude": getBasicInfoData.first.longitude,
         "phone": '$phoneCode${MobileNumberController.text}',
@@ -645,13 +654,74 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "email_visibility":
             VisibilityType.fromDisplayName(emailVisibility)?.name ??
                 VisibilityType.PRIVATE.name,
-      }
-    });
+        "community_status": "NO",
+        "community_id": communityId
+      };
+    } else if (type == UserRole.practice.value) {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "email": emailController.text,
+        "address": addressController.text,
+        "type": type,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "description": descController.text,
+        "banner_image":
+            banner == null ? getBasicInfoData.first.bannerImage : banner,
+        "phone_visibility":
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
+        "email_visibility":
+            VisibilityType.fromDisplayName(emailVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
+        "mobile_number": businessPhoneCntr.text,
+        "company_name": CompanyNameController.text,
+        "business_name": CompanyNameController.text,
+        "business_email":
+            businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
+        "logo": logo == null ? getBasicInfoData.first.logo : logo,
+        "abn_acn": ABNNumberController.text,
+        "dental_practice_id": userId
+      };
+    } else {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "email": emailController.text,
+        "address": addressController.text,
+        "type": type,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "description": descController.text,
+        "banner_image":
+            banner == null ? getBasicInfoData.first.bannerImage : banner,
+        "phone_visibility":
+            VisibilityType.fromDisplayName(phoneVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
+        "email_visibility":
+            VisibilityType.fromDisplayName(emailVisibility)?.name ??
+                VisibilityType.PRIVATE.name,
+        "alt_phone": null,
+        "profile_image": {
+          "url": "assets/images/social/male_avatar.png",
+          "type": "STATIC"
+        },
+        "university_school": null,
+        "designation": null,
+        "hobbies": null,
+        "special_interests": []
+      };
+    }
+
+    final res = await addDirectorRepositoryImpl.updateBasicInfo(requestData);
     if (res != null) {
       await LocalStorage.setBoolValue(
           LocalStorageConst.directoryComplete, true);
       Loaders.circularHideLoader(context);
       scaffoldMessenger('Updated Basic Information successfully');
+      await updateRecord();
+      await updateClient();
       await updateViewProfileData();
     } else {
       Loaders.circularHideLoader(context);
@@ -1136,6 +1206,85 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       testimonialsPicFile = File(pickedFile.path);
       NavigationService().goBack();
       notifyListeners();
+    }
+  }
+
+  Future<void> updateRecord() async {
+    print("**************update record calling");
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    var logo = logoFile == null
+        ? null
+        : await addDirectorRepositoryImpl.http.uploadImage(logoFile?.path);
+
+    Map<String, dynamic> requestData = {"id": userId};
+    if (type == UserRole.supplier.value || type == UserRole.practice.value) {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "address": addressController.text,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "business_email":
+            businessEmailCntr.text.isEmpty ? null : businessEmailCntr.text,
+        "business_name": CompanyNameController.text,
+        "mobile_number": "",
+        "logo": logo == null ? getBasicInfoData.first.logo : logo,
+        "abn_number": ABNNumberController.text,
+      };
+    } else {
+      requestData["changes"] = {
+        "name": nameController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "address": addressController.text,
+        "profession_type": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "profile_image": {
+          "url": "assets/images/social/male_avatar.png",
+          "type": "STATIC"
+        }
+      };
+    }
+
+    print("**************$requestData");
+
+    final res = await addDirectorRepositoryImpl.updateRecord(requestData);
+    if (res != null) {
+      print(res);
+    }
+  }
+
+  Future<void> updateClient() async {
+    print("**************update client calling");
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
+    Map<String, dynamic> requestData = {"id": userId};
+    if (type == UserRole.practice.value || type == UserRole.supplier.value) {
+      requestData["changes"] = {
+        "type": type,
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "professionType": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+        "business_name": CompanyNameController.text,
+      };
+    }
+    {
+      requestData["changes"] = {
+        "type": type,
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": '$phoneCode${MobileNumberController.text}',
+        "professionType": selectedBusineestype?.name,
+        "professiontype": selectedBusineestype,
+      };
+    }
+    final res = await addDirectorRepositoryImpl.updateClient(requestData);
+    if (res != null) {
+      print(res);
     }
   }
 
