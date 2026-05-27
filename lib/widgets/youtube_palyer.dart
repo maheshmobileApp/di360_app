@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -335,14 +336,12 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   }
 }
 
-// ─── Webview Fullscreen ───────────────────────────────────────────────────────
-
 class _WebviewFullscreenRoute extends PageRoute<void> {
   final String embedUrl;
   _WebviewFullscreenRoute({required this.embedUrl});
 
   @override
-  Color get barrierColor => Colors.black;
+  Color get barrierColor => AppColors.primaryColor;
   @override
   bool get barrierDismissible => false;
   @override
