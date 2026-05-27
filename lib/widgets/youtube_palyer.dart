@@ -10,15 +10,19 @@ enum _VideoType { youtube, webview, unknown }
 Future<String?> _fetchWebviewThumbnail(String url) async {
   try {
     if (url.contains('vimeo.com')) {
-      final id = Uri.parse(url).pathSegments.firstWhere((s) => s.isNotEmpty, orElse: () => '');
-      final res = await http.get(Uri.parse('https://vimeo.com/api/v2/video/$id.json'));
+      final id = Uri.parse(url)
+          .pathSegments
+          .firstWhere((s) => s.isNotEmpty, orElse: () => '');
+      final res =
+          await http.get(Uri.parse('https://vimeo.com/api/v2/video/$id.json'));
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         return data[0]['thumbnail_large'] as String?;
       }
     }
     if (url.contains('loom.com')) {
-      final res = await http.get(Uri.parse('https://www.loom.com/v1/oembed?url=${Uri.encodeComponent(url)}'));
+      final res = await http.get(Uri.parse(
+          'https://www.loom.com/v1/oembed?url=${Uri.encodeComponent(url)}'));
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         return data['thumbnail_url'] as String?;
@@ -30,17 +34,21 @@ Future<String?> _fetchWebviewThumbnail(String url) async {
 
 _VideoType _detectType(String url) {
   if (url.isEmpty) return _VideoType.unknown;
-  if (url.contains('youtube.com') || url.contains('youtu.be')) return _VideoType.youtube;
-  if (url.contains('drive.google.com') || url.contains('loom.com') || url.contains('vimeo.com')) {
-    return _VideoType.webview;
-  }
+  if (url.contains('youtube.com') || url.contains('youtu.be'))
+    return _VideoType.youtube;
+  if (url.contains('drive.google.com') ||
+      url.contains('loom.com') ||
+      url.contains('vimeo.com')) return _VideoType.webview;
   return _VideoType.unknown;
 }
 
 String _toEmbedUrl(String url) {
-  if (url.contains('loom.com/share/')) return url.replaceFirst('/share/', '/embed/');
+  if (url.contains('loom.com/share/'))
+    return url.replaceFirst('/share/', '/embed/');
   if (url.contains('vimeo.com')) {
-    final id = Uri.parse(url).pathSegments.firstWhere((s) => s.isNotEmpty, orElse: () => '');
+    final id = Uri.parse(url)
+        .pathSegments
+        .firstWhere((s) => s.isNotEmpty, orElse: () => '');
     return 'https://player.vimeo.com/video/$id?autoplay=1&muted=0';
   }
   if (url.contains('drive.google.com')) {
@@ -53,13 +61,15 @@ String _toEmbedUrl(String url) {
   return url;
 }
 
-// ─── Main Widget ─────────────────────────────────────────────────────────────
+// ─── Main Widget ──────────────────────────────────────────────────────────────
 
 class LazyYoutubePlayer extends StatefulWidget {
   final String youtubeUrl;
   final String? thumbnailUrl;
 
-  const LazyYoutubePlayer({Key? key, required this.youtubeUrl, this.thumbnailUrl}) : super(key: key);
+  const LazyYoutubePlayer(
+      {Key? key, required this.youtubeUrl, this.thumbnailUrl})
+      : super(key: key);
 
   @override
   State<LazyYoutubePlayer> createState() => _LazyYoutubePlayerState();
@@ -85,15 +95,14 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   void didUpdateWidget(LazyYoutubePlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.youtubeUrl != widget.youtubeUrl) {
-      // stop current playback immediately
       _ytController?.pause();
       _ytController?.dispose();
       _ytController = null;
       _webViewController?.evaluateJavascript(
-        source: "(function(){ var v=document.querySelector('video'); if(v){v.pause();v.src='';} })();",
+        source:
+            "(function(){ var v=document.querySelector('video'); if(v){v.pause();v.src='';} })();",
       );
       _webViewController = null;
-      // reset all state and load new url
       setState(() {
         _playing = false;
         _thumbnailDismissed = false;
@@ -106,7 +115,8 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   void _init(String url) {
     _type = _detectType(url);
     _embedUrl = _toEmbedUrl(url);
-    _videoId = _type == _VideoType.youtube ? (YoutubePlayer.convertUrlToId(url) ?? '') : '';
+    _videoId =
+        _type == _VideoType.youtube ? (YoutubePlayer.convertUrlToId(url) ?? '') : '';
     if (_type == _VideoType.webview) {
       _playing = true;
       _fetchWebviewThumbnail(url).then((thumb) {
@@ -121,8 +131,9 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
         initialVideoId: _videoId,
         flags: const YoutubePlayerFlags(
           autoPlay: true,
-          useHybridComposition: true,
+          useHybridComposition: false,
           controlsVisibleAtStart: true,
+          forceHD: false,
         ),
       );
       setState(() => _playing = true);
@@ -144,30 +155,18 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
     """);
   }
 
-  void _enterFullscreen() {
-    final position = _ytController?.value.position ?? Duration.zero;
-    // pause inline before going fullscreen
-    _ytController?.pause();
+  void _enterWebviewFullscreen() {
     _webViewController?.evaluateJavascript(
-      source: "(function(){ var v=document.querySelector('video'); if(v) v.pause(); })();",
+      source:
+          "(function(){ var v=document.querySelector('video'); if(v) v.pause(); })();",
     );
-
-    Navigator.of(context).push(_FullscreenRoute(
-      embedUrl: _embedUrl,
-      type: _type,
-      ytController: _ytController,
-      webViewController: _webViewController,
-      startPosition: position,
-    )).then((_) {
+    Navigator.of(context)
+        .push(_WebviewFullscreenRoute(embedUrl: _embedUrl))
+        .then((_) {
       if (!mounted) return;
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      // resume inline from where fullscreen left off
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (!mounted) return;
-        _ytController?.play();
-        _triggerWebviewPlay();
-      });
+      Future.delayed(const Duration(milliseconds: 300), _triggerWebviewPlay);
     });
   }
 
@@ -175,30 +174,8 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
   void dispose() {
     _ytController?.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
-  }
-
-  Widget _buildYoutubePlayer() {
-    if (_ytController == null) return const SizedBox.shrink();
-    return YoutubePlayer(
-      controller: _ytController!,
-      showVideoProgressIndicator: true,
-      progressIndicatorColor: Colors.red,
-      progressColors: const ProgressBarColors(
-        playedColor: Colors.red,
-        handleColor: Colors.redAccent,
-      ),
-      onEnded: (_) => _ytController?.pause(),
-      bottomActions: [
-        CurrentPosition(),
-        ProgressBar(isExpanded: true),
-        RemainingDuration(),
-        IconButton(
-          icon: const Icon(Icons.fullscreen, color: Colors.white),
-          onPressed: _enterFullscreen,
-        ),
-      ],
-    );
   }
 
   Widget _placeholder() {
@@ -223,14 +200,22 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        Container(width: double.infinity, height: 200, color: Colors.grey[300]),
+                    errorBuilder: (_, __, ___) => Container(
+                        width: double.infinity,
+                        height: 200,
+                        color: Colors.grey[300]),
                   )
-                : Container(width: double.infinity, height: 200, color: Colors.grey[850]),
+                : Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey[850]),
             Container(
               width: 64,
               height: 64,
-              decoration: BoxDecoration(color: Colors.black.withOpacity(0.6), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.6),
+                shape: BoxShape.circle,
+              ),
               child: const Icon(Icons.play_arrow, size: 40, color: Colors.white),
             ),
           ],
@@ -249,12 +234,42 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
       );
     }
 
+    // ── YouTube
     if (_type == _VideoType.youtube) {
-      if (!_playing) return _placeholder();
-      return _buildYoutubePlayer();
+      if (!_playing || _ytController == null) return _placeholder();
+      return YoutubePlayerBuilder(
+        onEnterFullScreen: () {
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ]);
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        },
+        onExitFullScreen: () {
+          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        },
+        player: YoutubePlayer(
+          controller: _ytController!,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.red,
+          progressColors: const ProgressBarColors(
+            playedColor: Colors.red,
+            handleColor: Colors.redAccent,
+          ),
+          onEnded: (_) => _ytController?.pause(),
+          bottomActions: [
+            CurrentPosition(),
+            ProgressBar(isExpanded: true),
+            RemainingDuration(),
+            FullScreenButton(),
+          ],
+        ),
+        builder: (context, player) => player,
+      );
     }
 
-    // webview: ValueKey forces full rebuild when URL changes
+    // ── Webview: Drive / Loom / Vimeo
     return SizedBox(
       width: double.infinity,
       height: 220,
@@ -270,44 +285,44 @@ class _LazyYoutubePlayerState extends State<LazyYoutubePlayer> {
             ),
             onWebViewCreated: (c) => _webViewController = c,
             onLoadStop: (c, _) {
-              if (_thumbnailDismissed || _embedUrl.contains('loom.com') || _embedUrl.contains('drive.google.com')) _triggerWebviewPlay();
+              if (_thumbnailDismissed ||
+                  _embedUrl.contains('loom.com') ||
+                  _embedUrl.contains('drive.google.com')) {
+                _triggerWebviewPlay();
+              }
             },
           ),
           Positioned(
             bottom: 8,
             right: 8,
             child: GestureDetector(
-              onTap: _enterFullscreen,
+              onTap: _enterWebviewFullscreen,
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Icon(Icons.fullscreen, color: Colors.white, size: 22),
+                child:
+                    const Icon(Icons.fullscreen, color: Colors.white, size: 22),
               ),
             ),
           ),
-          if (!_thumbnailDismissed && !_embedUrl.contains('loom.com') && !_embedUrl.contains('drive.google.com')) _placeholder(),
+          if (!_thumbnailDismissed &&
+              !_embedUrl.contains('loom.com') &&
+              !_embedUrl.contains('drive.google.com'))
+            _placeholder(),
         ],
       ),
     );
   }
 }
-class _FullscreenRoute extends PageRoute<void> {
-  final String embedUrl;
-  final _VideoType type;
-  final YoutubePlayerController? ytController;
-  final InAppWebViewController? webViewController;
-  final Duration startPosition;
 
-  _FullscreenRoute({
-    required this.embedUrl,
-    required this.type,
-    this.ytController,
-    this.webViewController,
-    this.startPosition = Duration.zero,
-  });
+// ─── Webview Fullscreen ───────────────────────────────────────────────────────
+
+class _WebviewFullscreenRoute extends PageRoute<void> {
+  final String embedUrl;
+  _WebviewFullscreenRoute({required this.embedUrl});
 
   @override Color get barrierColor => Colors.black;
   @override bool get barrierDismissible => false;
@@ -316,37 +331,20 @@ class _FullscreenRoute extends PageRoute<void> {
   @override Duration get transitionDuration => Duration.zero;
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> a, Animation<double> sa) {
-    return _FullscreenPage(
-      embedUrl: embedUrl,
-      type: type,
-      ytController: ytController,
-      webViewController: webViewController,
-      startPosition: startPosition,
-    );
-  }
+  Widget buildPage(BuildContext context, Animation<double> a,
+          Animation<double> sa) =>
+      _WebviewFullscreenPage(embedUrl: embedUrl);
 }
 
-class _FullscreenPage extends StatefulWidget {
+class _WebviewFullscreenPage extends StatefulWidget {
   final String embedUrl;
-  final _VideoType type;
-  final YoutubePlayerController? ytController;
-  final InAppWebViewController? webViewController;
-  final Duration startPosition;
-
-  const _FullscreenPage({
-    required this.embedUrl,
-    required this.type,
-    this.ytController,
-    this.webViewController,
-    this.startPosition = Duration.zero,
-  });
+  const _WebviewFullscreenPage({required this.embedUrl});
 
   @override
-  State<_FullscreenPage> createState() => _FullscreenPageState();
+  State<_WebviewFullscreenPage> createState() => _WebviewFullscreenPageState();
 }
 
-class _FullscreenPageState extends State<_FullscreenPage> {
+class _WebviewFullscreenPageState extends State<_WebviewFullscreenPage> {
   @override
   void initState() {
     super.initState();
@@ -355,27 +353,9 @@ class _FullscreenPageState extends State<_FullscreenPage> {
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    // seek to saved position and play after orientation settles
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (!mounted) return;
-      if (widget.ytController != null) {
-        widget.ytController!.seekTo(widget.startPosition);
-        widget.ytController!.play();
-      }
-      widget.webViewController?.evaluateJavascript(
-        source: "(function(){ var v=document.querySelector('video'); if(v) v.play(); })();",
-      );
-    });
   }
 
-  void _exit() {
-    // pause fullscreen before popping so inline resumes cleanly
-    widget.ytController?.pause();
-    widget.webViewController?.evaluateJavascript(
-      source: "(function(){ var v=document.querySelector('video'); if(v) v.pause(); })();",
-    );
-    Navigator.of(context).pop();
-  }
+  void _exit() => Navigator.of(context).pop();
 
   @override
   Widget build(BuildContext context) {
@@ -383,38 +363,18 @@ class _FullscreenPageState extends State<_FullscreenPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          if (widget.type == _VideoType.youtube && widget.ytController != null)
-            Center(
-              child: YoutubePlayer(
-                controller: widget.ytController!,
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Colors.red,
-                progressColors: const ProgressBarColors(
-                  playedColor: Colors.red,
-                  handleColor: Colors.redAccent,
-                ),
-                onEnded: (_) => widget.ytController?.pause(),
-                bottomActions: [
-                  CurrentPosition(),
-                  ProgressBar(isExpanded: true),
-                  RemainingDuration(),
-                ],
-              ),
-            )
-          else
-            InAppWebView(
-              initialUrlRequest: URLRequest(url: WebUri(widget.embedUrl)),
-              initialSettings: InAppWebViewSettings(
-                mediaPlaybackRequiresUserGesture: false,
-                allowsInlineMediaPlayback: true,
-                javaScriptEnabled: true,
-              ),
-              onLoadStop: (c, _) {
-                c.evaluateJavascript(
-                  source: "(function(){ var v=document.querySelector('video'); if(v) v.play(); })();",
-                );
-              },
+          InAppWebView(
+            initialUrlRequest: URLRequest(url: WebUri(widget.embedUrl)),
+            initialSettings: InAppWebViewSettings(
+              mediaPlaybackRequiresUserGesture: false,
+              allowsInlineMediaPlayback: true,
+              javaScriptEnabled: true,
             ),
+            onLoadStop: (c, _) => c.evaluateJavascript(
+              source:
+                  "(function(){ var v=document.querySelector('video'); if(v) v.play(); })();",
+            ),
+          ),
           Positioned(
             top: 16,
             right: 16,
@@ -427,7 +387,8 @@ class _FullscreenPageState extends State<_FullscreenPage> {
                     color: Colors.black.withOpacity(0.6),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.fullscreen_exit, color: Colors.white, size: 28),
+                  child: const Icon(Icons.fullscreen_exit,
+                      color: Colors.white, size: 28),
                 ),
               ),
             ),
