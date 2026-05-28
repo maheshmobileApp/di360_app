@@ -20,7 +20,7 @@ abstract class CommunityRepository {
   Future<dynamic> updateMembershipLink(dynamic variables);
   Future<dynamic> updatePartnershipLink(dynamic variables);
   Future<DirectoryData> getDirectory(dynamic variables);
-  Future<NewsFeedCategoriesData> getNewsFeedCategories(dynamic variables);
+  Future<NewsFeedCategoriesData> getNewsFeedCategories(dynamic variables, String type);
   Future<dynamic> addCategory(dynamic variables);
   Future<dynamic> deleteCategory(dynamic variables);
   Future<dynamic> updateCategory(dynamic variables);

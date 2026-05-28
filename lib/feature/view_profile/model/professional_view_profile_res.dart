@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/add_directors/model/get_business_type_res.dart';
+
 class ProfessionalViewProfileRes {
   ProfessionalData? data;
 
@@ -52,6 +54,7 @@ class DentalProfessionalsByPk {
   String? altEmail;
   dynamic altPhone;
   String? professionType;
+  DirectoryCategories? professiontype;
   String? directoryCategoryId;
   String? proDetailsAphraRegistrationNumber;
   BankDetails? bankDetails; //Todo remove this in feature
@@ -85,6 +88,7 @@ class DentalProfessionalsByPk {
       this.altEmail,
       this.altPhone,
       this.professionType,
+      this.professiontype,
       this.directoryCategoryId,
       this.proDetailsAphraRegistrationNumber,
       this.bankDetails,
@@ -118,6 +122,9 @@ class DentalProfessionalsByPk {
     altEmail = json['alt_email'];
     altPhone = json['alt_phone'];
     professionType = json['profession_type'];
+    professiontype = json['professiontype'] != null
+        ? new DirectoryCategories.fromJson(json['professiontype'])
+        : null;
     directoryCategoryId = json['directory_category_id'];
     proDetailsAphraRegistrationNumber =
         json['pro_details_aphra_registration_number'];
@@ -166,6 +173,7 @@ class DentalProfessionalsByPk {
     data['alt_email'] = this.altEmail;
     data['alt_phone'] = this.altPhone;
     data['profession_type'] = this.professionType;
+    data['professiontype'] = this.professiontype!.toJson(); 
     data['pro_details_aphra_registration_number'] =
         this.proDetailsAphraRegistrationNumber;
     if (this.bankDetails != null) {

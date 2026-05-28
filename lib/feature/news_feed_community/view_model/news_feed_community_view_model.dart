@@ -786,7 +786,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     __typename
   }
 }''';
-    final variables = {"communityId": "c3e0eb48-6a07-4545-8ad2-777e32a13f97"};
+final communityId = await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final variables = {"communityId": communityId};
     try {
       final response = await _http.query(query, variables: variables);
       if (response != null) {

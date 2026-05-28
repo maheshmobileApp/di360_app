@@ -24,8 +24,8 @@ class _CreateCategoryViewState extends State<CreateContactView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
-           logo: false,
-          title: (viewModel.contactEditMode) ? "Edit Contact":"Add Contact",
+          logo: false,
+          title: (viewModel.contactEditMode) ? "Edit Contact" : "Add Contact",
           searchWidget: false,
         ),
         body: SingleChildScrollView(
@@ -49,13 +49,26 @@ class _CreateCategoryViewState extends State<CreateContactView>
                     controller: viewModel.contactPhoneController,
                     validator: validateAustralianMobileNumber,
                     prefixIcon: PhonePrefixDropdown(
-                      value: viewModel.selectedPhoneCode??"",
+                      value: viewModel.selectedPhoneCode ?? "",
                       items: viewModel.phoneCodeList,
                       onChanged: (value) {
                         viewModel.setPhoneCode(value ?? "");
                       },
                     ),
                   ),
+                  if (viewModel.companyNameView == true) ...[
+                    SizedBox(
+                      height: 6,
+                    ),
+                    InputTextField(
+                      controller: viewModel.companyNameController,
+                      hintText: "Enter Company Name",
+                      title: "Company Name",
+                      maxLength: 100,
+                      isRequired: true,
+                      validator: validateCompanyName,
+                    ),
+                  ],
                   SizedBox(
                     height: 6,
                   ),
@@ -90,11 +103,11 @@ class _CreateCategoryViewState extends State<CreateContactView>
                     text: (viewModel.contactEditMode) ? "Update" : "Save",
                     onTap: () async {
                       if (_formKey.currentState!.validate()) {
-                              (viewModel.contactEditMode)
-                                  ? await viewModel.updateContact(
-                                      context,viewModel.updateContactId)
-                                  : await viewModel.addContact(context);
-                            }
+                        (viewModel.contactEditMode)
+                            ? await viewModel.updateContact(
+                                context, viewModel.updateContactId)
+                            : await viewModel.addContact(context);
+                      }
                     },
                   ),
                 ],
@@ -107,7 +120,8 @@ class _CreateCategoryViewState extends State<CreateContactView>
   Widget _buildContactTypes(CommunityViewModel viewModel) {
     return CustomDropDown(
       isRequired: true,
-      value: viewModel.contactTypes.any((e) => e["value"] == viewModel.selectedContactType)
+      value: viewModel.contactTypes
+              .any((e) => e["value"] == viewModel.selectedContactType)
           ? viewModel.selectedContactType
           : null,
       title: "Category",

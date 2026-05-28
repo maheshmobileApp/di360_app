@@ -31,7 +31,7 @@ class CommunityRepoImpl extends CommunityRepository {
   final HttpService http = HttpService();
   @override
   Future<CommunityMembersData> getJoinRequest(
-      String supplierId, String listingStatus,int limit, int offset) async {
+      String supplierId, String listingStatus, int limit, int offset) async {
     final Map<String, dynamic> whereCondition = {};
 
     // Always add supplier_id if provided
@@ -86,7 +86,7 @@ class CommunityRepoImpl extends CommunityRepository {
 
   @override
   Future<PartnershipMembersData> getPartnershipRequest(
-      String supplierId, String listingStatus,int limit, int offset) async {
+      String supplierId, String listingStatus, int limit, int offset) async {
     final Map<String, dynamic> whereCondition = {};
 
     // Always add supplier_id if provided
@@ -162,9 +162,12 @@ class CommunityRepoImpl extends CommunityRepository {
   }
 
   @override
-  Future<NewsFeedCategoriesData> getNewsFeedCategories(variables) async {
-    final res =
-        await http.query(getNewsFeedCategoriesQuery, variables: variables);
+  Future<NewsFeedCategoriesData> getNewsFeedCategories(variables, type) async {
+    final res = await http.query(
+        type == "Community"
+            ? getNewsFeedCommunityCategoriesQuery
+            : getNewsFeedCategoriesQuery,
+        variables: variables);
     final data = NewsFeedCategoriesData.fromJson(res);
     return data;
   }

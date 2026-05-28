@@ -26,6 +26,7 @@ query supplierDisplay($id: uuid!) {
     alt_email
     alt_phone
     profession_type
+    professiontype
     tga_number
     second_hand
     sell_products

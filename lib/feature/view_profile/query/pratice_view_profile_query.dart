@@ -1,39 +1,87 @@
 const String practiceViewProfileQuery = r'''
 query practiceDisplay($id: uuid!) {
   dental_practices_by_pk(id: $id) {
-    id
-    email
-    name
-    logo
-    phone
+    abn_number
     address
     city
     zipcode
     state
     country
-    land_mark
     address_line_one
     address_line_two
-    pro_details_aphra_registration_number
-    bank_details
-    business_name
-    abn_number
-    business_email
-    business_phone
-    mobile_number
-    website_link
-    fax_number
     alt_email
     alt_phone
-    profession_type
-    tga_number
-    second_hand
-    sell_products
+    bank_details
+    blocked_at
+    blocked_reason
+    business_email
+    business_name
+    business_phone
+    contact_person_first_name
+    contact_person_gender
+    contact_person_last_name
+    contact_person_middle_name
+    contact_person_profile_image
+    created_at
+    credits
+    defaultAddress
+    directory_category_id
+    directory_column_other_name
+    driving_licence
+    email
+    email_verification_expiry_at
+    email_verification_key
+    email_verification_required
+    email_verified
+    fax_number
     first_name
-    middle_name
+    id
     last_name
-    type
+    logo
+    middle_name
+    name
+    passcode
+    password
+    password_reset_expiry_at
+    password_reset_key
+    password_reset_required
+    payment_completed
+    phone
+    mobile_number
+    website_link
+    phone_verification_expiry_at
+    phone_verification_key
+    phone_verification_required
+    phone_verified
+    present_subscription_id
+    pro_details_abn_acn_number
+    pro_details_aphra_registration_number
+    pro_details_driving_license_image
+    pro_details_other_attachments
+    pro_details_provider_number
+    profession_type
+    professiontype
+    profile_completed
+    profile_image
+    second_hand
     secondary_contact
+    sell_products
+    status
+    subsciption_plan_id
+    tga_number
+    timings
+    type
+    directories {
+      id
+      name
+      email
+      phone
+      profile_image
+      address
+      profession_type
+      professiontype
+      __typename
+    }
     __typename
   }
 }
