@@ -814,6 +814,7 @@ class CourseDetailRegisteredUsers {
   String? fromId;
   String? status;
   String? quizStatus;
+  String? courseExpiryAt;
   List<QuizAnswers>? quizAnswers;
   List<RegisteredModuleDetails>? registeredModuleDetails;
   String? courseRegisteredDate;
@@ -828,6 +829,7 @@ class CourseDetailRegisteredUsers {
       this.quizAnswers,
       this.registeredModuleDetails,
       this.courseRegisteredDate,
+      this.courseExpiryAt,
       this.sTypename});
 
   CourseDetailRegisteredUsers.fromJson(Map<String, dynamic> json) {
@@ -836,6 +838,7 @@ class CourseDetailRegisteredUsers {
     fromId = json['from_id'];
     status = json['status'];
     quizStatus = json['quiz_status'];
+    courseExpiryAt = json['course_expires_at'];
     if (json['quiz_answers'] != null) {
       quizAnswers = <QuizAnswers>[];
       json['quiz_answers'].forEach((v) {
@@ -859,6 +862,7 @@ class CourseDetailRegisteredUsers {
     data['from_id'] = this.fromId;
     data['status'] = this.status;
     data['quiz_status'] = this.quizStatus;
+    data['course_expires_at'] = this.courseExpiryAt;
     if (this.quizAnswers != null) {
       data['quiz_answers'] = this.quizAnswers!.map((v) => v.toJson()).toList();
     }

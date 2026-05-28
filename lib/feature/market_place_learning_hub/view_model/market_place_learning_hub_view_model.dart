@@ -303,8 +303,14 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
                 courseDetails?.afterwardsPrice == null)
             ? "APPROVED"
             : "PENDING",
+        "course_registered_date": DateTime.now().toIso8601String(),
         "quiz_status": "PENDING",
-        "course_valid_till": 1
+        "course_expires_at": courseDetails?.courseAccessDuration != null
+            ? DateTime.now()
+                .add(Duration(days: courseDetails!.courseAccessDuration!))
+                .toIso8601String()
+            : null,
+        "course_valid_till": courseDetails?.courseAccessDuration,
       }
     });
     if (res != null) {

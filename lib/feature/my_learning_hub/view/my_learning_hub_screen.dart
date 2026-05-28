@@ -143,10 +143,9 @@ class _JobListingScreenState extends State<MyLearningHubScreen>
                                 myLearningHubVM.myRegisteredCourses.length) {
                               return Center(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: CircularProgressIndicator(
-                                      color: AppColors.primaryColor),
-                                ),
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: CircularProgressIndicator(
+                                        color: AppColors.primaryColor)),
                               );
                             }
 
