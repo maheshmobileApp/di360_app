@@ -455,6 +455,8 @@ class ViewProfileViewModel extends ChangeNotifier with ValidationMixins {
       if (type == UserRole.professional.value) updateTheDirectorViewProfile();
       await updateClient();
       await updateRecord();
+      await LocalStorage.setStringVal(
+          LocalStorageConst.professionId, selectedBusineestype?.id ?? "");
     }
     Loaders.circularHideLoader(context);
     notifyListeners();

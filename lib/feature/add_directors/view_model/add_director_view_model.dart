@@ -722,6 +722,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
       scaffoldMessenger('Updated Basic Information successfully');
       await updateRecord();
       await updateClient();
+      await LocalStorage.setStringVal(
+          LocalStorageConst.professionId, selectedBusineestype?.id ?? "");
       await updateViewProfileData();
     } else {
       Loaders.circularHideLoader(context);

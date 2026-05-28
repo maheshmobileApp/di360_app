@@ -24,12 +24,14 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
   Future<dynamic> getAllNewsFeed(int offset, int limit, String searchText,
       {String? feedType, String? categoryType}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final userType = await LocalStorage.getStringVal(LocalStorageConst.type); 
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final myCommunityIds =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
-    final professionId = await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    final professionId =
+        await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    print("*******************$professionId");
     final variables = {
       "where": {
         "_and": [
@@ -61,54 +63,50 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
             {
               "category_type": {"_eq": categoryType}
             },
-          {
-            "_or": [
-              {
-                "description": {"_ilike": "%$searchText%"}
-              },
-              {
-                "title": {"_ilike": "%$searchText%"}
-              },
-              {
-                "admin_user": {
-                  "name": {"_ilike": "%$searchText%"}
+          if (searchText.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "description": {"_ilike": "%$searchText%"}
+                },
+                {
+                  "title": {"_ilike": "%$searchText%"}
+                },
+                {
+                  "admin_user": {
+                    "name": {"_ilike": "%$searchText%"}
+                  }
+                },
+                {
+                  "dental_practice": {
+                    "business_name": {"_ilike": "%$searchText%"}
+                  }
+                },
+                {
+                  "dental_supplier": {
+                    "business_name": {"_ilike": "%$searchText%"}
+                  }
+                },
+                {
+                  "dental_professional": {
+                    "name": {"_ilike": "%$searchText%"}
+                  }
                 }
-              },
-              {
-                "dental_practice": {
-                  "business_name": {"_ilike": "%$searchText%"}
-                }
-              },
-              {
-                "dental_supplier": {
-                  "business_name": {"_ilike": "%$searchText%"}
-                }
-              },
-              {
-                "dental_professional": {
-                  "name": {"_ilike": "%$searchText%"}
-                }
-              }
-            ]
-          },
-          if (userType != UserRole.admin.name && professionId.isNotEmpty)
-          {
-                "_or": [
-                    {
-                        "access_rules": {
-                            "directory_category_id": {
-                                "_eq": professionId
-                            }
-                        }
-                    },
-                    {
-                        "category_type": {
-                            "_is_null": true
-                        }
-                    }
-                ]
+              ]
             },
-
+          if (professionId.isNotEmpty)
+            {
+              "_or": [
+                {
+                  "access_rules": {
+                    "directory_category_id": {"_eq": professionId}
+                  }
+                },
+                {
+                  "category_type": {"_is_null": true}
+                }
+              ]
+            },
           {
             "_not": {
               "newsfeed_user_actions": {
