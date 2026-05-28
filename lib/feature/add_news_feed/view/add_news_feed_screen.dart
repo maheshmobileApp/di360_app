@@ -59,22 +59,31 @@ class AddNewsFeedScreen extends StatelessWidget
                 addVertical(20),
                 richText('Select Category'),
                 addVertical(10),
-                DropdownButtonFormField<NewsfeedCategories>(
-                  decoration: InputDecoration(
-                    hintText: 'Select Category',
-                    border: OutlineInputBorder(),
-                  ),
-                  value: viewModel.selectedCategory,
-                  items: viewModel.newsfeedCategories?.map((v) {
-                    return DropdownMenuItem<NewsfeedCategories>(
-                      value: v,
-                      child: Text(v.categoryName ?? ''),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    viewModel.setSelectedCategory(value);
+                GestureDetector(
+                  onTap: () {
+                    if (viewModel.newsfeedCategories == null ||
+                        viewModel.newsfeedCategories?.isEmpty == true) {
+                      scaffoldMessenger(
+                          'No category options are currently available.');
+                    }
                   },
-                  validator: (value) => validateCategory(value?.categoryName),
+                  child: DropdownButtonFormField<NewsfeedCategories>(
+                    decoration: InputDecoration(
+                      hintText: 'Select Category',
+                      border: OutlineInputBorder(),
+                    ),
+                    value: viewModel.selectedCategory,
+                    items: viewModel.newsfeedCategories?.map((v) {
+                      return DropdownMenuItem<NewsfeedCategories>(
+                        value: v,
+                        child: Text(v.categoryName ?? ''),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      viewModel.setSelectedCategory(value);
+                    },
+                    validator: (value) => validateCategory(value?.categoryName),
+                  ),
                 ),
                 addVertical(20),
                 FileUploadWidget(),

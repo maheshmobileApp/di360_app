@@ -242,15 +242,15 @@ class NewsFeedViewModel extends ChangeNotifier {
             "community_id": {"_is_null": true}
           },
           if (professionTypeId.isNotEmpty)
-          {
-            "_or": [
-              {
-                "access_rules": {
-                  "directory_category_id": {"_eq": professionTypeId}
+            {
+              "_or": [
+                {
+                  "access_rules": {
+                    "directory_category_id": {"_eq": professionTypeId}
+                  }
                 }
-              }
-            ]
-          }
+              ]
+            }
         ]
       },
       "limit": 5,
@@ -274,8 +274,8 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> getUserId() async {
-    final userId = LocalStorage.getStringSync(LocalStorageConst.userId);
-    final type = LocalStorage.getStringSync(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringSync(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringSync(LocalStorageConst.type);
     userID = userId;
     if (type == UserRole.professional.value) {
       professionId = userId;

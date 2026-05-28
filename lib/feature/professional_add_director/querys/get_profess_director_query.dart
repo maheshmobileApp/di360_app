@@ -14,6 +14,7 @@ query getUeserProfDirectory($id: uuid!) {
     type
     address
     profession_type
+    professiontype
     directory_category_id
     working_at
     education

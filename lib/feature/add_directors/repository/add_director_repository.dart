@@ -43,4 +43,6 @@ abstract class AddDirectorRepository {
   Future<dynamic> deletePartner(dynamic variables);
   Future<dynamic> updatePartners(dynamic variables);
   Future<dynamic> updateViewProfileData(dynamic variables);
+  Future<dynamic> updateRecord(dynamic variables);
+  Future<dynamic> updateClient(dynamic variables);
 }

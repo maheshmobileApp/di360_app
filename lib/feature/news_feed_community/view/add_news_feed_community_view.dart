@@ -101,27 +101,31 @@ class AddNewsFeedCommunityView extends StatelessWidget
   }
 
   Widget _buildCategoryTypes(NewsFeedCommunityViewModel jobCreateVM) {
-    return CustomDropDown(
-      isRequired: true,
-      value: jobCreateVM.selectedCategory,
-      title: "Category",
-      onChanged: (v) {
-        if (jobCreateVM.addNewsFeedCommunityCategories?.isEmpty == true) {
-          scaffoldMessenger('Create category');
-          return;
+    return GestureDetector(
+      onTap: () {
+        if (jobCreateVM.addNewsFeedCommunityCategories == null ||
+            jobCreateVM.addNewsFeedCommunityCategories?.isEmpty == true) {
+          scaffoldMessenger('No category options are currently available.');
         }
-        jobCreateVM.setSelectedCategory(v);
       },
-      items: (jobCreateVM.addNewsFeedCommunityCategories ?? []).map((v) {
-        return DropdownMenuItem<NewsfeedCategories>(
-          value: v,
-          child: Text(v.categoryName ?? ''),
-        );
-      }).toList(),
-      hintText: "Select Category",
-      validator: (value) => value == null || value.toString().isEmpty
-          ? 'Please select category'
-          : null,
+      child: CustomDropDown(
+        isRequired: true,
+        value: jobCreateVM.selectedCategory,
+        title: "Category",
+        onChanged: (v) {
+          jobCreateVM.setSelectedCategory(v);
+        },
+        items: (jobCreateVM.addNewsFeedCommunityCategories ?? []).map((v) {
+          return DropdownMenuItem<NewsfeedCategories>(
+            value: v,
+            child: Text(v.categoryName ?? ''),
+          );
+        }).toList(),
+        hintText: "Select Category",
+        validator: (value) => value == null || value.toString().isEmpty
+            ? 'Please select category'
+            : null,
+      ),
     );
   }
 

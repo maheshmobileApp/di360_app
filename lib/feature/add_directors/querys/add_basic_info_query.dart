@@ -8,10 +8,13 @@ mutation addDirectory($dirObj: directories_insert_input!) {
 ''';
 
 const String updateBasicInfoQuery = r'''
-mutation updateBasicInfo($id: uuid!, $updateInfo: directories_set_input!) {
-  update_directories(where: {id: {_eq: $id}}, _set: $updateInfo) {
-    affected_rows
+mutation updateRecord($id: uuid!, $changes: directories_set_input!) {
+  update_directories_by_pk(pk_columns: {id: $id}, _set: $changes) {
+    id
+    description
     __typename
   }
 }
 ''';
+
+

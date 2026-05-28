@@ -104,6 +104,7 @@ class LoginViewModel extends ChangeNotifier {
             viewProfileHandle(context);
           }
 
+
           // Background tasks (parallel)
           Future(() async {
             try {
@@ -113,6 +114,7 @@ class LoginViewModel extends ChangeNotifier {
                 if (isSupplier) getSupplierCommunityOwner(userId),
                 getMyCommunityData(userId),
                 updateDevieToken(),
+
 
                 // Local Storage
                 LocalStorage.setStringVal(

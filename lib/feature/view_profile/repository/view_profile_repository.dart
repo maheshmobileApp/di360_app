@@ -11,4 +11,6 @@ abstract class ViewProfileRepository {
   Future<dynamic> deleteAccount();
   Future<dynamic> insertDirectory(dynamic variables);
   Future<dynamic> updateDirectoryFromViewProfile(dynamic variable);
+  Future<dynamic> updateClient(dynamic variables);
+  Future<dynamic> updateRecord(dynamic variables);
 }

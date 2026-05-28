@@ -12,6 +12,7 @@ query professionalDisplay($id: uuid!) {
     alt_email
     alt_phone
     profession_type
+    professiontype
     directory_category_id
     pro_details_aphra_registration_number
     bank_details

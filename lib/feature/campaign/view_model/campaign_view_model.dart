@@ -453,6 +453,7 @@ class CampaignViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final userEmail =
         await LocalStorage.getStringVal(LocalStorageConst.emailId);
+    final userName = await LocalStorage.getStringVal(LocalStorageConst.name);
     Loaders.circularShowLoader(context);
     try {
       String messageChannel = selectedType;
@@ -471,6 +472,7 @@ class CampaignViewModel extends ChangeNotifier {
       final variables = {
         "fields": {
           "from_email": userEmail,
+          "from_name": userName,
           "created_by_id": userId,
           "campaign_name": campaignNameController.text,
           "recipients_count": recipientsCount,
@@ -485,7 +487,7 @@ class CampaignViewModel extends ChangeNotifier {
           "is_repeating": "no",
           "is_refined_by_state": selectStateCondition == "Yes" ? "yes" : "no",
           "refine_state": selectedStateChips,
-          "groups": _selectedGroupChips,
+          "groups": selectedGroupIdChips,
           "message_text": messageController.text,
           "send_to_numbers": selectedSendChips,
           "send_to_emails": null,

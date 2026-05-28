@@ -31,7 +31,7 @@ class CommunityViewModel extends ChangeNotifier {
   TextEditingController categoryController = TextEditingController();
   TextEditingController contactEmailController = TextEditingController();
   TextEditingController contactNameController = TextEditingController();
-
+  TextEditingController companyNameController = TextEditingController();
   TextEditingController contactPhoneController = TextEditingController();
 
   bool editMode = false;
@@ -75,9 +75,15 @@ class CommunityViewModel extends ChangeNotifier {
   ];
 
   String selectedFilterContactType = "";
+  bool appliedContactFilter = false;
 
   void setSelectedFilterContactType(String value) {
     selectedFilterContactType = value;
+    notifyListeners();
+  }
+
+  void updateAppliedContactFilter(bool value) {
+    appliedContactFilter = value;
     notifyListeners();
   }
 
@@ -97,8 +103,19 @@ class CommunityViewModel extends ChangeNotifier {
     {"label": "Educators", "value": "EDUCATORS"},
   ];
   String selectedContactType = "";
+  bool companyNameView = false;
+
+  void updateCompanyNameView(bool value) {
+    companyNameView = value;
+    notifyListeners();
+  }
   void setSelectedContactType(String value) {
     selectedContactType = value;
+    updateCompanyNameView(true);
+    if (value == "MEMBER") {
+      companyNameController.clear();
+      updateCompanyNameView(false);
+    } 
     notifyListeners();
   }
 
@@ -410,10 +427,13 @@ class CommunityViewModel extends ChangeNotifier {
   NewsFeedCategoriesData? filterCatgoriesData;
 
   Future<void> getNewsFeedCategories(BuildContext context,
-      [String? newsFeedId]) async {
+      {String? type}) async {
     Loaders.circularShowLoader(context);
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+
     final variables = {
       "where": {
         "_and": [
@@ -432,11 +452,16 @@ class CommunityViewModel extends ChangeNotifier {
             }
         ]
       },
-      "limit": 5,
+      "limit": 10,
       "offset": 0
     };
-    ;
-    final res = await repo.getNewsFeedCategories(variables);
+    final communityVariables = {
+      "communityId": communityId,
+      "limit": 10,
+      "offset": 0
+    };
+    final res = await repo.getNewsFeedCategories(
+        type == "Community" ? communityVariables : variables, type ?? "");
     newsFeedCategoriesData = res;
     filterCatgoriesData = NewsFeedCategoriesData(
       newsfeedCategories: List.from(res.newsfeedCategories ?? []),
@@ -588,7 +613,9 @@ class CommunityViewModel extends ChangeNotifier {
           "contact_name": contactNameController.text,
           "email": contactEmailController.text,
           "phone": "${phoneCode}${contactPhoneController.text}",
-          "company_name": companyName,
+          "company_name": selectedContactType == "MEMBER"
+              ? null
+              : companyNameController.text,
           "state": selectedState,
           "contact_type": selectedContactType,
           "created_by_id": id
@@ -653,7 +680,9 @@ class CommunityViewModel extends ChangeNotifier {
           "contact_name": contactNameController.text,
           "email": contactEmailController.text,
           "phone": "${phoneCode}${contactPhoneController.text}",
-          "company_name": companyName,
+          "company_name": selectedContactType == "MEMBER"
+              ? null
+              : companyNameController.text,
           "state": selectedState,
           "contact_type": selectedContactType,
           "created_by_id": id
@@ -722,6 +751,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   setContactDetails(PartnersContactBook? data) {
     contactNameController.text = data?.contactName ?? "";
+    companyNameController.text = data?.companyName ?? "";
     selectedState = data?.state ?? "";
     selectedContactType = data?.contactType ?? "";
     contactEmailController.text = data?.email ?? "";
@@ -740,6 +770,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   clearContactDetails() {
     contactNameController.text = "";
+    companyNameController.text = "";
     selectedState = "";
     selectedContactType = "";
     contactEmailController.text = "";
