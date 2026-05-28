@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/market_place_learning_hub/widgets/registra
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/jiffy_widget.dart';
 import 'package:di360_flutter/widgets/socila_media_icons_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -75,11 +76,6 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
     final isRegistered = courseListingVM
         .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
     final seats = courseDetails?.numberOfSeats ?? 0;
-    final registeredDate = courseDetails?.createdAt ?? "";
-    final accessDays = courseDetails?.courseAccessDuration ?? 0;
-    final expiryDate = registeredDate.isNotEmpty
-        ? DateFormatUtils.addDaysToDate(registeredDate, accessDays)
-        : "";
 
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
@@ -239,7 +235,15 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CourseInfoCardWidget(
-                        expiryDate: expiryDate,
+                        expiryDate: courseDetails?.courseRegisteredUsers
+                                    ?.firstOrNull?.courseExpiryAt !=
+                                null
+                            ? jiffyDataWidget(
+                                courseDetails?.courseRegisteredUsers
+                                        ?.firstOrNull?.courseExpiryAt ??
+                                    "",
+                                format: "dd MMM yyyy")
+                            : "",
                         address: courseDetails?.address?.isNotEmpty == true
                             ? courseDetails?.address?.first.city ?? ""
                             : "",

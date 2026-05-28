@@ -93,35 +93,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                             style: TextStyles.medium2(
                                 color: AppColors.greenColor)),
                       const SizedBox(height: 4),
-                      if (platform == "Online Academy" &&
-                          registerStatus == true &&
-                          courseStatus != "PENDING")
-                        Text("Expires on : $expiryDate"),
-                      if (platform != "Online Academy")
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.calendar_month_outlined,
-                                color: AppColors.primaryColor, size: 20),
-                            const SizedBox(width: 4),
-                            if (startDate.isNotEmpty && endDate.isNotEmpty)
-                              Text(DateFormatUtils.formatDateRange(
-                                  startDate, endDate)),
-                          ],
-                        ),
-                      const SizedBox(height: 4),
-                      if (startTime.isNotEmpty && endTime.isNotEmpty)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.access_time_rounded,
-                                color: AppColors.primaryColor, size: 20),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
-                            ),
-                          ],
-                        ),
+                      
                     ],
                   ),
                 ),
@@ -164,6 +136,41 @@ class CourseInfoCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
+                    Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                      if (platform == "Online Academy" &&
+                          registerStatus == true &&
+                          courseStatus != "PENDING" &&
+                          expiryDate != '')
+                        Text("Expires on : $expiryDate"),
+                      if (platform != "Online Academy")
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.calendar_month_outlined,
+                                color: AppColors.primaryColor, size: 20),
+                            const SizedBox(width: 4),
+                            if (startDate.isNotEmpty && endDate.isNotEmpty)
+                              Text(DateFormatUtils.formatDateRange(
+                                  startDate, endDate)),
+                          ],
+                        ),
+                      const SizedBox(height: 4),
+                      if (startTime.isNotEmpty && endTime.isNotEmpty)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.access_time_rounded,
+                                color: AppColors.primaryColor, size: 20),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                            ),
+                          ],
+                        ),
+                    ]))
                   ],
                 ),
                 const SizedBox(height: 4),
