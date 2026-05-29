@@ -17,13 +17,12 @@ class RegisterCourseCard extends StatelessWidget {
   final VoidCallback? onDownloadTap;
   final CoursesListingDetails courseData;
 
-  const RegisterCourseCard({
-    super.key,
-    this.onCardTap,
-    this.onViewCourseTap,
-    this.onDownloadTap,
-    required this.courseData,
-  });
+  const RegisterCourseCard(
+      {super.key,
+      this.onCardTap,
+      this.onViewCourseTap,
+      this.onDownloadTap,
+      required this.courseData});
 
   @override
   Widget build(BuildContext context) {
@@ -178,9 +177,7 @@ class RegisterCourseCard extends StatelessWidget {
               Text(title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyles.regular2(
-                    color: AppColors.black,
-                  )),
+                  style: TextStyles.regular2(color: AppColors.black)),
               const SizedBox(height: 2),
               Text("CPD Points: ${courseData.cpdPoints ?? ""}",
                   style: TextStyles.regular2(color: AppColors.black)),

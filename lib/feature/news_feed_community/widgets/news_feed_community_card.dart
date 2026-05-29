@@ -137,11 +137,11 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                             (type == UserRole.professional.value &&
                                 feedUserRole != UserRole.supplier.value &&
                                 isSameUser))*/
-                          Row(
-                            children: [
-                              _menuWidget(context, type, imageUrls, isSameUser),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            _menuWidget(context, type, imageUrls, isSameUser),
+                          ],
+                        ),
                       ],
                     ),
 
@@ -157,7 +157,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                     ),
                     if (newsfeeds?.videoUrl != null &&
                         newsfeeds?.videoUrl?.isNotEmpty == true &&
-                        _isValidYoutubeUrl(newsfeeds?.videoUrl ?? ""))
+                        _isValidVideoUrl(newsfeeds?.videoUrl ?? ""))
                       LazyYoutubePlayer(youtubeUrl: newsfeeds?.videoUrl ?? ""),
                     const SizedBox(height: 8),
 
@@ -875,7 +875,11 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     );
   }
 
-  bool _isValidYoutubeUrl(String url) {
-    return url.contains('youtube.com') || url.contains('youtu.be');
+  bool _isValidVideoUrl(String url) {
+    return url.contains('youtube.com') ||
+        url.contains('youtu.be') ||
+        url.contains('drive.google.com') ||
+        url.contains('loom.com') ||
+        url.contains('vimeo.com');
   }
 }

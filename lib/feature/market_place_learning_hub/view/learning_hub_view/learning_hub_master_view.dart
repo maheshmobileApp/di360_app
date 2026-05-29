@@ -4,7 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
-import 'package:di360_flutter/feature/learning_hub/widgets/learning_hub_master_card.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
