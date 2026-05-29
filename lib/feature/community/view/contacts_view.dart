@@ -24,7 +24,8 @@ class _ContactsViewState extends State<ContactsView> {
     super.initState();
     final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
     viewModel.contactsRes = null;
-    WidgetsBinding.instance.addPostFrameCallback((_) {      viewModel.selectedFilterContactType = "";
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.selectedFilterContactType = "";
       viewModel.selectedFilterState = "";
       viewModel.getContacts(context);
       viewModel.updateAppliedContactFilter(false);
@@ -149,6 +150,10 @@ class _ContactsViewState extends State<ContactsView> {
           onTap: () {
             viewModel.updateContactEditMode(false);
             viewModel.clearContactDetails();
+            viewModel.selectedFilterContactType = "";
+            viewModel.selectedFilterState = "";
+            viewModel.getContacts(context);
+            viewModel.updateAppliedContactFilter(false);
             navigationService.navigateTo(RouteList.createContactView);
           },
           child: SvgPicture.asset(ImageConst.createSupport)),

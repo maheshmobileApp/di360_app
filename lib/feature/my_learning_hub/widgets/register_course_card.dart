@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class RegisterCourseCard extends StatelessWidget {
                 courseData.presenters?.first.presentedByName ?? "",
                 courseData.status ?? "",
                 courseData.type ?? "",
-                courseData.meetingLink ?? "",
+                courseData.webinarLink ?? "",
                 courseStatus,
                 expiryDate),
             Divider(color: AppColors.borderColor),
@@ -193,7 +194,8 @@ class RegisterCourseCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              if (link.isNotEmpty) _meetingLinkWidget(link)
+              if (link.isNotEmpty && courseStatus == "APPROVED" && types == "Webinar")
+                _meetingLinkWidget(link)
             ],
           ),
         ),
@@ -203,27 +205,63 @@ class RegisterCourseCard extends StatelessWidget {
 
   Widget _meetingLinkWidget(String link) {
     return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: AppColors.borderColor)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: GestureDetector(
-          onTap: () async {
-            final url = Uri.parse(link);
-            if (await canLaunchUrl(url)) {
-              await launchUrl(url, mode: LaunchMode.externalApplication);
-            } else {}
-          },
-          child: Text(
-            "Meeting Link",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyles.regular1(
-              color: AppColors.bottomNavUnSelectedColor,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.borderColor),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () async {
+          final rawLink = link.trim();
+
+          final fullLink =
+              rawLink.startsWith('http://') || rawLink.startsWith('https://')
+                  ? rawLink
+                  : 'https://$rawLink';
+
+          final url = Uri.parse(fullLink);
+
+          if (await canLaunchUrl(url)) {
+            await launchUrl(
+              url,
+              mode: LaunchMode.externalApplication,
+            );
+          } else {
+            scaffoldMessenger("Invalid link !!");
+          }
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+           
+            Expanded(
+              child: RichText(
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Meeting Link : ",
+                      style: TextStyles.medium1(
+                        color: AppColors.black,
+                      ),
+                    ),
+                    TextSpan(
+                      text: link,
+                      style: TextStyles.medium1(
+                        color: Colors.blue,
+                      ).copyWith(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

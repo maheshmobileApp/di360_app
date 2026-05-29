@@ -142,22 +142,19 @@ class _CreateCategoryViewState extends State<CreateContactView>
   }
 
   Widget _buildStates(CommunityViewModel viewModel) {
-    // Remove duplicates from contactTypes
-    final uniqueStates = viewModel.states.toSet().toList();
-
     return CustomDropDown(
       isRequired: true,
-      value: uniqueStates.contains(viewModel.selectedState)
+      value: viewModel.filterStatesList.any((e) => e["short"] == viewModel.selectedState)
           ? viewModel.selectedState
           : null,
       title: "State",
       onChanged: (v) {
         viewModel.setSelectedState(v as String);
       },
-      items: uniqueStates.map<DropdownMenuItem<Object>>((String value) {
+      items: viewModel.filterStatesList.map<DropdownMenuItem<Object>>((item) {
         return DropdownMenuItem<Object>(
-          value: value,
-          child: Text(value),
+          value:  item["short"],
+          child: Text(item["name"]!),
         );
       }).toList(),
       hintText: "Select State",
