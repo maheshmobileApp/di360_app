@@ -74,6 +74,17 @@ class CommunityViewModel extends ChangeNotifier {
     "Australian Capital Territory"
   ];
 
+  final List<Map<String, String>> filterStatesList = [
+    {"name": 'New South Wales', "short": 'NSW'},
+    {"name": 'Victoria', "short": 'VIC'},
+    {"name": 'Queensland', "short": 'QLD'},
+    {"name": 'South Australia', "short": 'SA'},
+    {"name": 'Western Australia', "short": 'WA'},
+    {"name": 'Tasmania', "short": 'TAS'},
+    {"name": 'Northern Territory', "short": 'NT'},
+    {"name": 'Australian Capital Territory', "short": 'ACT'},
+  ];
+
   String selectedFilterContactType = "";
   bool appliedContactFilter = false;
 
@@ -573,6 +584,17 @@ class CommunityViewModel extends ChangeNotifier {
       }
     }
 
+    if (selectedFilterState.isNotEmpty) {
+      final match = filterStatesList.firstWhere(
+        (e) => e["name"] == selectedFilterState,
+        orElse: () => {},
+      );
+      if (match["short"] != null) {
+        whereClause["state"] = {"_eq": match["short"]};
+      }
+      
+    }
+
     final variables = {
       "where": whereClause,
       "limit": _limitSize,
@@ -603,8 +625,6 @@ class CommunityViewModel extends ChangeNotifier {
 
     try {
       final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final companyName =
-          await LocalStorage.getStringVal(LocalStorageConst.businessName);
 
       final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
 
