@@ -273,7 +273,11 @@ class CouresListingCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
         child: GestureDetector(
           onTap: () async {
-            final url = Uri.parse(link);
+            final rawLink = link.trim();
+            final fullLink = rawLink.startsWith('http://') || rawLink.startsWith('https://')
+                ? rawLink
+                : 'https://$rawLink';
+            final url = Uri.parse(fullLink);
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
