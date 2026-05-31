@@ -31,7 +31,8 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final needFeedViewModel = Provider.of<NewsFeedViewModel>(context, listen:false);
+    final needFeedViewModel =
+        Provider.of<NewsFeedViewModel>(context, listen: false);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
     final currentUserId = needFeedViewModel.userID;
 
@@ -53,13 +54,15 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
           showAlertMessage(
               context, 'Are you really want to delete this NewsFeed ?',
               onBack: () {
-            needFeedViewModel.deleteTheNewsFeed(context, widget.newsfeeds?.id ?? '');
+            needFeedViewModel.deleteTheNewsFeed(
+                context, widget.newsfeeds?.id ?? '');
             navigationService.goBack();
           });
         } else if (value == 'report') {
           showReportBottomSheet(context, () {
             navigationService.goBack();
-            needFeedViewModel.reportNewsFeed(context, widget.newsfeeds?.id ?? '');
+            needFeedViewModel.reportNewsFeed(
+                context, widget.newsfeeds?.id ?? '');
           });
         } else if (value == 'hide') {
           showUserBlockPopup(context, 'Are you sure Hide this user?',
@@ -88,6 +91,15 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
         }
       },
       itemBuilder: (context) => [
+        PopupMenuItem(
+            value: "approve",
+            child: buildRow(Icons.arrow_circle_right, AppColors.greenColor, "Approve")),
+        PopupMenuItem(
+            value: "publish",
+            child: buildRow(Icons.arrow_upward, AppColors.blueColor, "Publish")),
+        PopupMenuItem(
+            value: "unpublish",
+            child: buildRow(Icons.unpublished, AppColors.redColor, "Unpublish")),
         if (isSameUser) ...[
           PopupMenuItem(
               value: "edit",

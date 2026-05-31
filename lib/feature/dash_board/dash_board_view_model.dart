@@ -74,7 +74,7 @@ class DashBoardViewModel extends ChangeNotifier {
         CataloguePage(),
         AccountScreen(),
       ];
-    } else if (_userType == UserRole.practice.value) {
+    } else if (_userType == UserRole.practice.value || _userType == UserRole.admin.value ) {
       _pages = [
         HomeScreen(),
         NewsFeedScreen(),

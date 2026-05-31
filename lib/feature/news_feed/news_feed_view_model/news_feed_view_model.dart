@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/news_feed/querys/news_feed_like_querys.dar
 import 'package:di360_flutter/feature/news_feed/querys/report_query.dart';
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repo_impl.dart';
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repository.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
@@ -94,6 +95,42 @@ class NewsFeedViewModel extends ChangeNotifier {
     }
   }
 
+  String selectedStatus = "Published";
+  String listingStatus = "PUBLISHED";
+  FeedCountData? feedCountData;
+  int? pendingCount = 0;
+  int? publishedCount = 0;
+  int? unPublishedCount = 0;
+  Map<String, int?> get statusCountMap => {
+        'Published': publishedCount,
+        'Unpublished': unPublishedCount,
+        'Pending Approval': pendingCount,
+      };
+
+  final List<String> statuses = [
+    'Pending Approval',
+    "Published",
+    'Unpublished'
+  ];
+
+  void changeStatus(
+    String status,
+    BuildContext context,
+  ) {
+    selectedStatus = status;
+    if (status == 'Pending Approval') {
+      listingStatus = "PENDING";
+    } else if (status == 'Published') {
+      listingStatus = 'PUBLISHED';
+    } else if (status == 'Unpublished') {
+      listingStatus = 'UNPUBLISHED';
+    }
+
+    getAllNewsfeeds(context,
+        categoryType: selectedCategoryId, status: listingStatus);
+    notifyListeners();
+  }
+
   void _loadMoreNewsfeeds() async {
     if (isLoadingMore || !hasMoreData) return;
     isLoadingMore = true;
@@ -105,6 +142,7 @@ class NewsFeedViewModel extends ChangeNotifier {
         searchController.text,
         feedType: _activeFeedType,
         categoryType: _activeCategoryType,
+        status: listingStatus
       );
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
@@ -140,22 +178,18 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllNewsfeeds(BuildContext context,
-      {String? feedType, String? categoryType}) async {
+      {String? feedType, String? categoryType, String? status}) async {
     _activeFeedType = feedType;
     _activeCategoryType = categoryType;
     Loaders.circularShowLoader(context);
     resetPagination();
     try {
-      var res = await repo.getAllNewsFeed(
-        offset,
-        limit,
-        searchController.text,
-        feedType: feedType,
-        categoryType: categoryType,
-      );
+      var res = await repo.getAllNewsFeed(offset, limit, searchController.text,
+          feedType: feedType, categoryType: categoryType, status: status);
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         allNewsFeedsData = result;
+        getAllStatusCounts();
         Loaders.circularHideLoader(context);
       } else {
         Loaders.circularHideLoader(context);
@@ -387,6 +421,59 @@ class NewsFeedViewModel extends ChangeNotifier {
     } else {
       scaffoldMessenger("Job details not found");
     }
+    notifyListeners();
+  }
+
+  Future<void> getAllStatusCounts(
+      {String? categoryType, String? feedType}) async {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "_or": [
+              {
+                "community_type": {"_eq": "BOTH"}
+              },
+              {
+                "user_id": {"_eq": userId}
+              }
+            ]
+          },
+          {
+            "_not": {
+              "newsfeed_user_actions": {
+                "created_by_id": {"_eq": userId},
+                "entity_type": {"_eq": "POST"},
+                "action": {
+                  "_in": ["HIDE", "REPORT"]
+                },
+                "status": {"_eq": "ACTIVE"}
+              }
+            }
+          },
+          {
+            "_not": {
+              "blocked_by_user_actions": {
+                "created_by_id": {"_eq": userId},
+                "entity_type": {"_eq": "PROFILE"},
+                "action": {"_eq": "BLOCK"},
+                "status": {"_eq": "ACTIVE"}
+              }
+            }
+          }
+        ]
+      }
+    };
+
+    final res = await repo.feedCount(variables);
+    feedCountData = res;
+    pendingCount = feedCountData?.pendingNews?.aggregate?.count ?? 0;
+    publishedCount = feedCountData?.publishedNews?.aggregate?.count ?? 0;
+    unPublishedCount = feedCountData?.unpublishedNews?.aggregate?.count ?? 0;
     notifyListeners();
   }
 }
