@@ -88,72 +88,64 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
               children: [
                 const Divider(height: 1),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RegisterNowWidget(
-                      earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
-                      registerStatus: isRegistered,
-                      currentPrice:
-                          courseDetails?.earlyBirdPrice?.toString() ?? "0",
-                      oldPrice:
-                          courseDetails?.afterwardsPrice?.toString() ?? "0",
-                      courseRegisterStatus: courseDetails
-                          ?.courseRegisteredUsers?.firstOrNull?.status,
-                      onPressed: isRegistered
-                          ? courseDetails?.type == 'Online Academy'
-                              ? () async {
-                                  courseDetails?.courseRegisteredUsers
-                                              ?.firstOrNull?.status ==
-                                          "PENDING"
-                                      ? showAlertMessage(
-                                          context,
-                                          'Thank you for your registration. We are currently awaiting payment confirmation from the administrator. You will be notified once your enrollment is confirmed.',
-                                          yes: 'View Registration Link',
-                                          onBack: () async {
-                                            final raw = courseDetails
-                                                    ?.registerLink
-                                                    ?.trim() ??
-                                                '';
-                                            if (raw.isEmpty) {
+                    padding: const EdgeInsets.all(8.0),
+                    child: RegisterNowWidget(
+                        earlyBirdEndDate: courseDetails?.earlyBirdEndDate,
+                        registerStatus: isRegistered,
+                        currentPrice:
+                            courseDetails?.earlyBirdPrice?.toString() ?? "0",
+                        oldPrice:
+                            courseDetails?.afterwardsPrice?.toString() ?? "0",
+                        courseRegisterStatus: courseDetails
+                            ?.courseRegisteredUsers?.firstOrNull?.status,
+                        onPressed: isRegistered &&
+                                courseDetails?.courseRegisteredUsers
+                                        ?.firstOrNull?.status !=
+                                    "EXPIRED"
+                            ? courseDetails?.type == 'Online Academy'
+                                ? () async {
+                                    courseDetails?.courseRegisteredUsers
+                                                ?.firstOrNull?.status ==
+                                            "PENDING"
+                                        ? showAlertMessage(
+                                            context,
+                                            'Thank you for your registration. We are currently awaiting payment confirmation from the administrator. You will be notified once your enrollment is confirmed.',
+                                            yes: 'View Registration Link',
+                                            onBack: () async {
+                                              final raw = courseDetails
+                                                      ?.registerLink
+                                                      ?.trim() ??
+                                                  '';
+                                              if (raw.isEmpty) {
+                                                navigationService.goBack();
+                                                return;
+                                              }
+                                              final urlStr = raw.startsWith(
+                                                          'http://') ||
+                                                      raw.startsWith('https://')
+                                                  ? raw
+                                                  : 'https://$raw';
+                                              final url = Uri.tryParse(urlStr);
+                                              if (url != null &&
+                                                  await canLaunchUrl(url)) {
+                                                await launchUrl(url,
+                                                    mode: LaunchMode
+                                                        .externalApplication);
+                                              } else {
+                                                scaffoldMessenger(
+                                                    'Could not open registration link');
+                                              }
                                               navigationService.goBack();
-                                              return;
-                                            }
-                                            final urlStr = raw.startsWith(
-                                                        'http://') ||
-                                                    raw.startsWith('https://')
-                                                ? raw
-                                                : 'https://$raw';
-                                            final url = Uri.tryParse(urlStr);
-                                            if (url != null &&
-                                                await canLaunchUrl(url)) {
-                                              await launchUrl(url,
-                                                  mode: LaunchMode
-                                                      .externalApplication);
-                                            } else {
-                                              scaffoldMessenger(
-                                                  'Could not open registration link');
-                                            }
-                                            navigationService.goBack();
-                                          },
-                                        )
-                                      : navigationService
-                                          .push(CourseDetailsView());
-                                }
-                              : () {
-                                  scaffoldMessenger("Already Registered");
-                                }
-                          : courseDetails?.type == 'Online Academy'
-                              ? () {
-                                  courseListingVM
-                                      .setCourseId(courseDetails?.id ?? "");
-                                  RegistrationUserForm.show(
-                                      context,
-                                      courseDetails?.courseName ?? "",
-                                      courseDetails?.createdById ?? "",
-                                      courseDetails?.id ?? "",
-                                      courseDetails?.registerLink ?? "");
-                                }
-                              : () {
-                                  if (seats > 0) {
+                                            },
+                                          )
+                                        : navigationService
+                                            .push(CourseDetailsView());
+                                  }
+                                : () {
+                                    scaffoldMessenger("Already Registered");
+                                  }
+                            : courseDetails?.type == 'Online Academy'
+                                ? () {
                                     courseListingVM
                                         .setCourseId(courseDetails?.id ?? "");
                                     RegistrationUserForm.show(
@@ -162,12 +154,22 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
                                         courseDetails?.createdById ?? "",
                                         courseDetails?.id ?? "",
                                         courseDetails?.registerLink ?? "");
-                                  } else {
-                                    scaffoldMessenger('Seats are sold out!');
                                   }
-                                },
-                      courseType: courseDetails?.type ?? ""),
-                ),
+                                : () {
+                                    if (seats > 0) {
+                                      courseListingVM
+                                          .setCourseId(courseDetails?.id ?? "");
+                                      RegistrationUserForm.show(
+                                          context,
+                                          courseDetails?.courseName ?? "",
+                                          courseDetails?.createdById ?? "",
+                                          courseDetails?.id ?? "",
+                                          courseDetails?.registerLink ?? "");
+                                    } else {
+                                      scaffoldMessenger('Seats are sold out!');
+                                    }
+                                  },
+                        courseType: courseDetails?.type ?? "")),
               ],
             )
           : const SizedBox.shrink(),

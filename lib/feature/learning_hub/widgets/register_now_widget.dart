@@ -84,19 +84,20 @@ class RegisterNowWidget extends StatelessWidget {
 
           // Register Button
           CustomRoundedButton(
-            onPressed: onPressed ?? () {},
-            backgroundColor: AppColors.primaryColor,
-            text: registerStatus
-                ? courseRegisterStatus == "PENDING"
-                    ? "Registration Pending"
-                    : courseType == 'Online Academy'
-                        ? "View Course"
-                        : "Registered"
-                : "Register Now",
-            width: 170,
-            height: 42,
-            textColor: AppColors.whiteColor,
-          )
+              onPressed: onPressed ?? () {},
+              backgroundColor: AppColors.primaryColor,
+              text: registerStatus
+                  ? courseRegisterStatus == "PENDING"
+                      ? "Registration Pending"
+                      : courseRegisterStatus == "EXPIRED"
+                          ? "Register Now"
+                          : courseType == 'Online Academy'
+                              ? "View Course"
+                              : "Registered"
+                  : "Register Now",
+              width: 170,
+              height: 42,
+              textColor: AppColors.whiteColor)
         ],
       ),
     );
