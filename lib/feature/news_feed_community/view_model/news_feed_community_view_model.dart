@@ -268,7 +268,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
                 }
               ]
             },
-          if (userType != UserRole.admin.name && professionId.isNotEmpty)
+          /*if (userType != UserRole.admin.name && professionId.isNotEmpty)
             {
               "_or": [
                 {
@@ -280,7 +280,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
                   "category_type": {"_is_null": true}
                 }
               ]
-            },
+            },*/
           {
             "_not": {
               "newsfeed_user_actions": {
