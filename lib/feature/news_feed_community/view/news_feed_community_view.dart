@@ -263,7 +263,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   feedType: newsItem.feedType ?? "",
                                   createdAt: newsItem.createdAt ?? "",
                                   feedUserRole: newsItem.userRole ?? "",
-                                  imageUrls: newsItem.imageUrl ?? [],
+                                  imageUrls: newsItem.imageUrl ?? newsItem.postImage,
                                   id: newsItem.id ?? '',
                                   logoUrl: (newsItem.userRole ==
                                           UserRole.professional.value)
@@ -370,7 +370,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         await viewModel
                                             .fetchAddNewsfeedCommunityCategories();
                                         viewModel.editSelectCategoryAssigned(
-                                            newsItem?.categoryType ?? '');
+                                            newsItem.categoryType ?? '');
 
                                         /*viewModel.setSelectedCourseCategoryName(
                                             newsItem.categoryType ?? "");*/

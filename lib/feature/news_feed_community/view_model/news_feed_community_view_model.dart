@@ -790,12 +790,19 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   editSelectCategoryAssigned(String id) {
-    final category = addNewsFeedCommunityCategories?.firstWhere(
-        (val) => val.id == id,
-        orElse: () => addNewsFeedCommunityCategories!.first);
-    setSelectedCategory(id.isEmpty ? null : category);
+  if (id.isEmpty || addNewsFeedCommunityCategories == null || addNewsFeedCommunityCategories?.isEmpty == true) {
+    setSelectedCategory(null);
     notifyListeners();
+    return;
   }
+
+  final category = addNewsFeedCommunityCategories!.firstWhere(
+      (val) => val.id == id,
+      orElse: () => addNewsFeedCommunityCategories!.first);
+  setSelectedCategory(category);
+  notifyListeners();
+}
+
 
   initialStateData() {
     feedTypeUpdate("");
