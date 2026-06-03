@@ -268,19 +268,6 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
                 }
               ]
             },
-          if (userType != UserRole.admin.name && professionId.isNotEmpty)
-            {
-              "_or": [
-                {
-                  "access_rules": {
-                    "directory_category_id": {"_eq": professionId}
-                  }
-                },
-                {
-                  "category_type": {"_is_null": true}
-                }
-              ]
-            },
           {
             "_not": {
               "newsfeed_user_actions": {
@@ -307,6 +294,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       },
       "userId": userId
     };
+    print("************$variables");
 
     final res = await repo.getAllNewsFeeds(variables);
 
@@ -447,7 +435,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Liked Successfully");
     }
-    getAllNewsFeeds(context);
+    await getAllNewsFeeds(context);
     notifyListeners();
   }
 
@@ -786,7 +774,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     __typename
   }
 }''';
-final communityId = await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {"communityId": communityId};
     try {
       final response = await _http.query(query, variables: variables);

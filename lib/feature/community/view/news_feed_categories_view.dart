@@ -27,9 +27,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
 
-      await viewModel.getNewsFeedCategories(context);
-      
-
+      await viewModel.getNewsFeedCategoriesByCommunity(context);
       viewModel.getDirectory();
     });
   }
@@ -37,7 +35,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);
-    final joinRequests = viewModel.newsFeedCategoriesData?.newsfeedCategories;
+    final joinRequests = viewModel.newsFeedCategoriesByCommunityData?.newsfeedCategories;
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
@@ -89,7 +87,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCategoriesView>
               : Expanded(
                   child: Center(
                     child: Text(
-                      "No Join Requests",
+                      "No Newsfeed Categories Available",
                       style: TextStyles.medium3(
                           color: AppColors.black, fontSize: 16),
                     ),

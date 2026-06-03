@@ -120,13 +120,14 @@ class CommunityViewModel extends ChangeNotifier {
     companyNameView = value;
     notifyListeners();
   }
+
   void setSelectedContactType(String value) {
     selectedContactType = value;
     updateCompanyNameView(true);
     if (value == "MEMBER") {
       companyNameController.clear();
       updateCompanyNameView(false);
-    } 
+    }
     notifyListeners();
   }
 
@@ -333,7 +334,7 @@ class CommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Category updated Sucessfully");
     }
     categoryController.text = "";
-    getNewsFeedCategories(context);
+    await getNewsFeedCategoriesByCommunity(context);
     notifyListeners();
   }
 
@@ -355,7 +356,7 @@ class CommunityViewModel extends ChangeNotifier {
       scaffoldMessenger("Category added Sucessfully");
     }
     categoryController.text = "";
-    getNewsFeedCategories(context);
+    await getNewsFeedCategoriesByCommunity(context);
     notifyListeners();
   }
 
@@ -382,7 +383,7 @@ class CommunityViewModel extends ChangeNotifier {
     final variables = {"id": id};
     final res = await repo.deleteCategory(variables);
     if (res != null) {
-      await getNewsFeedCategories(context);
+      await getNewsFeedCategoriesByCommunity(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger("Category deleted Sucessfully");
     }
@@ -435,7 +436,19 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
+  NewsFeedCategoriesData? newsFeedCategoriesByCommunityData;
   NewsFeedCategoriesData? filterCatgoriesData;
+
+  Future<void> getNewsFeedCategoriesByCommunity(BuildContext context,
+      {String? type}) async {
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final variables = {
+      "communityId": communityId,
+    };
+    final res = await repo.getNewsFeedCategoriesByCommunity(variables);
+    newsFeedCategoriesByCommunityData = res;
+  }
 
   Future<void> getNewsFeedCategories(BuildContext context,
       {String? type}) async {
@@ -592,7 +605,6 @@ class CommunityViewModel extends ChangeNotifier {
       if (match["short"] != null) {
         whereClause["state"] = {"_eq": match["short"]};
       }
-      
     }
 
     final variables = {

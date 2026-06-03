@@ -24,7 +24,7 @@ class _CreateCategoryViewState extends State<CreateCategoryView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
-          title: "Partnership Registration",
+          title: "Add Category",
           searchWidget: false,
            logo: false,
         ),
