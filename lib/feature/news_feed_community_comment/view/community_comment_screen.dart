@@ -86,8 +86,8 @@ class _CommentScreenState extends State<CommunityCommentScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      widget.newsfeeds?.dentalSupplier?.name ??
-                          widget.newsfeeds?.dentalPractice?.name ??
+                      widget.newsfeeds?.dentalSupplier?.businessName ??
+                          widget.newsfeeds?.dentalPractice?.businessName ??
                           widget.newsfeeds?.dentalProfessional?.name ??
                           'Dental Interface',
                       style: TextStyles.clashMedium(

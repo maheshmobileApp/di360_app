@@ -468,19 +468,24 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           alignment: Alignment.center,
           children: [
             CircleAvatar(
-              backgroundColor: AppColors.geryColor,
-              radius: 30,
-              child: logo.isNotEmpty
-                  ? ClipOval(
-                      child: CachedNetworkImageWidget(
-                        imageUrl: logo,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      ),
+              backgroundColor: (logo != null && logo.isNotEmpty)
+                  ? AppColors.greyLight
+                  : AppColors.primaryColor,
+              radius: 26.5,
+              child: (logo != null && logo.isNotEmpty)
+                  ? SizedBox(
+                      height: 52,
+                      width: 52,
+                      child: ClipOval(
+                          child: CachedNetworkImageWidget(
+                              imageUrl: logo,
+                              fit: BoxFit.contain,
+                              errorWidget: SvgPicture.asset(ImageConst.logo))),
                     )
-                  : const Icon(Icons.person,
-                      size: 20, color: AppColors.lightGeryColor),
+                  : Text(
+                      company?[0].toUpperCase() ?? "",
+                      style: TextStyles.bold5(color: AppColors.whiteColor),
+                    ),
             ),
           ],
         ),

@@ -31,6 +31,10 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final viewModel = Provider.of<NewsFeedViewModel>(context, listen: false);
+      viewModel.getFilterCategories();
+    });
   }
 
   @override

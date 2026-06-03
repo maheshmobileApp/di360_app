@@ -6,6 +6,10 @@ const String getJoinedCommunityQuery =
     id
     community_id
     community_name
+    dental_suppliers {
+      business_name
+      __typename
+    }
     supplier_id
     member_id
     status

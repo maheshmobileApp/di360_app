@@ -12,6 +12,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
@@ -333,8 +334,9 @@ class CommunityViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Category updated Sucessfully");
     }
-    categoryController.text = "";
     await getNewsFeedCategoriesByCommunity(context);
+    navigationService.goBack();
+    categoryController.text = "";
     notifyListeners();
   }
 
@@ -355,8 +357,9 @@ class CommunityViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Category added Sucessfully");
     }
-    categoryController.text = "";
     await getNewsFeedCategoriesByCommunity(context);
+    navigationService.goBack();
+    categoryController.text = "";
     notifyListeners();
   }
 
@@ -457,7 +460,6 @@ class CommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
-
     final variables = {
       "where": {
         "_and": [
@@ -484,6 +486,7 @@ class CommunityViewModel extends ChangeNotifier {
       "limit": 10,
       "offset": 0
     };
+    print("Variables for news feed categories: $communityVariables");
     final res = await repo.getNewsFeedCategories(
         type == "Community" ? communityVariables : variables, type ?? "");
     newsFeedCategoriesData = res;
@@ -557,6 +560,7 @@ class CommunityViewModel extends ChangeNotifier {
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
     getJoinedCommunityMembersData = res;
+    print("Joined Community Members: ${res.communityMembers?.length}");
     notifyListeners();
   }
 

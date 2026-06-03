@@ -46,6 +46,8 @@ class Directories {
   String? name;
   String? companyName;
   Logo? logo;
+  String? type;
+  String? businessName;
   ProfileImages? profileImage;
   String? address;
   String? pincode;
@@ -56,6 +58,8 @@ class Directories {
       this.name,
       this.companyName,
       this.logo,
+      this.type,
+      this.businessName,
       this.profileImage,
       this.address,
       this.pincode,
@@ -69,6 +73,8 @@ class Directories {
     profileImage = json['profile_image'] != null
         ? new ProfileImages.fromJson(json['profile_image'])
         : null;
+    type = json['type'];
+    businessName = json['business_name'];
     address = json['address'];
     pincode = json['pincode'];
     sTypename = json['__typename'];
@@ -82,6 +88,8 @@ class Directories {
     if (this.logo != null) {
       data['logo'] = this.logo!.toJson();
     }
+    data['type'] = this.type;
+    data['business_name'] = this.businessName;
     if (this.profileImage != null) {
       data['profile_image'] = this.profileImage!.toJson();
     }
@@ -140,7 +148,6 @@ class Logo {
     return data;
   }
 }
-
 
 class ProfileImages {
   String? url;
