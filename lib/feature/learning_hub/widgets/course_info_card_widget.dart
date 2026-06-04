@@ -92,8 +92,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Text("Already Registered",
                             style: TextStyles.medium2(
                                 color: AppColors.greenColor)),
-                      const SizedBox(height: 4),
-                      
+                      const SizedBox(height: 4)
                     ],
                   ),
                 ),
@@ -138,39 +137,45 @@ class CourseInfoCardWidget extends StatelessWidget {
                     ),
                     Flexible(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                      if (platform == "Online Academy" &&
-                          registerStatus == true &&
-                          courseStatus != "PENDING" &&
-                          expiryDate != '')
-                        Text("Expires on : $expiryDate"),
-                      if (platform != "Online Academy")
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.calendar_month_outlined,
-                                color: AppColors.primaryColor, size: 20),
-                            const SizedBox(width: 4),
-                            if (startDate.isNotEmpty && endDate.isNotEmpty)
-                              Text(DateFormatUtils.formatDateRange(
-                                  startDate, endDate)),
-                          ],
-                        ),
-                      const SizedBox(height: 4),
-                      if (startTime.isNotEmpty && endTime.isNotEmpty)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.access_time_rounded,
-                                color: AppColors.primaryColor, size: 20),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                          if (platform == "Online Academy" &&
+                              registerStatus == true &&
+                              courseStatus != "PENDING" &&
+                              expiryDate != '')
+                            Text("Expires on : $expiryDate"),
+                          if (platform != "Online Academy")
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.calendar_month_outlined,
+                                    color: AppColors.primaryColor, size: 20),
+                                const SizedBox(width: 4),
+                                if (startDate.isNotEmpty && endDate.isNotEmpty)
+                                  Flexible(
+                                      child: Text(
+                                          DateFormatUtils.formatDateRange(
+                                              startDate, endDate),
+                                          maxLines: 2)),
+                              ],
                             ),
-                          ],
-                        ),
-                    ]))
+                          const SizedBox(height: 4),
+                          if (startTime.isNotEmpty && endTime.isNotEmpty)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.access_time_rounded,
+                                    color: AppColors.primaryColor, size: 20),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                    child: Text(
+                                        '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
+                                        maxLines: 2)),
+                              ],
+                            ),
+                        ]))
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -179,47 +184,46 @@ class CourseInfoCardWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _InfoTextWidget(
-                          label: "CPD Hours",
-                          first: true,
-                          value: "${cpdHours}",
-                        ),
-                        const SizedBox(height: 6),
-                        _InfoTextWidget(
-                          label: "Price",
-                          first: true,
-                          value:
-                              "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}",
-                        ),
-                      ],
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _InfoTextWidget(
+                            label: "CPD Hours",
+                            first: true,
+                            value: "${cpdHours}",
+                          ),
+                          const SizedBox(height: 6),
+                          _InfoTextWidget(
+                            label: "Price",
+                            first: true,
+                            value:
+                                "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}",
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
-                      width: 1, // thickness of the line
-                      height: 50, // adjust according to content height
-                      color: Colors.grey, // line color
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 12), // spacing around the line
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        _InfoTextWidget(
-                          label: "How",
-                          first: false,
-                          value: "${platform}",
-                        ),
-                        const SizedBox(height: 6),
-                        _InfoTextWidget(
-                            label: "Where",
-                            first: false,
-                            value:
-                                address.isNotEmpty ? "${address}" : "Online"),
-                      ],
+                        width: 1,
+                        height: 50,
+                        color: Colors.grey,
+                        margin: const EdgeInsets.symmetric(horizontal: 12)),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          _InfoTextWidget(
+                              label: "How", first: false, value: "${platform}"),
+                          const SizedBox(height: 6),
+                          _InfoTextWidget(
+                              label: "Where",
+                              first: false,
+                              value:
+                                  address.isNotEmpty ? "${address}" : "Online"),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -227,7 +231,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                   const SizedBox(height: 10),
                   MediaWidget(url: bannerUrl, name: bannerName)
                 ],
-                const SizedBox(height: 10),
+                const SizedBox(height: 10)
               ],
             ),
           ),
@@ -243,11 +247,8 @@ class _InfoTextWidget extends StatelessWidget {
 
   final bool first;
 
-  const _InfoTextWidget({
-    required this.label,
-    required this.value,
-    required this.first,
-  });
+  const _InfoTextWidget(
+      {required this.label, required this.value, required this.first});
 
   @override
   Widget build(BuildContext context) {
@@ -257,68 +258,19 @@ class _InfoTextWidget extends StatelessWidget {
       children: [
         Text(label,
             style: const TextStyle(
-              color: AppColors.primaryColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            )),
-        const SizedBox(width: 4),
-        Text(value,
-            maxLines: 2,
-            style: TextStyle(
+                color: AppColors.primaryColor,
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.black)),
-      ],
-    );
-  }
-}
-
-/*class _PriceTextWidget extends StatelessWidget {
-  final String label;
-
-  final String originalPrice;
-  final String discountedPrice;
-
-  final bool first;
-
-  const _PriceTextWidget({
-    required this.label,
-    required this.first,
-    required this.originalPrice,
-    required this.discountedPrice,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment:
-          first ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-      children: [
-        Text(label,
-            style: const TextStyle(
-              color: AppColors.primaryColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            )),
+                fontWeight: FontWeight.w600)),
         const SizedBox(width: 4),
-        Row(
-          children: [
-            Text(
-              "\$${originalPrice}",
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                decoration: TextDecoration.lineThrough, // strike-through
-              ),
-            ),
-            Text("AUD \$${discountedPrice}",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.black)),
-          ],
+        Flexible(
+          child: Text(value,
+              maxLines: 2,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black)),
         ),
       ],
     );
   }
-} */
+}

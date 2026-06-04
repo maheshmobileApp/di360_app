@@ -300,7 +300,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         "email": userEmailController.text,
         "description": userDescriptionController.text,
         "status": (courseDetails?.afterwardsPrice == 0 ||
-                courseDetails?.afterwardsPrice == null)
+                    courseDetails?.afterwardsPrice == null) &&
+                (courseDetails?.type == 'Online Academy')
             ? "APPROVED"
             : "PENDING",
         "course_registered_date": DateTime.now().toIso8601String(),
