@@ -19,6 +19,7 @@ import 'package:di360_flutter/feature/community/query/get_join_requests_query.da
 import 'package:di360_flutter/feature/community/query/get_joined_community_members.dart';
 import 'package:di360_flutter/feature/community/query/get_membership_link_query.dart';
 import 'package:di360_flutter/feature/community/query/get_news_feed_categories_query.dart';
+import 'package:di360_flutter/feature/community/query/get_news_feed_community_by_category_query.dart';
 import 'package:di360_flutter/feature/community/query/get_partner_contacts_query.dart';
 import 'package:di360_flutter/feature/community/query/get_partnership_link_query.dart';
 import 'package:di360_flutter/feature/community/query/get_partnership_requests_query.dart';
@@ -221,5 +222,12 @@ class CommunityRepoImpl extends CommunityRepository {
   Future<DeleteContactData> deleteContact(variables) async {
     final res = await http.mutation(deleteContactQuery, variables);
     return DeleteContactData.fromJson(res);
+  }
+  
+  @override
+  Future<NewsFeedCategoriesData> getNewsFeedCategoriesByCommunity(variables) async {
+ final res = await http.query(getNewsFeedCategoriesByCommunityQuery, variables: variables);
+    final data = NewsFeedCategoriesData.fromJson(res);
+    return data;
   }
 }

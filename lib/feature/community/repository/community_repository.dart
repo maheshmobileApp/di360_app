@@ -30,4 +30,5 @@ abstract class CommunityRepository {
   Future<dynamic> addContact(dynamic variables);
   Future<dynamic> updateContact(dynamic variables);
   Future<DeleteContactData> deleteContact(dynamic variables);
+   Future<NewsFeedCategoriesData> getNewsFeedCategoriesByCommunity(dynamic variables);
 }

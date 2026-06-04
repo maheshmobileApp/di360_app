@@ -44,6 +44,7 @@ class CommunityMembers {
   String? id;
   String? communityId;
   String? communityName;
+  DentalSuppliers? dentalSuppliers;
   String? supplierId;
   String? memberId;
   String? status;
@@ -53,6 +54,7 @@ class CommunityMembers {
       {this.id,
       this.communityId,
       this.communityName,
+      this.dentalSuppliers,
       this.supplierId,
       this.memberId,
       this.status,
@@ -62,6 +64,9 @@ class CommunityMembers {
     id = json['id'];
     communityId = json['community_id'];
     communityName = json['community_name'];
+    dentalSuppliers = json['dental_suppliers'] != null
+        ? new DentalSuppliers.fromJson(json['dental_suppliers'])
+        : null;
     supplierId = json['supplier_id'];
     memberId = json['member_id'];
     status = json['status'];
@@ -73,9 +78,32 @@ class CommunityMembers {
     data['id'] = this.id;
     data['community_id'] = this.communityId;
     data['community_name'] = this.communityName;
+     if (this.dentalSuppliers != null) {
+      data['dental_suppliers'] = this.dentalSuppliers?.toJson();
+    }
     data['supplier_id'] = this.supplierId;
     data['member_id'] = this.memberId;
     data['status'] = this.status;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+
+class DentalSuppliers {
+  String? businessName;
+  String? sTypename;
+
+  DentalSuppliers({this.businessName, this.sTypename});
+
+  DentalSuppliers.fromJson(Map<String, dynamic> json) {
+    businessName = json['business_name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['business_name'] = this.businessName;
     data['__typename'] = this.sTypename;
     return data;
   }

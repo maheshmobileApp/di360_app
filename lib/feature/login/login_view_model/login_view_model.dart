@@ -62,12 +62,11 @@ class LoginViewModel extends ChangeNotifier {
 
         final err =
             res['_error']?.toString() ?? "Login failed. Please try again.";
-          if(err == "field 'professiontype' not found in type: 'LoginOutput'"){
-             scaffoldMessenger(
-            "Login Failed. your account is invactive now. Please contact support team."
-          );
+        if (err == "field 'professiontype' not found in type: 'LoginOutput'") {
+          scaffoldMessenger(
+              "Login Failed. your account is invactive now. Please contact support team.");
           return;
-          }
+        }
 
         scaffoldMessenger(
           err == "HasuraRequestError: Invalid credentials"
@@ -88,14 +87,16 @@ class LoginViewModel extends ChangeNotifier {
           _http.setToken(loginData?.accessToken ?? '');
           //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
 
-          // Set dashboard index 
+          // Set dashboard index
           Provider.of<DashBoardViewModel>(context, listen: false)
               .setIndex(0, context);
 
           Loaders.circularHideLoader(context);
 
-           await LocalStorage.setStringVal(
+          await LocalStorage.setStringVal(
               LocalStorageConst.type, loginData?.type ?? '');
+          await LocalStorage.setStringVal(
+              LocalStorageConst.token, loginData?.accessToken ?? '');
 
           // Navigate instantly
           if (loginData?.profileCompleted == true) {
@@ -103,7 +104,6 @@ class LoginViewModel extends ChangeNotifier {
           } else {
             viewProfileHandle(context);
           }
-
 
           // Background tasks (parallel)
           Future(() async {
@@ -115,7 +115,6 @@ class LoginViewModel extends ChangeNotifier {
                 getMyCommunityData(userId),
                 updateDevieToken(),
 
-
                 // Local Storage
                 LocalStorage.setStringVal(
                     LocalStorageConst.name, loginData?.name ?? ''),
@@ -124,8 +123,6 @@ class LoginViewModel extends ChangeNotifier {
                 LocalStorage.setStringVal(LocalStorageConst.userId, userId),
                 LocalStorage.setStringVal(
                     LocalStorageConst.emailId, loginData?.email ?? ''),
-                LocalStorage.setStringVal(
-                    LocalStorageConst.token, loginData?.accessToken ?? ''),
                 LocalStorage.setStringVal(
                     LocalStorageConst.type, loginData?.type ?? ''),
                 LocalStorage.setStringVal(LocalStorageConst.professionType,

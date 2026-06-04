@@ -52,16 +52,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           Provider.of<CommunityViewModel>(context, listen: false);
       final newsFeedVM =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      if (type == 'SUPPLIER') {
         await communityVM.getNewsFeedCategories(context, type: "Community");
-      }
-      //newsFeedVM.newsFeedCategoriesData = communityVM.newsFeedCategoriesData;
-
-      /*newsFeedVM.newsFeedCategory = communityVM
-              .newsFeedCategoriesData?.newsfeedCategories
-              ?.map((e) => e.categoryName ?? "")
-              .toList() ??
-          [];*/
     });
   }
 
@@ -272,7 +263,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   feedType: newsItem.feedType ?? "",
                                   createdAt: newsItem.createdAt ?? "",
                                   feedUserRole: newsItem.userRole ?? "",
-                                  imageUrls: newsItem.postImage ?? [],
+                                  imageUrls: newsItem.imageUrl ?? newsItem.postImage,
                                   id: newsItem.id ?? '',
                                   logoUrl: (newsItem.userRole ==
                                           UserRole.professional.value)
@@ -379,7 +370,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         await viewModel
                                             .fetchAddNewsfeedCommunityCategories();
                                         viewModel.editSelectCategoryAssigned(
-                                            newsItem?.categoryType ?? '');
+                                            newsItem.categoryType ?? '');
 
                                         /*viewModel.setSelectedCourseCategoryName(
                                             newsItem.categoryType ?? "");*/

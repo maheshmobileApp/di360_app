@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -16,7 +18,6 @@ class CommunityMarketView extends StatefulWidget {
 
 class _CreateCategoryViewState extends State<CommunityMarketView>
     with ValidationMixins {
-
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CommunityViewModel>(context);
@@ -27,7 +28,7 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
         title: "Community",
-         logo: false,
+        logo: false,
         searchWidget: false,
       ),
       body: Column(
@@ -42,8 +43,12 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                           onTap: () async {
                             newsCommunityVM.listingStatus = "PUBLISHED";
                             newsCommunityVM.setProfCommunityId(
-                                list[index].communityId ?? "",list[index].communityName ?? "");
-                            await viewModel.getNewsFeedCategories(context);
+                                list[index].communityId ?? "",
+                                list[index].communityName ?? "");
+                            await LocalStorage.setStringVal(
+                                LocalStorageConst.communityId,
+                                list[index].communityId ?? "");
+                            //await viewModel.getNewsFeedCategories(context);
                             newsCommunityVM.getBannerUrl(context);
                             /*newsCommunityVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;*/
@@ -68,7 +73,7 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                                     width: 10,
                                   ),
                                   Text(
-                                    list[index].communityName ?? "",
+                                    list[index].dentalSuppliers?.businessName ?? "",
                                     style: TextStyles.medium3(
                                         color: AppColors.black),
                                   ),
