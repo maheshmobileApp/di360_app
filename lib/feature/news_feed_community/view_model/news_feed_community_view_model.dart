@@ -421,19 +421,26 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final Map<String, dynamic> fields = {
       "news_feeds_id": newsFeedId,
       "role_type": type,
+      "created_by_id": userId,
     };
 
     if (type == UserRole.professional.value) {
       fields["dental_professional_id"] = userId;
-    } else {
+    } else if (type == UserRole.supplier.value) {
       fields["dental_supplier_id"] = userId;
+    } else if (type == UserRole.practice.value) {
+      fields["dental_practice_id"] = userId;
+    } else {
+      fields["dental_admin_id"] = userId;
     }
 
     final variables = {"fields": fields};
 
+
     final res = await repo.communityLike(variables);
     if (res != null) {
-      scaffoldMessenger("Liked Successfully");
+      
+      //scaffoldMessenger("Liked Successfully");
     }
     await getAllNewsFeeds(context);
     notifyListeners();
@@ -515,13 +522,13 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   // UN LIKE
   Future<void> communityUnLike(BuildContext context, [String? likeId]) async {
-    print("*************************************CommunityUnLike Calling");
-    final variables = {"id": likeId ?? "42543249-80cc-4c4a-b878-e871023e3944"};
+    final variables = {"id": likeId};
+    print("$variables");
     final res = await repo.communityUnLike(variables);
     if (res != null) {
-      scaffoldMessenger("Unliked Successfully");
+      //scaffoldMessenger("Unliked Successfully");
     }
-    getAllNewsFeeds(context);
+    await getAllNewsFeeds(context);
     notifyListeners();
   }
 
@@ -790,19 +797,20 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   editSelectCategoryAssigned(String id) {
-  if (id.isEmpty || addNewsFeedCommunityCategories == null || addNewsFeedCommunityCategories?.isEmpty == true) {
-    setSelectedCategory(null);
+    if (id.isEmpty ||
+        addNewsFeedCommunityCategories == null ||
+        addNewsFeedCommunityCategories?.isEmpty == true) {
+      setSelectedCategory(null);
+      notifyListeners();
+      return;
+    }
+
+    final category = addNewsFeedCommunityCategories!.firstWhere(
+        (val) => val.id == id,
+        orElse: () => addNewsFeedCommunityCategories!.first);
+    setSelectedCategory(category);
     notifyListeners();
-    return;
   }
-
-  final category = addNewsFeedCommunityCategories!.firstWhere(
-      (val) => val.id == id,
-      orElse: () => addNewsFeedCommunityCategories!.first);
-  setSelectedCategory(category);
-  notifyListeners();
-}
-
 
   initialStateData() {
     feedTypeUpdate("");

@@ -44,7 +44,7 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                             newsCommunityVM.listingStatus = "PUBLISHED";
                             newsCommunityVM.setProfCommunityId(
                                 list[index].communityId ?? "",
-                                list[index].communityName ?? "");
+                                list[index].dentalSuppliers?.businessName ??"");
                             await LocalStorage.setStringVal(
                                 LocalStorageConst.communityId,
                                 list[index].communityId ?? "");
