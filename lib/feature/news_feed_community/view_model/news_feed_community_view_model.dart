@@ -474,6 +474,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
       "category_type": selectedCategory?.id,
+      "community_type": "COMMUNITY_USER", 
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,

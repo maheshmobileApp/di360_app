@@ -841,19 +841,19 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       ),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
-        if (isSameUser) ...[
+        if (isSameUser && feedType == FeedType.newsfeed.value) ...[
           _popupItem("Edit", Icons.edit, AppColors.blueColor),
         ],
         if (type == UserRole.supplier.value &&
             feedUserRole == UserRole.supplier.value) ...[
           if (status == "UNPUBLISHED" || status == "PENDING")
             _popupItem("Publish", Icons.send, AppColors.blueColor),
-          if (status == "PUBLISHED" || status == "PENDING")
+          if (status == "PUBLISHED")
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ] else if (type != UserRole.professional.value) ...[
           if (status == "UNPUBLISHED" || status == "PENDING")
             _popupItem("Publish", Icons.send, AppColors.blueColor),
-          if (status == "PUBLISHED" || status == "PENDING")
+          if (status == "PUBLISHED")
             _popupItem("Unpublish", Icons.send, AppColors.redColor),
         ],
         if (!isSameUser) ...[
