@@ -309,7 +309,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                       case FeedType.learnhub:
                                         await courseListingVM.getCourseDetails(
                                           context,
-                                          newsItem.courses?.first.id ?? "",
+                                          newsItem.payloadId ?? "",
                                         );
                                         navigationService.navigateTo(
                                             RouteList.courseDetailScreen);
