@@ -480,7 +480,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                           child: CachedNetworkImageWidget(
                               imageUrl: logo,
                               fit: BoxFit.contain,
-                              errorWidget: SvgPicture.asset(ImageConst.logo))),
+                              errorWidget: Image.asset(ImageConst.directorProfile))),
                     )
                   : Text(
                       company?[0].toUpperCase() ?? "",

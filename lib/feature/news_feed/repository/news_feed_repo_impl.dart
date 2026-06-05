@@ -144,7 +144,6 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
       "limit": limit,
       "offset": offset,
       "userId": userId,
-      //"roleType": roleType
     };
     final res = await http.query(getAllNewsfeedsQuery, variables: variables);
     return res;
