@@ -58,6 +58,7 @@ class Newsfeeds {
   String? communityId;
   String? description;
   String? categoryType;
+  String? communityType;
   dynamic attachments;
   String? feedType;
   Payload? payload;
@@ -94,6 +95,7 @@ class Newsfeeds {
       this.communityId,
       this.description,
       this.categoryType,
+      this.communityType,
       this.attachments,
       this.feedType,
       this.payload,
@@ -147,6 +149,7 @@ class Newsfeeds {
     communityId = json['community_id'];
     description = json['description'];
     categoryType = json['category_type'];
+    communityType = json['community_type'];
     attachments = json['attachments'];
     feedType = json['feed_type'];
     payload =
@@ -224,6 +227,7 @@ class Newsfeeds {
     data['community_id'] = this.communityId;
     data['description'] = this.description;
     data['category_type'] = this.categoryType;
+    data['community_type'] = this.communityType;
     data['attachments'] = this.attachments;
     data['feed_type'] = this.feedType;
     if (this.payload != null) {
