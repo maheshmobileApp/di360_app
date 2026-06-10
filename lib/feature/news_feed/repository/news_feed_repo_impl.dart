@@ -3,10 +3,10 @@ import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_news_feeds_query.dart';
 import 'package:di360_flutter/feature/news_feed/querys/hide_post_query.dart';
+import 'package:di360_flutter/feature/news_feed/querys/publish_unpublish_newsfeed_query.dart';
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repository.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_supplier_feed_count_query.dart';
-import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class NewsFeedRepoImpl implements NewsFeedRepository {
   final HttpService http = HttpService();
@@ -26,7 +26,6 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
   Future<dynamic> getAllNewsFeed(int offset, int limit, String searchText,
       {String? feedType, String? categoryType, String? status}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final myCommunityIds =
@@ -38,7 +37,7 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
       "where": {
         "_and": [
           {
-            "status": {"_eq": status==null? "PUBLISHED": status}
+            "status": {"_eq": status == null ? "PUBLISHED" : status}
           },
           {
             "_or": [
@@ -141,11 +140,19 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
     final res = await http.query(getAllNewsfeedsQuery, variables: variables);
     return res;
   }
-  
+
   @override
   Future<FeedCountData> feedCount(variables) async {
     final res = await http.query(getSupplierFeedCount, variables: variables);
     final data = FeedCountData.fromJson(res);
     return data;
+  }
+
+  @override
+  Future<dynamic> publishAndUnpublishNewsFeed(
+      String newsFeedId, String status) async {
+    final variables = {"id": newsFeedId, "status": status};
+    final res = await http.mutation(publishUnpublishNewsFeedQuery, variables);
+    return res;
   }
 }

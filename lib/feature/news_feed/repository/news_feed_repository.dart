@@ -6,4 +6,5 @@ abstract class NewsFeedRepository {
   Future<dynamic> hidePost(dynamic variables);
   Future<dynamic> blockUser(dynamic variables);
   Future<FeedCountData> feedCount(dynamic variables);
+  Future<dynamic> publishAndUnpublishNewsFeed(String newsFeedId, String status);
 }

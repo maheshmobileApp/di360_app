@@ -65,7 +65,7 @@ class _JobListingApplicantsMessegeState
           radius: 22,
           backgroundColor: AppColors.geryColor,
           child: CachedNetworkImageWidget(
-              imageUrl: profileUrl ?? '',
+              imageUrl: profileUrl,
               fit: BoxFit.fill,
               errorWidget: Image.asset(ImageConst.prfImg)),
         );

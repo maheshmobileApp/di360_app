@@ -15,6 +15,7 @@ import 'package:di360_flutter/feature/news_feed/repository/news_feed_repo_impl.d
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repository.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/admin_news_feed_enum.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -50,6 +51,7 @@ class NewsFeedViewModel extends ChangeNotifier {
   String? practiceId;
   String? professionId;
   String? userID;
+  String? userType;
 
   final Set<int> _expandedIndices = {};
   bool applyCatageories = false;
@@ -107,23 +109,14 @@ class NewsFeedViewModel extends ChangeNotifier {
         'Pending Approval': pendingCount,
       };
 
-  final List<String> statuses = [
-    'Pending Approval',
-    "Published",
-    'Unpublished'
-  ];
-
-  void changeStatus(
-    String status,
-    BuildContext context,
-  ) {
+  void changeStatus(String status, BuildContext context) {
     selectedStatus = status;
-    if (status == 'Pending Approval') {
-      listingStatus = "PENDING";
-    } else if (status == 'Published') {
-      listingStatus = 'PUBLISHED';
-    } else if (status == 'Unpublished') {
-      listingStatus = 'UNPUBLISHED';
+    if (status == AdminNewsFeedStatus.pendingStatus.value) {
+      listingStatus = AdminNewsFeedStatus.pending.value;
+    } else if (status == AdminNewsFeedStatus.publishedStatus.value) {
+      listingStatus = AdminNewsFeedStatus.published.value;
+    } else if (status == AdminNewsFeedStatus.unpublishedStatus.value) {
+      listingStatus = AdminNewsFeedStatus.unPublished.value;
     }
 
     getAllNewsfeeds(context,
@@ -136,14 +129,10 @@ class NewsFeedViewModel extends ChangeNotifier {
     isLoadingMore = true;
     offset += limit;
     try {
-      var res = await repo.getAllNewsFeed(
-        offset,
-        limit,
-        searchController.text,
-        feedType: _activeFeedType,
-        categoryType: _activeCategoryType,
-        status: listingStatus
-      );
+      var res = await repo.getAllNewsFeed(offset, limit, searchController.text,
+          feedType: _activeFeedType,
+          categoryType: _activeCategoryType,
+          status: listingStatus);
       if (res != null) {
         final result = AllNewsFeedData.fromJson(res);
         if (result.newsfeeds?.isEmpty ?? true) {
@@ -312,6 +301,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringSync(LocalStorageConst.userId);
     final type = await LocalStorage.getStringSync(LocalStorageConst.type);
     userID = userId;
+    userType = type;
     if (type == UserRole.professional.value) {
       professionId = userId;
     } else if (type == UserRole.admin.value) {
@@ -331,6 +321,8 @@ class NewsFeedViewModel extends ChangeNotifier {
       if (res.isNotEmpty) {
         removeTheNewsFeedObject(context, feedId);
         Loaders.circularHideLoader(context);
+        getAllNewsfeeds(context,
+            categoryType: selectedCategoryId, status: listingStatus);
         scaffoldMessenger('Newsfeed deleted successfully');
       } else {
         Loaders.circularHideLoader(context);
@@ -428,9 +420,6 @@ class NewsFeedViewModel extends ChangeNotifier {
   Future<void> getAllStatusCounts(
       {String? categoryType, String? feedType}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final communityId =
-        await LocalStorage.getStringVal(LocalStorageConst.communityId);
-
     final variables = {
       "where": {
         "_and": [
@@ -476,5 +465,17 @@ class NewsFeedViewModel extends ChangeNotifier {
     publishedCount = feedCountData?.publishedNews?.aggregate?.count ?? 0;
     unPublishedCount = feedCountData?.unpublishedNews?.aggregate?.count ?? 0;
     notifyListeners();
+  }
+
+  Future<void> publishUnPublishNewsFeeds(
+      BuildContext context, String id, String status) async {
+    Loaders.circularShowLoader(context);
+    final res = await repo.publishAndUnpublishNewsFeed(id, status);
+    Loaders.circularHideLoader(context);
+    if (res['update_newsfeeds_by_pk'].isNotEmpty) {
+      scaffoldMessenger('Newsfeed updated successfully');
+      await getAllNewsfeeds(context,
+          categoryType: selectedCategoryId, status: listingStatus);
+    }
   }
 }

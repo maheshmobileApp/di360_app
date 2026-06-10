@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/banner/generic_list_view_with_banners.dart'
 import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/banner/utils.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
@@ -202,20 +203,20 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
             child: SvgPicture.asset(ImageConst.addFeed)));
   }
 
-  SizedBox communityStatusWidget(NewsFeedViewModel courseListingVM) {
+  SizedBox communityStatusWidget(NewsFeedViewModel newsFeedVM) {
     final userType = LocalStorage.getStringSync(LocalStorageConst.type) ?? '';
     if (userType != UserRole.admin.value) return SizedBox.shrink();
     return SizedBox(
       height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: courseListingVM.statuses.length,
+        itemCount: ConstantData.statuses.length,
         itemBuilder: (context, index) {
-          String status = courseListingVM.statuses[index];
-          bool isSelected = courseListingVM.selectedStatus == status;
+          String status = ConstantData.statuses[index];
+          bool isSelected = newsFeedVM.selectedStatus == status;
           return GestureDetector(
             onTap: () {
-              courseListingVM.changeStatus(status, context);
+              newsFeedVM.changeStatus(status, context);
             },
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
@@ -228,30 +229,25 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
               ),
               child: Row(
                 children: [
-                  Text(
-                    status,
-                    style: TextStyles.regular2(
-                      color:
-                          isSelected ? AppColors.whiteColor : AppColors.black,
-                    ),
-                  ),
+                  Text(status,
+                      style: TextStyles.regular2(
+                          color: isSelected
+                              ? AppColors.whiteColor
+                              : AppColors.black)),
                   SizedBox(width: 6),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.whiteColor
-                          : AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      "${courseListingVM.statusCountMap[status]}",
-                      style: TextStyles.regular2(
-                        color:
-                            isSelected ? AppColors.black : AppColors.whiteColor,
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.whiteColor
+                            : AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                  ),
+                      child: Text("${newsFeedVM.statusCountMap[status]}",
+                          style: TextStyles.regular2(
+                              color: isSelected
+                                  ? AppColors.black
+                                  : AppColors.whiteColor))),
                 ],
               ),
             ),

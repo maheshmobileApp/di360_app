@@ -12,7 +12,6 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
@@ -705,8 +704,8 @@ class CommunityViewModel extends ChangeNotifier {
 
     try {
       final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final companyName =
-          await LocalStorage.getStringVal(LocalStorageConst.businessName);
+      // final companyName =
+      //     await LocalStorage.getStringVal(LocalStorageConst.businessName);
 
       final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
 
