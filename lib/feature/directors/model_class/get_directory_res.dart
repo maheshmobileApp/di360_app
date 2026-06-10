@@ -20,19 +20,30 @@ class GetDirectoryRes {
 
 class GetDirectoryData {
   DirectoriesById? directoriesByPk;
+  List<Null>? loggedInSupplier;
+  List<LoggedInProfessional>? loggedInProfessional;
 
-  GetDirectoryData({this.directoriesByPk});
+  GetDirectoryData({this.directoriesByPk, this.loggedInSupplier, this.loggedInProfessional});
 
   GetDirectoryData.fromJson(Map<String, dynamic> json) {
     directoriesByPk = json['directories_by_pk'] != null
         ? new DirectoriesById.fromJson(json['directories_by_pk'])
         : null;
+    if (json['loggedInProfessional'] != null) {
+      loggedInProfessional = (json['loggedInProfessional'] as List)
+          .map((v) => LoggedInProfessional.fromJson(v))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.directoriesByPk != null) {
       data['directories_by_pk'] = this.directoriesByPk!.toJson();
+    }
+    if (this.loggedInProfessional != null) {
+      data['loggedInProfessional'] =
+          this.loggedInProfessional!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -398,18 +409,97 @@ class BannerImage {
 class DentalSupplier {
   String? firstName;
   String? lastName;
+  String? communityStatus;
+  String? communityId;
+  List<CommunityMembers>?communityMembers;
+  List<CommunityMembers>? partnershipMembers;
+  String? sTypename;
 
-  DentalSupplier({this.firstName, this.lastName});
+  DentalSupplier(
+      {this.firstName,
+      this.lastName,
+      this.communityStatus,
+      this.communityId,
+      this.communityMembers,
+      this.partnershipMembers,
+      this.sTypename});
 
   DentalSupplier.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
     lastName = json['last_name'];
+    communityStatus = json['community_status'];
+    communityId = json['community_id'];
+    if (json['community_members'] != null) {
+      communityMembers = (json['community_members'] as List)
+          .map((v) => CommunityMembers.fromJson(v))
+          .toList();
+    }
+    if (json['partnership_members'] != null) {
+      partnershipMembers =  (json['partnership_members'] as List)
+          .map((v) => CommunityMembers.fromJson(v))
+          .toList();
+    }
+    sTypename = json['__typename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
+    data['community_status'] = this.communityStatus;
+    data['community_id'] = this.communityId;
+    if (this.communityMembers != null) {
+      data['community_members'] =
+          this.communityMembers?.map((v) => v.toJson()).toList();
+    }
+    if (this.partnershipMembers != null) {
+      data['partnership_members'] =
+          this.partnershipMembers?.map((v) => v.toJson()).toList();
+    }
+    data['__typename'] = this.sTypename;
     return data;
   }
 }
+
+class CommunityMembers {
+  String? status;
+  String? sTypename;
+
+  CommunityMembers({this.status, this.sTypename});
+
+  CommunityMembers.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class LoggedInProfessional {
+  String? firstName;
+  String? lastName;
+  String? sTypename;
+
+  LoggedInProfessional({this.firstName, this.lastName, this.sTypename});
+
+  LoggedInProfessional.fromJson(Map<String, dynamic> json) {
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+

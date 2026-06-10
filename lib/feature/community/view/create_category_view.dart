@@ -24,7 +24,7 @@ class _CreateCategoryViewState extends State<CreateCategoryView>
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBarWidget(
-          title: "Partnership Registration",
+          title: "Add Category",
           searchWidget: false,
            logo: false,
         ),
@@ -64,7 +64,6 @@ class _CreateCategoryViewState extends State<CreateCategoryView>
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
                            (viewModel.editMode) ?await viewModel.updateCategory(context,viewModel.editCategoryId): await viewModel.addCategory(context);
-                            navigationService.goBack();
                           }
                         },
                       ),

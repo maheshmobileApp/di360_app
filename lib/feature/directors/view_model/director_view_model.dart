@@ -333,20 +333,73 @@ class DirectoryViewModel extends ChangeNotifier {
 
   Future<void> getDirectory(String directorId) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final variables = {"id": directorId};
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    setUserId(userId);
+    final variables = {"id": directorId, "member_id": userId};
     final res = await repository.getDirectory(variables);
     if (res.directoriesByPk != []) {
       getDirectoryData = res;
-      directorCommunityID = getDirectoryData?.directoriesByPk?.communityId;
+      directorCommunityID =
+          getDirectoryData?.directoriesByPk?.dentalSupplier?.communityId;
       directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
       directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
-      if (directorCommunityID != null) {
+      /*if (directorCommunityID != null) {
         (type == UserRole.professional.value)
             ? getCommunityStatus(directorCommunityID ?? "")
             : getPartnershipStatus(directorCommunityID ?? "");
+      }*/
+      final joinCommunitystatus = getDirectoryData?.directoriesByPk
+                  ?.dentalSupplier?.communityMembers?.isNotEmpty ==
+              true
+          ? getDirectoryData
+              ?.directoriesByPk?.dentalSupplier?.communityMembers?.first.status
+          : "";
+      final partnershipRequeststatus = getDirectoryData?.directoriesByPk
+                  ?.dentalSupplier?.partnershipMembers?.isNotEmpty ==
+              true
+          ? getDirectoryData?.directoriesByPk?.dentalSupplier
+              ?.partnershipMembers?.first.status
+          : "";
+      setJoinCommunityStatus(joinCommunitystatus);
+      setPartnershipRequestStatus(partnershipRequeststatus);
+      if (type == UserRole.professional.value) {
+        firstNameController.text =
+            getDirectoryData?.loggedInProfessional?.first.firstName ?? "tt";
+        lastNameController.text =
+            getDirectoryData?.loggedInProfessional?.first.lastName ?? "ttt";
       }
     }
     notifyListeners();
+  }
+
+  Future<void> setJoinCommunityStatus(String? status) async {
+    if (status != "") {
+      if (status == "APPROVED") {
+        setCommunityStatusString("Community Joined");
+      } else if (status == "REJECTED") {
+        setCommunityStatusString("Join Community Rejected");
+      } else if (status == "PENDING") {
+        setCommunityStatusString("Join Community Pending");
+      }
+      notifyListeners();
+    } else {
+      setCommunityStatusString("Join Community");
+    }
+  }
+
+  Future<void> setPartnershipRequestStatus(String? status) async {
+    if (status != "") {
+      if (status == "APPROVED") {
+        setPartnershipStatusString("Partnership Request Approved");
+      } else if (status == "REJECTED") {
+        setPartnershipStatusString("Partnership Request Rejected");
+      } else if (status == "PENDING") {
+        setPartnershipStatusString("Partnership Request Pending");
+      }
+      notifyListeners();
+    } else {
+      setPartnershipStatusString("Partnership Request");
+    }
   }
 
   Future<void> getCommunityStatus(String communityId) async {
@@ -446,8 +499,6 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   clearCommunityFields() {
-    firstNameController.clear();
-    lastNameController.clear();
     phoneController.clear();
     emailController.clear();
     membershipNumberController.clear();

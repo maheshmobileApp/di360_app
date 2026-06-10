@@ -140,9 +140,7 @@ class _GridViewWidgetState extends State<GridViewWidget> with BaseContextHelpers
                                           children: [
                                             Flexible(
                                                 child: Text(
-                                                    director.companyName ??
-                                                        director.name ??
-                                                        '',
+                                                    director.type == UserRole.professional.value ? director.name ?? '' : director.businessName ?? '',
                                                     textAlign: TextAlign.center,
                                                     maxLines: 2,
                                                     style: TextStyles.medium2(

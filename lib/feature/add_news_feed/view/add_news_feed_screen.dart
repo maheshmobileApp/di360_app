@@ -72,11 +72,12 @@ class AddNewsFeedScreen extends StatelessWidget
                       hintText: 'Select Category',
                       border: OutlineInputBorder(),
                     ),
+                    isExpanded: true,
                     value: viewModel.selectedCategory,
                     items: viewModel.newsfeedCategories?.map((v) {
                       return DropdownMenuItem<NewsfeedCategories>(
                         value: v,
-                        child: Text(v.categoryName ?? ''),
+                        child: Text(v.categoryName ?? '', overflow: TextOverflow.ellipsis),
                       );
                     }).toList(),
                     onChanged: (value) {

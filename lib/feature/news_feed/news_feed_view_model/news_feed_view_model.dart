@@ -290,6 +290,7 @@ class NewsFeedViewModel extends ChangeNotifier {
       "limit": 5,
       "offset": 0
     };
+    print("************variables $variables");
     try {
       final response = await _http.query(getAllNewsfeedCategoriesQuery,
           variables: variables);

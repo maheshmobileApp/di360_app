@@ -12,6 +12,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
@@ -120,13 +121,14 @@ class CommunityViewModel extends ChangeNotifier {
     companyNameView = value;
     notifyListeners();
   }
+
   void setSelectedContactType(String value) {
     selectedContactType = value;
     updateCompanyNameView(true);
     if (value == "MEMBER") {
       companyNameController.clear();
       updateCompanyNameView(false);
-    } 
+    }
     notifyListeners();
   }
 
@@ -332,8 +334,9 @@ class CommunityViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Category updated Sucessfully");
     }
+    await getNewsFeedCategoriesByCommunity(context);
+    navigationService.goBack();
     categoryController.text = "";
-    getNewsFeedCategories(context);
     notifyListeners();
   }
 
@@ -354,8 +357,9 @@ class CommunityViewModel extends ChangeNotifier {
     if (res != null) {
       scaffoldMessenger("Category added Sucessfully");
     }
+    await getNewsFeedCategoriesByCommunity(context);
+    navigationService.goBack();
     categoryController.text = "";
-    getNewsFeedCategories(context);
     notifyListeners();
   }
 
@@ -382,7 +386,7 @@ class CommunityViewModel extends ChangeNotifier {
     final variables = {"id": id};
     final res = await repo.deleteCategory(variables);
     if (res != null) {
-      await getNewsFeedCategories(context);
+      await getNewsFeedCategoriesByCommunity(context);
       Loaders.circularHideLoader(context);
       scaffoldMessenger("Category deleted Sucessfully");
     }
@@ -435,7 +439,19 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   NewsFeedCategoriesData? newsFeedCategoriesData;
+  NewsFeedCategoriesData? newsFeedCategoriesByCommunityData;
   NewsFeedCategoriesData? filterCatgoriesData;
+
+  Future<void> getNewsFeedCategoriesByCommunity(BuildContext context,
+      {String? type}) async {
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final variables = {
+      "communityId": communityId,
+    };
+    final res = await repo.getNewsFeedCategoriesByCommunity(variables);
+    newsFeedCategoriesByCommunityData = res;
+  }
 
   Future<void> getNewsFeedCategories(BuildContext context,
       {String? type}) async {
@@ -444,7 +460,6 @@ class CommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
-
     final variables = {
       "where": {
         "_and": [
@@ -471,6 +486,7 @@ class CommunityViewModel extends ChangeNotifier {
       "limit": 10,
       "offset": 0
     };
+    print("Variables for news feed categories: $communityVariables");
     final res = await repo.getNewsFeedCategories(
         type == "Community" ? communityVariables : variables, type ?? "");
     newsFeedCategoriesData = res;
@@ -544,6 +560,7 @@ class CommunityViewModel extends ChangeNotifier {
     final variables = {"member_id": id};
     final res = await repo.getJoinedCommunityMembers(variables);
     getJoinedCommunityMembersData = res;
+    print("Joined Community Members: ${res.communityMembers?.length}");
     notifyListeners();
   }
 
@@ -592,7 +609,6 @@ class CommunityViewModel extends ChangeNotifier {
       if (match["short"] != null) {
         whereClause["state"] = {"_eq": match["short"]};
       }
-      
     }
 
     final variables = {
