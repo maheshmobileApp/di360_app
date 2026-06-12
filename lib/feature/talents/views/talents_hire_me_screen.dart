@@ -72,9 +72,9 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
       BuildContext context, TalentsViewModel talentViewmodel) {
     final talentList = talentViewmodel.talentListById?.firstOrNull;
     String profleImage = '';
-    /*if (talentList?.profileImage.isNotEmpty ?? false) {
+    if (talentList?.profileImage.isNotEmpty ?? false) {
       profleImage = talentList!.profileImage.first.url ?? '';
-    }*/
+    }
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -89,8 +89,9 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                       title: talentList?.fullName ?? "",
                       showTime: false,
                       createdAt: talentList?.createdAt ?? "",
-                      role: talentList?.jobDesignation ?? "",
+                      role: talentList?.professionType ?? "",
                       imageUrl: profleImage,
+                      postAnonymously: talentList?.postAnonymously ?? false,
                     ),
                   ),
                   if ((talentList?.uploadResume.isNotEmpty ?? false))
@@ -123,11 +124,12 @@ class _TalentsDetailsViewState extends State<TalentsHireMeScreen>
                     ExerinaceInfoIcons(
                         icon: Icons.location_on, text: talentList!.location!),
                   if (talentList?.location?.isNotEmpty == true) addVertical(12),
-                  if (talentList?.mobileNumber?.isNotEmpty == true)
+                  if (talentList?.mobileNumber?.isNotEmpty == true && talentList?.postAnonymously == false) ...[
                     ExerinaceInfoIcons(
                         icon: Icons.call, text: talentList!.mobileNumber!),
-                  if (talentList?.mobileNumber?.isNotEmpty == true)
-                    addVertical(12),
+                        addVertical(12),
+                  ],
+                  
                   if (talentList?.currentCompany?.isNotEmpty == true)
                     ExerinaceInfoIcons(
                         icon: Icons.business,

@@ -93,6 +93,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+        final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -116,7 +118,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         )
                       : null,
                   background: CachedNetworkImageWidget(
-                    imageUrl: widget.job.bannerImage?.url ?? '',
+                    imageUrl: widget.job.bannerImage?.url ?? provider.getBannersData?.banners?.first.image?.first.url ?? '',
                     width: double.infinity,
                   ),
                 );

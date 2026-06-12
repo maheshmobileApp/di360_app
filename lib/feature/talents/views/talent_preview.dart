@@ -75,8 +75,9 @@ class _TalentPreviewState extends State<TalentPreview> with BaseContextHelpers {
                       title: widget.talentList?.fullName ?? "",
                       showTime: false,
                       createdAt: widget.talentList?.createdAt ?? "",
-                      role: widget.talentList?.jobDesignation ?? "",
+                      role: widget.talentList?.professionType ?? "",
                       imageUrl: profleImage,
+                      postAnonymously: widget.talentList?.postAnonymously ?? false,
                     ),
                   ),
                   if ((widget.talentList?.uploadResume.isNotEmpty ?? false))

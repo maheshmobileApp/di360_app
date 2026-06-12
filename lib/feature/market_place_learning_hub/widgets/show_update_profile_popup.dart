@@ -61,6 +61,7 @@ Future<void> showUpdateMobileNumberDialog(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Expanded(
+                    flex: 2,
                     child: OutlinedButton(
                       onPressed: () {
                         navigationService.goBack();
@@ -100,7 +101,7 @@ Future<void> showUpdateMobileNumberDialog(
                         ),
                       ),
                       child: const Text(
-                        "Update Profile",
+                        "Update",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
