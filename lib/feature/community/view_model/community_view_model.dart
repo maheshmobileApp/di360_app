@@ -36,9 +36,11 @@ class CommunityViewModel extends ChangeNotifier {
   TextEditingController contactPhoneController = TextEditingController();
 
   bool editMode = false;
+  bool isCategorySubmitting = false;
   bool contactEditMode = false;
   String updateContactId = "";
   String editCategoryId = "";
+  DirectoryData? directoryData;
 
   void setUpdateContactId(String value) {
     updateContactId = value;
@@ -317,6 +319,9 @@ class CommunityViewModel extends ChangeNotifier {
   }
 
   Future<void> updateCategory(BuildContext context, String id) async {
+    if (isCategorySubmitting) return;
+    isCategorySubmitting = true;
+    notifyListeners();
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -337,10 +342,14 @@ class CommunityViewModel extends ChangeNotifier {
     await getNewsFeedCategoriesByCommunity(context);
     navigationService.goBack();
     categoryController.text = "";
+    isCategorySubmitting = false;
     notifyListeners();
   }
 
   Future<void> addCategory(BuildContext context) async {
+    if (isCategorySubmitting) return;
+    isCategorySubmitting = true;
+    notifyListeners();
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
@@ -360,10 +369,9 @@ class CommunityViewModel extends ChangeNotifier {
     await getNewsFeedCategoriesByCommunity(context);
     navigationService.goBack();
     categoryController.text = "";
+    isCategorySubmitting = false;
     notifyListeners();
   }
-
-  DirectoryData? directoryData;
 
   //GET DIRECTORY---------------------------------------------------------------
   Future<void> getDirectory() async {

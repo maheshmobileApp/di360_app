@@ -481,20 +481,15 @@ class CampaignViewModel extends ChangeNotifier {
           "schedule_date": scheduleDateController.text,
           "schedule_time_local": scheduleTimeController.text,
           "schedule_timezone": selectedTimeZone,
+          "message_text": messageController.text,
+          "email_subject": null,
           "email_design_json": null,
-          "sms_segments_count": 1,
-          "characters_used": messageController.text.length,
-          "is_repeating": "no",
+          "groups": selectedGroupIdChips,
           "is_refined_by_state": selectStateCondition == "Yes" ? "yes" : "no",
           "refine_state": selectedStateChips,
-          "groups": selectedGroupIdChips,
-          "message_text": messageController.text,
-          "send_to_numbers": selectedSendChips,
-          "send_to_emails": null,
           "status": "PENDING",
-          "email_subject": null,
+          "message_channel": messageChannel,
           "email_attachments": [],
-          "message_channel": messageChannel
         }
       };
       print("Create Campaign Variables: $variables");
@@ -510,6 +505,11 @@ class CampaignViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {}
   }
+  /* "sms_segments_count": 1,
+          "characters_used": messageController.text.length,
+          "is_repeating": "no",
+          "send_to_numbers": selectedSendChips,
+          "send_to_emails": null,*/
 
   ContactsData? contactsData;
   String recipientsCount = "0";

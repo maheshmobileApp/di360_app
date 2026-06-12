@@ -24,6 +24,14 @@ mixin ValidationMixins {
     return null;
   }
 
+  bool isValidAusPhoneNumber(String? value) {
+    if (value == null || value.isEmpty) return false;
+    String phone = value.trim();
+    if (phone.startsWith('+61')) phone = phone.substring(3);
+    else if (phone.startsWith('61')) phone = phone.substring(2);
+    return validateAusMobileNumber(phone);
+  }
+
   String? validateBusinessPhoneNumber(String? value) {
     if (value == null || value.isEmpty) return null;
     if (!isValidBusinessPhoneNumber(value))

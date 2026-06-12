@@ -339,9 +339,13 @@ class DirectoryViewModel extends ChangeNotifier {
     final res = await repository.getDirectory(variables);
     if (res.directoriesByPk != []) {
       getDirectoryData = res;
-      directorCommunityID =
-          getDirectoryData?.directoriesByPk?.dentalSupplier?.communityId;
-      directorCommunityName = getDirectoryData?.directoriesByPk?.companyName;
+      if (type == UserRole.supplier.value) {
+        directorCommunityID =
+            getDirectoryData?.directoriesByPk?.dentalSupplier?.communityId;
+      }
+      directorCommunityName = (type != UserRole.professional.value)
+          ? getDirectoryData?.directoriesByPk?.businessName
+          : getDirectoryData?.directoriesByPk?.companyName;
       directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
       /*if (directorCommunityID != null) {
         (type == UserRole.professional.value)
@@ -528,7 +532,7 @@ class DirectoryViewModel extends ChangeNotifier {
         "community_name": communityName,
         "supplier_id": supplierId,
         "member_id": userId,
-        "company_name": communityName,
+        "company_name": companyNameController.text,
         "contact_name": contactNameController.text,
         "email": emailController.text,
         "phone": '$phoneCode${phoneController.text}',
@@ -537,6 +541,7 @@ class DirectoryViewModel extends ChangeNotifier {
         "is_registered": false
       }
     };
+    print("**********$variables");
     final res = await repository.partnershipRegister(variables);
     if (res != null) {
       scaffoldMessenger("Successfully Registered");

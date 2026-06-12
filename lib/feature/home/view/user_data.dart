@@ -73,9 +73,9 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                             fit: BoxFit.contain,
                             errorWidget: type == UserRole.professional.value
                                 ? gender?.toLowerCase() == 'male'
-                                    ? Image.asset(ImageConst.man)
+                                    ? Image.asset(ImageConst.directorProfile)
                                     : Image.asset(ImageConst.woman)
-                                : Image.asset(ImageConst.man))),
+                                : Image.asset(ImageConst.directorProfile))),
                   ),
                 ),
                 addHorizontal(12),
