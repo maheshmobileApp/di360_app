@@ -454,10 +454,16 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                           child: CachedNetworkImageWidget(
                               imageUrl: imageUrl,
                               fit: BoxFit.contain,
-                              errorWidget: Image.asset(ImageConst.directorProfile))),
+                              errorWidget:
+                                  Image.asset(ImageConst.directorProfile))),
                     )
                   : Text(
-                      name?[0].toUpperCase() ?? "",
+                      name!.split('')
+                          .firstWhere(
+                            (char) => char.trim().isNotEmpty,
+                            orElse: () => '',
+                          )
+                          .toUpperCase(),
                       style: TextStyles.bold5(color: AppColors.whiteColor),
                     ),
             ),

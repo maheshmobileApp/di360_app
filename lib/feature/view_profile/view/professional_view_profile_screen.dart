@@ -80,6 +80,7 @@ class ProfessionalViewProfileScreen extends StatelessWidget
                           return const SizedBox.shrink();
                         },
                       ),
+                      SizedBox(width: 10),
                       Expanded(
                         child: AppButton(
                             text: 'Save & Update',
