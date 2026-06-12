@@ -101,9 +101,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                       fit: BoxFit.contain,
                       errorWidget: type == UserRole.professional.value
                           ? viewProfileVM.gender?.toLowerCase() == "male"
-                              ? Image.asset(ImageConst.man)
+                              ? Image.asset(ImageConst.directorProfile)
                               : Image.asset(ImageConst.woman)
-                          : Image.asset(ImageConst.man))))),
+                          : Image.asset(ImageConst.directorProfile))))),
       addVertical(8),
       Text(viewProfileVM.userName ?? "Profile Name",
           style: TextStyles.medium3(color: AppColors.black, fontSize: 15)),

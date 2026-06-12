@@ -52,7 +52,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           Provider.of<CommunityViewModel>(context, listen: false);
       final newsFeedVM =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-        await communityVM.getNewsFeedCategories(context, type: "Community");
+      await communityVM.getNewsFeedCategories(context, type: "Community");
     });
   }
 
@@ -263,7 +263,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   feedType: newsItem.feedType ?? "",
                                   createdAt: newsItem.createdAt ?? "",
                                   feedUserRole: newsItem.userRole ?? "",
-                                  imageUrls: newsItem.imageUrl ?? newsItem.postImage,
+                                  imageUrls:
+                                      newsItem.imageUrl ?? newsItem.postImage,
                                   id: newsItem.id ?? '',
                                   logoUrl: (newsItem.userRole ==
                                           UserRole.professional.value)
@@ -285,7 +286,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   chipTitle: newsItem.categoryType ?? '',
                                   comments:
                                       newsItem.newsFeedsComments?.length ?? 0,
-                                  likes: newsItem.newsfeedsLikes?.length ?? 0,
+                                  likes: newsItem.newsfeedsLikesAggregate
+                                          ?.aggregate?.count ??
+                                      0,
                                   isLiked: newsItem.myLike?.isNotEmpty ?? false,
                                   onCommentTap: () {
                                     navigationService.push(
@@ -294,8 +297,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   },
                                   onLikeTap: () {
                                     (newsItem.myLike?.isNotEmpty ?? false)
-                                        ? viewModel.communityUnLike(
-                                            context, newsItem.id ?? '')
+                                        ? viewModel.communityUnLike(context,
+                                            newsItem.myLike?.first.id ?? '')
                                         : viewModel.communityLike(
                                             context, newsItem.id ?? '');
                                   },
@@ -306,7 +309,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                       case FeedType.learnhub:
                                         await courseListingVM.getCourseDetails(
                                           context,
-                                          newsItem.courses?.first.id ?? "",
+                                          newsItem.payloadId ?? "",
                                         );
                                         navigationService.navigateTo(
                                             RouteList.courseDetailScreen);

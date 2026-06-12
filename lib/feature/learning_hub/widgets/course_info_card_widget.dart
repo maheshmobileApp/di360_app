@@ -144,7 +144,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                           registerStatus == true &&
                           courseStatus != "PENDING" &&
                           expiryDate != '')
-                        Text("Expires on : $expiryDate"),
+                        Text("Expires on : $expiryDate", overflow: TextOverflow.ellipsis),
                       if (platform != "Online Academy")
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -153,8 +153,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
                             if (startDate.isNotEmpty && endDate.isNotEmpty)
-                              Text(DateFormatUtils.formatDateRange(
-                                  startDate, endDate)),
+                              Flexible(child: Text(DateFormatUtils.formatDateRange(
+                                  startDate, endDate), overflow: TextOverflow.ellipsis)),
                           ],
                         ),
                       const SizedBox(height: 4),
@@ -165,9 +165,10 @@ class CourseInfoCardWidget extends StatelessWidget {
                             Icon(Icons.access_time_rounded,
                                 color: AppColors.primaryColor, size: 20),
                             const SizedBox(width: 4),
-                            Text(
+                            Flexible(child: Text(
                               '${DateFormatUtils.formatTime(startTime)}  –  ${DateFormatUtils.formatTime(endTime)}',
-                            ),
+                              overflow: TextOverflow.ellipsis,
+                            )),
                           ],
                         ),
                     ]))

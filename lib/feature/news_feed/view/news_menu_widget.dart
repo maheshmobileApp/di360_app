@@ -88,7 +88,7 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
         }
       },
       itemBuilder: (context) => [
-        if (isSameUser) ...[
+        if (isSameUser && widget.newsfeeds?.communityType == "BOTH") ...[
           PopupMenuItem(
               value: "edit",
               child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),

@@ -67,7 +67,7 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                                   : null) ??
                               '') ==
                           '')
-                      ? SvgPicture.asset(ImageConst.logo)
+                      ? Image.asset(ImageConst.directorProfile)
                       : ClipOval(
                           child: CachedNetworkImageWidget(
                               imageUrl: widget.newsfeeds?.dentalSupplier?.logo?.url ??
@@ -79,7 +79,7 @@ class _CommentScreenState extends State<CommentScreen> with BaseContextHelpers {
                                           ?.directories?.first.logo?.url
                                       : null) ??
                                   '',
-                              errorWidget: SvgPicture.asset(ImageConst.logo)))),
+                              errorWidget: Image.asset(ImageConst.directorProfile)))),
             ),
             addHorizontal(16),
             Expanded(

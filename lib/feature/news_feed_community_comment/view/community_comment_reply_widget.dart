@@ -38,7 +38,7 @@ class CommunityCommentReplyWidget extends StatelessWidget with BaseContextHelper
                             comments?.dentalProfessional?.profileImage?.url ??
                             comments?.adminUser?.profileImage ??
                             '',
-                        errorWidget: SvgPicture.asset(ImageConst.logo),
+                        errorWidget: Image.asset(ImageConst.directorProfile),
                       ),
                     ),
                   ),

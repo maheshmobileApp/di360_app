@@ -626,7 +626,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'word'],
     );
     if (result != null) {
       coverLetterFile = File(result.files.single.path!);
@@ -640,7 +640,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'word', 'png', 'jpg', 'jpeg'],
     );
     if (result != null) {
       certificateFile = File(result.files.single.path!);
