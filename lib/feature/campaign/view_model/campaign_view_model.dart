@@ -380,7 +380,6 @@ class CampaignViewModel extends ChangeNotifier {
       final res = await repo.getCampaignDetails(variables);
 
       campaignDetails = res;
-      print("**************************$campaignDetails");
       final data = campaignDetails?.smsCampaignByPk;
       campaignNameController.text = data?.campaignName ?? "";
       scheduleDateController.text = data?.scheduleDate ?? "";
@@ -389,12 +388,16 @@ class CampaignViewModel extends ChangeNotifier {
       selectedTimeZone = data?.scheduleTimezone ?? "";
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
-      _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
+      _selectedGroupChips = (data?.groups ?? []).map((id) {
+        final match = groupOptions.firstWhere(
+          (g) => g['id'] == id,
+          orElse: () => {'label': id},
+        );
+        return match['label'] as String;
+      }).toList();
       selectStateCondition = data?.isRefinedByState == "yes" ? "Yes" : "No";
       _selectedSendChips = (data?.sendToNumbers?.cast<String>()) ?? [];
       recipientsCount = data?.recipientsCount.toString() ?? "0";
-      print("**************************$_selectedGroupChips");
-
       notifyListeners();
     } catch (e) {}
   }
@@ -468,6 +471,7 @@ class CampaignViewModel extends ChangeNotifier {
           .where((id) => id != null)
           .cast<String>()
           .toList();
+
 
       final variables = {
         "fields": {
