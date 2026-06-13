@@ -27,6 +27,32 @@ class ConstantData {
     'Support'
   ];
 
+  static List<String> adminHomeGridImgs = [
+    ImageConst.newsFeed,
+    ImageConst.supplies,
+    //ImageConst.usedSupplies,
+    ImageConst.learningHub,
+    ImageConst.directory,
+    ImageConst.jobSeek,
+    //  ImageConst.buy,
+    ImageConst.catalogue,
+    ImageConst.support,
+    ImageConst.peopleSvg
+  ];
+
+  static List<String> adminHomeGridTitles = [
+    'News Feed',
+    'Banners',
+    //'Used Supplies',
+    'Learning Hub',
+    "Directory",
+    'Job Seek',
+    //'Buy & Sell',
+    'Catalogue',
+    'Support',
+    'Clients'
+  ];
+
   static List<String> teamMemberList = ['All Team Member', 'George'];
 
   static List<String> serviceList = [

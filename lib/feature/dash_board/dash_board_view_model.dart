@@ -7,6 +7,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/clients/clients_screen.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/home/view/home_screen.dart';
@@ -74,13 +75,22 @@ class DashBoardViewModel extends ChangeNotifier {
         CataloguePage(),
         AccountScreen(),
       ];
-    } else if (_userType == UserRole.practice.value || _userType == UserRole.admin.value ) {
+    } else if (_userType == UserRole.practice.value) {
       _pages = [
         HomeScreen(),
         NewsFeedScreen(),
         JobSeekView(),
         CataloguePage(),
         AccountScreen(),
+      ];
+    } else if (_userType == UserRole.admin.value) {
+      _pages = [
+        HomeScreen(),
+        NewsFeedScreen(),
+        JobSeekView(),
+        NewsFeedCommunityView(),
+        CataloguePage(),
+        ClientsScreen(),
       ];
     } else {
       _pages = [

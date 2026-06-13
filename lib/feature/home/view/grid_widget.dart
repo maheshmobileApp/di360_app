@@ -25,12 +25,18 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: ConstantData.homeGridImgs.length,
+      itemCount: dashBoardVM.userType == UserRole.admin.value
+          ? ConstantData.adminHomeGridImgs.length
+          : ConstantData.homeGridImgs.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           mainAxisSpacing: 20, crossAxisCount: 3, childAspectRatio: 4.4 / 3),
       itemBuilder: (context, index) {
-        final img = ConstantData.homeGridImgs[index];
-        final title = ConstantData.homeGridTitles[index];
+        final img = dashBoardVM.userType == UserRole.admin.value
+            ? ConstantData.adminHomeGridImgs[index]
+            : ConstantData.homeGridImgs[index];
+        final title = dashBoardVM.userType == UserRole.admin.value
+            ? ConstantData.adminHomeGridTitles[index]
+            : ConstantData.homeGridTitles[index];
         return GestureDetector(
           onTap: () {
             gridOnTap(title, context, dashBoardVM);
@@ -55,7 +61,8 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     } else if (title == 'Job Seek') {
       dashBoardVM.setIndex(2, navigatorKey.currentContext!);
     } else if (title == 'Catalogue') {
-      dashBoardVM.setIndex(type == UserRole.practice.value ? 3 : 4, navigatorKey.currentContext!);
+      dashBoardVM.setIndex(type == UserRole.practice.value ? 3 : 4,
+          navigatorKey.currentContext!);
     } else if (title == 'Support') {
       navigationService.navigateTo(RouteList.supportScreen);
     } else if (title == 'Directory') {
@@ -63,12 +70,17 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
     } else if (title == 'Learning Hub') {
       Loaders.circularShowLoader(context);
       context.read<MarketPlaceLearningHubViewModel>().searchBarOpen = false;
-      context.read<MarketPlaceLearningHubViewModel>().searchController.text = "";
+      context.read<MarketPlaceLearningHubViewModel>().searchController.text =
+          "";
       context.read<NewCourseViewModel>().fetchCourseCategory();
       context.read<NewCourseViewModel>().fetchCourseType();
-      await context.read<MarketPlaceLearningHubViewModel>().getAllLearningHubData(context);
+      await context
+          .read<MarketPlaceLearningHubViewModel>()
+          .getAllLearningHubData(context);
       Loaders.circularHideLoader(context);
       await navigationService.navigateTo(RouteList.learningHubMasterView);
+    } else if (title == 'Clients') {
+      dashBoardVM.setIndex(5, navigatorKey.currentContext!);
     }
   }
 }

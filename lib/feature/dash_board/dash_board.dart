@@ -74,45 +74,46 @@ class _DashBoardState extends State<DashBoard> {
             items: [
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(ImageConst.home,
-                      height: 24, width: 24,
+                      height: 24,
+                      width: 24,
                       color: AppColors.bottomNavUnSelectedColor),
                   activeIcon: SvgPicture.asset(ImageConst.home,
-                      height: 24, width: 24,
-                      color: AppColors.primaryColor),
+                      height: 24, width: 24, color: AppColors.primaryColor),
                   label: 'Home'),
               BottomNavigationBarItem(
                   icon: Image.asset(ImageConst.feed,
-                      height: 24, width: 24,
+                      height: 24,
+                      width: 24,
                       color: AppColors.bottomNavUnSelectedColor),
                   activeIcon: Image.asset(ImageConst.feed,
-                      height: 24, width: 24,
-                      color: AppColors.primaryColor),
+                      height: 24, width: 24, color: AppColors.primaryColor),
                   label: 'Feeds'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(ImageConst.jobSeek,
-                      height: 24, width: 24,
+                      height: 24,
+                      width: 24,
                       color: AppColors.bottomNavUnSelectedColor),
                   activeIcon: SvgPicture.asset(ImageConst.jobSeek,
-                      height: 24, width: 24,
-                      color: AppColors.primaryColor),
+                      height: 24, width: 24, color: AppColors.primaryColor),
                   label: 'Job Seek'),
               if (type == UserRole.professional.value ||
-                  type == UserRole.supplier.value)
+                  type == UserRole.supplier.value ||
+                  type == UserRole.admin.value)
                 BottomNavigationBarItem(
                     icon: Icon(Icons.group, size: 24), label: 'Community'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(ImageConst.catalogue,
-                      height: 24, width: 24,
+                      height: 24,
+                      width: 24,
                       color: AppColors.bottomNavUnSelectedColor),
                   activeIcon: SvgPicture.asset(ImageConst.catalogue,
-                      height: 24, width: 24,
-                      color: AppColors.primaryColor),
+                      height: 24, width: 24, color: AppColors.primaryColor),
                   label: 'Catalogue'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.person, size: 24), label: 'Profile'),
+                  icon: Icon(Icons.person, size: 24),
+                  label: type == UserRole.admin.value ? 'Clients' : 'Profile')
             ],
           ),
         ));
   }
-
 }
