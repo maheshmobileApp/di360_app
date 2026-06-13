@@ -569,7 +569,13 @@ class DirectoryViewModel extends ChangeNotifier {
   }
 
   Future<void> GetDirectorDetails(String id) async {
-    final res = await repository.directoriesDetailsQuery(id);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final variables = {
+      "id": id ,
+      "member_id": userId,
+    };
+    print("**********$variables");
+    final res = await repository.directoriesDetailsQuery(variables);
     if (res != null) {
       directorDetails = res;
       quickLinkItems = [

@@ -745,21 +745,17 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
             .text, // Getting fron Dropdown, this is static data for now
         "video": videoLinkController.text,
         "banner_image": selectedBannerImgList,
-        "start_Date": di360_date_utils.DateFormatUtils.formatDateYear(
-            startDateController.text),
+        "start_Date": startDateController.text.isNotEmpty
+            ? di360_date_utils.DateFormatUtils.formatDateYear(
+                startDateController.text)
+            : null,
 
         "clinic_logo": selectedClinicImgList,
 
-        // {
-        //   "url":
-        //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
-        //   "type": "image",
-        //   "extension": "jpeg"
-        // }
-        //TODO: need to send array of object
-
-        "closed_at": di360_date_utils.DateFormatUtils.formatDateToIso8601(
-            endDateController.text),
+        "closed_at": endDateController.text.isNotEmpty
+            ? di360_date_utils.DateFormatUtils.formatDateToIso8601(
+                endDateController.text)
+            : null,
         "status": isDraft
             ? "DRAFT"
             : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
@@ -844,19 +840,15 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "banner_image": selectedBannerImgList,
 
         "clinic_logo": selectedClinicImgList,
-        "start_Date": di360_date_utils.DateFormatUtils.formatDateYear(
-            startDateController.text),
+        "start_Date": startDateController.text.isNotEmpty
+            ? di360_date_utils.DateFormatUtils.formatDateYear(
+                startDateController.text)
+            : null,
 
-        // {
-        //   "url":
-        //       "https://dentalerp-dev.s3-ap-southeast-2.amazonaws.com/uploads360/project/9c67fdf5-c331-47d3-ae30-24be740056c3",
-        //   "type": "image",
-        //   "extension": "jpeg"
-        // }
-        //TODO: need to send array of object
-
-        "closed_at": di360_date_utils.DateFormatUtils.formatDateToIso8601(
-            endDateController.text),
+        "closed_at": endDateController.text.isNotEmpty
+            ? di360_date_utils.DateFormatUtils.formatDateToIso8601(
+                endDateController.text)
+            : null,
         "status": isDraft
             ? "DRAFT"
             : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,

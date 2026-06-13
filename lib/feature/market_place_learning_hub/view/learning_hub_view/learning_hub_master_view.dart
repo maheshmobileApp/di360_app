@@ -186,14 +186,16 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             },
                             registerTap: // isRegistered ?
                                 () async {
-                                await courseListingVM.getCourseDetails(
-                                    context, course.id ?? "");
-                                await courseListingVM.getProfile();
-                              if (!isRegistered) {
+                              await courseListingVM.getCourseDetails(
+                                  context, course.id ?? "");
+                              await courseListingVM.getProfile();
+                              if (isRegistered && course
+                                .courseRegisteredUsers?.firstOrNull?.status != "EXPIRED" &&
+                                  course.type == "Online Academy") {
+                                navigationService.push(CourseDetailsView());
+                              }else{
                                 navigationService
                                     .navigateTo(RouteList.courseDetailScreen);
-                              } else {
-                                navigationService.push(CourseDetailsView());
                               }
                             },
                             // : () {

@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -53,7 +54,9 @@ class CouresListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String time = (status == "ACTIVE") ?DateFormatUtils.formatTwoDateTime(createdAt) : DateFormatUtils.formatTwoDateTime(updatedAt);
+    final String time = (status == "ACTIVE")
+        ? DateFormatUtils.formatTwoDateTime(createdAt)
+        : DateFormatUtils.formatTwoDateTime(updatedAt);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -79,7 +82,8 @@ class CouresListingCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        _menuWidget(context, types.isNotEmpty ? types.first : null),
+                        _menuWidget(
+                            context, types.isNotEmpty ? types.first : null),
                       ],
                     ),
                   ],
@@ -140,25 +144,10 @@ class CouresListingCard extends StatelessWidget {
               radius: 30,
               backgroundColor: AppColors.geryColor,
               child: ClipOval(
-                child: logo.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: logo,
-                        fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
-                        // No placeholder → uses default placeholder
-                        placeholderFadeInDuration: Duration(milliseconds: 300),
-                        errorWidget: (context, url, error) => Icon(
-                          Icons.person_2_rounded,
-                          size: 30,
-                          color: AppColors.lightGeryColor,
-                        ),
-                      )
-                    : Icon(
-                        Icons.person_2_rounded,
-                        size: 30,
-                        color: AppColors.lightGeryColor,
-                      ),
+                child: CachedNetworkImageWidget(
+                    imageUrl: logo,
+                    fit: BoxFit.contain,
+                    errorWidget: Image.asset(ImageConst.directorProfile)),
               ),
             ),
             Positioned(
@@ -202,7 +191,6 @@ class CouresListingCard extends StatelessWidget {
       child: ExpandableHtmlText(
         htmlData: description,
         index: index,
-        
       ),
     );
   }
@@ -274,9 +262,10 @@ class CouresListingCard extends StatelessWidget {
         child: GestureDetector(
           onTap: () async {
             final rawLink = link.trim();
-            final fullLink = rawLink.startsWith('http://') || rawLink.startsWith('https://')
-                ? rawLink
-                : 'https://$rawLink';
+            final fullLink =
+                rawLink.startsWith('http://') || rawLink.startsWith('https://')
+                    ? rawLink
+                    : 'https://$rawLink';
             final url = Uri.parse(fullLink);
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);

@@ -49,7 +49,8 @@ class ListingHubMasterCard extends StatelessWidget {
       this.noOfSeats,
       this.registerCount,
       this.expiryDateCount,
-      this.courseStatus});
+      this.courseStatus,
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -272,13 +273,13 @@ class ListingHubMasterCard extends StatelessWidget {
               ),
               //Spacer(),
               RegisterButton(
-                  text: isRegistered
+                  text: isRegistered && courseStatus != "EXPIRED"
                       ? (type == "Online Academy")
                           ? "View Course Details"
                           : "Already Registered"
                       : 'Register Now',
                   onTap: registerTap,
-                  isRegistered: isRegistered)
+                  isRegistered: isRegistered && courseStatus != "EXPIRED")
             ],
           ),
         ),

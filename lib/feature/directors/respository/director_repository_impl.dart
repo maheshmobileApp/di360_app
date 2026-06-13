@@ -96,9 +96,9 @@ class DirectorRepositoryImpl extends DirectorRepository {
   }
 
   @override
-  Future<DirectoriesByPk?> directoriesDetailsQuery(String id) async {
+  Future<DirectoriesByPk?> directoriesDetailsQuery(dynamic variables) async {
     final res =
-        await http.query(directories_Details_Query, variables: {"id": id});
+        await http.query(directories_Details_Query, variables: variables);
     final result = DirectoryDetailsData.fromJson(res);
     print("***********Directory Details: ${result.directoriesByPk?.name}");
     return result.directoriesByPk;
