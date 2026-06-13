@@ -326,6 +326,7 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
   void setPartnershipStatusString(String value) {
     partnershipStatusString = value;
     notifyListeners();
@@ -338,12 +339,10 @@ class DirectoryViewModel extends ChangeNotifier {
     final variables = {"id": directorId, "member_id": userId};
     final res = await repository.getDirectory(variables);
     if (res.directoriesByPk != []) {
-      getDirectoryData = res;
-      if (type == UserRole.supplier.value) {
+      getDirectoryData = res;  
         directorCommunityID =
             getDirectoryData?.directoriesByPk?.dentalSupplier?.communityId;
-      }
-      directorCommunityName = (type != UserRole.professional.value)
+      directorCommunityName = (type == UserRole.professional.value)
           ? getDirectoryData?.directoriesByPk?.businessName
           : getDirectoryData?.directoriesByPk?.companyName;
       directorSupplierID = getDirectoryData?.directoriesByPk?.dentalSupplierId;
@@ -456,22 +455,28 @@ class DirectoryViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final variables = {
-      "fields": {
+    "input": {
+        "action": "APPLY",
         "community_id": communityId,
-        "community_name": communityName,
         "supplier_id": supplierId,
         "member_id": userId,
-        "first_name": firstNameController.text,
-        "last_name": lastNameController.text,
-        "email": emailController.text,
-        "phone": "$phoneCode${phoneController.text}",
-        "membership_number": membershipNumberController.text,
-        "status": "PENDING",
-        "type": "COMMUNITY",
-        "is_registered": selectedMembership == "Yes" ? false : true,
-        "state": selectedState
-      }
-    };
+        "payload": {
+            "community_id": communityId,
+            "community_name": communityName,
+            "supplier_id": supplierId,
+            "member_id": userId,
+            "first_name": firstNameController.text,
+            "last_name": lastNameController.text,
+            "email": emailController.text,
+            "phone": "$phoneCode${phoneController.text}",
+            "state": selectedState,
+            "membership_number": membershipNumberController.text,
+            "type": "COMMUNITY",
+            "is_registered": selectedMembership == "Yes" ? false : true
+        }
+    }
+};
+    print("**********$variables");
     final res = await repository.communityRegister(variables);
     Loaders.circularHideLoader(context);
 
