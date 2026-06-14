@@ -65,6 +65,7 @@ class DirectoriesByPk {
   List<DirectoryGalleryPosts>? directoryGalleryPosts;
   List<DirectoryTestimonials>? directoryTestimonials;
   List<DirectoryFaqs>? directoryFaqs;
+  DentalSupplier? dentalSupplier;
   String? sTypename;
 
   DirectoriesByPk(
@@ -108,6 +109,7 @@ class DirectoriesByPk {
       this.directoryGalleryPosts,
       this.directoryTestimonials,
       this.directoryFaqs,
+      this.dentalSupplier,
       this.sTypename});
 
   DirectoriesByPk.fromJson(Map<String, dynamic> json) {
@@ -247,10 +249,70 @@ class DirectoriesByPk {
         directoryFaqs!.add(new DirectoryFaqs.fromJson(v));
       });
     }
+    dentalSupplier = json['dental_supplier'] != null
+        ? new DentalSupplier.fromJson(json['dental_supplier'])
+        : null;
     sTypename = json['__typename'];
   }
 }
 
+
+class DentalSupplier {
+  String? firstName;
+  String? lastName;
+  String? communityStatus;
+  String? communityId;
+  List<Null>? communityMembers;
+  List<Null>? partnershipMembers;
+  String? sTypename;
+
+  DentalSupplier(
+      {this.firstName,
+      this.lastName,
+      this.communityStatus,
+      this.communityId,
+      this.communityMembers,
+      this.partnershipMembers,
+      this.sTypename});
+
+  DentalSupplier.fromJson(Map<String, dynamic> json) {
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    communityStatus = json['community_status'];
+    communityId = json['community_id'];
+    /*if (json['community_members'] != null) {
+      communityMembers = <Null>[];
+      json['community_members'].forEach((v) {
+        communityMembers!.add(new Null.fromJson(v));
+      });
+    }
+    if (json['partnership_members'] != null) {
+      partnershipMembers = <Null>[];
+      json['partnership_members'].forEach((v) {
+        partnershipMembers!.add(new Null.fromJson(v));
+      });
+    }*/
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['community_status'] = this.communityStatus;
+    data['community_id'] = this.communityId;
+    /*if (this.communityMembers != null) {
+      data['community_members'] =
+          this.communityMembers!.map((v) => v?.toJson()).toList();
+    }
+    if (this.partnershipMembers != null) {
+      data['partnership_members'] =
+          this.partnershipMembers!.map((v) => v?.toJson()).toList();
+    }*/
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
 class BannerImage {
   String? url;
   String? name;

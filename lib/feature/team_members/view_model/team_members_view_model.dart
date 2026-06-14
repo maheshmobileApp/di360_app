@@ -250,6 +250,7 @@ class TeamMembersViewModel extends ChangeNotifier {
         "subscription_plan_id": subscriptionPlanId,
         "community_id": null,
         "community_status": null,
+        "tracking_details": "mobile", 
         "permissions": {
           "modules": [
             {
