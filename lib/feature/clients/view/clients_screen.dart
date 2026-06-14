@@ -1,6 +1,10 @@
+import 'package:di360_flutter/common/constants/image_const.dart';
+import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/clients/clients_provider/clients_provider.dart';
 import 'package:di360_flutter/feature/clients/view/client_card_widget.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class ClientsScreen extends StatefulWidget {
@@ -10,7 +14,7 @@ class ClientsScreen extends StatefulWidget {
   State<ClientsScreen> createState() => _ClientsScreenState();
 }
 
-class _ClientsScreenState extends State<ClientsScreen> {
+class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
   @override
   void initState() {
     super.initState();
@@ -25,17 +29,23 @@ class _ClientsScreenState extends State<ClientsScreen> {
     return Consumer<ClientsProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBar(title: Text("Clients"), centerTitle: true),
+          appBar: AppBar(title: Text("Clients"), centerTitle: true, actions: [
+            GestureDetector(
+                onTap: () => logOutAlert(context),
+                child:
+                    SvgPicture.asset(ImageConst.logout, width: 25, height: 25)),
+            addHorizontal(16)
+          ]),
           body: Column(
             children: [
               _statusTabs(provider),
-              const SizedBox(height: 12),
+              addVertical(12),
               _categoryTabs(provider),
-              const SizedBox(height: 16),
-              _searchField(),
-              const SizedBox(height: 12),
-              _filters(),
-              const SizedBox(height: 12),
+              addVertical(16),
+              // _searchField(),
+              // const SizedBox(height: 12),
+              // _filters(),
+              // const SizedBox(height: 12),
               Expanded(
                 child: ListView.builder(
                   itemCount: provider.clients?.length,
@@ -70,7 +80,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                   ),
                 ),
               ),
-              child: const Text("ACTIVE 1049",
+              child: Text("ACTIVE 1049",
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
@@ -89,7 +99,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                               : Colors.transparent,
                           width: 3)),
                 ),
-                child: const Text("INACTIVE 21",
+                child: Text("INACTIVE 21",
                     style: TextStyle(fontWeight: FontWeight.bold))),
           ),
         ),
