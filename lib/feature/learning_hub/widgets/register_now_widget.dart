@@ -54,18 +54,16 @@ class RegisterNowWidget extends StatelessWidget {
                 Text(
                   "AUD \$ ${oldPrice != null ? double.tryParse(oldPrice!)?.toStringAsFixed(0) ?? oldPrice : ''}",
                   style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                    decoration: TextDecoration.lineThrough,
-                  ),
+                      fontSize: 14,
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough),
                 ),
                 Text(
                   "AUD \$ ${currentPrice != null ? double.tryParse(currentPrice!)?.toStringAsFixed(0) ?? currentPrice : ''}",
                   style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.activesendary,
-                  ),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.activesendary),
                 ),
               ] else ...[
                 // EARLY BIRD EXPIRED → Show old & new prices
@@ -73,10 +71,9 @@ class RegisterNowWidget extends StatelessWidget {
                   Text(
                     "AUD \$ ${oldPrice != null ? double.tryParse(oldPrice!)?.toStringAsFixed(0) ?? oldPrice : ''}",
                     style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.activesendary,
-                    ),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.activesendary),
                   ),
               ],
             ],

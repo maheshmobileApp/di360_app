@@ -132,33 +132,39 @@ class ListingHubMasterCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: AppColors.geryColor,
-                              radius: 15,
-                              child: ClipOval(
-                                child: CachedNetworkImageWidget(
-                                    imageUrl: profilePic,
-                                    width: 30,
-                                    height: 30,
-                                    fit: BoxFit.cover,
-                                    errorWidget:
-                                        Image.asset(ImageConst.prfImg)),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: AppColors.geryColor,
+                                radius: 15,
+                                child: ClipOval(
+                                  child: CachedNetworkImageWidget(
+                                      imageUrl: profilePic,
+                                      width: 30,
+                                      height: 30,
+                                      fit: BoxFit.cover,
+                                      errorWidget:
+                                          Image.asset(ImageConst.prfImg)),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              presenterName.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  presenterName.toUpperCase(),
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4)
-                          ],
+                              const SizedBox(height: 4)
+                            ],
+                          ),
                         ),
                         Row(
                           children: [

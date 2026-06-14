@@ -192,10 +192,13 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
   void removeDocument(String key) {
     if (localDocs.containsKey(key)) {
       localDocs.remove(key);
+      if (key == "Resume") resumeFile = null;
+      if (key == "Cover Letter") coverLetterFile = null;
+      if (key == "Certificate") certificateFile = null;
     } else if (serverDocuments.containsKey(key) &&
         serverDocuments[key] != null) {
-      serverDocuments[key] = null; // remove from UI
-      removedServerDocKeys.add(key); // store for API
+      serverDocuments[key] = null;
+      removedServerDocKeys.add(key);
     }
     notifyListeners();
   }
@@ -626,7 +629,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'word'],
     );
     if (result != null) {
       coverLetterFile = File(result.files.single.path!);
@@ -640,7 +643,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'word', 'png', 'jpg', 'jpeg'],
     );
     if (result != null) {
       certificateFile = File(result.files.single.path!);
@@ -832,8 +835,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                   {
                     "url": uploadedFiles['certificate'] != null
                         ? uploadedFiles['certificate']["url"]
-                        : profileFile!.path,
-                    "name": profileFile!.path.split("/").last,
+                        : certificateFile!.path,
+                    "name": certificateFile!.path.split("/").last,
                     "type": "document",
                     "extension": "pdf",
                   }
@@ -844,8 +847,8 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
                   {
                     "url": uploadedFiles['coverLetter'] != null
                         ? uploadedFiles['coverLetter']["url"]
-                        : profileFile!.path,
-                    "name": profileFile!.path.split("/").last,
+                        : coverLetterFile!.path,
+                    "name": coverLetterFile!.path.split("/").last,
                     "type": "image",
                     "extension": "jpeg",
                   }
@@ -896,8 +899,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
           "Year_of_experiance": selectExperience,
           "availabilityDate":
               availabilityDates.map((d) => d.toIso8601String()).toList(),
-          "fromDate":
-              fromDateController.text,
+          "fromDate": fromDateController.text,
         }
       ]
     };
@@ -1059,7 +1061,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         "availabilityDay": selectedDays,
         "availabilityDate":
             availabilityDates.map((d) => d.toIso8601String()).toList(),
-        "fromDate":  fromDateController.text,
+        "fromDate": fromDateController.text,
       }
     };
     try {
@@ -1089,6 +1091,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
 
   setTheProfileUpdateData(JobProfiles? profile) {
     mobileNumberController.text = profile?.mobileNumber ?? "";
+    togglePostAnonymous(profile?.postAnonymously ?? false);
     emailAddressController.text = profile?.emailAddress ?? "";
     selectedRole = profile?.professionType;
     _selectedEmploymentChips = profile?.workType ?? [];

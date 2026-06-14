@@ -92,7 +92,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                         Text("Already Registered",
                             style: TextStyles.medium2(
                                 color: AppColors.greenColor)),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 4)
                     ],
                   ),
                 ),
@@ -205,21 +205,17 @@ class CourseInfoCardWidget extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: 1,
-                      height: 50,
-                      color: Colors.grey,
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                    ),
+                        width: 1,
+                        height: 50,
+                        color: Colors.grey,
+                        margin: const EdgeInsets.symmetric(horizontal: 12)),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           _InfoTextWidget(
-                            label: "How",
-                            first: false,
-                            value: "${platform}",
-                          ),
+                              label: "How", first: false, value: "${platform}"),
                           const SizedBox(height: 6),
                           _InfoTextWidget(
                               label: "Where",
@@ -235,7 +231,7 @@ class CourseInfoCardWidget extends StatelessWidget {
                   const SizedBox(height: 10),
                   MediaWidget(url: bannerUrl, name: bannerName)
                 ],
-                const SizedBox(height: 10),
+                const SizedBox(height: 10)
               ],
             ),
           ),
@@ -251,11 +247,8 @@ class _InfoTextWidget extends StatelessWidget {
 
   final bool first;
 
-  const _InfoTextWidget({
-    required this.label,
-    required this.value,
-    required this.first,
-  });
+  const _InfoTextWidget(
+      {required this.label, required this.value, required this.first});
 
   @override
   Widget build(BuildContext context) {
@@ -281,53 +274,3 @@ class _InfoTextWidget extends StatelessWidget {
     );
   }
 }
-
-/*class _PriceTextWidget extends StatelessWidget {
-  final String label;
-
-  final String originalPrice;
-  final String discountedPrice;
-
-  final bool first;
-
-  const _PriceTextWidget({
-    required this.label,
-    required this.first,
-    required this.originalPrice,
-    required this.discountedPrice,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment:
-          first ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-      children: [
-        Text(label,
-            style: const TextStyle(
-              color: AppColors.primaryColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            )),
-        const SizedBox(width: 4),
-        Row(
-          children: [
-            Text(
-              "\$${originalPrice}",
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                decoration: TextDecoration.lineThrough, // strike-through
-              ),
-            ),
-            Text("AUD \$${discountedPrice}",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.black)),
-          ],
-        ),
-      ],
-    );
-  }
-} */

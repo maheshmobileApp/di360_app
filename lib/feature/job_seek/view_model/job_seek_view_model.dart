@@ -4,6 +4,7 @@ import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_v
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/attachment.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
+import 'package:di360_flutter/feature/job_seek/model/get_banner_res.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/send_message_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/upload_response.dart';
@@ -22,6 +23,7 @@ class JobSeekViewModel extends ChangeNotifier {
 
   JobSeekViewModel() {
     // Initialize immediately with empty structure to avoid late init crash
+    getBanners();
     filterOptions = {
       'profession': [],
       'employment': [],
@@ -572,5 +574,26 @@ class JobSeekViewModel extends ChangeNotifier {
           .map((d) => DateFormat('yyyy-MM-dd').format(d))
           .toList();
     }
+  }
+
+  GetBannerData? getBannersData;
+
+  Future<void> getBanners() async {
+    print("Fetching banners with filters...");
+    final variables = {
+      "status": "APPROVED",
+      "category_names": ["All Header Banners"],
+      "banner_location": ["Web Header Job Seek"],
+      "schedule_date": "2026-06-12T05:03:01.250Z",
+      "limit": 10,
+      "offset": 0
+    };
+
+    final response = await repo.getBanners(variables);
+    if (response != null) {
+      getBannersData = response;
+    }
+
+    notifyListeners();
   }
 }

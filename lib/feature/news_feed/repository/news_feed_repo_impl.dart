@@ -44,9 +44,6 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
               {
                 "community_type": {"_eq": "BOTH"}
               },
-              {
-                "user_id": {"_eq": userId}
-              },
               if (communityId.isNotEmpty || myCommunityIds.isNotEmpty)
                 {
                   "community_id": {
@@ -99,9 +96,22 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
             {
               "_or": [
                 {
-                  "access_rules": {
-                    "directory_category_id": {"_eq": professionId}
-                  }
+                  "community_type": {"_eq": "COMMUNITY_USER"}
+                },
+                {
+                  "_and": [
+                    {
+                      "community_type": {"_eq": "BOTH"}
+                    },
+                    {
+                      "access_rules": {
+                        "directory_category_id": {"_eq": professionId}
+                      }
+                    }
+                  ]
+                },
+                {
+                  "user_id": {"_eq": userId}
                 },
                 {
                   "category_type": {"_is_null": true}
@@ -135,7 +145,6 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
       "limit": limit,
       "offset": offset,
       "userId": userId,
-      //"roleType": roleType
     };
     final res = await http.query(getAllNewsfeedsQuery, variables: variables);
     return res;

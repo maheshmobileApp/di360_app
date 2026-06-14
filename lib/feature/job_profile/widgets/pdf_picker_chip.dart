@@ -23,14 +23,19 @@ class PdfPickerChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? displayHintText(String title) {
+      if (title == "Resume") return "Upload $title (PDF only)";
+      if (title == "Certificate") return "Upload $title (PDF / Word / Image)";
+      return "Upload $title (PDF / Word only)";
+    }
+
     final bool hasLocal = file != null;
     final bool hasServer = !hasLocal && serverFileName != null && serverFileName!.isNotEmpty;
 
     final String displayTop = hasLocal
         ? file!.path.split('/').last
-        : "Upload $title (PDF only)";
+        : displayHintText(title) ?? "";
 
-    // bottom row name
     String? bottomName;
     if (hasLocal) {
       bottomName = file!.path.split('/').last;

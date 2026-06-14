@@ -2,7 +2,7 @@ const String getAllNewsfeedsQuery =
     r'''query GetNewsfeedsByWhere($where: newsfeeds_bool_exp!, $limit: Int, $offset: Int, $userId: uuid!) {
   newsfeeds(
     where: $where
-    order_by: {created_at: desc}
+    order_by: {approved_at: desc}
     limit: $limit
     offset: $offset
   ) {

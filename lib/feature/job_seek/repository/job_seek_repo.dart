@@ -1,6 +1,7 @@
 import 'package:di360_flutter/feature/job_seek/model/aplly_job_applicants.dart';
 import 'package:di360_flutter/feature/job_seek/model/apply_job_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/enquire_request.dart';
+import 'package:di360_flutter/feature/job_seek/model/get_banner_res.dart';
 import 'package:di360_flutter/feature/job_seek/model/hire_me_request.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/job_seek/model/job_model.dart';
@@ -22,6 +23,7 @@ abstract class JobSeekRepository {
   Future<List<Jobs>> fetchFilteredJobs(
   dynamic variables
 );
+  Future<GetBannerData> getBanners(dynamic variables);
 
 
  //Future<List<JobSeekResponseModel>> fetchFilteredJobs(JobSeekFilterModel filter)

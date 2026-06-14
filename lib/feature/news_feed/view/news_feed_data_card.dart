@@ -25,7 +25,6 @@ import 'package:di360_flutter/widgets/outline_button_widget.dart';
 import 'package:di360_flutter/widgets/share_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
@@ -454,10 +453,16 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                           child: CachedNetworkImageWidget(
                               imageUrl: imageUrl,
                               fit: BoxFit.contain,
-                              errorWidget: SvgPicture.asset(ImageConst.logo))),
+                              errorWidget:
+                                  Image.asset(ImageConst.directorProfile))),
                     )
                   : Text(
-                      name?[0].toUpperCase() ?? "",
+                      name!.split('')
+                          .firstWhere(
+                            (char) => char.trim().isNotEmpty,
+                            orElse: () => '',
+                          )
+                          .toUpperCase(),
                       style: TextStyles.bold5(color: AppColors.whiteColor),
                     ),
             ),

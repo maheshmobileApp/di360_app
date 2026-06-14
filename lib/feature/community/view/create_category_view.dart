@@ -61,9 +61,11 @@ class _CreateCategoryViewState extends State<CreateCategoryView>
                       child: AppButton(
                         height: 42,
                         text: (viewModel.editMode) ? "Update" : "Add",
-                        onTap: () async {
+                        onTap: viewModel.isCategorySubmitting ? null : () async {
                           if (_formKey.currentState!.validate()) {
-                           (viewModel.editMode) ?await viewModel.updateCategory(context,viewModel.editCategoryId): await viewModel.addCategory(context);
+                            (viewModel.editMode)
+                                ? viewModel.updateCategory(context, viewModel.editCategoryId)
+                                : viewModel.addCategory(context);
                           }
                         },
                       ),

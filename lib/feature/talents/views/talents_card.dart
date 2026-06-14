@@ -54,13 +54,12 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
                     profleImage,
                     talentList?.fullName ?? "",
                     talentList?.professionType ?? "",
+                    talentList?.jobDesignation ?? "",
+                    talentList?.postAnonymously ?? false,
+
                   ),
                 ],
               ),
-              if (talentList?.jobDesignation?.isNotEmpty == true) ...[
-                addVertical(4),
-                _descptionDate(talentList?.jobDesignation ?? ""),
-              ],
               addVertical(6),
               Row(
                 children: [
@@ -191,6 +190,8 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
     String imageUrl,
     String title,
     String role,
+    String designation,
+    bool postAnonymously,
   ) {
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       CircleAvatar(
@@ -200,15 +201,15 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
               radius: 24,
               backgroundColor: AppColors.primaryColor,
               child: ClipOval(
-
                   child: CachedNetworkImageWidget(
                 width: 48,
                 height: 48,
-                imageUrl: imageUrl,
+                imageUrl: postAnonymously ? "" : imageUrl,
                 errorWidget: Image.asset(ImageConst.directorProfile),
               )))),
       addHorizontal(6),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (!postAnonymously)
         SizedBox(
           width: getSize(context).width * 0.5,
           child: Text(
@@ -218,6 +219,16 @@ class TalentsCard extends StatelessWidget with BaseContextHelpers {
           ),
         ),
         addVertical(4),
+        SizedBox(
+          width: getSize(context).width * 0.5,
+          child: Text(
+            designation,
+            style: TextStyles.regular2(color: AppColors.black),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+
+         addVertical(4),
         SizedBox(
           width: getSize(context).width * 0.5,
           child: Text(

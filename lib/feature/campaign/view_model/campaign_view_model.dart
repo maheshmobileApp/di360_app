@@ -380,7 +380,6 @@ class CampaignViewModel extends ChangeNotifier {
       final res = await repo.getCampaignDetails(variables);
 
       campaignDetails = res;
-      print("**************************$campaignDetails");
       final data = campaignDetails?.smsCampaignByPk;
       campaignNameController.text = data?.campaignName ?? "";
       scheduleDateController.text = data?.scheduleDate ?? "";
@@ -389,12 +388,16 @@ class CampaignViewModel extends ChangeNotifier {
       selectedTimeZone = data?.scheduleTimezone ?? "";
       selectedType = data?.messageChannel ?? "";
       _selectedStateChips = (data?.refineState?.cast<String>()) ?? [];
-      _selectedGroupChips = (data?.groups?.cast<String>()) ?? [];
+      _selectedGroupChips = (data?.groups ?? []).map((id) {
+        final match = groupOptions.firstWhere(
+          (g) => g['id'] == id,
+          orElse: () => {'label': id},
+        );
+        return match['label'] as String;
+      }).toList();
       selectStateCondition = data?.isRefinedByState == "yes" ? "Yes" : "No";
       _selectedSendChips = (data?.sendToNumbers?.cast<String>()) ?? [];
       recipientsCount = data?.recipientsCount.toString() ?? "0";
-      print("**************************$_selectedGroupChips");
-
       notifyListeners();
     } catch (e) {}
   }
@@ -469,6 +472,7 @@ class CampaignViewModel extends ChangeNotifier {
           .cast<String>()
           .toList();
 
+
       final variables = {
         "fields": {
           "from_email": userEmail,
@@ -481,20 +485,15 @@ class CampaignViewModel extends ChangeNotifier {
           "schedule_date": scheduleDateController.text,
           "schedule_time_local": scheduleTimeController.text,
           "schedule_timezone": selectedTimeZone,
+          "message_text": messageController.text,
+          "email_subject": null,
           "email_design_json": null,
-          "sms_segments_count": 1,
-          "characters_used": messageController.text.length,
-          "is_repeating": "no",
+          "groups": selectedGroupIdChips,
           "is_refined_by_state": selectStateCondition == "Yes" ? "yes" : "no",
           "refine_state": selectedStateChips,
-          "groups": selectedGroupIdChips,
-          "message_text": messageController.text,
-          "send_to_numbers": selectedSendChips,
-          "send_to_emails": null,
           "status": "PENDING",
-          "email_subject": null,
+          "message_channel": messageChannel,
           "email_attachments": [],
-          "message_channel": messageChannel
         }
       };
       print("Create Campaign Variables: $variables");
@@ -510,6 +509,11 @@ class CampaignViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {}
   }
+  /* "sms_segments_count": 1,
+          "characters_used": messageController.text.length,
+          "is_repeating": "no",
+          "send_to_numbers": selectedSendChips,
+          "send_to_emails": null,*/
 
   ContactsData? contactsData;
   String recipientsCount = "0";

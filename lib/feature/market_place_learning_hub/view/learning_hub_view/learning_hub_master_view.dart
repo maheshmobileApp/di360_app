@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/learning_hub_master_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/course_modules_view/course_details_view.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
@@ -185,18 +186,15 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                             },
                             registerTap: // isRegistered ?
                                 () async {
-                              await courseListingVM.getCourseDetails(
-                                  context, course.id ?? "");
-                              await courseListingVM.getProfile();
-
-                              // await courseListingVM
-                              //     .getCourseRegisteredUsers(
-                              //         context, course.id ?? "");
-
-                              // await courseListingVM.registerCourseHandler(
-                              //     context, course.createdById ?? "");
-                              navigationService
-                                  .navigateTo(RouteList.courseDetailScreen);
+                                await courseListingVM.getCourseDetails(
+                                    context, course.id ?? "");
+                                await courseListingVM.getProfile();
+                              if (!isRegistered) {
+                                navigationService
+                                    .navigateTo(RouteList.courseDetailScreen);
+                              } else {
+                                navigationService.push(CourseDetailsView());
+                              }
                             },
                             // : () {
                             //     // if (seats > 0) {

@@ -1,6 +1,7 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/widgets/show_update_profile_popup.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -69,6 +70,7 @@ class RegistrationUserForm {
                             title: "First Name",
                             maxLength: 75,
                             isRequired: true,
+                            readOnly: true,
                             validator: (value) => value == null || value.isEmpty
                                 ? 'Please enter First Name'
                                 : null,
@@ -80,6 +82,7 @@ class RegistrationUserForm {
                             title: "Last Name",
                             maxLength: 75,
                             isRequired: true,
+                            readOnly: true,
                             validator: (value) => value == null || value.isEmpty
                                 ? 'Please enter Last Name'
                                 : null,
@@ -89,6 +92,7 @@ class RegistrationUserForm {
                             controller: courseVM.userPhoneNumberController,
                             hintText: "Enter Phone Number",
                             title: "Phone Number",
+                            readOnly: true,
                             maxLength: 12,
                             keyboardType: TextInputType.number,
                             isRequired: true,
@@ -103,6 +107,7 @@ class RegistrationUserForm {
                               hintText: "Enter Email Id",
                               title: "Email Id",
                               isRequired: true,
+                              readOnly: true,
                               validator: courseVM.validateEmailField),
                           const SizedBox(height: 8),
                           InputTextField(
@@ -117,6 +122,18 @@ class RegistrationUserForm {
                             width: double.infinity,
                             child: CustomRoundedButton(
                               onPressed: () async {
+                                final isValidPhone =
+                                    courseVM.isValidAusPhoneNumber(courseVM
+                                        .userPhoneNumberController.text);
+
+                                if (!isValidPhone) {
+                                  showUpdateMobileNumberDialog(context,
+                                      onUpdateProfile: () {
+                                    navigationService.goBack();
+                                    courseVM.viewProfileNavigationHandle();
+                                  });
+                                  return;
+                                }
                                 if (formKey.currentState!.validate()) {
                                   formKey.currentState!.save();
                                   await courseVM.userRegisterToCourse(context);
@@ -124,33 +141,35 @@ class RegistrationUserForm {
                                   courseVM.clearAll();
                                   await courseVM.registerCourseHandler(
                                       context, createdById);
-                                  alertPopup(
-                                    context,
-                                    "You are being redirected to the registration link",
-                                    onBack: () async {
-                                      final raw = registrationLink.trim();
-                                      if (raw.isEmpty) {
+                                  if (registrationLink.trim().isNotEmpty) {
+                                    alertPopup(
+                                      context,
+                                      "You are being redirected to the registration link",
+                                      onBack: () async {
+                                        final raw = registrationLink.trim();
+                                        if (raw.isEmpty) {
+                                          navigationService.goBack();
+                                          return;
+                                        }
+                                        final urlStr =
+                                            raw.startsWith('http://') ||
+                                                    raw.startsWith('https://')
+                                                ? raw
+                                                : 'https://$raw';
+                                        final url = Uri.tryParse(urlStr);
+                                        if (url != null &&
+                                            await canLaunchUrl(url)) {
+                                          await launchUrl(url,
+                                              mode: LaunchMode
+                                                  .externalApplication);
+                                        } else {
+                                          scaffoldMessenger(
+                                              'Could not open registration link');
+                                        }
                                         navigationService.goBack();
-                                        return;
-                                      }
-                                      final urlStr =
-                                          raw.startsWith('http://') ||
-                                                  raw.startsWith('https://')
-                                              ? raw
-                                              : 'https://$raw';
-                                      final url = Uri.tryParse(urlStr);
-                                      if (url != null &&
-                                          await canLaunchUrl(url)) {
-                                        await launchUrl(url,
-                                            mode:
-                                                LaunchMode.externalApplication);
-                                      } else {
-                                        scaffoldMessenger(
-                                            'Could not open registration link');
-                                      }
-                                      navigationService.goBack();
-                                    },
-                                  );
+                                      },
+                                    );
+                                  }
                                   await courseVM.getAllLearningHubData(context);
                                   await courseVM.getCourseDetails(
                                       context, courseId);

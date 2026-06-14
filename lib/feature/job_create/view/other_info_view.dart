@@ -60,7 +60,8 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             }
                             if (value != null && value.isNotEmpty) {
                               try {
-                                final selectedDate = DateTime.parse(DateFormatUtils.formatDateYear(value));
+                                final selectedDate = DateTime.parse(
+                                    DateFormatUtils.formatDateYear(value));
                                 final today = DateTime.now();
                                 final todayDate = DateTime(
                                     today.year, today.month, today.day);
@@ -117,18 +118,23 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             }
                             if (value != null && value.isNotEmpty) {
                               try {
-                                final endDate = DateTime.parse(DateFormatUtils.formatDateYear(value));
+                                final endDate = DateTime.parse(
+                                    DateFormatUtils.formatDateYear(value));
                                 final today = DateTime.now();
                                 final todayDate = DateTime(
                                     today.year, today.month, today.day);
-                                
+
                                 if (endDate.isBefore(todayDate)) {
                                   return 'End date cannot be earlier than today';
                                 }
-                                
-                                if (jobCreateVM.startDateController.text.isNotEmpty) {
-                                  final startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
-                                  if (endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate)) {
+
+                                if (jobCreateVM
+                                    .startDateController.text.isNotEmpty) {
+                                  final startDate = DateTime.parse(
+                                      DateFormatUtils.formatDateYear(jobCreateVM
+                                          .startDateController.text));
+                                  if (endDate.isBefore(startDate) ||
+                                      endDate.isAtSameMomentAs(startDate)) {
                                     return 'The End Date cannot be before the Start Date.';
                                   }
                                 }
@@ -148,7 +154,9 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                             if (jobCreateVM
                                 .startDateController.text.isNotEmpty) {
                               try {
-                                startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
+                                startDate = DateTime.parse(
+                                    DateFormatUtils.formatDateYear(
+                                        jobCreateVM.startDateController.text));
                               } catch (e) {
                                 startDate = DateTime.now();
                               }
@@ -163,7 +171,9 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
                               if (jobCreateVM
                                   .startDateController.text.isNotEmpty) {
                                 try {
-                                  final startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
+                                  final startDate = DateTime.parse(
+                                      DateFormatUtils.formatDateYear(jobCreateVM
+                                          .startDateController.text));
                                   if (picked.isBefore(startDate) ||
                                       picked.isAtSameMomentAs(startDate)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -228,7 +238,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
           activeColor: AppColors.primaryColor,
           visualDensity: VisualDensity.compact,
           value: value,
-          onChanged: onChanged,
+          onChanged: onChanged?.call(false),
         ),
         Text(text, style: TextStyles.regular2()),
         const SizedBox(width: 20),
@@ -348,8 +358,10 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
     }
 
     try {
-      final startDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
-      final endDate = DateTime.parse(DateFormatUtils.formatDateYear(jobCreateVM.endDateController.text));
+      final startDate = DateTime.parse(
+          DateFormatUtils.formatDateYear(jobCreateVM.startDateController.text));
+      final endDate = DateTime.parse(
+          DateFormatUtils.formatDateYear(jobCreateVM.endDateController.text));
 
       return endDate.isBefore(startDate) || endDate.isAtSameMomentAs(startDate);
     } catch (e) {

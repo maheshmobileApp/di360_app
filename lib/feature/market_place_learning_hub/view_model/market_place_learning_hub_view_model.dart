@@ -530,6 +530,15 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     notifyListeners();
   }
 
+  viewProfileNavigationHandle() async{
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    if (type == UserRole.professional.value){
+      navigationService.replaceWith(RouteList.professionalViewProfileScreen);
+    } else{
+      navigationService.replaceWith(RouteList.viewProfileScreen);
+    }
+  }
+
   clearAll() {
     userFirstNameController.text = "";
     userLastNameController.text = "";
