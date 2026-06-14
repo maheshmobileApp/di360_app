@@ -1017,7 +1017,7 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         "availabilityOption": selectedAvailabilityType,
         "current_ctc": "100000",
         "post_anonymously": isPostAnonymous,
-        "admin_status": isDraft ? "DRAFT" : "PENDING",
+        "admin_status": "APPROVE",
         "jobexperiences": experiences
             .map((e) => {
                   "company_name": e.companyName,
@@ -1044,9 +1044,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
         "languages_spoken": languages,
         "areas_expertise": expertise,
         "skills": selectskills.map((toElement) => toElement).toList(),
-        "salary_amount": salaryController.text == ""
-            ? null
-            : salaryController.text, // need to send dynamically
+        "salary_amount": salaryController.text.isNotEmpty
+            ? int.tryParse(salaryController.text)
+            : null,
         "salary_type": selectedSalaryPer, // need to send dynamically
         "travel_distance": DistanceController.text == ""
             ? null
@@ -1107,7 +1107,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     locationController.text = profile?.location ?? "";
     countryController.text = profile?.country ?? "";
     stateController.text = profile?.state ?? "";
-    salaryController.text = profile?.salaryAmount.toString() ?? "";
+    salaryController.text = (profile?.salaryAmount != null && profile!.salaryAmount != 0)
+        ? profile.salaryAmount.toString()
+        : "";
     selectedSalaryPer = profile?.salaryType ?? "";
     cityPostCodeController.text = profile?.city ?? "";
     experiences = profile?.jobExperiences ?? [];
