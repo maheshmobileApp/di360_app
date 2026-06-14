@@ -10,4 +10,5 @@ abstract class MyLearningHubRepository {
       String date);
 
   Future<dynamic> certificateDownload(dynamic variables);
+
 }

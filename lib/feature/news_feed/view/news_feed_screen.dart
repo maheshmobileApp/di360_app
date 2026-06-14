@@ -2,6 +2,8 @@ import 'package:di360_flutter/common/banner/generic_list_view_with_banners.dart'
 import 'package:di360_flutter/common/banner/list_banner.dart';
 import 'package:di360_flutter/common/banner/utils.dart';
 import 'package:di360_flutter/common/constants/app_colors.dart';
+import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
@@ -12,6 +14,8 @@ import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/view/news_feed_data_card.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -152,6 +156,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
                   await newsFeedVM.getAllNewsfeeds(context);
                 },
               ),
+            communityStatusWidget(newsFeedVM),
             Expanded(
                 child: newsFeedVM.allNewsFeedsData?.newsfeeds?.isEmpty ?? false
                     ? Center(
@@ -196,5 +201,59 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
               navigationService.navigateTo(RouteList.addNewsFeed);
             },
             child: SvgPicture.asset(ImageConst.addFeed)));
+  }
+
+  SizedBox communityStatusWidget(NewsFeedViewModel newsFeedVM) {
+    final userType = LocalStorage.getStringSync(LocalStorageConst.type) ?? '';
+    if (userType != UserRole.admin.value) return SizedBox.shrink();
+    return SizedBox(
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: ConstantData.statuses.length,
+        itemBuilder: (context, index) {
+          String status = ConstantData.statuses[index];
+          bool isSelected = newsFeedVM.selectedStatus == status;
+          return GestureDetector(
+            onTap: () {
+              newsFeedVM.changeStatus(status, context);
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color:
+                    isSelected ? AppColors.primaryColor : AppColors.whiteColor,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: AppColors.primaryColor),
+              ),
+              child: Row(
+                children: [
+                  Text(status,
+                      style: TextStyles.regular2(
+                          color: isSelected
+                              ? AppColors.whiteColor
+                              : AppColors.black)),
+                  SizedBox(width: 6),
+                  Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.whiteColor
+                            : AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text("${newsFeedVM.statusCountMap[status]}",
+                          style: TextStyles.regular2(
+                              color: isSelected
+                                  ? AppColors.black
+                                  : AppColors.whiteColor))),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
