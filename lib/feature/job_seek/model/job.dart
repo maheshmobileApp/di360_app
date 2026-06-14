@@ -110,11 +110,17 @@ class Jobs {
     description = json['description'];
 
     typeofEmployment = json['TypeofEmployment'] is List
-        ? List<String>.from(json['TypeofEmployment'])
+        ? (json['TypeofEmployment'] as List)
+            .where((e) => e != null)
+            .map((e) => e.toString())
+            .toList()
         : [];
 
     availabilityDate = json['availability_date'] is List
-        ? List<String>.from(json['availability_date'])
+        ? (json['availability_date'] as List)
+            .where((e) => e != null)
+            .map((e) => e.toString())
+            .toList()
         : [];
 
     autoExpiryDate = json['auto_expiry_date']?.toString();
@@ -137,7 +143,10 @@ class Jobs {
     status = json['status'];
 
     offeredBenefits = json['offered_benefits'] is List
-        ? List<String>.from(json['offered_benefits'])
+        ? (json['offered_benefits'] as List)
+            .where((e) => e != null)
+            .map((e) => e.toString())
+            .toList()
         : [];
 
     country = json['country'];
