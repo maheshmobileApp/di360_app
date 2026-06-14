@@ -33,7 +33,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-         logo: false,
+        logo: false,
         title: 'Registered Users',
         searchWidget: false,
       ),
@@ -68,7 +68,7 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                             horizontal: 8, vertical: 4),
                         child: RegisteredUserCard(
                             id: userData?.id ?? "",
-                            userPhone: userData?.phoneNumber ?? "",
+                            userPhone: userData?.phoneNumber.toString() ?? "",
                             userName:
                                 "${userData?.firstName ?? ""} ${userData?.lastName ?? ""}",
                             userMail: userData?.email ?? "",
@@ -81,10 +81,15 @@ class _JobListingScreenState extends State<RegisteredUsersView>
                             onMenuAction: (action, id) async {
                               switch (action) {
                                 case "Approve":
-                                  courseListingVM.updateRegUserStatus(context,id,"APPROVED",userData?.courseId??"");
+                                  courseListingVM.updateRegUserStatus(context,
+                                      id, "APPROVED", userData?.courseId ?? "");
                                   break;
                                 case "Cancel":
-                                courseListingVM.updateRegUserStatus(context,id,"CANCELLED",userData?.courseId??"");
+                                  courseListingVM.updateRegUserStatus(
+                                      context,
+                                      id,
+                                      "CANCELLED",
+                                      userData?.courseId ?? "");
                                   break;
                               }
                             }),

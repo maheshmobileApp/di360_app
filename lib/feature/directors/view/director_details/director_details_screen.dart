@@ -78,11 +78,10 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
                 ),
               ],
             ),
-            (directionalVM.userType == UserRole.professional.value ||
-                        directionalVM.userType == UserRole.supplier.value) &&
-                    (directionalVM.directorCommunityID != null) &&
-                    (directionalVM.directorDetails?.dentalSupplierId !=
-                        directionalVM.userId)
+            ((directionalVM.directorDetails?.dentalSupplier?.communityStatus ==
+                        "YES") &&
+                    (directionalVM.userType == UserRole.professional.value ||
+                        directionalVM.userType == UserRole.supplier.value))
                 ? Positioned(
                     top: 20,
                     right: 20,

@@ -555,7 +555,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
-          children: vm.directorDetails!.directoryTestimonials!
+          children: (vm.directorDetails?.directoryTestimonials ?? [])
               .map(
                 (data) => Card(
                   color: Colors.black,
@@ -618,7 +618,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
 
   Widget _faqSection(DirectoryViewModel vm) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: vm.directorDetails!.directoryFaqs!
+      children: (vm.directorDetails?.directoryFaqs ?? [])
           .map((val) => Column(
                 children: [
                   const Padding(
@@ -732,7 +732,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           ],
           addVertical(20),
           Row(
-            children: vm.directorDetails?.directoryLocations!
+            children: (vm.directorDetails?.directoryLocations ?? [])
                     .where((e) => [
                           'facebook',
                           'instagram',
@@ -783,7 +783,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                       fit: BoxFit.cover, width: double.infinity, height: 180))),
           const SizedBox(height: 25),
           Column(
-              children: vm.directorDetails!.directoryLocations!
+              children: (vm.directorDetails?.directoryLocations ?? [])
                   .map((val) => Row(
                         children: [
                           Text(

@@ -90,9 +90,12 @@ class SignupViewModel extends ChangeNotifier {
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
 
+  String? businessTypeId;
+
   void setSelectedIndex(int index) {
     _selectedIndex = index;
     selectedCategorys = null;
+    businessTypeId = directoryBusinessTypes?[index].id;
     notifyListeners();
   }
 
@@ -154,6 +157,7 @@ class SignupViewModel extends ChangeNotifier {
           "name": nameController.text,
           "email": emailController.text.toLowerCase(),
           "password": passController.text,
+          "directory_business_type_id": businessTypeId,
           "phone": '$phoneCode${numberController.text}',
           "aphra_registration_number": ahpraRegistrationNumber.text,
           "abn_number": abnNumber.text,

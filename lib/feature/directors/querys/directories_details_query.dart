@@ -1,26 +1,29 @@
 const String directories_Details_Query = r'''
-query getDirectory($id: uuid!) {
+query getDirectory($id: uuid!, $member_id: uuid!) {
   directories_by_pk(id: $id) {
     id
     description
     name
     email
+    business_email
     phone
     address
+    website
     alt_phone
+    mobile_number
     hobbies
     university_school
     abn_acn
+    status
     company_name
-    business_email
-    mobile_number
     profession
+    membership_link
+    partnership_link
+    business_name
     type
     education
     profession_type
     designation
-    phone_visibility
-    email_visibility
     working_at
     banner_image
     logo
@@ -30,6 +33,37 @@ query getDirectory($id: uuid!) {
     dental_practice_id
     dental_professional_id
     dental_supplier_id
+    email_visibility
+    phone_visibility
+    dental_supplier {
+      first_name
+      last_name
+      community_status
+      community_id
+      community_members(where: {member_id: {_eq: $member_id}}, limit: 1) {
+        status
+        __typename
+      }
+      partnership_members(
+        where: {member_id: {_eq: $member_id}}
+        limit: 1
+        order_by: {created_at: desc}
+      ) {
+        status
+        __typename
+      }
+      __typename
+    }
+    dental_practice {
+      first_name
+      last_name
+      __typename
+    }
+    dental_professional {
+      first_name
+      last_name
+      __typename
+    }
     directory_documents {
       name
       attachment
@@ -113,6 +147,19 @@ query getDirectory($id: uuid!) {
       answer
       __typename
     }
+    __typename
+  }
+  loggedInSupplier: dental_suppliers(where: {id: {_eq: $member_id}}, limit: 1) {
+    name
+    business_name
+    __typename
+  }
+  loggedInProfessional: dental_professionals(
+    where: {id: {_eq: $member_id}}
+    limit: 1
+  ) {
+    first_name
+    last_name
     __typename
   }
 }
