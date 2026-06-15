@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
+import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
@@ -11,6 +12,7 @@ import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
+import 'package:di360_flutter/feature/news_feed_community/view/feature_buttons_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
@@ -34,7 +36,7 @@ class NewsFeedCommunityView extends StatefulWidget {
 }
 
 class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
-    with ValidationMixins {
+    with ValidationMixins , BaseContextHelpers {
   String selectedFilter = 'all';
   final ScrollController _scrollController = ScrollController();
 
@@ -44,14 +46,11 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       await viewModel.getAllNewsFeeds(context);
       final communityVM =
           Provider.of<CommunityViewModel>(context, listen: false);
-      final newsFeedVM =
-          Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       await communityVM.getNewsFeedCategories(context, type: "Community");
     });
   }
@@ -220,6 +219,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                       });
                     },
                   ),
+                  FeatureButtonsWidget(),
+                  addVertical(10),
                   if (viewModel.searchBarOpen)
                     SearchWidget(
                       controller: viewModel.searchController,
@@ -251,7 +252,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                   padding: EdgeInsets.all(16),
                                   child: Center(
                                       child: CircularProgressIndicator(
-                                    color: AppColors.primaryColor,
+                                    color: AppColors.primaryColor
                                   )),
                                 );
                               }
@@ -443,11 +444,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                         )
                       : Expanded(
                           child: Center(
-                            child: Text(
-                              "No Data",
-                              style: TextStyles.medium3(
-                                  color: AppColors.black, fontSize: 16),
-                            ),
+                            child: Text("No Data",
+                                style: TextStyles.medium3(
+                                    color: AppColors.black, fontSize: 16)),
                           ),
                         ),
                 ],
@@ -492,30 +491,24 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
               ),
               child: Row(
                 children: [
-                  Text(
-                    status,
-                    style: TextStyles.regular2(
-                      color:
-                          isSelected ? AppColors.whiteColor : AppColors.black,
-                    ),
-                  ),
+                  Text(status,
+                      style: TextStyles.regular2(
+                          color: isSelected
+                              ? AppColors.whiteColor
+                              : AppColors.black)),
                   SizedBox(width: 6),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.whiteColor
-                          : AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      "${courseListingVM.statusCountMap[status]}",
-                      style: TextStyles.regular2(
-                        color:
-                            isSelected ? AppColors.black : AppColors.whiteColor,
-                      ),
-                    ),
-                  ),
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.whiteColor
+                              : AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Text("${courseListingVM.statusCountMap[status]}",
+                          style: TextStyles.regular2(
+                              color: isSelected
+                                  ? AppColors.black
+                                  : AppColors.whiteColor))),
                 ],
               ),
             ),

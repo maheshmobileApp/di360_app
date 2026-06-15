@@ -132,4 +132,11 @@ class ConstantData {
     "Published",
     'Unpublished'
   ];
+
+  static List<String> featureStatus = [
+    'Home',
+    'Partners',
+    'Learning Hub',
+    'Catalogue'
+  ];
 }

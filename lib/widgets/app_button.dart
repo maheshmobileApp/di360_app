@@ -9,8 +9,18 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double radius;
   final Color? btnColor;
+  final Color? borderColor;
+  final Color? btnTextColor;
   const AppButton(
-      {super.key, required this.text, this.onTap, this.height, this.width, this.radius = 50,this.btnColor});
+      {super.key,
+      required this.text,
+      this.onTap,
+      this.height,
+      this.width,
+      this.radius = 50,
+      this.btnColor,
+      this.borderColor,
+      this.btnTextColor});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +31,12 @@ class AppButton extends StatelessWidget {
         width: width ?? double.infinity,
         decoration: BoxDecoration(
             color: btnColor ?? AppColors.buttonColor,
-            borderRadius: BorderRadius.circular(radius)),
+            borderRadius: BorderRadius.circular(radius),
+            border: Border.all(color: borderColor ?? AppColors.primaryColor)),
         child: Center(
             child: Text(text,
-                style: TextStyles.medium3(color: AppColors.whiteColor))),
+                style: TextStyles.medium3(
+                    color: btnTextColor ?? AppColors.whiteColor))),
       ),
     );
   }

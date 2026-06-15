@@ -205,9 +205,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final professionId =
-        await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    // final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    // final professionId =
+    //     await LocalStorage.getStringVal(LocalStorageConst.professionId);
 
     final variables = {
       "limit": _newsFeedLimit,
