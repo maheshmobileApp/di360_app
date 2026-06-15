@@ -479,7 +479,8 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
                           fit: BoxFit.contain)),
                   Divider(height: 8),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     child: Text(
                       achieve?.title ?? '',
                       maxLines: 2,
@@ -684,9 +685,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           ),
           if (vm.directorDetails?.businessEmail != null) ...[
             addVertical(8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Business Email :',
                   style: TextStyles.medium2(
                       color: AppColors.bottomNavUnSelectedColor)),
@@ -696,9 +695,7 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           ],
           if (vm.directorDetails?.mobileNumber != null) ...[
             addVertical(8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Business Phone :',
                   style: TextStyles.medium2(
                       color: AppColors.bottomNavUnSelectedColor)),
@@ -732,47 +729,40 @@ class DirectorBasicInfo extends StatelessWidget with BaseContextHelpers {
           ],
           addVertical(20),
           Row(
-            children: (vm.directorDetails?.directoryLocations ?? [])
-                    .where((e) => [
-                          'facebook',
-                          'instagram',
-                          'linkedin',
-                          'twitter'
-                        ].contains(e.mediaName?.toLowerCase()))
-                    .map((social) {
-                  String icon;
-                  switch (social.mediaName?.toLowerCase()) {
-                    case 'facebook':
-                      icon = ImageConst.facebookSvg;
-                      break;
-                    case 'instagram':
-                      icon = ImageConst.instagramSvg;
-                      break;
-                    case 'linkedin':
-                      icon = ImageConst.linkedinSvg;
-                      break;
-                    case 'twitter':
-                      icon = ImageConst.twitterSvg;
-                      break;
-                    default:
-                      icon = ImageConst.facebookSvg;
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: InkWell(
-                        onTap: () async {
-                          final url = social.mediaLink ?? '';
-                          if (url.isNotEmpty &&
-                              await canLaunchUrl(Uri.parse(url))) {
-                            await launchUrl(Uri.parse(url),
-                                mode: LaunchMode.externalApplication);
-                          }
-                        },
-                        child: Image.asset(icon, height: 25)),
-                  );
-                }).toList() ??
-                [],
-          ),
+              children: (vm.directorDetails?.directoryLocations ?? [])
+                  .where((e) => ['facebook', 'instagram', 'linkedin', 'twitter']
+                      .contains(e.mediaName?.toLowerCase()))
+                  .map((social) {
+            String icon;
+            switch (social.mediaName?.toLowerCase()) {
+              case 'facebook':
+                icon = ImageConst.facebookSvg;
+                break;
+              case 'instagram':
+                icon = ImageConst.instagramSvg;
+                break;
+              case 'linkedin':
+                icon = ImageConst.linkedinSvg;
+                break;
+              case 'twitter':
+                icon = ImageConst.twitterSvg;
+                break;
+              default:
+                icon = ImageConst.facebookSvg;
+            }
+            return Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: InkWell(
+                  onTap: () async {
+                    final url = social.mediaLink ?? '';
+                    if (url.isNotEmpty && await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url),
+                          mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  child: Image.asset(icon, height: 25)),
+            );
+          }).toList()),
           const SizedBox(height: 20),
           InkWell(
               onTap: () => openLocationInMaps(
