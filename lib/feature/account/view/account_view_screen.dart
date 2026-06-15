@@ -18,7 +18,6 @@ import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile
 import 'package:di360_flutter/feature/learning_hub/view_model/course_listing_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
-import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/talent_enquiries/view_model/talent_enquiry_view_model.dart';
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -331,9 +330,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                             final viewModel = Provider.of<CommunityViewModel>(
                                 context,
                                 listen: false);
-                            final newsFeedVM =
-                                Provider.of<NewsFeedCommunityViewModel>(context,
-                                    listen: false);
+                            // final newsFeedVM =
+                            //     Provider.of<NewsFeedCommunityViewModel>(context,
+                            //         listen: false);
                             await viewModel.getNewsFeedCategories(context);
                             /*newsFeedVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;

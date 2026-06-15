@@ -52,9 +52,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       padding: const EdgeInsets.all(8.0),
       child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: AppColors.whiteColor,
-          ),
+              borderRadius: BorderRadius.circular(12),
+              color: AppColors.whiteColor),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

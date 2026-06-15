@@ -90,7 +90,9 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
     type == UserRole.professional.value
         ? await navigationService
             .navigateTo(RouteList.professionalViewProfileScreen)
-        : await navigationService.navigateTo(RouteList.viewProfileScreen);
+        : type == UserRole.admin.value
+            ? navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard)
+            : await navigationService.navigateTo(RouteList.viewProfileScreen);
   }
 
   directorNavigationHandle(BuildContext context) async {

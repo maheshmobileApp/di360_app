@@ -98,11 +98,14 @@ class LoginViewModel extends ChangeNotifier {
           await LocalStorage.setStringVal(
               LocalStorageConst.token, loginData?.accessToken ?? '');
 
-          // Navigate instantly
-          if (loginData?.profileCompleted == true) {
-            homeNavigation(context);
+          if (loginData?.type == UserRole.admin.name) {
+            if (loginData?.profileCompleted == true) {
+              homeNavigation(context);
+            } else {
+              viewProfileHandle(context);
+            }
           } else {
-            viewProfileHandle(context);
+            homeNavigation(context);
           }
 
           // Background tasks (parallel)

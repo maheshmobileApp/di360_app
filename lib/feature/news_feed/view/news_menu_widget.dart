@@ -6,7 +6,9 @@ import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/admin_news_feed_enum.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +33,10 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final needFeedViewModel = Provider.of<NewsFeedViewModel>(context, listen:false);
+    final newsFeedViewModel =
+        Provider.of<NewsFeedViewModel>(context, listen: false);
     final addNeedFeedViewModel = Provider.of<AddNewsFeedViewModel>(context);
-    final currentUserId = needFeedViewModel.userID;
+    final currentUserId = newsFeedViewModel.userID;
 
     final isSameUser = widget.newsfeeds?.userId == currentUserId ||
         widget.newsfeeds?.dentalPracticeId == currentUserId ||
@@ -53,26 +56,28 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
           showAlertMessage(
               context, 'Are you really want to delete this NewsFeed ?',
               onBack: () {
-            needFeedViewModel.deleteTheNewsFeed(context, widget.newsfeeds?.id ?? '');
+            newsFeedViewModel.deleteTheNewsFeed(
+                context, widget.newsfeeds?.id ?? '');
             navigationService.goBack();
           });
         } else if (value == 'report') {
           showReportBottomSheet(context, () {
             navigationService.goBack();
-            needFeedViewModel.reportNewsFeed(context, widget.newsfeeds?.id ?? '');
+            newsFeedViewModel.reportNewsFeed(
+                context, widget.newsfeeds?.id ?? '');
           });
         } else if (value == 'hide') {
           showUserBlockPopup(context, 'Are you sure Hide this user?',
               confirmAction: () {
             navigationService.goBack();
-            needFeedViewModel.HideUser(context, widget.newsfeeds?.id ?? '',
+            newsFeedViewModel.HideUser(context, widget.newsfeeds?.id ?? '',
                 widget.newsfeeds?.feedType ?? '', widget.newsfeeds?.id ?? '');
           });
         } else if (value == 'block') {
           showUserBlockPopup(context, 'Are you sure Block this profile?',
               confirmAction: () {
             navigationService.goBack();
-            needFeedViewModel.blockProfile(
+            newsFeedViewModel.blockProfile(
                 context,
                 widget.newsfeeds?.dentalProfessional?.id ??
                     widget.newsfeeds?.dentalSupplier?.id ??
@@ -85,10 +90,58 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
           final mediaList = widget.newsfeeds?.postImage ?? [];
 
           downloadAllFiles(context, mediaList);
+        } else if (value == 'publish' ||
+            value == 'unpublish' ||
+            value == 'approve') {
+          newsFeedViewModel.publishUnPublishNewsFeeds(
+              context,
+              widget.newsfeeds?.id ?? '',
+              newsFeedViewModel.listingStatus ==
+                      AdminNewsFeedStatus.published.value
+                  ? AdminNewsFeedStatus.unPublished.value
+                  : AdminNewsFeedStatus.published.value);
+        } else if (value == 'reject') {
+          newsFeedViewModel.publishUnPublishNewsFeeds(
+              context,
+              widget.newsfeeds?.id ?? '',
+              AdminNewsFeedStatus.unPublished.value);
         }
       },
       itemBuilder: (context) => [
-        if (isSameUser && widget.newsfeeds?.communityType == "BOTH") ...[
+        if (newsFeedViewModel.userType == UserRole.admin.value &&
+            newsFeedViewModel.selectedStatus ==
+                AdminNewsFeedStatus.pendingStatus.value)
+          PopupMenuItem(
+              value: "approve",
+              child: buildRow(
+                  Icons.arrow_circle_right, AppColors.greenColor, "Approve")),
+        if (newsFeedViewModel.userType == UserRole.admin.value &&
+            newsFeedViewModel.selectedStatus ==
+                AdminNewsFeedStatus.pendingStatus.value)
+          PopupMenuItem(
+              value: "reject",
+              child: buildRow(Icons.delete, AppColors.redColor, "Reject")),
+        if (newsFeedViewModel.userType == UserRole.admin.value &&
+            newsFeedViewModel.selectedStatus ==
+                AdminNewsFeedStatus.unpublishedStatus.value)
+          PopupMenuItem(
+              value: "publish",
+              child:
+                  buildRow(Icons.arrow_upward, AppColors.blueColor, "Publish")),
+        if (newsFeedViewModel.userType == UserRole.admin.value &&
+            newsFeedViewModel.selectedStatus ==
+                AdminNewsFeedStatus.publishedStatus.value)
+          PopupMenuItem(
+              value: "unpublish",
+              child: buildRow(
+                  Icons.unpublished, AppColors.quizWrongBg, "Unpublish")),
+        if (newsFeedViewModel.userType == UserRole.admin.value &&
+            newsFeedViewModel.selectedStatus ==
+                AdminNewsFeedStatus.publishedStatus.value)
+          PopupMenuItem(
+              value: "delete",
+              child: buildRow(Icons.delete, AppColors.redColor, "Delete")),
+        if (isSameUser) ...[
           PopupMenuItem(
               value: "edit",
               child: buildRow(Icons.edit, AppColors.blueColor, "Edit")),
@@ -98,21 +151,21 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
         ],
         if (!isSameUser) ...[
           PopupMenuItem(
+              value: "hide",
+              child:
+                  buildRow(Icons.hide_source, AppColors.redColor, "Hide Post")),
+          PopupMenuItem(
               value: "report",
               child: buildRow(
                   Icons.report, AppColors.primaryColor, "Report Post")),
           PopupMenuItem(
               value: "block",
-              child:
-                  buildRow(Icons.block, AppColors.redColor, "Block Profile")),
-          PopupMenuItem(
-              value: "hide",
-              child:
-                  buildRow(Icons.hide_source, AppColors.redColor, "Hide Post")),
+              child: buildRow(Icons.block, AppColors.redColor, "Block Profile"))
         ],
         if (widget.newsfeeds?.postImage != null &&
             widget.newsfeeds?.postImage?.isNotEmpty == true &&
-            !isSameUser)
+            !isSameUser &&
+            newsFeedViewModel.userType != UserRole.admin.value)
           PopupMenuItem(
               value: "Save Media",
               child: buildRow(Icons.save, AppColors.greenColor, "Save Media"))
