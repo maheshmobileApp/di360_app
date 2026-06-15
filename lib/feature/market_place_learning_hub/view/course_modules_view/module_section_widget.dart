@@ -1,11 +1,15 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/attachment_view_widget.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/gallery_img_widget.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/course_details_response.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/feature/my_learning_hub/view_model/my_learning_hub_view_model.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/youtube_palyer.dart';
@@ -115,7 +119,17 @@ class ModuleSectionWidget extends StatelessWidget with BaseContextHelpers {
               width: 230,
               btnColor: isCompleted ? Colors.green : null,
               onTap: isCompleted
-                  ? null
+                  ? () {
+                      showCourseCompletedDialog(context, () async {
+                        await context
+                            .read<MyLearningHubViewModel>()
+                            .getCoursesWithMyRegistrations(context);
+                        navigationService
+                            .pushNamedAndRemoveUntil(RouteList.dashBoard);
+                        navigationService
+                            .navigateTo(RouteList.myLearningHubScreen);
+                      });
+                    }
                   : () {
                       vm.completeAndContinue(context);
                       scrollController.animateTo(0,
