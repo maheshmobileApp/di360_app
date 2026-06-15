@@ -7,7 +7,9 @@ import 'package:di360_flutter/services/download_notification_service.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
   final MyLearningHubRepoImpl repo = MyLearningHubRepoImpl();
@@ -77,8 +79,10 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     final variables = {
       "first_name": course.courseRegisteredUsers?.first.firstName ?? "",
       "last_name": course.courseRegisteredUsers?.first.lastName ?? "",
-      "presenters":
-          course.presenters?.map((e) => e.presentedByName as String).toList(),
+      "presenters": course.presenters
+              ?.map((e) => e.presentedByName ?? "")
+              .toList() ??
+          [],
       "course_name": course.courseName,
       "logo": course.dentalSupplier?.logo?.url ?? "",
       "company_name": course.companyName,
@@ -89,21 +93,48 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       "completed_date": course.courseRegisteredUsers?.first.completedDate ?? ""
     };
     final res = await repo.certificateDownload(variables);
-    Loaders.circularHideLoader(context);
-    if (res != null && res is List<int>) {
-      final certificateName = "${course.courseName}_certificate.pdf";
-      final dir = await _getDownloadDir();
-      final file = File('${dir.path}/${certificateName}');
-      await file.writeAsBytes(res);
-      await DownloadNotificationService.showDownloadNotification(
-        fileName: certificateName,
-        filePath: file.path,
-      );
 
-      scaffoldMessenger(
-          "✅ Certificate Downloaded\n📁 Downloads > DentalInterface360 > Certificates");
+    if (!context.mounted) return;
+    Loaders.circularHideLoader(context);
+
+    if (res != null && res is List<int>) {
+      final certificateName =
+          "${course.courseName ?? 'certificate'}_certificate.pdf"
+              .replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
+      final file = await _saveFile(certificateName, res);
+      if (file == null) {
+        scaffoldMessenger("Failed to save certificate");
+        return;
+      }
+
+      if (Platform.isIOS) {
+        // iOS: share/open via system share sheet — no public Downloads folder
+        await Share.shareXFiles(
+          [XFile(file.path, mimeType: 'application/pdf')],
+          subject: certificateName,
+        );
+      } else {
+        // Android: save to Downloads and show notification
+        await DownloadNotificationService.showDownloadNotification(
+          fileName: certificateName,
+          filePath: file.path,
+        );
+        scaffoldMessenger(
+            "✅ Certificate Downloaded\n📁 Downloads > DentalInterface360 > Certificates");
+      }
     } else {
-      print("Certificate download failed or invalid response");
+      scaffoldMessenger("Certificate download failed. Please try again.");
+    }
+  }
+
+  Future<File?> _saveFile(String fileName, List<int> bytes) async {
+    try {
+      final dir = await _getDownloadDir();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(bytes);
+      return file;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -119,7 +150,8 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
         } catch (_) {
           final base = await getExternalStorageDirectory() ??
               await getApplicationDocumentsDirectory();
-          final dir = Directory('${base.path}/DentalInterface360/Certificates');
+          final dir =
+              Directory('${base.path}/DentalInterface360/Certificates');
           if (!await dir.exists()) await dir.create(recursive: true);
           return dir;
         }
@@ -131,7 +163,9 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
         return dir;
       }
     } else {
-      return await getApplicationDocumentsDirectory();
+      // iOS: use temp directory for sharing — not visible to user directly
+      final dir = await getTemporaryDirectory();
+      return dir;
     }
   }
 }
