@@ -25,6 +25,15 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
   void initState() {
     super.initState();
     _loadUserType();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final scrollLabel =
+          ModalRoute.of(context)?.settings.arguments as String?;
+      if (scrollLabel != null) {
+        await Future.delayed(const Duration(milliseconds: 400));
+        Provider.of<DirectoryViewModel>(context, listen: false)
+            .scrollToSectionByLabel(scrollLabel);
+      }
+    });
   }
 
   _loadUserType() async {

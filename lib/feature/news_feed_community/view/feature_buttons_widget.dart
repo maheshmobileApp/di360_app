@@ -37,12 +37,14 @@ class FeatureButtonsWidget extends StatelessWidget {
                     await directoryVM.GetDirectorDetails(
                         communityMemberDirectorId ?? '');
                     Loaders.circularHideLoader(context);
-                    await navigationService
-                        .navigateTo(RouteList.directoryDetailsScreen);
-                    if (index == 1)
-                      directoryVM.scrollToSectionByLabel('Partner');
-                    if (index == 2)
-                      directoryVM.scrollToSectionByLabel('Contact Us');
+                    final scrollTo = index == 1
+                        ? 'Partner'
+                        : index == 2
+                            ? 'Contact Us'
+                            : null;
+                    await navigationService.navigateToWithParams(
+                        RouteList.directoryDetailsScreen,
+                        params: scrollTo);
                   } else if (index == 3) {
                   } else if (index == 4) {}
                 }),

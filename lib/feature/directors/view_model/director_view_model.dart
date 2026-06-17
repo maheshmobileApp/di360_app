@@ -166,7 +166,7 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  final Map<String, GlobalKey> sectionKeys = {
+  Map<String, GlobalKey> sectionKeys = {
     'Basic Info': GlobalKey(),
     'Services': GlobalKey(),
     'Team': GlobalKey(),
@@ -575,6 +575,20 @@ class DirectoryViewModel extends ChangeNotifier {
   Future<void> GetDirectorDetails(String id) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {"id": id, "member_id": userId};
+    sectionKeys = {
+      'Basic Info': GlobalKey(),
+      'Services': GlobalKey(),
+      'Team': GlobalKey(),
+      'Partner': GlobalKey(),
+      'Gallery': GlobalKey(),
+      'Document': GlobalKey(),
+      'Achievements': GlobalKey(),
+      'Certifications': GlobalKey(),
+      'Book Appointment': GlobalKey(),
+      'Testimonials': GlobalKey(),
+      'FAQ': GlobalKey(),
+      'Contact Us': GlobalKey(),
+    };
     final res = await repository.directoriesDetailsQuery(variables);
     if (res != null) {
       directorDetails = res;
