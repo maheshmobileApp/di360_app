@@ -45,7 +45,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       await viewModel.setCommunityStatus();

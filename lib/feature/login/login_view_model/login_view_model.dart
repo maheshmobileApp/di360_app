@@ -161,11 +161,16 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   homeNavigation(BuildContext context) async {
-    navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     await LocalStorage.setBoolValue(LocalStorageConst.directoryComplete, true);
-    Future.microtask(() => DeepLinkService.consumePendingLink());
+    navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+
+    if (DeepLinkService.hasPendingLink) {
+      print('LoginViewModel: pending deep link found after login, consuming');
+      await DeepLinkService.consumePendingLink();
+      return;
+    }
   }
 
   viewProfileHandle(BuildContext context) async {
@@ -276,7 +281,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
           LocalStorageConst.businessName, supplier?.businessName ?? "");
-    } else {     
+    } else {
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'false');
       await LocalStorage.setStringVal(
