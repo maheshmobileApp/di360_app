@@ -45,14 +45,18 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      await viewModel.getAllNewsFeeds(context);
-      final communityVM =
-          Provider.of<CommunityViewModel>(context, listen: false);
-      final newsFeedVM =
-          Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      await communityVM.getNewsFeedCategories(context, type: "Community");
+      await viewModel.setCommunityStatus();
+      if (viewModel.communityStatus) {
+        await viewModel.getAllNewsFeeds(context);
+        final communityVM =
+            Provider.of<CommunityViewModel>(context, listen: false);
+        final newsFeedVM =
+            Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
+        await communityVM.getNewsFeedCategories(context, type: "Community");
+      }
     });
   }
 
@@ -191,138 +195,158 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                   ],
                 ),
               ),
-              body: Column(
-                children: [
-                  CommunityHeaderCard(
-                    imageUrl: (viewModel.bannerData?.directories != null &&
-                            viewModel.bannerData!.directories!.isNotEmpty)
-                        ? (viewModel.bannerData!.directories!.first.bannerImage
-                                ?.url ??
-                            "")
-                        : "",
-                    title: type == UserRole.professional.value
-                        ? "${viewModel.profCommunityName} Community"
-                        : "${businessname}Community",
-                    leaveButton: type == UserRole.professional.value,
-                    onLeaveTap: () async {
-                      showAlertMessage(context,
-                          'Are you sure you want to leave this Community?',
-                          onBack: () async {
-                        Loaders.circularShowLoader(context);
+              body: (viewModel.communityStatus)
+                  ? Column(
+                      children: [
+                        CommunityHeaderCard(
+                          imageUrl: (viewModel.bannerData?.directories !=
+                                      null &&
+                                  viewModel.bannerData!.directories!.isNotEmpty)
+                              ? (viewModel.bannerData!.directories!.first
+                                      .bannerImage?.url ??
+                                  "")
+                              : "",
+                          title: type == UserRole.professional.value
+                              ? "${viewModel.profCommunityName} Community"
+                              : "${businessname}Community",
+                          leaveButton: type == UserRole.professional.value,
+                          onLeaveTap: () async {
+                            showAlertMessage(context,
+                                'Are you sure you want to leave this Community?',
+                                onBack: () async {
+                              Loaders.circularShowLoader(context);
 
-                        await viewModel.leaveCommunity(context);
-                        await communityVM.getJoinedCommunityMembersRes(context);
-                        Loaders.circularHideLoader(context);
+                              await viewModel.leaveCommunity(context);
+                              await communityVM
+                                  .getJoinedCommunityMembersRes(context);
+                              Loaders.circularHideLoader(context);
 
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        dashboardVM.setIndex(3, context);
-                      });
-                    },
-                  ),
-                  if (viewModel.searchBarOpen)
-                    SearchWidget(
-                      controller: viewModel.searchController,
-                      hintText: "Search News Feed...",
-                      onClear: () {
-                        viewModel.searchController.clear();
-                        viewModel.getAllNewsFeeds(context);
-                      },
-                      onSearch: () {
-                        viewModel.getAllNewsFeeds(context);
-                      },
-                    ),
-                  (type == UserRole.professional.value)
-                      ? SizedBox.shrink()
-                      : communityStatusWidget(viewModel),
-                  (joinRequests?.length != 0 && joinRequests != null)
-                      ? Expanded(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            padding: EdgeInsets.all(10),
-                            itemCount: joinRequests.length +
-                                (viewModel.hasMoreNewsFeeds &&
-                                        viewModel.isLoadingMore
-                                    ? 1
-                                    : 0),
-                            itemBuilder: (context, index) {
-                              if (index == joinRequests.length) {
-                                return const Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Center(
-                                      child: CircularProgressIndicator(
-                                    color: AppColors.primaryColor,
-                                  )),
-                                );
-                              }
-                              final newsItem = joinRequests[index];
-                              return NewsFeedCommunityCard(
-                                  index: index,
-                                  newsfeeds: newsItem,
-                                  course: newsItem.courses ?? [],
-                                  feedType: newsItem.feedType ?? "",
-                                  createdAt: newsItem.createdAt ?? "",
-                                  feedUserRole: newsItem.userRole ?? "",
-                                  imageUrls:
-                                      newsItem.imageUrl ?? newsItem.postImage,
-                                  id: newsItem.id ?? '',
-                                  logoUrl: (newsItem.userRole ==
-                                          UserRole.professional.value)
-                                      ? newsItem.dentalProfessional
-                                              ?.profileImage?.url ??
-                                          ''
-                                      : newsItem.dentalSupplier?.logo?.url ??
-                                          "",
-                                  companyName: (newsItem.userRole ==
-                                          UserRole.professional.value)
-                                      ? newsItem.dentalProfessional?.name ?? ''
-                                      : newsItem.dentalSupplier?.businessName ??
-                                          "",
-                                  courseTitle: newsItem.description ?? '',
-                                  status: newsItem.status ?? '',
-                                  description: newsItem.description ?? '',
-                                  types: [],
-                                  registeredCount: 0,
-                                  chipTitle: newsItem.categoryType ?? '',
-                                  comments:
-                                      newsItem.newsFeedsComments?.length ?? 0,
-                                  likes: newsItem.newsfeedsLikesAggregate
-                                          ?.aggregate?.count ??
-                                      0,
-                                  isLiked: newsItem.myLike?.isNotEmpty ?? false,
-                                  onCommentTap: () {
-                                    navigationService.push(
-                                        CommunityCommentScreen(
-                                            newsfeeds: newsItem));
-                                  },
-                                  onLikeTap: () {
-                                    (newsItem.myLike?.isNotEmpty ?? false)
-                                        ? viewModel.communityUnLike(context,
-                                            newsItem.myLike?.first.id ?? '')
-                                        : viewModel.communityLike(
-                                            context, newsItem.id ?? '');
-                                  },
-                                  onDetailView: () async {
-                                    final feedTypeEnum =
-                                        FeedType.fromString(newsItem.feedType);
-                                    switch (feedTypeEnum) {
-                                      case FeedType.learnhub:
-                                        await courseListingVM.getCourseDetails(
-                                          context,
-                                          newsItem.payloadId ?? "",
-                                        );
-                                        navigationService.navigateTo(
-                                            RouteList.courseDetailScreen);
-                                        break;
-                                      case FeedType.jobs:
-                                        await newsFeedVM.getJobDetailsByIds(
-                                            context, newsItem.payloadId ?? "");
-                                        break;
-                                      default:
-                                        // Handle default case or other feed types if necessary
-                                        break;
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              dashboardVM.setIndex(3, context);
+                            });
+                          },
+                        ),
+                        if (viewModel.searchBarOpen)
+                          SearchWidget(
+                            controller: viewModel.searchController,
+                            hintText: "Search News Feed...",
+                            onClear: () {
+                              viewModel.searchController.clear();
+                              viewModel.getAllNewsFeeds(context);
+                            },
+                            onSearch: () {
+                              viewModel.getAllNewsFeeds(context);
+                            },
+                          ),
+                        (type == UserRole.professional.value)
+                            ? SizedBox.shrink()
+                            : communityStatusWidget(viewModel),
+                        (joinRequests?.length != 0 && joinRequests != null)
+                            ? Expanded(
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  padding: EdgeInsets.all(10),
+                                  itemCount: joinRequests.length +
+                                      (viewModel.hasMoreNewsFeeds &&
+                                              viewModel.isLoadingMore
+                                          ? 1
+                                          : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index == joinRequests.length) {
+                                      return const Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Center(
+                                            child: CircularProgressIndicator(
+                                          color: AppColors.primaryColor,
+                                        )),
+                                      );
                                     }
-                                    /*if (newsItem.feedType == "LEARNHUB") {
+                                    final newsItem = joinRequests[index];
+                                    return NewsFeedCommunityCard(
+                                        index: index,
+                                        newsfeeds: newsItem,
+                                        course: newsItem.courses ?? [],
+                                        feedType: newsItem.feedType ?? "",
+                                        createdAt: newsItem.createdAt ?? "",
+                                        feedUserRole: newsItem.userRole ?? "",
+                                        imageUrls:
+                                            newsItem
+                                                    .imageUrl ??
+                                                newsItem.postImage,
+                                        id: newsItem.id ?? '',
+                                        logoUrl:
+                                            (newsItem
+                                                        .userRole ==
+                                                    UserRole.professional.value)
+                                                ? newsItem.dentalProfessional
+                                                        ?.profileImage?.url ??
+                                                    ''
+                                                : newsItem.dentalSupplier?.logo
+                                                        ?.url ??
+                                                    "",
+                                        companyName:
+                                            (newsItem
+                                                        .userRole ==
+                                                    UserRole.professional.value)
+                                                ? newsItem.dentalProfessional
+                                                        ?.name ??
+                                                    ''
+                                                : newsItem.dentalSupplier
+                                                        ?.businessName ??
+                                                    "",
+                                        courseTitle: newsItem.description ?? '',
+                                        status: newsItem.status ?? '',
+                                        description: newsItem.description ?? '',
+                                        types: [],
+                                        registeredCount: 0,
+                                        chipTitle: newsItem.categoryType ?? '',
+                                        comments: newsItem
+                                                .newsFeedsComments?.length ??
+                                            0,
+                                        likes: newsItem.newsfeedsLikesAggregate
+                                                ?.aggregate?.count ??
+                                            0,
+                                        isLiked: newsItem.myLike?.isNotEmpty ??
+                                            false,
+                                        onCommentTap: () {
+                                          navigationService.push(
+                                              CommunityCommentScreen(
+                                                  newsfeeds: newsItem));
+                                        },
+                                        onLikeTap: () {
+                                          (newsItem.myLike?.isNotEmpty ?? false)
+                                              ? viewModel.communityUnLike(
+                                                  context,
+                                                  newsItem.myLike?.first.id ??
+                                                      '')
+                                              : viewModel.communityLike(
+                                                  context, newsItem.id ?? '');
+                                        },
+                                        onDetailView: () async {
+                                          final feedTypeEnum =
+                                              FeedType.fromString(
+                                                  newsItem.feedType);
+                                          switch (feedTypeEnum) {
+                                            case FeedType.learnhub:
+                                              await courseListingVM
+                                                  .getCourseDetails(
+                                                context,
+                                                newsItem.payloadId ?? "",
+                                              );
+                                              navigationService.navigateTo(
+                                                  RouteList.courseDetailScreen);
+                                              break;
+                                            case FeedType.jobs:
+                                              await newsFeedVM
+                                                  .getJobDetailsByIds(context,
+                                                      newsItem.payloadId ?? "");
+                                              break;
+                                            default:
+                                              // Handle default case or other feed types if necessary
+                                              break;
+                                          }
+                                          /*if (newsItem.feedType == "LEARNHUB") {
                                       await courseListingVM.getCourseDetails(
                                         context,
                                         newsItem.courses?.first.id ?? "",
@@ -337,130 +361,154 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         params: jobListingsViewModel.jobListingData?.first??Jobs(),
                                       );
                                     }*/
-                                  },
-                                  onMenuAction: (action, id) async {
-                                    switch (action) {
-                                      case "Publish":
-                                        viewModel.updateNewsFeedStatus(
-                                          context,
-                                          newsItem.id ?? '',
-                                          "PUBLISHED",
-                                        );
+                                        },
+                                        onMenuAction: (action, id) async {
+                                          switch (action) {
+                                            case "Publish":
+                                              viewModel.updateNewsFeedStatus(
+                                                context,
+                                                newsItem.id ?? '',
+                                                "PUBLISHED",
+                                              );
 
-                                        break;
-                                      case "Unpublish":
-                                        viewModel.updateNewsFeedStatus(
-                                          context,
-                                          newsItem.id ?? '',
-                                          "UNPUBLISHED",
-                                        );
+                                              break;
+                                            case "Unpublish":
+                                              viewModel.updateNewsFeedStatus(
+                                                context,
+                                                newsItem.id ?? '',
+                                                "UNPUBLISHED",
+                                              );
 
-                                        break;
-                                      case "Edit":
-                                        viewModel.setEditNewsFeed(true);
-                                        viewModel.setEditNewsFeedId(
-                                            newsItem.id ?? "");
-                                        viewModel.descriptionController.text =
-                                            htmlParser
-                                                    .parse(newsItem.description)
-                                                    .body
-                                                    ?.text ??
-                                                '';
-                                        viewModel.videoLinkController.text =
-                                            newsItem.videoUrl ?? "";
-                                        viewModel.websiteLinkController.text =
-                                            newsItem.webUrl ?? "";
-                                        await viewModel
-                                            .fetchAddNewsfeedCommunityCategories();
-                                        viewModel.editSelectCategoryAssigned(
-                                            newsItem.categoryType ?? '');
+                                              break;
+                                            case "Edit":
+                                              viewModel.setEditNewsFeed(true);
+                                              viewModel.setEditNewsFeedId(
+                                                  newsItem.id ?? "");
+                                              viewModel.descriptionController
+                                                  .text = htmlParser
+                                                      .parse(
+                                                          newsItem.description)
+                                                      .body
+                                                      ?.text ??
+                                                  '';
+                                              viewModel.videoLinkController
+                                                      .text =
+                                                  newsItem.videoUrl ?? "";
+                                              viewModel.websiteLinkController
+                                                  .text = newsItem.webUrl ?? "";
+                                              await viewModel
+                                                  .fetchAddNewsfeedCommunityCategories();
+                                              viewModel
+                                                  .editSelectCategoryAssigned(
+                                                      newsItem.categoryType ??
+                                                          '');
 
-                                        /*viewModel.setSelectedCourseCategoryName(
+                                              /*viewModel.setSelectedCourseCategoryName(
                                             newsItem.categoryType ?? "");*/
 
-                                        /*viewModel.newsFeedCategory = communityVM
+                                              /*viewModel.newsFeedCategory = communityVM
                                                 .newsFeedCategoriesData
                                                 ?.newsfeedCategories
                                                 ?.map(
                                                     (e) => e.categoryName ?? "")
                                                 .toList() ??
                                             [];*/
-                                        viewModel.serverNewsFeedGallery =
-                                            (newsItem.postImage ?? [])
-                                                .map((item) => item.url ?? "")
-                                                .where((url) => url.isNotEmpty)
-                                                .toList();
-                                        viewModel.existingImages =
-                                            newsItem.postImage ?? [];
-                                        navigationService.navigateTo(
-                                            RouteList.addNewsFeedCommunityView);
+                                              viewModel.serverNewsFeedGallery =
+                                                  (newsItem.postImage ?? [])
+                                                      .map((item) =>
+                                                          item.url ?? "")
+                                                      .where((url) =>
+                                                          url.isNotEmpty)
+                                                      .toList();
+                                              viewModel.existingImages =
+                                                  newsItem.postImage ?? [];
+                                              navigationService.navigateTo(
+                                                  RouteList
+                                                      .addNewsFeedCommunityView);
 
-                                        break;
-                                      case "Delete":
-                                        showAlertMessage(context,
-                                            'Are you sure you want to delete this news feed post?',
-                                            onBack: () async {
-                                          await viewModel
-                                              .deleteNewsFeedCommunity(
-                                                  context, newsItem.id ?? "");
-                                          navigationService.goBack();
+                                              break;
+                                            case "Delete":
+                                              showAlertMessage(context,
+                                                  'Are you sure you want to delete this news feed post?',
+                                                  onBack: () async {
+                                                await viewModel
+                                                    .deleteNewsFeedCommunity(
+                                                        context,
+                                                        newsItem.id ?? "");
+                                                navigationService.goBack();
+                                              });
+
+                                              break;
+                                            case "Save Media":
+                                              final mediaList =
+                                                  newsItem.postImage ?? [];
+                                              downloadAllFiles(
+                                                  context, mediaList);
+
+                                              break;
+                                            case "Hide Post":
+                                              await viewModel
+                                                  .newsFeedCommunityAction(
+                                                      context,
+                                                      newsItem.id ?? "",
+                                                      "HIDE");
+                                              showReportSuccessPopup(context);
+                                              break;
+                                            case "Report Post":
+                                              showReportBottomSheet(context,
+                                                  () {
+                                                navigationService.goBack();
+                                                viewModel
+                                                    .newsFeedCommunityAction(
+                                                        context,
+                                                        newsItem.id ?? "",
+                                                        "REPORT");
+                                              }, newsFeedCommunityVM);
+                                              scaffoldMessenger(
+                                                  "Post Reported Successfully");
+                                              break;
+                                            case "Block Profile":
+                                              await viewModel
+                                                  .newsFeedCommunityAction(
+                                                      context,
+                                                      newsItem.id ?? "",
+                                                      "BLOCK");
+                                              showReportSuccessPopup(context);
+                                              break;
+                                          }
                                         });
-
-                                        break;
-                                      case "Save Media":
-                                        final mediaList =
-                                            newsItem.postImage ?? [];
-                                        downloadAllFiles(context, mediaList);
-
-                                        break;
-                                      case "Hide Post":
-                                        await viewModel.newsFeedCommunityAction(
-                                            context, newsItem.id ?? "", "HIDE");
-                                        showReportSuccessPopup(context);
-                                        break;
-                                      case "Report Post":
-                                        showReportBottomSheet(context, () {
-                                          navigationService.goBack();
-                                          viewModel.newsFeedCommunityAction(
-                                              context,
-                                              newsItem.id ?? "",
-                                              "REPORT");
-                                        }, newsFeedCommunityVM);
-                                        scaffoldMessenger(
-                                            "Post Reported Successfully");
-                                        break;
-                                      case "Block Profile":
-                                        await viewModel.newsFeedCommunityAction(
-                                            context,
-                                            newsItem.id ?? "",
-                                            "BLOCK");
-                                        showReportSuccessPopup(context);
-                                        break;
-                                    }
-                                  });
-                            },
-                          ),
-                        )
-                      : Expanded(
-                          child: Center(
-                            child: Text(
-                              "No Data",
-                              style: TextStyles.medium3(
-                                  color: AppColors.black, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                ],
-              ),
-              floatingActionButton: GestureDetector(
-                  onTap: () async {
-                    viewModel.setEditNewsFeed(false);
-                    viewModel.clearAddNewsFeedData();
-                    await viewModel.fetchAddNewsfeedCommunityCategories();
-                    navigationService
-                        .navigateTo(RouteList.addNewsFeedCommunityView);
-                  },
-                  child: SvgPicture.asset(ImageConst.createSupport)),
+                                  },
+                                ),
+                              )
+                            : Expanded(
+                                child: Center(
+                                  child: Text(
+                                    "No Data",
+                                    style: TextStyles.medium3(
+                                        color: AppColors.black, fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                      ],
+                    )
+                  : Center(
+                      child: Text(
+                        "No Community",
+                        style: TextStyles.medium3(
+                            color: AppColors.black, fontSize: 16),
+                      ),
+                    ),
+              floatingActionButton: (viewModel.communityStatus)
+                  ? GestureDetector(
+                      onTap: () async {
+                        viewModel.setEditNewsFeed(false);
+                        viewModel.clearAddNewsFeedData();
+                        await viewModel.fetchAddNewsfeedCommunityCategories();
+                        navigationService
+                            .navigateTo(RouteList.addNewsFeedCommunityView);
+                      },
+                      child: SvgPicture.asset(ImageConst.createSupport))
+                  : SizedBox.shrink(),
             );
           },
         );

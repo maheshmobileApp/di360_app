@@ -172,10 +172,11 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
+                        await vm.getEditJobIDData(context, jobsListingData?.id ?? "");
                         navigationService.navigateToWithParams(
                           RouteList.jobdetailsScreen,
-                          params: vm.myJobListingList[index!],
+                          params: vm.jobDataById,
                         );
                       },
                       child: Row(
@@ -331,20 +332,20 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
       padding: EdgeInsets.all(0),
-      onSelected: (value) {
+      onSelected: (value)  async{
         if (value == "Edit") {
           // vm.getCatalogueView(context, id);
           jobCreateVM.setJobEditOption(true);
           jobCreateVM.setJobId(jobsListingData?.id ?? "");
 
-          vm.getEditJobIDData(context, jobsListingData?.id ?? "");
+          await vm.getEditJobIDData(context, jobsListingData?.id ?? "");
 
           navigationService.navigateToWithParams(
             RouteList.jobCreate,
             params: {
               'isEdit': true,
               'jobId': jobsListingData?.id,
-              'loadJobData': vm.myJobListingList[index]
+              'loadJobData': vm.jobDataById
             },
           );
         } else if (value == "Active") {
@@ -354,9 +355,10 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
             navigationService.goBack();
           });
         } else if (value == "Preview") {
+          await vm.getEditJobIDData(context, jobsListingData?.id ?? "");
           navigationService.navigateToWithParams(
             RouteList.jobdetailsScreen,
-            params: vm.myJobListingList[index],
+            params: vm.jobDataById
           );
         } else if (value == "Inactive") {
           showAlertMessage(
@@ -376,7 +378,7 @@ class JobListingCard extends StatelessWidget with BaseContextHelpers {
           jobCreateVM.setJobEditOption(true);
           jobCreateVM.setJobId(jobsListingData?.id ?? "");
 
-          vm.getEditJobIDData(context, jobsListingData?.id ?? "");
+          await vm.getEditJobIDData(context, jobsListingData?.id ?? "");
 
           navigationService.navigateToWithParams(
             RouteList.jobCreate,

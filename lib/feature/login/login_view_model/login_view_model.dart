@@ -276,7 +276,7 @@ class LoginViewModel extends ChangeNotifier {
           LocalStorageConst.communityStatus, 'true');
       await LocalStorage.setStringVal(
           LocalStorageConst.businessName, supplier?.businessName ?? "");
-    } else {
+    } else {     
       await LocalStorage.setStringVal(
           LocalStorageConst.communityStatus, 'false');
       await LocalStorage.setStringVal(

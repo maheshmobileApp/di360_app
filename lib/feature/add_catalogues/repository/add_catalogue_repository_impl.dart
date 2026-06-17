@@ -29,7 +29,7 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
 
   @override
   Future<List<Catalogues>?> getMyCatalogues(
-      List<String>? catalogStatus, List<String>? status,int limit, int offset,
+      List<String>? catalogStatus, List<String>? status, int limit, int offset, String selectedStatus,
       {String? type, String? subCatagory, String? searchText}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
@@ -60,21 +60,13 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                 "name": {"_ilike": "%$subCatagory%"}
               }
             },
-          (catalogStatus ==
-                  [
-                    "APPROVED",
-                    "PENDING_APPROVAL",
-                    "EXPIRED",
-                    "SCHEDULED",
-                    "REJECTED",
-                    "DRAFT"
-                  ])
+          (selectedStatus ==
+                  "All")
               ? {
                   "_or": [
                     {
                       "status": {
-                        "_in": catalogStatus?.isEmpty == true
-                            ? [
+                        "_in":[
                                 "APPROVED",
                                 "PENDING_APPROVAL",
                                 "EXPIRED",
@@ -82,7 +74,6 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                                 "REJECTED",
                                 "DRAFT"
                               ]
-                            : catalogStatus
                       }
                     },
                     if (status?.isNotEmpty == true)
@@ -108,13 +99,13 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                           ]
                         : catalogStatus
                   }
-                },
-          if (status?.isNotEmpty == true)
+                }
+          /*if (status?.isNotEmpty == true)
             {
               "catalogue_status": {
                 "_in": status?.isEmpty == true ? ["ACTIVE", "INACTIVE"] : status
               }
-            }
+            }*/
         ]
       }
     };

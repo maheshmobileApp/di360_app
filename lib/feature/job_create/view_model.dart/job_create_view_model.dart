@@ -318,6 +318,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   getCompanyName() async {
+    if (editMode) return;
     final companyName =
         await LocalStorage.getStringVal(LocalStorageConst.businessName);
     companyNameController.text = companyName;
@@ -888,41 +889,58 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
   }
 
   Future<void> loadJobData(Jobs? jobData) async {
-    setJobStatus(jobData?.status ?? "");
-    setSaveDraft(jobData?.status != "DRAFT");
+    minSalaryController.text = jobData?.payMin?.toString() ?? "";
+    maxSalaryController.text = jobData?.payMax?.toString() ?? "";
+
+    // Basic info
+    jobStatus = jobData?.status ?? "";
+    isSaveDraft = jobData?.status != "DRAFT";
+
+    // Text controllers - Job details
     jobTitleController.text = jobData?.title ?? "";
     companyNameController.text = jobData?.companyName ?? "";
-    selectedRole = jobData?.jRole ?? "";
     jobDescController.text = jobData?.description ?? "";
     videoLinkController.text = jobData?.video ?? "";
-    countryController.text = jobData?.country ?? "";
-    serverBannerImg = jobData?.bannerImage?.url;
-    isStartDateEnabled = jobData?.startDate != null;
-    isEndDateEnabled = jobData?.closedAt != null;
-    startDateController.text =
-        di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
-            jobData?.startDate ?? "");
-    if (jobData?.closedAt != null) {
-      endDateController.text =
-          di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
-              jobData?.closedAt ?? "");
+
+    String? normalize(String? value) {
+      return value != null && value.trim().isNotEmpty ? value : null;
     }
 
-    serverClinicImgs =
-        jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
-            [];
-    selectExperience = jobData?.yearsOfExperience ?? "";
-    websiteController.text = jobData?.websiteUrl ?? "";
-    facebookController.text = jobData?.facebookUrl ?? "";
-    instgramController.text = jobData?.instagramUrl ?? "";
-    linkedInController.text = jobData?.linkedinUrl ?? "";
+    // Dropdowns
+    selectedRole = normalize(jobData?.jRole);
+    selectExperience = normalize(jobData?.yearsOfExperience);
+    selectCountry = normalize(jobData?.country);
+    selectHire = normalize(jobData?.hiringPeriod);
+    selectPositions = normalize(jobData?.noOfPeople);
+    selectRate = normalize(jobData?.rateBilling);
+    selectedPayRange = normalize(jobData?.payRange);
+    educationLevelController.text = normalize(jobData?.education) ?? "";
+
+    // Location info
     locationSearchController.text = jobData?.location ?? "";
     stateController.text = jobData?.state ?? "";
     countryController.text = jobData?.country ?? "";
     cityPostCodeController.text = jobData?.city ?? "";
-    minSalaryController.text = jobData?.payMin?.toString() ?? "";
-    maxSalaryController.text = jobData?.payMax?.toString() ?? "";
 
+    // Social links
+    websiteController.text = jobData?.websiteUrl ?? "";
+    facebookController.text = jobData?.facebookUrl ?? "";
+    instgramController.text = jobData?.instagramUrl ?? "";
+    linkedInController.text = jobData?.linkedinUrl ?? "";
+
+    // Banner image
+    serverBannerImg = jobData?.bannerImage?.url;
+    selectedBannerImgList = jobData?.bannerImage;
+    bannerFile = null;
+
+    // Clinic images
+    serverClinicImgs =
+        jobData?.clinicLogo?.map((e) => e.url).whereType<String>().toList() ??
+            [];
+    selectedClinicImgList = jobData?.clinicLogo ?? [];
+    clinicPhotos = [];
+
+    // Employment type
     selectedEmploymentType = jobData?.typeofEmployment?.isNotEmpty == true
         ? jobData?.typeofEmployment!.first
         : null;
@@ -931,29 +949,87 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       ..addAll(jobData?.typeofEmployment ?? []);
     _updateLocumVisibility();
 
-    educationLevelController.text = jobData?.education ?? "";
-    selectCountry = jobData?.location;
-    selectHire = jobData?.hiringPeriod;
-    selectPositions = jobData?.noOfPeople;
-    selectRate = jobData?.rateBilling;
-    selectedPayRange = jobData?.payRange;
-
-    // Benefits (if any)
+    // Benefits
     _selectedBenefits
       ..clear()
       ..addAll(jobData?.offeredBenefits ?? []);
 
+    // Start date - with proper DateTime parsing
+    isStartDateEnabled =
+        jobData?.startDate != null && jobData!.startDate!.isNotEmpty;
+    if (jobData?.startDate != null && jobData!.startDate!.isNotEmpty) {
+      startDateController.text =
+          di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
+              jobData.startDate!);
+      try {
+        startDate = DateTime.parse(jobData.startDate!);
+      } catch (e) {
+        startDate = null;
+      }
+    } else {
+      startDateController.clear();
+      startDate = null;
+    }
+
+    // End date - with proper DateTime parsing
+    isEndDateEnabled =
+        jobData?.closedAt != null && jobData!.closedAt!.isNotEmpty;
+    if (jobData?.closedAt != null && jobData!.closedAt!.isNotEmpty) {
+      endDateController.text =
+          di360_date_utils.DateFormatUtils.formatYyyyMmDdToDdMmYyyy(
+              jobData.closedAt!);
+      try {
+        endDate = DateTime.parse(jobData.closedAt!);
+      } catch (e) {
+        endDate = null;
+      }
+    } else {
+      endDateController.clear();
+      endDate = null;
+    }
+
     // Locum dates
     if (jobData?.availabilityDate != null &&
-        jobData?.availabilityDate!.length == 2) {
-      startLocumDateController.text = jobData?.availabilityDate![0] ?? "";
-      endLocumDateController.text = jobData?.availabilityDate![1] ?? "";
+        jobData!.availabilityDate!.length == 2) {
+      startLocumDateController.text = jobData.availabilityDate![0] ?? "";
+      endLocumDateController.text = jobData.availabilityDate![1] ?? "";
       locumDateController.text =
           "${startLocumDateController.text} - ${endLocumDateController.text}";
-      //updateLocumSummary();
+    } else {
+      startLocumDateController.clear();
+      endLocumDateController.clear();
+      locumDateController.clear();
+    }
+
+    // Preserve dropdown values even if the current static option lists don't contain them
+    if (selectedPayRange != null &&
+        selectedPayRange!.isNotEmpty &&
+        !payRanges.contains(selectedPayRange)) {
+      payRanges.insert(0, selectedPayRange!);
+    }
+    if (selectRate != null &&
+        selectRate!.isNotEmpty &&
+        !rateTypes.contains(selectRate)) {
+      rateTypes.insert(0, selectRate!);
+    }
+    if (selectHire != null &&
+        selectHire!.isNotEmpty &&
+        !HireList.contains(selectHire)) {
+      HireList.insert(0, selectHire!);
+    }
+    if (selectPositions != null &&
+        selectPositions!.isNotEmpty &&
+        !positionsOptions.contains(selectPositions)) {
+      positionsOptions.insert(0, selectPositions!);
+    }
+    if (selectExperience != null &&
+        selectExperience!.isNotEmpty &&
+        !experienceOptions.contains(selectExperience)) {
+      experienceOptions.insert(0, selectExperience!);
     }
 
     notifyListeners();
+    print('=== loadJobData end ===');
   }
 
   // #endregion

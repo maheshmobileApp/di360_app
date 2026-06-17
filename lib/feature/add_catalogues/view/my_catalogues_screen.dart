@@ -28,6 +28,7 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
     WidgetsBinding.instance.addPostFrameCallback((s) {
       final catalogVM = context.read<AddCatalogueViewModel>();
       catalogVM.getMyCataloguesData(context);
+      catalogVM.setCommunityStatus();
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=

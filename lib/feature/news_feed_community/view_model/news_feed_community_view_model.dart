@@ -189,6 +189,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool communityStatus = false;
+
+  Future<void> setCommunityStatus() async {
+    print("Setting community status");
+    final communityValue =
+        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
+    communityStatus = communityValue == 'true';
+    notifyListeners();
+  }
+
   Future<void> getAllNewsFeeds(BuildContext context,
       {bool loadMore = false, String? feedType, String? categoryType}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
@@ -436,10 +446,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     final variables = {"fields": fields};
 
-
     final res = await repo.communityLike(variables);
     if (res != null) {
-      
       //scaffoldMessenger("Liked Successfully");
     }
     await getAllNewsFeeds(context);
@@ -474,7 +482,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
       "category_type": selectedCategory?.id,
-      "community_type": "COMMUNITY_USER", 
+      "community_type": "COMMUNITY_USER",
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
