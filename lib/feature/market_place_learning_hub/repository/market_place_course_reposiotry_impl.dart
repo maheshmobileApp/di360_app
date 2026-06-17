@@ -18,7 +18,9 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
   @override
   Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
       int limit, int offset, String searchText,
-      {List<String>? types, List<String>? courseCategory}) async {
+      {List<String>? types,
+      List<String>? courseCategory,
+      bool? isCommunityLearningHub}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityIdList =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
@@ -101,8 +103,22 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
       }
     };
 
-    final listingData =
-        await http.query(getAllListingDataQuery, variables: payload);
+    final communityPlayload = {
+      "limit": limit,
+      "offset": offset,
+      "where": {
+        "_and": [
+          if (communityIdList != [] && communityIdList.isNotEmpty)
+            {
+              "community_id": {"_in": communityIdList}
+            }
+        ]
+      }
+    };
+
+    final listingData = await http.query(getAllListingDataQuery,
+        variables:
+            isCommunityLearningHub == true ? communityPlayload : payload);
     if (listingData is Map && listingData.containsKey('_error')) return [];
     final result = CoursesListingData.fromJson(listingData);
     return result.courses ?? [];

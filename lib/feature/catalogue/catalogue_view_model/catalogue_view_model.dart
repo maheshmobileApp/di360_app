@@ -93,11 +93,13 @@ class CatalogueViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  Future<void> fetchCatalogue(BuildContext context) async {
+  Future<void> fetchCatalogue(BuildContext context,
+      {bool? isCommunityCatalogue}) async {
     cataloguesLoading = true;
     Loaders.circularShowLoader(context);
     var res = await repo.getCatalogue(searchController.text, type, catagroies,
-        suppliers, selectedUserId ?? '');
+        suppliers, selectedUserId ?? '',
+        isCommunityCatalogue: isCommunityCatalogue ?? false);
     if (res != []) {
       catalogueCategories = res;
       initializeExpanded(catalogueCategories);

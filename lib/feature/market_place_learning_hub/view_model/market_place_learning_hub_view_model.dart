@@ -241,7 +241,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   Future<void> getAllLearningHubData(BuildContext context,
       {bool loadMore = false,
       List<String>? types,
-      List<String>? courseCategory}) async {
+      List<String>? courseCategory,
+      bool? isCommunityLearningHub}) async {
     if (loadMore) {
       if (isLoadingMoreMarketPlace || !hasMoreMarketPlace) return;
       isLoadingMoreMarketPlace = true;
@@ -254,7 +255,9 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
     final res = await repo.getMarketPlaceLearningHubData(
         _marketPlaceLimit, _marketPlaceOffset, searchController.text,
-        types: types, courseCategory: courseCategory);
+        types: types,
+        courseCategory: courseCategory,
+        isCommunityLearningHub: isCommunityLearningHub);
 
     if (loadMore) {
       marketPlaceCoursesList.addAll(res ?? []);
@@ -530,11 +533,11 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  viewProfileNavigationHandle() async{
+  viewProfileNavigationHandle() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    if (type == UserRole.professional.value){
+    if (type == UserRole.professional.value) {
       navigationService.replaceWith(RouteList.professionalViewProfileScreen);
-    } else{
+    } else {
       navigationService.replaceWith(RouteList.viewProfileScreen);
     }
   }

@@ -1,7 +1,10 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -15,6 +18,7 @@ class FeatureButtonsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final directoryVM = Provider.of<DirectoryViewModel>(context);
+    final dashBoardVM = Provider.of<DashBoardViewModel>(context);
     return SizedBox(
       height: 45,
       child: ListView.builder(
@@ -46,7 +50,27 @@ class FeatureButtonsWidget extends StatelessWidget {
                         RouteList.directoryDetailsScreen,
                         params: scrollTo);
                   } else if (index == 3) {
-                  } else if (index == 4) {}
+                    Loaders.circularShowLoader(context);
+                    context
+                        .read<MarketPlaceLearningHubViewModel>()
+                        .searchBarOpen = false;
+                    context
+                        .read<MarketPlaceLearningHubViewModel>()
+                        .searchController
+                        .text = "";
+                    context.read<NewCourseViewModel>().fetchCourseCategory();
+                    context.read<NewCourseViewModel>().fetchCourseType();
+                    await context
+                        .read<MarketPlaceLearningHubViewModel>()
+                        .getAllLearningHubData(context,
+                            isCommunityLearningHub: true);
+                    Loaders.circularHideLoader(context);
+                    await navigationService
+                        .navigateTo(RouteList.learningHubMasterView);
+                  } else if (index == 4) {
+                    dashBoardVM.setIndex(4, context);
+                    navigationService.goBack();
+                  }
                 }),
           );
         },

@@ -105,10 +105,6 @@ class DashBoardViewModel extends ChangeNotifier {
   }
 
   void setIndex(int index, BuildContext context) {
-    // if (_pages.isEmpty) {
-    //   _pendingIndex = index;
-    //   return;
-    // }
     if (index < 0 || index >= _pages.length) return;
     _currentIndex = index;
     updateIndex(index, context);
@@ -137,7 +133,9 @@ class DashBoardViewModel extends ChangeNotifier {
 
           break;
         case 4: // Catalogue
-          context.read<CatalogueViewModel>().fetchCatalogue(context);
+          context
+              .read<CatalogueViewModel>()
+              .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
         case 5: // Account
           break;
@@ -154,7 +152,9 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<JobSeekViewModel>().fetchJobs(context);
           break;
         case 3: // Catalogue
-          context.read<CatalogueViewModel>().fetchCatalogue(context);
+          context
+              .read<CatalogueViewModel>()
+              .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
         case 4: // Account
           break;
@@ -177,7 +177,9 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           break;
         case 4: // Catalogue
-          context.read<CatalogueViewModel>().fetchCatalogue(context);
+          context
+              .read<CatalogueViewModel>()
+              .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
         case 5: // Account
           break;
