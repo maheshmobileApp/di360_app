@@ -9,6 +9,8 @@ query getByPk($id: uuid!) {
     schedulerDay
     months_count
     expiryDay
+    status
+    community_user_type
     catalogue_category {
       id
       name

@@ -45,6 +45,8 @@ class CataloguesByPk {
   String? schedulerDay;
   dynamic monthsCount;
   String? expiryDay;
+  String? status;
+  String? communityUserType;
   CatalogueCategory? catalogueCategory;
   CatalogueSubCategory? catalogueSubCategory;
   List<Null>? jCataloguesCatalogueTags;
@@ -59,6 +61,8 @@ class CataloguesByPk {
       this.schedulerDay,
       this.monthsCount,
       this.expiryDay,
+      this.status,
+      this.communityUserType,
       this.catalogueCategory,
       this.catalogueSubCategory,
       this.jCataloguesCatalogueTags,
@@ -77,6 +81,8 @@ class CataloguesByPk {
     schedulerDay = json['schedulerDay'];
     monthsCount = json['months_count'];
     expiryDay = json['expiryDay'];
+    status = json['status'];
+    communityUserType = json['community_user_type'];
     catalogueCategory = json['catalogue_category'] != null
         ? new CatalogueCategory.fromJson(json['catalogue_category'])
         : null;
@@ -106,6 +112,8 @@ class CataloguesByPk {
     data['schedulerDay'] = this.schedulerDay;
     data['months_count'] = this.monthsCount;
     data['expiryDay'] = this.expiryDay;
+    data['status'] = this.status;
+    data['community_user_type'] = this.communityUserType;
     if (this.catalogueCategory != null) {
       data['catalogue_category'] = this.catalogueCategory!.toJson();
     }

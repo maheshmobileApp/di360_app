@@ -238,7 +238,7 @@ class OtherInfoView extends StatelessWidget with BaseContextHelpers {
           activeColor: AppColors.primaryColor,
           visualDensity: VisualDensity.compact,
           value: value,
-          onChanged: onChanged?.call(false),
+          onChanged: null,
         ),
         Text(text, style: TextStyles.regular2()),
         const SizedBox(width: 20),

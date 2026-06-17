@@ -10,7 +10,6 @@ class ScheduleExpiryPage extends StatelessWidget {
 
   Future<void> _pickScheduleDate(BuildContext context) async {
     final provider = context.read<AddCatalogueViewModel>();
-    provider.scheduleDate = null;
     final picked = await showDatePicker(
       context: context,
       initialDate: provider.scheduleDate ?? DateTime.now(),
@@ -25,7 +24,6 @@ class ScheduleExpiryPage extends StatelessWidget {
 
   Future<void> _pickExpiryDate(BuildContext context) async {
     final provider = context.read<AddCatalogueViewModel>();
-    provider.expiryDate = null;
     if (provider.scheduleDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select Schedule date first")),

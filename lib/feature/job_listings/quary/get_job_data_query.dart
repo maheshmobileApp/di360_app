@@ -1,5 +1,5 @@
-const String getJobDataQuery = r'''query GetEditJobIDData($Jobid: uuid!) {
-  jobs(where: {id: {_eq: $Jobid}}) {
+const String getJobDataQuery = r'''query getRecordById($id: uuid!) {
+  jobs_by_pk(id: $id) {
     id
     title
     j_type
@@ -47,6 +47,7 @@ const String getJobDataQuery = r'''query GetEditJobIDData($Jobid: uuid!) {
       }
       __typename
     }
+    start_Date
     __typename
   }
 }
