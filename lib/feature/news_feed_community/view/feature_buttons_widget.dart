@@ -5,6 +5,7 @@ import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
+import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
@@ -18,7 +19,6 @@ class FeatureButtonsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final directoryVM = Provider.of<DirectoryViewModel>(context);
-    final dashBoardVM = Provider.of<DashBoardViewModel>(context);
     return SizedBox(
       height: 45,
       child: ListView.builder(
@@ -68,8 +68,12 @@ class FeatureButtonsWidget extends StatelessWidget {
                     await navigationService
                         .navigateTo(RouteList.learningHubMasterView);
                   } else if (index == 4) {
-                    dashBoardVM.setIndex(4, context);
                     navigationService.goBack();
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    final ctx = navigatorKey.currentContext!;
+                    ctx
+                        .read<DashBoardViewModel>()
+                        .setIndex(4, ctx, isCommunityCatalogue: true);
                   }
                 }),
           );

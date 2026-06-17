@@ -104,14 +104,14 @@ class DashBoardViewModel extends ChangeNotifier {
     }
   }
 
-  void setIndex(int index, BuildContext context) {
+  void setIndex(int index, BuildContext context,{bool? isCommunityCatalogue}) {
     if (index < 0 || index >= _pages.length) return;
     _currentIndex = index;
-    updateIndex(index, context);
+    updateIndex(index, context, isCommunityCatalogue: isCommunityCatalogue);
     notifyListeners();
   }
 
-  updateIndex(int index, BuildContext context) async {
+  updateIndex(int index, BuildContext context, {bool? isCommunityCatalogue}) async {
     if (_userType == UserRole.supplier.value) {
       switch (index) {
         case 0: // Home
@@ -135,7 +135,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 4: // Catalogue
           context
               .read<CatalogueViewModel>()
-              .fetchCatalogue(context, isCommunityCatalogue: false);
+              .fetchCatalogue(context, isCommunityCatalogue: isCommunityCatalogue);
           break;
         case 5: // Account
           break;
@@ -179,7 +179,7 @@ class DashBoardViewModel extends ChangeNotifier {
         case 4: // Catalogue
           context
               .read<CatalogueViewModel>()
-              .fetchCatalogue(context, isCommunityCatalogue: false);
+              .fetchCatalogue(context, isCommunityCatalogue: isCommunityCatalogue);
           break;
         case 5: // Account
           break;

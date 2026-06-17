@@ -26,6 +26,7 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
       String loginId,
       {bool? isCommunityCatalogue}) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final myCommunityIds =
@@ -63,7 +64,7 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
                 "community_user_type": {"_is_null": true}
               },
               {
-                "dental_supplier_id": {"_eq": loginId}
+                "dental_supplier_id": {"_eq": userId}
               },
               {
                 "community_id": {"_in": myCommunityIds}
