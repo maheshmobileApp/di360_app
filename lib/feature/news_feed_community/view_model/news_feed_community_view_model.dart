@@ -6,6 +6,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/report_newsfeed_community.dart';
@@ -47,6 +48,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   bool searchBarOpen = false;
   TextEditingController searchController = TextEditingController();
   String? feedType;
+  String? communityMemberDirectorId;
 
   void feedTypeUpdate(String value) {
     feedType = value;
@@ -700,9 +702,18 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> leaveCommunity(BuildContext context) async {
-    print("********************leave community calling");
+  Future<void> getCommunityMemberDirectorIds(String communityId) async {
+    final res = await repo.getCommunityMemberCountData(communityId);
+    if (res['community_members'] != null) {
+      final data = GetCommunityMemberCountRes.fromJson({'data': res});
+      communityMemberDirectorId = data
+          .data?.communityMembers?.first.dentalSuppliers?.directories?.first.id;
+    }
 
+    notifyListeners();
+  }
+
+  Future<void> leaveCommunity(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     final variables = {

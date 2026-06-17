@@ -26,11 +26,8 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
         viewModel.getJoinedCommunityMembersData?.communityMembers ?? [];
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBarWidget(
-        title: "Community",
-        logo: false,
-        searchWidget: false,
-      ),
+      appBar:
+          AppBarWidget(title: "Community", logo: false, searchWidget: false),
       body: Column(
         children: [
           (list.length != 0)
@@ -44,12 +41,14 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                             newsCommunityVM.listingStatus = "PUBLISHED";
                             newsCommunityVM.setProfCommunityId(
                                 list[index].communityId ?? "",
-                                list[index].dentalSuppliers?.businessName ??"");
+                                list[index].dentalSuppliers?.businessName ??
+                                    "");
                             await LocalStorage.setStringVal(
                                 LocalStorageConst.communityId,
                                 list[index].communityId ?? "");
                             //await viewModel.getNewsFeedCategories(context);
                             newsCommunityVM.getBannerUrl(context);
+                            newsCommunityVM.getCommunityMemberDirectorIds(list[index].communityId ?? "");
                             /*newsCommunityVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;*/
                             navigationService
@@ -65,18 +64,16 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                                   CircleAvatar(
                                       backgroundColor: AppColors.primaryColor,
                                       radius: 20,
-                                      child: Icon(
-                                        Icons.group,
-                                        color: AppColors.whiteColor,
-                                      )),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
+                                      child: Icon(Icons.group,
+                                          color: AppColors.whiteColor)),
+                                  SizedBox(width: 10),
                                   Text(
-                                    list[index].dentalSuppliers?.businessName ?? "",
-                                    style: TextStyles.medium3(
-                                        color: AppColors.black),
-                                  ),
+                                      list[index]
+                                              .dentalSuppliers
+                                              ?.businessName ??
+                                          "",
+                                      style: TextStyles.medium3(
+                                          color: AppColors.black))
                                 ],
                               ),
                             ),
@@ -86,11 +83,9 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                 )
               : Expanded(
                   child: Center(
-                    child: Text(
-                      "No Communities",
-                      style: TextStyles.medium3(
-                          color: AppColors.black, fontSize: 16),
-                    ),
+                    child: Text("No Communities",
+                        style: TextStyles.medium3(
+                            color: AppColors.black, fontSize: 16)),
                   ),
                 ),
         ],

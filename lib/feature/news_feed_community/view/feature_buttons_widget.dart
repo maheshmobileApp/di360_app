@@ -1,15 +1,20 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FeatureButtonsWidget extends StatelessWidget {
-  const FeatureButtonsWidget({super.key});
+  final String? communityMemberDirectorId;
+  const FeatureButtonsWidget({super.key, this.communityMemberDirectorId});
 
   @override
   Widget build(BuildContext context) {
+    final directoryVM = Provider.of<DirectoryViewModel>(context);
     return SizedBox(
       height: 45,
       child: ListView.builder(
@@ -26,10 +31,20 @@ class FeatureButtonsWidget extends StatelessWidget {
                 height: 45,
                 width: 130,
                 radius: 8,
-                onTap: () {
-                  if (index == 0) {
-                    navigationService.navigateTo(RouteList.directory);
-                  }
+                onTap: () async {
+                  if (index == 0 || index == 1 || index == 2) {
+                    Loaders.circularShowLoader(context);
+                    await directoryVM.GetDirectorDetails(
+                        communityMemberDirectorId ?? '');
+                    Loaders.circularHideLoader(context);
+                    await navigationService
+                        .navigateTo(RouteList.directoryDetailsScreen);
+                    if (index == 1)
+                      directoryVM.scrollToSectionByLabel('Partner');
+                    if (index == 2)
+                      directoryVM.scrollToSectionByLabel('Contact Us');
+                  } else if (index == 3) {
+                  } else if (index == 4) {}
                 }),
           );
         },

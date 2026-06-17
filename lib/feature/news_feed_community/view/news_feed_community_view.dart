@@ -46,16 +46,12 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
       //await viewModel.setCommunityStatus(); 
         await viewModel.getAllNewsFeeds(context);
         final communityVM =
             Provider.of<CommunityViewModel>(context, listen: false);
-        final newsFeedVM =
-            Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
         await communityVM.getNewsFeedCategories(context, type: "Community");
     });
   }
@@ -226,6 +222,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             });
                           },
                         ),
+                        FeatureButtonsWidget(communityMemberDirectorId: newsFeedCommunityVM.communityMemberDirectorId),
+                        addVertical(8),
                         if (viewModel.searchBarOpen)
                           SearchWidget(
                             controller: viewModel.searchController,

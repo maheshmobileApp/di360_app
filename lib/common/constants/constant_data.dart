@@ -136,6 +136,7 @@ class ConstantData {
   static List<String> featureStatus = [
     'Home',
     'Partners',
+    'Contacts',
     'Learning Hub',
     'Catalogue'
   ];
