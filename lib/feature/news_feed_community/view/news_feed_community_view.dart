@@ -48,15 +48,13 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
 
       final viewModel =
           Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
-      await viewModel.setCommunityStatus();
-      if (viewModel.communityStatus) {
+      //await viewModel.setCommunityStatus(); 
         await viewModel.getAllNewsFeeds(context);
         final communityVM =
             Provider.of<CommunityViewModel>(context, listen: false);
         final newsFeedVM =
             Provider.of<NewsFeedCommunityViewModel>(context, listen: false);
         await communityVM.getNewsFeedCategories(context, type: "Community");
-      }
     });
   }
 
@@ -195,8 +193,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                   ],
                 ),
               ),
-              body: (viewModel.communityStatus)
-                  ? Column(
+              body:  Column(
                       children: [
                         CommunityHeaderCard(
                           imageUrl: (viewModel.bannerData?.directories !=
@@ -491,15 +488,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               ),
                       ],
                     )
-                  : Center(
-                      child: Text(
-                        "No Community",
-                        style: TextStyles.medium3(
-                            color: AppColors.black, fontSize: 16),
-                      ),
-                    ),
-              floatingActionButton: (viewModel.communityStatus)
-                  ? GestureDetector(
+                 ,
+              floatingActionButton: 
+                   GestureDetector(
                       onTap: () async {
                         viewModel.setEditNewsFeed(false);
                         viewModel.clearAddNewsFeedData();
@@ -508,7 +499,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             .navigateTo(RouteList.addNewsFeedCommunityView);
                       },
                       child: SvgPicture.asset(ImageConst.createSupport))
-                  : SizedBox.shrink(),
+                  
             );
           },
         );

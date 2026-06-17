@@ -189,15 +189,15 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool communityStatus = false;
+  //bool communityStatus = false;
 
-  Future<void> setCommunityStatus() async {
+  /*Future<void> setCommunityStatus() async {
     print("Setting community status");
     final communityValue =
         await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
     communityStatus = communityValue == 'true';
     notifyListeners();
-  }
+  }*/
 
   Future<void> getAllNewsFeeds(BuildContext context,
       {bool loadMore = false, String? feedType, String? categoryType}) async {
