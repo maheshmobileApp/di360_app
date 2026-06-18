@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/services/deep_link_service.dart';
 import 'package:di360_flutter/services/notification_service.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,15 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     super.initState();
+
     final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
     dashBoardVM.checkForUpdate(context);
+
+    /*WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print("Dashboard consumePendingLink Calling");
+      await DeepLinkService.consumePendingLink();
+    });*/
+
     if (dashBoardVM.isInitialized) {
       _handlePendingNotification();
     } else {

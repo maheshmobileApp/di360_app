@@ -69,12 +69,19 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
 
     if (userLogin == true) {
       if (profileCompleted == true) {
+        print('SplashScreen: routing to dashboard');
         navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
-        DeepLinkService.consumePendingLink();
+
+        if (DeepLinkService.hasPendingLink) {
+          await DeepLinkService.consumePendingLink();
+        }
         return;
       }
+
       await viewProfileHandle(context);
-      DeepLinkService.consumePendingLink();
+      if (DeepLinkService.hasPendingLink) {
+        await DeepLinkService.consumePendingLink();
+      }
       return;
     }
 
