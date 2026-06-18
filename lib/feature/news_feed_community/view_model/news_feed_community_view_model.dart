@@ -6,6 +6,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/report_newsfeed_community.dart';
@@ -47,6 +48,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   bool searchBarOpen = false;
   TextEditingController searchController = TextEditingController();
   String? feedType;
+  String? communityMemberDirectorId;
 
   void feedTypeUpdate(String value) {
     feedType = value;
@@ -189,6 +191,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //bool communityStatus = false;
+
+  /*Future<void> setCommunityStatus() async {
+    print("Setting community status");
+    final communityValue =
+        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
+    communityStatus = communityValue == 'true';
+    notifyListeners();
+  }*/
+
   Future<void> getAllNewsFeeds(BuildContext context,
       {bool loadMore = false, String? feedType, String? categoryType}) async {
     if (loadMore && (_isLoadingMore || !_hasMoreNewsFeeds)) return;
@@ -205,9 +217,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final professionId =
-        await LocalStorage.getStringVal(LocalStorageConst.professionId);
+    // final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    // final professionId =
+    //     await LocalStorage.getStringVal(LocalStorageConst.professionId);
 
     final variables = {
       "limit": _newsFeedLimit,
@@ -436,10 +448,8 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
     final variables = {"fields": fields};
 
-
     final res = await repo.communityLike(variables);
     if (res != null) {
-      
       //scaffoldMessenger("Liked Successfully");
     }
     await getAllNewsFeeds(context);
@@ -474,7 +484,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final Map<String, dynamic> fields = {
       "description": descriptionController.text,
       "category_type": selectedCategory?.id,
-      "community_type": "COMMUNITY_USER", 
+      "community_type": "COMMUNITY_USER",
       "video_url": videoLinkController.text,
       "post_image": uploadedFiles,
       "web_url": websiteLinkController.text,
@@ -692,9 +702,18 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> leaveCommunity(BuildContext context) async {
-    print("********************leave community calling");
+  Future<void> getCommunityMemberDirectorIds(String communityId) async {
+    final res = await repo.getCommunityMemberCountData(communityId);
+    if (res['community_members'] != null) {
+      final data = GetCommunityMemberCountRes.fromJson({'data': res});
+      communityMemberDirectorId = data
+          .data?.communityMembers?.first.dentalSuppliers?.directories?.first.id;
+    }
 
+    notifyListeners();
+  }
+
+  Future<void> leaveCommunity(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
 
     final variables = {

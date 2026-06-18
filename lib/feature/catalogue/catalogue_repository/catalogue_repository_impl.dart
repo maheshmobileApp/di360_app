@@ -23,9 +23,15 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
       String? typeId,
       List<String>? categories,
       List<String>? suppliers,
-      String loginId) async {
+      String loginId,
+      {bool? isCommunityCatalogue}) async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final catalogueData = await http.query(getCatalogueQuery, variables: {
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final myCommunityIds =
+        await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
+    final communityCatalogue = {
       "categoryWhere": {
         "status": {"_eq": "ACTIVE"},
         "catalogues": {
@@ -35,33 +41,82 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
         }
       },
       "catalogueWhere": {
+        "catalogue_category_id": {},
         "status": {
-          "_in": ["APPROVED", "SCHEDULED"]
+          "_in": ["APPROVED"]
         },
         "catalogue_status": {"_eq": "ACTIVE"},
-        if (typeId != null && typeId.isNotEmpty)
-          "catalogue_category_id": {"_eq": typeId},
-        if (suppliers != null && suppliers.isNotEmpty)
-          "dental_supplier": {
-            "name": {"_in": suppliers}
+        "catalogue_category": {
+          "status": {"_eq": "ACTIVE"}
+        },
+        "_and": [
+          {
+            "community_id": {
+              "_in": [communityId]
+            }
           },
-        if (categories != null && categories.isNotEmpty)
-          "catalogue_sub_category": {
-            "id": {"_in": categories}
-          },
-        if (searchText != null && searchText.isNotEmpty)
-          "dental_supplier": {
-            "name": {"_ilike": "%$searchText%"}
-          },
-        if (loginId != '' && loginId.isNotEmpty)
-          "catalogue_favorites": {
-            if (type == 'SUPPLIER') "dental_supplier_id": {"_eq": loginId},
-            if (type == 'PRACTICE') "dental_practice_id": {"_eq": loginId},
-            if (type == 'PROFESSIONAL')
-              "dental_professional_id": {"_eq": loginId}
+          {
+            "_or": [
+              {
+                "community_user_type": {"_eq": "BOTH"}
+              },
+              {
+                "community_user_type": {"_is_null": true}
+              },
+              {
+                "dental_supplier_id": {"_eq": userId}
+              },
+              {
+                "community_id": {"_in": myCommunityIds}
+              }
+            ]
           }
+        ]
       }
-    });
+    };
+
+    final catalogueData = await http.query(getCatalogueQuery,
+        variables: isCommunityCatalogue == true
+            ? communityCatalogue
+            : {
+                "categoryWhere": {
+                  "status": {"_eq": "ACTIVE"},
+                  "catalogues": {
+                    "dental_supplier": {
+                      "name": {"_ilike": "%%"}
+                    }
+                  }
+                },
+                "catalogueWhere": {
+                  "status": {
+                    "_in": ["APPROVED", "SCHEDULED"]
+                  },
+                  "catalogue_status": {"_eq": "ACTIVE"},
+                  if (typeId != null && typeId.isNotEmpty)
+                    "catalogue_category_id": {"_eq": typeId},
+                  if (suppliers != null && suppliers.isNotEmpty)
+                    "dental_supplier": {
+                      "name": {"_in": suppliers}
+                    },
+                  if (categories != null && categories.isNotEmpty)
+                    "catalogue_sub_category": {
+                      "id": {"_in": categories}
+                    },
+                  if (searchText != null && searchText.isNotEmpty)
+                    "dental_supplier": {
+                      "name": {"_ilike": "%$searchText%"}
+                    },
+                  if (loginId != '' && loginId.isNotEmpty)
+                    "catalogue_favorites": {
+                      if (type == 'SUPPLIER')
+                        "dental_supplier_id": {"_eq": loginId},
+                      if (type == 'PRACTICE')
+                        "dental_practice_id": {"_eq": loginId},
+                      if (type == 'PROFESSIONAL')
+                        "dental_professional_id": {"_eq": loginId}
+                    }
+                }
+              });
     if (catalogueData != null) {
       final result = CatalogueData.fromJson(catalogueData);
       return result.catalogueCategories ?? [];

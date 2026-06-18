@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/banners/view/banners_list_screen.dart';
 import 'package:di360_flutter/feature/campaign/view/create_campaign_view.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
+import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
 import 'package:di360_flutter/feature/community/view/contact_filter_view.dart';
 import 'package:di360_flutter/feature/community/view/contacts_view.dart';
@@ -99,7 +100,7 @@ class Routes {
       RouteList.preLogin: (context) => PreLoginScreen(),
       RouteList.login: (context) => ChangeNotifierProvider(
           create: (_) => LoginViewModel(), child: LoginScreen()),
-       RouteList.dashBoard: (context) => ChangeNotifierProvider(
+      RouteList.dashBoard: (context) => ChangeNotifierProvider(
           create: (context) => DashBoardViewModel(), child: DashBoard()),
       RouteList.addNewsFeed: (context) => AddNewsFeedScreen(),
       RouteList.signup: (context) => SignupScreen(),
@@ -120,10 +121,7 @@ class Routes {
 
         return ChangeNotifierProvider(
           create: (_) => JobProfileCreateViewModel(),
-          child: JobProfileView(
-            profile: profileData,
-            isEdit: isEdit,
-          ),
+          child: JobProfileView(profile: profileData, isEdit: isEdit),
         );
       },
       RouteList.JobListingScreen: (context) => JobListingScreen(),
@@ -136,39 +134,36 @@ class Routes {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return JobListingApplicantsMessege(
-          jobId: args['jobId'],
-          applicantId: args['applicantId'],
-          userId: args['userId'],
-          profilePic: args['profilePic'] ?? "",
-          applicant: args['applicant'],
-          typeName: args['type'],
-        );
+            jobId: args['jobId'],
+            applicantId: args['applicantId'],
+            userId: args['userId'],
+            profilePic: args['profilePic'] ?? "",
+            applicant: args['applicant'],
+            typeName: args['type']);
       },
       RouteList.TalentListingMessageScreen: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return TalentListingMessageScreen(
-          jobId: args['jobId'],
-          applicantId: args['applicantId'],
-          userId: args['userId'],
-          userImg: args['userImg'] ?? "",
-          profilePic: args['profilePic'] ?? "",
-          applicant: args['applicant'],
-          typeName: args['type'],
-        );
+            jobId: args['jobId'],
+            applicantId: args['applicantId'],
+            userId: args['userId'],
+            userImg: args['userImg'] ?? "",
+            profilePic: args['profilePic'] ?? "",
+            applicant: args['applicant'],
+            typeName: args['type']);
       },
       RouteList.enquiryMessagesView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return EnquiryMessagesView(
-          jobId: args['jobId'],
-          applicantId: args['applicantId'],
-          receiverId: args['receiverId'],
-          userId: args['userId'],
-          profilePic: args['profilePic'] ?? "",
-          applicant: args['applicant'],
-          typeName: args['type'],
-        );
+            jobId: args['jobId'],
+            applicantId: args['applicantId'],
+            receiverId: args['receiverId'],
+            userId: args['userId'],
+            profilePic: args['profilePic'] ?? "",
+            applicant: args['applicant'],
+            typeName: args['type']);
       },
       RouteList.AppliedJobScreen: (context) {
         return AppliedJobScreen();
@@ -184,7 +179,8 @@ class Routes {
       },
       RouteList.MyJobProfileScreen: (context) {
         final args = ModalRoute.of(context)!.settings.arguments;
-        final jobProfile = args is List<JobProfiles> ? args.first : args as JobProfiles;
+        final jobProfile =
+            args is List<JobProfiles> ? args.first : args as JobProfiles;
         return MyJobProfileScreen(jobsListingData: jobProfile);
       },
       RouteList.adddirectorview: (context) => AddDirectorView(),
@@ -194,18 +190,15 @@ class Routes {
           job: args as Jobs,
         );
       },
+      RouteList.catalogueScreen: (context) => CataloguePage(),
       RouteList.catalogueDetails: (context) => CatalogueDetailsScreen(),
       RouteList.talentdetailsScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
-        return TalentsDetailsView(
-          talentList: args as JobProfiles,
-        );
+        return TalentsDetailsView(talentList: args as JobProfiles);
       },
       RouteList.talentPreview: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
-        return TalentPreview(
-          talentList: args as JobProfiles,
-        );
+        return TalentPreview(talentList: args as JobProfiles);
       },
       RouteList.catalogueFilterScreen: (context) => CatalogueFilterScreen(),
       RouteList.addCatalogScreen: (context) => AddCatalogueScreen(),
@@ -270,14 +263,13 @@ class Routes {
       RouteList.contactFilterView: (context) => ContactFilterView(),
       RouteList.coursePreviewScreen: (context) {
         final args = ModalRoute.of(context)?.settings.arguments;
-        return CoursePreviewScreen(
-            courseDetails: args as CourseObject);
+        return CoursePreviewScreen(courseDetails: args as CourseObject);
       },
-      
       RouteList.notificationScreen: (context) => NotificationScreen(),
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
       RouteList.forgotPasswordScreen: (context) => ForgotPasswordScreen(),
-      RouteList.termsAndConditionsDetails: (context) => TermsAndConditionsDetails()
+      RouteList.termsAndConditionsDetails: (context) =>
+          TermsAndConditionsDetails()
     };
   }
 }

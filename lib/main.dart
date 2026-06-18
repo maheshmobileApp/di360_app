@@ -84,10 +84,10 @@ void main() async {
     await NotificationService.captureInitialMessage();
   } catch (e) {}
 
+  await DeepLinkService.init();
   runApp(const MyApp());
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  DeepLinkService.init();
   configLoading();
 }
 

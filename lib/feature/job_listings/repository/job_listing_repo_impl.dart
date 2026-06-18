@@ -172,9 +172,8 @@ class JobListingRepoImpl extends JobListingRepository {
 
   @override
   Future<Jobs> getEditJobIDData(String jobId) async {
-    final data = await http.query(getJobDataQuery, variables: {"Jobid": jobId});
-
-    final result = Jobs.fromJson(data);
+    final data = await http.query(getJobDataQuery, variables: {"id": jobId});
+    final result = Jobs.fromJson(data["jobs_by_pk"] ?? {});
     return result;
   }
 

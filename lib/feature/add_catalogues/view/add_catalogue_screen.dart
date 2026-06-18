@@ -112,6 +112,9 @@ class AddCatalogueScreen extends StatelessWidget
                     ),
                     addVertical(15),
                     ScheduleExpiryPage(),
+                    addVertical(15),
+                    if (addCataloguVM.communityStatus == true)
+                    _buildCommunityTypes(addCataloguVM),
                     addVertical(30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,5 +175,31 @@ class AddCatalogueScreen extends StatelessWidget
       return false;
     }
     return true;
+  }
+
+  Widget _buildCommunityTypes(AddCatalogueViewModel addCataloguVM) {
+    final selectedValue = addCataloguVM.communityTypes.contains(addCataloguVM.selectedCommunityType) 
+        ? addCataloguVM.selectedCommunityType 
+        : null;
+        
+    return CustomDropDown(
+      isRequired: true,
+      value: selectedValue,
+      title: "Community User Type",
+      onChanged: (v) {
+        addCataloguVM.setCommunityType(v as String);
+      },
+      items: addCataloguVM.communityTypes
+          .map<DropdownMenuItem<Object>>((String value) {
+        return DropdownMenuItem<Object>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hintText: "Select Category",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select category'
+          : null,
+    );
   }
 }

@@ -6,7 +6,6 @@ import 'package:di360_flutter/feature/home/model_class/news_feed_comment_res.dar
 import 'package:di360_flutter/feature/news_feed_community_comment/view_model/news_feed_community_comment_view_model.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class CommunityCommentReplyWidget extends StatelessWidget with BaseContextHelpers {

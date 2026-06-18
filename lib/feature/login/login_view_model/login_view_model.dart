@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/http_service.dart';
@@ -116,7 +119,7 @@ class LoginViewModel extends ChangeNotifier {
                 if (isSupplier) getSuppliers(userId),
                 if (isSupplier) getSupplierCommunityOwner(userId),
                 getMyCommunityData(userId),
-                updateDevieToken(),
+                updateDevieToken(userId, loginData?.type ?? ''),
 
                 // Local Storage
                 LocalStorage.setStringVal(
@@ -161,11 +164,16 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   homeNavigation(BuildContext context) async {
-    navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     await LocalStorage.setBoolValue(LocalStorageConst.directoryComplete, true);
-    Future.microtask(() => DeepLinkService.consumePendingLink());
+
+    navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
+
+    if (DeepLinkService.hasPendingLink) {
+      print('LoginViewModel: pending deep link found after login, consuming');
+      await DeepLinkService.consumePendingLink();
+    }
   }
 
   viewProfileHandle(BuildContext context) async {
@@ -196,27 +204,25 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateDevieToken() async {
-    try {
-      if (Firebase.apps.isEmpty) return;
-      //await Future.delayed(Duration(seconds: 2));
+  Future<void> updateDevieToken(String userId, String type) async {
+    if (Firebase.apps.isEmpty) return;
+    final deviceId = await getDeviceId();
+    final fcmToken = await FirebaseMessaging.instance.getToken();
 
-      final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final deviceToken = await FirebaseMessaging.instance.getToken();
+    String platform = Platform.isAndroid
+        ? 'android'
+        : Platform.isIOS
+            ? 'ios'
+            : 'unknown';
 
-      if (deviceToken != null && userId.isNotEmpty) {
-        await LocalStorage.setStringVal(
-            LocalStorageConst.deviceToken, deviceToken);
-        final variables = {
-          "id": userId,
-          "device_tokens": [deviceToken]
-        };
-        await repo.updateDeviceToken(variables);
-      }
-    } catch (e) {}
-    if (hasListeners) {
-      notifyListeners();
-    }
+    final variables = {
+      "user_id": userId,
+      "type": type,
+      "device_id": deviceId,
+      "fcm_token": fcmToken,
+      "platform": platform
+    };
+    await repo.updateDeviceToken(variables);
   }
 
   getUserDetails() async {
@@ -301,6 +307,22 @@ class LoginViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+}
+
+Future<String> getDeviceId() async {
+  final deviceInfo = DeviceInfoPlugin();
+
+  if (Platform.isAndroid) {
+    final androidInfo = await deviceInfo.androidInfo;
+    return androidInfo.id;
+  }
+
+  if (Platform.isIOS) {
+    final iosInfo = await deviceInfo.iosInfo;
+    return iosInfo.identifierForVendor ?? '';
+  }
+
+  return '';
 }
 
 _modulePermissions(List<Modules> modules) async {

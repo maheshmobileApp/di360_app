@@ -10,6 +10,7 @@ import 'package:di360_flutter/feature/news_feed_community/query/delete_new_feed_
 import 'package:di360_flutter/feature/news_feed_community/query/filter_community_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_all_news_feeds_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_banner_url.dart';
+import 'package:di360_flutter/feature/news_feed_community/query/get_community_members_count_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_supplier_feed_count_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/leave_community_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/update_new_feed_community.dart';
@@ -72,24 +73,33 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
 
   @override
   Future<BannerUrlData> getBannerUrl(variables) async {
-    final res = await http.query(getBannerUrlQuery,variables: variables);
+    final res = await http.query(getBannerUrlQuery, variables: variables);
     final data = BannerUrlData.fromJson(res);
     return data;
   }
-  
+
   @override
   Future leaveCommunity(variables) async {
     final res = await http.mutation(leaveCommunityQuery, variables);
     return res;
   }
-  
+
   @override
-  Future<NewsFeedCommunityData> filterNewsFeed(variables)  async {
-    final res = await http.query(filterCommunityQuery, variables:variables);
+  Future<NewsFeedCommunityData> filterNewsFeed(variables) async {
+    final res = await http.query(filterCommunityQuery, variables: variables);
     final data = NewsFeedCommunityData.fromJson(res);
     return data;
   }
 
-  
-  
+  @override
+  Future<dynamic> getCommunityMemberCountData(String communityId) async {
+    final variables = {
+      "where": {
+        "community_id": {"_eq": communityId}
+      }
+    };
+    final res =
+        await http.query(getCommunityMembersCountQuery, variables: variables);
+    return res;
+  }
 }

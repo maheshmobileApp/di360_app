@@ -26,6 +26,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     getCatalogueTypeData();
     initializeFilterOptions();
     activeStatus = ["ACTIVE", "INACTIVE"];
+    selectedStatus = "All";
   }
 
   String selectedStatus = 'All';
@@ -75,6 +76,22 @@ class AddCatalogueViewModel extends ChangeNotifier {
   String? pdfPath;
   dynamic pdfPathUrl;
   bool isEditCatalogue = false;
+  List<String> communityTypes = ["Both", "Community User"];
+  String? selectedCommunityType = 'Both';
+  bool communityStatus = false;
+
+  void setCommunityStatus() async {
+    print("Setting community status");
+    final communityValue =
+        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
+    communityStatus = communityValue == 'true';
+    notifyListeners();
+  }
+
+  void setCommunityType(String value) {
+    selectedCommunityType = value;
+    notifyListeners();
+  }
 
   void updateSelectedCatagory(CatalogueSubCategories? catagory) {
     selectedCatagory = catagory;
@@ -146,7 +163,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
 
   Future<String> pickFiles(List<String>? allowedExtensions) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
+        allowMultiple: false,
         type: FileType.custom,
         allowedExtensions: allowedExtensions);
     notifyListeners();
@@ -174,8 +191,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addCatalogueData(BuildContext context, bool isDarft) async {
+  Future<void> addCatalogueData(BuildContext context, bool isDraft) async {
     final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final communityStatus =
+        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
+
     final isoString = DateTime.now().toUtc().toIso8601String();
 
     Loaders.circularShowLoader(context);
@@ -203,8 +226,13 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "months_count": null,
         "expiryDay":
             '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
-        "status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
-        "pending_at": isoString
+        "status": isDraft ? "DRAFT" : "PENDING_APPROVAL",
+        "pending_at": isoString,
+        "community_user_type":
+            selectedCommunityType == "Both" ? "BOTH" : "COMMUNITY_USER",
+        "community_id": communityId,
+        "community_status": communityStatus == "true" ? "YES" : "NO",
+        "user_role": type,
       }
     });
     if (res != null) {
@@ -256,8 +284,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
       Loaders.circularShowLoader(context);
     }
     notifyListeners();
-    final res = await repo.getMyCatalogues(
-        catalogStatus, activeStatus, catalogueLimit, catalougueOffset,
+    final res = await repo.getMyCatalogues(catalogStatus, activeStatus,
+        catalogueLimit, catalougueOffset, selectedStatus,
         type: _lastType, subCatagory: _lastSubCatagory);
     if (!isPagination) getCatalogCounts();
     if (res != null) {
@@ -355,6 +383,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
     assignTheSelectedCatalogueType(cataloguView?.catalogueCategory?.id);
     scheduleDate = DateFormatUtils.parseToLocalDate(cataloguView?.schedulerDay);
     expiryDate = DateFormatUtils.parseToLocalDate(cataloguView?.expiryDay);
+    setCommunityType(cataloguView?.communityUserType == "BOTH"
+        ? "Both"
+        : cataloguView?.communityUserType == "COMMUNITY_USER"
+            ? "Community User"
+            : '');
     notifyListeners();
   }
 
@@ -413,6 +446,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "months_count": int.tryParse(monthCount ?? ''),
         "expiryDay":
             '${expiryDate?.year}-${expiryDate?.month}-${expiryDate?.day}',
+        "community_user_type":
+            selectedCommunityType == "Both" ? "BOTH" : "COMMUNITY_USER",
       }
     });
     if (res != null) {
@@ -424,10 +459,10 @@ class AddCatalogueViewModel extends ChangeNotifier {
         catalogStatus = ['PENDING_APPROVAL'];
       }
       await getCatalogCounts();
-      clearAddCatalogueData();
       await getMyCataloguesData(navigatorKey.currentContext!);
       Loaders.circularHideLoader(context);
       navigationService.goBack();
+      clearAddCatalogueData();
     } else {
       Loaders.circularHideLoader(context);
     }

@@ -79,8 +79,7 @@ class _CustomMultiSelectDropDownState<T>
                             },
                             child: Text('Select All',
                                 style: TextStyles.semiBold(
-                                    color: AppColors.black,
-                                    fontSize: 14)),
+                                    color: AppColors.black, fontSize: 14)),
                           ),
                           TextButton(
                             onPressed: () {
@@ -90,12 +89,13 @@ class _CustomMultiSelectDropDownState<T>
                             },
                             child: Text('Clear All',
                                 style: TextStyles.semiBold(
-                                    color: AppColors.redColor,
-                                    fontSize: 14)),
+                                    color: AppColors.redColor, fontSize: 14)),
                           ),
                         ],
                       ),
-                      Divider(color: AppColors.black,),
+                    Divider(
+                      color: AppColors.black,
+                    ),
                     SizedBox(
                       height: 300,
                       width: double.maxFinite,
@@ -121,33 +121,31 @@ class _CustomMultiSelectDropDownState<T>
                             onChanged: (checked) {
                               setStateDialog(() {
                                 if (checked == true) {
-                                  // Handle Locum exclusivity
-                                  if (widget.itemLabel(item) == "Locum") {
+                                  final label = widget.itemLabel(item);
+                                  // If Locum selected -> clear others and keep only Locum
+                                  if (label == "Locum") {
                                     _selected.clear();
                                     _selected.add(item);
                                   }
-                                  // Handle Full Time exclusivity
-                                  else if (widget.itemLabel(item) == "Full Time") {
-                                    _selected.clear();
-                                    _selected.add(item);
-                                  }
-                                  // Handle Directory permissions mutual exclusion
-                                  else if (widget.itemLabel(item) == "Directory Full Access") {
+                                  // Directory permission mutual exclusion should be preserved
+                                  else if (label == "Directory Full Access") {
                                     _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) == "Directory Minimal");
+                                        widget.itemLabel(selectedItem) ==
+                                        "Directory Minimal");
                                     _selected.add(item);
-                                  }
-                                  else if (widget.itemLabel(item) == "Directory Minimal") {
+                                  } else if (label == "Directory Minimal") {
                                     _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) == "Directory Full Access");
+                                        widget.itemLabel(selectedItem) ==
+                                        "Directory Full Access");
                                     _selected.add(item);
                                   }
+                                  // Any other selection: allow multiple, but remove Locum if present
                                   else {
-                                    // If other item is selected, remove Locum and Full Time if present
                                     _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) == "Locum" ||
-                                        widget.itemLabel(selectedItem) == "Full Time");
-                                    _selected.add(item);
+                                        widget.itemLabel(selectedItem) ==
+                                        "Locum");
+                                    if (!_selected.contains(item))
+                                      _selected.add(item);
                                   }
                                 } else {
                                   _selected.remove(item);
@@ -197,18 +195,12 @@ class _CustomMultiSelectDropDownState<T>
         return isSelected ? AppColors.primaryColor : AppColors.black;
       }
 
+      // When Locum is selected, grey-out all other items to indicate exclusivity.
       final hasLocum = currentSelection
           .any((selected) => widget.itemLabel(selected) == "Locum");
-      final hasFullTime = currentSelection
-          .any((selected) => widget.itemLabel(selected) == "Full Time");
       final isLocum = widget.itemLabel(item) == "Locum";
-      final isFullTime = widget.itemLabel(item) == "Full Time";
 
       if (hasLocum && !isLocum) {
-        return Colors.grey;
-      } else if (hasFullTime && !isFullTime) {
-        return Colors.grey;
-      } else if (!hasLocum && !hasFullTime && (isLocum || isFullTime) && currentSelection.isNotEmpty) {
         return Colors.grey;
       }
     }
@@ -237,8 +229,9 @@ class _CustomMultiSelectDropDownState<T>
               child: Text(
                 displayText,
                 style: TextStyles.regular3(
-                  color:
-                      widget.selectedItems.isEmpty ? AppColors.geryColor : AppColors.black,
+                  color: widget.selectedItems.isEmpty
+                      ? AppColors.geryColor
+                      : AppColors.black,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),

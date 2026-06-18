@@ -76,7 +76,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       context.read<NewCourseViewModel>().fetchCourseType();
       await context
           .read<MarketPlaceLearningHubViewModel>()
-          .getAllLearningHubData(context);
+          .getAllLearningHubData(context, isCommunityLearningHub: false);
       Loaders.circularHideLoader(context);
       await navigationService.navigateTo(RouteList.learningHubMasterView);
     } else if (title == 'Clients') {

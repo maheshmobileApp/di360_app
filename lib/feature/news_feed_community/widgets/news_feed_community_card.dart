@@ -468,10 +468,12 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           alignment: Alignment.center,
           children: [
             CircleAvatar(
+              // ignore: unnecessary_null_comparison
               backgroundColor: (logo != null && logo.isNotEmpty)
                   ? AppColors.greyLight
                   : AppColors.primaryColor,
               radius: 26.5,
+              // ignore: unnecessary_null_comparison
               child: (logo != null && logo.isNotEmpty)
                   ? SizedBox(
                       height: 52,
@@ -483,7 +485,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                               errorWidget: Image.asset(ImageConst.directorProfile))),
                     )
                   : Text(
-                      company?[0].toUpperCase() ?? "",
+                      company[0].toUpperCase(),
                       style: TextStyles.bold5(color: AppColors.whiteColor),
                     ),
             ),

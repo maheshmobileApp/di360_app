@@ -402,10 +402,11 @@ class NewsFeedViewModel extends ChangeNotifier {
   Future<void> getJobDetailsByIds(BuildContext context, String id) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
-    final res = await _http
-        .query(getJobDetailsById, variables: {"id": id, "loginID": userId});
+    final variables = {"id": id, "loginID": userId};
+    print("**************$variables");
+    final res = await _http.query(getJobDetailsById, variables: variables);
     Loaders.circularHideLoader(context);
-    if (res.isNotEmpty) {
+    if (res != null) {
       final result = JobdList.fromJson(res);
       final job =
           result.jobs?.isNotEmpty ?? false ? result.jobs?.first : Jobs();

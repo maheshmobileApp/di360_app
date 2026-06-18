@@ -118,7 +118,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         )
                       : null,
                   background: CachedNetworkImageWidget(
-                    imageUrl: widget.job.bannerImage?.url ?? provider.getBannersData?.banners?.first.image?.first.url ?? '',
+                    imageUrl: widget.job.bannerImage?.url ?? '',
                     width: double.infinity,
                   ),
                 );

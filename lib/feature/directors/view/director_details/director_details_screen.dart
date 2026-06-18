@@ -21,10 +21,34 @@ class DirectorDetailsScreen extends StatefulWidget {
 }
 
 class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
+  bool _listenerAdded = false;
+
   @override
   void initState() {
     super.initState();
     _loadUserType();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_listenerAdded) return;
+    _listenerAdded = true;
+    final scrollLabel =
+        ModalRoute.of(context)?.settings.arguments as String?;
+    if (scrollLabel != null) {
+      final vm = Provider.of<DirectoryViewModel>(context, listen: false);
+      void listener() {
+        if (vm.directorDetails != null) {
+          vm.removeListener(listener);
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            await Future.delayed(const Duration(milliseconds: 300));
+            vm.scrollToSectionByLabel(scrollLabel);
+          });
+        }
+      }
+      vm.addListener(listener);
+    }
   }
 
   _loadUserType() async {
@@ -91,7 +115,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
 
                         (directionalVM.userType == UserRole.professional.value)
                             ? ((directionalVM.communityStatusString ==
-                                    "Join Community")
+                                    "Join Community" || directionalVM.communityStatusString ==
+                                    "Re-Join")
                                 ? navigationService
                                     .navigateTo(RouteList.joinCommunityView)
                                 : null)

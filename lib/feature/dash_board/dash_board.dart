@@ -19,8 +19,14 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     super.initState();
+
     final dashBoardVM = Provider.of<DashBoardViewModel>(context, listen: false);
     dashBoardVM.checkForUpdate(context);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await dashBoardVM.getUserType();
+    });
+
     if (dashBoardVM.isInitialized) {
       _handlePendingNotification();
     } else {

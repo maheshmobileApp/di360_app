@@ -5,7 +5,7 @@ import 'package:di360_flutter/feature/catalogue/model_class/get_releted_catalogu
 
 abstract class CatalogueRepository {
   Future<List<CatalogueCategories>> getCatalogue(
-    String? searchText,String? typeId,List<String>? categories,List<String>? suppliers,String loginId);
+    String? searchText,String? typeId,List<String>? categories,List<String>? suppliers,String loginId,{bool? isCommunityCatalogue});
   Future<CataloguesByPk?> getCatalogueById(String catalogueId);
   Future<List<CatalogData>?> getRelatedCatalogues(String catalogueId);
   Future<List<DentalSuppliers>?> getFilterSuppliers();

@@ -7,7 +7,6 @@ import 'package:di360_flutter/feature/news_feed_comment/comment_view_model/comme
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class NewReplyCommentWidget extends StatelessWidget with BaseContextHelpers {

@@ -86,6 +86,23 @@ class DirectoryViewModel extends ChangeNotifier {
 
   bool searchBarOpen = false;
 
+  final List<Map<String, String>> partnershipStatesList = [
+    {"name": 'New South Wales', "short": 'NSW'},
+    {"name": 'Victoria', "short": 'VIC'},
+    {"name": 'Queensland', "short": 'QLD'},
+    {"name": 'South Australia', "short": 'SA'},
+    {"name": 'Western Australia', "short": 'WA'},
+    {"name": 'Tasmania', "short": 'TAS'},
+    {"name": 'Northern Territory', "short": 'NT'},
+    {"name": 'Australian Capital Territory', "short": 'ACT'},
+  ];
+
+  String partnershipSelectedState = "";
+  void setPartnershipSelectedState(String value) {
+    partnershipSelectedState = value;
+    notifyListeners();
+  }
+
   void setSearchBar(bool val) {
     searchBarOpen = val;
     notifyListeners();
@@ -166,7 +183,7 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  final Map<String, GlobalKey> sectionKeys = {
+  Map<String, GlobalKey> sectionKeys = {
     'Basic Info': GlobalKey(),
     'Services': GlobalKey(),
     'Team': GlobalKey(),
@@ -326,7 +343,6 @@ class DirectoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-
   void setPartnershipStatusString(String value) {
     partnershipStatusString = value;
     notifyListeners();
@@ -339,9 +355,9 @@ class DirectoryViewModel extends ChangeNotifier {
     final variables = {"id": directorId, "member_id": userId};
     final res = await repository.getDirectory(variables);
     if (res.directoriesByPk != []) {
-      getDirectoryData = res;  
-        directorCommunityID =
-            getDirectoryData?.directoriesByPk?.dentalSupplier?.communityId;
+      getDirectoryData = res;
+      directorCommunityID =
+          getDirectoryData?.directoriesByPk?.dentalSupplier?.communityId;
       directorCommunityName = (type == UserRole.professional.value)
           ? getDirectoryData?.directoriesByPk?.businessName
           : getDirectoryData?.directoriesByPk?.companyName;
@@ -380,7 +396,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setCommunityStatusString("Community Joined");
       } else if (status == "REJECTED") {
-        setCommunityStatusString("Join Community Rejected");
+        setCommunityStatusString("Re-Join");
       } else if (status == "PENDING") {
         setCommunityStatusString("Join Community Pending");
       }
@@ -395,7 +411,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setPartnershipStatusString("Partnership Request Approved");
       } else if (status == "REJECTED") {
-        setPartnershipStatusString("Partnership Request Rejected");
+        setPartnershipStatusString("Partnership Request");
       } else if (status == "PENDING") {
         setPartnershipStatusString("Partnership Request Pending");
       }
@@ -415,7 +431,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setCommunityStatusString("Community Joined");
       } else if (status == "REJECTED") {
-        setCommunityStatusString("Join Community Rejected");
+        setCommunityStatusString("Re-Join");
       } else if (status == "PENDING") {
         setCommunityStatusString("Join Community Pending");
       }
@@ -437,7 +453,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setPartnershipStatusString("Partnership Request Approved");
       } else if (status == "REJECTED") {
-        setPartnershipStatusString("Partnership Request Rejected");
+        setPartnershipStatusString("Partnership Request");
       } else if (status == "PENDING") {
         setPartnershipStatusString("Partnership Request Pending");
       }
@@ -455,27 +471,27 @@ class DirectoryViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final phoneCode = selectedPhoneCode == "AU (+61)" ? "+61" : "+64";
     final variables = {
-    "input": {
+      "input": {
         "action": "APPLY",
         "community_id": communityId,
         "supplier_id": supplierId,
         "member_id": userId,
         "payload": {
-            "community_id": communityId,
-            "community_name": communityName,
-            "supplier_id": supplierId,
-            "member_id": userId,
-            "first_name": firstNameController.text,
-            "last_name": lastNameController.text,
-            "email": emailController.text,
-            "phone": "$phoneCode${phoneController.text}",
-            "state": selectedState,
-            "membership_number": membershipNumberController.text,
-            "type": "COMMUNITY",
-            "is_registered": selectedMembership == "Yes" ? false : true
+          "community_id": communityId,
+          "community_name": communityName,
+          "supplier_id": supplierId,
+          "member_id": userId,
+          "first_name": firstNameController.text,
+          "last_name": lastNameController.text,
+          "email": emailController.text,
+          "phone": "$phoneCode${phoneController.text}",
+          "state": selectedState,
+          "membership_number": membershipNumberController.text,
+          "type": "COMMUNITY",
+          "is_registered": selectedMembership == "Yes" ? false : true
         }
-    }
-};
+      }
+    };
     print("**********$variables");
     final res = await repository.communityRegister(variables);
     Loaders.circularHideLoader(context);
@@ -543,7 +559,8 @@ class DirectoryViewModel extends ChangeNotifier {
         "phone": '$phoneCode${phoneController.text}',
         "type": "PARTNERSHIP",
         "status": "PENDING",
-        "is_registered": false
+        "is_registered": false,
+        "state" : partnershipSelectedState
       }
     };
     print("**********$variables");
@@ -575,11 +592,21 @@ class DirectoryViewModel extends ChangeNotifier {
 
   Future<void> GetDirectorDetails(String id) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final variables = {
-      "id": id ,
-      "member_id": userId,
+    final variables = {"id": id, "member_id": userId};
+    sectionKeys = {
+      'Basic Info': GlobalKey(),
+      'Services': GlobalKey(),
+      'Team': GlobalKey(),
+      'Partner': GlobalKey(),
+      'Gallery': GlobalKey(),
+      'Document': GlobalKey(),
+      'Achievements': GlobalKey(),
+      'Certifications': GlobalKey(),
+      'Book Appointment': GlobalKey(),
+      'Testimonials': GlobalKey(),
+      'FAQ': GlobalKey(),
+      'Contact Us': GlobalKey(),
     };
-    print("**********$variables");
     final res = await repository.directoriesDetailsQuery(variables);
     if (res != null) {
       directorDetails = res;
