@@ -21,7 +21,7 @@ class FeatureButtonsWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: SizedBox(
-        height: 40,
+        height: 36,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: ConstantData.featureStatus.length,
@@ -69,7 +69,7 @@ class FeatureButtonsWidget extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  height: 40,
+                  height: 36,
                   decoration: BoxDecoration(
                       color: AppColors.whiteColor,
                       borderRadius: BorderRadius.circular(16),
