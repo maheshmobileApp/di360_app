@@ -24,37 +24,28 @@ class DeepLinkService {
     final uri = await _appLinks.getInitialAppLink();
     if (uri != null) {
       _pendingUri = uri;
-      print('DeepLinkService.init(): initial app link found: $uri');
     } else {
-      print('DeepLinkService.init(): no initial app link');
     }
     _appLinks.uriLinkStream.listen((uri) {
-      print('DeepLinkService: received uriLinkStream event: $uri');
-      final context = navigatorKey.currentContext;
-      if (context != null) {
-        _handleUri(uri, context);
-      } else {
-        print(
-            'DeepLinkService: uriLinkStream event received with no navigator context');
-      }
+      _pendingUri = uri;
     });
   }
 
-  static Future<void> consumePendingLink() async {
-    print("consumePendingLink Calling");
-    if (_pendingUri == null || _isProcessing) return;
+  static Future<bool> consumePendingLink() async {
+    if (_pendingUri == null || _isProcessing) return false;
 
     _isProcessing = true;
+    final uri = _pendingUri!;
+    _pendingUri = null;
 
     try {
-      final uri = _pendingUri!;
-      _pendingUri = null;
-
       final context = navigatorKey.currentContext;
-
-      if (context != null) {
-        await _handleUri(uri, context);
+      if (context == null) {
+        _pendingUri = uri;
+        return false;
       }
+      await _handleUri(uri, context);
+      return true;
     } finally {
       _isProcessing = false;
     }

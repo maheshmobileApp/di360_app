@@ -513,15 +513,17 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
             )
           ],
         ),
-        OutlineButtonWidget(
-          text: "View Details",
-          onTap: () async {
-            await catalogueVM.getCatalogDetails(context, categoryId ?? '');
-            final id =
-                catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
-            await catalogueVM.getReletedCatalog(context, id);
-            await navigationService.navigateTo(RouteList.catalogueDetails);
-          },
+        Expanded(
+          child: OutlineButtonWidget(
+            text: "View Details",
+            onTap: () async {
+              await catalogueVM.getCatalogDetails(context, categoryId ?? '');
+              final id =
+                  catalogueVM.cataloguesByIdData?.catalogueCategoryId ?? '';
+              await catalogueVM.getReletedCatalog(context, id);
+              await navigationService.navigateTo(RouteList.catalogueDetails);
+            },
+          ),
         )
       ],
     );

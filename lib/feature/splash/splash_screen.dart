@@ -68,23 +68,18 @@ class _SplashScreenState extends State<SplashScreen> with BaseContextHelpers {
     }
 
     if (userLogin == true) {
-      if (DeepLinkService.hasPendingLink) {
-        print(
-            'SplashScreen: pending deep link found, consuming before dashboard');
+      if (profileCompleted == true) {
+        print('SplashScreen: routing to dashboard');
         navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
-        await DeepLinkService.consumePendingLink();
+
+        if (DeepLinkService.hasPendingLink) {
+          await DeepLinkService.consumePendingLink();
+        }
         return;
       }
 
-      if (profileCompleted == true) {
-        print('SplashScreen: no pending deep link, routing to dashboard');
-        navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
-        return;
-      }
       await viewProfileHandle(context);
       if (DeepLinkService.hasPendingLink) {
-        print(
-            'SplashScreen: pending deep link found after profile flow, consuming');
         await DeepLinkService.consumePendingLink();
       }
       return;

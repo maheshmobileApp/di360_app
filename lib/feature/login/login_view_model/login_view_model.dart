@@ -164,12 +164,12 @@ class LoginViewModel extends ChangeNotifier {
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, true);
     await LocalStorage.setBoolValue(LocalStorageConst.directoryComplete, true);
+
     navigationService.pushNamedAndRemoveUntil(RouteList.dashBoard);
 
     if (DeepLinkService.hasPendingLink) {
       print('LoginViewModel: pending deep link found after login, consuming');
       await DeepLinkService.consumePendingLink();
-      return;
     }
   }
 
