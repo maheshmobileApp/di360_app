@@ -32,10 +32,6 @@ class FeatureButtonsWidget extends StatelessWidget {
               child: GestureDetector(
                 onTap: () async {
                   if (index == 0 || index == 1 || index == 2) {
-                    Loaders.circularShowLoader(context);
-                    await directoryVM.GetDirectorDetails(
-                        communityMemberDirectorId ?? '');
-                    Loaders.circularHideLoader(context);
                     final scrollTo = index == 1
                         ? 'Partner'
                         : index == 2
@@ -44,6 +40,10 @@ class FeatureButtonsWidget extends StatelessWidget {
                     navigationService.navigateToWithParams(
                         RouteList.directoryDetailsScreen,
                         params: scrollTo);
+                    Loaders.circularShowLoader(context);
+                    await directoryVM.GetDirectorDetails(
+                        communityMemberDirectorId ?? '');
+                    Loaders.circularHideLoader(context);
                   } else if (index == 3) {
                     navigationService.navigateTo(RouteList.learningHubMasterView);
                     Loaders.circularShowLoader(context);
