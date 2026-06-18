@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/account/view/account_view_screen.dart';
 import 'package:di360_flutter/feature/add_directors/view_model/add_director_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
@@ -24,6 +28,7 @@ import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -51,7 +56,7 @@ class DashBoardViewModel extends ChangeNotifier {
     _userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     await LocalStorage.setBoolValue(
         LocalStorageConst.firstNavigationDirectory, false);
-    _setupPages();
+    //_setupPages();
     // if (_pendingIndex != null && _pendingIndex! < _pages.length) {
     //   _currentIndex = _pendingIndex!;
     //   _pendingIndex = null;
@@ -60,7 +65,8 @@ class DashBoardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setupPages() {
+  Future<void> getUserType() async {
+    _userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     _updatePages();
     notifyListeners();
   }
@@ -104,14 +110,15 @@ class DashBoardViewModel extends ChangeNotifier {
     }
   }
 
-  void setIndex(int index, BuildContext context,{bool? isCommunityCatalogue}) {
+  void setIndex(int index, BuildContext context, {bool? isCommunityCatalogue}) {
     if (index < 0 || index >= _pages.length) return;
     _currentIndex = index;
     updateIndex(index, context, isCommunityCatalogue: isCommunityCatalogue);
     notifyListeners();
   }
 
-  updateIndex(int index, BuildContext context, {bool? isCommunityCatalogue}) async {
+  updateIndex(int index, BuildContext context,
+      {bool? isCommunityCatalogue}) async {
     if (_userType == UserRole.supplier.value) {
       switch (index) {
         case 0: // Home
@@ -133,9 +140,8 @@ class DashBoardViewModel extends ChangeNotifier {
 
           break;
         case 4: // Catalogue
-          context
-              .read<CatalogueViewModel>()
-              .fetchCatalogue(context, isCommunityCatalogue: isCommunityCatalogue);
+          context.read<CatalogueViewModel>().fetchCatalogue(context,
+              isCommunityCatalogue: isCommunityCatalogue);
           break;
         case 5: // Account
           break;
@@ -177,9 +183,8 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           break;
         case 4: // Catalogue
-          context
-              .read<CatalogueViewModel>()
-              .fetchCatalogue(context, isCommunityCatalogue: isCommunityCatalogue);
+          context.read<CatalogueViewModel>().fetchCatalogue(context,
+              isCommunityCatalogue: isCommunityCatalogue);
           break;
         case 5: // Account
           break;
@@ -277,22 +282,35 @@ Future logOutAlert(BuildContext context) {
       });
 }
 
+Future<String> getDeviceId() async {
+  final deviceInfo = DeviceInfoPlugin();
+
+  if (Platform.isAndroid) {
+    final androidInfo = await deviceInfo.androidInfo;
+    return androidInfo.id;
+  }
+
+  if (Platform.isIOS) {
+    final iosInfo = await deviceInfo.iosInfo;
+    return iosInfo.identifierForVendor ?? '';
+  }
+
+  return '';
+}
+
 Future<void> deleteToken() async {
-  // final HttpService _http = HttpService();
-  // final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-  // final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+  final HttpService _http = HttpService();
+  final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+  final deviceId = await getDeviceId();
 
-  // final deviceToken = await FirebaseMessaging.instance.getToken();
+  if (deviceId == "") {
+    print("Device token is null or empty, skipping token deletion");
+    return;
+  }
 
-  // // Handle null device token
-  // if (deviceToken == null || deviceToken == "") {
-  //   print("Device token is null or empty, skipping token deletion");
-  //   return;
-  // }
-
-  // final variables = {"id": id, "type": type, "devicetoken": deviceToken};
-  // print("variables: $variables");
-  // final res = await _http.post("/api/v1/auth/remove-devicetoken", variables);
+  final variables = {"device_id": deviceId, "type": type};
+  print("variables: $variables");
+  final res = await _http.post("/api/v1/auth/remove-devicetoken", variables);
   await LocalStorage.clearAllData();
-  // print("res: $res");
+  print("res: $res");
 }

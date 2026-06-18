@@ -35,7 +35,7 @@ class LoginRepoImpl extends LoginRepository {
 
   @override
   Future updateDeviceToken(dynamic variables) async {
-    final res = await http.mutation(updateDeviceTokenQuery, variables);
+    final res = await http.post("/api/v1/auth/fcm-token", variables);
     return res;
   }
 

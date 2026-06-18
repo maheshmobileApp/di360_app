@@ -3,6 +3,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
+import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -56,21 +57,23 @@ class PartnershipCommunityRequestView extends StatelessWidget
                 ),
                 SizedBox(height: 8),
                 InputTextField(
-                      title: "Mobile Number",
-                      isRequired: true,
-                      hintText: "4XXXXXXXX",
-                      keyboardType: TextInputType.phone,
-                      maxLength: 9,
-                      controller: directorVM.phoneController,
-                      validator: validateAustralianMobileNumber,
-                      prefixIcon: PhonePrefixDropdown(
-                        value: directorVM.selectedPhoneCode ?? "",
-                        items: directorVM.phoneCodeList,
-                        onChanged: (value) {
-                          directorVM.setPhoneCode(value ?? "");
-                        },
-                      ),
-                    ),
+                  title: "Mobile Number",
+                  isRequired: true,
+                  hintText: "4XXXXXXXX",
+                  keyboardType: TextInputType.phone,
+                  maxLength: 9,
+                  controller: directorVM.phoneController,
+                  validator: validateAustralianMobileNumber,
+                  prefixIcon: PhonePrefixDropdown(
+                    value: directorVM.selectedPhoneCode ?? "",
+                    items: directorVM.phoneCodeList,
+                    onChanged: (value) {
+                      directorVM.setPhoneCode(value ?? "");
+                    },
+                  ),
+                ),
+                SizedBox(height: 8),
+                _buildStates(directorVM),
                 SizedBox(
                   height: 30,
                 ),
@@ -107,5 +110,30 @@ class PartnershipCommunityRequestView extends StatelessWidget
             ),
           ),
         ));
+  }
+
+  Widget _buildStates(DirectoryViewModel viewModel) {
+    return CustomDropDown(
+      isRequired: true,
+      value: viewModel.partnershipStatesList
+              .any((e) => e["short"] == viewModel.selectedState)
+          ? viewModel.selectedState
+          : null,
+      title: "State",
+      onChanged: (v) {
+        viewModel.setPartnershipSelectedState(v as String);
+      },
+      items:
+          viewModel.partnershipStatesList.map<DropdownMenuItem<Object>>((item) {
+        return DropdownMenuItem<Object>(
+          value: item["short"],
+          child: Text(item["name"]!),
+        );
+      }).toList(),
+      hintText: "Select State",
+      validator: (value) => value == null || value.toString().isEmpty
+          ? 'Please select state'
+          : null,
+    );
   }
 }

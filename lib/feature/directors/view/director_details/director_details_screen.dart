@@ -100,7 +100,8 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
 
                         (directionalVM.userType == UserRole.professional.value)
                             ? ((directionalVM.communityStatusString ==
-                                    "Join Community")
+                                    "Join Community" || directionalVM.communityStatusString ==
+                                    "Re-Join")
                                 ? navigationService
                                     .navigateTo(RouteList.joinCommunityView)
                                 : null)

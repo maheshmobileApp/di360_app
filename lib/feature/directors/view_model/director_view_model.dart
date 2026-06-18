@@ -86,6 +86,23 @@ class DirectoryViewModel extends ChangeNotifier {
 
   bool searchBarOpen = false;
 
+  final List<Map<String, String>> partnershipStatesList = [
+    {"name": 'New South Wales', "short": 'NSW'},
+    {"name": 'Victoria', "short": 'VIC'},
+    {"name": 'Queensland', "short": 'QLD'},
+    {"name": 'South Australia', "short": 'SA'},
+    {"name": 'Western Australia', "short": 'WA'},
+    {"name": 'Tasmania', "short": 'TAS'},
+    {"name": 'Northern Territory', "short": 'NT'},
+    {"name": 'Australian Capital Territory', "short": 'ACT'},
+  ];
+
+  String partnershipSelectedState = "";
+  void setPartnershipSelectedState(String value) {
+    partnershipSelectedState = value;
+    notifyListeners();
+  }
+
   void setSearchBar(bool val) {
     searchBarOpen = val;
     notifyListeners();
@@ -379,7 +396,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setCommunityStatusString("Community Joined");
       } else if (status == "REJECTED") {
-        setCommunityStatusString("Join Community Rejected");
+        setCommunityStatusString("Re-Join");
       } else if (status == "PENDING") {
         setCommunityStatusString("Join Community Pending");
       }
@@ -394,7 +411,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setPartnershipStatusString("Partnership Request Approved");
       } else if (status == "REJECTED") {
-        setPartnershipStatusString("Partnership Request Rejected");
+        setPartnershipStatusString("Partnership Request");
       } else if (status == "PENDING") {
         setPartnershipStatusString("Partnership Request Pending");
       }
@@ -414,7 +431,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setCommunityStatusString("Community Joined");
       } else if (status == "REJECTED") {
-        setCommunityStatusString("Join Community Rejected");
+        setCommunityStatusString("Re-Join");
       } else if (status == "PENDING") {
         setCommunityStatusString("Join Community Pending");
       }
@@ -436,7 +453,7 @@ class DirectoryViewModel extends ChangeNotifier {
       if (status == "APPROVED") {
         setPartnershipStatusString("Partnership Request Approved");
       } else if (status == "REJECTED") {
-        setPartnershipStatusString("Partnership Request Rejected");
+        setPartnershipStatusString("Partnership Request");
       } else if (status == "PENDING") {
         setPartnershipStatusString("Partnership Request Pending");
       }
@@ -542,7 +559,8 @@ class DirectoryViewModel extends ChangeNotifier {
         "phone": '$phoneCode${phoneController.text}',
         "type": "PARTNERSHIP",
         "status": "PENDING",
-        "is_registered": false
+        "is_registered": false,
+        "state" : partnershipSelectedState
       }
     };
     print("**********$variables");

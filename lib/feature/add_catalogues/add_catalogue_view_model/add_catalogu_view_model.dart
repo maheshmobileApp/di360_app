@@ -77,12 +77,13 @@ class AddCatalogueViewModel extends ChangeNotifier {
   dynamic pdfPathUrl;
   bool isEditCatalogue = false;
   List<String> communityTypes = ["Both", "Community User"];
-  String? selectedCommunityType;
+  String? selectedCommunityType = 'Both';
   bool communityStatus = false;
 
   void setCommunityStatus() async {
     print("Setting community status");
-    final communityValue = await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
+    final communityValue =
+        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
     communityStatus = communityValue == 'true';
     notifyListeners();
   }
@@ -195,6 +196,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final communityStatus =
+        await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
 
     final isoString = DateTime.now().toUtc().toIso8601String();
 
@@ -228,7 +231,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "community_user_type":
             selectedCommunityType == "Both" ? "BOTH" : "COMMUNITY_USER",
         "community_id": communityId,
-        "community_status": "YES",
+        "community_status": communityStatus == "true" ? "YES" : "NO",
         "user_role": type,
       }
     });
