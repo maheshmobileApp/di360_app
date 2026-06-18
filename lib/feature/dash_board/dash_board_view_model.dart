@@ -28,7 +28,6 @@ import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -110,15 +109,14 @@ class DashBoardViewModel extends ChangeNotifier {
     }
   }
 
-  void setIndex(int index, BuildContext context, {bool? isCommunityCatalogue}) {
+  void setIndex(int index, BuildContext context) {
     if (index < 0 || index >= _pages.length) return;
     _currentIndex = index;
-    updateIndex(index, context, isCommunityCatalogue: isCommunityCatalogue);
+    updateIndex(index, context);
     notifyListeners();
   }
 
-  updateIndex(int index, BuildContext context,
-      {bool? isCommunityCatalogue}) async {
+  updateIndex(int index, BuildContext context) async {
     if (_userType == UserRole.supplier.value) {
       switch (index) {
         case 0: // Home
@@ -140,8 +138,9 @@ class DashBoardViewModel extends ChangeNotifier {
 
           break;
         case 4: // Catalogue
-          context.read<CatalogueViewModel>().fetchCatalogue(context,
-              isCommunityCatalogue: isCommunityCatalogue);
+          context
+              .read<CatalogueViewModel>()
+              .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
         case 5: // Account
           break;
@@ -183,8 +182,9 @@ class DashBoardViewModel extends ChangeNotifier {
           context.read<CommunityViewModel>().changeProfessionalMode(true);
           break;
         case 4: // Catalogue
-          context.read<CatalogueViewModel>().fetchCatalogue(context,
-              isCommunityCatalogue: isCommunityCatalogue);
+          context
+              .read<CatalogueViewModel>()
+              .fetchCatalogue(context, isCommunityCatalogue: false);
           break;
         case 5: // Account
           break;
