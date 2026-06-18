@@ -10,6 +10,7 @@ class RouteList {
   static const String addNewsFeed = '/addNewsFeed';
   static const String roleScreen = '/roleScreen';
   static const String jobdetailsScreen = '/jobdetailsScreen';
+  static const String catalogueScreen = '/catalogueScreen';
   static const String catalogueDetails = '/catalogueDetails';
   static const String talentdetailsScreen = '/talentdetailsScreen';
   static const String catalogueFilterScreen = '/catalogueFilterScreen';

@@ -1,14 +1,13 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
-import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
-import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/loader.dart';
-import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,22 +18,18 @@ class FeatureButtonsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final directoryVM = Provider.of<DirectoryViewModel>(context);
-    return SizedBox(
-      height: 45,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: ConstantData.featureStatus.length,
-        itemBuilder: (context, index) {
-          String status = ConstantData.featureStatus[index];
-          return Padding(
-            padding: const EdgeInsets.only(right: 8, left: 2),
-            child: AppButton(
-                btnColor: AppColors.whiteColor,
-                btnTextColor: AppColors.black,
-                text: status,
-                height: 45,
-                width: 130,
-                radius: 8,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SizedBox(
+        height: 40,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: ConstantData.featureStatus.length,
+          itemBuilder: (context, index) {
+            String status = ConstantData.featureStatus[index];
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
                 onTap: () async {
                   if (index == 0 || index == 1 || index == 2) {
                     Loaders.circularShowLoader(context);
@@ -46,10 +41,11 @@ class FeatureButtonsWidget extends StatelessWidget {
                         : index == 2
                             ? 'Contact Us'
                             : null;
-                    await navigationService.navigateToWithParams(
+                    navigationService.navigateToWithParams(
                         RouteList.directoryDetailsScreen,
                         params: scrollTo);
                   } else if (index == 3) {
+                    navigationService.navigateTo(RouteList.learningHubMasterView);
                     Loaders.circularShowLoader(context);
                     context
                         .read<MarketPlaceLearningHubViewModel>()
@@ -65,19 +61,32 @@ class FeatureButtonsWidget extends StatelessWidget {
                         .getAllLearningHubData(context,
                             isCommunityLearningHub: true);
                     Loaders.circularHideLoader(context);
-                    await navigationService
-                        .navigateTo(RouteList.learningHubMasterView);
                   } else if (index == 4) {
-                    navigationService.goBack();
-                    await Future.delayed(const Duration(milliseconds: 100));
-                    final ctx = navigatorKey.currentContext!;
-                    ctx
-                        .read<DashBoardViewModel>()
-                        .setIndex(4, ctx, isCommunityCatalogue: true);
+                    navigationService.navigateTo(RouteList.catalogueScreen);
+                    context
+                        .read<CatalogueViewModel>()
+                        .fetchCatalogue(context, isCommunityCatalogue: true);
                   }
-                }),
-          );
-        },
+                },
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border:
+                          Border.all(color: AppColors.primaryColor, width: 1)),
+                  child: Center(
+                      child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(status,
+                        style: TextStyles.medium3(color: AppColors.black)),
+                  )),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
