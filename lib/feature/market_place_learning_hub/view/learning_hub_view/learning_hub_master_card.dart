@@ -205,7 +205,7 @@ class ListingHubMasterCard extends StatelessWidget {
                                     TextStyles.medium2(color: AppColors.black)),
                           ],
                         ),
-                        if (isRegistered && type == "Online Academy")
+                        if (isRegistered && type == "Online Academy" && courseStatus != "EXPIRED")
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

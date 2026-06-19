@@ -79,9 +79,18 @@ class UserData extends StatelessWidget with BaseContextHelpers {
                   ),
                 ),
                 addHorizontal(12),
-                Text(userName ?? homeViewModel.profileName ?? '',
-                    style: TextStyles.clashMedium(
-                        fontSize: 20, color: AppColors.black)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(userName ?? homeViewModel.profileName ?? '',
+                        style: TextStyles.clashMedium(
+                            fontSize: 20, color: AppColors.black)),
+                    if (homeViewModel.subSupplierName != "")
+                      Text("(${homeViewModel.subSupplierName ?? ''})",
+                          style: TextStyles.clashMedium(
+                              fontSize: 20, color: AppColors.primaryColor)),
+                  ],
+                ),
               ],
             ),
             addVertical(6),

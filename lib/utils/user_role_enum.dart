@@ -2,7 +2,8 @@ enum UserRole {
   admin('ADMIN'),
   professional('PROFESSIONAL'),
   supplier('SUPPLIER'),
-  practice('PRACTICE');
+  practice('PRACTICE'),
+  subSupplier('SUB_SUPPLIER');
 
   const UserRole(this.value);
 

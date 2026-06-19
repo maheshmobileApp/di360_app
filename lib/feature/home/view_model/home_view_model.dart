@@ -11,6 +11,7 @@ class HomeViewModel extends ChangeNotifier {
 
   GetFollowersData? getFollowersData;
   String? userName;
+  String? subSupplierName;
   String? profileName;
   String? profilePic;
   String? userID;
@@ -116,11 +117,15 @@ class HomeViewModel extends ChangeNotifier {
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    final businessName = await LocalStorage.getStringVal(LocalStorageConst.businessName);
+    final subType = await LocalStorage.getStringVal(LocalStorageConst.subType);
+    final businessName =
+        await LocalStorage.getStringVal(LocalStorageConst.businessName);
     final user_id =
         await LocalStorage.getStringVal(LocalStorageConst.profilePic);
     this.userName = name;
-    this.profileName = (type == UserRole.professional.value) ? name : businessName;
+    this.subSupplierName = subType == UserRole.subSupplier.value ? name : "";
+    this.profileName =
+        (type == UserRole.professional.value) ? name : businessName;
     this.profilePic = img;
     this.userID = user_id;
     this.userType = type;
