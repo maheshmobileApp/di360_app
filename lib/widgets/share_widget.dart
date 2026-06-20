@@ -14,10 +14,19 @@ class ShareWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
+          final RenderBox? box = context.findRenderObject() as RenderBox?;
+          final Rect sharePositionOrigin = box != null
+              ? box.localToGlobal(Offset.zero) & box.size
+              : Rect.fromLTWH(0, 0, 1, 1);
+
           final link = category != null
-              ? ShareUtils.getShareUrlDeepling(feedId, category??"")
+              ? ShareUtils.getShareUrlDeepling(feedId, category ?? "")
               : ShareUtils.getShareUrl(feedId);
-          SharePlus.instance.share(ShareParams(uri: Uri.parse(link)));
+
+          SharePlus.instance.share(ShareParams(
+            uri: Uri.parse(link),
+            sharePositionOrigin: sharePositionOrigin,
+          ));
         },
         child: Container(
             decoration: BoxDecoration(
