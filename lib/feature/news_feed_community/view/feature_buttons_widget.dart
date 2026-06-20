@@ -36,6 +36,8 @@ class FeatureButtonsWidget extends StatelessWidget {
                     Loaders.circularShowLoader(context);
                     await directoryVM.GetDirectorDetails(
                         communityMemberDirectorId ?? '');
+                    await directoryVM
+                        .getDirectory(communityMemberDirectorId ?? "");
                     final scrollTo = index == 1
                         ? 'Partner'
                         : index == 2
