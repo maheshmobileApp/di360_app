@@ -43,9 +43,12 @@ class FeatureButtonsWidget extends StatelessWidget {
                     Loaders.circularShowLoader(context);
                     await directoryVM.GetDirectorDetails(
                         communityMemberDirectorId ?? '');
+                    await directoryVM
+                        .getDirectory(communityMemberDirectorId ?? "");
                     Loaders.circularHideLoader(context);
                   } else if (index == 3) {
-                    navigationService.navigateTo(RouteList.learningHubMasterView);
+                    navigationService
+                        .navigateTo(RouteList.learningHubMasterView);
                     Loaders.circularShowLoader(context);
                     context
                         .read<MarketPlaceLearningHubViewModel>()
@@ -77,8 +80,7 @@ class FeatureButtonsWidget extends StatelessWidget {
                           Border.all(color: AppColors.primaryColor, width: 1)),
                   child: Center(
                       child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(status,
                         style: TextStyles.medium3(color: AppColors.black)),
                   )),
