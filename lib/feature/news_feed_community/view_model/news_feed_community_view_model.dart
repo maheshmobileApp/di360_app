@@ -704,8 +704,10 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getCommunityMemberDirectorIds(String communityId) async {
-    final res = await repo.getCommunityMemberCountData(communityId);
+  Future<void> getCommunityMemberDirectorIds({String? communityId}) async {
+    final userCommunityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final res = await repo.getCommunityMemberCountData(communityId ?? userCommunityId);
     if (res.communityMembers != null) {
       communityMembersCountData = res;
       communityMemberDirectorId =

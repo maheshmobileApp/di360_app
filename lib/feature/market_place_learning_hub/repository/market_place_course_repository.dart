@@ -4,7 +4,10 @@ import 'package:di360_flutter/feature/market_place_learning_hub/model_class/cour
 abstract class MarketPlaceCourseRepository {
   Future<List<CoursesListingDetails>?> getMarketPlaceLearningHubData(
       int limit, int offset, String searchText,
-      {List<String>? types, List<String>? courseCategory,bool? isCommunityLearningHub});
+      {List<String>? types,
+      List<String>? courseCategory,
+      bool? isCommunityLearningHub,
+      String? communityId});
   Future<CoursesByPk?> getCourseDetails(String? courseId);
   Future<dynamic> markQuizCompleted(dynamic variables);
   Future<dynamic> updatedTheCourseCompletedStatus(dynamic variables);

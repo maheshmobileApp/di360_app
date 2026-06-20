@@ -48,7 +48,8 @@ class _CreateCategoryViewState extends State<CommunityMarketView>
                                 list[index].communityId ?? "");
                             //await viewModel.getNewsFeedCategories(context);
                             newsCommunityVM.getBannerUrl(context);
-                            newsCommunityVM.getCommunityMemberDirectorIds(list[index].communityId ?? "");
+                            newsCommunityVM.getCommunityMemberDirectorIds(
+                                communityId: list[index].communityId ?? "");
                             /*newsCommunityVM.newsFeedCategoriesData =
                                 viewModel.newsFeedCategoriesData;*/
                             navigationService

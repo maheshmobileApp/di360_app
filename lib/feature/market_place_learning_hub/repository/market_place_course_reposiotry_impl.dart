@@ -20,7 +20,8 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
       int limit, int offset, String searchText,
       {List<String>? types,
       List<String>? courseCategory,
-      bool? isCommunityLearningHub}) async {
+      bool? isCommunityLearningHub,
+      String? communityId}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final communityIdList =
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
@@ -108,10 +109,11 @@ class MarketPlaceCourseRepositoryImpl implements MarketPlaceCourseRepository {
       "offset": offset,
       "where": {
         "_and": [
-          if (communityIdList != [] && communityIdList.isNotEmpty)
-            {
-              "community_id": {"_in": communityIdList}
+          {
+            "community_id": {
+              "_in": [communityId]
             }
+          }
         ]
       }
     };

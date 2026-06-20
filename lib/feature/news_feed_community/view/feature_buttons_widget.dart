@@ -1,7 +1,9 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/constant_data.dart';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
 import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
@@ -14,7 +16,9 @@ import 'package:provider/provider.dart';
 
 class FeatureButtonsWidget extends StatelessWidget {
   final String? communityMemberDirectorId;
-  const FeatureButtonsWidget({super.key, this.communityMemberDirectorId});
+  final String? communityId;
+  const FeatureButtonsWidget(
+      {super.key, this.communityMemberDirectorId, this.communityId});
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +84,8 @@ class FeatureButtonsWidget extends StatelessWidget {
 
                     Loaders.circularHideLoader(context);
                   } else if (index == 3) {
+                    final userCommunityId = await LocalStorage.getStringVal(
+                        LocalStorageConst.communityId);
                     navigationService
                         .navigateTo(RouteList.learningHubMasterView);
                     Loaders.circularShowLoader(context);
@@ -95,7 +101,8 @@ class FeatureButtonsWidget extends StatelessWidget {
                     await context
                         .read<MarketPlaceLearningHubViewModel>()
                         .getAllLearningHubData(context,
-                            isCommunityLearningHub: true);
+                            isCommunityLearningHub: true,
+                            communityId: communityId ?? userCommunityId);
                     Loaders.circularHideLoader(context);
                   } else if (index == 4) {
                     navigationService.navigateTo(RouteList.catalogueScreen);
