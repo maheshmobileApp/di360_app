@@ -7,6 +7,7 @@ import 'package:di360_flutter/feature/directors/view_model/director_view_model.d
 import 'package:di360_flutter/feature/learning_hub/view_model/new_course_view_model.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,20 +33,43 @@ class FeatureButtonsWidget extends StatelessWidget {
               child: GestureDetector(
                 onTap: () async {
                   if (index == 0 || index == 1 || index == 2) {
+                    Loaders.circularShowLoader(context);
+                    await directoryVM.GetDirectorDetails(
+                        communityMemberDirectorId ?? '');
                     final scrollTo = index == 1
                         ? 'Partner'
                         : index == 2
                             ? 'Contact Us'
                             : null;
-                    navigationService.navigateToWithParams(
-                        RouteList.directoryDetailsScreen,
-                        params: scrollTo);
-                    Loaders.circularShowLoader(context);
-                    await directoryVM.GetDirectorDetails(
-                        communityMemberDirectorId ?? '');
+                    if (index == 1) {
+                      if (directoryVM
+                              .directorDetails?.directoryPartners?.isEmpty ??
+                          false) {
+                        scaffoldMessenger("No Partners Available");
+                      } else {
+                        navigationService.navigateToWithParams(
+                            RouteList.directoryDetailsScreen,
+                            params: scrollTo);
+                      }
+                    } else if (index == 2) {
+                      if (directoryVM.directorDetails?.email?.isEmpty ??
+                          false) {
+                        scaffoldMessenger("No Contacts Available");
+                      } else {
+                        navigationService.navigateToWithParams(
+                            RouteList.directoryDetailsScreen,
+                            params: scrollTo);
+                      }
+                    } else {
+                      navigationService.navigateToWithParams(
+                          RouteList.directoryDetailsScreen,
+                          params: scrollTo);
+                    }
+
                     Loaders.circularHideLoader(context);
                   } else if (index == 3) {
-                    navigationService.navigateTo(RouteList.learningHubMasterView);
+                    navigationService
+                        .navigateTo(RouteList.learningHubMasterView);
                     Loaders.circularShowLoader(context);
                     context
                         .read<MarketPlaceLearningHubViewModel>()
@@ -77,8 +101,7 @@ class FeatureButtonsWidget extends StatelessWidget {
                           Border.all(color: AppColors.primaryColor, width: 1)),
                   child: Center(
                       child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(status,
                         style: TextStyles.medium3(color: AppColors.black)),
                   )),
