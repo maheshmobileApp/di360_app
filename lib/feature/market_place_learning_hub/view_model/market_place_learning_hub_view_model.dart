@@ -243,7 +243,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       {bool loadMore = false,
       List<String>? types,
       List<String>? courseCategory,
-      bool? isCommunityLearningHub}) async {
+      bool? isCommunityLearningHub,
+      String? communityId}) async {
     if (loadMore) {
       if (isLoadingMoreMarketPlace || !hasMoreMarketPlace) return;
       isLoadingMoreMarketPlace = true;
@@ -261,7 +262,8 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         _marketPlaceLimit, _marketPlaceOffset, searchController.text,
         types: types,
         courseCategory: courseCategory,
-        isCommunityLearningHub: this.isCommunityLearningHub);
+        isCommunityLearningHub: this.isCommunityLearningHub,
+        communityId: communityId);
 
     if (loadMore) {
       marketPlaceCoursesList.addAll(res ?? []);

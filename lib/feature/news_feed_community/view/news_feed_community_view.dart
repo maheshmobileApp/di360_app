@@ -54,6 +54,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         final communityVM =
             Provider.of<CommunityViewModel>(context, listen: false);
         await communityVM.getNewsFeedCategories(context, type: "Community");
+        await viewModel.getCommunityMemberDirectorIds();
       }
     });
   }
@@ -180,16 +181,16 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                               color: AppColors.black)),
                       if (viewModel.applyFilter)
                         Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: GestureDetector(
-                              onTap: () {
-                                viewModel.updateApplyFilter(false);
-                                viewModel.initialStateData();
-                                viewModel.getAllNewsFeeds(context);
-                                viewModel.setSelectedCategoryId("");
-                              },
-                              child: Icon(Icons.close, color: AppColors.black)),
-                        )
+                            padding: const EdgeInsets.only(left: 10),
+                            child: GestureDetector(
+                                onTap: () {
+                                  viewModel.updateApplyFilter(false);
+                                  viewModel.initialStateData();
+                                  viewModel.getAllNewsFeeds(context);
+                                  viewModel.setSelectedCategoryId("");
+                                },
+                                child:
+                                    Icon(Icons.close, color: AppColors.black)))
                     ],
                   ),
                 ),
@@ -227,8 +228,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                             },
                           ),
                           FeatureButtonsWidget(
-                              communityMemberDirectorId: newsFeedCommunityVM
-                                  .communityMemberDirectorId),
+                            communityMemberDirectorId:
+                                newsFeedCommunityVM.communityMemberDirectorId,
+                            communityId: joinRequests?.firstOrNull?.communityId,
+                          ),
                           addVertical(8),
                           if (viewModel.searchBarOpen)
                             SearchWidget(
@@ -261,8 +264,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                           padding: EdgeInsets.all(16),
                                           child: Center(
                                               child: CircularProgressIndicator(
-                                            color: AppColors.primaryColor,
-                                          )),
+                                                  color:
+                                                      AppColors.primaryColor)),
                                         );
                                       }
                                       final newsItem = joinRequests[index];
