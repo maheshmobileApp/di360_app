@@ -549,6 +549,18 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
   }
 
+  String? getDirectoryBusinessTypeId(String? categoryId) {
+    if (categoryId == null) return null;
+
+    final parent = directoryBusinessTypes.firstWhere(
+      (bt) =>
+          bt.directoryCategories?.any((cat) => cat.id == categoryId) == true,
+      orElse: () => DirectoryBusinessTypes(),
+    );
+
+    return parent.id;
+  }
+
   Future<void> addBasicInfo(BuildContext context) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
@@ -565,6 +577,9 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "company_name": CompanyNameController.text,
         "description": descController.text,
         "directory_category_id": selectedBusineestype?.id,
+        "directory_business_type_id":
+            getDirectoryBusinessTypeId(selectedBusineestype?.id),
+
         "dental_practice_id": type == UserRole.practice.value ? userId : null,
         "dental_professional_id":
             type == UserRole.professional.value ? userId : null,
@@ -633,6 +648,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
             banner == null ? getBasicInfoData.first.bannerImage : banner,
         "profession_type": selectedBusineestype?.name,
         "professiontype": selectedBusineestype,
+        "directory_business_type_id":
+            getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "directory_category_id": selectedBusineestype?.id,
         "logo": logo == null ? getBasicInfoData.first.logo : logo,
         "alt_phone": alternateNumberController.text,
@@ -666,6 +683,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "type": type,
         "profession_type": selectedBusineestype?.name,
         "professiontype": selectedBusineestype,
+        "directory_business_type_id":
+            getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "description": descController.text,
         "banner_image":
             banner == null ? getBasicInfoData.first.bannerImage : banner,
@@ -693,6 +712,8 @@ class AddDirectoryViewModel extends ChangeNotifier with ValidationMixins {
         "type": type,
         "profession_type": selectedBusineestype?.name,
         "professiontype": selectedBusineestype,
+        "directory_business_type_id":
+            getDirectoryBusinessTypeId(selectedBusineestype?.id),
         "description": descController.text,
         "banner_image":
             banner == null ? getBasicInfoData.first.bannerImage : banner,

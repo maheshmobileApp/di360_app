@@ -1,10 +1,10 @@
-class GetCommunityMemberCountRes {
-  CommunityMemberData? data;
+class GetCommunityMembersCountRes {
+  CommunityMembersCountData? data;
 
-  GetCommunityMemberCountRes({this.data});
+  GetCommunityMembersCountRes({this.data});
 
-  GetCommunityMemberCountRes.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new CommunityMemberData.fromJson(json['data']) : null;
+  GetCommunityMembersCountRes.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? new CommunityMembersCountData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -16,13 +16,13 @@ class GetCommunityMemberCountRes {
   }
 }
 
-class CommunityMemberData {
+class CommunityMembersCountData {
   List<CommunityMembers>? communityMembers;
   CommunityMembersAggregate? communityMembersAggregate;
 
-  CommunityMemberData({this.communityMembers, this.communityMembersAggregate});
+  CommunityMembersCountData({this.communityMembers, this.communityMembersAggregate});
 
-  CommunityMemberData.fromJson(Map<String, dynamic> json) {
+  CommunityMembersCountData.fromJson(Map<String, dynamic> json) {
     if (json['community_members'] != null) {
       communityMembers = <CommunityMembers>[];
       json['community_members'].forEach((v) {
@@ -103,30 +103,19 @@ class DentalSuppliers {
 
 class Directories {
   String? id;
-  List<DirectoryPartners>? directoryPartners;
- // List<DirectoryLocations>? directoryLocations;
+  List<dynamic>? directoryPartners;
+  List<dynamic>? directoryLocations;
   String? sTypename;
 
   Directories(
       {this.id,
       this.directoryPartners,
-    //  this.directoryLocations,
+      this.directoryLocations,
       this.sTypename});
 
   Directories.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    if (json['directory_partners'] != null) {
-      directoryPartners = <DirectoryPartners>[];
-      json['directory_partners'].forEach((v) {
-        directoryPartners!.add(new DirectoryPartners.fromJson(v));
-      });
-    }
-    // if (json['directory_locations'] != null) {
-    //   directoryLocations = <DirectoryLocations>[];
-    //   json['directory_locations'].forEach((v) {
-    //     directoryLocations!.add(new DirectoryLocations.fromJson(v));
-    //   });
-    // }
+
     sTypename = json['__typename'];
   }
 
@@ -137,29 +126,10 @@ class Directories {
       data['directory_partners'] =
           this.directoryPartners!.map((v) => v.toJson()).toList();
     }
-    // if (this.directoryLocations != null) {
-    //   data['directory_locations'] =
-    //       this.directoryLocations!.map((v) => v.toJson()).toList();
-    // }
-    data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class DirectoryPartners {
-  String? id;
-  String? sTypename;
-
-  DirectoryPartners({this.id, this.sTypename});
-
-  DirectoryPartners.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    if (this.directoryLocations != null) {
+      data['directory_locations'] =
+          this.directoryLocations!.map((v) => v.toJson()).toList();
+    }
     data['__typename'] = this.sTypename;
     return data;
   }

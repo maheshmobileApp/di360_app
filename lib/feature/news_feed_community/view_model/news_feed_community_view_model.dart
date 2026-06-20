@@ -49,6 +49,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   TextEditingController searchController = TextEditingController();
   String? feedType;
   String? communityMemberDirectorId;
+  CommunityMembersCountData? communityMembersCountData;
 
   void feedTypeUpdate(String value) {
     feedType = value;
@@ -191,15 +192,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //bool communityStatus = false;
+  bool communityStatus = false;
 
-  /*Future<void> setCommunityStatus() async {
+  Future<void> setCommunityStatus() async {
     print("Setting community status");
     final communityValue =
         await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
-    communityStatus = communityValue == 'true';
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    communityStatus = (communityValue == 'true' && type == UserRole.supplier.value) || (type == UserRole.professional.value);
     notifyListeners();
-  }*/
+  }
 
   Future<void> getAllNewsFeeds(BuildContext context,
       {bool loadMore = false, String? feedType, String? categoryType}) async {
@@ -704,10 +706,17 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   Future<void> getCommunityMemberDirectorIds(String communityId) async {
     final res = await repo.getCommunityMemberCountData(communityId);
-    if (res['community_members'] != null) {
-      final data = GetCommunityMemberCountRes.fromJson({'data': res});
-      communityMemberDirectorId = data
-          .data?.communityMembers?.first.dentalSuppliers?.directories?.first.id;
+    if (res.communityMembers != null) {
+      communityMembersCountData = res;
+      communityMemberDirectorId =
+          communityMembersCountData?.communityMembers?.isNotEmpty == true &&
+                  communityMembersCountData?.communityMembers?.first
+                          .dentalSuppliers?.directories?.isNotEmpty ==
+                      true
+              ? communityMembersCountData?.communityMembers?.first
+                      .dentalSuppliers?.directories?.first.id ??
+                  ""
+              : "";
     }
 
     notifyListeners();
