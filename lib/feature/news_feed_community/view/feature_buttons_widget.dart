@@ -52,13 +52,23 @@ class FeatureButtonsWidget extends StatelessWidget {
                             params: scrollTo);
                       }
                     } else if (index == 2) {
-                      if (directoryVM.directorDetails?.email?.isEmpty ??
-                          false) {
+                      final noEmail = (directoryVM
+                                  .directorDetails?.businessEmail?.isNotEmpty ??
+                              false) ==
+                          false;
+
+                      final noMobile = (directoryVM
+                                  .directorDetails?.mobileNumber?.isNotEmpty ??
+                              false) ==
+                          false;
+
+                      if (noEmail && noMobile) {
                         scaffoldMessenger("No Contacts Available");
                       } else {
                         navigationService.navigateToWithParams(
-                            RouteList.directoryDetailsScreen,
-                            params: scrollTo);
+                          RouteList.directoryDetailsScreen,
+                          params: scrollTo,
+                        );
                       }
                     } else {
                       navigationService.navigateToWithParams(
