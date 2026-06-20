@@ -723,10 +723,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "job_designation": "", //Need to discuss with backend
         "offered_supplement": "", //Need to discuss with backend
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [
-          startLocumDateController.text,
-          endLocumDateController.text
-        ],
+        "availability_date": selectedEmploymentChips.contains("Locum")
+            ? [startLocumDateController.text, endLocumDateController.text]
+            : null,
         "years_of_experience": selectExperience,
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,
@@ -818,10 +817,9 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "job_designation": "", //Need to discuss with backend
         "offered_supplement": "", //Need to discuss with backend
         "TypeofEmployment": selectedEmploymentChips,
-        "availability_date": [
-          startLocumDateController.text,
-          endLocumDateController.text
-        ],
+        "availability_date": selectedEmploymentChips.contains("Locum")
+            ? [startLocumDateController.text, endLocumDateController.text]
+            : null,
         "years_of_experience": selectExperience,
         "dental_supplier_id": supplierId,
         "dental_practice_id": practiceId,

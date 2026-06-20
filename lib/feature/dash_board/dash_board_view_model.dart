@@ -27,6 +27,7 @@ import 'package:di360_flutter/feature/splash/repository/app_config_repo_impl.dar
 import 'package:di360_flutter/feature/view_profile/view_model/view_profile_view_model.dart';
 import 'package:di360_flutter/services/banner_services.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -269,11 +270,13 @@ Future logOutAlert(BuildContext context) {
                 child: const Text('Cancel')),
             TextButton(
                 onPressed: () async {
+                  await Loaders.circularShowLoader(context);
                   await deleteToken();
                   await LocalStorage.clearAllData();
                   addDirectoryVM.clearAllDirectorData();
                   viewProfileVM.clearProfileData();
                   professionalAddDirVM.clearProfessionalDirectorData();
+                  await Loaders.circularHideLoader(context);
                   navigationService.pushNamedAndRemoveUntil(RouteList.login);
                 },
                 child: const Text('Ok')),
