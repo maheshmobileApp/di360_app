@@ -457,7 +457,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                   Image.asset(ImageConst.directorProfile))),
                     )
                   : Text(
-                      name!.split('')
+                      name!
+                          .split('')
                           .firstWhere(
                             (char) => char.trim().isNotEmpty,
                             orElse: () => '',
@@ -491,27 +492,35 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.email_outlined, color: AppColors.primaryColor),
-                addHorizontal(6),
-                Text(newsfeeds?.dentalSupplier?.email ?? '',
-                    style: TextStyles.regular1(color: AppColors.black)),
-              ],
-            ),
-            addVertical(8),
-            Row(
-              children: [
-                Icon(Icons.phone, color: AppColors.primaryColor),
-                addHorizontal(6),
-                Text(newsfeeds?.dentalSupplier?.phone ?? '',
-                    style: TextStyles.regular1(color: AppColors.black)),
-              ],
-            )
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.email_outlined, color: AppColors.primaryColor),
+                  addHorizontal(6),
+                  Expanded(
+                    child: Text(
+                      newsfeeds?.dentalSupplier?.email ?? '',
+                      style: TextStyles.regular1(color: AppColors.black),
+                      overflow: TextOverflow.ellipsis, // optional
+                      maxLines: 1, // optional
+                    ),
+                  ),
+                ],
+              ),
+              addVertical(8),
+              Row(
+                children: [
+                  Icon(Icons.phone, color: AppColors.primaryColor),
+                  addHorizontal(6),
+                  Text(newsfeeds?.dentalSupplier?.phone ?? '',
+                      style: TextStyles.regular1(color: AppColors.black)),
+                ],
+              )
+            ],
+          ),
         ),
         OutlineButtonWidget(
           text: "View Details",

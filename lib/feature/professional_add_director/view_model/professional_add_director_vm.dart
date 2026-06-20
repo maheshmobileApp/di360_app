@@ -236,6 +236,8 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
         "profession_type": addDirectorVM.selectedBusineestype?.name,
         "description": descController.text,
         "directory_category_id": addDirectorVM.selectedBusineestype?.id,
+        "directory_business_type_id": addDirectorVM
+            .getDirectoryBusinessTypeId(addDirectorVM.selectedBusineestype?.id),
         "banner_image": banner == null
             ? addDirectorVM.getBasicInfoData.isEmpty
                 ? null
@@ -315,6 +317,8 @@ class ProfessionalAddDirectorVm extends ChangeNotifier {
       "professiontype": addDirectorVM.selectedBusineestype,
       "description": descController.text,
       "directory_category_id": addDirectorVM.selectedBusineestype?.id,
+      "directory_business_type_id": addDirectorVM
+          .getDirectoryBusinessTypeId(addDirectorVM.selectedBusineestype?.id),
       "banner_image": banner == null
           ? addDirectorVM.getBasicInfoData.first.bannerImage
           : banner,

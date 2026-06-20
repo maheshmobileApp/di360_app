@@ -23,8 +23,10 @@ class PartnershipCommunityRequestView extends StatelessWidget
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+            child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+          child: Form(
+            key: directorVM.formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -45,6 +47,8 @@ class PartnershipCommunityRequestView extends StatelessWidget
                   controller: directorVM.contactNameController,
                   hintText: "Enter Contact Name",
                   title: "Contact Name",
+                  isRequired: true,
+                  validator: validateContactName,
                   maxLength: 100,
                 ),
                 SizedBox(height: 8),
@@ -53,7 +57,13 @@ class PartnershipCommunityRequestView extends StatelessWidget
                   hintText: "Enter Email",
                   title: "Email",
                   maxLength: 100,
-                  validator: validateEmail,
+                  isRequired: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Email';
+                    }
+                    return validateEmail(value);
+                  },
                 ),
                 SizedBox(height: 8),
                 InputTextField(
@@ -97,6 +107,8 @@ class PartnershipCommunityRequestView extends StatelessWidget
                           height: 40,
                           text: 'Submit',
                           onTap: () {
+                            if (!directorVM.validateForm()) return;
+
                             directorVM.partnershipRegsiter(
                                 context,
                                 directorVM.directorCommunityID ?? "",
@@ -109,7 +121,7 @@ class PartnershipCommunityRequestView extends StatelessWidget
               ],
             ),
           ),
-        ));
+        )));
   }
 
   Widget _buildStates(DirectoryViewModel viewModel) {

@@ -55,6 +55,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
   bool? quizAnswerCorrect;
   bool retakeQuiz = false;
   bool applyFilter = false;
+  bool isCommunityLearningHub = false;
 
   void updateApplyFilter(bool value) {
     applyFilter = value;
@@ -250,6 +251,9 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
       currentUserId = await LocalStorage.getStringVal(LocalStorageConst.userId);
       _marketPlaceOffset = 0;
       hasMoreMarketPlace = true;
+      if (isCommunityLearningHub != null) {
+        this.isCommunityLearningHub = isCommunityLearningHub;
+      }
     }
     notifyListeners();
 
@@ -257,7 +261,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
         _marketPlaceLimit, _marketPlaceOffset, searchController.text,
         types: types,
         courseCategory: courseCategory,
-        isCommunityLearningHub: isCommunityLearningHub);
+        isCommunityLearningHub: this.isCommunityLearningHub);
 
     if (loadMore) {
       marketPlaceCoursesList.addAll(res ?? []);

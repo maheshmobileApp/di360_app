@@ -8,6 +8,7 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
 class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
@@ -78,10 +79,8 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     final variables = {
       "first_name": course.courseRegisteredUsers?.first.firstName ?? "",
       "last_name": course.courseRegisteredUsers?.first.lastName ?? "",
-      "presenters": course.presenters
-              ?.map((e) => e.presentedByName ?? "")
-              .toList() ??
-          [],
+      "presenters":
+          course.presenters?.map((e) => e.presentedByName ?? "").toList() ?? [],
       "course_name": course.courseName,
       "logo": course.dentalSupplier?.logo?.url ?? "",
       "company_name": course.companyName,
@@ -100,6 +99,13 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       final certificateName =
           "${course.courseName ?? 'certificate'}_certificate.pdf"
               .replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
+      print("****************$res");
+
+      if (!await _requestPermission()) {
+        scaffoldMessenger("Storage permission denied.");
+        return;
+      }
+
       final file = await _saveFile(certificateName, res);
       if (file == null) {
         scaffoldMessenger("Failed to save certificate");
@@ -137,6 +143,17 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
+  Future<bool> _requestPermission() async {
+    if (Platform.isIOS) return true;
+    if (Platform.isAndroid) {
+      final info = await DeviceInfoPlugin().androidInfo;
+      if (info.version.sdkInt >= 29) return true;
+      final status = await Permission.storage.request();
+      return status.isGranted;
+    }
+    return true;
+  }
+
   Future<Directory> _getDownloadDir() async {
     if (Platform.isAndroid) {
       final info = await DeviceInfoPlugin().androidInfo;
@@ -149,8 +166,7 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
         } catch (_) {
           final base = await getExternalStorageDirectory() ??
               await getApplicationDocumentsDirectory();
-          final dir =
-              Directory('${base.path}/DentalInterface360/Certificates');
+          final dir = Directory('${base.path}/DentalInterface360/Certificates');
           if (!await dir.exists()) await dir.create(recursive: true);
           return dir;
         }

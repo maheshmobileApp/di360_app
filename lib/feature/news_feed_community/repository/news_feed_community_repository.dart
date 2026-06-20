@@ -1,4 +1,5 @@
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
 
@@ -14,5 +15,5 @@ abstract class NewsFeedCommunityRepository {
   Future<BannerUrlData> getBannerUrl(dynamic variables);
   Future<dynamic> leaveCommunity(dynamic variables);
   Future<NewsFeedCommunityData> filterNewsFeed(dynamic variables);
-  Future<dynamic> getCommunityMemberCountData(String communityId);
+  Future<CommunityMembersCountData> getCommunityMemberCountData(String communityId);
 }

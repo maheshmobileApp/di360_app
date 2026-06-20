@@ -1,5 +1,6 @@
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
+import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_news_feed_community_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/update_news_feed_status.dart';
@@ -92,7 +93,7 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
   }
 
   @override
-  Future<dynamic> getCommunityMemberCountData(String communityId) async {
+  Future<CommunityMembersCountData> getCommunityMemberCountData(String communityId) async {
     final variables = {
       "where": {
         "community_id": {"_eq": communityId}
@@ -100,6 +101,7 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
     };
     final res =
         await http.query(getCommunityMembersCountQuery, variables: variables);
-    return res;
+    final output = CommunityMembersCountData.fromJson(res);
+    return output;
   }
 }

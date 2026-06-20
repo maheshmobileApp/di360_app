@@ -56,7 +56,6 @@ class _DirectorDetailsScreenState extends State<DirectorDetailsScreen> {
         Provider.of<DirectoryViewModel>(context, listen: false);
     final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-
     directionalVM.setUserType(userType);
     directionalVM.setUserId(userId);
   }
