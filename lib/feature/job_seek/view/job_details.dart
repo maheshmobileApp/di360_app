@@ -93,7 +93,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-        final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+    final provider = Provider.of<JobSeekViewModel>(context, listen: false);
 
     return Scaffold(
       body: CustomScrollView(
@@ -182,8 +182,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           width: 50,
                           height: 50,
                           color: Colors.grey.shade300,
-                          child:
-                              const Icon(Icons.business, color: Colors.white),
+                          child: Image.asset(ImageConst.directorProfile,
+                              height: 110,
+                              width: double.infinity,
+                              fit: BoxFit.fitWidth),
                         ),
                 ),
                 const SizedBox(width: 12),
@@ -191,7 +193,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.job.companyName ?? '',
+                      widget.job.title ?? '',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -204,26 +206,29 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 ),
               ],
             ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.orange.shade50, Colors.white],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.orange.shade50, Colors.white],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
                 ),
-                child: Text(
-                  widget.job.createdAt?.isNotEmpty == true
-                      ? Jiffy.parse(widget.job.createdAt!).fromNow()
-                      : 'Recently posted',
-                  style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                widget.job.createdAt?.isNotEmpty == true
+                    ? Jiffy.parse(widget.job.createdAt!).fromNow()
+                    : 'Recently posted',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -332,12 +337,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           locationView(context),
         ],
         if ((widget.job.dentalSupplier?.directories?.isNotEmpty == true &&
-            widget.job.dentalSupplier?.directories?.first.description?.isNotEmpty == true) ||
+                widget.job.dentalSupplier?.directories?.first.description
+                        ?.isNotEmpty ==
+                    true) ||
             (widget.job.dentalPractice?.directories?.isNotEmpty == true &&
-            widget.job.dentalPractice?.directories?.first.description?.isNotEmpty == true)) ...[
+                widget.job.dentalPractice?.directories?.first.description
+                        ?.isNotEmpty ==
+                    true)) ...[
           Divider(height: 4),
           _sectionHeader('About Company'),
-          _sectionText('${widget.job.dentalSupplier?.directories?.first.description ?? widget.job.dentalPractice?.directories?.first.description}'),
+          _sectionText(
+              '${widget.job.dentalSupplier?.directories?.first.description ?? widget.job.dentalPractice?.directories?.first.description}'),
         ],
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(
