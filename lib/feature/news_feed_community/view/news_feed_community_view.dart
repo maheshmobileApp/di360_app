@@ -16,6 +16,7 @@ import 'package:di360_flutter/feature/news_feed_community/view/feature_buttons_w
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/banner_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/news_feed_community_card.dart';
+import 'package:di360_flutter/feature/news_feed_community/widgets/show_report_popup.dart';
 import 'package:di360_flutter/feature/news_feed_community_comment/view/community_comment_screen.dart';
 import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
@@ -23,8 +24,6 @@ import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
-import 'package:di360_flutter/widgets/app_button.dart';
-import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:html/parser.dart' as htmlParser;
@@ -371,18 +370,16 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             switch (action) {
                                               case "Publish":
                                                 viewModel.updateNewsFeedStatus(
-                                                  context,
-                                                  newsItem.id ?? '',
-                                                  "PUBLISHED",
-                                                );
+                                                    context,
+                                                    newsItem.id ?? '',
+                                                    "PUBLISHED");
 
                                                 break;
                                               case "Unpublish":
                                                 viewModel.updateNewsFeedStatus(
-                                                  context,
-                                                  newsItem.id ?? '',
-                                                  "UNPUBLISHED",
-                                                );
+                                                    context,
+                                                    newsItem.id ?? '',
+                                                    "UNPUBLISHED");
 
                                                 break;
                                               case "Edit":
@@ -489,11 +486,10 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                 )
                               : Expanded(
                                   child: Center(
-                                    child: Text(
-                                      "No Data",
-                                      style: TextStyles.medium3(
-                                          color: AppColors.black, fontSize: 16),
-                                    ),
+                                    child: Text("No Data",
+                                        style: TextStyles.medium3(
+                                            color: AppColors.black,
+                                            fontSize: 16)),
                                   ),
                                 ),
                         ],
@@ -570,96 +566,6 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
           );
         },
       ),
-    );
-  }
-
-  void showReportBottomSheet(BuildContext context, Function()? sumbitedAction,
-      NewsFeedCommunityViewModel viewModel) {
-    final _formKey = GlobalKey<FormState>();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: false,
-      enableDrag: false,
-      showDragHandle: false,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: SafeArea(
-                top: false,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 10,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 12),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Report',
-                                style: TextStyles.bold5(
-                                    color: AppColors.primaryColor)),
-                            InkWell(
-                                onTap: () => navigationService.goBack(),
-                                child: Icon(Icons.close,
-                                    color: AppColors.primaryColor))
-                          ]),
-                      SizedBox(height: 20),
-                      Text("Why are you reporting this post?",
-                          style: TextStyles.semiBold(
-                              color: AppColors.black, fontSize: 16)),
-                      SizedBox(height: 10),
-                      Text(
-                          "If someone is in immediate danger, get help before reporting. Your report is confidential and won’t be shared.",
-                          style: TextStyles.regular2()),
-                      SizedBox(height: 10),
-                      InputTextField(
-                        controller: viewModel.reportText,
-                        title: '',
-                        hintText: 'Describe the issue',
-                        maxLines: 5,
-                      ),
-                      SizedBox(height: 40),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            AppButton(
-                              width: 150,
-                              height: 45,
-                              radius: 12,
-                              text: 'Cancel',
-                              onTap: () => navigationService.goBack(),
-                            ),
-                            AppButton(
-                                width: 150,
-                                height: 45,
-                                radius: 12,
-                                text: 'Submit',
-                                onTap: sumbitedAction)
-                          ])
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }
