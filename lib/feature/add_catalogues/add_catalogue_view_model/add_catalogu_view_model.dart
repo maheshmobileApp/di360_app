@@ -79,6 +79,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
   List<String> communityTypes = ["Both", "Community User"];
   String? selectedCommunityType = 'Both';
   bool communityStatus = false;
+  String editCatalougeStatus = "";
+  String editStatus = '';
 
   void setCommunityStatus() async {
     print("Setting community status");
@@ -354,19 +356,26 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editCatalogueNavigator(
-      BuildContext context, String? id, String expDate) async {
+  Future<void> editCatalogueNavigator(BuildContext context, String? id,
+      String expDate,String status, String catalougeStatus) async {
     Loaders.circularShowLoader(context);
     final res = await repo.cataloguView(id);
     if (res != null) {
       cataloguView = res;
       updateEditCatalogueVal(true);
       editDataAssign(res, expDate);
+      setEditCatalougeStatus(status, catalougeStatus);
       Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.addCatalogScreen);
     } else {
       Loaders.circularHideLoader(context);
     }
+    notifyListeners();
+  }
+
+  void setEditCatalougeStatus(String valueOne, String valueTwo) {
+    editStatus = valueOne;
+    editCatalougeStatus = valueTwo;
     notifyListeners();
   }
 
@@ -439,8 +448,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "catalogue_sub_category_id": selectedCatagory?.id,
         "thumbnail_image": thumbnailImageObj,
         "attachment": pdfPathUrl,
-        "catalogue_status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
-        "status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
+        "catalogue_status": isDarft ? "DRAFT" : editStatus == "APPROVED"
+                ? "ACTIVE"
+                : "PENDING_APPROVAL",
+        "status": isDarft
+            ? "DRAFT"
+            : editStatus == "APPROVED"
+                ? "APPROVED"
+                : "PENDING_APPROVAL",
         "schedulerDay":
             '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
         "months_count": int.tryParse(monthCount ?? ''),
@@ -455,8 +470,15 @@ class AddCatalogueViewModel extends ChangeNotifier {
         selectedStatus = 'Draft';
         catalogStatus = ['DRAFT'];
       } else {
-        selectedStatus = 'Pending Approval';
-        catalogStatus = ['PENDING_APPROVAL'];
+        selectedStatus = 'All';
+        catalogStatus = catalogStatus = [
+          "APPROVED",
+          "PENDING_APPROVAL",
+          "EXPIRED",
+          "SCHEDULED",
+          "REJECTED",
+          "DRAFT"
+        ];
       }
       await getCatalogCounts();
       await getMyCataloguesData(navigatorKey.currentContext!);

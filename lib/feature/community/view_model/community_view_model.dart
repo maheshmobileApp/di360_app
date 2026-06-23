@@ -1,5 +1,6 @@
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/contacts_res.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
@@ -682,7 +683,7 @@ class CommunityViewModel extends ChangeNotifier {
 
       if (res != null && res.containsKey('insert_partners_contact_book_one')) {
         await getContacts(context);
-        navigationService.goBack();
+        navigationService.replaceWith(RouteList.contactView);
         Loaders.circularHideLoader(context);
         clearContactDetails();
 
@@ -797,6 +798,24 @@ class CommunityViewModel extends ChangeNotifier {
     companyNameController.text = data?.companyName ?? "";
     selectedState = data?.state ?? "";
     selectedContactType = data?.contactType ?? "";
+    contactEmailController.text = data?.email ?? "";
+    final phone = data?.phone ?? "";
+    if (phone.startsWith('+61')) {
+      selectedPhoneCode = 'AU (+61)';
+      contactPhoneController.text = phone.substring(3);
+    } else if (phone.startsWith('+64')) {
+      selectedPhoneCode = 'NZ (+64)';
+      contactPhoneController.text = phone.substring(3);
+    } else {
+      selectedPhoneCode = 'AU (+61)';
+      contactPhoneController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+  }
+
+  setContactDetailsFromPartners(PartnershipMembers? data) {
+    contactNameController.text = data?.contactName ?? "";
+    companyNameController.text = data?.companyName ?? "";
+    selectedState = data?.state ?? "";
     contactEmailController.text = data?.email ?? "";
     final phone = data?.phone ?? "";
     if (phone.startsWith('+61')) {
