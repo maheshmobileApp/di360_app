@@ -17,16 +17,16 @@ class GetCommunityMembersCountRes {
 }
 
 class CommunityMembersCountData {
-  List<CommunityMembers>? communityMembers;
+  List<DentalSuppliers>? dentalSuppliers;
   CommunityMembersAggregate? communityMembersAggregate;
 
-  CommunityMembersCountData({this.communityMembers, this.communityMembersAggregate});
+  CommunityMembersCountData({this.dentalSuppliers, this.communityMembersAggregate});
 
   CommunityMembersCountData.fromJson(Map<String, dynamic> json) {
-    if (json['community_members'] != null) {
-      communityMembers = <CommunityMembers>[];
-      json['community_members'].forEach((v) {
-        communityMembers!.add(new CommunityMembers.fromJson(v));
+    if (json['dental_suppliers'] != null) {
+      dentalSuppliers = <DentalSuppliers>[];
+      json['dental_suppliers'].forEach((v) {
+        dentalSuppliers!.add(new DentalSuppliers.fromJson(v));
       });
     }
     communityMembersAggregate = json['community_members_aggregate'] != null
@@ -37,37 +37,14 @@ class CommunityMembersCountData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.communityMembers != null) {
-      data['community_members'] =
-          this.communityMembers!.map((v) => v.toJson()).toList();
+    if (this.dentalSuppliers != null) {
+      data['dental_suppliers'] =
+          this.dentalSuppliers!.map((v) => v.toJson()).toList();
     }
     if (this.communityMembersAggregate != null) {
       data['community_members_aggregate'] =
           this.communityMembersAggregate!.toJson();
     }
-    return data;
-  }
-}
-
-class CommunityMembers {
-  DentalSuppliers? dentalSuppliers;
-  String? sTypename;
-
-  CommunityMembers({this.dentalSuppliers, this.sTypename});
-
-  CommunityMembers.fromJson(Map<String, dynamic> json) {
-    dentalSuppliers = json['dental_suppliers'] != null
-        ? new DentalSuppliers.fromJson(json['dental_suppliers'])
-        : null;
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.dentalSuppliers != null) {
-      data['dental_suppliers'] = this.dentalSuppliers!.toJson();
-    }
-    data['__typename'] = this.sTypename;
     return data;
   }
 }
@@ -103,8 +80,8 @@ class DentalSuppliers {
 
 class Directories {
   String? id;
-  List<dynamic>? directoryPartners;
-  List<dynamic>? directoryLocations;
+  List<DirectoryPartners>? directoryPartners;
+  List<Null>? directoryLocations;
   String? sTypename;
 
   Directories(
@@ -115,7 +92,18 @@ class Directories {
 
   Directories.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-
+    if (json['directory_partners'] != null) {
+      directoryPartners = <DirectoryPartners>[];
+      json['directory_partners'].forEach((v) {
+        directoryPartners!.add(new DirectoryPartners.fromJson(v));
+      });
+    }
+    // if (json['directory_locations'] != null) {
+    //   directoryLocations = <Null>[];
+    //   json['directory_locations'].forEach((v) {
+    //     directoryLocations!.add(new Null.fromJson(v));
+    //   });
+    // }
     sTypename = json['__typename'];
   }
 
@@ -126,10 +114,29 @@ class Directories {
       data['directory_partners'] =
           this.directoryPartners!.map((v) => v.toJson()).toList();
     }
-    if (this.directoryLocations != null) {
-      data['directory_locations'] =
-          this.directoryLocations!.map((v) => v.toJson()).toList();
-    }
+    // if (this.directoryLocations != null) {
+    //   data['directory_locations'] =
+    //       this.directoryLocations!.map((v) => v.toJson()).toList();
+    // }
+    data['__typename'] = this.sTypename;
+    return data;
+  }
+}
+
+class DirectoryPartners {
+  String? id;
+  String? sTypename;
+
+  DirectoryPartners({this.id, this.sTypename});
+
+  DirectoryPartners.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    sTypename = json['__typename'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['__typename'] = this.sTypename;
     return data;
   }
