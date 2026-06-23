@@ -459,17 +459,17 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 showReportSuccessPopup(context);
                                                 break;
                                               case "Report Post":
-                                                showReportBottomSheet(context,
-                                                    () {
+                                                showAdminReportBottomSheet(context,
+                                                    () async {
                                                   navigationService.goBack();
-                                                  viewModel
+                                                  await viewModel
                                                       .newsFeedCommunityAction(
                                                           context,
                                                           newsItem.id ?? "",
                                                           "REPORT");
-                                                }, newsFeedCommunityVM);
-                                                scaffoldMessenger(
-                                                    "Post Reported Successfully");
+                                                  scaffoldMessenger(
+                                                      "Post Reported Successfully");
+                                                }, viewModel.reportText);
                                                 break;
                                               case "Block Profile":
                                                 await viewModel

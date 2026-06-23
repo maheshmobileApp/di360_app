@@ -1,13 +1,12 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
-import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 
-void showReportBottomSheet(BuildContext context, Function()? sumbitedAction,
-    NewsFeedCommunityViewModel viewModel) {
+void showAdminReportBottomSheet(BuildContext context, Function()? sumbitedAction,
+    TextEditingController? controller) {
   final _formKey = GlobalKey<FormState>();
   showModalBottomSheet(
     context: context,
@@ -60,7 +59,7 @@ void showReportBottomSheet(BuildContext context, Function()? sumbitedAction,
                         style: TextStyles.regular2()),
                     SizedBox(height: 10),
                     InputTextField(
-                        controller: viewModel.reportText,
+                        controller: controller,
                         title: '',
                         hintText: 'Describe the issue',
                         maxLines: 5),

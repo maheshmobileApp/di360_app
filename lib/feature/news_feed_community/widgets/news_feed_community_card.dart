@@ -859,7 +859,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           _popupItem("Report Post", Icons.report, AppColors.redColor),
           _popupItem("Block Profile", Icons.block, AppColors.redColor),
           if (imageUrls?.isNotEmpty == true)
-            _popupItem("Save Media", Icons.save, AppColors.greenColor),
+            _popupItem("Save Media", Icons.save, AppColors.greenColor)
         ],
       ],
     );
