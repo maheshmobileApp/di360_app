@@ -93,9 +93,13 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
   }
 
   @override
-  Future<CommunityMembersCountData> getCommunityMemberCountData(String communityId) async {
+  Future<CommunityMembersCountData> getCommunityMemberCountData(
+      String communityId) async {
     final variables = {
-      "where": {
+      "supplierWhere": {
+        "community_id": {"_eq": communityId}
+      },
+      "memberWhere": {
         "community_id": {"_eq": communityId}
       }
     };

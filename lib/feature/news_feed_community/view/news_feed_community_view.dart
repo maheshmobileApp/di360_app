@@ -207,7 +207,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                         "")
                                     : "",
                             title: type == UserRole.professional.value
-                                ? "${viewModel.communityMembersCountData?.communityMembers?.first.dentalSuppliers?.businessName} Community - ${viewModel.communityMembersCountData?.communityMembersAggregate?.aggregate?.count} members"
+                                ? "${viewModel.communityMembersCountData?.dentalSuppliers?.first.businessName} Community - ${viewModel.communityMembersCountData?.communityMembersAggregate?.aggregate?.count} members"
                                 : "${businessname}Community",
                             leaveButton: type == UserRole.professional.value,
                             onLeaveTap: () async {

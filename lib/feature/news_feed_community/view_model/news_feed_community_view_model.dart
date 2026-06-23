@@ -199,7 +199,9 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     final communityValue =
         await LocalStorage.getStringVal(LocalStorageConst.communityStatus);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    communityStatus = (communityValue == 'true' && type == UserRole.supplier.value) || (type == UserRole.professional.value);
+    communityStatus =
+        (communityValue == 'true' && type == UserRole.supplier.value) ||
+            (type == UserRole.professional.value);
     notifyListeners();
   }
 
@@ -707,16 +709,17 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   Future<void> getCommunityMemberDirectorIds({String? communityId}) async {
     final userCommunityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
-    final res = await repo.getCommunityMemberCountData(communityId ?? userCommunityId);
-    if (res.communityMembers != null) {
+    final res =
+        await repo.getCommunityMemberCountData(communityId ?? userCommunityId);
+    if (res.dentalSuppliers != null) {
       communityMembersCountData = res;
       communityMemberDirectorId =
-          communityMembersCountData?.communityMembers?.isNotEmpty == true &&
-                  communityMembersCountData?.communityMembers?.first
-                          .dentalSuppliers?.directories?.isNotEmpty ==
+          communityMembersCountData?.dentalSuppliers?.isNotEmpty == true &&
+                  communityMembersCountData
+                          ?.dentalSuppliers?.first.directories?.isNotEmpty ==
                       true
-              ? communityMembersCountData?.communityMembers?.first
-                      .dentalSuppliers?.directories?.first.id ??
+              ? communityMembersCountData
+                      ?.dentalSuppliers?.first.directories?.first.id ??
                   ""
               : "";
     }
