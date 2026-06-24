@@ -136,9 +136,14 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     try {
       final dir = await _getDownloadDir();
       final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes);
+
+      await file.writeAsBytes(
+        bytes,
+        flush: true,
+      );
+
       return file;
-    } catch (e) {
+    } catch (e, s) {
       return null;
     }
   }
@@ -156,31 +161,21 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<Directory> _getDownloadDir() async {
     if (Platform.isAndroid) {
-      final info = await DeviceInfoPlugin().androidInfo;
-      if (info.version.sdkInt >= 29) {
-        try {
-          final dir = Directory(
-              '/storage/emulated/0/Download/DentalInterface360/Certificates');
-          if (!await dir.exists()) await dir.create(recursive: true);
-          return dir;
-        } catch (_) {
-          final base = await getExternalStorageDirectory() ??
-              await getApplicationDocumentsDirectory();
-          final dir = Directory('${base.path}/DentalInterface360/Certificates');
-          if (!await dir.exists()) await dir.create(recursive: true);
-          return dir;
-        }
-      } else {
-        final base = await getExternalStorageDirectory() ??
-            await getApplicationDocumentsDirectory();
-        final dir = Directory('${base.path}/DentalInterface360/Certificates');
-        if (!await dir.exists()) await dir.create(recursive: true);
-        return dir;
+      final base = await getExternalStorageDirectory();
+
+      if (base == null) {
+        return await getApplicationDocumentsDirectory();
       }
-    } else {
-      // iOS: use temp directory for sharing — not visible to user directly
-      final dir = await getTemporaryDirectory();
+
+      final dir = Directory(
+        '${base.path}/DentalInterface360/Certificates',
+      );
+
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
       return dir;
     }
+    return await getTemporaryDirectory();
   }
 }
