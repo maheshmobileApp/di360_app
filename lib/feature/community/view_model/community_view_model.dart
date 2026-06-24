@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/community/model/get_partnership_members.da
 import 'package:di360_flutter/feature/community/repository/community_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'dart:math';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   CommunityMembersData? communityMembers;
   int _currentPage = 0;
-  int _limitSize = 4;
+  int _limitSize = 10;
   bool isLoadingMore = false;
   bool hasMoreData = true;
   PartnershipMembersData? partnershipMembers;
@@ -198,7 +199,6 @@ class CommunityViewModel extends ChangeNotifier {
   //GET JOIN REQUEST
   Future<void> getJoinRequest(BuildContext context,
       {bool loadMore = false}) async {
-    Loaders.circularShowLoader(context);
     if (loadMore) {
       if (isLoadingMore || !hasMoreData) return;
       isLoadingMore = true;
@@ -206,24 +206,37 @@ class CommunityViewModel extends ChangeNotifier {
     } else {
       _currentPage = 0;
       hasMoreData = true;
+      Loaders.circularShowLoader(context);
     }
 
     notifyListeners();
 
-    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final res = await repo.getJoinRequest(
-        id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
+    try {
+      final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+      final res = await repo.getJoinRequest(
+          id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
 
-    if (loadMore) {
-      communityMembers?.communityMembers?.addAll(res.communityMembers ?? []);
-      isLoadingMore = false;
-    } else {
-      communityMembers = res;
+      if (loadMore) {
+        communityMembers?.communityMembers?.addAll(res.communityMembers ?? []);
+      } else {
+        communityMembers = res;
+      }
+
+      hasMoreData = (res.communityMembers?.length ?? 0) >= _limitSize;
+    } catch (e) {
+      if (loadMore) {
+        isLoadingMore = false;
+        _currentPage = max(0, _currentPage - 1);
+      }
+      rethrow;
+    } finally {
+      if (loadMore) {
+        isLoadingMore = false;
+      } else {
+        Loaders.circularHideLoader(context);
+      }
+      notifyListeners();
     }
-
-    hasMoreData = (res.communityMembers?.length ?? 0) >= _limitSize;
-    Loaders.circularHideLoader(context);
-    notifyListeners();
   }
 
   Future<void> getPartnershipRequest({bool loadMore = false}) async {

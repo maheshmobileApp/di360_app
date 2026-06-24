@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
@@ -19,6 +20,7 @@ import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/outline_button_widget.dart';
@@ -31,11 +33,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
   final VoidCallback? onDetailView;
   final int index;
-  const NewsFeedDataCard(
-      {super.key,
-      required this.newsfeeds,
-      required this.index,
-      this.onDetailView});
+  const NewsFeedDataCard({
+    super.key,
+    required this.newsfeeds,
+    required this.index,
+    this.onDetailView,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +51,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
     final String shareId = _fetchId(newsfeeds);
+    final directoryVM = Provider.of<DirectoryViewModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -107,7 +111,14 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             context,
                             newsfeeds,
                             needFeedViewModel,
-                            addNeedFeedViewModel),
+                            addNeedFeedViewModel,
+                            directoryVM,
+                            newsfeeds?.dentalSupplier?.directories
+                                        ?.isNotEmpty ==
+                                    true
+                                ? newsfeeds
+                                    ?.dentalSupplier?.directories?.first.id
+                                : ""),
                         addVertical(10),
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
@@ -434,53 +445,65 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       BuildContext context,
       Newsfeeds? newsfeeds,
       NewsFeedViewModel viewModel,
-      AddNewsFeedViewModel addNewsVM) {
+      AddNewsFeedViewModel addNewsVM,
+      DirectoryViewModel directoryVM,
+      String? id) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
-                  ? AppColors.greyLight
-                  : AppColors.primaryColor,
-              radius: 26.5,
-              child: (imageUrl != null && imageUrl.isNotEmpty)
-                  ? SizedBox(
-                      height: 52,
-                      width: 52,
-                      child: ClipOval(
-                          child: CachedNetworkImageWidget(
-                              imageUrl: imageUrl,
-                              fit: BoxFit.contain,
-                              errorWidget:
-                                  Image.asset(ImageConst.directorProfile))),
-                    )
-                  : Text(
-                      name!
-                          .split('')
-                          .firstWhere(
-                            (char) => char.trim().isNotEmpty,
-                            orElse: () => '',
-                          )
-                          .toUpperCase(),
-                      style: TextStyles.bold5(color: AppColors.whiteColor),
-                    ),
-            ),
-            addHorizontal(10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(name ?? 'Dental Interface',
-                    style: TextStyles.clashMedium(
-                        fontSize: 16, color: AppColors.black)),
-                Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
-                    style:
-                        TextStyles.regular1(color: AppColors.lightGeryColor)),
-              ],
-            ),
-          ],
+        GestureDetector(
+          onTap: () async {
+            Loaders.circularShowLoader(context);
+            await directoryVM.GetDirectorDetails(id ?? "");
+            await directoryVM.getDirectory(id ?? "");
+            Loaders.circularHideLoader(context);
+
+            navigationService.navigateTo(RouteList.directoryDetailsScreen);
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
+                    ? AppColors.greyLight
+                    : AppColors.primaryColor,
+                radius: 26.5,
+                child: (imageUrl != null && imageUrl.isNotEmpty)
+                    ? SizedBox(
+                        height: 52,
+                        width: 52,
+                        child: ClipOval(
+                            child: CachedNetworkImageWidget(
+                                imageUrl: imageUrl,
+                                fit: BoxFit.contain,
+                                errorWidget:
+                                    Image.asset(ImageConst.directorProfile))),
+                      )
+                    : Text(
+                        name!
+                            .split('')
+                            .firstWhere(
+                              (char) => char.trim().isNotEmpty,
+                              orElse: () => '',
+                            )
+                            .toUpperCase(),
+                        style: TextStyles.bold5(color: AppColors.whiteColor),
+                      ),
+              ),
+              addHorizontal(10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(name ?? 'Dental Interface',
+                      style: TextStyles.clashMedium(
+                          fontSize: 16, color: AppColors.black)),
+                  Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
+                      style:
+                          TextStyles.regular1(color: AppColors.lightGeryColor)),
+                ],
+              ),
+            ],
+          ),
         ),
         NewsMenuWidget(newsfeeds: newsfeeds)
       ],
