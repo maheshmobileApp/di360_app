@@ -12,6 +12,7 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
   final double? height;
   final bool showOptions;
   final bool readOnly;
+  final String? module;
 
   const CustomMultiSelectDropDown({
     Key? key,
@@ -24,6 +25,7 @@ class CustomMultiSelectDropDown<T> extends StatefulWidget {
     this.height,
     this.showOptions = false,
     this.readOnly = false,
+    this.module,
   }) : super(key: key);
 
   @override
@@ -127,31 +129,42 @@ class _CustomMultiSelectDropDownState<T>
                                     _selected.add(item);
                                   }
                                   // Handle Full Time exclusivity
-                                  else if (widget.itemLabel(item) == "Full Time") {
+                                  else if (widget.itemLabel(item) ==
+                                          "Full Time" &&
+                                      widget.module != "Job") {
                                     _selected.clear();
                                     _selected.add(item);
                                   }
                                   // Handle Directory permissions mutual exclusion
-                                  else if (widget.itemLabel(item) == "Directory Full Access") {
+                                  else if (widget.itemLabel(item) ==
+                                      "Directory Full Access") {
                                     _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) == "Directory Minimal");
+                                        widget.itemLabel(selectedItem) ==
+                                        "Directory Minimal");
 
                                     _selected.add(item);
-                                  }
-                                  else if (widget.itemLabel(item) == "Directory Minimal") {
+                                  } else if (widget.itemLabel(item) ==
+                                      "Directory Minimal") {
                                     _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) == "Directory Full Access");
+                                        widget.itemLabel(selectedItem) ==
+                                        "Directory Full Access");
 
                                     _selected.add(item);
-                                  }
-
-                                  else {
+                                  } else {
                                     // If other item is selected, remove Locum and Full Time if present
-                                    _selected.removeWhere((selectedItem) =>
-                                        widget.itemLabel(selectedItem) == "Locum" ||
-                                        widget.itemLabel(selectedItem) == "Full Time");
-                                    _selected.add(item);
-
+                                    if (widget.module != "Job") {
+                                      _selected.removeWhere((selectedItem) =>
+                                          widget.itemLabel(selectedItem) ==
+                                              "Locum" ||
+                                          widget.itemLabel(selectedItem) ==
+                                              "Full Time");
+                                      _selected.add(item);
+                                    } else {
+                                      _selected.removeWhere((selectedItem) =>
+                                          widget.itemLabel(selectedItem) ==
+                                          "Locum");
+                                      _selected.add(item);
+                                    }
                                   }
                                 } else {
                                   _selected.remove(item);
@@ -195,13 +208,11 @@ class _CustomMultiSelectDropDownState<T>
     );
   }
 
-
   Color _getItemColor(T item, List<T> currentSelection, bool isSelected) {
     if (widget.greyOutCondition != null) {
       if (currentSelection.isEmpty) {
         return isSelected ? AppColors.primaryColor : AppColors.black;
       }
-
 
       final hasLocum = currentSelection
           .any((selected) => widget.itemLabel(selected) == "Locum");
@@ -209,13 +220,23 @@ class _CustomMultiSelectDropDownState<T>
           .any((selected) => widget.itemLabel(selected) == "Full Time");
       final isLocum = widget.itemLabel(item) == "Locum";
       final isFullTime = widget.itemLabel(item) == "Full Time";
-
-      if (hasLocum && !isLocum) {
-        return Colors.grey;
-      } else if (hasFullTime && !isFullTime) {
-        return Colors.grey;
-      } else if (!hasLocum && !hasFullTime && (isLocum || isFullTime) && currentSelection.isNotEmpty) {
-        return Colors.grey;
+      if (widget.module != "Job") {
+        if (hasLocum && !isLocum) {
+          return Colors.grey;
+        } else if (hasFullTime && !isFullTime) {
+          return Colors.grey;
+        } else if (!hasLocum &&
+            !hasFullTime &&
+            (isLocum || isFullTime) &&
+            currentSelection.isNotEmpty) {
+          return Colors.grey;
+        }
+      } else {
+        if (hasLocum && !isLocum) {
+          return Colors.grey;
+        } else if (!hasLocum && (isLocum) && currentSelection.isNotEmpty) {
+          return Colors.grey;
+        }
       }
     }
 
