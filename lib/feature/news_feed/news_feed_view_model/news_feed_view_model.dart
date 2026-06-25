@@ -370,7 +370,6 @@ class NewsFeedViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     final variables = {"id": id, "loginID": userId};
-    print("**************$variables");
     final res = await _http.query(getJobDetailsById, variables: variables);
     Loaders.circularHideLoader(context);
     if (res != null) {
