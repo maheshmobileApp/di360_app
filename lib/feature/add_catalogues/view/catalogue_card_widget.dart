@@ -81,7 +81,12 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               right: 2,
               top: 15,
               child: menuWidget(
-                  myCatalogVM, context, item?.id, item?.expiryDay ?? '', item?.status??"", item?.catalogueStatus??""))
+                  myCatalogVM,
+                  context,
+                  item?.id,
+                  item?.expiryDay ?? '',
+                  item?.status ?? "",
+                  item?.catalogueStatus ?? ""))
         ],
       ),
     );
@@ -135,7 +140,7 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
   }
 
   Widget menuWidget(AddCatalogueViewModel vm, BuildContext context, String? id,
-      String expDate,String status, String catalougeStatus) {
+      String expDate, String status, String catalougeStatus) {
     return PopupMenuButton<String>(
       iconColor: AppColors.bottomNavUnSelectedColor,
       color: AppColors.whiteColor,
@@ -144,7 +149,11 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
         if (value == "View") {
           vm.getCatalogueView(context, id);
         } else if (value == "Edit") {
-          vm.editCatalogueNavigator(context, id, expDate,status, catalougeStatus);
+          vm.editCatalogueNavigator(
+              context, id, expDate, status, catalougeStatus, isThisRelist: false);
+        } else if (value == "Relist") {
+          vm.editCatalogueNavigator(
+              context, id, expDate, status, catalougeStatus, isThisRelist: true);
         } else if (value == "Inactive") {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {
@@ -192,11 +201,14 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               value: "sendApproval",
               child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
                   "Send for Approval")),
-        if (vm.selectedStatus != 'Approved & Scheduled')
-          PopupMenuItem(
-              value: "Edit",
-              child:
-                  _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
+        if (vm.selectedStatus != 'Expired')
+        PopupMenuItem(
+            value: "Edit",
+            child: _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
+        if (vm.selectedStatus == 'Expired')
+        PopupMenuItem(
+            value: "Relist",
+            child: _buildRow(Icons.rotate_right_sharp, AppColors.blueColor, "Relist")),
         /*PopupMenuItem(
             value: "Delete",
             child:

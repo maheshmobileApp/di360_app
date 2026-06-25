@@ -357,13 +357,14 @@ class AddCatalogueViewModel extends ChangeNotifier {
   }
 
   Future<void> editCatalogueNavigator(BuildContext context, String? id,
-      String expDate,String status, String catalougeStatus) async {
+      String expDate, String status, String catalougeStatus,
+      {bool? isThisRelist}) async {
     Loaders.circularShowLoader(context);
     final res = await repo.cataloguView(id);
     if (res != null) {
       cataloguView = res;
       updateEditCatalogueVal(true);
-      editDataAssign(res, expDate);
+      editDataAssign(res, expDate, isThisRelist: isThisRelist);
       setEditCatalougeStatus(status, catalougeStatus);
       Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.addCatalogScreen);
@@ -379,8 +380,9 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editDataAssign(
-      CataloguesByPk? cataloguView, String expirysDate) async {
+  Future<void> editDataAssign(CataloguesByPk? cataloguView, String expirysDate,
+      {bool? isThisRelist}) async {
+    print("isThisRelist : $isThisRelist");
     catalogueNameController.text = cataloguView?.title ?? '';
     thumbnailImageObj = cataloguView?.thumbnailImage;
     thumbnailServerPath = cataloguView?.thumbnailImage?.url ?? '';
@@ -390,8 +392,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
     pdfPathUrl = cataloguView?.attachment;
     assignTheSelectedCatagory(cataloguView?.catalogueSubCategory?.id);
     assignTheSelectedCatalogueType(cataloguView?.catalogueCategory?.id);
-    scheduleDate = DateFormatUtils.parseToLocalDate(cataloguView?.schedulerDay);
-    expiryDate = DateFormatUtils.parseToLocalDate(cataloguView?.expiryDay);
+    if (isThisRelist == false) {
+      scheduleDate =
+          DateFormatUtils.parseToLocalDate(cataloguView?.schedulerDay);
+      expiryDate = DateFormatUtils.parseToLocalDate(cataloguView?.expiryDay);
+    }
     setCommunityType(cataloguView?.communityUserType == "BOTH"
         ? "Both"
         : cataloguView?.communityUserType == "COMMUNITY_USER"
@@ -448,7 +453,9 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "catalogue_sub_category_id": selectedCatagory?.id,
         "thumbnail_image": thumbnailImageObj,
         "attachment": pdfPathUrl,
-        "catalogue_status": isDarft ? "DRAFT" : editStatus == "APPROVED"
+        "catalogue_status": isDarft
+            ? "DRAFT"
+            : editStatus == "APPROVED"
                 ? "ACTIVE"
                 : "PENDING_APPROVAL",
         "status": isDarft

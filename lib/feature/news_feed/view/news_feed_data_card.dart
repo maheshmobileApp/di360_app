@@ -265,38 +265,43 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     return Container(
       width: double.infinity,
       height: 150,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Column(
         children: [
-          Expanded(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _sectionWidget("Title", title ?? ''),
-                _sectionWidget("Role", job.jRole ?? ""),
-                _chipWidget(job.typeofEmployment ?? [], "")
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 8,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _timeChip(
-                    "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
-                OutlineButtonWidget(
-                  text: "View Details",
-                  onTap: () async {
-                    await newsFeedVM.getJobDetailsByIds(context, jobId);
-                  },
-                )
-              ],
-            ),
+          _timeChip(
+              "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _sectionWidget("Title", title ?? ''),
+                    _sectionWidget("Role", job.jRole ?? ""),
+                    _chipWidget(job.typeofEmployment ?? [], "")
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    /*_timeChip(
+                        "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),*/
+                    OutlineButtonWidget(
+                      text: "View Details",
+                      onTap: () async {
+                        await newsFeedVM.getJobDetailsByIds(context, jobId);
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -322,7 +327,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           gradient: LinearGradient(
