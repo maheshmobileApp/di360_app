@@ -10,7 +10,6 @@ import 'package:di360_flutter/feature/news_feed/querys/edit_feed_query.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_all_news_feed_categories_query.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_job_details_by_id.dart';
 import 'package:di360_flutter/feature/news_feed/querys/news_feed_like_querys.dart';
-import 'package:di360_flutter/feature/news_feed/querys/report_query.dart';
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repo_impl.dart';
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repository.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -24,6 +23,7 @@ import 'package:flutter/material.dart';
 class NewsFeedViewModel extends ChangeNotifier {
   final HttpService _http = HttpService();
   final NewsFeedRepository repo = NewsFeedRepoImpl();
+  TextEditingController reportText = TextEditingController();
   NewsFeedViewModel() {
     _init();
     searchController.addListener(notifyListeners);
@@ -341,61 +341,28 @@ class NewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> blockProfile(BuildContext context, String entityId,
-      String entityType, String feedId) async {
+  Future<void> BlockReportHidePostUser(
+      BuildContext context, String feedId, String action,{String? entityId}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     final variables = {
       "fields": {
-        "entity_id": entityId,
-        "entity_type": "PROFILE",
-        "action": "BLOCK",
+        "entity_id":(action == "BLOCK") ? entityId : feedId,
+        "entity_type": (action == "BLOCK") ? "PROFILE" : "POST",
+        "action": action,
         "created_by_id": userId,
         "created_by_type": type,
         "status": "ACTIVE",
-        "feed_id": feedId
+        "feed_id": feedId,
+        if (action == "REPORT") "reason": reportText.text
       }
     };
-    final res = await repo.blockUser(variables);
+    final res = await repo.BlockReportHidePost(variables);
     if (res != null) {
       getAllNewsfeeds(context);
     }
     Loaders.circularHideLoader(context);
-    notifyListeners();
-  }
-
-  Future<void> HideUser(BuildContext context, String entityId,
-      String entityType, String feedId) async {
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
-    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
-    Loaders.circularShowLoader(context);
-    final variables = {
-      "fields": {
-        "entity_id": entityId,
-        "entity_type": 'POST',
-        "action": "HIDE",
-        "created_by_id": userId,
-        "created_by_type": type,
-        "status": "ACTIVE",
-        "feed_id": feedId
-      }
-    };
-    final res = await repo.hidePost(variables);
-    if (res != null) {
-      getAllNewsfeeds(context);
-    }
-    Loaders.circularHideLoader(context);
-    notifyListeners();
-  }
-
-  Future<void> reportNewsFeed(BuildContext context, String feedId) async {
-    Loaders.circularShowLoader(context);
-    final res = await _http.mutation(reportQuery, {"id": feedId});
-    Loaders.circularHideLoader(context);
-    if (res['update_newsfeeds'] != null) {
-      removeTheNewsFeedObject(context, feedId);
-    }
     notifyListeners();
   }
 
@@ -403,7 +370,6 @@ class NewsFeedViewModel extends ChangeNotifier {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     Loaders.circularShowLoader(context);
     final variables = {"id": id, "loginID": userId};
-    print("**************$variables");
     final res = await _http.query(getJobDetailsById, variables: variables);
     Loaders.circularHideLoader(context);
     if (res != null) {
