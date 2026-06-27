@@ -226,7 +226,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ),
         SizedBox(height: 10),
         _timeChip(
-            "Posted on : ${DateFormatUtils.formatTwoDateTime(widget.job.createdAt ?? "")}"),
+            "${DateFormatUtils.formatTwoDateTime(widget.job.createdAt ?? "")}"),
         SizedBox(height: 10),
         if (widget.job.typeofEmployment?.isNotEmpty == true)
           Column(

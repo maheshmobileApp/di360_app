@@ -209,10 +209,11 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
         PopupMenuItem(
             value: "Relist",
             child: _buildRow(Icons.rotate_right_sharp, AppColors.blueColor, "Relist")),
-        /*PopupMenuItem(
+        if (vm.selectedStatus == 'Draft' || vm.selectedStatus == 'Pending Approval')
+        PopupMenuItem(
             value: "Delete",
             child:
-                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),*/
+                _buildRow(Icons.delete_outline, AppColors.redColor, "Delete")),
       ],
     );
   }
