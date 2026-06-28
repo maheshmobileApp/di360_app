@@ -120,12 +120,13 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
         );
       } else {
         // Android: save to Downloads and show notification
+        print("*************${file.path}");
         await DownloadNotificationService.showDownloadNotification(
           fileName: certificateName,
           filePath: file.path,
         );
         scaffoldMessenger(
-            "✅ Certificate Downloaded\n📁 Downloads > DentalInterface360 > Certificates");
+            "✅ Certificate Downloaded");
       }
     } else {
       scaffoldMessenger("Certificate download failed. Please try again.");
@@ -161,20 +162,36 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
 
   Future<Directory> _getDownloadDir() async {
     if (Platform.isAndroid) {
-      final base = await getExternalStorageDirectory();
-
-      if (base == null) {
-        return await getApplicationDocumentsDirectory();
+      final info = await DeviceInfoPlugin().androidInfo;
+      if (info.version.sdkInt >= 29) {
+        try {
+          // Android 10+ uses public Downloads folder
+          final dir = Directory(
+              '/storage/emulated/0/Download/DentalInterface360/Certificates');
+          if (!await dir.exists()) {
+            await dir.create(recursive: true);
+          }
+          return dir;
+        } catch (_) {
+          // Fallback to app-specific directory
+          final base = await getExternalStorageDirectory() ??
+              await getApplicationDocumentsDirectory();
+          final dir = Directory('${base.path}/DentalInterface360/Certificates');
+          if (!await dir.exists()) {
+            await dir.create(recursive: true);
+          }
+          return dir;
+        }
+      } else {
+        // Older Android versions
+        final base = await getExternalStorageDirectory() ??
+            await getApplicationDocumentsDirectory();
+        final dir = Directory('${base.path}/DentalInterface360/Certificates');
+        if (!await dir.exists()) {
+          await dir.create(recursive: true);
+        }
+        return dir;
       }
-
-      final dir = Directory(
-        '${base.path}/DentalInterface360/Certificates',
-      );
-
-      if (!await dir.exists()) {
-        await dir.create(recursive: true);
-      }
-      return dir;
     }
     return await getTemporaryDirectory();
   }
