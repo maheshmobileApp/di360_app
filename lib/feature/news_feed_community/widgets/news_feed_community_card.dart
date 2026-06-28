@@ -482,7 +482,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                           child: CachedNetworkImageWidget(
                               imageUrl: logo,
                               fit: BoxFit.contain,
-                              errorWidget: Image.asset(ImageConst.directorProfile))),
+                              errorWidget:
+                                  Image.asset(ImageConst.directorProfile))),
                     )
                   : Text(
                       company[0].toUpperCase(),
@@ -833,14 +834,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
       constraints: const BoxConstraints(
-        minWidth: 0,
-        minHeight: 0,
-      ), // remove default 48x48
-      icon: Icon(
-        Icons.more_vert,
-        size: 20,
-        color: AppColors.bottomNavUnSelectedColor,
-      ),
+          minWidth: 0, minHeight: 0), // remove default 48x48
+      icon: Icon(Icons.more_vert,
+          size: 20, color: AppColors.bottomNavUnSelectedColor),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         if (isSameUser && feedType == FeedType.newsfeed.value) ...[
@@ -863,7 +859,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
           _popupItem("Report Post", Icons.report, AppColors.redColor),
           _popupItem("Block Profile", Icons.block, AppColors.redColor),
           if (imageUrls?.isNotEmpty == true)
-            _popupItem("Save Media", Icons.save, AppColors.greenColor),
+            _popupItem("Save Media", Icons.save, AppColors.greenColor)
         ],
       ],
     );
@@ -872,13 +868,11 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   PopupMenuItem<String> _popupItem(String label, IconData icon, Color color) {
     return PopupMenuItem(
       value: label,
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 18),
-          const SizedBox(width: 8),
-          Text(label, style: TextStyles.semiBold(color: color, fontSize: 14)),
-        ],
-      ),
+      child: Row(children: [
+        Icon(icon, color: color, size: 18),
+        const SizedBox(width: 8),
+        Text(label, style: TextStyles.semiBold(color: color, fontSize: 14))
+      ]),
     );
   }
 

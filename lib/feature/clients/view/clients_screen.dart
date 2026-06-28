@@ -68,40 +68,35 @@ class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
           child: InkWell(
             onTap: () => provider.changeStatus(0),
             child: Container(
-              padding: const EdgeInsets.all(16),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: provider.selectedStatus == 0
-                        ? Colors.orange
-                        : Colors.transparent,
-                    width: 3,
-                  ),
-                ),
-              ),
-              child: Text("ACTIVE 1049",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
+                padding: const EdgeInsets.all(16),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            color: provider.selectedStatus == 0
+                                ? Colors.orange
+                                : Colors.transparent,
+                            width: 3))),
+                child: Text("ACTIVE (${provider.clientCountData?.allActive?.aggregate?.count ?? 0})",
+                    style: TextStyle(fontWeight: FontWeight.bold))),
           ),
         ),
         Expanded(
           child: InkWell(
-            onTap: () => provider.changeStatus(1),
-            child: Container(
-                padding: const EdgeInsets.all(16),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          color: provider.selectedStatus == 1
-                              ? Colors.orange
-                              : Colors.transparent,
-                          width: 3)),
-                ),
-                child: Text("INACTIVE 21",
-                    style: TextStyle(fontWeight: FontWeight.bold))),
-          ),
+              onTap: () => provider.changeStatus(1),
+              child: Container(
+                  padding: const EdgeInsets.all(16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            color: provider.selectedStatus == 1
+                                ? Colors.orange
+                                : Colors.transparent,
+                            width: 3)),
+                  ),
+                  child: Text("INACTIVE (${provider.clientCountData?.allInactive?.aggregate?.count ?? 0})",
+                      style: TextStyle(fontWeight: FontWeight.bold)))),
         ),
       ],
     );

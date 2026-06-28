@@ -2,7 +2,7 @@ import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/news_feed/querys/get_news_feeds_query.dart';
-import 'package:di360_flutter/feature/news_feed/querys/hide_post_query.dart';
+import 'package:di360_flutter/feature/news_feed/querys/block_report_hide_post_query.dart';
 import 'package:di360_flutter/feature/news_feed/querys/publish_unpublish_newsfeed_query.dart';
 import 'package:di360_flutter/feature/news_feed/repository/news_feed_repository.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -10,15 +10,10 @@ import 'package:di360_flutter/feature/news_feed_community/query/get_supplier_fee
 
 class NewsFeedRepoImpl implements NewsFeedRepository {
   final HttpService http = HttpService();
+  
   @override
-  Future<dynamic> hidePost(variables) {
-    final res = http.mutation(HidePostQuery, variables);
-    return res;
-  }
-
-  @override
-  Future<dynamic> blockUser(variables) {
-    final res = http.mutation(BlockUserQuery, variables);
+  Future<dynamic> BlockReportHidePost(variables) {
+    final res = http.mutation(BlockReportHidePostQuery, variables);
     return res;
   }
 
@@ -32,7 +27,6 @@ class NewsFeedRepoImpl implements NewsFeedRepository {
         await LocalStorage.getStringList(LocalStorageConst.myCommunityIds);
     final professionId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
-    print("*******************$status");
     final variables = {
       "where": {
         "_and": [

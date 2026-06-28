@@ -4,13 +4,12 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
+import 'package:di360_flutter/feature/news_feed_community/widgets/show_report_popup.dart';
 import 'package:di360_flutter/services/download_file.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/admin_news_feed_enum.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
-import 'package:di360_flutter/widgets/app_button.dart';
-import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,30 +60,26 @@ class _NewsMenuWidgetState extends State<NewsMenuWidget> {
             navigationService.goBack();
           });
         } else if (value == 'report') {
-          showReportBottomSheet(context, () {
+          showAdminReportBottomSheet(context, () async {
             navigationService.goBack();
-            newsFeedViewModel.reportNewsFeed(
-                context, widget.newsfeeds?.id ?? '');
-          });
+            await newsFeedViewModel.BlockReportHidePostUser(
+                context, widget.newsfeeds?.id ?? '', "REPORT");
+            scaffoldMessenger("Post Reported Successfully");
+          }, newsFeedViewModel.reportText);
         } else if (value == 'hide') {
           showUserBlockPopup(context, 'Are you sure Hide this user?',
               confirmAction: () {
             navigationService.goBack();
-            newsFeedViewModel.HideUser(context, widget.newsfeeds?.id ?? '',
-                widget.newsfeeds?.feedType ?? '', widget.newsfeeds?.id ?? '');
+            newsFeedViewModel.BlockReportHidePostUser(
+                context, widget.newsfeeds?.id ?? '', "HIDE");
           });
         } else if (value == 'block') {
           showUserBlockPopup(context, 'Are you sure Block this profile?',
               confirmAction: () {
             navigationService.goBack();
-            newsFeedViewModel.blockProfile(
-                context,
-                widget.newsfeeds?.dentalProfessional?.id ??
-                    widget.newsfeeds?.dentalSupplier?.id ??
-                    widget.newsfeeds?.dentalPractice?.id ??
-                    '',
-                widget.newsfeeds?.feedType ?? '',
-                widget.newsfeeds?.id ?? '');
+            newsFeedViewModel.BlockReportHidePostUser(
+                context, widget.newsfeeds?.id ?? 'BLOCK', '',
+                entityId: widget.newsfeeds?.userId ?? '');
           });
         } else if (value == 'Save Media') {
           final mediaList = widget.newsfeeds?.postImage ?? [];
@@ -180,83 +175,4 @@ Widget buildRow(IconData? icon, Color? color, String? title) {
     SizedBox(width: 8),
     Text(title ?? '', style: TextStyles.semiBold(fontSize: 14, color: color))
   ]);
-}
-
-void showReportBottomSheet(BuildContext context, Function()? sumbitedAction) {
-  final _formKey = GlobalKey<FormState>();
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    isDismissible: false,
-    enableDrag: false,
-    showDragHandle: false,
-    backgroundColor: Colors.transparent,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (context) {
-      return Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 10,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: 12),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Report',
-                              style: TextStyles.bold5(
-                                  color: AppColors.primaryColor)),
-                          InkWell(
-                              onTap: () => navigationService.goBack(),
-                              child: Icon(Icons.close,
-                                  color: AppColors.primaryColor))
-                        ]),
-                    SizedBox(height: 20),
-                    InputTextField(
-                      title: 'Report',
-                      hintText: 'Enter report',
-                      maxLines: 5,
-                    ),
-                    SizedBox(height: 40),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppButton(
-                            width: 150,
-                            height: 45,
-                            radius: 12,
-                            text: 'Cancel',
-                            onTap: () => navigationService.goBack(),
-                          ),
-                          AppButton(
-                              width: 150,
-                              height: 45,
-                              radius: 12,
-                              text: 'Submit',
-                              onTap: sumbitedAction)
-                        ])
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    },
-  );
 }
