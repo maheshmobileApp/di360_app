@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/emp_types_model.dart';
 import 'package:di360_flutter/feature/job_create/model/resp/job_roles_model.dart';
 import 'package:di360_flutter/feature/learning_hub/model_class/course_status_count_data.dart';
@@ -20,6 +22,7 @@ import 'package:di360_flutter/feature/learning_hub/querys/update_course_query.da
 import 'package:di360_flutter/feature/learning_hub/querys/update_course_status.dart';
 import 'package:di360_flutter/feature/learning_hub/querys/update_reg_user_status_query.dart';
 import 'package:di360_flutter/feature/learning_hub/repository/learning_hub_repository.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/services.dart';
 
 class LearningHubRepoImpl extends LearningHubRepository {
@@ -62,6 +65,7 @@ class LearningHubRepoImpl extends LearningHubRepository {
       int limit,
       int offset) async {
     final Map<String, dynamic> whereCondition = {};
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
 
     if (listingStatus != null &&
         listingStatus.isNotEmpty &&
@@ -78,37 +82,41 @@ class LearningHubRepoImpl extends LearningHubRepository {
     }
     whereCondition["created_by_id"] = {"_eq": userId};
 
+    final adminLearningHub = (listingStatus != null &&
+            listingStatus.isNotEmpty &&
+            listingStatus != "All")
+        ? {
+            if (activeStatus != null && activeStatus.isNotEmpty)
+              "active_status": {"_eq": activeStatus},
+            "status": {"_eq": listingStatus},
+            if (listingStatus == 'DRAFT') "created_by_id": {"_eq": userId}
+          }
+        : {
+            "_or": [
+              {
+                "status": {"_neq": "DRAFT"}
+              },
+              {
+                "created_by_id": {"_eq": userId}
+              }
+            ]
+          };
+
     final payload = {
-      "where": whereCondition,
+      "where": type == UserRole.admin.value ? adminLearningHub : whereCondition,
       "limit": limit,
       "offset": offset,
     };
 
-    final listingData = await http.query(
-      getCoursesQuery,
-      variables: payload,
-    );
+    final listingData = await http.query(getCoursesQuery, variables: payload);
 
     final result = CoursesListingData.fromJson(listingData);
     return result.courses ?? [];
   }
 
-  /*
-
-  {
-  "where": {
-    "status": { "_eq": "APPROVE" },
-    "active_status": { "_eq": "ACTIVE" },
-    "company_name": { "_ilike": "%smiletech%" }
-  },
-  "limit": 10,
-  "offset": 0
-}
-  
-   */
-
   @override
   Future<CourseStatusCountData> courseListingStatusCount(String? userId) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final Map<String, dynamic> variables = {
       "whereAll": {
         "created_by_id": {"_eq": "${userId}"}
@@ -121,8 +129,27 @@ class LearningHubRepoImpl extends LearningHubRepository {
         "created_by_id": {"_eq": "${userId}"}
       }
     };
-    final response =
-        await http.query(getCourseStatusCount, variables: variables);
+
+    final adminCourseSatusCount = {
+      "whereAll": {
+        "_or": [
+          {
+            "status": {"_neq": "DRAFT"}
+          },
+          {
+            "created_by_id": {"_eq": userId}
+          }
+        ]
+      },
+      "whereDraft": {
+        "status": {"_eq": "DRAFT"},
+        "created_by_id": {"_eq": userId}
+      },
+      "where": {}
+    };
+    final response = await http.query(getCourseStatusCount,
+        variables:
+            type == UserRole.admin.value ? adminCourseSatusCount : variables);
     final result = CourseStatusCountData.fromJson(response);
     return result;
   }
@@ -180,8 +207,17 @@ class LearningHubRepoImpl extends LearningHubRepository {
 
   @override
   Future updateCourseStatus(String courseId, String status) async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final Map<String, dynamic> variables = {"id": courseId, "status": status};
-    final res = await http.mutation(getUpdateCourseStatus, variables);
+    final approveVariables = {
+      "id": courseId,
+      "fields": {"status": status}
+    };
+    final res = await http.mutation(
+        type == UserRole.admin.value
+            ? adminApproveTheCourseQuery
+            : getUpdateCourseStatus,
+        type == UserRole.admin.value ? approveVariables : variables);
     return res;
   }
 
