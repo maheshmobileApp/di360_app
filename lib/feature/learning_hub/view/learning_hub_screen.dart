@@ -114,18 +114,12 @@ class _JobListingScreenState extends State<LearningHubScreen>
       title: Stack(
         clipBehavior: Clip.none,
         children: [
-          Text(
-            'Course Listing',
-            style: TextStyles.bold4(color: AppColors.black),
-          ),
+          Text('Course Listing',
+              style: TextStyles.bold4(color: AppColors.black)),
           Positioned(
             top: -9,
             right: -18,
-            child: SvgPicture.asset(
-              ImageConst.logo,
-              height: 20,
-              width: 20,
-            ),
+            child: SvgPicture.asset(ImageConst.logo, height: 20, width: 20),
           ),
         ],
       ),
@@ -189,10 +183,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                 if (index == courseListingVM.coursesListingList.length) {
                   return Center(
                       child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(
-                        color: AppColors.primaryColor),
-                  ));
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(
+                              color: AppColors.primaryColor)));
                 }
                 final jobData = courseListingVM.coursesListingList[index];
                 final course = jobData;
@@ -200,7 +193,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   id: course.id ?? "",
                   index: index,
                   meetingLink: course.meetingLink ?? "",
-                  logoUrl: course.presentedByImage?.url ?? '',
+                  logoUrl:
+                      course.presenters?.firstOrNull?.presentedByImage?.url ??
+                          '',
                   companyName: course.courseName ?? '',
                   courseTitle: course.presentedByName ?? '',
                   status: course.status ?? '',
@@ -220,13 +215,9 @@ class _JobListingScreenState extends State<LearningHubScreen>
                         context, course.createdById ?? "");*/
 
                     await marketPlaceLearningHubVM.getCourseDetails(
-                      context,
-                      course.id ?? "",
-                    );
+                        context, course.id ?? "");
 
-                    navigationService.navigateTo(
-                      RouteList.courseDetailScreen,
-                    );
+                    navigationService.navigateTo(RouteList.courseDetailScreen);
                   },
                   onTapRegistered: () async {
                     await courseListingVM.getCourseRegisteredUsers(
@@ -243,15 +234,19 @@ class _JobListingScreenState extends State<LearningHubScreen>
                       scaffoldMessenger('No Registered Users');
                     }
                   },
+                  userType: courseListingVM.userType,
                   onMenuAction: (action, id) async {
                     switch (action) {
                       case "Preview":
                         await marketPlaceLearningHubVM.getCourseDetails(
                             context, course.id ?? "");
 
-                        navigationService.navigateTo(
-                          RouteList.courseDetailScreen,
-                        );
+                        navigationService
+                            .navigateTo(RouteList.courseDetailScreen);
+                        break;
+                      case "Approve":
+                        courseListingVM.updateCourseStatus(
+                            context, course.id ?? "", "APPROVE");
                         break;
                       case "Edit":
                         await marketPlaceLearningHubVM.getCourseDetails(
