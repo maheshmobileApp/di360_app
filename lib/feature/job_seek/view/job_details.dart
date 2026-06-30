@@ -190,35 +190,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.job.title ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.job.jRole ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.job.companyName ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.black,
-                    ),
-                  ),
+                  if (widget.job.title != "")
+                    customHeadTexter("Job Title", widget.job.title ?? ''),
+                  if (widget.job.jRole != "")
+                    customHeadTexter("Role", widget.job.jRole ?? ''),
+                  if (widget.job.companyName != "")
+                    customHeadTexter(
+                        "Company Name", widget.job.companyName ?? ''),
                 ],
               ),
             ),
@@ -414,6 +392,28 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         SizedBox(height: 20),
         actionsWidget(context),
         SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget customHeadTexter(String key, String value) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          key,
+          style: const TextStyle(fontSize: 12, color: AppColors.geryColor),
+        ),
+        Text(
+          value,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 4),
       ],
     );
   }

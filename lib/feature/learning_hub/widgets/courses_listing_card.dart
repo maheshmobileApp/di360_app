@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
+import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -11,7 +13,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CouresListingCard extends StatelessWidget {
+class CouresListingCard extends StatefulWidget {
   final String id;
   final int index;
   final String logoUrl;
@@ -30,6 +32,7 @@ class CouresListingCard extends StatelessWidget {
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
   final VoidCallback? onDetailView;
+  final List<Presenters>? presenters;
 
   const CouresListingCard(
       {super.key,
@@ -50,13 +53,48 @@ class CouresListingCard extends StatelessWidget {
       required this.meetingLink,
       required this.activeStatus,
       required this.chipTitle,
+      required this.presenters,
       this.userType});
 
   @override
+  State<CouresListingCard> createState() => _CouresListingCardState();
+}
+
+class _CouresListingCardState extends State<CouresListingCard> {
+  int currentIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final presenters = widget.presenters ?? [];
+
+    if (presenters.length > 1) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+        if (!mounted) return;
+
+        setState(() {
+          currentIndex = (currentIndex + 1) % presenters.length;
+        });
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String time = (status == "ACTIVE")
+    /*final String time = (status == "ACTIVE")
         ? DateFormatUtils.formatTwoDateTime(createdAt)
-        : DateFormatUtils.formatTwoDateTime(updatedAt);
+        : DateFormatUtils.formatTwoDateTime(updatedAt);*/
+    final time = DateFormatUtils.formatTwoDateTime(widget.createdAt);
+    final List<String> presenterImages = widget.presenters!
+        .where((e) => e.presentedByImage?.url != null)
+        .map((e) => e.presentedByImage!.url!)
+        .toList();
+    final List<String> presenterNames = widget.presenters!
+        .where((e) => e.presentedByName != null)
+        .map((e) => e.presentedByName ?? "")
+        .toList();
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -77,31 +115,44 @@ class CouresListingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                        child: _logoWithTitle(logoUrl, companyName, courseTitle,
-                            status, activeStatus)),
+                        child: _logoWithTitle(
+                            widget.logoUrl,
+                            widget.companyName,
+                            widget.courseTitle,
+                            widget.status,
+                            widget.activeStatus,
+                            presenterImages,
+                            presenterNames)),
                     Row(
                       children: [
                         _menuWidget(
-                            context, types.isNotEmpty ? types.first : null),
+                            context,
+                            widget.types.isNotEmpty
+                                ? widget.types.first
+                                : null),
                       ],
                     ),
                   ],
                 ),
 
                 const SizedBox(height: 8),
-                _chipWidget(types, meetingLink, time),
+                Text(presenterNames?[currentIndex] ?? "",
+                    style: TextStyles.medium1(color: AppColors.black)),
+                const SizedBox(height: 8),
+                _chipWidget(widget.types, widget.meetingLink, time),
                 const SizedBox(height: 8),
 
-                _descriptionWidget(description, index),
+                _descriptionWidget(widget.description, widget.index),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                        onTap: onTapRegistered,
-                        child: _registeredChip(registeredCount, chipTitle)),
+                        onTap: widget.onTapRegistered,
+                        child: _registeredChip(
+                            widget.registeredCount, widget.chipTitle)),
                     GestureDetector(
-                        onTap: onDetailView,
+                        onTap: widget.onDetailView,
                         child: Row(children: [
                           Text("View Details",
                               style: TextStyles.medium1(
@@ -119,33 +170,38 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _logoWithTitle(String logo, String company, String title,
-      String status, String activeStatus) {
+  Widget _logoWithTitle(
+    String logo,
+    String company,
+    String title,
+    String status,
+    String activeStatus,
+    List<String>? presenterImages,
+    List<String>? presenterNames,
+  ) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Stack(
-          alignment: Alignment.center,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-                radius: 30,
-                backgroundColor: AppColors.geryColor,
-                child: ClipOval(
+              radius: 30,
+              backgroundColor: AppColors.geryColor,
+              child: ClipOval(
+                child: SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
                     child: CachedNetworkImageWidget(
-                        imageUrl: logo,
-                        fit: BoxFit.contain,
-                        errorWidget: Image.asset(ImageConst.directorProfile)))),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(229, 244, 237, 1),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: AppColors.whiteColor, width: 1),
+                      key: ValueKey(presenterImages?[currentIndex]),
+                      imageUrl: presenterImages?[currentIndex] ?? "",
+                      fit: BoxFit.contain,
+                      errorWidget: Image.asset(ImageConst.directorProfile),
+                    ),
+                  ),
                 ),
-                child: Text(status == "APPROVE" ? activeStatus : status,
-                    style: TextStyles.bold4(
-                        color: StatusColors.getColor(status), fontSize: 10)),
               ),
             ),
           ],
@@ -156,8 +212,19 @@ class CouresListingCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(company, style: TextStyles.medium2(color: AppColors.black)),
-              const SizedBox(height: 2),
-              Text(title, style: TextStyles.regular2(color: AppColors.black)),
+              //const SizedBox(height: 2),
+              //Text(title, style: TextStyles.regular2(color: AppColors.black)),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(229, 244, 237, 1),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: AppColors.whiteColor, width: 1),
+                ),
+                child: Text(status == "APPROVE" ? activeStatus : status,
+                    style: TextStyles.bold4(
+                        color: StatusColors.getColor(status), fontSize: 10)),
+              ),
             ],
           ),
         ),
@@ -292,20 +359,22 @@ class CouresListingCard extends StatelessWidget {
           minWidth: 0, minHeight: 0), // remove default 48x48
       icon: Icon(Icons.more_vert,
           size: 20, color: AppColors.bottomNavUnSelectedColor),
-      onSelected: (value) => onMenuAction?.call(value, id),
+      onSelected: (value) => widget.onMenuAction?.call(value, widget.id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (userType == UserRole.admin.value &&
-            (status == "PENDING" || status == "REJECT"))
+        if (widget.userType == UserRole.admin.value &&
+            (widget.status == "PENDING" || widget.status == "REJECT"))
           _popupItem("Approve", Icons.check, AppColors.greenColor),
         /*if (status != "EXPIRED" && courseType != "Online Academy")
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),*/
-        if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
+        if (widget.status != "APPROVE" &&
+            widget.status != "EXPIRED" &&
+            widget.status != "REJECT")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
-        if (activeStatus == "ACTIVE" && status == "APPROVE")
+        if (widget.activeStatus == "ACTIVE" && widget.status == "APPROVE")
           _popupItem(
               "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
-        if (activeStatus == "INACTIVE" && status == "APPROVE")
+        if (widget.activeStatus == "INACTIVE" && widget.status == "APPROVE")
           _popupItem(
               "Active", Icons.nightlight_outlined, AppColors.primaryColor),
         /*if (status == "EXPIRED")
@@ -326,12 +395,4 @@ class CouresListingCard extends StatelessWidget {
       ),
     );
   }
-
-  // String? _getShortTime(String createdAt) {
-  //   try {
-  //     return Jiffy.parse(createdAt).fromNow();
-  //   } catch (_) {
-  //     return '';
-  //   }
-  // }
 }
