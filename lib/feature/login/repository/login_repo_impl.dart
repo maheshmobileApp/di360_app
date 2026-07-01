@@ -48,7 +48,7 @@ class LoginRepoImpl extends LoginRepository {
 
   @override
   Future<dynamic> login(dynamic _variables) async {
-    final res = await http.mutation(loginSchema, _variables);
+    final res = await http.mutation(loginSchema, _variables, isTokenRequired: false);
     return res;
   }
 

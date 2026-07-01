@@ -21,6 +21,7 @@ import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.d
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/outline_button_widget.dart';
@@ -52,6 +53,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
     final String shareId = _fetchId(newsfeeds);
     final directoryVM = Provider.of<DirectoryViewModel>(context);
+    final isLogoAvailable = newsfeeds?.communityType == "COMMUNITY_USER" &&
+        newsfeeds?.userRole == UserRole.professional.value;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -118,7 +121,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                                     true
                                 ? newsfeeds
                                     ?.dentalSupplier?.directories?.first.id
-                                : ""),
+                                : "",
+                            isLogoAvailable),
                         addVertical(10),
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
@@ -453,7 +457,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       NewsFeedViewModel viewModel,
       AddNewsFeedViewModel addNewsVM,
       DirectoryViewModel directoryVM,
-      String? id) {
+      String? id,
+      bool logoAvailable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -468,44 +473,88 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           },
           child: Row(
             children: [
-              CircleAvatar(
-                backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
-                    ? AppColors.greyLight
-                    : AppColors.primaryColor,
-                radius: 26.5,
-                child: (imageUrl != null && imageUrl.isNotEmpty)
-                    ? SizedBox(
-                        height: 52,
-                        width: 52,
-                        child: ClipOval(
-                            child: CachedNetworkImageWidget(
-                                imageUrl: imageUrl,
-                                fit: BoxFit.contain,
-                                errorWidget:
-                                    Image.asset(ImageConst.directorProfile))),
-                      )
-                    : Text(
-                        name!
-                            .split('')
-                            .firstWhere(
-                              (char) => char.trim().isNotEmpty,
-                              orElse: () => '',
+              Stack(alignment: Alignment.center, children: [
+                CircleAvatar(
+                  backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
+                      ? AppColors.greyLight
+                      : AppColors.primaryColor,
+                  radius: 26.5,
+                  child: (imageUrl != null && imageUrl.isNotEmpty)
+                      ? SizedBox(
+                          height: 52,
+                          width: 52,
+                          child: ClipOval(
+                              child: CachedNetworkImageWidget(
+                                  imageUrl: logoAvailable
+                                      ? newsfeeds?.communityOwner?.logo?.url ??
+                                          ''
+                                      : imageUrl,
+                                  fit: BoxFit.contain,
+                                  errorWidget:
+                                      Image.asset(ImageConst.directorProfile))),
+                        )
+                      : Text(
+                          name!
+                              .split('')
+                              .firstWhere(
+                                (char) => char.trim().isNotEmpty,
+                                orElse: () => '',
+                              )
+                              .toUpperCase(),
+                          style: TextStyles.bold5(color: AppColors.whiteColor),
+                        ),
+                ),
+                if (logoAvailable)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CircleAvatar(
+                      backgroundColor: AppColors.greyLight,
+                      radius: 16,
+                      child: (newsfeeds
+                                  ?.communityOwner?.logo?.url?.isNotEmpty ==
+                              true)
+                          ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: ClipOval(
+                                  child: CachedNetworkImageWidget(
+                                      imageUrl: imageUrl ?? '',
+                                      fit: BoxFit.contain,
+                                      errorWidget: Image.asset(
+                                          ImageConst.directorProfile))),
                             )
-                            .toUpperCase(),
-                        style: TextStyles.bold5(color: AppColors.whiteColor),
-                      ),
-              ),
+                          : Text(
+                              "D",
+                              style:
+                                  TextStyles.bold5(color: AppColors.whiteColor),
+                            ),
+                    ),
+                  ),
+              ]),
               addHorizontal(10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(name ?? 'Dental Interface',
+                  Text(
+                      logoAvailable
+                          ? newsfeeds?.communityOwner?.businessName ?? ""
+                          : name ?? 'Dental Interface',
                       style: TextStyles.clashMedium(
                           fontSize: 16, color: AppColors.black)),
-                  Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
-                      style:
-                          TextStyles.regular1(color: AppColors.lightGeryColor)),
+                  Row(
+                    children: [
+                      logoAvailable
+                          ? Text("$name ",
+                              style: TextStyles.regular1(
+                                  color: Colors.black, fontSize: 14))
+                          : SizedBox.shrink(),
+                      Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
+                          style: TextStyles.regular1(
+                              color: AppColors.lightGeryColor)),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -749,28 +798,29 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
         ),
         Spacer(),
         if (commentsEnabled)
-        GestureDetector(
-          onTap: () async {
-            await commentViewModel.getComments(context, newsfeeds?.id ?? "");
-            navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-          },
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: AppColors.backgroundColor),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              child: Row(
-                children: [
-                  Image.asset(ImageConst.comment),
-                  addHorizontal(8),
-                  Text('$commentCount comments',
-                      style: TextStyles.regular3(color: AppColors.black))
-                ],
+          GestureDetector(
+            onTap: () async {
+              await commentViewModel.getComments(context, newsfeeds?.id ?? "");
+              navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.backgroundColor),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Row(
+                  children: [
+                    Image.asset(ImageConst.comment),
+                    addHorizontal(8),
+                    Text('$commentCount comments',
+                        style: TextStyles.regular3(color: AppColors.black))
+                  ],
+                ),
               ),
             ),
-          ),
-        )
+          )
       ],
     );
   }

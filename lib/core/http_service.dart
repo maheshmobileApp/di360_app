@@ -126,14 +126,21 @@ class HttpService {
   }
 
   Future<Map<String, dynamic>> mutation(document, variables,
-      {showLoading = true}) async {
+      {showLoading = true, isTokenRequired = true}) async {
     final token = await LocalStorage.getStringVal(LocalStorageConst.token);
     var response;
     try {
-      response = await _hasuraConnect
-          .mutation(document, variables: variables ?? {}, headers: {
-        'Authorization': 'Bearer $token',
-      });
+      if (isTokenRequired) {
+        response = await _hasuraConnect
+            .mutation(document, variables: variables ?? {}, headers: {
+          'Authorization': 'Bearer $token',
+        });
+      } else {
+        response = await _hasuraConnect.mutation(
+          document,
+          variables: variables ?? {},
+        );
+      }
       response = response['data'];
     } catch (e, s) {
       print("$e , $s");

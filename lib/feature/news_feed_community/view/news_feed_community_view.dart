@@ -285,12 +285,18 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                   ''
                                               : newsItem.dentalSupplier?.logo?.url ??
                                                   "",
-                                          companyName: (newsItem.userRole ==
+                                          communityLogo: newsItem
+                                                  .communityOwner?.logo?.url ??
+                                              "",
+                                          companyName: newsItem
+                                                  .communityOwner?.businessName ??
+                                              "",
+                                          userName: (newsItem.userRole ==
                                                   UserRole.professional.value)
-                                              ? newsItem.dentalProfessional?.name ??
+                                              ? newsItem.dentalProfessional
+                                                      ?.name ??
                                                   ''
-                                              : newsItem.dentalSupplier?.businessName ??
-                                                  "",
+                                              : "",
                                           courseTitle:
                                               newsItem.description ?? '',
                                           status: newsItem.status ?? '',
@@ -298,16 +304,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                               newsItem.description ?? '',
                                           types: [],
                                           registeredCount: 0,
-                                          chipTitle:
-                                              newsItem.categoryType ?? '',
-                                          comments: newsItem
-                                                  .newsFeedsComments?.length ??
-                                              0,
-                                          likes: newsItem
-                                                  .newsfeedsLikesAggregate
-                                                  ?.aggregate
-                                                  ?.count ??
-                                              0,
+                                          chipTitle: newsItem.categoryType ?? '',
+                                          comments: newsItem.newsFeedsComments?.length ?? 0,
+                                          likes: newsItem.newsfeedsLikesAggregate?.aggregate?.count ?? 0,
                                           isLiked: newsItem.myLike?.isNotEmpty ?? false,
                                           onCommentTap: () {
                                             navigationService.push(
@@ -399,7 +398,9 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 viewModel.websiteLinkController
                                                         .text =
                                                     newsItem.webUrl ?? "";
-                                                viewModel.setEnableComments(newsItem.commentsEnabled ?? false);
+                                                viewModel.setEnableComments(
+                                                    newsItem.commentsEnabled ??
+                                                        false);
                                                 await viewModel
                                                     .fetchAddNewsfeedCommunityCategories();
                                                 viewModel
@@ -460,8 +461,8 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 showReportSuccessPopup(context);
                                                 break;
                                               case "Report Post":
-                                                showAdminReportBottomSheet(context,
-                                                    () async {
+                                                showAdminReportBottomSheet(
+                                                    context, () async {
                                                   navigationService.goBack();
                                                   await viewModel
                                                       .newsFeedCommunityAction(
