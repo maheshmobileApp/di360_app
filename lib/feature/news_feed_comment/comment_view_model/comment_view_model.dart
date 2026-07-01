@@ -148,13 +148,11 @@ class CommentViewModel extends ChangeNotifier {
           "created_by_id": userId,
           "role_type": userType,
           "attachments": uploadedFiles,
-          "dental_supplier_id":
-              UserRole.supplier.value == userType ? userId : null,
-          "dental_practice_id":
-              UserRole.practice.value == userType ? userId : null,
-          "dental_professional_id":
-              UserRole.professional.value == userType ? userId : null,
-          "dental_admin_id": null
+          if (UserRole.supplier.value == userType) "dental_supplier_id": userId,
+          if (UserRole.practice.value == userType) "dental_practice_id": userId,
+          if (UserRole.professional.value == userType)
+            "dental_professional_id": userId,
+          if (UserRole.admin.value == userType) "dental_admin_id": userId
         }
       };
       var res = await _http.mutation(commentQuery, variables);
@@ -207,7 +205,7 @@ class CommentViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
-
+  
   deleteTheComment(BuildContext context, String id, String feedId) async {
     Loaders.circularShowLoader(context);
 
@@ -251,7 +249,7 @@ class CommentViewModel extends ChangeNotifier {
     final variables = {"feedId": feedId, "limit": 10, "offset": 0};
     try {
       var res = await repo.getComments(variables);
-        newsFeedComments = res;
+      newsFeedComments = res;
     } catch (e) {
       print("Error fetching comments: $e");
       scaffoldMessenger(e.toString());

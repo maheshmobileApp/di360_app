@@ -1,4 +1,6 @@
+import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/configuration/app_config.dart';
+import 'package:di360_flutter/data/local_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 
@@ -125,10 +127,13 @@ class HttpService {
 
   Future<Map<String, dynamic>> mutation(document, variables,
       {showLoading = true}) async {
+    final token = await LocalStorage.getStringVal(LocalStorageConst.token);
     var response;
     try {
-      response =
-          await _hasuraConnect.mutation(document, variables: variables ?? {});
+      response = await _hasuraConnect
+          .mutation(document, variables: variables ?? {}, headers: {
+        'Authorization': 'Bearer $token',
+      });
       response = response['data'];
     } catch (e, s) {
       print("$e , $s");

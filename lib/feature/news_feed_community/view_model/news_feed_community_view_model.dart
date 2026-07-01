@@ -50,6 +50,12 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String? feedType;
   String? communityMemberDirectorId;
   CommunityMembersCountData? communityMembersCountData;
+  bool enableComments = true;
+
+  void setEnableComments(bool value) {
+    enableComments = value;
+    notifyListeners();
+  }
 
   void feedTypeUpdate(String value) {
     feedType = value;
@@ -498,6 +504,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
+      "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {
@@ -507,7 +514,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
 
     final variables = {"fields": fields};
-    print("addNFCommunity: $variables");
+    print("**********addNFCommunity: $variables");
 
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
@@ -647,6 +654,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
+       "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {

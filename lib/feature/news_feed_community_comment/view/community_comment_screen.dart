@@ -119,8 +119,7 @@ class _CommentScreenState extends State<CommunityCommentScreen>
               ),
             ),
             _buildCommentInputField(context, viewModel, widget.newsfeeds),
-            // File attachments preview
-            // File attachments preview
+            
             if (viewModel.existingAttachments.isNotEmpty || viewModel.selectedFiles.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),

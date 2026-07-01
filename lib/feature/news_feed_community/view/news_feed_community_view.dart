@@ -399,6 +399,7 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 viewModel.websiteLinkController
                                                         .text =
                                                     newsItem.webUrl ?? "";
+                                                viewModel.setEnableComments(newsItem.commentsEnabled ?? false);
                                                 await viewModel
                                                     .fetchAddNewsfeedCommunityCategories();
                                                 viewModel

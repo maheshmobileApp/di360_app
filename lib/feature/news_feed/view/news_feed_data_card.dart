@@ -180,7 +180,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     context,
                     shareId,
                     newsfeeds?.feedType ?? FeedType.newsfeed.name,
-                    commentViewModel),
+                    commentViewModel,
+                    newsfeeds?.commentsEnabled ?? false),
               ],
             ),
           )),
@@ -706,7 +707,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       BuildContext context,
       String feedId,
       String? category,
-      CommentViewModel commentViewModel) {
+      CommentViewModel commentViewModel,
+      bool commentsEnabled) {
     final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
@@ -746,6 +748,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           category: category,
         ),
         Spacer(),
+        if (commentsEnabled)
         GestureDetector(
           onTap: () async {
             await commentViewModel.getComments(context, newsfeeds?.id ?? "");

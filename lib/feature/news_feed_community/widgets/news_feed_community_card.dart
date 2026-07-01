@@ -233,6 +233,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         const Spacer(),
 
                         /// 💬 Comment Icon + Count
+                        if (newsfeeds?.commentsEnabled ?? false)
                         GestureDetector(
                           onTap: onCommentTap,
                           child: Row(
