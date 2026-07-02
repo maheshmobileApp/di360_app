@@ -21,6 +21,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
   final AddCatalogueRepositoryImpl repo = AddCatalogueRepositoryImpl();
   final HttpService _http = HttpService();
 
+  TextEditingController rejectController = TextEditingController();
+
   AddCatalogueViewModel() {
     getCatalogCounts();
     getCatagorysData();
@@ -518,7 +520,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> approveTheCatalogue(String id,BuildContext context) async {
+  Future<void> approveTheCatalogue(String id, BuildContext context) async {
     Loaders.circularShowLoader(context);
     String timestamp = DateTime.now().toUtc().toIso8601String();
     final res = await repo.approveAndRejectCatalogueQuery({
@@ -537,6 +539,23 @@ class AddCatalogueViewModel extends ChangeNotifier {
       myCatalogueList?[index].status = status;
       notifyListeners();
     }
+  }
+
+  Future<void> rejectTheCatalogue(String id, BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    String timestamp = DateTime.now().toUtc().toIso8601String();
+    final res = await repo.approveAndRejectCatalogueQuery({
+      "id": id,
+      "updateObj": {
+        "status": "REJECTED",
+        "rejected_at": timestamp,
+        "reject_reason": rejectController.text
+      }
+    });
+    if (res != null) {
+      await updateTheMyCatalogueList(id, "REJECTED");
+    }
+    Loaders.circularHideLoader(context);
   }
 
   late Map<String, List<FilterItem>> filterOptions;
