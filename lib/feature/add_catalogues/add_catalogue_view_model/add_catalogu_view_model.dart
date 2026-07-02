@@ -13,6 +13,7 @@ import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +42,15 @@ class AddCatalogueViewModel extends ChangeNotifier {
     'InActive'
   ];
 
+  final List<String> adminStatuses = [
+    'All',
+    'Pending Approval',
+    'Approved & Scheduled',
+    'Expired',
+    'Reject',
+    'InActive'
+  ];
+
   int? allCatalogueCount = 0;
   int? draftCatalogueCount = 0;
   int? pendingApprovalCatalogueCount = 0;
@@ -52,6 +62,15 @@ class AddCatalogueViewModel extends ChangeNotifier {
   Map<String, int?> get statusCountMap => {
         'All': allCatalogueCount,
         'Draft': draftCatalogueCount,
+        'Pending Approval': pendingApprovalCatalogueCount,
+        'Approved & Scheduled': approvedScheduledCatalogueCount,
+        'Expired': expiredCatalogueCount,
+        'Reject': rejectCatalogueCount,
+        'InActive': inActiveCatalogueCount
+      };
+
+  Map<String, int?> get adminStatusCountMap => {
+        'All': allCatalogueCount,
         'Pending Approval': pendingApprovalCatalogueCount,
         'Approved & Scheduled': approvedScheduledCatalogueCount,
         'Expired': expiredCatalogueCount,
@@ -79,6 +98,7 @@ class AddCatalogueViewModel extends ChangeNotifier {
   List<String> communityTypes = ["Both", "Community User"];
   String? selectedCommunityType = 'Both';
   bool communityStatus = false;
+  String? userType;
 
   void setCommunityStatus() async {
     print("Setting community status");
@@ -111,14 +131,16 @@ class AddCatalogueViewModel extends ChangeNotifier {
   void changeStatus(String status, BuildContext context) async {
     selectedStatus = status;
     if (status == 'All') {
-      catalogStatus = [
-        "APPROVED",
-        "PENDING_APPROVAL",
-        "EXPIRED",
-        "SCHEDULED",
-        "REJECTED",
-        "DRAFT"
-      ];
+      catalogStatus = userType == UserRole.admin.value
+          ? ["APPROVED", "PENDING_APPROVAL", "EXPIRED", "SCHEDULED", "REJECTED"]
+          : [
+              "APPROVED",
+              "PENDING_APPROVAL",
+              "EXPIRED",
+              "SCHEDULED",
+              "REJECTED",
+              "DRAFT"
+            ];
       activeStatus = ["ACTIVE", "INACTIVE"];
     } else if (status == 'Draft') {
       catalogStatus = ['DRAFT'];
@@ -272,6 +294,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
 
   Future<void> getMyCataloguesData(BuildContext context,
       {String? type, String? subCatagory, bool isPagination = false}) async {
+    final userTypes = await LocalStorage.getStringVal(LocalStorageConst.type);
+    userType = userTypes;
     if (isPagination) {
       if (!hasMoreCatalogues || isLoadingMore) return;
       isLoadingMore = true;
@@ -287,7 +311,9 @@ class AddCatalogueViewModel extends ChangeNotifier {
     final res = await repo.getMyCatalogues(catalogStatus, activeStatus,
         catalogueLimit, catalougueOffset, selectedStatus,
         type: _lastType, subCatagory: _lastSubCatagory);
-    if (!isPagination) getCatalogCounts();
+    if (!isPagination && userTypes != UserRole.admin.value) getCatalogCounts();
+    if (!isPagination && userTypes == UserRole.admin.value)
+      getAdminCatalogStatusCounts();
     if (res != null) {
       myCatalogueList = isPagination ? [...?myCatalogueList, ...res] : res;
       if (res.length < catalogueLimit) hasMoreCatalogues = false;
@@ -479,6 +505,38 @@ class AddCatalogueViewModel extends ChangeNotifier {
     rejectCatalogueCount = res.rejected?.aggregate?.count;
     inActiveCatalogueCount = res.inactive?.aggregate?.count;
     notifyListeners();
+  }
+
+  Future<void> getAdminCatalogStatusCounts() async {
+    final res = await repo.adminCataloguesCount();
+    allCatalogueCount = res.all?.aggregate?.count;
+    pendingApprovalCatalogueCount = res.approvalPending?.aggregate?.count;
+    approvedScheduledCatalogueCount = res.approved?.aggregate?.count;
+    expiredCatalogueCount = res.expired?.aggregate?.count;
+    rejectCatalogueCount = res.rejected?.aggregate?.count;
+    inActiveCatalogueCount = res.inactive?.aggregate?.count;
+    notifyListeners();
+  }
+
+  Future<void> approveTheCatalogue(String id,BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    String timestamp = DateTime.now().toUtc().toIso8601String();
+    final res = await repo.approveAndRejectCatalogueQuery({
+      "id": id,
+      "updateObj": {"status": "APPROVED", "approved_at": timestamp}
+    });
+    if (res != null) {
+      await updateTheMyCatalogueList(id, "APPROVED");
+    }
+    Loaders.circularHideLoader(context);
+  }
+
+  Future<void> updateTheMyCatalogueList(String id, String status) async {
+    final index = myCatalogueList?.indexWhere((item) => item.id == id);
+    if (index != null && index >= 0) {
+      myCatalogueList?[index].status = status;
+      notifyListeners();
+    }
   }
 
   late Map<String, List<FilterItem>> filterOptions;

@@ -6,6 +6,7 @@ import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_re
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,16 +45,22 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
                   borderRadius: BorderRadius.circular(15)),
               child: Padding(
                   padding: const EdgeInsets.all(14.0),
-                  child: Column(children: [
-                    addVertical(8),
-                    _buildCatalogueName('Catalogue Name', item?.title),
-                    addVertical(10),
-                    _buildCataloguRow('Category', item?.catalogueCategory?.name,
-                        'Views', '${item?.views}', false),
-                    addVertical(10),
-                    _buildCataloguRow('Scheduler date', item?.schedulerDay,
-                        'Expiry Date', item?.expiryDay, true)
-                  ]))),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        addVertical(8),
+                        _buildCatalogueName('Catalogue Name', item?.title),
+                        addVertical(10),
+                        _buildCataloguRow(
+                            'Category',
+                            item?.catalogueCategory?.name,
+                            'Views',
+                            '${item?.views}',
+                            false),
+                        addVertical(10),
+                        _buildCataloguRow('Scheduler date', item?.schedulerDay,
+                            'Expiry Date', item?.expiryDay, true)
+                      ]))),
           Positioned(
             top: 1,
             right: 50,
@@ -91,14 +98,18 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title ?? '',
-              style: TextStyles.regular1(
-                  color: AppColors.bottomNavUnSelectedColor)),
-          addVertical(5),
-          Text(titleVal ?? '',
-              style: TextStyles.medium2(color: AppColors.black))
-        ])
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title ?? '',
+                style: TextStyles.regular1(
+                    color: AppColors.bottomNavUnSelectedColor)),
+            addVertical(5),
+            Text(titleVal ?? '',
+                style: TextStyles.medium2(color: AppColors.black),
+                overflow: TextOverflow.ellipsis)
+          ]),
+        )
       ],
     );
   }
@@ -108,28 +119,35 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title ?? '',
-              style: TextStyles.regular1(
-                  color: AppColors.bottomNavUnSelectedColor)),
-          addVertical(5),
-          Text(
-              isData
-                  ? DateFormatUtils.formatDateOnly(titleVal)
-                  : titleVal ?? '',
-              style: TextStyles.medium2(color: AppColors.black))
-        ]),
-        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text(subTitle ?? '',
-              style: TextStyles.regular1(
-                  color: AppColors.bottomNavUnSelectedColor)),
-          addVertical(5),
-          Text(
-              isData
-                  ? DateFormatUtils.formatDateOnly(subTitleVal)
-                  : subTitleVal ?? '',
-              style: TextStyles.medium2(color: AppColors.black))
-        ]),
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title ?? '',
+                style: TextStyles.regular1(
+                    color: AppColors.bottomNavUnSelectedColor)),
+            addVertical(5),
+            Text(
+                isData
+                    ? DateFormatUtils.formatDateOnly(titleVal)
+                    : titleVal ?? '',
+                style: TextStyles.medium2(color: AppColors.black),
+                overflow: TextOverflow.ellipsis)
+          ]),
+        ),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Text(subTitle ?? '',
+                style: TextStyles.regular1(
+                    color: AppColors.bottomNavUnSelectedColor)),
+            addVertical(5),
+            Text(
+                isData
+                    ? DateFormatUtils.formatDateOnly(subTitleVal)
+                    : subTitleVal ?? '',
+                style: TextStyles.medium2(color: AppColors.black),
+                overflow: TextOverflow.ellipsis)
+          ]),
+        ),
       ],
     );
   }
@@ -164,6 +182,18 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
             navigationService.goBack();
             vm.removeCatalogue(context, id);
           });
+        } else if (value == "Approve") {
+          showAlertMessage(context, 'Are you sure you want to Approve this catalogue?',
+              onBack: () {
+            navigationService.goBack();
+            vm.approveTheCatalogue(id ?? '', context);
+          });
+        } else if (value == "Reject") {
+          showAlertMessage(context, 'Are you sure you want to reject this catalogue?',
+              onBack: () {
+            navigationService.goBack();
+          //  vm.rejectCatalogue(context, id);
+          });
         } else if (value == "sendApproval") {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {
@@ -192,11 +222,23 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               value: "sendApproval",
               child: _buildRow(Icons.send_rounded, AppColors.primaryColor,
                   "Send for Approval")),
-        if (vm.selectedStatus != 'Approved & Scheduled')
+        if (vm.userType != UserRole.admin.value &&
+            vm.selectedStatus != 'Approved & Scheduled')
           PopupMenuItem(
               value: "Edit",
               child:
                   _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
+        if (vm.userType == UserRole.admin.value &&
+            (item?.status == 'PENDING_APPROVAL' || item?.status == 'REJECTED'))
+          PopupMenuItem(
+              value: "Approve",
+              child: _buildRow(
+                  Icons.check, AppColors.greenColor, "Approve")),
+        if (vm.userType == UserRole.admin.value &&
+            item?.status == 'PENDING_APPROVAL')
+          PopupMenuItem(
+              value: "Reject",
+              child: _buildRow(Icons.block, AppColors.redColor, "Reject")),
         /*PopupMenuItem(
             value: "Delete",
             child:
