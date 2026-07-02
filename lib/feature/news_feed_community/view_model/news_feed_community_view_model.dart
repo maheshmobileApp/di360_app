@@ -51,6 +51,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String? communityMemberDirectorId;
   CommunityMembersCountData? communityMembersCountData;
   bool enableComments = true;
+  List<CoursesListingDetails> upComingCoursesList = [];
 
   void setEnableComments(bool value) {
     enableComments = value;
@@ -654,7 +655,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
-       "comments_enabled": enableComments,
+      "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {
@@ -715,6 +716,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   Future<void> getCommunityMemberDirectorIds({String? communityId}) async {
+     print("**************getCommunityMemberDirectorIds Calling");
     final userCommunityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final res =
@@ -852,6 +854,38 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         orElse: () => addNewsFeedCommunityCategories!.first);
     setSelectedCategory(category);
     notifyListeners();
+  }
+
+  Future<void> getUpcomingCourses(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+     print("**************getUpcomingCourses Calling");
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_eq": communityId}
+          },
+          {
+            "community_status": {"_eq": "YES"}
+          },
+          {
+            "active_status": {"_eq": "ACTIVE"}
+          },
+          {
+            "status": {"_eq": "APPROVE"}
+          }
+        ]
+      },
+      "limit": 5,
+      "offset": 0
+    };
+    final res = await repo.getUpcomingCourses(variables);
+    if (res != null) {
+      upComingCoursesList = res;
+    }
+    Loaders.circularHideLoader(context);
   }
 
   initialStateData() {

@@ -9,6 +9,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
+import 'package:di360_flutter/feature/market_place_learning_hub/view/learning_hub_view/learning_hub_master_card.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
@@ -52,8 +53,14 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
         await viewModel.getAllNewsFeeds(context);
         final communityVM =
             Provider.of<CommunityViewModel>(context, listen: false);
-        await communityVM.getNewsFeedCategories(context, type: "Community");
+        Future.wait([
+          communityVM.getNewsFeedCategories(context, type: "Community"),
+          viewModel.getCommunityMemberDirectorIds(),
+          viewModel.getUpcomingCourses(context),
+        ]);
+        /*await communityVM.getNewsFeedCategories(context, type: "Community");
         await viewModel.getCommunityMemberDirectorIds();
+        await viewModel.getUpcomingCourses(context);*/
       }
     });
   }
@@ -194,63 +201,148 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                   ),
                 ),
                 body: (viewModel.communityStatus)
-                    ? Column(
-                        children: [
-                          CommunityHeaderCard(
-                            imageUrl:
-                                (viewModel.bannerData?.directories != null &&
-                                        viewModel.bannerData!.directories!
-                                            .isNotEmpty)
-                                    ? (viewModel.bannerData!.directories!.first
-                                            .bannerImage?.url ??
-                                        "")
-                                    : "",
-                            title: type == UserRole.professional.value
-                                ? "${viewModel.communityMembersCountData?.dentalSuppliers?.first.businessName} Community - ${viewModel.communityMembersCountData?.communityMembersAggregate?.aggregate?.count} members"
-                                : "${businessname}Community",
-                            leaveButton: type == UserRole.professional.value,
-                            onLeaveTap: () async {
-                              showAlertMessage(context,
-                                  'Are you sure you want to leave this Community?',
-                                  onBack: () async {
-                                Loaders.circularShowLoader(context);
+                    ? SingleChildScrollView(
+                        child: Column(
+                        
+                          children: [
+                            CommunityHeaderCard(
+                              imageUrl:
+                                  (viewModel.bannerData?.directories != null &&
+                                          viewModel.bannerData!.directories!
+                                              .isNotEmpty)
+                                      ? (viewModel.bannerData!.directories!
+                                              .first.bannerImage?.url ??
+                                          "")
+                                      : "",
+                              title: type == UserRole.professional.value
+                                  ? "${viewModel.communityMembersCountData?.dentalSuppliers?.first.businessName} Community - ${viewModel.communityMembersCountData?.communityMembersAggregate?.aggregate?.count} members"
+                                  : "${businessname}Community",
+                              leaveButton: type == UserRole.professional.value,
+                              onLeaveTap: () async {
+                                showAlertMessage(context,
+                                    'Are you sure you want to leave this Community?',
+                                    onBack: () async {
+                                  Loaders.circularShowLoader(context);
 
-                                await viewModel.leaveCommunity(context);
-                                await communityVM
-                                    .getJoinedCommunityMembersRes(context);
-                                Loaders.circularHideLoader(context);
+                                  await viewModel.leaveCommunity(context);
+                                  await communityVM
+                                      .getJoinedCommunityMembersRes(context);
+                                  Loaders.circularHideLoader(context);
 
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                                dashboardVM.setIndex(3, context);
-                              });
-                            },
-                          ),
-                          FeatureButtonsWidget(
-                            communityMemberDirectorId:
-                                newsFeedCommunityVM.communityMemberDirectorId,
-                            communityId: joinRequests?.firstOrNull?.communityId,
-                          ),
-                          addVertical(8),
-                          if (viewModel.searchBarOpen)
-                            SearchWidget(
-                              controller: viewModel.searchController,
-                              hintText: "Search News Feed...",
-                              onClear: () {
-                                viewModel.searchController.clear();
-                                viewModel.getAllNewsFeeds(context);
-                              },
-                              onSearch: () {
-                                viewModel.getAllNewsFeeds(context);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                  dashboardVM.setIndex(3, context);
+                                });
                               },
                             ),
-                          (type == UserRole.professional.value)
-                              ? SizedBox.shrink()
-                              : communityStatusWidget(viewModel),
-                          (joinRequests?.length != 0 && joinRequests != null)
-                              ? Expanded(
-                                  child: ListView.builder(
-                                    controller: _scrollController,
+                            FeatureButtonsWidget(
+                              communityMemberDirectorId:
+                                  newsFeedCommunityVM.communityMemberDirectorId,
+                              communityId:
+                                  joinRequests?.firstOrNull?.communityId,
+                            ),
+                            addVertical(8),
+                            if (viewModel.searchBarOpen)
+                              SearchWidget(
+                                controller: viewModel.searchController,
+                                hintText: "Search News Feed...",
+                                onClear: () {
+                                  viewModel.searchController.clear();
+                                  viewModel.getAllNewsFeeds(context);
+                                },
+                                onSearch: () {
+                                  viewModel.getAllNewsFeeds(context);
+                                },
+                              ),
+                            (type == UserRole.professional.value)
+                                ? SizedBox.shrink()
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: communityStatusWidget(viewModel),
+                                  ),
+                            if (viewModel.upComingCoursesList.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Upcomming Courses",
+                                      style: TextStyles.regular3(
+                                          color: AppColors.primaryColor)),
+                                  SizedBox(
+                                    height: 380,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          viewModel.upComingCoursesList.length,
+                                      itemBuilder: (context, index) {
+                                        final course =
+                                            viewModel.upComingCoursesList[index];
+                              
+                                        return SizedBox(
+                                          width: 300,
+                                          child: ListingHubMasterCard(
+                                              feedId: course.id ?? "",
+                                              afterWardsPrice:
+                                                  course.afterwardsPrice,
+                                              presenterName: course.presenters?.isNotEmpty == true
+                                                  ? course.presenters?.first.presentedByName ??
+                                                      ""
+                                                  : "",
+                                              profilePic: course.presenters?.isNotEmpty == true
+                                                  ? course
+                                                          .presenters
+                                                          ?.first
+                                                          .presentedByImage
+                                                          ?.url ??
+                                                      ""
+                                                  : "",
+                                              imageUrl: (course.courseBannerImage!.isNotEmpty)
+                                                  ? course.courseBannerImage?.first.url ??
+                                                      ''
+                                                  : '',
+                                              companyName:
+                                                  course.courseName ?? '',
+                                              description:
+                                                  course.description ?? '',
+                                              date: "",
+                                              cpdHours: (course.cpdPoints ?? 0) % 1 == 0
+                                                  ? (course.cpdPoints ?? 0)
+                                                      .toInt()
+                                                      .toString()
+                                                  : (course.cpdPoints ?? 0)
+                                                      .toString(),
+                                              location: course.address != null && course.address?.isNotEmpty == true
+                                                  ? (course.address?.first.formattedAddress ??
+                                                      course.address?.first.city ??
+                                                      "")
+                                                  : "",
+                                              courseStatus: course.courseRegisteredUsers?.firstOrNull?.status,
+                                              onTap: () async {
+                                                await courseListingVM
+                                                    .getCourseDetails(context,
+                                                        course.id ?? "");
+                                                await courseListingVM
+                                                    .getProfile();
+                                                navigationService.navigateTo(
+                                                    RouteList
+                                                        .courseDetailScreen);
+                                              },
+                                              registerTap: () {},
+                                              isRegistered: false),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            (joinRequests?.length != 0 && joinRequests != null)
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     padding: EdgeInsets.all(10),
                                     itemCount: joinRequests.length +
                                         (viewModel.hasMoreNewsFeeds &&
@@ -350,20 +442,20 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                 break;
                                             }
                                             /*if (newsItem.feedType == "LEARNHUB") {
-                                      await courseListingVM.getCourseDetails(
-                                        context,
-                                        newsItem.courses?.first.id ?? "",
-                                      );
-                                      navigationService.navigateTo(
-                                          RouteList.courseDetailScreen);
-                                    } else if (newsItem.feedType == "JOBS") {
-                                      await jobListingsViewModel
-                                          .getJobListingById(context,newsItem.jobs?.first.id??"");
-                                      navigationService.navigateToWithParams(
-                                        RouteList.jobdetailsScreen,
-                                        params: jobListingsViewModel.jobListingData?.first??Jobs(),
-                                      );
-                                    }*/
+                                    await courseListingVM.getCourseDetails(
+                                      context,
+                                      newsItem.courses?.first.id ?? "",
+                                    );
+                                    navigationService.navigateTo(
+                                        RouteList.courseDetailScreen);
+                                  } else if (newsItem.feedType == "JOBS") {
+                                    await jobListingsViewModel
+                                        .getJobListingById(context,newsItem.jobs?.first.id??"");
+                                    navigationService.navigateToWithParams(
+                                      RouteList.jobdetailsScreen,
+                                      params: jobListingsViewModel.jobListingData?.first??Jobs(),
+                                    );
+                                  }*/
                                           },
                                           onMenuAction: (action, id) async {
                                             switch (action) {
@@ -409,15 +501,15 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                                             '');
 
                                                 /*viewModel.setSelectedCourseCategoryName(
-                                            newsItem.categoryType ?? "");*/
+                                          newsItem.categoryType ?? "");*/
 
                                                 /*viewModel.newsFeedCategory = communityVM
-                                                .newsFeedCategoriesData
-                                                ?.newsfeedCategories
-                                                ?.map(
-                                                    (e) => e.categoryName ?? "")
-                                                .toList() ??
-                                            [];*/
+                                              .newsFeedCategoriesData
+                                              ?.newsfeedCategories
+                                              ?.map(
+                                                  (e) => e.categoryName ?? "")
+                                              .toList() ??
+                                          [];*/
                                                 viewModel
                                                         .serverNewsFeedGallery =
                                                     (newsItem.postImage ?? [])
@@ -484,17 +576,17 @@ class _NewsFeedCategoriesViewState extends State<NewsFeedCommunityView>
                                             }
                                           });
                                     },
+                                  )
+                                : Expanded(
+                                    child: Center(
+                                      child: Text("No Data",
+                                          style: TextStyles.medium3(
+                                              color: AppColors.black,
+                                              fontSize: 16)),
+                                    ),
                                   ),
-                                )
-                              : Expanded(
-                                  child: Center(
-                                    child: Text("No Data",
-                                        style: TextStyles.medium3(
-                                            color: AppColors.black,
-                                            fontSize: 16)),
-                                  ),
-                                ),
-                        ],
+                          ],
+                        ),
                       )
                     : Center(
                         child: Text(
