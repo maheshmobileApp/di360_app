@@ -12,6 +12,7 @@ import 'package:di360_flutter/feature/campaign/view/create_campaign_view.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_details_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_filter_screen.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_screen.dart';
+import 'package:di360_flutter/feature/clients/view/clients_screen.dart';
 import 'package:di360_flutter/feature/community/view/community_market_view.dart';
 import 'package:di360_flutter/feature/community/view/contact_filter_view.dart';
 import 'package:di360_flutter/feature/community/view/contacts_view.dart';
@@ -226,9 +227,7 @@ class Routes {
       RouteList.registeredUsersView: (context) {
         final args =
             ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return RegisteredUsersView(
-          courseId: args['course_id'],
-        );
+        return RegisteredUsersView(courseId: args['course_id']);
       },
       RouteList.learningHubMasterView: (context) => LearningHubMasterView(),
       RouteList.learningHubFliterScreen: (context) => LearningHubFilterScreen(),
@@ -269,7 +268,8 @@ class Routes {
       RouteList.talentsHireMeScreen: (context) => TalentsHireMeScreen(),
       RouteList.forgotPasswordScreen: (context) => ForgotPasswordScreen(),
       RouteList.termsAndConditionsDetails: (context) =>
-          TermsAndConditionsDetails()
+          TermsAndConditionsDetails(),
+      RouteList.clientScreen: (context) => ClientsScreen(),
     };
   }
 }

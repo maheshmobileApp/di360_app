@@ -116,8 +116,7 @@ class _DashBoardState extends State<DashBoard> {
                       height: 24, width: 24, color: AppColors.primaryColor),
                   label: 'Catalogue'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.person, size: 24),
-                  label: type == UserRole.admin.value ? 'Clients' : 'Profile')
+                  icon: Icon(Icons.person, size: 24), label: 'Profile')
             ],
           ),
         ));
