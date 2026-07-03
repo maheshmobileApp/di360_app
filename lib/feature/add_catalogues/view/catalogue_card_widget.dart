@@ -173,19 +173,6 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
             navigationService.goBack();
             vm.removeCatalogue(context, id);
           });
-        } else if (value == "Approve") {
-          showAlertMessage(
-              context, 'Are you sure you want to Approve this catalogue?',
-              onBack: () {
-            navigationService.goBack();
-            vm.approveTheCatalogue(id ?? '', context);
-          });
-        } else if (value == "Reject") {
-          vm.rejectController.clear();
-          showRejectPopup(context, vm.rejectController, () {
-            navigationService.goBack();
-            vm.rejectTheCatalogue(id ?? '', context);
-          });
         } else if (value == "sendApproval") {
           showAlertMessage(context, 'Do you really want to change status?',
               onBack: () {
@@ -219,16 +206,6 @@ class CatalogueCard extends StatelessWidget with BaseContextHelpers {
               value: "Edit",
               child:
                   _buildRow(Icons.edit_outlined, AppColors.blueColor, "Edit")),
-        if (vm.userType == UserRole.admin.value &&
-            (item?.status == 'PENDING_APPROVAL' || item?.status == 'REJECTED'))
-          PopupMenuItem(
-              value: "Approve",
-              child: _buildRow(Icons.check, AppColors.greenColor, "Approve")),
-        if (vm.userType == UserRole.admin.value &&
-            item?.status == 'PENDING_APPROVAL')
-          PopupMenuItem(
-              value: "Reject",
-              child: _buildRow(Icons.block, AppColors.redColor, "Reject")),
         /*PopupMenuItem(
             value: "Delete",
             child:

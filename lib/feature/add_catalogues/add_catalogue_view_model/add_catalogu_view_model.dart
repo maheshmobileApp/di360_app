@@ -81,8 +81,6 @@ class AddCatalogueViewModel extends ChangeNotifier {
   List<String> communityTypes = ["Both", "Community User"];
   String? selectedCommunityType = 'Both';
   bool communityStatus = false;
-  String editCatalougeStatus = "";
-  String editStatus = '';
 
   void setCommunityStatus() async {
     print("Setting community status");
@@ -510,55 +508,6 @@ class AddCatalogueViewModel extends ChangeNotifier {
     rejectCatalogueCount = res.rejected?.aggregate?.count;
     inActiveCatalogueCount = res.inactive?.aggregate?.count;
     notifyListeners();
-  }
-
-  Future<void> getAdminCatalogStatusCounts() async {
-    final res = await repo.adminCataloguesCount();
-    allCatalogueCount = res.all?.aggregate?.count;
-    pendingApprovalCatalogueCount = res.approvalPending?.aggregate?.count;
-    approvedScheduledCatalogueCount = res.approved?.aggregate?.count;
-    expiredCatalogueCount = res.expired?.aggregate?.count;
-    rejectCatalogueCount = res.rejected?.aggregate?.count;
-    inActiveCatalogueCount = res.inactive?.aggregate?.count;
-    notifyListeners();
-  }
-
-  Future<void> approveTheCatalogue(String id, BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    String timestamp = DateTime.now().toUtc().toIso8601String();
-    final res = await repo.approveAndRejectCatalogueQuery({
-      "id": id,
-      "updateObj": {"status": "APPROVED", "approved_at": timestamp}
-    });
-    if (res != null) {
-      await updateTheMyCatalogueList(id, "APPROVED");
-    }
-    Loaders.circularHideLoader(context);
-  }
-
-  Future<void> updateTheMyCatalogueList(String id, String status) async {
-    final index = myCatalogueList?.indexWhere((item) => item.id == id);
-    if (index != null && index >= 0) {
-      myCatalogueList?[index].status = status;
-      notifyListeners();
-    }
-  }
-
-  Future<void> rejectTheCatalogue(String id, BuildContext context) async {
-    Loaders.circularShowLoader(context);
-    String timestamp = DateTime.now().toUtc().toIso8601String();
-    final res = await repo.approveAndRejectCatalogueQuery({
-      "id": id,
-      "updateObj": {
-        "status": "REJECTED",
-        "rejected_at": timestamp,
-        "reject_reason": rejectController.text
-      }
-    });
-    if (res != null) {
-      await updateTheMyCatalogueList(id, "REJECTED");
-    }
-    Loaders.circularHideLoader(context);
   }
 
   late Map<String, List<FilterItem>> filterOptions;
