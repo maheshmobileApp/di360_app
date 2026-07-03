@@ -198,6 +198,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen>
             onPressed: () async {
               await categoryVM.fetchNewsfeedCategories();
               addNewsFeedVM.clearFeedNews();
+              addNewsFeedVM.getUserType();
               navigationService.navigateTo(RouteList.addNewsFeed);
             },
             child: SvgPicture.asset(ImageConst.addFeed)));

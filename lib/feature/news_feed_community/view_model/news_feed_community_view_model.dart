@@ -52,6 +52,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   CommunityMembersCountData? communityMembersCountData;
   bool enableComments = true;
   List<CoursesListingDetails> upComingCoursesList = [];
+  String? userType;
 
   void setEnableComments(bool value) {
     enableComments = value;
@@ -716,7 +717,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   Future<void> getCommunityMemberDirectorIds({String? communityId}) async {
-     print("**************getCommunityMemberDirectorIds Calling");
+    print("**************getCommunityMemberDirectorIds Calling");
     final userCommunityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final res =
@@ -858,7 +859,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
 
   Future<void> getUpcomingCourses(BuildContext context) async {
     Loaders.circularShowLoader(context);
-     print("**************getUpcomingCourses Calling");
+    print("**************getUpcomingCourses Calling");
     final communityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final variables = {
@@ -886,6 +887,16 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       upComingCoursesList = res;
     }
     Loaders.circularHideLoader(context);
+  }
+
+  Future<void> getUserType() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    setUserType(type);
+  }
+
+  void setUserType(String type) {
+    userType = type;
+    notifyListeners();
   }
 
   initialStateData() {

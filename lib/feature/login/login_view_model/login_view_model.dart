@@ -46,19 +46,6 @@ class LoginViewModel extends ChangeNotifier {
   List<Modules>? modulePermissions = [];
   List<CommunityMembers> communityMembers = [];
 
-  bool isPractice = false;
-  bool isSupplier = false;
-  bool isProfessional = false;
-  bool isAdmin = false;
-
-  void setUserType(String type) {
-  isPractice = type == UserRole.practice.value;
-  isSupplier = type == UserRole.supplier.value;
-  isProfessional = type == UserRole.professional.value;
-  isAdmin = type == UserRole.admin.value;
-
-  notifyListeners();
-}
 
   Future<void> submit(BuildContext context) async {
     _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
@@ -100,7 +87,6 @@ class LoginViewModel extends ChangeNotifier {
         if (loginData?.status == 'ACTIVE' || loginData?.status == 'UNBLOCKED') {
           final userId = loginData?.id ?? '';
           final isSupplier = loginData?.type == UserRole.supplier.value;
-          setUserType(loginData?.type ?? '');
           _http.setToken(loginData?.accessToken ?? '');
           //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
 

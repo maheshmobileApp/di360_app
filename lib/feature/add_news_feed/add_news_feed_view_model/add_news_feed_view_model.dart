@@ -32,6 +32,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   String? newsFeedId;
   List existingImages = [];
   bool enableComments = true;
+  String? userType;
 
   void setEnableComments(bool value) {
     enableComments = value;
@@ -237,6 +238,17 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     }
     newsfeedVM.notifyListeners();
     notifyListeners();
+  }
+
+  Future<void> getUserType() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    setUserType(type);
+  }
+
+  void setUserType(String type) {
+    userType = type;
+    notifyListeners();
+    
   }
 
   clearFeedNews() {

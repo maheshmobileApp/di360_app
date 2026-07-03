@@ -28,7 +28,6 @@ class AddNewsFeedScreen extends StatelessWidget
   Widget build(BuildContext context) {
     final viewModel = Provider.of<AddNewsFeedViewModel>(context);
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
-    final loginVM = Provider.of<LoginViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(
@@ -121,7 +120,7 @@ class AddNewsFeedScreen extends StatelessWidget
                         ? validateOptionalUrl
                         : null),
                 addVertical(10),
-                if (loginVM.isSupplier)
+                if (viewModel.userType == UserRole.supplier.value)
                 EnableCommentsWidget(
                   value: viewModel.enableComments,
                   onChanged: (value) {
