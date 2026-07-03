@@ -37,6 +37,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   bool hasMoreCourses = true;
 
   String courseStatus = "";
+  String? userType;
 
   void setCourseStatus(String value) {
     courseStatus = value;
@@ -139,7 +140,6 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
   int? inActiveCount = 0;
   int? expiredStatusCount = 0;
   int? rejectStatusCount = 0;
-  /**************** */
   int? allRegUsersCount = 0;
   int? pendingRegUsersCount = 0;
   int? approvedRegUsersCount = 0;
@@ -178,6 +178,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
     notifyListeners();
 
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     final res = await repo.getCoursesListing(
         listingStatus,
         activeStatus,
@@ -203,6 +204,7 @@ class CourseListingViewModel extends ChangeNotifier with ValidationMixins {
 
     hasMoreCourses = (res?.length ?? 0) >= _courseListingLimit;
     _courseListingOffset += res?.length ?? 0;
+    userType = type;
     Loaders.circularHideLoader(context);
     notifyListeners();
   }

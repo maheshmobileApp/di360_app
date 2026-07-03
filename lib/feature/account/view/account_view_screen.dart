@@ -118,9 +118,8 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(246, 247, 249, 1),
-        borderRadius: BorderRadius.circular(10),
-      ),
+          color: const Color.fromRGBO(246, 247, 249, 1),
+          borderRadius: BorderRadius.circular(10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -149,10 +148,8 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                           item.asset,
                           width: 22,
                           height: 22,
-                          placeholderBuilder: (context) => const SizedBox(
-                            width: 22,
-                            height: 22,
-                          ),
+                          placeholderBuilder: (context) =>
+                              const SizedBox(width: 22, height: 22),
                         ),
                         title: Text(
                           item.title,
@@ -279,19 +276,7 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 .navigateTo(RouteList.myLearningHubScreen);
                           } else if (item.title == "Banners") {
                             navigationService
-                                  .navigateTo(RouteList.bannersListView);
-                          
-                            /*final bannerPermission =
-                                await LocalStorage.getBoolValue(
-                                    LocalStorageConst.bannerPermission);
-
-                            if (bannerPermission) {
-                              navigationService
-                                  .navigateTo(RouteList.bannersListView);
-                            } else {
-                              scaffoldMessenger(
-                                  "You do not have permission to access this feature.");
-                            }*/
+                                .navigateTo(RouteList.bannersListView);
                           } else if (item.title == "Marketing") {
                             navigationService
                                 .navigateTo(RouteList.campaignListingView);
@@ -344,6 +329,9 @@ class _AccountScreenState extends State<AccountScreen> with BaseContextHelpers {
                                 [];*/
                             navigationService
                                 .navigateTo(RouteList.newsFeedCommunityView);
+                          } else if (item.title == "Clients") {
+                            navigationService
+                                .navigateTo(RouteList.clientScreen);
                           }
                         },
                       ),

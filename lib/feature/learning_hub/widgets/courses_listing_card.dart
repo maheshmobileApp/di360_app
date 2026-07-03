@@ -2,6 +2,7 @@ import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:flutter/material.dart';
@@ -25,31 +26,31 @@ class CouresListingCard extends StatelessWidget {
   final int registeredCount;
   final String meetingLink;
   final String chipTitle;
-
+  final String? userType;
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
   final VoidCallback? onDetailView;
 
-  const CouresListingCard({
-    super.key,
-    required this.id,
-    required this.index,
-    required this.logoUrl,
-    required this.companyName,
-    required this.courseTitle,
-    required this.status,
-    required this.description,
-    required this.types,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.registeredCount,
-    this.onTapRegistered,
-    this.onMenuAction,
-    this.onDetailView,
-    required this.meetingLink,
-    required this.activeStatus,
-    required this.chipTitle,
-  });
+  const CouresListingCard(
+      {super.key,
+      required this.id,
+      required this.index,
+      required this.logoUrl,
+      required this.companyName,
+      required this.courseTitle,
+      required this.status,
+      required this.description,
+      required this.types,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.registeredCount,
+      this.onTapRegistered,
+      this.onMenuAction,
+      this.onDetailView,
+      required this.meetingLink,
+      required this.activeStatus,
+      required this.chipTitle,
+      this.userType});
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +77,8 @@ class CouresListingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: _logoWithTitle(logoUrl, companyName, courseTitle,
-                          status, activeStatus),
-                    ),
+                        child: _logoWithTitle(logoUrl, companyName, courseTitle,
+                            status, activeStatus)),
                     Row(
                       children: [
                         _menuWidget(
@@ -101,22 +101,14 @@ class CouresListingCard extends StatelessWidget {
                         onTap: onTapRegistered,
                         child: _registeredChip(registeredCount, chipTitle)),
                     GestureDetector(
-                      onTap: onDetailView,
-                      child: Row(
-                        children: [
-                          Text(
-                            "View Details",
-                            style: TextStyles.medium1(
-                                color: AppColors.primaryColor),
-                          ),
-                          SvgPicture.asset(
-                            ImageConst.nextArrow,
-                            width: 26,
-                            height: 26,
-                          ),
-                        ],
-                      ),
-                    ),
+                        onTap: onDetailView,
+                        child: Row(children: [
+                          Text("View Details",
+                              style: TextStyles.medium1(
+                                  color: AppColors.primaryColor)),
+                          SvgPicture.asset(ImageConst.nextArrow,
+                              width: 26, height: 26)
+                        ]))
                   ],
                 ),
               ],
@@ -127,28 +119,21 @@ class CouresListingCard extends StatelessWidget {
     );
   }
 
-  Widget _logoWithTitle(
-    String logo,
-    String company,
-    String title,
-    String status,
-    String activeStatus,
-  ) {
+  Widget _logoWithTitle(String logo, String company, String title,
+      String status, String activeStatus) {
     return Row(
       children: [
         Stack(
           alignment: Alignment.center,
           children: [
             CircleAvatar(
-              radius: 30,
-              backgroundColor: AppColors.geryColor,
-              child: ClipOval(
-                child: CachedNetworkImageWidget(
-                    imageUrl: logo,
-                    fit: BoxFit.contain,
-                    errorWidget: Image.asset(ImageConst.directorProfile)),
-              ),
-            ),
+                radius: 30,
+                backgroundColor: AppColors.geryColor,
+                child: ClipOval(
+                    child: CachedNetworkImageWidget(
+                        imageUrl: logo,
+                        fit: BoxFit.contain,
+                        errorWidget: Image.asset(ImageConst.directorProfile)))),
             Positioned(
               bottom: 0,
               child: Container(
@@ -158,13 +143,9 @@ class CouresListingCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: AppColors.whiteColor, width: 1),
                 ),
-                child: Text(
-                  status == "APPROVE" ? activeStatus : status,
-                  style: TextStyles.bold4(
-                    color: StatusColors.getColor(status),
-                    fontSize: 10,
-                  ),
-                ),
+                child: Text(status == "APPROVE" ? activeStatus : status,
+                    style: TextStyles.bold4(
+                        color: StatusColors.getColor(status), fontSize: 10)),
               ),
             ),
           ],
@@ -187,10 +168,7 @@ class CouresListingCard extends StatelessWidget {
   Widget _descriptionWidget(String description, int index) {
     return SizedBox(
       width: double.infinity,
-      child: ExpandableHtmlText(
-        htmlData: description,
-        index: index,
-      ),
+      child: ExpandableHtmlText(htmlData: description, index: index),
     );
   }
 
@@ -217,14 +195,10 @@ class CouresListingCard extends StatelessWidget {
                   child: Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                    child: Text(
-                      label,
-                      style: TextStyles.regular1(
-                        color: AppColors.typeTextColor,
-                        fontSize: 12,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    child: Text(label,
+                        style: TextStyles.regular1(
+                            color: AppColors.typeTextColor, fontSize: 12),
+                        overflow: TextOverflow.ellipsis),
                   ),
                 ),
                 SizedBox(
@@ -239,9 +213,7 @@ class CouresListingCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _jobTimeChip(time),
-              ],
+              children: [_jobTimeChip(time)],
             )
           ],
         );
@@ -276,9 +248,8 @@ class CouresListingCard extends StatelessWidget {
             "Meeting Link",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyles.regular1(
-              color: AppColors.bottomNavUnSelectedColor,
-            ),
+            style:
+                TextStyles.regular1(color: AppColors.bottomNavUnSelectedColor),
           ),
         ),
       ),
@@ -289,21 +260,17 @@ class CouresListingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color.fromRGBO(255, 241, 229, 0),
-            Color.fromRGBO(255, 241, 229, 1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        "Posted on : $time",
-        style: TextStyles.semiBold(
-            fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1)),
-      ),
+          gradient: const LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Color.fromRGBO(255, 241, 229, 0),
+                Color.fromRGBO(255, 241, 229, 1)
+              ]),
+          borderRadius: BorderRadius.circular(5)),
+      child: Text("Posted on : $time",
+          style: TextStyles.semiBold(
+              fontSize: 10, color: const Color.fromRGBO(255, 112, 0, 1))),
     );
   }
 
@@ -311,13 +278,9 @@ class CouresListingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: AppColors.greyLight,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        "$registeredCount $chipTitle",
-        style: TextStyles.semiBold(fontSize: 10, color: AppColors.black),
-      ),
+          color: AppColors.greyLight, borderRadius: BorderRadius.circular(10)),
+      child: Text("$registeredCount $chipTitle",
+          style: TextStyles.semiBold(fontSize: 10, color: AppColors.black)),
     );
   }
 
@@ -326,17 +289,15 @@ class CouresListingCard extends StatelessWidget {
       color: AppColors.whiteColor,
       padding: EdgeInsets.zero, // removes inside padding
       constraints: const BoxConstraints(
-        minWidth: 0,
-        minHeight: 0,
-      ), // remove default 48x48
-      icon: Icon(
-        Icons.more_vert,
-        size: 20,
-        color: AppColors.bottomNavUnSelectedColor,
-      ),
+          minWidth: 0, minHeight: 0), // remove default 48x48
+      icon: Icon(Icons.more_vert,
+          size: 20, color: AppColors.bottomNavUnSelectedColor),
       onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
+        if (userType == UserRole.admin.value &&
+            (status == "PENDING" || status == "REJECT"))
+          _popupItem("Approve", Icons.check, AppColors.greenColor),
         /*if (status != "EXPIRED" && courseType != "Online Academy")
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),*/
         if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")

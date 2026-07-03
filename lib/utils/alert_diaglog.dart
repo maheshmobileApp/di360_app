@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/main.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
+import 'package:di360_flutter/widgets/input_text_feild.dart';
 import 'package:flutter/material.dart';
 
 alertPopup(BuildContext context, String message, {Function()? onBack}) {
@@ -418,6 +419,56 @@ void showCourseCompletedDialog(BuildContext context, Function()? onPressed) {
                           style: TextStyles.medium3())),
                 ),
               ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> showRejectPopup(BuildContext context,
+    TextEditingController? controller, Function()? rejectOnTap) async {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return Dialog(
+        backgroundColor: AppColors.whiteColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Reject Catalogue',
+                  style: TextStyles.semiBold(
+                      fontSize: 16, color: AppColors.primaryColor)),
+              const SizedBox(height: 24),
+              InputTextField(
+                  title: 'Catalogue Rejection Reason',
+                  isRequired: true,
+                  controller: controller,
+                  hintText: 'Enter rejection reason'),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                AppButton(
+                    text: 'cancel',
+                    width: 90,
+                    height: 38,
+                    btnColor: AppColors.lightGeryColor,
+                    borderColor: AppColors.lightGeryColor,
+                    onTap: () {
+                      navigationService.goBack();
+                    }),
+                SizedBox(width: 10),
+                AppButton(
+                    text: 'Reject', width: 90, height: 38, onTap: rejectOnTap),
+              ])
             ],
           ),
         ),
