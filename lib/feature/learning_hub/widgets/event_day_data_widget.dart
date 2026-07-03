@@ -29,7 +29,7 @@ class EventDayDataWidget extends StatelessWidget with BaseContextHelpers {
                 style: TextStyles.bold2(color: AppColors.primaryColor),
               ),
               addHorizontal(8),
-              Text(name ?? '', style: TextStyles.bold2(color: AppColors.black)),
+              Flexible(child: Text(name ?? '',maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyles.bold2(color: AppColors.black))),
             ]),
             addVertical(10),
             ExpandableHtmlText(htmlData : desc ?? "", index: index ?? 0),
