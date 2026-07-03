@@ -1,12 +1,14 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/filter_suppliers_res.dart';
 import 'package:di360_flutter/feature/catalogue/querys/add_like_catalogue_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/catalogue_by_id_request.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository.dart';
 import 'package:di360_flutter/feature/catalogue/querys/filter_supplier_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/get_catalogue_request.dart';
+import 'package:di360_flutter/feature/catalogue/querys/get_catalouges_for_all_tab_query.dart';
 import 'package:di360_flutter/feature/catalogue/querys/get_related_catalogues.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_by_id_res.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
@@ -172,5 +174,11 @@ class CatalogueRepositoryImpl extends CatalogueRepository {
     final data =
         await http.mutation(removeLikeCatalogueQuery, {"id": catalogueId});
     return data;
+  }
+
+  @override
+  Future<CatalougesListData> getCatalougesList(variables) async {
+   final res = await http.query(getCatalougesForAllTabQuery, variables : variables);
+   return CatalougesListData.fromJson(res);
   }
 }

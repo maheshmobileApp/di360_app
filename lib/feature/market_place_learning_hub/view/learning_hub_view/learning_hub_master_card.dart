@@ -290,7 +290,6 @@ class ListingHubMasterCard extends StatelessWidget {
   }
 
   String _expiryLabel() {
-    print("********expiry label**********$expiryDateCount");
     if (expiryDateCount == "Life Time") {
       return '';
     }

@@ -3,6 +3,7 @@ import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/repository/add_catalogue_repository_impl.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_repository/catalogue_repository_impl.dart';
@@ -70,14 +71,22 @@ class CatalogueViewModel extends ChangeNotifier {
   }
 
   bool isExpanded(String categoryName) {
-    return expandedCategories[categoryName] ?? false;
+  return expandedCategories[categoryName] ?? false;
+}
+
+void toggleExpanded(String categoryName) {
+  final isCurrentlyExpanded = expandedCategories[categoryName] ?? false;
+
+  // Collapse all categories
+  expandedCategories.updateAll((key, value) => false);
+
+  // If it wasn't already expanded, expand it
+  if (!isCurrentlyExpanded) {
+    expandedCategories[categoryName] = true;
   }
 
-  void toggleExpanded(String categoryName) {
-    expandedCategories[categoryName] =
-        !(expandedCategories[categoryName] ?? false);
-    notifyListeners();
-  }
+  notifyListeners();
+}
 
   final PageController pageController = PageController();
   int currentPage = 0;
@@ -102,6 +111,14 @@ class CatalogueViewModel extends ChangeNotifier {
         isCommunityCatalogue: isCommunityCatalogue ?? false);
     if (res != []) {
       catalogueCategories = res;
+      catalogueCategories.insert(
+        0,
+        CatalogueCategories(
+          id: "",
+          name: "Add",
+        ),
+      );
+      getCataloguesList("");
       initializeExpanded(catalogueCategories);
       Loaders.circularHideLoader(context);
       for (var cat in catalogueCategories) {
@@ -281,6 +298,69 @@ class CatalogueViewModel extends ChangeNotifier {
       );
     }
     throw Exception("Invalid user type");
+  }
+
+  CatalougesListData? catalougesListData;
+  Future<void> getCataloguesList(String categoryId) async {
+    print("***********getCataloguesList $categoryId *");
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final variables = {
+      "where": {
+        if (categoryId.isEmpty) "catalogue_category_id": {},
+        if (categoryId.isNotEmpty) "catalogue_category_id": {"_eq": categoryId},
+        "status": {
+          "_in": ["APPROVED"]
+        },
+        "catalogue_status": {"_eq": "ACTIVE"},
+        "catalogue_category": {
+          "status": {"_eq": "ACTIVE"}
+        },
+        "schedulerDay": {"_lte": "2026-07-03T00:00:00.000Z"},
+        "_and": [
+          {
+            "_or": [
+              {
+                "community_user_type": {"_eq": "BOTH"}
+              },
+              {
+                "community_user_type": {"_is_null": true}
+              },
+              if (UserRole.supplier.value == userType)
+                {
+                  "dental_supplier_id": {"_eq": userId}
+                },
+              if (UserRole.professional.value == userType)
+                {
+                  "dental_professional_id": {"_eq": userId}
+                },
+              if (UserRole.practice.value == userType)
+                {
+                  "dental_practice_id": {"_eq": userId}
+                },
+              if (UserRole.admin.value == userType)
+                {
+                  "dental_admin_id": {"_eq": userId}
+                },
+              {
+                "community_id": {
+                  "_in": ["$communityId"]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "limit": 20,
+      "offset": 0
+    };
+    final res = await repo.getCatalougesList(variables);
+    if (res != null) {
+      catalougesListData = res;
+    }
+    notifyListeners();
   }
 
   void initializeFilterOptions() async {

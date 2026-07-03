@@ -477,6 +477,7 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getNewsFeedCategories(BuildContext context,
       {String? type}) async {
     Loaders.circularShowLoader(context);
+     print("**************getNewsFeedCategories Calling");
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final communityId =

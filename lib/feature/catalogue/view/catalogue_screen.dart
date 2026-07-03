@@ -5,6 +5,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
 import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
 import 'package:di360_flutter/feature/catalogue/view/catalogue_like_widget.dart';
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
@@ -127,8 +128,9 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
   Widget buildCatalogueSection(
       BuildContext context, CatalogueViewModel vm, CatalogueCategories cat) {
     final showMore = vm.isShowMore(cat.name ?? '');
-    final displayList =
-        showMore ? cat.catalogues : cat.catalogues?.take(2).toList();
+    final displayList = showMore
+        ? (vm.catalougesListData?.catalogues ?? [])
+        : (vm.catalougesListData?.catalogues?.take(2).toList() ?? []);
     final expanded = vm.isExpanded(cat.name ?? '');
 
     return Card(
@@ -142,8 +144,11 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
           // Clickable header
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () {
+            onTap: () async {
               vm.toggleExpanded(cat.name ?? '');
+              if (vm.isExpanded(cat.name ?? '')) {
+                await vm.getCataloguesList(cat.id ?? '');
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 23),
@@ -195,7 +200,7 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                       shrinkWrap: true,
                       crossAxisCount: 2,
                       childAspectRatio: 0.55,
-                      children: displayList!
+                      children: displayList
                           .map((c) =>
                               buildCatalogueCard(context, vm, c, () async {
                                 await vm.getCatalogDetails(context, c.id ?? '');
@@ -289,7 +294,8 @@ class _CataloguePageState extends State<CataloguePage> with BaseContextHelpers {
                         Text(
                           c.catalogueSubCategory?.name ?? '',
                           maxLines: 1,
-                          style: TextStyles.regular1(color: AppColors.primaryColor),
+                          style: TextStyles.regular1(
+                              color: AppColors.primaryColor),
                         ),
                         addVertical(5),
                         Text(

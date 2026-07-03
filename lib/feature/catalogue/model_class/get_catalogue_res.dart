@@ -1,3 +1,5 @@
+import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
+
 class GetCatalogueRes {
   CatalogueData? data;
 
@@ -68,88 +70,6 @@ class CatalogueCategories {
     if (this.catalogues != null) {
       data['catalogues'] = this.catalogues!.map((v) => v.toJson()).toList();
     }
-    data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class Catalogues {
-  String? id;
-  String? title;
-  String? status;
-  ThumbnailImage? thumbnailImage;
-  String? schedulerDay;
-  DentalSupplier? dentalSupplier;
-  CatalogueSubCategory? catalogueCategory;
-  CatalogueSubCategory? catalogueSubCategory;
-  List<CatalogueFavorites>? catalogueFavorites;
-  String? sTypename;
-
-  Catalogues(
-      {this.id,
-      this.title,
-      this.status,
-      this.thumbnailImage,
-      this.schedulerDay,
-      this.dentalSupplier,
-      this.catalogueCategory,
-      this.catalogueSubCategory,
-      this.catalogueFavorites,
-      this.sTypename});
-
-  Catalogues.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    title = json['title'];
-    status = json['status'];
-    if (json['thumbnail_image'] != null) {
-      if (json['thumbnail_image'] is Map<String, dynamic>) {
-        thumbnailImage = ThumbnailImage.fromJson(json['thumbnail_image']);
-      } else if (json['thumbnail_image'] is List) {
-        final list = json['thumbnail_image'] as List;
-        if (list.isNotEmpty) {
-          thumbnailImage = ThumbnailImage.fromJson(list[0]);
-        }
-      }
-    } else {
-      thumbnailImage = null;
-    }
-    schedulerDay = json['schedulerDay'];
-    dentalSupplier = json['dental_supplier'] != null
-        ? new DentalSupplier.fromJson(json['dental_supplier'])
-        : null;
-    catalogueCategory = json['catalogue_category'] != null
-        ? new CatalogueSubCategory.fromJson(json['catalogue_category'])
-        : null;
-    catalogueSubCategory = json['catalogue_sub_category'] != null
-        ? new CatalogueSubCategory.fromJson(json['catalogue_sub_category'])
-        : null;
-    if (json['catalogue_favorites'] != null) {
-      catalogueFavorites = <CatalogueFavorites>[];
-      json['catalogue_favorites'].forEach((v) {
-        catalogueFavorites!.add(new CatalogueFavorites.fromJson(v));
-      });
-    }
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['status'] = this.status;
-    if (this.thumbnailImage != null) {
-      data['thumbnail_image'] = this.thumbnailImage!.toJson();
-    }
-    data['schedulerDay'] = this.schedulerDay;
-    if (this.dentalSupplier != null) {
-      data['dental_supplier'] = this.dentalSupplier!.toJson();
-    }
-    if (this.catalogueFavorites != null) {
-      data['catalogue_favorites'] =
-          this.catalogueFavorites!.map((v) => v.toJson()).toList();
-    }
-    data['catalogue_category'] = this.catalogueCategory!.toJson();
-    data['catalogue_sub_category'] = this.catalogueSubCategory!.toJson();
     data['__typename'] = this.sTypename;
     return data;
   }
@@ -243,47 +163,6 @@ class CatalogueSubCategory {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class CatalogueFavorites {
-  String? id;
-  String? catalogueId;
-  String? type;
-  String? dentalSupplierId;
-  String? dentalProfessionalId;
-  String? dentalPracticeId;
-  String? sTypename;
-
-  CatalogueFavorites(
-      {this.id,
-      this.catalogueId,
-      this.type,
-      this.dentalSupplierId,
-      this.dentalProfessionalId,
-      this.dentalPracticeId,
-      this.sTypename});
-
-  CatalogueFavorites.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    catalogueId = json['catalogue_id'];
-    type = json['type'];
-    dentalSupplierId = json['dental_supplier_id'];
-    dentalProfessionalId = json['dental_professional_id'];
-    dentalPracticeId = json['dental_practice_id'];
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['catalogue_id'] = this.catalogueId;
-    data['type'] = this.type;
-    data['dental_supplier_id'] = this.dentalSupplierId;
-    data['dental_professional_id'] = this.dentalProfessionalId;
-    data['dental_practice_id'] = this.dentalPracticeId;
     data['__typename'] = this.sTypename;
     return data;
   }
