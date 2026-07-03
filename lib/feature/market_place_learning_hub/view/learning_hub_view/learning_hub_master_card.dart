@@ -288,6 +288,10 @@ class ListingHubMasterCard extends StatelessWidget {
   }
 
   String _expiryLabel() {
+    print("********expiry label**********$expiryDateCount");
+    if (expiryDateCount == "Life Time") {
+      return '';
+    }
     final count = int.tryParse(expiryDateCount ?? '0') ?? 0;
     if (count == 0) return 'Access expires today';
     if (count == 1) return 'Access expires tomorrow';
