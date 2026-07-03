@@ -31,6 +31,13 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   bool? isEditNewsFeed = false;
   String? newsFeedId;
   List existingImages = [];
+  bool enableComments = true;
+  String? userType;
+
+  void setEnableComments(bool value) {
+    enableComments = value;
+    notifyListeners();
+  }
 
   NewsfeedCategories? selectedCategory;
 
@@ -61,7 +68,6 @@ class AddNewsFeedViewModel extends ChangeNotifier {
   Future<void> fetchNewsfeedCategories() async {
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
-    print("**************$professionTypeId");
     const String query = r'''
     query getAllNewsfeedCategories($where: newsfeed_categories_bool_exp!) {
   newsfeed_categories(where: $where, order_by: {created_at: desc}) {
@@ -137,16 +143,19 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "user_role": type,
           "user_id": userId,
           "status": "PENDING",
-          "dental_practice_id": type == UserRole.practice.value ? userId : null,
-          "dental_supplier_id": type == UserRole.supplier.value ? userId : null,
-          "dental_professional_id":
-              type == UserRole.professional.value ? userId : null,
-          "dental_admin_id": type == UserRole.admin.value ? userId : null,
+          if (type == UserRole.practice.value) "dental_practice_id": userId,
+          if (type == UserRole.supplier.value) "dental_supplier_id": userId,
+          if (type == UserRole.professional.value)
+            "dental_professional_id": userId,
+          if (type == UserRole.admin.value) "dental_admin_id": userId,
           "feed_type": "NEWSFEED",
           "community_id": null,
-          "community_type": "BOTH"
+          "community_type": "BOTH",
+          "comments_enabled": enableComments,
         }
       };
+
+      print("***************$variables");
 
       final res = await repo.addNewsFeed(variables);
 
@@ -197,6 +206,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
           "video_url": videoController.text,
           "post_image": uploadedFiles,
           "web_url": websiteController.text,
+          "comments_enabled": enableComments,
         }
       });
 
@@ -230,6 +240,17 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getUserType() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    setUserType(type);
+  }
+
+  void setUserType(String type) {
+    userType = type;
+    notifyListeners();
+    
+  }
+
   clearFeedNews() {
     videoController.clear();
     websiteController.clear();
@@ -261,6 +282,7 @@ class AddNewsFeedViewModel extends ChangeNotifier {
     videoController.text = newsfeeds?.videoUrl ?? '';
     websiteController.text = newsfeeds?.webUrl ?? '';
     desController.text = newsfeeds?.description ?? '';
+    setEnableComments(newsfeeds?.commentsEnabled ?? false);
     editSelectCategoryAssigned(newsfeeds?.categoryType ?? '');
     notifyListeners();
   }

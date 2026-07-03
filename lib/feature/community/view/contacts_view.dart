@@ -4,6 +4,7 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/community/widgets/contact_card.dart';
+import 'package:di360_flutter/feature/learning_hub/widgets/search_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
@@ -18,6 +19,7 @@ class ContactsView extends StatefulWidget {
 
 class _ContactsViewState extends State<ContactsView> {
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _ContactsViewState extends State<ContactsView> {
   @override
   void dispose() {
     _scrollController.dispose();
+     _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -56,7 +59,14 @@ class _ContactsViewState extends State<ContactsView> {
       appBar: AppBarWidget(
           title: "Contacts",
           logo: false,
-          searchWidget: false,
+          searchBarOpen: viewModel.searchBarOpen,
+          searchAction: () {
+            final isOpening = !viewModel.searchBarOpen;
+            viewModel.setSearchBar(isOpening);
+            if (isOpening) {
+              Future.microtask(() => _searchFocusNode.requestFocus());
+            }
+          },
           filterWidget: Row(
             children: [
               GestureDetector(
@@ -81,6 +91,22 @@ class _ContactsViewState extends State<ContactsView> {
           )),
       body: Column(
         children: [
+          if (viewModel.searchBarOpen)
+              SearchWidget(
+                focusNode: _searchFocusNode,
+                searchButton:
+                    viewModel.searchController.text.length >= 3 ? true : false,
+                controller: viewModel.searchController,
+                hintText: "Search Contacts...",
+                onClear: () async {
+                  viewModel.searchController.clear();
+                  await viewModel.getContacts(context);
+                },
+                onSearch: () async {
+                  _searchFocusNode.unfocus();
+                  await viewModel.getContacts(context);
+                },
+              ),
           (contacts != null && contacts.isNotEmpty)
               ? Expanded(
                   child: ListView.builder(

@@ -501,6 +501,7 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
 
   Future<dynamic> getProfile() async {
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final res = await repo.getProfileData();
     if (res != null) {
       _assignProfileData(type, res);
@@ -546,6 +547,19 @@ class MarketPlaceLearningHubViewModel extends ChangeNotifier
     } else {
       navigationService.replaceWith(RouteList.viewProfileScreen);
     }
+  }
+
+  int? getDurationCount(List<CourseRegisteredUsers>? users) {
+    print("************************$currentUserId");
+    final user = users
+        ?.where(
+          (e) => e.fromId == currentUserId,
+        )
+        .toList();
+
+    if (user == null || user.isEmpty) return null;
+
+    return user.first.courseValidTill;
   }
 
   clearAll() {

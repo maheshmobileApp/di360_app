@@ -46,6 +46,7 @@ class LoginViewModel extends ChangeNotifier {
   List<Modules>? modulePermissions = [];
   List<CommunityMembers> communityMembers = [];
 
+
   Future<void> submit(BuildContext context) async {
     _variables['details']['emailOrPhone'] = emailController.text.toLowerCase();
     _variables['details']['password'] = passController.text;
@@ -86,7 +87,6 @@ class LoginViewModel extends ChangeNotifier {
         if (loginData?.status == 'ACTIVE' || loginData?.status == 'UNBLOCKED') {
           final userId = loginData?.id ?? '';
           final isSupplier = loginData?.type == UserRole.supplier.value;
-
           _http.setToken(loginData?.accessToken ?? '');
           //_modulePermissions(loginData?.subscriptionPermissions?.modules ?? []);
 

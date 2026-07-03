@@ -170,6 +170,7 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
 
   @override
   Future<dynamic> removeCatalogue(String? id) async {
+    print("*****************$id");
     final catalogueData = await http.mutation(removeCatalogueQuery, {"id": id});
     return catalogueData;
   }

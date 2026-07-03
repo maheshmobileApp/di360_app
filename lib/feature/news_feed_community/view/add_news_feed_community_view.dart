@@ -3,12 +3,15 @@ import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:di360_flutter/common/validations/validate_mixin.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
+import 'package:di360_flutter/feature/add_news_feed/widget/enable_comment_widget.dart';
 
 import 'package:di360_flutter/feature/job_create/widgets/custom_dropdown.dart';
+import 'package:di360_flutter/feature/login/login_view_model/login_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/view_model/news_feed_community_view_model.dart';
 import 'package:di360_flutter/feature/news_feed_community/widgets/upload_file_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_button.dart';
 import 'package:di360_flutter/widgets/appbar_title_back_icon_widget.dart';
 import 'package:di360_flutter/widgets/input_text_feild.dart';
@@ -24,6 +27,8 @@ class AddNewsFeedCommunityView extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<NewsFeedCommunityViewModel>(context);
+    final loginVM = Provider.of<LoginViewModel>(context);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppbarTitleBackIconWidget(
@@ -80,6 +85,14 @@ class AddNewsFeedCommunityView extends StatelessWidget
                   validator: (value) => value?.trim().isNotEmpty == true
                       ? validateOptionalUrl(value)
                       : null,
+                ),
+                addVertical(10),
+                if (viewModel.userType == UserRole.supplier.value)
+                EnableCommentsWidget(
+                  value: viewModel.enableComments,
+                  onChanged: (value) {
+                    viewModel.setEnableComments(value);
+                  },
                 ),
                 addVertical(30),
                 AppButton(

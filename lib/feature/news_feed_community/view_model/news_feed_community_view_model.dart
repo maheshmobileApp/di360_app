@@ -50,6 +50,14 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   String? feedType;
   String? communityMemberDirectorId;
   CommunityMembersCountData? communityMembersCountData;
+  bool enableComments = true;
+  List<CoursesListingDetails> upComingCoursesList = [];
+  String? userType;
+
+  void setEnableComments(bool value) {
+    enableComments = value;
+    notifyListeners();
+  }
 
   void feedTypeUpdate(String value) {
     feedType = value;
@@ -498,6 +506,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
+      "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {
@@ -507,7 +516,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
     }
 
     final variables = {"fields": fields};
-    print("addNFCommunity: $variables");
+    print("**********addNFCommunity: $variables");
 
     final res = await repo.addNewsFeed(variables);
     if (res.isNotEmpty) {
@@ -647,6 +656,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
       "feed_type": "NEWSFEED",
       "community_id":
           (type == UserRole.professional.value) ? profCommunityId : communityId,
+      "comments_enabled": enableComments,
     };
 
     if (type == UserRole.professional.value) {
@@ -707,6 +717,7 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
   }
 
   Future<void> getCommunityMemberDirectorIds({String? communityId}) async {
+    print("**************getCommunityMemberDirectorIds Calling");
     final userCommunityId =
         await LocalStorage.getStringVal(LocalStorageConst.communityId);
     final res =
@@ -843,6 +854,48 @@ class NewsFeedCommunityViewModel extends ChangeNotifier {
         (val) => val.id == id,
         orElse: () => addNewsFeedCommunityCategories!.first);
     setSelectedCategory(category);
+    notifyListeners();
+  }
+
+  Future<void> getUpcomingCourses(BuildContext context) async {
+    Loaders.circularShowLoader(context);
+    print("**************getUpcomingCourses Calling");
+    final communityId =
+        await LocalStorage.getStringVal(LocalStorageConst.communityId);
+    final variables = {
+      "where": {
+        "_and": [
+          {
+            "community_id": {"_eq": communityId}
+          },
+          {
+            "community_status": {"_eq": "YES"}
+          },
+          {
+            "active_status": {"_eq": "ACTIVE"}
+          },
+          {
+            "status": {"_eq": "APPROVE"}
+          }
+        ]
+      },
+      "limit": 5,
+      "offset": 0
+    };
+    final res = await repo.getUpcomingCourses(variables);
+    if (res != null) {
+      upComingCoursesList = res;
+    }
+    Loaders.circularHideLoader(context);
+  }
+
+  Future<void> getUserType() async {
+    final type = await LocalStorage.getStringVal(LocalStorageConst.type);
+    setUserType(type);
+  }
+
+  void setUserType(String type) {
+    userType = type;
     notifyListeners();
   }
 

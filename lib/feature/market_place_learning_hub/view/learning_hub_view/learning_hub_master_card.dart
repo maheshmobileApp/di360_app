@@ -29,28 +29,28 @@ class ListingHubMasterCard extends StatelessWidget {
   final String? expiryDateCount;
   final String? courseStatus;
 
-  const ListingHubMasterCard(
-      {super.key,
-      required this.feedId,
-      required this.imageUrl,
-      required this.companyName,
-      required this.description,
-      required this.date,
-      required this.cpdHours,
-      required this.location,
-      this.isFree = true,
-      required this.onTap,
-      required this.profilePic,
-      required this.presenterName,
-      required this.registerTap,
-      required this.afterWardsPrice,
-      required this.isRegistered,
-      this.type,
-      this.noOfSeats,
-      this.registerCount,
-      this.expiryDateCount,
-      this.courseStatus,
-      });
+  const ListingHubMasterCard({
+    super.key,
+    required this.feedId,
+    required this.imageUrl,
+    required this.companyName,
+    required this.description,
+    required this.date,
+    required this.cpdHours,
+    required this.location,
+    this.isFree = true,
+    required this.onTap,
+    required this.profilePic,
+    required this.presenterName,
+    required this.registerTap,
+    required this.afterWardsPrice,
+    required this.isRegistered,
+    this.type,
+    this.noOfSeats,
+    this.registerCount,
+    this.expiryDateCount,
+    this.courseStatus,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,7 @@ class ListingHubMasterCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20)),
                       child: Text(
                           noOfSeats != null
-                              ? noOfSeats == registerCount
+                              ? noOfSeats <= registerCount
                                   ? "SOLD OUT"
                                   : noOfSeats > 10
                                       ? " FILLING FAST !"
@@ -205,7 +205,9 @@ class ListingHubMasterCard extends StatelessWidget {
                                     TextStyles.medium2(color: AppColors.black)),
                           ],
                         ),
-                        if (isRegistered && type == "Online Academy" && courseStatus != "EXPIRED")
+                        if (isRegistered &&
+                            type == "Online Academy" &&
+                            courseStatus != "EXPIRED")
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -219,7 +221,7 @@ class ListingHubMasterCard extends StatelessWidget {
                                 child: Text(
                                   (courseStatus == "PENDING")
                                       ? "You purchased this course"
-                                      : "You purchased this course - ${_expiryLabel()}",
+                                      : "You purchased this course ${_expiryLabel()}",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyles.medium2(
@@ -288,10 +290,13 @@ class ListingHubMasterCard extends StatelessWidget {
   }
 
   String _expiryLabel() {
+    if (expiryDateCount == "Life Time") {
+      return '';
+    }
     final count = int.tryParse(expiryDateCount ?? '0') ?? 0;
-    if (count == 0) return 'Access expires today';
-    if (count == 1) return 'Access expires tomorrow';
-    return 'Access expires in $count day';
+    if (count == 0) return '- Access expires today';
+    if (count == 1) return '- Access expires tomorrow';
+    return '- Access expires in $count day';
   }
 
   Widget _circleIcon() {

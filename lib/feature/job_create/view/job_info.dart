@@ -214,6 +214,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
          ),
             addVertical(4),
         CustomMultiSelectDropDown<String>(
+          module: "Job",
           items: jobCreateVM.empOptions,
           selectedItems: jobCreateVM.selectedEmploymentChips,
           itemLabel: (item) => item,
@@ -225,10 +226,7 @@ class JobInfo extends StatelessWidget with BaseContextHelpers, ValidationMixins 
             if (jobCreateVM.selectedEmploymentChips.contains("Locum")) {
               return item != "Locum";
             }
-            if (jobCreateVM.selectedEmploymentChips.contains("Full Time")) {
-              return item != "Full Time";
-            }
-            return item == "Locum" || item == "Full Time";
+            return item == "Locum" ;
           },
           onSelectionChanged: (selected) {
             final current =

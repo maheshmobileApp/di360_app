@@ -1,7 +1,11 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
+import 'package:di360_flutter/common/routes/route_list.dart';
+import 'package:di360_flutter/feature/community/model/contacts_res.dart';
+import 'package:di360_flutter/feature/community/model/get_partnership_members.dart';
 import 'package:di360_flutter/feature/community/view_model/community_view_model.dart';
 import 'package:di360_flutter/feature/community/widgets/partnership_request_card.dart';
+import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +30,8 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       final viewModel = Provider.of<CommunityViewModel>(context, listen: false);
       viewModel.getPartnershipRequest(loadMore: true);
     }
@@ -46,7 +51,7 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBarWidget(
-         logo: false,
+        logo: false,
         title: "Partnership Requests",
         searchWidget: false,
       ),
@@ -58,21 +63,27 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
                   child: ListView.builder(
                     controller: _scrollController,
                     padding: EdgeInsets.all(10),
-                    itemCount: partnershipRequests.length + (viewModel.isLoadingMorePartnership ? 1 : 0),
+                    itemCount: partnershipRequests.length +
+                        (viewModel.isLoadingMorePartnership ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == partnershipRequests.length) {
-                        return Center(child: Padding(
+                        return Center(
+                            child: Padding(
                           padding: EdgeInsets.all(16),
-                          child: CircularProgressIndicator(color: AppColors.primaryColor,),
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
                         ));
                       }
                       return PartnershipRequestCard(
-                        contactName: partnershipRequests[index].contactName??"",
-                          firstName: partnershipRequests[index].companyName ?? "",
+                          contactName:
+                              partnershipRequests[index].contactName ?? "",
+                          firstName:
+                              partnershipRequests[index].companyName ?? "",
                           email: partnershipRequests[index].email ?? "",
                           phone: partnershipRequests[index].phone ?? "",
+                          state: partnershipRequests[index].state ?? "",
                           status: partnershipRequests[index].status ?? "",
-                         
                           onMenuAction: (action) async {
                             switch (action) {
                               case "Approve":
@@ -80,6 +91,8 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
                                     partnershipRequests[index].id ?? "",
                                     "APPROVED",
                                     context);
+                                showPartnerApprovedDialog(context, viewModel,
+                                    partnershipRequests[index]);
 
                                 break;
                               case "Reject":
@@ -105,6 +118,108 @@ class _PartnershipRequestViewState extends State<PartnershipRequestView> {
                 ),
         ],
       ),
+    );
+  }
+
+  void showPartnerApprovedDialog(BuildContext context,
+      CommunityViewModel viewModel, PartnershipMembers data) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: SizedBox(
+            width: 500,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 24,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: const Color(0xFFF3F5F7),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                  ),
+                  
+                  child: const Text(
+                    "Partner Approved",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFF6D00),
+                    ),
+                  ),
+                ),
+
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Partner has been approved successfully.",
+                        style: TextStyles.bold4(fontSize: 16),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        "Would you like to add this partner to your contact book?",
+                        style: TextStyles.medium3(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Divider(height: 1),
+
+                // Buttons
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          viewModel.setContactDetailsFromPartners(data);
+                          navigationService
+                              .replaceWith(RouteList.createContactView);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF8C1A),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text(
+                          "Add",
+                          style: TextStyles.bold4(fontSize: 16),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      OutlinedButton(
+                        onPressed: () {
+                          navigationService.goBack();
+                        },
+                        child: Text(
+                          "Skip",
+                          style: TextStyles.bold4(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
