@@ -1,6 +1,6 @@
 import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
-import 'package:di360_flutter/feature/catalogue/model_class/get_catalogue_res.dart';
+import 'package:di360_flutter/feature/catalogue/model_class/catalouges_list.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
