@@ -18,6 +18,10 @@ import 'package:flutter/material.dart';
 class CommunityViewModel extends ChangeNotifier {
   final CommunityRepoImpl repo = CommunityRepoImpl();
 
+   CommunityViewModel() {
+    searchController.addListener(notifyListeners);
+  }
+
   CommunityMembersData? communityMembers;
   int _currentPage = 0;
   int _limitSize = 10;
@@ -35,6 +39,7 @@ class CommunityViewModel extends ChangeNotifier {
   TextEditingController contactNameController = TextEditingController();
   TextEditingController companyNameController = TextEditingController();
   TextEditingController contactPhoneController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   bool editMode = false;
   bool isCategorySubmitting = false;
@@ -42,9 +47,15 @@ class CommunityViewModel extends ChangeNotifier {
   String updateContactId = "";
   String editCategoryId = "";
   DirectoryData? directoryData;
+  bool searchBarOpen = false;
 
   void setUpdateContactId(String value) {
     updateContactId = value;
+    notifyListeners();
+  }
+
+  void setSearchBar(bool val) {
+    searchBarOpen = val;
     notifyListeners();
   }
 
@@ -477,7 +488,7 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getNewsFeedCategories(BuildContext context,
       {String? type}) async {
     Loaders.circularShowLoader(context);
-     print("**************getNewsFeedCategories Calling");
+    print("**************getNewsFeedCategories Calling");
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final communityId =
@@ -611,6 +622,23 @@ class CommunityViewModel extends ChangeNotifier {
     Map<String, dynamic> whereClause = {
       "created_by_id": {"_eq": id}
     };
+
+    if (searchController.text.isNotEmpty) {
+      whereClause["_or"] = [
+        {
+          "contact_name": {"_ilike": "%${searchController.text}%"}
+        },
+        {
+          "email": {"_ilike": "%${searchController.text}%"}
+        },
+        {
+          "phone": {"_ilike": "%${searchController.text}%"}
+        },
+        {
+          "company_name": {"_ilike": "%${searchController.text}%"}
+        }
+      ];
+    }
 
     if (selectedFilterContactType.isNotEmpty &&
         selectedFilterContactType != "All") {
