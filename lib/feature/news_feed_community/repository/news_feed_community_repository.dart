@@ -1,3 +1,4 @@
+import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -16,4 +17,5 @@ abstract class NewsFeedCommunityRepository {
   Future<dynamic> leaveCommunity(dynamic variables);
   Future<NewsFeedCommunityData> filterNewsFeed(dynamic variables);
   Future<CommunityMembersCountData> getCommunityMemberCountData(String communityId);
+  Future<List<CoursesListingDetails>?> getUpcomingCourses(dynamic variables);
 }

@@ -120,12 +120,13 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
         );
       } else {
         // Android: save to Downloads and show notification
+        print("*************${file.path}");
         await DownloadNotificationService.showDownloadNotification(
           fileName: certificateName,
           filePath: file.path,
         );
         scaffoldMessenger(
-            "✅ Certificate Downloaded\n📁 Downloads > DentalInterface360 > Certificates");
+            "✅ Certificate Downloaded");
       }
     } else {
       scaffoldMessenger("Certificate download failed. Please try again.");
@@ -136,9 +137,14 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
     try {
       final dir = await _getDownloadDir();
       final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes);
+
+      await file.writeAsBytes(
+        bytes,
+        flush: true,
+      );
+
       return file;
-    } catch (e) {
+    } catch (e, s) {
       return null;
     }
   }
@@ -159,28 +165,34 @@ class MyLearningHubViewModel extends ChangeNotifier with ValidationMixins {
       final info = await DeviceInfoPlugin().androidInfo;
       if (info.version.sdkInt >= 29) {
         try {
+          // Android 10+ uses public Downloads folder
           final dir = Directory(
               '/storage/emulated/0/Download/DentalInterface360/Certificates');
-          if (!await dir.exists()) await dir.create(recursive: true);
+          if (!await dir.exists()) {
+            await dir.create(recursive: true);
+          }
           return dir;
         } catch (_) {
+          // Fallback to app-specific directory
           final base = await getExternalStorageDirectory() ??
               await getApplicationDocumentsDirectory();
           final dir = Directory('${base.path}/DentalInterface360/Certificates');
-          if (!await dir.exists()) await dir.create(recursive: true);
+          if (!await dir.exists()) {
+            await dir.create(recursive: true);
+          }
           return dir;
         }
       } else {
+        // Older Android versions
         final base = await getExternalStorageDirectory() ??
             await getApplicationDocumentsDirectory();
         final dir = Directory('${base.path}/DentalInterface360/Certificates');
-        if (!await dir.exists()) await dir.create(recursive: true);
+        if (!await dir.exists()) {
+          await dir.create(recursive: true);
+        }
         return dir;
       }
-    } else {
-      // iOS: use temp directory for sharing — not visible to user directly
-      final dir = await getTemporaryDirectory();
-      return dir;
     }
+    return await getTemporaryDirectory();
   }
 }
