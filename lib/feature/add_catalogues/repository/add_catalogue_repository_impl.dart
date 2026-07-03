@@ -28,8 +28,8 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   }
 
   @override
-  Future<List<Catalogues>?> getMyCatalogues(List<String>? catalogStatus,
-      List<String>? status, int limit, int offset, String selectedStatus,
+  Future<List<Catalogues>?> getMyCatalogues(
+      List<String>? catalogStatus, List<String>? status, int limit, int offset, String selectedStatus,
       {String? type, String? subCatagory, String? searchText}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
@@ -60,19 +60,20 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                 "name": {"_ilike": "%$subCatagory%"}
               }
             },
-          (selectedStatus == "All")
+          (selectedStatus ==
+                  "All")
               ? {
                   "_or": [
                     {
                       "status": {
-                        "_in": [
-                          "APPROVED",
-                          "PENDING_APPROVAL",
-                          "EXPIRED",
-                          "SCHEDULED",
-                          "REJECTED",
-                          "DRAFT"
-                        ]
+                        "_in":[
+                                "APPROVED",
+                                "PENDING_APPROVAL",
+                                "EXPIRED",
+                                "SCHEDULED",
+                                "REJECTED",
+                                "DRAFT"
+                              ]
                       }
                     },
                     if (status?.isNotEmpty == true)
