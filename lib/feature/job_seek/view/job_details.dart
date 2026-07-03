@@ -11,6 +11,7 @@ import 'package:di360_flutter/feature/job_seek/view/chip_view.dart';
 import 'package:di360_flutter/feature/job_seek/view/enquiry_foam.dart';
 import 'package:di360_flutter/feature/job_seek/view_model/job_seek_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
+import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/toast.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
@@ -93,7 +94,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-        final provider = Provider.of<JobSeekViewModel>(context, listen: false);
+    final provider = Provider.of<JobSeekViewModel>(context, listen: false);
 
     return Scaffold(
       body: CustomScrollView(
@@ -165,89 +166,46 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                ClipOval(
-                  child: widget.job.logo != null && widget.job.logo!.isNotEmpty
-                      ? CachedNetworkImageWidget(
-                          imageUrl: widget.job.logo!,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          width: 50,
-                          height: 50,
-                          color: Colors.grey.shade300,
-                          child:
-                              const Icon(Icons.business, color: Colors.white),
-                        ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.job.companyName ?? '',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ClipOval(
+              child: widget.job.logo != null && widget.job.logo!.isNotEmpty
+                  ? CachedNetworkImageWidget(
+                      imageUrl: widget.job.logo!,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 50,
+                      height: 50,
+                      color: Colors.grey.shade300,
+                      child: Image.asset(
+                        ImageConst.directorProfile,
+                        fit: BoxFit.fitWidth,
+                      ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      widget.job.jRole ?? '',
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ],
             ),
+            const SizedBox(width: 12),
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.orange.shade50, Colors.white],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  widget.job.createdAt?.isNotEmpty == true
-                      ? Jiffy.parse(widget.job.createdAt!).fromNow()
-                      : 'Recently posted',
-                  style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.job.title != "")
+                    customHeadTexter("Job Title", widget.job.title ?? ''),
+                  if (widget.job.jRole != "")
+                    customHeadTexter("Role", widget.job.jRole ?? ''),
+                  if (widget.job.companyName != "")
+                    customHeadTexter(
+                        "Company Name", widget.job.companyName ?? ''),
+                ],
               ),
             ),
           ],
         ),
-        SizedBox(height: 16),
-        if (widget.job.yearsOfExperience != null)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              jobInfoItem(ImageConst.briefcaseSvg,
-                  '${widget.job.yearsOfExperience} Yrs Experience'),
-              SizedBox(height: 12),
-            ],
-          ),
-        /*if ((widget.job.payMin != null && widget.job.payMin! > 0) || 
-            (widget.job.payMax != null && widget.job.payMax! > 0))
-          Column(
-            children: [
-              jobInfoItem(ImageConst.briefcurrencySvg,
-                  '${widget.job.payMin ?? 0} - ${widget.job.payMax ?? 0}'),
-              SizedBox(height: 12),
-            ],
-          ),*/
+        SizedBox(height: 10),
+        _timeChip(
+            "${DateFormatUtils.formatTwoDateTime(widget.job.createdAt ?? "")}"),
+        SizedBox(height: 10),
         if (widget.job.typeofEmployment?.isNotEmpty == true)
           Column(
             children: [
@@ -291,6 +249,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               iconPath: ImageConst.graduationSvg,
               title: 'Education Level',
               subtitle: '${widget.job.education}'),
+        if (widget.job.yearsOfExperience?.isNotEmpty == true)
+          InfoItem(
+              iconPath: ImageConst.briefcaseSvg,
+              title: 'Experience Level',
+              subtitle: '${widget.job.yearsOfExperience}'),
         if (widget.job.noOfPeople != null)
           InfoItem(
               iconPath: ImageConst.peopleSvg,
@@ -332,12 +295,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           locationView(context),
         ],
         if ((widget.job.dentalSupplier?.directories?.isNotEmpty == true &&
-            widget.job.dentalSupplier?.directories?.first.description?.isNotEmpty == true) ||
+                widget.job.dentalSupplier?.directories?.first.description
+                        ?.isNotEmpty ==
+                    true) ||
             (widget.job.dentalPractice?.directories?.isNotEmpty == true &&
-            widget.job.dentalPractice?.directories?.first.description?.isNotEmpty == true)) ...[
+                widget.job.dentalPractice?.directories?.first.description
+                        ?.isNotEmpty ==
+                    true)) ...[
           Divider(height: 4),
           _sectionHeader('About Company'),
-          _sectionText('${widget.job.dentalSupplier?.directories?.first.description ?? widget.job.dentalPractice?.directories?.first.description}'),
+          _sectionText(
+              '${widget.job.dentalSupplier?.directories?.first.description ?? widget.job.dentalPractice?.directories?.first.description}'),
         ],
         if (widget.job.clinicLogo != null && widget.job.clinicLogo!.isNotEmpty)
           Column(
@@ -424,6 +392,28 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         SizedBox(height: 20),
         actionsWidget(context),
         SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget customHeadTexter(String key, String value) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          key,
+          style: const TextStyle(fontSize: 12, color: AppColors.geryColor),
+        ),
+        Text(
+          value,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 4),
       ],
     );
   }
@@ -516,6 +506,45 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ),
       );
     }
+  }
+
+  Widget _timeChip(String time) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade300,
+            ],
+          ),
+        ),
+        child: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "Posted on : ",
+                style: TextStyles.medium1(
+                  color: AppColors.black,
+                ),
+              ),
+              TextSpan(
+                text: time,
+                style: TextStyles.medium1(
+                  color: AppColors.geryColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget jobInfoItem(String svgPath, String text) {

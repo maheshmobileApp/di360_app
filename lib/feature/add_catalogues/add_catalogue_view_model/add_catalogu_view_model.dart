@@ -101,6 +101,8 @@ class AddCatalogueViewModel extends ChangeNotifier {
   String? selectedCommunityType = 'Both';
   bool communityStatus = false;
   String? userType;
+  String editCatalougeStatus = "";
+  String editStatus = '';
 
   void setCommunityStatus() async {
     print("Setting community status");
@@ -382,14 +384,16 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editCatalogueNavigator(
-      BuildContext context, String? id, String expDate) async {
+  Future<void> editCatalogueNavigator(BuildContext context, String? id,
+      String expDate, String status, String catalougeStatus,
+      {bool? isThisRelist}) async {
     Loaders.circularShowLoader(context);
     final res = await repo.cataloguView(id);
     if (res != null) {
       cataloguView = res;
       updateEditCatalogueVal(true);
-      editDataAssign(res, expDate);
+      editDataAssign(res, expDate, isThisRelist: isThisRelist);
+      setEditCatalougeStatus(status, catalougeStatus);
       Loaders.circularHideLoader(context);
       navigationService.navigateTo(RouteList.addCatalogScreen);
     } else {
@@ -398,8 +402,15 @@ class AddCatalogueViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editDataAssign(
-      CataloguesByPk? cataloguView, String expirysDate) async {
+  void setEditCatalougeStatus(String valueOne, String valueTwo) {
+    editStatus = valueOne;
+    editCatalougeStatus = valueTwo;
+    notifyListeners();
+  }
+
+  Future<void> editDataAssign(CataloguesByPk? cataloguView, String expirysDate,
+      {bool? isThisRelist}) async {
+    print("isThisRelist : $isThisRelist");
     catalogueNameController.text = cataloguView?.title ?? '';
     thumbnailImageObj = cataloguView?.thumbnailImage;
     thumbnailServerPath = cataloguView?.thumbnailImage?.url ?? '';
@@ -409,8 +420,11 @@ class AddCatalogueViewModel extends ChangeNotifier {
     pdfPathUrl = cataloguView?.attachment;
     assignTheSelectedCatagory(cataloguView?.catalogueSubCategory?.id);
     assignTheSelectedCatalogueType(cataloguView?.catalogueCategory?.id);
-    scheduleDate = DateFormatUtils.parseToLocalDate(cataloguView?.schedulerDay);
-    expiryDate = DateFormatUtils.parseToLocalDate(cataloguView?.expiryDay);
+    if (isThisRelist == false) {
+      scheduleDate =
+          DateFormatUtils.parseToLocalDate(cataloguView?.schedulerDay);
+      expiryDate = DateFormatUtils.parseToLocalDate(cataloguView?.expiryDay);
+    }
     setCommunityType(cataloguView?.communityUserType == "BOTH"
         ? "Both"
         : cataloguView?.communityUserType == "COMMUNITY_USER"
@@ -467,8 +481,16 @@ class AddCatalogueViewModel extends ChangeNotifier {
         "catalogue_sub_category_id": selectedCatagory?.id,
         "thumbnail_image": thumbnailImageObj,
         "attachment": pdfPathUrl,
-        "catalogue_status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
-        "status": isDarft ? "DRAFT" : "PENDING_APPROVAL",
+        "catalogue_status": isDarft
+            ? "DRAFT"
+            : editStatus == "APPROVED"
+                ? "ACTIVE"
+                : "PENDING_APPROVAL",
+        "status": isDarft
+            ? "DRAFT"
+            : editStatus == "APPROVED"
+                ? "APPROVED"
+                : "PENDING_APPROVAL",
         "schedulerDay":
             '${scheduleDate?.year}-${scheduleDate?.month}-${scheduleDate?.day}',
         "months_count": int.tryParse(monthCount ?? ''),
@@ -483,8 +505,15 @@ class AddCatalogueViewModel extends ChangeNotifier {
         selectedStatus = 'Draft';
         catalogStatus = ['DRAFT'];
       } else {
-        selectedStatus = 'Pending Approval';
-        catalogStatus = ['PENDING_APPROVAL'];
+        selectedStatus = 'All';
+        catalogStatus = catalogStatus = [
+          "APPROVED",
+          "PENDING_APPROVAL",
+          "EXPIRED",
+          "SCHEDULED",
+          "REJECTED",
+          "DRAFT"
+        ];
       }
       await getCatalogCounts();
       await getMyCataloguesData(navigatorKey.currentContext!);

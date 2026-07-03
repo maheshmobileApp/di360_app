@@ -232,19 +232,26 @@ class DateFormatUtils {
     }
   }
 
- static int remainingDays(String dateStr, int accessDuration) {
+ static String? remainingDays(String? dateStr, int? accessDuration) {
+  if (dateStr == null || accessDuration == null) {
+    return null;
+  }
+
   try {
-    final expiry =
-        DateTime.parse(dateStr).toLocal().add(Duration(days: accessDuration));
+    final expiry = DateTime.parse(dateStr)
+        .toLocal()
+        .add(Duration(days: accessDuration));
+
     final now = DateTime.now();
 
     final today = DateTime(now.year, now.month, now.day);
     final expiryDate = DateTime(expiry.year, expiry.month, expiry.day);
 
     final days = expiryDate.difference(today).inDays;
-    return days < 0 ? 0 : days;
+
+    return days < 0 ? "0" : days.toString();
   } catch (_) {
-    return 0;
+    return null;
   }
 }
 

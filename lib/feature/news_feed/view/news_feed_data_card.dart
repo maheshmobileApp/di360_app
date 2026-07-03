@@ -6,6 +6,7 @@ import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/catalogue/catalogue_view_model/catalogue_view_model.dart';
+import 'package:di360_flutter/feature/directors/view_model/director_view_model.dart';
 import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/feature/job_seek/model/job.dart';
 import 'package:di360_flutter/feature/market_place_learning_hub/view_model/market_place_learning_hub_view_model.dart';
@@ -19,6 +20,8 @@ import 'package:di360_flutter/feature/news_feed_comment/view/comment_screen.dart
 import 'package:di360_flutter/feature/news_feed_community/enums/feed_type_enum.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
+import 'package:di360_flutter/utils/loader.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/cached_network_image_widget.dart';
 import 'package:di360_flutter/widgets/expanded_html_widget.dart';
 import 'package:di360_flutter/widgets/outline_button_widget.dart';
@@ -31,11 +34,12 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
   final Newsfeeds? newsfeeds;
   final VoidCallback? onDetailView;
   final int index;
-  const NewsFeedDataCard(
-      {super.key,
-      required this.newsfeeds,
-      required this.index,
-      this.onDetailView});
+  const NewsFeedDataCard({
+    super.key,
+    required this.newsfeeds,
+    required this.index,
+    this.onDetailView,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +52,9 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     final newsFeedVM = Provider.of<NewsFeedViewModel>(context);
     final newsFeedTypeEnum = newsfeeds?.feedType ?? '';
     final String shareId = _fetchId(newsfeeds);
+    final directoryVM = Provider.of<DirectoryViewModel>(context);
+    final isLogoAvailable = newsfeeds?.communityType == "COMMUNITY_USER" &&
+        newsfeeds?.userRole == UserRole.professional.value;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -107,7 +114,15 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                             context,
                             newsfeeds,
                             needFeedViewModel,
-                            addNeedFeedViewModel),
+                            addNeedFeedViewModel,
+                            directoryVM,
+                            newsfeeds?.dentalSupplier?.directories
+                                        ?.isNotEmpty ==
+                                    true
+                                ? newsfeeds
+                                    ?.dentalSupplier?.directories?.first.id
+                                : "",
+                            isLogoAvailable),
                         addVertical(10),
                         _buildImageRow(catalogueViewModel, context),
                         if (newsfeeds?.videoUrl != null &&
@@ -169,7 +184,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
                     context,
                     shareId,
                     newsfeeds?.feedType ?? FeedType.newsfeed.name,
-                    commentViewModel),
+                    commentViewModel,
+                    newsfeeds?.commentsEnabled ?? false),
               ],
             ),
           )),
@@ -254,38 +270,43 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
     return Container(
       width: double.infinity,
       height: 150,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Column(
         children: [
-          Expanded(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _sectionWidget("Title", title ?? ''),
-                _sectionWidget("Role", job.jRole ?? ""),
-                _chipWidget(job.typeofEmployment ?? [], "")
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 8,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _timeChip(
-                    "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
-                OutlineButtonWidget(
-                  text: "View Details",
-                  onTap: () async {
-                    await newsFeedVM.getJobDetailsByIds(context, jobId);
-                  },
-                )
-              ],
-            ),
+          _timeChip(
+              "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _sectionWidget("Title", title ?? ''),
+                    _sectionWidget("Role", job.jRole ?? ""),
+                    _chipWidget(job.typeofEmployment ?? [], "")
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    /*_timeChip(
+                        "Posted on : ${DateFormatUtils.formatTwoDateTime(createdAt)}"),*/
+                    OutlineButtonWidget(
+                      text: "View Details",
+                      onTap: () async {
+                        await newsFeedVM.getJobDetailsByIds(context, jobId);
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -311,7 +332,7 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           gradient: LinearGradient(
@@ -434,53 +455,110 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       BuildContext context,
       Newsfeeds? newsfeeds,
       NewsFeedViewModel viewModel,
-      AddNewsFeedViewModel addNewsVM) {
+      AddNewsFeedViewModel addNewsVM,
+      DirectoryViewModel directoryVM,
+      String? id,
+      bool logoAvailable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
-                  ? AppColors.greyLight
-                  : AppColors.primaryColor,
-              radius: 26.5,
-              child: (imageUrl != null && imageUrl.isNotEmpty)
-                  ? SizedBox(
-                      height: 52,
-                      width: 52,
-                      child: ClipOval(
-                          child: CachedNetworkImageWidget(
-                              imageUrl: imageUrl,
-                              fit: BoxFit.contain,
-                              errorWidget:
-                                  Image.asset(ImageConst.directorProfile))),
-                    )
-                  : Text(
-                      name!
-                          .split('')
-                          .firstWhere(
-                            (char) => char.trim().isNotEmpty,
-                            orElse: () => '',
-                          )
-                          .toUpperCase(),
-                      style: TextStyles.bold5(color: AppColors.whiteColor),
+        GestureDetector(
+          onTap: () async {
+            Loaders.circularShowLoader(context);
+            await directoryVM.GetDirectorDetails(id ?? "");
+            await directoryVM.getDirectory(id ?? "");
+            Loaders.circularHideLoader(context);
+
+            navigationService.navigateTo(RouteList.directoryDetailsScreen);
+          },
+          child: Row(
+            children: [
+              Stack(alignment: Alignment.center, children: [
+                CircleAvatar(
+                  backgroundColor: (imageUrl != null && imageUrl.isNotEmpty)
+                      ? AppColors.greyLight
+                      : AppColors.primaryColor,
+                  radius: 26.5,
+                  child: (imageUrl != null && imageUrl.isNotEmpty)
+                      ? SizedBox(
+                          height: 52,
+                          width: 52,
+                          child: ClipOval(
+                              child: CachedNetworkImageWidget(
+                                  imageUrl: logoAvailable
+                                      ? newsfeeds?.communityOwner?.logo?.url ??
+                                          ''
+                                      : imageUrl,
+                                  fit: BoxFit.contain,
+                                  errorWidget:
+                                      Image.asset(ImageConst.directorProfile))),
+                        )
+                      : Text(
+                          name!
+                              .split('')
+                              .firstWhere(
+                                (char) => char.trim().isNotEmpty,
+                                orElse: () => '',
+                              )
+                              .toUpperCase(),
+                          style: TextStyles.bold5(color: AppColors.whiteColor),
+                        ),
+                ),
+                if (logoAvailable)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CircleAvatar(
+                      backgroundColor: AppColors.greyLight,
+                      radius: 16,
+                      child: (newsfeeds
+                                  ?.communityOwner?.logo?.url?.isNotEmpty ==
+                              true)
+                          ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: ClipOval(
+                                  child: CachedNetworkImageWidget(
+                                      imageUrl: imageUrl ?? '',
+                                      fit: BoxFit.contain,
+                                      errorWidget: Image.asset(
+                                          ImageConst.directorProfile))),
+                            )
+                          : Text(
+                              "D",
+                              style:
+                                  TextStyles.bold5(color: AppColors.whiteColor),
+                            ),
                     ),
-            ),
-            addHorizontal(10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(name ?? 'Dental Interface',
-                    style: TextStyles.clashMedium(
-                        fontSize: 16, color: AppColors.black)),
-                Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
-                    style:
-                        TextStyles.regular1(color: AppColors.lightGeryColor)),
-              ],
-            ),
-          ],
+                  ),
+              ]),
+              addHorizontal(10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                      logoAvailable
+                          ? newsfeeds?.communityOwner?.businessName ?? ""
+                          : name ?? 'Dental Interface',
+                      style: TextStyles.clashMedium(
+                          fontSize: 16, color: AppColors.black)),
+                  Row(
+                    children: [
+                      logoAvailable
+                          ? Text("$name ",
+                              style: TextStyles.regular1(
+                                  color: Colors.black, fontSize: 14))
+                          : SizedBox.shrink(),
+                      Text(DateFormatUtils.formatTwoDateTime(date ?? ""),
+                          style: TextStyles.regular1(
+                              color: AppColors.lightGeryColor)),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         NewsMenuWidget(newsfeeds: newsfeeds)
       ],
@@ -678,7 +756,8 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
       BuildContext context,
       String feedId,
       String? category,
-      CommentViewModel commentViewModel) {
+      CommentViewModel commentViewModel,
+      bool commentsEnabled) {
     final isLiked = newsfeeds?.myLike?.length == 1;
 
     return Row(
@@ -718,28 +797,30 @@ class NewsFeedDataCard extends StatelessWidget with BaseContextHelpers {
           category: category,
         ),
         Spacer(),
-        GestureDetector(
-          onTap: () async {
-            await commentViewModel.getComments(context, newsfeeds?.id ?? "");
-            navigationService.push(CommentScreen(newsfeeds: newsfeeds));
-          },
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: AppColors.backgroundColor),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              child: Row(
-                children: [
-                  Image.asset(ImageConst.comment),
-                  addHorizontal(8),
-                  Text('$commentCount comments',
-                      style: TextStyles.regular3(color: AppColors.black))
-                ],
+        if (commentsEnabled)
+          GestureDetector(
+            onTap: () async {
+              await commentViewModel.getComments(context, newsfeeds?.id ?? "");
+              navigationService.push(CommentScreen(newsfeeds: newsfeeds));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.backgroundColor),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Row(
+                  children: [
+                    Image.asset(ImageConst.comment),
+                    addHorizontal(8),
+                    Text('$commentCount comments',
+                        style: TextStyles.regular3(color: AppColors.black))
+                  ],
+                ),
               ),
             ),
-          ),
-        )
+          )
       ],
     );
   }
