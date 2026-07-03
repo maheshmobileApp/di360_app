@@ -262,42 +262,11 @@
     "ADMIN": {
       "data": [
         {
-          "title": "Account",
+          "title": "Clients",
           "subTitle": [
             {
-              "title": "View Profile",
-              "asset": "assets/profile/account/profile.svg"
-            }
-          ]
-        },
-        {
-          "title": "My Directory",
-          "subTitle": [
-            {
-              "title": "My Directory",
-              "asset": "assets/profile/inventory/directory.svg"
-            }
-          ]
-        },
-        {
-          "title": "Appointments",
-          "subTitle": [
-            {
-              "title": "Appointments",
-              "asset": "assets/profile/inventory/directory.svg"
-            }
-          ]
-        },
-        {
-          "title": "JobSeek",
-          "subTitle": [
-            {
-              "title": "Job Listings",
-              "asset": "assets/profile/jobseek/#000000ff.svg"
-            },
-            {
-              "title": "Talent Request",
-              "asset": "assets/profile/jobseek/#000000ff.svg"
+              "title": "Clients",
+              "asset": "assets/svgs/people.svg"
             }
           ]
         },

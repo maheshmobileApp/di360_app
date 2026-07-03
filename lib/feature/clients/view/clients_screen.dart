@@ -1,10 +1,7 @@
-import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/clients/clients_provider/clients_provider.dart';
 import 'package:di360_flutter/feature/clients/view/client_card_widget.dart';
-import 'package:di360_flutter/feature/dash_board/dash_board_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class ClientsScreen extends StatefulWidget {
@@ -29,13 +26,7 @@ class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
     return Consumer<ClientsProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBar(title: Text("Clients"), centerTitle: true, actions: [
-            GestureDetector(
-                onTap: () => logOutAlert(context),
-                child:
-                    SvgPicture.asset(ImageConst.logout, width: 25, height: 25)),
-            addHorizontal(16)
-          ]),
+          appBar: AppBar(title: Text("Clients"), centerTitle: true),
           body: Column(
             children: [
               _statusTabs(provider),
@@ -77,7 +68,8 @@ class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
                                 ? Colors.orange
                                 : Colors.transparent,
                             width: 3))),
-                child: Text("ACTIVE (${provider.clientCountData?.allActive?.aggregate?.count ?? 0})",
+                child: Text(
+                    "ACTIVE (${provider.clientCountData?.allActive?.aggregate?.count ?? 0})",
                     style: TextStyle(fontWeight: FontWeight.bold))),
           ),
         ),
@@ -95,7 +87,8 @@ class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
                                 : Colors.transparent,
                             width: 3)),
                   ),
-                  child: Text("INACTIVE (${provider.clientCountData?.allInactive?.aggregate?.count ?? 0})",
+                  child: Text(
+                      "INACTIVE (${provider.clientCountData?.allInactive?.aggregate?.count ?? 0})",
                       style: TextStyle(fontWeight: FontWeight.bold)))),
         ),
       ],
@@ -128,7 +121,7 @@ class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
     );
   }
 
-  Widget _searchField() {
+  /* Widget _searchField() {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: TextField(
@@ -164,5 +157,5 @@ class _ClientsScreenState extends State<ClientsScreen> with BaseContextHelpers {
         ],
       ),
     );
-  }
+  }*/
 }

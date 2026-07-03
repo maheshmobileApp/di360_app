@@ -80,7 +80,7 @@ class GridWidget extends StatelessWidget with BaseContextHelpers {
       Loaders.circularHideLoader(context);
       await navigationService.navigateTo(RouteList.learningHubMasterView);
     } else if (title == 'Clients') {
-      dashBoardVM.setIndex(5, navigatorKey.currentContext!);
+      navigationService.navigateTo(RouteList.clientScreen);
     }
   }
 }
