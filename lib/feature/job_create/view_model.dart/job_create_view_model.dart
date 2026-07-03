@@ -733,7 +733,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "logo": logoPath,
         "state": stateController.text,
         "city": cityPostCodeController.text,
-        "salary": "Range", //Need to discuss with backend
+        "salary": "Range",
         "pay_min":
             minSalaryController.text != "" ? minSalaryController.text : 0,
         "pay_max":
@@ -850,7 +850,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
             : null,
         "status": isDraft
             ? "DRAFT"
-            : "PENDING", // REJECT,APPROVE,PENDING,EXPIRED,DRAFT,
+            : editJobStatus == "APPROVE" ? "APPROVE": "PENDING",
         "active_status":
             "ACTIVE", // This is default ACTIVE, Backend team ask me to send this value
         "website_url": websiteController.text,
@@ -872,7 +872,7 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
         "feed_type": "JOBS"
       }
     };
-    print("*******************$variables");
+
     final result = await repo.updateJobListing(variables);
     if (result != null) {
     } else {
@@ -1026,8 +1026,17 @@ class JobCreateViewModel extends ChangeNotifier with ValidationMixins {
       experienceOptions.insert(0, selectExperience!);
     }
 
+    setEditJobStatus(jobData?.status ?? "");
+
     notifyListeners();
     print('=== loadJobData end ===');
+  }
+
+  String editJobStatus = "";
+
+  void setEditJobStatus(String status) {
+    editJobStatus = status;
+    notifyListeners();
   }
 
   // #endregion

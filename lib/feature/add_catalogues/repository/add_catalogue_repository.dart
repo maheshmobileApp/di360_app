@@ -17,6 +17,4 @@ abstract class AddCatalogueRepository {
   Future<dynamic> editCatalogue(dynamic variables);
   Future<CatalogueCountData> catalogueCounts();
   Future<List<CatalogueTypes>?> getCatalogueTypes();
-  Future<dynamic> adminCataloguesCount();
-  Future<dynamic> approveAndRejectCatalogueQuery(dynamic variables);
 }

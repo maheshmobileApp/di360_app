@@ -6,7 +6,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_catalogues/add_catalogue_view_model/add_catalogu_view_model.dart';
 import 'package:di360_flutter/feature/add_catalogues/view/catalogue_card_widget.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
-import 'package:di360_flutter/utils/user_role_enum.dart';
 import 'package:di360_flutter/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,9 +33,7 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
-        context
-            .read<AddCatalogueViewModel>()
-            .getMyCataloguesData(context, isPagination: true);
+        context.read<AddCatalogueViewModel>().getMyCataloguesData(context, isPagination: true);
       }
     });
   }
@@ -75,13 +72,9 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
               height: 60,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: myCatalogVM.userType == UserRole.admin.value
-                    ? myCatalogVM.adminStatuses.length
-                    : myCatalogVM.statuses.length,
+                itemCount: myCatalogVM.statuses.length,
                 itemBuilder: (context, index) {
-                  String status = myCatalogVM.userType == UserRole.admin.value
-                      ? myCatalogVM.adminStatuses[index]
-                      : myCatalogVM.statuses[index];
+                  String status = myCatalogVM.statuses[index];
                   bool isSelected = myCatalogVM.selectedStatus == status;
                   return GestureDetector(
                     onTap: () {
@@ -98,29 +91,33 @@ class _MyCataloguesScreenState extends State<MyCataloguesScreen>
                               : AppColors.whiteColor,
                           borderRadius: BorderRadius.circular(28),
                           border: Border.all(color: AppColors.primaryColor)),
-                      child: Row(children: [
-                        Text(status,
-                            style: TextStyles.regular2(
-                                color: isSelected
-                                    ? AppColors.whiteColor
-                                    : AppColors.black)),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
+                      child: Row(
+                        children: [
+                          Text(status,
+                              style: TextStyles.regular2(
+                                  color: isSelected
+                                      ? AppColors.whiteColor
+                                      : AppColors.black)),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
                               color: isSelected
                                   ? AppColors.whiteColor
                                   : AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                              "${myCatalogVM.userType == UserRole.admin.value ? myCatalogVM.statusCountMap[status] : myCatalogVM.statusCountMap[status]}",
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              "${myCatalogVM.statusCountMap[status]}",
                               style: TextStyles.regular2(
                                   color: isSelected
                                       ? AppColors.black
-                                      : AppColors.whiteColor)),
-                        )
-                      ]),
+                                      : AppColors.whiteColor),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },

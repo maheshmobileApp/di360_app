@@ -16,6 +16,14 @@ const String getPartnershipRequestsQuery =
     community_id
     supplier_id
     register_link
+    state
+    __typename
+  }
+  partnership_members_aggregate(where: $where) {
+    aggregate {
+      count
+      __typename
+    }
     __typename
   }
 }
