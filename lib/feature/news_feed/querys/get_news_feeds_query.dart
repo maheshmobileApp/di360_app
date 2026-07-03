@@ -22,6 +22,16 @@ const String getAllNewsfeedsQuery =
     payload_id
     user_role
     community_id
+    comments_enabled
+    community_owner {
+      logo
+      business_name
+      directories {
+        id
+        __typename
+      }
+      __typename
+    }
     catalogues {
       status
       catalogue_category {

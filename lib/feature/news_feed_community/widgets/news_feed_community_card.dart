@@ -53,34 +53,39 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
   final bool isLiked;
   final Newsfeeds? newsfeeds;
   final int index;
+  final String communityLogo;
+  final String userName;
 
-  NewsFeedCommunityCard(
-      {super.key,
-      required this.id,
-      required this.logoUrl,
-      required this.feedUserRole,
-      required this.comments,
-      required this.companyName,
-      required this.courseTitle,
-      required this.description,
-      required this.status,
-      required this.types,
-      required this.imageUrls,
-      required this.createdAt,
-      required this.registeredCount,
-      this.course,
-      this.job,
-      this.onTapRegistered,
-      this.onMenuAction,
-      this.onDetailView,
-      required this.chipTitle,
-      this.onLikeTap,
-      this.onCommentTap,
-      required this.likes,
-      required this.feedType,
-      this.isLiked = false,
-      this.newsfeeds,
-      required this.index}) {}
+  NewsFeedCommunityCard({
+    super.key,
+    required this.id,
+    required this.logoUrl,
+    required this.feedUserRole,
+    required this.comments,
+    required this.companyName,
+    required this.courseTitle,
+    required this.description,
+    required this.status,
+    required this.types,
+    required this.imageUrls,
+    required this.createdAt,
+    required this.registeredCount,
+    this.course,
+    this.job,
+    this.onTapRegistered,
+    this.onMenuAction,
+    this.onDetailView,
+    required this.chipTitle,
+    this.onLikeTap,
+    this.onCommentTap,
+    required this.likes,
+    required this.feedType,
+    this.isLiked = false,
+    this.newsfeeds,
+    required this.index,
+    required this.communityLogo,
+    required this.userName,
+  }) {}
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +98,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     final currentUserId = newsFeedCommunityViewModel.userID ?? '';
 
     final isSameUser = newsfeeds?.userId == currentUserId;
+    final logoAvailable = feedUserRole == UserRole.professional.value &&
+        newsfeeds?.communityType == "COMMUNITY_USER";
 
     return FutureBuilder<String>(
       future: LocalStorage.getStringVal(LocalStorageConst.type),
@@ -127,11 +134,8 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _logoWithTitle(
-                            logoUrl,
-                            companyName,
-                            createdAt,
-                          ),
+                          child: _logoWithTitle(logoUrl, companyName, createdAt,
+                              communityLogo, userName, logoAvailable),
                         ),
                         /*if (type == UserRole.supplier.value ||
                             (type == UserRole.professional.value &&
@@ -233,20 +237,21 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                         const Spacer(),
 
                         /// 💬 Comment Icon + Count
-                        GestureDetector(
-                          onTap: onCommentTap,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.comment,
-                                  color: Colors.black, size: 20),
-                              const SizedBox(width: 4),
-                              Text(
-                                "${comments.toString()} Comments",
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        )
+                        if (newsfeeds?.commentsEnabled ?? false)
+                          GestureDetector(
+                            onTap: onCommentTap,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.comment,
+                                    color: Colors.black, size: 20),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "${comments.toString()} Comments",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          )
                       ],
                     ),
                   ],
@@ -461,6 +466,9 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
     String logo,
     String company,
     String createdAt,
+    String communityLogo,
+    String userName,
+    bool logoAvailable,
   ) {
     return Row(
       children: [
@@ -480,7 +488,7 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       width: 52,
                       child: ClipOval(
                           child: CachedNetworkImageWidget(
-                              imageUrl: logo,
+                              imageUrl: communityLogo,
                               fit: BoxFit.contain,
                               errorWidget:
                                   Image.asset(ImageConst.directorProfile))),
@@ -490,6 +498,30 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
                       style: TextStyles.bold5(color: AppColors.whiteColor),
                     ),
             ),
+            if (logoAvailable)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: CircleAvatar(
+                  backgroundColor: AppColors.greyLight,
+                  radius: 16,
+                  child: (communityLogo.isNotEmpty)
+                      ? SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: ClipOval(
+                              child: CachedNetworkImageWidget(
+                                  imageUrl: logo,
+                                  fit: BoxFit.contain,
+                                  errorWidget:
+                                      Image.asset(ImageConst.directorProfile))),
+                        )
+                      : Text(
+                          company[0].toUpperCase(),
+                          style: TextStyles.bold5(color: AppColors.whiteColor),
+                        ),
+                ),
+              ),
           ],
         ),
         const SizedBox(width: 12),
@@ -499,8 +531,18 @@ class NewsFeedCommunityCard extends StatelessWidget with BaseContextHelpers {
             children: [
               Text(company, style: TextStyles.bold3(color: AppColors.black)),
               const SizedBox(height: 2),
-              Text(DateFormatUtils.formatDateTime(createdAt),
-                  style: TextStyles.regular1(color: Colors.grey)),
+              Row(
+                children: [
+                  if (userName.isNotEmpty)
+                    Text("$userName ",
+                        style: TextStyles.regular1(
+                            color: Colors.black, fontSize: 14)),
+                  Flexible(
+                    child: Text(DateFormatUtils.formatDateTime(createdAt),
+                        style: TextStyles.regular1(color: Colors.grey)),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

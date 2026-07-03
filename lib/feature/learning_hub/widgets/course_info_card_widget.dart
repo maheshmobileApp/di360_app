@@ -198,8 +198,8 @@ class CourseInfoCardWidget extends StatelessWidget {
                           _InfoTextWidget(
                             label: "Price",
                             first: true,
-                            value:
-                                "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}",
+                            value: (totalPrice == 0)?
+                                "\$${totalPrice != null ? double.tryParse(totalPrice!)?.toStringAsFixed(0) ?? totalPrice : ''}": "FREE",
                           ),
                         ],
                       ),
