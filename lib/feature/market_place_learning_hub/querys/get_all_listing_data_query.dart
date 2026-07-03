@@ -33,7 +33,6 @@ const String getAllListingDataQuery   =
       from_id
       status
       course_registered_date
-      course_valid_till
       __typename
     }
     course_registered_users_aggregate(where: {status: {_neq: "CANCELLED"}}) {

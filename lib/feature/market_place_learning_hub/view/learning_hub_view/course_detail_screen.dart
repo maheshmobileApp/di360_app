@@ -75,9 +75,8 @@ class CourseDetailScreen extends StatelessWidget with BaseContextHelpers {
 
     final isRegistered = courseListingVM
         .isCourseDetailRegisteredCheck(courseDetails?.courseRegisteredUsers);
-final bool seats =
-    (courseDetails?.numberOfSeats ?? 0) <=
-    (courseDetails?.courseRegisteredUsersAggregate?.aggregate?.count ?? 0);
+    final seats = courseDetails?.numberOfSeats ?? 0;
+
     return Scaffold(
       backgroundColor: AppColors.greyLightcolor,
       bottomNavigationBar: (courseDetails?.status == "APPROVE" &&
@@ -157,7 +156,7 @@ final bool seats =
                                         courseDetails?.registerLink ?? "");
                                   }
                                 : () {
-                                    if (!seats) {
+                                    if (seats > 0) {
                                       courseListingVM
                                           .setCourseId(courseDetails?.id ?? "");
                                       RegistrationUserForm.show(
@@ -167,7 +166,7 @@ final bool seats =
                                           courseDetails?.id ?? "",
                                           courseDetails?.registerLink ?? "");
                                     } else {
-                                      scaffoldMessenger('Registration is Full');
+                                      scaffoldMessenger('Seats are sold out!');
                                     }
                                   },
                         courseType: courseDetails?.type ?? "")),

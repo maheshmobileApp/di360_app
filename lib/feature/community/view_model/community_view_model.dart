@@ -1,6 +1,5 @@
 import 'package:di360_flutter/common/constants/constant_data.dart';
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
-import 'package:di360_flutter/common/routes/route_list.dart';
 import 'package:di360_flutter/data/local_storage.dart';
 import 'package:di360_flutter/feature/community/model/contacts_res.dart';
 import 'package:di360_flutter/feature/community/model/get_community_members.dart';
@@ -11,7 +10,6 @@ import 'package:di360_flutter/feature/community/model/get_partnership_members.da
 import 'package:di360_flutter/feature/community/repository/community_repo_impl.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
-import 'dart:math';
 import 'package:di360_flutter/utils/loader.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +18,7 @@ class CommunityViewModel extends ChangeNotifier {
 
   CommunityMembersData? communityMembers;
   int _currentPage = 0;
-  int _limitSize = 10;
+  int _limitSize = 4;
   bool isLoadingMore = false;
   bool hasMoreData = true;
   PartnershipMembersData? partnershipMembers;
@@ -199,6 +197,7 @@ class CommunityViewModel extends ChangeNotifier {
   //GET JOIN REQUEST
   Future<void> getJoinRequest(BuildContext context,
       {bool loadMore = false}) async {
+    Loaders.circularShowLoader(context);
     if (loadMore) {
       if (isLoadingMore || !hasMoreData) return;
       isLoadingMore = true;
@@ -206,37 +205,24 @@ class CommunityViewModel extends ChangeNotifier {
     } else {
       _currentPage = 0;
       hasMoreData = true;
-      Loaders.circularShowLoader(context);
     }
 
     notifyListeners();
 
-    try {
-      final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
-      final res = await repo.getJoinRequest(
-          id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
+    final id = await LocalStorage.getStringVal(LocalStorageConst.userId);
+    final res = await repo.getJoinRequest(
+        id, listingStatus ?? "", _limitSize, _currentPage * _limitSize);
 
-      if (loadMore) {
-        communityMembers?.communityMembers?.addAll(res.communityMembers ?? []);
-      } else {
-        communityMembers = res;
-      }
-
-      hasMoreData = (res.communityMembers?.length ?? 0) >= _limitSize;
-    } catch (e) {
-      if (loadMore) {
-        isLoadingMore = false;
-        _currentPage = max(0, _currentPage - 1);
-      }
-      rethrow;
-    } finally {
-      if (loadMore) {
-        isLoadingMore = false;
-      } else {
-        Loaders.circularHideLoader(context);
-      }
-      notifyListeners();
+    if (loadMore) {
+      communityMembers?.communityMembers?.addAll(res.communityMembers ?? []);
+      isLoadingMore = false;
+    } else {
+      communityMembers = res;
     }
+
+    hasMoreData = (res.communityMembers?.length ?? 0) >= _limitSize;
+    Loaders.circularHideLoader(context);
+    notifyListeners();
   }
 
   Future<void> getPartnershipRequest({bool loadMore = false}) async {
@@ -477,7 +463,6 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> getNewsFeedCategories(BuildContext context,
       {String? type}) async {
     Loaders.circularShowLoader(context);
-     print("**************getNewsFeedCategories Calling");
     final professionTypeId =
         await LocalStorage.getStringVal(LocalStorageConst.professionId);
     final communityId =
@@ -697,7 +682,7 @@ class CommunityViewModel extends ChangeNotifier {
 
       if (res != null && res.containsKey('insert_partners_contact_book_one')) {
         await getContacts(context);
-        navigationService.replaceWith(RouteList.contactView);
+        navigationService.goBack();
         Loaders.circularHideLoader(context);
         clearContactDetails();
 
@@ -812,24 +797,6 @@ class CommunityViewModel extends ChangeNotifier {
     companyNameController.text = data?.companyName ?? "";
     selectedState = data?.state ?? "";
     selectedContactType = data?.contactType ?? "";
-    contactEmailController.text = data?.email ?? "";
-    final phone = data?.phone ?? "";
-    if (phone.startsWith('+61')) {
-      selectedPhoneCode = 'AU (+61)';
-      contactPhoneController.text = phone.substring(3);
-    } else if (phone.startsWith('+64')) {
-      selectedPhoneCode = 'NZ (+64)';
-      contactPhoneController.text = phone.substring(3);
-    } else {
-      selectedPhoneCode = 'AU (+61)';
-      contactPhoneController.text = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    }
-  }
-
-  setContactDetailsFromPartners(PartnershipMembers? data) {
-    contactNameController.text = data?.contactName ?? "";
-    companyNameController.text = data?.companyName ?? "";
-    selectedState = data?.state ?? "";
     contactEmailController.text = data?.email ?? "";
     final phone = data?.phone ?? "";
     if (phone.startsWith('+61')) {

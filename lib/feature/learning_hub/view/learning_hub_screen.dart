@@ -204,7 +204,6 @@ class _JobListingScreenState extends State<LearningHubScreen>
                   types: [course.type ?? ''],
                   createdAt: course.createdAt ?? '',
                   updatedAt: course.updatedAt ?? '',
-                  presenters: course.presenters,
                   registeredCount:
                       course.courseRegisteredUsersAggregate?.aggregate?.count ??
                           0,

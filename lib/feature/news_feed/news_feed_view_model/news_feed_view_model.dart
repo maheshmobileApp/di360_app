@@ -207,13 +207,10 @@ class NewsFeedViewModel extends ChangeNotifier {
         "news_feeds_id": newsFeedId,
         "created_by_id": userID ?? null,
         "role_type": type,
-        if (type == UserRole.supplier.value)
-          "dental_supplier_id": supplierId ?? null,
-        if (type == UserRole.practice.value)
-          "dental_practice_id": practiceId ?? null,
-        if (type == UserRole.professional.value)
-          "dental_professional_id": professionId ?? null,
-        if (type == UserRole.admin.value) "dental_admin_id": adminId ?? null,
+        "dental_supplier_id": supplierId ?? null,
+        "dental_practice_id": practiceId ?? null,
+        "dental_professional_id": professionId ?? null,
+        "dental_admin_id": adminId ?? null,
       }
     };
     try {
@@ -345,14 +342,13 @@ class NewsFeedViewModel extends ChangeNotifier {
   }
 
   Future<void> BlockReportHidePostUser(
-      BuildContext context, String feedId, String action,
-      {String? entityId}) async {
+      BuildContext context, String feedId, String action,{String? entityId}) async {
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final type = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     final variables = {
       "fields": {
-        "entity_id": (action == "BLOCK") ? entityId : feedId,
+        "entity_id":(action == "BLOCK") ? entityId : feedId,
         "entity_type": (action == "BLOCK") ? "PROFILE" : "POST",
         "action": action,
         "created_by_id": userId,

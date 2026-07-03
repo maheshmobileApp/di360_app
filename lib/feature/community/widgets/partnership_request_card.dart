@@ -6,7 +6,6 @@ class PartnershipRequestCard extends StatelessWidget {
   final String firstName;
   final String email;
   final String phone;
-  final String state;
   final String status;
   final VoidCallback? onApprove;
   final Function(String action)? onMenuAction;
@@ -18,7 +17,6 @@ class PartnershipRequestCard extends StatelessWidget {
     required this.firstName,
     required this.email,
     required this.phone,
-    required this.state,
     required this.status,
     required this.contactName,
     this.onApprove,
@@ -70,8 +68,8 @@ class PartnershipRequestCard extends StatelessWidget {
                       _popupItem("Reject", Icons.close, AppColors.redColor),
                     ] else if (status == "APPROVED")
                       _popupItem("Reject", Icons.close, AppColors.redColor)
-                    /*else
-                      _popupItem("Approve", Icons.check, AppColors.greenColor),*/
+                    else
+                      _popupItem("Approve", Icons.check, AppColors.greenColor),
                   ],
                 ),
               ],
@@ -81,7 +79,6 @@ class PartnershipRequestCard extends StatelessWidget {
             _infoRow("Contact Name", contactName),
             _infoRow("Email", email),
             _infoRow("Phone", phone),
-            _infoRow("State", state),
             _infoRow("Status", status),
           ],
         ),

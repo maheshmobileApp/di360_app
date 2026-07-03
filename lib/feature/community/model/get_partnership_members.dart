@@ -1,11 +1,10 @@
 class GetPartnershipMembers {
   PartnershipMembersData? data;
+
   GetPartnershipMembers({this.data});
 
   GetPartnershipMembers.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null
-        ? new PartnershipMembersData.fromJson(json['data'])
-        : null;
+    data = json['data'] != null ? new PartnershipMembersData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -19,10 +18,8 @@ class GetPartnershipMembers {
 
 class PartnershipMembersData {
   List<PartnershipMembers>? partnershipMembers;
-  PartnershipMembersAggregate? partnershipMembersAggregate;
 
-  PartnershipMembersData(
-      {this.partnershipMembers, this.partnershipMembersAggregate});
+  PartnershipMembersData({this.partnershipMembers});
 
   PartnershipMembersData.fromJson(Map<String, dynamic> json) {
     if (json['partnership_members'] != null) {
@@ -31,10 +28,6 @@ class PartnershipMembersData {
         partnershipMembers!.add(new PartnershipMembers.fromJson(v));
       });
     }
-    partnershipMembersAggregate = json['partnership_members_aggregate'] != null
-        ? new PartnershipMembersAggregate.fromJson(
-            json['partnership_members_aggregate'])
-        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -42,10 +35,6 @@ class PartnershipMembersData {
     if (this.partnershipMembers != null) {
       data['partnership_members'] =
           this.partnershipMembers!.map((v) => v.toJson()).toList();
-    }
-    if (this.partnershipMembersAggregate != null) {
-      data['partnership_members_aggregate'] =
-          this.partnershipMembersAggregate!.toJson();
     }
     return data;
   }
@@ -61,8 +50,7 @@ class PartnershipMembers {
   bool? isRegistered;
   String? communityId;
   String? supplierId;
-  String? registerLink;
-  String? state;
+  dynamic registerLink;
   String? sTypename;
 
   PartnershipMembers(
@@ -76,7 +64,6 @@ class PartnershipMembers {
       this.communityId,
       this.supplierId,
       this.registerLink,
-      this.state,
       this.sTypename});
 
   PartnershipMembers.fromJson(Map<String, dynamic> json) {
@@ -90,7 +77,6 @@ class PartnershipMembers {
     communityId = json['community_id'];
     supplierId = json['supplier_id'];
     registerLink = json['register_link'];
-    state = json['state'];
     sTypename = json['__typename'];
   }
 
@@ -106,49 +92,6 @@ class PartnershipMembers {
     data['community_id'] = this.communityId;
     data['supplier_id'] = this.supplierId;
     data['register_link'] = this.registerLink;
-    data['state'] = this.state;
-    data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class PartnershipMembersAggregate {
-  Aggregate? aggregate;
-  String? sTypename;
-
-  PartnershipMembersAggregate({this.aggregate, this.sTypename});
-
-  PartnershipMembersAggregate.fromJson(Map<String, dynamic> json) {
-    aggregate = json['aggregate'] != null
-        ? new Aggregate.fromJson(json['aggregate'])
-        : null;
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aggregate != null) {
-      data['aggregate'] = this.aggregate!.toJson();
-    }
-    data['__typename'] = this.sTypename;
-    return data;
-  }
-}
-
-class Aggregate {
-  int? count;
-  String? sTypename;
-
-  Aggregate({this.count, this.sTypename});
-
-  Aggregate.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-    sTypename = json['__typename'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
     data['__typename'] = this.sTypename;
     return data;
   }

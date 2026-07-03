@@ -13,6 +13,7 @@ import 'package:di360_flutter/feature/job_profile_listing/view_model/job_profile
 import 'package:di360_flutter/feature/talents/model/talents_res.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/job_profile_enum.dart';
+import 'package:di360_flutter/utils/loader.dart';
 import 'package:di360_flutter/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,5 +1,4 @@
 import 'package:di360_flutter/core/http_service.dart';
-import 'package:di360_flutter/feature/market_place_learning_hub/model_class/courses_response.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/banner_url_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_community_member_count_res.dart';
 import 'package:di360_flutter/feature/news_feed_community/model/get_feed_count_res.dart';
@@ -14,7 +13,6 @@ import 'package:di360_flutter/feature/news_feed_community/query/get_all_news_fee
 import 'package:di360_flutter/feature/news_feed_community/query/get_banner_url.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_community_members_count_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/get_supplier_feed_count_query.dart';
-import 'package:di360_flutter/feature/news_feed_community/query/get_upcoming_courses_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/leave_community_query.dart';
 import 'package:di360_flutter/feature/news_feed_community/query/update_new_feed_community.dart';
 import 'package:di360_flutter/feature/news_feed_community/repository/news_feed_community_repository.dart';
@@ -109,12 +107,5 @@ class NewsFeedCommunityRepoImpl extends NewsFeedCommunityRepository {
         await http.query(getCommunityMembersCountQuery, variables: variables);
     final output = CommunityMembersCountData.fromJson(res);
     return output;
-  }
-
-  @override
-  Future<List<CoursesListingDetails>?> getUpcomingCourses(variables)  async{
-    final res = await http.query(getUpcomingCoursesQuery, variables: variables);
-    final data = CoursesListingData.fromJson(res);
-    return data.courses;
   }
 }

@@ -778,45 +778,6 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     }
   }
 
-  String _getFileExtension(String? filePath) {
-    if (filePath == null || filePath.isEmpty) return '';
-    final fileName = filePath.split('/').last.split('\\').last;
-    final dotIndex = fileName.lastIndexOf('.');
-    if (dotIndex == -1 || dotIndex == fileName.length - 1) return '';
-    return fileName.substring(dotIndex + 1).toLowerCase();
-  }
-
-  String _getFileType(String? filePath) {
-    final extension = _getFileExtension(filePath);
-    switch (extension) {
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-      case 'bmp':
-      case 'webp':
-        return 'image';
-      case 'pdf':
-        return 'pdf';
-      default:
-        return 'document';
-    }
-  }
-
-  Map<String, dynamic> _buildFilePayload({
-    required String? url,
-    required String? name,
-    String? filePath,
-  }) {
-    final extension = _getFileExtension(filePath ?? name ?? url);
-    return {
-      'url': url ?? '',
-      'name': name ?? '',
-      'type': _getFileType(filePath ?? name ?? url),
-      'extension': extension.isNotEmpty ? extension : 'pdf',
-    };
-  }
-
   Future<void> createJobProfile(BuildContext context, bool isDraft) async {
     Loaders.circularShowLoader(context);
     Map<String, String?> filePaths = {
@@ -859,35 +820,38 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
               : [],
           "upload_resume": resumeFile != null
               ? [
-                  _buildFilePayload(
-                    url: uploadedFiles['resume'] != null
+                  {
+                    "url": uploadedFiles['resume'] != null
                         ? uploadedFiles['resume']["url"]
                         : resumeFile!.path,
-                    name: resumeFile!.path.split("/").last,
-                    filePath: resumeFile!.path,
-                  )
+                    "name": resumeFile!.path.split("/").last,
+                    "type": "pdf",
+                    "extension": "pdf",
+                  }
                 ]
               : [],
           "certificate": certificateFile != null
               ? [
-                  _buildFilePayload(
-                    url: uploadedFiles['certificate'] != null
+                  {
+                    "url": uploadedFiles['certificate'] != null
                         ? uploadedFiles['certificate']["url"]
                         : certificateFile!.path,
-                    name: certificateFile!.path.split("/").last,
-                    filePath: certificateFile!.path,
-                  )
+                    "name": certificateFile!.path.split("/").last,
+                    "type": "document",
+                    "extension": "pdf",
+                  }
                 ]
               : [],
           "cover_letter": coverLetterFile != null
               ? [
-                  _buildFilePayload(
-                    url: uploadedFiles['coverLetter'] != null
+                  {
+                    "url": uploadedFiles['coverLetter'] != null
                         ? uploadedFiles['coverLetter']["url"]
                         : coverLetterFile!.path,
-                    name: coverLetterFile!.path.split("/").last,
-                    filePath: coverLetterFile!.path,
-                  )
+                    "name": coverLetterFile!.path.split("/").last,
+                    "type": "image",
+                    "extension": "jpeg",
+                  }
                 ]
               : [],
           "abn_number": abnNumberController.text,
@@ -1018,34 +982,34 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
               ]
             : [],
         "upload_resume": [
-          _buildFilePayload(
-            url: serverDocuments["Resume"]?.url ??
+          {
+            "url": serverDocuments["Resume"]?.url ??
                 uploadedFiles["Resume"]?["url"],
-            name: serverDocuments["Resume"]?.name ??
+            "name": serverDocuments["Resume"]?.name ??
                 uploadedFiles["Resume"]?["name"],
-            filePath: serverDocuments["Resume"]?.url ??
-                uploadedFiles["Resume"]?["name"],
-          )
+            "type": "pdf",
+            "extension": "pdf",
+          }
         ],
         "certificate": [
-          _buildFilePayload(
-            url: serverDocuments["Certificate"]?.url ??
+          {
+            "url": serverDocuments["Certificate"]?.url ??
                 uploadedFiles["Certificate"]?["url"],
-            name: serverDocuments["Certificate"]?.name ??
+            "name": serverDocuments["Certificate"]?.name ??
                 uploadedFiles["Certificate"]?["name"],
-            filePath: serverDocuments["Certificate"]?.url ??
-                uploadedFiles["Certificate"]?["name"],
-          )
+            "type": "document",
+            "extension": "pdf",
+          }
         ],
         "cover_letter": [
-          _buildFilePayload(
-            url: serverDocuments["Cover Letter"]?.url ??
+          {
+            "url": serverDocuments["Cover Letter"]?.url ??
                 uploadedFiles["Cover Letter"]?["url"],
-            name: serverDocuments["Cover Letter"]?.name ??
+            "name": serverDocuments["Cover Letter"]?.name ??
                 uploadedFiles["Cover Letter"]?["name"],
-            filePath: serverDocuments["Cover Letter"]?.url ??
-                uploadedFiles["Cover Letter"]?["name"],
-          )
+            "type": "image",
+            "extension": "jpeg",
+          }
         ],
         "Year_of_experiance": selectExperience,
 
@@ -1143,10 +1107,9 @@ class JobProfileCreateViewModel extends ChangeNotifier with ValidationMixins {
     locationController.text = profile?.location ?? "";
     countryController.text = profile?.country ?? "";
     stateController.text = profile?.state ?? "";
-    salaryController.text =
-        (profile?.salaryAmount != null && profile!.salaryAmount != 0)
-            ? profile.salaryAmount.toString()
-            : "";
+    salaryController.text = (profile?.salaryAmount != null && profile!.salaryAmount != 0)
+        ? profile.salaryAmount.toString()
+        : "";
     selectedSalaryPer = profile?.salaryType ?? "";
     cityPostCodeController.text = profile?.city ?? "";
     experiences = profile?.jobExperiences ?? [];

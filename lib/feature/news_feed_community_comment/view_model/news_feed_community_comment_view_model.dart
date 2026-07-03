@@ -130,9 +130,8 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
     print("*****************addCommentfee");
     await getUserId();
     final name = await LocalStorage.getStringVal(LocalStorageConst.name);
-    final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
+     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final img = await LocalStorage.getStringVal(LocalStorageConst.profilePic);
-    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     Loaders.circularShowLoader(context);
     try {
       // Upload files first
@@ -141,14 +140,14 @@ class NewsFeedCommunityCommentViewModel extends ChangeNotifier {
       var res = await _http.mutation(addNewsFeedCommentQuery, {
         "addCommentsData": {
           "created_by_id": userId,
-          if (UserRole.practice.value == userType) "dental_practice_id": practiceId,
-          if (UserRole.professional.value == userType) "dental_professional_id": professionId,
-          if (UserRole.admin.value == userType) "dental_admin_id": adminId,
-          if (UserRole.supplier.value == userType) "dental_supplier_id": supplierId,
+          "dental_practice_id": practiceId ?? null,
+          "dental_professional_id": professionId ?? null,
           "commenter_name": name,
           "comment_Pro_Img": img,
           "comments": commentController.text,
           "comments_attachments": uploadedFiles,
+          "dental_admin_id": adminId ?? null,
+          "dental_supplier_id": supplierId ?? null,
           "news_feeds_id": feedId
         }
       });

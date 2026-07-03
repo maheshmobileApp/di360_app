@@ -185,40 +185,37 @@ class JobSeekCard extends StatelessWidget with BaseContextHelpers {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (title != "")
-              SizedBox(
-                width: getSize(context).width * 0.5,
-                child: Text(
-                  title,
-                  maxLines: 2,
-                  style: TextStyles.semiBold(
-                    fontSize: 16,
-                    color: AppColors.black,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+            SizedBox(
+              width: getSize(context).width * 0.5,
+              child: Text(
+                title,
+                maxLines: 2,
+                style: TextStyles.semiBold(
+                  fontSize: 16,
+                  color: AppColors.black,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
+            ),
             addVertical(4),
-            if (jobTitle != "")
-              SizedBox(
-                width: getSize(context).width * 0.5,
-                child: Text(
-                  jobTitle,
-                  style:
-                      TextStyles.semiBold(fontSize: 16, color: AppColors.black),
-                  overflow: TextOverflow.ellipsis,
-                ),
+            SizedBox(
+              width: getSize(context).width * 0.5,
+              child: Text(
+                jobTitle,
+                style:
+                    TextStyles.semiBold(fontSize: 16, color: AppColors.black),
+                overflow: TextOverflow.ellipsis,
               ),
+            ),
             addVertical(4),
-            if (role != "")
-              SizedBox(
-                width: getSize(context).width * 0.5,
-                child: Text(
-                  role,
-                  style: TextStyles.semiBold(color: AppColors.black),
-                  overflow: TextOverflow.ellipsis,
-                ),
+            SizedBox(
+              width: getSize(context).width * 0.5,
+              child: Text(
+                role,
+                style: TextStyles.semiBold(color: AppColors.black),
+                overflow: TextOverflow.ellipsis,
               ),
+            ),
           ],
         ),
         Spacer(),

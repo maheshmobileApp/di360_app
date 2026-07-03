@@ -5,7 +5,6 @@ import 'package:di360_flutter/core/app_mixin.dart';
 import 'package:di360_flutter/feature/add_news_feed/add_news_feed_view_model/add_news_feed_view_model.dart';
 import 'package:di360_flutter/feature/add_news_feed/model_class/get_categories.dart';
 import 'package:di360_flutter/feature/add_news_feed/view/upload_file_preview.dart';
-import 'package:di360_flutter/feature/add_news_feed/widget/enable_comment_widget.dart';
 import 'package:di360_flutter/feature/news_feed/news_feed_view_model/news_feed_view_model.dart';
 import 'package:di360_flutter/services/navigation_services.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
@@ -78,8 +77,7 @@ class AddNewsFeedScreen extends StatelessWidget
                     items: viewModel.newsfeedCategories?.map((v) {
                       return DropdownMenuItem<NewsfeedCategories>(
                         value: v,
-                        child: Text(v.categoryName ?? '',
-                            overflow: TextOverflow.ellipsis),
+                        child: Text(v.categoryName ?? '', overflow: TextOverflow.ellipsis),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -115,13 +113,6 @@ class AddNewsFeedScreen extends StatelessWidget
                     validator: viewModel.websiteController.text.isNotEmpty
                         ? validateOptionalUrl
                         : null),
-                addVertical(10),
-                EnableCommentsWidget(
-                  value: viewModel.enableComments,
-                  onChanged: (value) {
-                    viewModel.setEnableComments(value);
-                  },
-                ),
                 addVertical(30),
                 AppButton(
                     text: viewModel.isEditNewsFeed == true ? 'Update' : 'Add',

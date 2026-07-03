@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:di360_flutter/common/constants/image_const.dart';
 import 'package:di360_flutter/common/constants/status_colors.dart';
-import 'package:di360_flutter/feature/home/model_class/get_all_news_feeds.dart';
 import 'package:di360_flutter/utils/alert_diaglog.dart';
 import 'package:di360_flutter/utils/date_utils.dart';
 import 'package:di360_flutter/utils/user_role_enum.dart';
@@ -13,7 +11,7 @@ import 'package:di360_flutter/common/constants/app_colors.dart';
 import 'package:di360_flutter/common/constants/txt_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CouresListingCard extends StatefulWidget {
+class CouresListingCard extends StatelessWidget {
   final String id;
   final int index;
   final String logoUrl;
@@ -32,7 +30,6 @@ class CouresListingCard extends StatefulWidget {
   final VoidCallback? onTapRegistered;
   final Function(String action, String id)? onMenuAction;
   final VoidCallback? onDetailView;
-  final List<Presenters>? presenters;
 
   const CouresListingCard(
       {super.key,
@@ -53,48 +50,13 @@ class CouresListingCard extends StatefulWidget {
       required this.meetingLink,
       required this.activeStatus,
       required this.chipTitle,
-      required this.presenters,
       this.userType});
 
   @override
-  State<CouresListingCard> createState() => _CouresListingCardState();
-}
-
-class _CouresListingCardState extends State<CouresListingCard> {
-  int currentIndex = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-
-    final presenters = widget.presenters ?? [];
-
-    if (presenters.length > 1) {
-      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
-        if (!mounted) return;
-
-        setState(() {
-          currentIndex = (currentIndex + 1) % presenters.length;
-        });
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    /*final String time = (status == "ACTIVE")
+    final String time = (status == "ACTIVE")
         ? DateFormatUtils.formatTwoDateTime(createdAt)
-        : DateFormatUtils.formatTwoDateTime(updatedAt);*/
-    final time = DateFormatUtils.formatTwoDateTime(widget.createdAt);
-    final List<String> presenterImages = widget.presenters!
-        .where((e) => e.presentedByImage?.url != null)
-        .map((e) => e.presentedByImage!.url!)
-        .toList();
-    final List<String> presenterNames = widget.presenters!
-        .where((e) => e.presentedByName != null)
-        .map((e) => e.presentedByName ?? "")
-        .toList();
+        : DateFormatUtils.formatTwoDateTime(updatedAt);
 
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -115,44 +77,31 @@ class _CouresListingCardState extends State<CouresListingCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                        child: _logoWithTitle(
-                            widget.logoUrl,
-                            widget.companyName,
-                            widget.courseTitle,
-                            widget.status,
-                            widget.activeStatus,
-                            presenterImages,
-                            presenterNames)),
+                        child: _logoWithTitle(logoUrl, companyName, courseTitle,
+                            status, activeStatus)),
                     Row(
                       children: [
                         _menuWidget(
-                            context,
-                            widget.types.isNotEmpty
-                                ? widget.types.first
-                                : null),
+                            context, types.isNotEmpty ? types.first : null),
                       ],
                     ),
                   ],
                 ),
 
                 const SizedBox(height: 8),
-                Text(presenterNames?[currentIndex] ?? "",
-                    style: TextStyles.medium1(color: AppColors.black)),
-                const SizedBox(height: 8),
-                _chipWidget(widget.types, widget.meetingLink, time),
+                _chipWidget(types, meetingLink, time),
                 const SizedBox(height: 8),
 
-                _descriptionWidget(widget.description, widget.index),
+                _descriptionWidget(description, index),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                        onTap: widget.onTapRegistered,
-                        child: _registeredChip(
-                            widget.registeredCount, widget.chipTitle)),
+                        onTap: onTapRegistered,
+                        child: _registeredChip(registeredCount, chipTitle)),
                     GestureDetector(
-                        onTap: widget.onDetailView,
+                        onTap: onDetailView,
                         child: Row(children: [
                           Text("View Details",
                               style: TextStyles.medium1(
@@ -170,51 +119,24 @@ class _CouresListingCardState extends State<CouresListingCard> {
     );
   }
 
-  Widget _logoWithTitle(
-    String logo,
-    String company,
-    String title,
-    String status,
-    String activeStatus,
-    List<String>? presenterImages,
-    List<String>? presenterNames,
-  ) {
+  Widget _logoWithTitle(String logo, String company, String title,
+      String status, String activeStatus) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Stack(
+          alignment: Alignment.center,
           children: [
             CircleAvatar(
-              radius: 30,
-              backgroundColor: AppColors.geryColor,
-              child: ClipOval(
-                child: SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
+                radius: 30,
+                backgroundColor: AppColors.geryColor,
+                child: ClipOval(
                     child: CachedNetworkImageWidget(
-                      key: ValueKey(presenterImages?[currentIndex]),
-                      imageUrl: presenterImages?[currentIndex] ?? "",
-                      fit: BoxFit.contain,
-                      errorWidget: Image.asset(ImageConst.directorProfile),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(company, style: TextStyles.medium2(color: AppColors.black)),
-              //const SizedBox(height: 2),
-              //Text(title, style: TextStyles.regular2(color: AppColors.black)),
-              Container(
+                        imageUrl: logo,
+                        fit: BoxFit.contain,
+                        errorWidget: Image.asset(ImageConst.directorProfile)))),
+            Positioned(
+              bottom: 0,
+              child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
                   color: const Color.fromRGBO(229, 244, 237, 1),
@@ -225,6 +147,17 @@ class _CouresListingCardState extends State<CouresListingCard> {
                     style: TextStyles.bold4(
                         color: StatusColors.getColor(status), fontSize: 10)),
               ),
+            ),
+          ],
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(company, style: TextStyles.medium2(color: AppColors.black)),
+              const SizedBox(height: 2),
+              Text(title, style: TextStyles.regular2(color: AppColors.black)),
             ],
           ),
         ),
@@ -359,22 +292,20 @@ class _CouresListingCardState extends State<CouresListingCard> {
           minWidth: 0, minHeight: 0), // remove default 48x48
       icon: Icon(Icons.more_vert,
           size: 20, color: AppColors.bottomNavUnSelectedColor),
-      onSelected: (value) => widget.onMenuAction?.call(value, widget.id),
+      onSelected: (value) => onMenuAction?.call(value, id),
       itemBuilder: (context) => [
         _popupItem("Preview", Icons.remove_red_eye, AppColors.black),
-        if (widget.userType == UserRole.admin.value &&
-            (widget.status == "PENDING" || widget.status == "REJECT"))
+        if (userType == UserRole.admin.value &&
+            (status == "PENDING" || status == "REJECT"))
           _popupItem("Approve", Icons.check, AppColors.greenColor),
         /*if (status != "EXPIRED" && courseType != "Online Academy")
           _popupItem("Edit", Icons.edit_outlined, AppColors.blueColor),*/
-        if (widget.status != "APPROVE" &&
-            widget.status != "EXPIRED" &&
-            widget.status != "REJECT")
+        if (status != "APPROVE" && status != "EXPIRED" && status != "REJECT")
           _popupItem("Delete", Icons.delete_outline, AppColors.redColor),
-        if (widget.activeStatus == "ACTIVE" && widget.status == "APPROVE")
+        if (activeStatus == "ACTIVE" && status == "APPROVE")
           _popupItem(
               "Inactive", Icons.nightlight_outlined, AppColors.primaryColor),
-        if (widget.activeStatus == "INACTIVE" && widget.status == "APPROVE")
+        if (activeStatus == "INACTIVE" && status == "APPROVE")
           _popupItem(
               "Active", Icons.nightlight_outlined, AppColors.primaryColor),
         /*if (status == "EXPIRED")
@@ -395,4 +326,12 @@ class _CouresListingCardState extends State<CouresListingCard> {
       ),
     );
   }
+
+  // String? _getShortTime(String createdAt) {
+  //   try {
+  //     return Jiffy.parse(createdAt).fromNow();
+  //   } catch (_) {
+  //     return '';
+  //   }
+  // }
 }

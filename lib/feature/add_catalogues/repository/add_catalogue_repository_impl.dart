@@ -1,12 +1,14 @@
 import 'package:di360_flutter/common/constants/local_storage_const.dart';
 import 'package:di360_flutter/core/http_service.dart';
 import 'package:di360_flutter/data/local_storage.dart';
+import 'package:di360_flutter/feature/add_catalogues/model_class/admin_catalogue_status_count_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catagorys_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/catalogue_view_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_count_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/get_catalogue_type_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/model_class/my_catalogue_res.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/add_catalogue_query.dart';
+import 'package:di360_flutter/feature/add_catalogues/querys/admin_catalogue_count_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catagorys_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/catalogue_view_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/edit_catalogue_query.dart';
@@ -17,6 +19,7 @@ import 'package:di360_flutter/feature/add_catalogues/querys/inactive_view_query.
 import 'package:di360_flutter/feature/add_catalogues/querys/remove_catalogue_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/querys/send_approval_query.dart';
 import 'package:di360_flutter/feature/add_catalogues/repository/add_catalogue_repository.dart';
+import 'package:di360_flutter/utils/user_role_enum.dart';
 
 class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   final HttpService http = HttpService();
@@ -31,6 +34,7 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
   Future<List<Catalogues>?> getMyCatalogues(List<String>? catalogStatus,
       List<String>? status, int limit, int offset, String selectedStatus,
       {String? type, String? subCatagory, String? searchText}) async {
+    final userType = await LocalStorage.getStringVal(LocalStorageConst.type);
     final userId = await LocalStorage.getStringVal(LocalStorageConst.userId);
     final variables = {
       "limit": limit,
@@ -41,7 +45,7 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
             {
               "_and": [
                 {
-                  "title": {"_ilike": "%%"}
+                  "title": {"_ilike": "%$searchText%"}
                 }
               ]
             },
@@ -99,18 +103,59 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
                         : catalogStatus
                   }
                 }
-          /*if (status?.isNotEmpty == true)
-            {
-              "catalogue_status": {
-                "_in": status?.isEmpty == true ? ["ACTIVE", "INACTIVE"] : status
-              }
-            }*/
         ]
       }
     };
-    print("variables $variables");
-    final catalogueData =
-        await http.query(getMyCatalogueQuery, variables: variables);
+
+    final adminVariable = {
+      "limit": limit,
+      "offset": offset,
+      "where": {
+        "_and": [
+          if (searchText?.isNotEmpty == true)
+            {
+              "title": {"_ilike": "%$searchText%"}
+            },
+          if (type?.isNotEmpty == true)
+            {
+              "catalogue_category": {
+                "name": {"_ilike": "%$type%"}
+              }
+            },
+          if (subCatagory?.isNotEmpty == true)
+            {
+              "catalogue_sub_category": {
+                "name": {"_ilike": "%$subCatagory%"}
+              }
+            },
+          {
+            "_or": [
+              {
+                "status": {
+                  "_in": catalogStatus?.isEmpty == true
+                      ? [
+                          "APPROVED",
+                          "PENDING_APPROVAL",
+                          "EXPIRED",
+                          "SCHEDULED",
+                          "REJECTED"
+                        ]
+                      : catalogStatus
+                }
+              },
+              if (status?.isNotEmpty == true)
+                {
+                  "catalogue_status": {"_in": status}
+                }
+            ]
+          }
+        ]
+      }
+    };
+
+    final catalogueData = await http.query(getMyCatalogueQuery,
+        variables:
+            userType == UserRole.admin.value ? adminVariable : variables);
     final result = MyCataloguesData.fromJson(catalogueData);
     return result.catalogues ?? [];
   }
@@ -125,7 +170,6 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
 
   @override
   Future<dynamic> removeCatalogue(String? id) async {
-    print("*****************$id");
     final catalogueData = await http.mutation(removeCatalogueQuery, {"id": id});
     return catalogueData;
   }
@@ -176,5 +220,18 @@ class AddCatalogueRepositoryImpl extends AddCatalogueRepository {
     final data = await http.query(getCatalogueTypesQuery);
     final result = CatalogueTypeData.fromJson(data);
     return result.catalogueCategories;
+  }
+
+  @override
+  Future<dynamic> adminCataloguesCount() async {
+    final data = await http.query(adminCatalogueStatusCountQuery);
+    final result = CatalogueStatusCountData.fromJson(data);
+    return result;
+  }
+
+  @override
+  Future<dynamic> approveAndRejectCatalogueQuery(variables) async {
+    final res = await http.mutation(InactiveViewQuery, variables);
+    return res;
   }
 }

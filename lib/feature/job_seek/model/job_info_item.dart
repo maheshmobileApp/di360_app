@@ -22,8 +22,8 @@ class InfoItem extends StatelessWidget {
         children: [
           SvgPicture.asset(
             iconPath,
-            width: 24,
-            height: 24,
+            width: 28,
+            height: 28,
             colorFilter:
                 const ColorFilter.mode(Colors.blueGrey, BlendMode.srcIn),
           ),

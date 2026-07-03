@@ -35,7 +35,8 @@ class _JobListingScreenState extends State<LearningHubMasterView>
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
         Provider.of<MarketPlaceLearningHubViewModel>(context, listen: false)
-            .getAllLearningHubData(context, loadMore: true);      }
+            .getAllLearningHubData(context, loadMore: true);
+      }
     });
   }
 
@@ -134,16 +135,11 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                   ? course.courseRegisteredUsers?.first
                                       .courseRegisteredDate
                                   : null;
-                          final int? durationCount = courseListingVM
-                              .getDurationCount(course.courseRegisteredUsers);
 
-                          final remainingDays = (registrationDate != null &&
-                                  durationCount != null)
-                              ? DateFormatUtils.remainingDays(
-                                  registrationDate,
-                                  durationCount,
-                                )
-                              : "Life Time";
+                          final remainingDays = registrationDate != null
+                              ? DateFormatUtils.remainingDays(registrationDate,
+                                  course.courseAccessDuration ?? 0)
+                              : 0;
 
                           final isRegistered = courseListingVM
                               .isRegisteredCheck(course.courseRegisteredUsers);
@@ -175,7 +171,7 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                                     course.address?.first.city ??
                                     "")
                                 : "",
-                            expiryDateCount: remainingDays,
+                            expiryDateCount: remainingDays.toString(),
                             courseStatus: course
                                 .courseRegisteredUsers?.firstOrNull?.status,
                             onTap: () async {
@@ -193,13 +189,11 @@ class _JobListingScreenState extends State<LearningHubMasterView>
                               await courseListingVM.getCourseDetails(
                                   context, course.id ?? "");
                               await courseListingVM.getProfile();
-                              if (isRegistered &&
-                                  course.courseRegisteredUsers?.firstOrNull
-                                          ?.status !=
-                                      "EXPIRED" &&
+                              if (isRegistered && course
+                                .courseRegisteredUsers?.firstOrNull?.status != "EXPIRED" &&
                                   course.type == "Online Academy") {
                                 navigationService.push(CourseDetailsView());
-                              } else {
+                              }else{
                                 navigationService
                                     .navigateTo(RouteList.courseDetailScreen);
                               }
